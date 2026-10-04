@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.spirit-swarm.bite",
+  "name": "Spirit Swarm · Bite",
+  "description": "",
+  "durationTicks": 20,
+  "loop": false,
+  "layers": [
+    {
+      "id": "bite",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 20,
+        "rate": 8,
+        "speed": 2,
+        "speedVariation": 0.25,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 120,
+        "gravity": 1,
+        "drag": 2,
+        "spawnRadius": 0.15,
+        "startSize": 0.12,
+        "endSize": 0.01,
+        "spin": 1,
+        "fadeIn": 0,
+        "fadeOut": 0.8
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#c5f882",
+      "accent": "#70c9a5",
+      "durationTicks": 1,
+      "count": 8,
+      "size": 0.08,
+      "height": 0.9
+    }
+  ]
+}

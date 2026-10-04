@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.hex",
+  "icon": "asset.custom.hex-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "transform",
+      "effect": "effect.core.hex",
+      "statusId": "form",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

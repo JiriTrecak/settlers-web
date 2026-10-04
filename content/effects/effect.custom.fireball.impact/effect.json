@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.fireball.impact",
+  "name": "Fireball Impact",
+  "description": "An orange impact flash with a short expanding ground ring and scattered cooling embers.",
+  "durationTicks": 32,
+  "loop": false,
+  "layers": [
+    {
+      "id": "flash",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#ff7518",
+      "accent": "#ffe4a0",
+      "durationTicks": 16,
+      "count": 10,
+      "size": 1.5,
+      "height": 1.1,
+      "blend": "additive"
+    },
+    {
+      "id": "shock-ring",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#e84a0c",
+      "accent": "#ffb83d",
+      "durationTicks": 20,
+      "count": 1,
+      "size": 1.7,
+      "height": 0.06
+    },
+    {
+      "id": "embers",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 28,
+        "rate": 24,
+        "speed": 4,
+        "speedVariation": 0.45,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 110,
+        "gravity": 6,
+        "drag": 1.8,
+        "spawnRadius": 0.25,
+        "startSize": 0.15,
+        "endSize": 0.02,
+        "spin": 3,
+        "fadeIn": 0,
+        "fadeOut": 0.8
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#ff7b12",
+      "accent": "#ffd967",
+      "durationTicks": 32,
+      "count": 18,
+      "size": 0.15,
+      "height": 1,
+      "blend": "additive"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.bash",
+  "name": "Bash",
+  "description": "",
+  "durationTicks": 40,
+  "loop": false,
+  "layers": [
+    {
+      "id": "aura",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#eed09a",
+      "accent": "#ffffff",
+      "durationTicks": 40,
+      "count": 1,
+      "size": 1.8,
+      "height": 0.05,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.3,
+          "max": 0.75,
+          "easing": "sine"
+        }
+      },
+      "follow": true
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.devour",
+  "icon": "asset.custom.devour-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "swallow",
+      "effect": "effect.core.devour.swallow",
+      "event": "contained",
+      "anchor": "caster",
+      "lifetime": "finite"
+    },
+    {
+      "id": "release",
+      "effect": "effect.core.devour.swallow",
+      "event": "releasedContained",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

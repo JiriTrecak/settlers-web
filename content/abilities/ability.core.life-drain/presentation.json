@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.life-drain",
+  "icon": "asset.custom.life-drain-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "main",
+      "effect": "effect.core.life-drain",
+      "event": "drained",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

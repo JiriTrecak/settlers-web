@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.unstoppable-command",
+  "name": "Unstoppable command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "9ecf9412bdd7511c6f58aa99436090f85574ec9b3fd7aa8995376aa47a32fa20",
+      "bytes": 665
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "73f9939c5f198cc685fffd9e0d8ce4ea811c432b505bdece04deabc8f604b23a",
+      "bytes": 662605
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "d1c0e2b058fe203ef90e7a204e9984188d86499a02db36b5f53b81011a3bba2c",
+      "bytes": 1560585
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.unstoppable-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.unstoppable-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

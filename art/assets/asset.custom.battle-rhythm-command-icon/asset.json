@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.battle-rhythm-command-icon",
+  "name": "Battle Rhythm — command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "24236d00f276d24e667962104594b8842146c24b9dd10d211f6b3aff2f2eee57",
+      "bytes": 803
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "839b1f7fec453808676ce84ddfd9017502d96a551bdc2d870e1fef0fec02f7a0",
+      "bytes": 547443
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "cf6745d1aaa6ce7f4aff122d2c6a5eec1049216592c5654a32181fc760063bae",
+      "bytes": 1334609
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.battle-rhythm-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.battle-rhythm-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

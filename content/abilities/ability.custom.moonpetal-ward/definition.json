@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.custom.moonpetal-ward",
+  "name": "Moonpetal Ward",
+  "description": "Wrap yourself in a cool lunar ward that absorbs up to 160 damage for eight seconds. Moon-petal glyphs orbit and breathe beneath you.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "mana": 40,
+      "cooldownTicks": 480
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "caster",
+      "id": "moonpetalShield",
+      "amount": 320,
+      "polarity": "positive",
+      "dispel": true,
+      "modifiers": {},
+      "shield": 160,
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.custom.moonpetal-ward"
+}

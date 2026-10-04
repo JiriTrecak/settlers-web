@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.dewspring.pulse",
+  "name": "Dewspring — Healing Ripple",
+  "description": "A subtle turquoise ripple marking each healing pulse at the spring point.",
+  "durationTicks": 18,
+  "loop": false,
+  "layers": [
+    {
+      "id": "healing-ripple",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#76dfc9",
+      "accent": "#c8f8e9",
+      "durationTicks": 18,
+      "count": 1,
+      "size": 3.8,
+      "height": 0.08
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.death-coil",
+  "name": "Death Coil",
+  "description": "A homing coil heals allied undead for 200 health or deals 100 spell damage to enemy organic units. Mechanical targets and the opposite class/relationship combinations are invalid.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "projectile",
+    "speed": 18
+  },
+  "ranks": [
+    {
+      "mana": 25,
+      "heal": 200,
+      "damage": 100,
+      "range": 12,
+      "cooldownTicks": 200
+    }
+  ],
+  "targeting": {
+    "condition": {
+      "kind": "any",
+      "conditions": [
+        {
+          "kind": "matches",
+          "of": "target",
+          "relations": [
+            "ally"
+          ],
+          "filter": {
+            "natures": [
+              "undead"
+            ]
+          }
+        },
+        {
+          "kind": "matches",
+          "of": "target",
+          "relations": [
+            "enemy"
+          ],
+          "filter": {
+            "natures": [
+              "organic"
+            ]
+          }
+        }
+      ]
+    },
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally",
+      "enemy"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 12,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "branch",
+      "condition": {
+        "kind": "matches",
+        "of": "target",
+        "relations": [
+          "ally"
+        ],
+        "filter": {
+          "natures": [
+            "undead"
+          ]
+        }
+      },
+      "then": [
+        {
+          "op": "heal",
+          "target": "target",
+          "amount": {
+            "rankParameter": "heal"
+          }
+        }
+      ],
+      "else": [
+        {
+          "op": "damage",
+          "target": "target",
+          "amount": {
+            "rankParameter": "damage"
+          },
+          "damageType": "spell"
+        }
+      ]
+    }
+  ],
+  "presentation": "presentation.core.death-coil"
+}

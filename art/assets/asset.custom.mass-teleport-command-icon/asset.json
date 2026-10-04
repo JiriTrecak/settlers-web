@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.mass-teleport-command-icon",
+  "name": "Mass Teleport — Root Circle Caravan",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "1698f7b34eee4c91bd5dcd995988dc5b19810128d8da423fb62a760fe46b778d",
+      "bytes": 1059
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "f1bb7c0dd97f2f2ed1e0e20d26aa85e0e232b020b735510db9e69b5473ebdd82",
+      "bytes": 702648
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "6a7a55f1be4c687e81fda3ee5b2270db4ebb9f8486dfeb46aebd6b876a6112c8",
+      "bytes": 1879258
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.mass-teleport-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.mass-teleport-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

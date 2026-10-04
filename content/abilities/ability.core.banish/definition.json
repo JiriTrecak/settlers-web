@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.banish",
+  "name": "Banish",
+  "description": "Turn a non-mechanical unit ethereal for 12/15/18 seconds (4/5/6 on heroes). It cannot attack or take physical damage, but can move and cast spells. Movement is slowed by 50%, and spell damage taken increases by 66%. Can target allies or enemies; can be dispelled.",
+  "activation": "targeted",
+  "piercesSpellImmunity": false,
+  "ranks": [
+    {
+      "duration": 480,
+      "heroDuration": 160,
+      "mana": 75,
+      "cooldownTicks": 0
+    },
+    {
+      "duration": 600,
+      "heroDuration": 200,
+      "mana": 60,
+      "cooldownTicks": 0
+    },
+    {
+      "duration": 720,
+      "heroDuration": 240,
+      "mana": 50,
+      "cooldownTicks": 0
+    }
+  ],
+  "targeting": {
+    "filter": {
+      "natures": [
+        "organic",
+        "undead"
+      ]
+    },
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally",
+      "enemy"
+    ],
+    "allowSelf": true,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "banished",
+      "amount": {
+        "rankParameter": "duration"
+      },
+      "heroDuration": {
+        "rankParameter": "heroDuration"
+      },
+      "polarity": "negative",
+      "dispel": true,
+      "ethereal": true,
+      "damageTakenPermille": {
+        "spell": 1660
+      },
+      "modifiers": {
+        "moveSpeedPermille": -500
+      },
+      "form": {
+        "opacity": 0.5,
+        "scale": 1
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.banish"
+}

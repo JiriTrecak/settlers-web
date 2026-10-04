@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.web.status",
+  "name": "Web · Silk bindings",
+  "description": "",
+  "durationTicks": 64,
+  "loop": true,
+  "layers": [
+    {
+      "id": "motes",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 36,
+        "rate": 10,
+        "speed": 0.4,
+        "speedVariation": 0.3,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 60,
+        "gravity": 0,
+        "drag": 1,
+        "spawnRadius": 0.65,
+        "startSize": 0.1,
+        "endSize": 0.01,
+        "spin": 1,
+        "fadeIn": 0.1,
+        "fadeOut": 0.7
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#e2f4ff",
+      "accent": "#83b8d2",
+      "durationTicks": 64,
+      "count": 24,
+      "size": 0.12,
+      "height": 0.2,
+      "follow": true
+    },
+    {
+      "id": "silk",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#c1e8ed",
+      "accent": "#e5faff",
+      "durationTicks": 64,
+      "count": 1,
+      "size": 1.05,
+      "height": 0.1,
+      "motion": {
+        "rotation": {
+          "periodTicks": 240,
+          "direction": "clockwise"
+        }
+      },
+      "follow": true,
+      "intensity": 0.7
+    }
+  ]
+}

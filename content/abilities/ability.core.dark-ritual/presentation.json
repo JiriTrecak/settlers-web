@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.dark-ritual",
+  "icon": "asset.custom.dark-ritual-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "offering",
+      "effect": "effect.core.dark-ritual.offering",
+      "event": "sacrificed",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "restoration",
+      "effect": "effect.core.dark-ritual.restoration",
+      "event": "manaRestored",
+      "anchor": "caster",
+      "lifetime": "finite"
+    }
+  ]
+}

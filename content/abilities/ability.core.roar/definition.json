@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.roar",
+  "name": "Roar",
+  "description": "Empower nearby allies with additional attack damage. Modifier strength follows the selected rank.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200,
+      "bonus": 150
+    },
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200,
+      "bonus": 250
+    },
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200,
+      "bonus": 350
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "query": {
+        "center": "caster",
+        "radius": 8,
+        "relations": [
+          "ally"
+        ],
+        "allowSelf": true,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "id": "roar",
+      "amount": 1200,
+      "polarity": "positive",
+      "dispel": true,
+      "modifiers": {},
+      "rankedModifiers": {
+        "damagePermille": {
+          "rankParameter": "bonus"
+        }
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.roar"
+}

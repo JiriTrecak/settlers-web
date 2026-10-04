@@ -44,7 +44,8 @@ export class ForestSurroundingsLayer {
   private readonly generated=new Set<BufferGeometry>();
   private originalBackground:Scene['background']=null;
   private readonly background=new Color();
-  private readonly bark=new TextureLoader().load(projectMeshUrl('assets/library/asset.textures.forest-giants-bark/albedo.png')!);
+  private bark:Texture|null=null;
+  private barkReady:Promise<Texture>|undefined;
   private readonly loader=new GLTFLoader().register(referenceMaterialPlugin);
   private readonly prototypes=new Map<string,Promise<Prototype[]>>();
   private readonly sourceRoots=new Set<Object3D>();
@@ -53,6 +54,7 @@ export class ForestSurroundingsLayer {
   private readonly leaf=canopyLeaf();
   private key='';
   private revision=0;
+  private building=false;
   private dead=false;
   ready:Promise<void>=Promise.resolve();
   private profile:Profile|undefined;
@@ -68,19 +70,24 @@ export class ForestSurroundingsLayer {
   private readonly sunTint={value:new Color()};
   private readonly sunDirection={value:new Vector3(0,1,0)};
   private readonly night={value:1};
-  constructor(private readonly scene:Scene){this.bark.colorSpace=SRGBColorSpace;this.bark.wrapS=this.bark.wrapT=RepeatWrapping;this.root.name='Biome forest surroundings';this.crowns.name='Overhead broadleaf crowns';this.root.add(this.crowns,this.limbs);scene.add(this.root);}
+  constructor(private readonly scene:Scene){this.root.name='Biome forest surroundings';this.crowns.name='Overhead broadleaf crowns';this.root.add(this.crowns,this.limbs);scene.add(this.root);}
 
   configure(profile:Profile|undefined,field:HeightField|null,frame:CanopyFrame|undefined,interior:boolean){
     this.profile=profile;this.root.visible=!!(profile&&field&&frame&&!interior);
-    if(!this.root.visible||!profile||!field||!frame)return;
+    if(!this.root.visible||!profile||!field||!frame){
+      // Disabling preview during a download must not construct a hidden forest
+      // after that download completes. Already built geometry can be reused.
+      if(this.building){this.revision++;this.key='';this.building=false;this.ready=Promise.resolve();}
+      return;
+    }
     this.mask.value=frame.texture;this.maskOffset.value.copy(frame.offset);this.maskScale.value=frame.settings.scale;
     this.haze.value.set(profile.hazeColor);this.hazeRange.value.set(profile.hazeStart,profile.hazeEnd);
     this.size=field.size;
     const boundary=Array.from({length:16},(_,i)=>{const t=(i%4)*field.size/3;return field.sample(i<4?t:i<8?field.size:i<12?t:0,i<4?0:i<8?t:i<12?field.size:t);});
     const key=JSON.stringify([field.size,boundary,frame.settings.seed,frame.settings.height,profile]);
     if(this.key===key)return;
-    this.key=key;const revision=++this.revision;
-    this.ready=this.build(profile,field,frame,revision).catch(error=>{if(!this.dead&&revision===this.revision){this.key='';console.error('Biome forest could not load',error);}throw error;});
+    this.key=key;const revision=++this.revision;this.building=true;
+    this.ready=this.build(profile,field,frame,revision).catch(error=>{if(!this.dead&&revision===this.revision){this.key='';console.error('Biome forest could not load',error);throw error;}}).finally(()=>{if(revision===this.revision)this.building=false;});
   }
 
   private async load(id:string):Promise<Prototype[]>{
@@ -164,7 +171,8 @@ export class ForestSurroundingsLayer {
     const ids=[profile.trunk,...profile.mushroom?[profile.mushroom]:[],...profile.log?[profile.log]:[]];
     let floor=this.floorTextures.get(profile.floorTexture);
     if(!floor){floor=new TextureLoader().loadAsync(projectMeshUrl(`assets/library/${profile.floorTexture}/albedo.png`)!).then(t=>{t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;return t;});this.floorTextures.set(profile.floorTexture,floor);}
-    const [loaded,floorMap]=await Promise.all([Promise.all(ids.map(id=>this.load(id))),floor]);
+    this.barkReady??=new TextureLoader().loadAsync(projectMeshUrl('assets/library/asset.textures.forest-giants-bark/albedo.png')!).then(t=>{t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;this.bark=t;if(this.dead)t.dispose();return t;});
+    const [loaded,floorMap]=await Promise.all([Promise.all(ids.map(id=>this.load(id))),floor,this.barkReady]);
     if(this.dead||revision!==this.revision)return;
     this.clearBatches();
     const trunkBounds=new Box3();
@@ -310,7 +318,7 @@ export class ForestSurroundingsLayer {
   }
 
   dispose(){
-    this.dead=true;this.revision++;this.clearBatches();this.root.removeFromParent();this.leaf.dispose();this.bark.dispose();
+    this.dead=true;this.revision++;this.clearBatches();this.root.removeFromParent();this.leaf.dispose();this.bark?.dispose();
     for(const texture of this.floorTextures.values())void texture.then(t=>t.dispose(),()=>{});
     if(this.scene.background===this.background)this.scene.background=this.originalBackground;
     // Pending loads also need disposal, even when navigation happens mid-load.

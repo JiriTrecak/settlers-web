@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.mass-teleport",
+  "name": "Mass Teleport arrival",
+  "description": "",
+  "durationTicks": 36,
+  "loop": false,
+  "layers": [
+    {
+      "id": "ground-light",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#8ad7ff",
+      "accent": "#fff6dc",
+      "durationTicks": 30,
+      "count": 1,
+      "size": 2,
+      "height": 0.04
+    },
+    {
+      "id": "sparks",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 32,
+        "rate": 40,
+        "speed": 4,
+        "speedVariation": 0.45,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 60,
+        "gravity": 0,
+        "drag": 2,
+        "spawnRadius": 1,
+        "startSize": 0.13,
+        "endSize": 0,
+        "spin": 0,
+        "fadeIn": 0.1,
+        "fadeOut": 0.8
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#8ad7ff",
+      "accent": "#ffffff",
+      "durationTicks": 24,
+      "count": 32,
+      "size": 0.1,
+      "height": 0.1
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.battle-rhythm",
+  "name": "Battle Rhythm",
+  "description": "Every third committed attack against an enemy unit grants 15/25/35% attack speed for four seconds. Cancelled windups do not count; released attacks count even if they miss. Refreshes the same buff. A custom attack-release proof; enable Combat to try it.",
+  "activation": "passive",
+  "ranks": [
+    {
+      "haste": 150
+    },
+    {
+      "haste": 250
+    },
+    {
+      "haste": 350
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 0,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 0,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [],
+  "triggers": [
+    {
+      "id": "rhythm",
+      "event": "weaponRelease",
+      "blockedBySilence": false,
+      "chancePermille": 1000,
+      "every": 3,
+      "manaCost": 0,
+      "operations": [
+        {
+          "op": "status",
+          "target": "caster",
+          "id": "momentum",
+          "amount": 160,
+          "polarity": "positive",
+          "dispel": true,
+          "modifiers": {},
+          "rankedModifiers": {
+            "attackSpeedPermille": {
+              "rankParameter": "haste"
+            }
+          },
+          "lifetime": "duration"
+        }
+      ]
+    }
+  ],
+  "presentation": "presentation.core.battle-rhythm"
+}

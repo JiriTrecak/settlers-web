@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.howl-of-terror",
+  "name": "Howl of Terror",
+  "description": "",
+  "durationTicks": 40,
+  "loop": false,
+  "layers": [
+    {
+      "id": "aura",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#b77bbf",
+      "accent": "#ffffff",
+      "durationTicks": 40,
+      "count": 1,
+      "size": 1.8,
+      "height": 0.05,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.3,
+          "max": 0.75,
+          "easing": "sine"
+        }
+      },
+      "follow": true
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.silence-command-icon",
+  "name": "Silence — sealed casting",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "401845d984ae0faa12fe79b850e13dba9f0edaf76853cdc6b923119961fbad59",
+      "bytes": 772
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "cdd5b1dda7e0fbf55cec7a0b67b21939315e906645bc872dc8f226e8ff839532",
+      "bytes": 549930
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "b707e0fefbb2100294c2d1311bd599751fd68a3e0477fc4e7a5878266c0d75be",
+      "bytes": 1291365
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.silence-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.silence-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

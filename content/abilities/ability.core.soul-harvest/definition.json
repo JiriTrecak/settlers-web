@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.soul-harvest",
+  "name": "Soul Harvest",
+  "description": "A passive lifecycle proof: killing an enemy organic or undead unit restores 40/60/80 health and 10/15/20 mana. Summons and structures grant no reward. Requires a living credited killer; rescue, friendly kills and later overkill do not count.",
+  "activation": "passive",
+  "piercesSpellImmunity": false,
+  "ranks": [
+    {
+      "health": 40,
+      "mana": 10
+    },
+    {
+      "health": 60,
+      "mana": 15
+    },
+    {
+      "health": 80,
+      "mana": 20
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 0,
+    "recoverTicks": 0,
+    "cost": {
+      "resource": "mana",
+      "amount": 0,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 0,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [],
+  "triggers": [
+    {
+      "id": "harvest",
+      "event": "kill",
+      "includeBuildings": false,
+      "filter": {
+        "summoned": false,
+        "natures": [
+          "organic",
+          "undead"
+        ]
+      },
+      "chancePermille": 1000,
+      "every": 1,
+      "manaCost": 0,
+      "operations": [
+        {
+          "op": "heal",
+          "target": "caster",
+          "amount": {
+            "rankParameter": "health"
+          }
+        },
+        {
+          "op": "mana",
+          "target": "caster",
+          "amount": {
+            "rankParameter": "mana"
+          }
+        }
+      ]
+    }
+  ],
+  "presentation": "presentation.core.soul-harvest"
+}

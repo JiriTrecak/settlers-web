@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.black-arrow-command",
+  "name": "Black Arrow — Woodland Command",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "f3041f75aab772b7d0601e3404eef0b4d159a49701e75543b991d3930138bf0e",
+      "bytes": 825
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "cc76bb6cce5f00140d2adb9c56ccbb108dee7847892d85f4321914f5ccf33e2a",
+      "bytes": 626504
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "6832457885137d885815715455621707f650582f45e79de521fefd81252b9636",
+      "bytes": 1561503
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.black-arrow-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.black-arrow-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

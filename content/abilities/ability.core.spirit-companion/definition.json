@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.spirit-companion",
+  "name": "Spirit Companion",
+  "description": "Summon one permanent forest-spirit companion. It ends when its source dies, disappears or changes controller. Recasting replaces only the previous owned companion, and only after successful placement. A generic source-linked summon proof.",
+  "activation": "targeted",
+  "ranks": [
+    {}
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 50,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 240,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "summon",
+      "target": "caster",
+      "amount": 1,
+      "definition": "unit.spell.feral-spirit",
+      "endsWithCaster": true,
+      "maxActive": 1,
+      "replace": true,
+      "radius": 2
+    }
+  ],
+  "presentation": "presentation.core.spirit-companion"
+}

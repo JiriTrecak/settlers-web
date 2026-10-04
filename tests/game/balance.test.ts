@@ -23,11 +23,13 @@ describe('first combat balance', () => {
     const immune=structuredClone(rules);immune.damageMultipliers.melee.light=0;
     expect(resolveDamage(immune,{armor:0,armorType:'light'},100,'melee')).toBe(0);
     expect(resolveDamage(rules,{armor:100,armorType:'hero'},1,'melee')).toBe(1);
-    expect(()=>armorMultiplier(rules,-1)).toThrow(/Negative armor/);
+    expect(resolveDamage(rules,{armor:-5,armorType:'heavy'},100,'melee')).toBe(123);
+    expect(armorMultiplier(rules,-1000)).toBeLessThan(2);
+    expect(armorMultiplier(rules,-5)).toBeGreaterThan(armorMultiplier(rules,-1));
   });
   it('publishes one complete stat table through level ten, including item and percentage bonuses', () => {
     const d=content.get('unit.ants.marshal');
-    expect(entityStats(d,{},content)).toEqual({moveSpeedPermille:1000,cooldownReductionPermille:0,lifestealPermille:0,level:1,maxHp:700,damage:31,armor:2,cooldownTicks:73,maxMana:225,healthRegenPerSecond:1.45,manaRegenPerSecond:.76});
+    expect(entityStats(d,{},content)).toEqual({moveSpeedPermille:1000,cooldownReductionPermille:0,lifestealPermille:0,meleeReflectionPermille:0,level:1,maxHp:700,damage:31,armor:2,cooldownTicks:73,maxMana:225,healthRegenPerSecond:1.45,manaRegenPerSecond:.76});
     const e={progression:{experience:3200},equipment:Array(6).fill('item.royal-crest')};
     expect(entityStats(d,e,content)).toMatchObject({level:10,maxHp:1975,damage:118,armor:24,cooldownTicks:60,maxMana:420,healthRegenPerSecond:2.8,manaRegenPerSecond:1.41});
   });

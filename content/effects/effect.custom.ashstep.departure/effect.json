@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.ashstep.departure",
+  "name": "Ashstep — departure flash",
+  "description": "Reusable fixed-position orange and teal teleport flash; no gameplay.",
+  "durationTicks": 20,
+  "loop": false,
+  "layers": [
+    {
+      "id": "orange-flash",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "source",
+      "shape": "glow",
+      "colour": "#ff781f",
+      "accent": "#ffae48",
+      "durationTicks": 10,
+      "count": 1,
+      "size": 2,
+      "height": 0.15,
+      "follow": false
+    },
+    {
+      "id": "teal-ring",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "source",
+      "shape": "ring",
+      "colour": "#20d8c9",
+      "accent": "#25aba8",
+      "durationTicks": 16,
+      "count": 1,
+      "size": 2.6,
+      "height": 0.12,
+      "follow": false
+    },
+    {
+      "id": "embers",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 18,
+        "rate": 40,
+        "speed": 5,
+        "speedVariation": 0.3,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 85,
+        "gravity": 6,
+        "drag": 3,
+        "spawnRadius": 0.8,
+        "startSize": 0.055,
+        "endSize": 0,
+        "spin": 0,
+        "fadeIn": 0,
+        "fadeOut": 0.8
+      },
+      "anchor": "source",
+      "shape": "particles",
+      "colour": "#ff872c",
+      "accent": "#25d2c4",
+      "durationTicks": 18,
+      "count": 18,
+      "size": 0.05,
+      "height": 0.5,
+      "follow": false
+    }
+  ]
+}

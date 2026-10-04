@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.mana-burn-command",
+  "name": "Mana Burn — original command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "6630a5bcfcbc8a0395c5c0fe2e2ff58780d72d2cfc2a2f1bfae2fefa7e34d281",
+      "bytes": 994
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "86b333a02f2af1a55026bfec0e4f7430494f1c74647973926f22c39f4b676ed2",
+      "bytes": 560446
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "90337d1eecdee58db625dfcda939dda15768f7c2953009f8798a074a1cde2142",
+      "bytes": 1355831
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.mana-burn-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.mana-burn-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

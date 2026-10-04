@@ -41,6 +41,25 @@ it('retains a valid ranged approach instead of replanning every six ticks',()=>{
  expect(routes.mock.calls.filter(([e])=>e.id===a.id)).toHaveLength(1);
 });
 
+it('defers approach rays during retry cooldown but checks changed terrain when retry opens',()=>{
+ const g=game([placed('archer','unit.ants.archer',100,100),placed('scout','unit.ants.settler',113,104),{...placed('target','unit.ants.warrior',113,100),owner:'player.2'}]);
+ const a=g.entities.find(e=>e.placement==='archer')!,target=g.entities.find(e=>e.placement==='target')!;
+ g.command('player.2',{type:'hold',actors:[target.id]});
+ g.command('player.1',{type:'attack',actors:[a.id],target:target.id});g.combat.plan();
+ expect(a.unit!.route.length).toBeGreaterThan(0);
+ const deadline=a.unit!.retryAt,route=[...a.unit!.route];
+ // The destination becomes obstructed while the actor is cooling down.
+ const ray=vi.spyOn(g.spatial,'attackClear').mockReturnValue(false);
+ const routeQuery=vi.spyOn(g.spatial,'route');
+ for(let tick=1;tick<deadline;tick++){
+  g.state.tick=tick;g.combat.plan();
+  expect(a.unit!.route).toEqual(route);
+ }
+ expect(ray).not.toHaveBeenCalled();expect(routeQuery).not.toHaveBeenCalled();
+ g.state.tick=deadline;g.combat.plan();
+ expect(ray).toHaveBeenCalled();expect(a.unit!.retryAt).toBe(deadline+6);
+});
+
 function hiddenPursuit(){
  const g=game([placed('a','unit.ants.archer',100,100),{...placed('b','unit.ants.settler',109,100),owner:'player.2'}]);
  const a=g.entities.find(e=>e.placement==='a')!,b=g.entities.find(e=>e.placement==='b')!;

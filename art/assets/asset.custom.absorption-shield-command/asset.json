@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.absorption-shield-command",
+  "name": "Absorption Shield — Finite Amber Damage Pool",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "6ca416264c8dcf30ee46caa1e78c136a0132cca6fae187f5900dee453fcca943",
+      "bytes": 1137
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "df5a8db07f0fcf5606899fe33333fca354ebe7d4c1767f8690affbc399e56a06",
+      "bytes": 669473
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "fdc9f1e1fa03bd3ce8b6cf8c44ccd89960102514bb552cedbf736c32036b2a1a",
+      "bytes": 1583957
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.absorption-shield-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.absorption-shield-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

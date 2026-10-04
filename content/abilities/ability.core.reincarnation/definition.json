@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.reincarnation",
+  "name": "Reincarnation",
+  "description": "When this hero dies, return at the death site after seven seconds with full health and mana. Retains identity, items and learned abilities. Triggers once every four minutes. If terrain stays blocked for ten more seconds, remains available for normal altar revival. Uses this game’s ordinary death rewards.",
+  "activation": "passive",
+  "piercesSpellImmunity": false,
+  "ranks": [
+    {
+      "delay": 280,
+      "cooldown": 9600
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 0,
+    "recoverTicks": 0,
+    "cost": {
+      "resource": "mana",
+      "amount": 0,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 0,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [],
+  "triggers": [
+    {
+      "id": "rebirth",
+      "event": "death",
+      "cooldownTicks": {
+        "rankParameter": "cooldown"
+      },
+      "chancePermille": 1000,
+      "every": 1,
+      "manaCost": 0,
+      "operations": [
+        {
+          "op": "revive",
+          "id": "return",
+          "target": "caster",
+          "amount": {
+            "rankParameter": "delay"
+          },
+          "healthPermille": 1000,
+          "manaPermille": 1000,
+          "placementRadius": 3,
+          "placementWaitTicks": 400
+        }
+      ]
+    }
+  ],
+  "presentation": "presentation.core.reincarnation"
+}

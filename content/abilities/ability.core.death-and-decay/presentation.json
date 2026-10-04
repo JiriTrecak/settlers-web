@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.death-and-decay",
+  "icon": "asset.custom.death-and-decay-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "idle"
+  },
+  "effects": [
+    {
+      "id": "pulse",
+      "effect": "effect.core.death-and-decay.pulse",
+      "event": "wave",
+      "anchor": "target",
+      "lifetime": "finite",
+      "sizeFrom": "radius"
+    }
+  ]
+}

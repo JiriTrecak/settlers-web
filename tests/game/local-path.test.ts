@@ -118,7 +118,7 @@ it('keeps self-spell visuals and saves at the hero’s precise position between 
  const spell='ability.core.holy-light-lite';mover.hp=100;
  expect(g.abilities.cast(mover.id,'holy-light',mover.id)).toBeNull();
  const cue=g.abilities.observedEvents().at(-1)!;
- expect(cue.origin).toEqual(center);expect(cue.point).toEqual(center);
+ expect(cue.origin).toEqual({...center,height:0});expect(cue.point).toEqual({...center,height:0});
  expect(cue.viewers).toContain('player.2');
  const restored=game(placements);restored.restore(g.snapshot());
  for(let n=0;n<25;n++){g.tick();restored.tick();expect(restored.checksum()).toBe(g.checksum());}

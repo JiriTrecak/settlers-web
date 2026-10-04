@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.mana-shield-command",
+  "name": "Mana Shield — Mana-Fed Protection",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "5a10da3c7fb01df1a9079d60f48efdbbc3570ba254db2013381e902c1a059c5b",
+      "bytes": 1181
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "77e00d02a9fee6be3ed47c86fe453666d9669aac218148ffb7c4ec82aa1b7688",
+      "bytes": 649893
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "de23a6fbbf13a7da2de7f42462d2b912103b8c36e4309ea8f4a0eaac1cc1f5d8",
+      "bytes": 1467180
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.mana-shield-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.mana-shield-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

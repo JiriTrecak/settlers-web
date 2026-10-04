@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.rallying-spark.impact",
+  "name": "Rallying Spark — Leafy Burst",
+  "description": "Brief readable leaf unfurl with a restrained golden pulse at each healed recipient.",
+  "durationTicks": 28,
+  "loop": false,
+  "layers": [
+    {
+      "id": "leaves",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 24,
+        "rate": 8,
+        "speed": 2.8,
+        "speedVariation": 0.3,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 80,
+        "gravity": -1.8,
+        "drag": 1.2,
+        "spawnRadius": 0.55,
+        "startSize": 0.5,
+        "endSize": 0.12,
+        "spin": 2.4,
+        "fadeIn": 0.05,
+        "fadeOut": 0.55
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#ffffff",
+      "accent": "#d8ef94",
+      "durationTicks": 26,
+      "count": 8,
+      "size": 0.5,
+      "height": 0.8,
+      "blend": "normal",
+      "follow": false,
+      "texture": {
+        "asset": "asset.assistant-trials.verdant-ward-leaf",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "gold-pulse",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#e2c46c",
+      "accent": "#a4cf82",
+      "durationTicks": 18,
+      "count": 1,
+      "size": 1.2,
+      "height": 0.08
+    }
+  ]
+}

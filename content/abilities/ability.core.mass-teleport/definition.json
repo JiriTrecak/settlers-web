@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.mass-teleport",
+  "name": "Mass Teleport",
+  "description": "After three seconds of preparation, relocate up to twelve nearby allies, including the caster, around the targeted allied unit or building. Individual blocked arrivals stay in place.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 128,
+      "mana": 25,
+      "cooldown": 200
+    }
+  ],
+  "targeting": {
+    "includeBuildings": true,
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 120,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldown"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "teleport",
+      "target": "target",
+      "query": {
+        "center": "caster",
+        "radius": 6,
+        "relations": [
+          "ally"
+        ],
+        "allowSelf": true,
+        "includeBuildings": false,
+        "excludePrimary": true,
+        "maxTargets": 12,
+        "order": "nearest"
+      },
+      "amount": 8,
+      "destination": "target",
+      "preserveOffset": true
+    }
+  ],
+  "presentation": "presentation.core.mass-teleport"
+}

@@ -68,7 +68,7 @@ it('Dispel damages enemy summons but preserves non-dispellable stuns',()=>{
  const f=setup('dispel-magic');const statuses=new SpellStatuses(f.game);
  const stun=coreAbilities.abilities.find(a=>a.id==='ability.core.storm-bolt')!;
  statuses.apply(f.caster,f.target,stun,1,f.game.state.nextCast++,releaseEffects(stun,1,'enemy')[1]);
- f.t().summoned={source:f.target,ability:'ability.core.feral-spirit',expires:9999};
+ f.t().summoned={source:f.target,ability:'ability.core.feral-spirit',rank:1,cast:1,started:0,expires:9999};
  f.cast();advance(f.game,11);expect(f.t().hp).toBe(300);expect(isStunned(f.t(),f.game.registry)).toBe(true);
 });
 it.each(names)('%s survives save/restore and lockstep replay',name=>{

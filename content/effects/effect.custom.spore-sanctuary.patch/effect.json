@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.spore-sanctuary.patch",
+  "name": "Spore Sanctuary · Mushroom Patch",
+  "description": "Cosmetic woodland mushroom mesh with gently drifting green-gold spores and subdued ground light. Emission ends early so all tails clear at five seconds.",
+  "durationTicks": 200,
+  "loop": false,
+  "layers": [
+    {
+      "id": "ground",
+      "name": "Subtle sanctuary glow",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#6dbe76",
+      "accent": "#d4bb69",
+      "durationTicks": 200,
+      "count": 1,
+      "size": 4,
+      "height": 0.08,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.4,
+          "max": 0.55,
+          "easing": "sine"
+        }
+      },
+      "intensity": 0.65
+    },
+    {
+      "id": "mushrooms",
+      "name": "Woodland mushroom cluster",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "mesh",
+      "model": {
+        "asset": "asset.models.environment.woodland-mushroom-cluster",
+        "role": "geometry",
+        "index": 1,
+        "rotation": {
+          "x": 0,
+          "y": 25,
+          "z": 0
+        }
+      },
+      "colour": "#ffffff",
+      "accent": "#ffffff",
+      "durationTicks": 200,
+      "count": 1,
+      "size": 2,
+      "height": 0,
+      "follow": false
+    },
+    {
+      "id": "spores",
+      "name": "Green-gold floating spores",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 40,
+        "rate": 18,
+        "speed": 0.48,
+        "speedVariation": 0.3,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 35,
+        "gravity": 0,
+        "drag": 0.3,
+        "spawnRadius": 2.6,
+        "startSize": 0.2,
+        "endSize": 0.07,
+        "spin": 0.4,
+        "fadeIn": 0.15,
+        "fadeOut": 0.65
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#b0dc86",
+      "accent": "#eed497",
+      "durationTicks": 160,
+      "count": 24,
+      "size": 0.2,
+      "height": 1.3,
+      "blend": "additive",
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

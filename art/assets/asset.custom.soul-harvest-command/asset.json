@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.soul-harvest-command",
+  "name": "Soul Harvest — Woodland Command",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "78daee163f664c5ef4596a7fb3b0c7a09ac5cce4c779ef557af6a73e4dac1f94",
+      "bytes": 775
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "f81c09e32b052641cc64419b9d6bd248fbbbb05183bfbeb8fa3867eb9aaf56f0",
+      "bytes": 605648
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "cb8122e2d041c47de73376211059086d7cfce124c63a87b1bdc7df9c726beced",
+      "bytes": 1345749
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.soul-harvest-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.soul-harvest-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

@@ -1,6 +1,6 @@
 import {describe,it,expect} from 'vitest';
 import {HeightField,encodeHeight,decodeHeight} from '../../src/shared/map/height';
-import {TacticalTerrain} from '../../src/shared/map/tacticalTerrain';
+import {TacticalTerrain,SIGHT_HEIGHT_CM,type TerrainPoint} from '../../src/shared/map/tacticalTerrain';
 import {sculptPlateau,sculptRamp} from '../../src/shared/landscape/tacticalAuthoring';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import {Game} from '../../src/sim/game/game';
@@ -66,6 +66,35 @@ describe('tactical heights',()=>{
   expect(t.visibleCells({x:16,y:16},4)).toBe(cells);
   for(let i=0;i<300;i++)t.visibleCells({x:i%32,y:Math.floor(i/32)},3);
   expect(t.visibleCells({x:16,y:16},4)).toEqual(cells);
+ });
+ it('matches a full unaccelerated sight march on fractional, elevated and boundary rays',()=>{
+  const size=64,heights=Int16Array.from({length:size*size},(_,i)=>
+   Math.round(280*Math.sin((i%size)/5)+190*Math.cos(Math.floor(i/size)/7)+(i%size>31?240:0)));
+  const t=new TacticalTerrain(size,heights);
+  const oracle=(a:TerrainPoint,b:TerrainPoint,shot=false)=>{
+   const from=t.height(a)+(a.elevation??0)*100+SIGHT_HEIGHT_CM,ground=t.height(b)+(b.elevation??0)*100;
+   if(!shot&&ground>from)return false;
+   const to=ground+SIGHT_HEIGHT_CM,steps=Math.max(1,Math.ceil(Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y))*4));
+   for(let i=1;i<steps;i++){
+    const f=i/steps;
+    if(t.height({x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f})>from+(to-from)*f)return false;
+   }
+   return true;
+  };
+  let seed=8931;const random=()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/2**32);
+  const points:TerrainPoint[]=[{x:0,y:0},{x:63,y:63},{x:15.999,y:16},{x:32,y:31.999}];
+  for(let i=0;i<300;i++)points.push({x:random()*63,y:random()*63,elevation:random()*6});
+  for(let i=0;i<points.length;i++)for(let offset=1;offset<=3;offset++){
+   const a=points[i],b=points[(i+offset)%points.length];
+   expect(t.visible(a,b)).toBe(oracle(a,b));expect(t.shotClear(a,b)).toBe(oracle(a,b,true));
+  }
+  for(const origin of [{x:0,y:0},{x:32,y:31,elevation:4},{x:63,y:63,elevation:1}]){
+   const expected:number[]=[];
+   for(let y=0;y<size;y++)for(let x=0;x<size;x++)
+    if((x-origin.x)**2+(y-origin.y)**2<=121&&oracle(origin,{x,y}))expected.push(y*size+x);
+   expect([...t.visibleCells(origin,11)]).toEqual(expected);
+   expect([...t.visibleCells(origin,11)]).toEqual(expected);
+  }
  });
 });
 it('shares allied cliff-top vision without granting it to another team',()=>{

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.ashstep-ant-icon",
+  "name": "Ashstep — forest ant command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "fd8516420b60a40e6a9ac8e8b0254c7b8ad8127e3b3f7c3f8d2ae5a3c241160a",
+      "bytes": 1288
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "c8fda636efc8f911b0186b54b62e23c33b71c7eb4d94a38001941d01031c27fd",
+      "bytes": 592922
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "a7e6a34b6bc36a343f44dc6a4470a7d54d2c80ffd9d8891393aba145105cc84f",
+      "bytes": 1268428
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.ashstep-ant-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.ashstep-ant-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.custom.amber-mend",
+  "icon": "asset.icons.spell-holy-light",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "golden-link",
+      "effect": "effect.custom.amber-mend.link",
+      "event": "impact",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "impact-petals",
+      "effect": "effect.custom.amber-mend.impact",
+      "event": "healed",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

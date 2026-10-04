@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.healing-wave",
+  "name": "Healing Wave",
+  "description": "A restorative chain jumps between up to four allies, losing 15% healing per jump.",
+  "durationTicks": 32,
+  "loop": false,
+  "layers": [
+    {
+      "id": "core",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "beam",
+      "colour": "#64f1b5",
+      "accent": "#fff5d6",
+      "durationTicks": 32,
+      "count": 10,
+      "size": 0.08,
+      "height": 1.5
+    },
+    {
+      "id": "flash",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "light",
+      "colour": "#64f1b5",
+      "accent": "#ffffff",
+      "durationTicks": 20,
+      "count": 1,
+      "size": 5,
+      "height": 1,
+      "intensity": 4
+    }
+  ]
+}

@@ -33,7 +33,7 @@ describe('declarative ability schema',()=>{
  it('rejects missing parameters, unsupported operations and unsafe bounds',()=>{
   const raw=structuredClone(coreAbilities.abilities[0]);delete raw.ranks[0].heal;expect(abilitySchema.safeParse(raw).success).toBe(false);
   expect(abilitySchema.safeParse({...raw,onRelease:[{op:'javascript',source:'alert(1)'}]}).success).toBe(false);
-  expect(abilitySchema.safeParse({...coreAbilities.abilities[0],ranks:[{...coreAbilities.abilities[0].ranks[0],range:1000}]}).success).toBe(false);
+  expect(abilitySchema.safeParse({...coreAbilities.abilities[0],ranks:[{...coreAbilities.abilities[0].ranks[0],range:5000}]}).success).toBe(false);
  });
  it('includes abilities in frozen registry identity',()=>{
   const a=setup(),b=setup(false,l=>l.abilities[0].ranks[0].heal=99);

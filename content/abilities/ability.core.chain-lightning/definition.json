@@ -6,6 +6,7 @@
   "activation": "targeted",
   "delivery": {
     "kind": "chain",
+    "skipFullHealth": false,
     "bounces": {
       "rankParameter": "bounces"
     },

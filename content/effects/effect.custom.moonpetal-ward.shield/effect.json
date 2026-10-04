@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.moonpetal-ward.shield",
+  "name": "Moonpetal Ward — Lunar Veil",
+  "description": "Cool sustained glow, original rotating moon-petal ground glyph, and an independent two-second breathing glyph. Bound to the shield status.",
+  "durationTicks": 320,
+  "loop": true,
+  "layers": [
+    {
+      "id": "cool-glow",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#90bdea",
+      "accent": "#dfebff",
+      "durationTicks": 320,
+      "count": 1,
+      "size": 1.2,
+      "height": 0.2,
+      "follow": true,
+      "intensity": 0.55
+    },
+    {
+      "id": "moonpetal-orbit",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "billboard",
+      "colour": "#e7f0ff",
+      "accent": "#d9e7ff",
+      "durationTicks": 320,
+      "count": 1,
+      "size": 2.4,
+      "height": 0.04,
+      "motion": {
+        "rotation": {
+          "periodTicks": 320,
+          "direction": "clockwise"
+        }
+      },
+      "blend": "additive",
+      "orientation": "ground",
+      "follow": true,
+      "texture": {
+        "asset": "asset.custom.moonpetal-ward-symbol",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "breathing-petals",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "billboard",
+      "colour": "#bdd7ff",
+      "accent": "#e8efff",
+      "durationTicks": 320,
+      "count": 1,
+      "size": 2.05,
+      "height": 0.06,
+      "motion": {
+        "scale": {
+          "periodTicks": 80,
+          "min": 0.88,
+          "max": 1.06,
+          "easing": "sine"
+        },
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.12,
+          "max": 0.5,
+          "easing": "sine"
+        }
+      },
+      "blend": "additive",
+      "orientation": "ground",
+      "follow": true,
+      "texture": {
+        "asset": "asset.custom.moonpetal-ward-symbol",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

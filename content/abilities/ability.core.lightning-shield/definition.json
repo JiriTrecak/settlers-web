@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.lightning-shield",
+  "name": "Lightning Shield",
+  "description": "Place an eight-second electrical field on a unit. Its pulses damage nearby enemies of the caster.",
+  "activation": "targeted",
+  "persistent": {
+    "durationTicks": 320,
+    "intervalTicks": 40,
+    "anchor": "target",
+    "endsWithCaster": false,
+    "upkeepMana": 0,
+    "toggle": false
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 20,
+      "cooldownTicks": 160
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "query": {
+        "center": "target",
+        "radius": 5,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "amount": 20,
+      "damageType": "spell"
+    }
+  ],
+  "presentation": "presentation.core.lightning-shield"
+}

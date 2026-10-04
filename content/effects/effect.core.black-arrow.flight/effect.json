@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.black-arrow.flight",
+  "name": "Black Arrow · Flight",
+  "description": "Reusable violet shadow layers for the Black Arrow proof.",
+  "durationTicks": 30,
+  "loop": false,
+  "layers": [
+    {
+      "id": "flame",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "missile",
+      "colour": "#8948da",
+      "accent": "#dca4ff",
+      "durationTicks": 30,
+      "count": 1,
+      "size": 0.24,
+      "height": 1.35,
+      "intensity": 0.8,
+      "length": 2.8
+    },
+    {
+      "id": "core",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "missile",
+      "colour": "#e8c5ff",
+      "accent": "#dca4ff",
+      "durationTicks": 30,
+      "count": 1,
+      "size": 0.09,
+      "height": 1.35,
+      "intensity": 1.5,
+      "length": 3.5
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "id": "asset.audio.spells.ward-hum",
+  "name": "Ward Hum",
+  "kind": "audio",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "spell",
+    "audio",
+    "ward-hum"
+  ],
+  "resources": [
+    {
+      "role": "audio",
+      "index": 1,
+      "format": "wav",
+      "sha256": "f2d9d74a20a1b216e0007047424860f7c5e3295364922150efff071f6725d2c1",
+      "bytes": 44144
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "ts",
+      "sha256": "2cdfed13fe9499b4745da9f7dfe080cdebd01cbdf8cacac0c99031f0da186a99",
+      "bytes": 1850
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "authored",
+    "licenseNote": "Original artwork created for Under the Canopy."
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.custom.amber-mend",
+  "name": "Amber Mend",
+  "description": "Warm golden healing restores 90 health to an ally, then jumps to up to three other wounded allies within 8 units. Each jump retains 80% healing; no target is visited twice.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "chain",
+    "skipFullHealth": true,
+    "bounces": 4,
+    "radius": 8,
+    "intervalTicks": 8,
+    "retentionPermille": 800
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 240
+    }
+  ],
+  "targeting": {
+    "includeBuildings": false,
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "heal",
+      "target": "target",
+      "amount": 90
+    }
+  ],
+  "presentation": "presentation.custom.amber-mend"
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.death-coil.projectile",
+  "name": "Death Coil Flight",
+  "description": "",
+  "durationTicks": 40,
+  "loop": false,
+  "layers": [
+    {
+      "id": "soul",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "missile",
+      "colour": "#80e94c",
+      "accent": "#b04de8",
+      "durationTicks": 40,
+      "count": 1,
+      "size": 0.65,
+      "height": 1.5
+    }
+  ]
+}

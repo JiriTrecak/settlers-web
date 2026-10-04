@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.spirit-companion",
+  "icon": "asset.custom.spirit-companion-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "arrival",
+      "effect": "effect.core.spirit-companion.arrival",
+      "event": "summoned",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

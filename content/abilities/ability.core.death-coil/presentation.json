@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.death-coil",
+  "icon": "asset.custom.death-coil-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "heal",
+      "effect": "effect.core.death-coil.burst",
+      "event": "healed",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "damage",
+      "effect": "effect.core.death-coil.burst",
+      "event": "damaged",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "flight",
+      "effect": "effect.core.death-coil.projectile",
+      "event": "projectile",
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery"
+    }
+  ]
+}

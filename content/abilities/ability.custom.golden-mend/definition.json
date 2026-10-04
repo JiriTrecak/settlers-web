@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.custom.golden-mend",
+  "name": "Golden Mend",
+  "description": "Restore 100 health to an ally or yourself in a warm golden burst.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "mana": 25,
+      "heal": 100,
+      "range": 12,
+      "cooldownTicks": 200
+    }
+  ],
+  "targeting": {
+    "includeBuildings": false,
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 12,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "heal",
+      "target": "target",
+      "amount": {
+        "rankParameter": "heal"
+      }
+    }
+  ],
+  "presentation": "presentation.custom.golden-mend"
+}

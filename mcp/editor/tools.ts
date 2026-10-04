@@ -1,6 +1,8 @@
 import {inspectionShotSchema} from '../../src/shared/camera/inspectionShot';
 import {UNIT_CAMERA_MODES} from '../../src/shared/camera/modes';
 import {sceneCommandSchema} from '../../src/shared/authoring/sceneCommands';
+import {editorPreviewSchema} from '../../src/shared/authoring/editorPreview';
+import {editorPerformanceSchema} from '../../src/shared/authoring/editorPerformance';
 import {walkStampSchema} from '../../src/shared/map/utcmap';
 import {DECAL_KINDS} from '../../src/shared/landscape/decal';
 import {environmentConditionsSchema} from '../../src/shared/environment/conditions';
@@ -47,9 +49,11 @@ const cellY = z.number().describe("Cell Y / Z. Same range as X");
 export function editorTools(hub: EditorHub) {
   // Loading or regenerating a forested 512² map runs well past the 8 s default.
   const call = (op: string, params?: unknown) =>
-    hub.call(op, params, op === "landscape" || op === "scene" ? 120_000 : undefined);
+    hub.call(op, params, op === "landscape" || op === "scene" ? 120_000 : op === "performance" && (params as {action?:string}|undefined)?.action === "benchmark" ? 30_000 : undefined);
 
   return {
+    editor_preview:createTool({id:'editor_preview',description:'Read or set local editor viewport previews. Canopy defaults off to avoid constructing the forest backdrop during editing. This does not edit the map, biome, undo history or in-game visuals. Empty input reads current settings.',inputSchema:editorPreviewSchema,execute:async(input)=>call('preview',input)}),
+    editor_performance:createTool({id:'editor_performance',description:'Map generation/presentation stages and CPU/GPU frame timings, draw calls and instance counters. get reads; reset clears rolling timings; capture records 10 seconds; census attributes the next rendered frame to scene branches; trace returns Chrome trace JSON. enabled controls sampling. Capture/census enable sampling automatically. Read get later for completed capture/census. benchmark renders the current camera to a fixed-size target (width/height/frames), returning CPU submission, asynchronous GPU timing and draw counts without changing the document. This is renderer throughput, not interactive FPS. Does not regenerate or refresh the editor.',inputSchema:editorPerformanceSchema,execute:async(input)=>call('performance',input)}),
     editor_scene:createTool({id:'editor_scene',description:'Author live procedural layers and independent objects. Recipes generate in terrain/river/path/forest/grass/meadow order. Batch applies many put/remove edits as one undo step and one regeneration. Pick selects the owner layer; bake converts the complete scatter layer with undo. No detach or per-generated-object edits. Top camera is orthographic.',inputSchema:z.object({command:sceneCommandSchema}).strict(),execute:async(input)=>call('scene',input.command)}),
     editor_mission:createTool({id:"editor_mission",description:"Read or replace mission metadata, Lua source and named circular regions in the loaded map. Mission maps are excluded from Skirmish.",inputSchema:z.object({action:z.enum(["get","set"]),mission:missionSchema.nullable().optional(),camps:z.array(campSchema).optional()}),execute:async(input)=>call("mission",input)}),
     editor_entities: createTool({
@@ -180,9 +184,15 @@ export function editorTools(hub: EditorHub) {
     }),
     game_performance: createTool({
       id: "game_performance",
-      description: "Read active-match CPU/GPU timing samples, draw calls, triangle counts and loaded asset diagnostics. Enable Debug in the game to collect timing samples. Read-only; does not change simulation or graphics settings.",
-      inputSchema: z.object({}),
-      execute: async () => call("gamePerformance"),
+      description: "Read active-match CPU/GPU timings, draw calls, assets and completed capture. action capture enables profiling and starts a 10-second window; read get later for results. Detail inclusive / Detail self rows expose hierarchical simulation categories: abilities, autocast, path searches, AI, economy and checksums. Inclusive parents overlap children: do not sum them; use self rows for attribution. Worker tick total includes simulation, lockstep and periodic hashing; projection/encode/decode are separate. Detailed profiling adds overhead; compare an unprofiled benchmark for budget acceptance. Does not change simulation behavior or graphics settings.",
+      inputSchema: z.object({action:z.enum(['get','capture']).default('get')}).strict(),
+      execute: async (input) => call("gamePerformance",input),
+    }),
+    game_checkpoint: createTool({
+      id:'game_checkpoint',
+      description:'Save or restore an exact local diagnostic match checkpoint through the normal save validation. Saves include pending lockstep commands. Remote multiplayer matches cannot be saved or restored by this tool. Save returns a checkpoint; load requires that checkpoint and the original map, content and player configuration.',
+      inputSchema:z.discriminatedUnion('action',[z.object({action:z.literal('save')}).strict(),z.object({action:z.literal('load'),save:z.unknown()}).strict()]),
+      execute:async(input)=>input.action==='save'?call('gameSave'):call('gameLoad',{save:input.save}),
     }),
     game_command: createTool({
       id: "game_command",

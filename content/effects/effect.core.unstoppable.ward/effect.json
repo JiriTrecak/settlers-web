@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.unstoppable.ward",
+  "name": "Unstoppable Ward",
+  "description": "",
+  "durationTicks": 160,
+  "loop": false,
+  "layers": [
+    {
+      "id": "ward",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#f7db83",
+      "accent": "#fff0c2",
+      "durationTicks": 160,
+      "count": 1,
+      "size": 1.5,
+      "height": 0.06,
+      "motion": {
+        "rotation": {
+          "periodTicks": 240,
+          "direction": "clockwise"
+        },
+        "opacity": {
+          "periodTicks": 100,
+          "min": 0.45,
+          "max": 0.9,
+          "easing": "sine"
+        }
+      },
+      "follow": true
+    },
+    {
+      "id": "warmth",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#e5ba48",
+      "accent": "#fff0c2",
+      "durationTicks": 160,
+      "count": 1,
+      "size": 1.4,
+      "height": 0.035,
+      "follow": true,
+      "intensity": 0.2
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.death-coil-command",
+  "name": "Death Coil — original command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "db5f2903cf509ee772e6e6e7c7aa1de7607b903f745a7326806621535b3bc7a0",
+      "bytes": 1034
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "c13cd360f2e32e36fd14d5040fd0dc1c2694148fce7968cf3a403f7e4eff8ab5",
+      "bytes": 528900
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "ec4675542b1c86dea7088f1448193101615f1f007edb26501c46769b4f883a45",
+      "bytes": 1271521
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.death-coil-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.death-coil-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

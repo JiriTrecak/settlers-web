@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.frost-armor",
+  "name": "Frost Armor",
+  "description": "Grant five armor. Melee attackers are chilled for four seconds after landing a hit.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "armor",
+      "amount": 1200,
+      "polarity": "positive",
+      "dispel": true,
+      "modifiers": {
+        "armor": 5
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "retaliation",
+      "event": "meleeDamaged",
+      "whileStatus": "armor",
+      "chancePermille": 1000,
+      "every": 1,
+      "manaCost": 0,
+      "operations": [
+        {
+          "op": "status",
+          "target": "target",
+          "id": "retaliationSlow",
+          "amount": 160,
+          "polarity": "negative",
+          "dispel": true,
+          "modifiers": {
+            "attackSpeedPermille": -200,
+            "moveSpeedPermille": -300
+          },
+          "lifetime": "duration"
+        }
+      ]
+    }
+  ],
+  "presentation": "presentation.core.frost-armor"
+}

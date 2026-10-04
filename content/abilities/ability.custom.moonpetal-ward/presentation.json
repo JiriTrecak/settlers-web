@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.custom.moonpetal-ward",
+  "icon": "asset.icons.spell-dispel-magic",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "lunar-veil",
+      "effect": "effect.custom.moonpetal-ward.shield",
+      "statusId": "moonpetalShield",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

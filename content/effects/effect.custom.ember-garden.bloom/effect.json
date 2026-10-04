@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.ember-garden.bloom",
+  "name": "Ember Garden — Fire Blooms",
+  "description": "Short small amber fire bursts scattered across the garden at each damage pulse.",
+  "durationTicks": 28,
+  "loop": false,
+  "layers": [
+    {
+      "id": "blooms",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#f2791d",
+      "accent": "#ffc45e",
+      "durationTicks": 24,
+      "count": 7,
+      "size": 0.42,
+      "height": 0.2,
+      "distribution": "disc",
+      "blend": "additive",
+      "spread": 2.6
+    },
+    {
+      "id": "bloom-embers",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 25,
+        "rate": 16,
+        "speed": 2.3,
+        "speedVariation": 0.5,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 35,
+        "gravity": 1.2,
+        "drag": 1,
+        "spawnRadius": 2.5,
+        "startSize": 0.13,
+        "endSize": 0.02,
+        "spin": 2,
+        "fadeIn": 0,
+        "fadeOut": 0.8
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#ff9a35",
+      "accent": "#ffd678",
+      "durationTicks": 28,
+      "count": 16,
+      "size": 0.12,
+      "height": 0.12,
+      "blend": "additive"
+    }
+  ]
+}

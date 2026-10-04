@@ -1,4 +1,4 @@
-import {abilityStateSchema,spellStatusSchema,spellDeliverySchema,summonedSchema} from '../abilities/state';
+import {splitFormSchema,containmentSchema,heroReturnSchema,triggerTimerSchema,triggerCooldownSchema,lifecycleReactionSchema,abilityStateSchema,spellStatusSchema,spellDeliverySchema,spellInstanceSchema,spellVisionSchema,summonedSchema} from '../abilities/state';
 import {missionStateSchema} from "../../shared/scenario/schema";
 import { missileSchema } from "./missileState";
 import { shellSchema } from "./shellState";
@@ -63,6 +63,11 @@ export const entitySchema = z
     progression: z.object({ experience: natural, bonuses:permanentBonusesSchema.optional() }).strict().optional(),
     regeneration: z.object({ health: natural.max(39999), mana: natural.max(39999) }).strict().optional(),
     fallen: z.literal(true).optional(),
+    spellSplit:splitFormSchema.optional(),
+    spellContainment:containmentSchema.optional(),
+    spellReturn:heroReturnSchema.optional(),
+    spellTriggerCooldowns:triggerCooldownSchema.optional(),
+    spellTriggerTimers:triggerTimerSchema.optional(),
     revival: z
       .object({
         queue: z.array(
@@ -76,6 +81,7 @@ export const entitySchema = z
     itemStatuses: z.array(itemStatusSchema).max(128).optional(),
     equipment: z.array(idSchema.nullable()).max(12).optional(),
     abilities: abilityStateSchema.optional(),
+    spellCounters:z.record(z.string().max(220),z.number().int().min(0).max(99)).refine(v=>Object.keys(v).length<=128).optional(),
     spellStatuses:z.array(spellStatusSchema).max(32).optional(),
     summoned:summonedSchema.optional(),
     stunnedUntil: natural.optional(),
@@ -127,12 +133,13 @@ export const entitySchema = z
         pendingMove: point.nullable(),
         contained: positive.nullable(),
         garrison: z.object({building:positive,height:z.number().positive().max(32)}).strict().optional(),
+        flight:z.object({height:z.number().min(1).max(30),source:z.object({ability:idSchema,status:z.string().min(1).max(48),cast:positive,rank:z.number().int().min(1).max(10),started:natural}).strict().optional()}).strict().optional(),
         release: point.nullable(),
         target: positive.nullable(),
         pursuit: z.object({target:positive,position:point,seenTick:natural}).strict().optional(),
         cooldown: natural,
-        attack: z.object({target: positive, cycleTicks: positive, started: natural, impact: natural, ends: natural, released: z.boolean()}).strict().optional(),
-        charge: z.object({readyTick: natural, expires: natural, target: positive.nullable()}).strict().optional(),
+        attack: z.object({profile:idSchema.optional(),target: positive, cycleTicks: positive, started: natural, impact: natural, ends: natural, released: z.boolean()}).strict().optional(),
+        charge: z.object({profile:idSchema.optional(),readyTick: natural, expires: natural, target: positive.nullable()}).strict().optional(),
         camp: z.string().nullable(),
         returning: z.boolean(),
         retryAt: natural,
@@ -210,6 +217,14 @@ export const factSchema = z
     amount: positive.optional(),
   })
   .strict();
+/** Dead non-hero units remain queryable without occupying cells or contributing supply. */
+export const corpseSchema=z.object({
+ id:positive,definition:idSchema,owner:ownerSchema,position:pointSchema,rotation:z.number().finite(),
+ died:natural,expires:natural,camp:z.string().min(1).max(100).optional(),
+ progression:entitySchema.shape.progression,
+ abilities:abilityStateSchema.optional(),
+}).strict();
+export type Corpse=z.infer<typeof corpseSchema>;
 export const stateSchema = z
   .object({
     tick: natural,
@@ -221,6 +236,12 @@ export const stateSchema = z
     nextShell: positive,
     shells: z.array(shellSchema),
     nextCast: positive,
+    corpses:z.array(corpseSchema).max(512).default([]),
+    spellLifecycleReactions:z.array(lifecycleReactionSchema).max(512).default([]),
+    spellCombatEvents:z.array(z.object({source:positive,target:positive,damage:natural,weapon:z.boolean(),melee:z.boolean()}).strict()).max(2048).default([]),
+    nextSpellVision:positive.default(1),
+    spellVisions:z.array(spellVisionSchema).max(256).default([]),
+    spellInstances:z.array(spellInstanceSchema).max(512).default([]),
     spellDeliveries:z.array(spellDeliverySchema).max(512).default([]),
     nextId: positive,
     nextJob: positive,
@@ -263,6 +284,12 @@ export const emptyState = (): GameState => ({
   nextShell: 1,
   shells: [],
   nextCast: 1,
+  corpses: [],
+  spellLifecycleReactions: [],
+  spellCombatEvents: [],
+  nextSpellVision: 1,
+  spellVisions: [],
+  spellInstances: [],
   spellDeliveries: [],
   nextId: 1,
   nextJob: 1,

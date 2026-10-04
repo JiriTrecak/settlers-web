@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.devour",
+  "name": "Devour",
+  "description": "Swallow one visible enemy non-hero organic or undead unit. It stays out of combat while taking 5 spell damage each second, still using its original owner’s supply. Killing or converting the carrier releases the survivor. Cannot swallow another occupied carrier.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "mana": 0,
+      "cooldown": 0,
+      "range": 8
+    }
+  ],
+  "targeting": {
+    "filter": {
+      "locomotion": [
+        "ground"
+      ],
+      "heroes": false,
+      "natures": [
+        "organic",
+        "undead"
+      ]
+    },
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 12,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 0,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 0,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "contain",
+      "id": "stomach",
+      "target": "target",
+      "shareVision": true,
+      "amount": 2400,
+      "lifetime": "untilDeath",
+      "capacity": 1,
+      "digestion": {
+        "intervalTicks": 40,
+        "damage": 5,
+        "damageType": "spell"
+      }
+    }
+  ],
+  "presentation": "presentation.core.devour"
+}

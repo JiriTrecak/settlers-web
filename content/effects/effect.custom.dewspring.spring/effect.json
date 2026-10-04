@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.dewspring.spring",
+  "name": "Dewspring — Spring",
+  "description": "A soft turquoise five-second ground pool with a restrained boundary and sparse rising droplets. Emission ends early enough for its 44-tick particle tails to finish at spring expiry.",
+  "durationTicks": 200,
+  "loop": false,
+  "layers": [
+    {
+      "id": "soft-pool",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#36baae",
+      "accent": "#b3f4e4",
+      "durationTicks": 200,
+      "count": 1,
+      "size": 4,
+      "height": 0.04,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.25,
+          "max": 0.42,
+          "easing": "sine"
+        }
+      },
+      "blend": "additive",
+      "orientation": "ground",
+      "intensity": 0.4
+    },
+    {
+      "id": "waterline",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#51cbbd",
+      "accent": "#b3f4e4",
+      "durationTicks": 200,
+      "count": 1,
+      "size": 4,
+      "height": 0.06,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.2,
+          "max": 0.36,
+          "easing": "sine"
+        }
+      }
+    },
+    {
+      "id": "rising-dew",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 44,
+        "rate": 12,
+        "speed": 1.1,
+        "speedVariation": 0.25,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 12,
+        "gravity": 0,
+        "drag": 0.3,
+        "spawnRadius": 3.5,
+        "startSize": 0.12,
+        "endSize": 0.045,
+        "spin": 0,
+        "fadeIn": 0.15,
+        "fadeOut": 0.65
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#73eadb",
+      "accent": "#d1fff2",
+      "durationTicks": 156,
+      "count": 20,
+      "size": 0.12,
+      "height": 0.12,
+      "blend": "additive",
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

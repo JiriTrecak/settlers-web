@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.siphon-mana",
+  "icon": "asset.custom.siphon-mana-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "main",
+      "effect": "effect.core.siphon-mana",
+      "event": "drained",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

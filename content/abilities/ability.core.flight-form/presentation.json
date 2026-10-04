@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.flight-form",
+  "icon": "asset.custom.flight-form-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "form",
+      "effect": "effect.core.flight-form.status",
+      "statusId": "soaring",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

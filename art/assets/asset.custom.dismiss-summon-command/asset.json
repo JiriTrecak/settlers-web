@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.dismiss-summon-command",
+  "name": "Dismiss Summon command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "4ced833f45ae16920a18c5e3f583b9b58c66a1d61a9b026e5bb89126be99aaa9",
+      "bytes": 693
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "5c90a2a09899a1528863b876240a7143e0deb3952e3d8964896f99b64c65e21d",
+      "bytes": 676991
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "19b513bf7230e4eca9a910d775353a73d36ddd48ebdb07e8fd6a561fd0881e76",
+      "bytes": 1594070
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.dismiss-summon-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.dismiss-summon-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

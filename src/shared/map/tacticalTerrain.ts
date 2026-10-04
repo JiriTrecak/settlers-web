@@ -22,7 +22,10 @@ export class TacticalTerrain {
     }
   }
   height(p:TerrainPoint):number {
-    const x=Math.max(0,Math.min(this.size-1,p.x)),y=Math.max(0,Math.min(this.size-1,p.y));
+    return this.heightAt(p.x,p.y);
+  }
+  private heightAt(px:number,py:number):number {
+    const x=Math.max(0,Math.min(this.size-1,px)),y=Math.max(0,Math.min(this.size-1,py));
     const ix=Math.floor(x),iy=Math.floor(y),jx=Math.min(ix+1,this.size-1),jy=Math.min(iy+1,this.size-1);
     const u=x-ix,v=y-iy,h=this.heights,n=this.size;
     return (h[iy*n+ix]*(1-u)+h[iy*n+jx]*u)*(1-v)+(h[jy*n+ix]*(1-u)+h[jy*n+jx]*u)*v;
@@ -31,36 +34,44 @@ export class TacticalTerrain {
    * The same rule reveals progressively while climbing a ramp. */
   visible(a:TerrainPoint,b:TerrainPoint):boolean {
     if(this.flat)return true;
-    if(this.height(b)+(b.elevation??0)*100>this.height(a)+(a.elevation??0)*100+SIGHT_HEIGHT_CM)return false;
-    return this.shotClear(a,b);
+    const from=this.heightAt(a.x,a.y)+(a.elevation??0)*100+SIGHT_HEIGHT_CM,groundTo=this.heightAt(b.x,b.y)+(b.elevation??0)*100;
+    if(groundTo>from)return false;
+    return this.corridorClear(a,b,from,groundTo+SIGHT_HEIGHT_CM);
   }
   /** Straight weapon corridor, not a visibility test. Allied scouts can provide
    * vision uphill, but intermediate terrain still intercepts a shot. */
   shotClear(a:TerrainPoint,b:TerrainPoint):boolean {
     if(this.flat)return true;
     const from=this.height(a)+(a.elevation??0)*100+SIGHT_HEIGHT_CM,to=this.height(b)+(b.elevation??0)*100+SIGHT_HEIGHT_CM;
+    return this.corridorClear(a,b,from,to);
+  }
+  private corridorClear(a:TerrainPoint,b:TerrainPoint,from:number,to:number):boolean {
     // Most RTS sight rays cross a level shelf. A conservative block maximum
     // rejects the expensive ray march without admitting any hidden terrain.
+    const ax=a.x,ay=a.y,bx=b.x,by=b.y,dx=bx-ax,dy=by-ay;
+    const minY=Math.max(0,Math.floor(Math.min(ay,by)/16)),maxY=Math.min(this.blockSize-1,Math.floor((Math.max(ay,by)+1)/16));
+    const minX=Math.max(0,Math.floor(Math.min(ax,bx)/16)),maxX=Math.min(this.blockSize-1,Math.floor((Math.max(ax,bx)+1)/16));
     let maximum=-32768;
-    for(let y=Math.max(0,Math.floor(Math.min(a.y,b.y)/16));y<=Math.min(this.blockSize-1,Math.floor((Math.max(a.y,b.y)+1)/16));y++)
-      for(let x=Math.max(0,Math.floor(Math.min(a.x,b.x)/16));x<=Math.min(this.blockSize-1,Math.floor((Math.max(a.x,b.x)+1)/16));x++)maximum=Math.max(maximum,this.blocks[y*this.blockSize+x]);
+    for(let y=minY;y<=maxY;y++)
+      for(let x=minX;x<=maxX;x++)maximum=Math.max(maximum,this.blocks[y*this.blockSize+x]);
     if(maximum<=Math.min(from,to))return true;
-    const steps=Math.max(1,Math.ceil(Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y))*4));
+    const steps=Math.max(1,Math.ceil(Math.max(Math.abs(dx),Math.abs(dy))*4));
     for(let i=1;i<steps;i++){
       const t=i/steps;
-      if(this.height({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t})>from+(to-from)*t)return false;
+      if(this.heightAt(ax+dx*t,ay+dy*t)>from+(to-from)*t)return false;
     }
     return true;
   }
   /** Physical reach: no striking through a cliff even with shared vision. */
   meleeClear(a:TerrainPoint,b:TerrainPoint):boolean {
     if(this.flat)return true;
-    if(Math.abs(this.height(a)-this.height(b))>MAX_GROUND_STEP_CM)return false;
+    const from=this.height(a);
+    if(Math.abs(from-this.height(b))>MAX_GROUND_STEP_CM)return false;
     const steps=Math.max(1,Math.ceil(Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y))*4));
-    let prev=this.height(a);
+    let prev=from;
     const segmentLength=Math.hypot(b.x-a.x,b.y-a.y)/steps;
     for(let i=1;i<=steps;i++){
-      const t=i/steps,h=this.height({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
+      const t=i/steps,h=this.heightAt(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t);
       if(Math.abs(h-prev)>MAX_GROUND_STEP_CM*segmentLength+1)return false;
       prev=h;
     }
@@ -69,12 +80,15 @@ export class TacticalTerrain {
   visibleCells(a:TerrainPoint,radius:number):Uint32Array{
     const x=Math.round(a.x),y=Math.round(a.y),r=Math.ceil(radius),key=`${x}:${y}:${radius}:${a.elevation??0}`;
     const cached=this.views.get(key);if(cached){this.views.delete(key);this.views.set(key,cached);return cached;}
-    const cells:number[]=[];
+    const cells:number[]=[],origin={x,y,elevation:a.elevation},target={x:0,y:0};
     for(let dy=-r;dy<=r;dy++){
       if(y+dy<0||y+dy>=this.size||dy*dy>radius*radius)continue;
       const span=Math.floor(Math.sqrt(radius*radius-dy*dy));
-      for(let xx=Math.max(0,x-span);xx<=Math.min(this.size-1,x+span);xx++)
-        if(this.visible({x,y,elevation:a.elevation},{x:xx,y:y+dy}))cells.push((y+dy)*this.size+xx);
+      target.y=y+dy;
+      for(let xx=Math.max(0,x-span);xx<=Math.min(this.size-1,x+span);xx++){
+        target.x=xx;
+        if(this.visible(origin,target))cells.push((y+dy)*this.size+xx);
+      }
     }
     const result=Uint32Array.from(cells);
     if(result.length<=this.cacheCellBudget){

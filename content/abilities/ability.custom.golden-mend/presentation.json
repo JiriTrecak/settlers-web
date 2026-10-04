@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.custom.golden-mend",
+  "icon": "asset.icons.spell-holy-light",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "golden-burst",
+      "effect": "effect.custom.golden-mend.burst",
+      "event": "released",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-export type VisionSource = {id:number; x:number; y:number; radius:number; surface?:string;elevation?:number};
+export type VisionSource = {id:number; x:number; y:number; radius:number; surface?:string;elevation?:number;ignoreTerrain?:boolean};
 type SightCells=ArrayLike<number>&Iterable<number>;
 type Contribution = VisionSource & {cells:SightCells};
 
@@ -28,7 +28,7 @@ export class VisionMask {
     for(const source of sources){
       seen.add(source.id);
       const old=this.sources.get(source.id);
-      if(old&&old.x===source.x&&old.y===source.y&&old.radius===source.radius&&old.surface===source.surface&&old.elevation===source.elevation)continue;
+      if(old&&old.x===source.x&&old.y===source.y&&old.radius===source.radius&&old.surface===source.surface&&old.elevation===source.elevation&&old.ignoreTerrain===source.ignoreTerrain)continue;
       const cells=footprint(source);
       // Most adjacent movement changes only the edge of a sight circle.
       const previous=old?.cells??[];let a=0,b=0;

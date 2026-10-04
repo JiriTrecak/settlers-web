@@ -1,6 +1,6 @@
 # Declarative abilities and spell authoring
 
-Status: target architecture with Holy Light and the Blizzard area/channel extension implemented, 2026-09-30. See [Spell Editor usage and current limits](../expansion/spell-effects.md) for the shipped surface. Remote pack distribution, per-map package selection and the later effect families remain planned. The first implementation is **Holy Light Lite: heal an ally or damage an enemy**. Blizzard subsequently adds fixed ground areas and interruptible wave delivery. Other spells below remain design tests.
+Status: architecture and implemented contracts, updated 2026-10-04. The declarative engine now covers direct, channelled, projectile, chain, line, aura, persistent, status, weapon, movement, concealment, revival, ownership, containment, factory, swarm and linked-form capabilities. See [Spell Studio usage and current limits](../expansion/spell-effects.md) for current proofs and acceptance results. Remote pack distribution and arbitrary actor-motion ribbons remain planned; terrain/destructible/economy and other-ability cost/cooldown modifiers are explicitly deferred.
 
 ## Decision in brief
 
@@ -16,7 +16,7 @@ Build the complete author → validate → preview → publish → bind → play
 
 The old fixed line/blast/rally/guard spell runtime and embedded effects workbench have been removed. The replacement uses [strict ability schemas](../../src/content/abilities/schema.ts), the [shared interpreter](../../src/sim/abilities/runtime.ts), and [ContentRegistry](../../src/content/registry.ts). Holy Light is published declarative content, not a special-case spell class.
 
-The first implementation provides standalone UI/MCP, local publication with stable-ID references, player and hidden-neutral bindings, worker registry injection, content agreement before network commits, campaign ranks and deterministic save/restore. Cosmetic events live outside checksummed state. The runtime resolves direct casts in stable caster-ID order after ordinary combat; a unified queue for future delayed delivery/status interactions is still a later extension.
+The implementation provides standalone UI/MCP, local publication with stable-ID references, player and hidden-neutral bindings, worker registry injection, content agreement before network commits, campaign ranks and deterministic save/restore. Cosmetic events live outside checksummed state. The runtime resolves casts, durable deliveries, status clocks and bounded lifecycle/combat reactions in deterministic simulation order. Their pending state is saved and checksummed; visual playback is independent.
 
 The sections below retain the broader architectural contracts. They do not imply that remote package registries, every presentation primitive or later spell families exist. The implementation's local published snapshot is the first package boundary; per-map dependency manifests and downloadable packs will extend it.
 
@@ -34,7 +34,7 @@ An effect is a one-time operation such as heal, damage, apply status, query targ
 
 These are engine capabilities with tested semantics, not per-spell classes. Shared status definitions and VFX can be referenced by multiple abilities. A visible particle called “fire” does not itself apply burning.
 
-Holy Light implements unit targeting, relation conditions, heal, damage and the cast lifecycle. Blizzard extends it with ground targeting, channeled area waves and interruptible, saved delivery clocks. Statuses, homing projectiles, auras, summons and teleportation remain later capabilities.
+Holy Light implements unit targeting, relation conditions, heal, damage and the cast lifecycle. Blizzard extends it with ground targeting, channeled area waves and interruptible, saved delivery clocks. Statuses, homing projectiles, auras, summons, combat reactions and persistent zones are now implemented; teleportation, temporary vision, invisibility and detection are implemented. Hero/summon/level/nature filters, bounded all/any trait-and-relation conditions and hostile/all spell-operation immunity are implemented. Holy Light and Death Coil prove organic/undead targeting and conditional heal/damage. Ranked critical strikes, evasion and cleave are implemented as passive/status combat modifiers with shared weapon integration and effect events. Appearance/stat, weapon-profile and movement forms are implemented, including takeoff/landing and air/ground targeting. Corpse consumers, ownership conversion, containment, source-linked summons, periodic factories, returning swarms and linked multi-unit forms also use shared declarative operations. World/economy changes are outside the current scope.
 
 ### Unit ability binding
 
@@ -48,7 +48,7 @@ Hero progression owns learned ranks, prerequisites and skill points. Mechanics d
 
 ### Presentation and animation bindings
 
-Spell presentations link independently published visual effects by stable ID, lifecycle event, anchor and lifetime. Effect definitions own their layer stacks, particle emitters, textures and motion. `EffectPlayer` renders them without a spell dependency; `AbilityEffects` supplies authoritative event and status context. The independent studio has separate Spells and Effects workspaces. Models, sounds and socket sequencing remain later presentation capabilities. Unit/model bindings map semantic animation roles (`cast.prepare`, `cast.release`, `cast.recover`, later `cast.channel`) to actual clips and sockets.
+Spell presentations link independently published visual effects by stable ID, lifecycle event, anchor and lifetime. Effect definitions own their layer stacks, particle emitters, textures and motion. `EffectPlayer` renders them without a spell dependency; `AbilityEffects` supplies authoritative event and status context. The independent studio has separate Spells and Effects workspaces. Model layers, deterministic clip playback, positional sound, semantic actor sockets, flipbooks and delivery trails are implemented. Arbitrary actor/socket motion ribbons are not supported. Unit/model bindings map semantic animation roles (`cast.prepare`, `cast.release`, `cast.recover`, `cast.channel`) to actual clips and sockets.
 
 This makes one spell portable between an ant, a mushroom and a neutral creature. Missing optional sockets have a declared fallback, such as entity centre; required sockets/clips fail binding validation. No assumed bone name is embedded in spell mechanics.
 
@@ -220,7 +220,7 @@ A complete agent batch can create a draft, import generated texture(s), referenc
 
 ## 7. Design validation against real spell patterns
 
-These are specification walkthroughs, not passing executable tests. The sketches use the same typed selectors, ordered operations and lifecycle contracts described above. They expose future capabilities without requiring them for Lite. Numerical balance and complete patch-specific Warcraft behaviour are deliberately not claimed to be reproduced.
+These are architecture walkthroughs, not executable syntax examples. The sketches use typed selectors, ordered operations and lifecycle contracts; published definitions and the strict schemas are the authority for supported fields. Category tests exercise the implemented contracts, including two-peer lockstep and mid-cast restore. Numerical balance and complete patch-specific Warcraft behaviour are deliberately not claimed to be reproduced.
 
 ### A. Holy Light Lite — direct, conditional target effect
 

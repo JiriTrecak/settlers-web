@@ -77,6 +77,7 @@ export class SimulationRuntime {
   this.acc+=this.paused?0:Math.max(0,dtMs)*this.simulationSpeed;
   const step=this.world.clock.tickMs;let n=0;
   while(this.acc>=step&&n<maxTicks){
+   const tickStarted=performance.now();
    const next=this.world.clock.tickIndex+1;
    if(!this.options.remote)for(const peer of this.locksteps.values())peer.confirm(next,next);
    const commit=this.locksteps.get(this.me)!.take(next);
@@ -84,13 +85,9 @@ export class SimulationRuntime {
    for(const slot of commit.slots)for(const [seq,action] of slot.actions.entries())this.world.enqueue(action,next,{player:slot.player,seq});
    for(const [id,peer] of this.locksteps)if(id!==this.me)peer.take(next);
    this.acc-=step;
-   const begin=performance.now();this.world.tick();this.timings.simulation=performance.now()-begin;
-   if(this.profiling){
-    const samples:[string,number][]=[['Worker · simulation',this.timings.simulation],
-     ...Object.entries(this.world.settlement.timings).map(([name,ms]):[string,number]=>[`Sim · ${name}`,ms]),
-     ...Object.entries(this.world.aiTimings).map(([name,ms]):[string,number]=>[`AI decision · ${name}`,ms])];
-    const room=Math.max(0,4096-this.profileSamples.length);this.profileSamples.push(...samples.slice(0,room));this.droppedSamples+=Math.max(0,samples.length-room);
-   }
+   const begin=performance.now();this.timings.lockstep=begin-tickStarted;
+   this.world.settlement.context.profile.enabled=this.profiling;this.world.tick();this.timings.simulation=performance.now()-begin;
+
    for(const slot of commit.slots)if(slot.player===this.me)for(const action of slot.actions)this.hooks.applied?.(action,next);
    for(const receipt of this.world.commandReceipts)if(receipt.player===this.me&&receipt.action.type==='learnAbility')this.hooks.learned?.();
    if(!this.options.remote)for(const slot of this.match.slots){
@@ -99,7 +96,20 @@ export class SimulationRuntime {
     if((hall&&max&&hall.hp!==null&&hall.hp<=max*.15)||game.isDefeated(slotOwner(slot.player))){this.greeted.add(slot.player);this.hooks.chat?.({name:slot.name??`Player ${slot.player+1}`,player:slot.player,text:'gg'});}
    }
    if(this.options.player===null)this.income.record(next,this.world.settlement.economy.deliveries);
-   if(this.options.remote&&next%this.match.checksumEvery===0)this.remoteChannel!.send({type:'hash',tick:next,checksum:this.world.checksum()});
+   this.timings.checksum=0;
+   if(this.options.remote&&next%this.match.checksumEvery===0){
+    const start=performance.now(),checksum=this.world.checksum();this.timings.checksum=performance.now()-start;
+    this.remoteChannel!.send({type:'hash',tick:next,checksum});
+   }
+   this.timings.tickTotal=performance.now()-tickStarted;
+   if(this.profiling){
+    const samples:[string,number][]=[['Worker · simulation',this.timings.simulation],
+     ['Worker · tick total',this.timings.tickTotal],['Worker · lockstep',this.timings.lockstep],['Worker · checksum',this.timings.checksum],
+     ...Object.entries(this.world.settlement.timings).map(([name,ms]):[string,number]=>[`Sim · ${name}`,ms]),
+     ...this.world.settlement.context.profile.snapshot().flatMap(row=>[[`Detail inclusive · ${row.path}`,row.inclusiveMs],[`Detail self · ${row.path}`,row.selfMs]] as [string,number][]),
+     ...Object.entries(this.world.aiTimings).map(([name,ms]):[string,number]=>[`AI decision · ${name}`,ms])];
+    const room=Math.max(0,4096-this.profileSamples.length);this.profileSamples.push(...samples.slice(0,room));this.droppedSamples+=Math.max(0,samples.length-room);
+   }
    n++;
   }
   // Bound a local wake-up backlog; never discard committed remote turns.

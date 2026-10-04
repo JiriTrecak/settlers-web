@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.searing-arrows-command",
+  "name": "Searing Arrows command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "ec8d5788380fc4d2a11e395d813dd6e9fbfb45d9d72e9d438dc8c4147bbe336d",
+      "bytes": 639
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "b20d939d70870fe3bb1a987a1f626a4030970b646f0e9e6cc730765ea7a0297b",
+      "bytes": 507292
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "6cd57967be0b89ee1f5753afd72b7cee750af9754a36695bf29e81cec1780807",
+      "bytes": 1293074
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.searing-arrows-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.searing-arrows-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

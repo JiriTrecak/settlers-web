@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.raise-dead",
+  "name": "Raise Dead",
+  "description": "Consume one nearby corpse in the selected area and raise two shadow spirits for your player for 40 seconds. The corpse cannot be resurrected afterward. Optional autocast is off by default and raises reinforcements when enemies are nearby. Uses our existing forest-spirit model in place of skeletons.",
+  "activation": "targeted",
+  "autocast": {
+    "intervalTicks": 20,
+    "enabledByDefault": false
+  },
+  "ranks": [
+    {}
+  ],
+  "targeting": {
+    "kind": "point",
+    "radius": 3,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally",
+      "enemy"
+    ],
+    "allowSelf": true,
+    "range": 12,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 12,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 75,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 320,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "summon",
+      "target": "point",
+      "amount": 2,
+      "definition": "unit.spell.shadow-spirit-lesser",
+      "durationTicks": 1600,
+      "replace": false,
+      "radius": 2,
+      "corpses": {
+        "radius": 3,
+        "relations": [
+          "ally",
+          "enemy",
+          "neutral"
+        ],
+        "order": "nearest",
+        "maxTargets": 1
+      }
+    }
+  ],
+  "presentation": "presentation.core.raise-dead"
+}

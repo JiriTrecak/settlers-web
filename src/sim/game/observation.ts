@@ -1,5 +1,8 @@
+import {SpellCorpses,type CorpseView} from '../abilities/corpses';
+import {allEffects} from '../../content/abilities/schema';
+import {spellAppearance,spellFormOpacity} from '../abilities/forms';
 import { colonySupply, type Supply } from "./supply";
-import {elevatedPoint} from './garrisons';
+import {spellHidden,spellDetection,concealmentOpacity} from '../abilities/concealment';
 import {SectorIndex} from '../../shared/spatial/sectors';
 import {VisionMask} from './visionMask';
 import { workerPopulation } from "./population";
@@ -48,12 +51,17 @@ export type EntityView = {
   y: number;
   surface?:string;
   rotation: number;
+  elevation?:number;
   hp: number | null;
   stats?: ReturnType<typeof entityStats>;
   progression?: Entity["progression"];
   equipment?: Entity["equipment"];
   abilities?: Entity["abilities"];
   spellStatuses?: Entity["spellStatuses"];
+  summoned?: boolean;
+  summonOrigin?: {source:number;ability:string};
+  concealmentOpacity?: number;
+  activeAbilities?: string[];
   appearance?: Entity["appearance"];
   remembered?: boolean;
   inventory?: Stock;
@@ -64,6 +72,7 @@ export type EntityView = {
   gathering?: { workers: number; capacity: number };
   item?: Entity["item"];
   unit?: {
+    flight?:{height:number};
     moving: boolean;
     strolling?: boolean;
     charging?: boolean;
@@ -80,6 +89,7 @@ export type EntityView = {
   };
   production?: Entity["production"];
   revival?: Entity["revival"];
+  spellReturn?: Entity["spellReturn"];
   job?: string;
 };
 export type FogDeckNode = {cell:number;height:number};
@@ -100,6 +110,7 @@ const observedDeathSchema = z
   .strict();
 type ObservedDeath = z.infer<typeof observedDeathSchema>;
 export type SettlementView = {
+  corpses?: readonly CorpseView[];
   mission?: GameState["mission"];
   heroLevelCap?: number;
   missionObjectives?: import('../../shared/scenario/schema').MissionDefinition['objectives'];
@@ -110,6 +121,7 @@ export type SettlementView = {
   fallenHeroes?: readonly EntityView[];
   shells?: GameState["shells"];
   missiles?: GameState["missiles"];
+  heroReturns?:import('../abilities/runtime').HeroReturnView[];
   abilityEvents?: AbilityEvent[];
   abilityDeliveries?: import('../abilities/runtime').AbilityDeliveryView[];
   goods?: GoodsSummary[];
@@ -249,8 +261,41 @@ export class Observation {
       observedDeaths: [],
     }));
   }
-  private sharesVision(owner:Owner,sensor:Entity):boolean {
+  private nativeSharesVision(owner:Owner,sensor:Entity):boolean {
     return sensor.owner===owner || (sensor.owner!=="none" && this.hostility?.(owner,sensor)===false);
+  }
+  private containmentSightStamp='';
+  private readonly containmentSight=new Map<number,Entity[]>();
+  /** Borrow only ordinary sight. Ownership, control and stealth detection remain independent. */
+  private sharesVision(owner:Owner,sensor:Entity):boolean {
+    if(this.nativeSharesVision(owner,sensor))return true;
+    if(!sensor.id||owner==='none')return false;
+    const stamp=`${this.c.state.tick}:${this.c.observationRevision}`;
+    if(stamp!==this.containmentSightStamp){
+      this.containmentSight.clear();
+      for(const e of this.c.state.entities){
+        const s=e.spellContainment;if(!s||!alive(e)||e.unit?.contained!==s.host||s.expires<=this.c.state.tick)continue;
+        const host=this.c.get(s.host),a=this.c.registry.abilityLibrary.abilities.find(a=>a.id===s.ability);
+        if(!host||!alive(host)||host.owner!==s.owner||host.unit?.contained||host.unit?.release||!a||!allEffects(a).some(op=>op.op==='contain'&&op.id===s.operation&&op.shareVision))continue;
+        const recipients=this.containmentSight.get(s.host)??[];recipients.push(e);this.containmentSight.set(s.host,recipients);
+      }
+      this.containmentSightStamp=stamp;
+    }
+    return this.containmentSight.get(sensor.id)?.some(e=>this.nativeSharesVision(owner,e))??false;
+  }
+  private spellSensors(owner:Owner){
+    return this.c.state.spellVisions.filter(v=>v.expires>this.c.state.tick&&this.sharesVision(owner,{owner:v.owner as Owner} as Entity));
+  }
+  private spellVisible(owner:Owner,e:Entity){
+    const point=this.c.spatial.elevatedPoint(e);
+    return this.spellSensors(owner).some(v=>(point.x-v.point.x)**2+(point.y-v.point.y)**2<=v.radius**2&&(v.ignoreTerrain||this.c.spatial.visible(v.point,point)));
+  }
+  /** Detection never grants ordinary sight; both checks must pass for hostile targets. */
+  detects(owner:Owner,e:Entity,observer?:Entity):boolean {
+    if(!spellHidden(e,this.c.registry,this.c.state.tick)||this.nativeSharesVision(owner,e)&&owner!=='none'||observer?.id===e.id)return true;
+    const p=this.c.spatial.elevatedPoint(e),sensors=owner==='none'?(observer?[observer]:[]):this.c.liveSensors().filter(s=>this.nativeSharesVision(owner,s));
+    if(sensors.some(s=>!s.unit?.contained&&!s.unit?.release&&alive(s)&&(()=>{const r=spellDetection(s,this.c.registry,this.c.state.tick),o=precise(s);return r>0&&(p.x-o.x)**2+(p.y-o.y)**2<=r*r&&this.c.spatial.visible(this.c.spatial.elevatedPoint(s),p);})()))return true;
+    return this.spellSensors(owner).some(v=>v.detectInvisible&&(p.x-v.point.x)**2+(p.y-v.point.y)**2<=v.radius*v.radius&&(v.ignoreTerrain||this.c.spatial.visible(v.point,p)));
   }
   private readonly sightSectors=new SectorIndex<Entity>();
   private sightStamp='';
@@ -270,21 +315,23 @@ export class Observation {
     return this.sightSectors.query({minX:p.x-x-1,minY:p.y-y-1,maxX:p.x+x+1,maxY:p.y+y+1});
   }
   visible(owner: Owner, e: Entity): boolean {
-    if(e.owner===owner)return true;
+    if(!this.detects(owner,e))return false;
+    if(e.owner===owner||this.spellVisible(owner,e))return true;
     const candidates=this.nearbySensors(e);
-    if(this.c.spatial.layers){
+    if(this.c.spatial.layers||this.c.spatial.airborne(e)){
       for(const sensor of candidates)if(alive(sensor)&&this.sharesVision(owner,sensor)&&!sensor.unit?.contained&&!sensor.unit?.release&&
-        this.c.spatial.range(sensor,e)<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(elevatedPoint(sensor),precise(e)))return true;
+        this.c.spatial.range(sensor,e)<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(this.c.spatial.elevatedPoint(sensor),this.c.spatial.elevatedPoint(e)))return true;
       return false;
     }
     const cells=this.c.spatial.footprint(e);
     for(const sensor of candidates)if(alive(sensor)&&this.sharesVision(owner,sensor)&&!sensor.unit?.contained&&!sensor.unit?.release&&
       cells.some(i=>i>=0&&((i%this.c.spatial.size-sensor.x)**2+(Math.floor(i/this.c.spatial.size)-sensor.y)**2)<=(this.c.def(sensor).vision??0)**2&&
-        this.c.spatial.tactical.visible(elevatedPoint(sensor),this.c.spatial.point(i))))return true;
+        this.c.spatial.tactical.visible(this.c.spatial.elevatedPoint(sensor),this.c.spatial.point(i))))return true;
     return false;
   }
   previouslyVisible(owner: Owner, e: Entity): boolean {
     if (e.owner === owner) return true;
+    if(!this.detects(owner,e))return false;
     const m = this.memories.find((p) => p.owner === owner);
     if(this.c.spatial.layers)return !!m&&this.c.spatial.footprint(e).some(i=>i>=0&&m.cells[i]===2)&&this.visible(owner,e);
     return (
@@ -351,7 +398,7 @@ export class Observation {
   }
   /** Keep the forest projection fast path small; actors have richer private state. */
   private describeActor(e:Entity,privateData:boolean,observer?:Owner):EntityView {
-    const position=precise(e),definition=this.c.def(e);
+    const position=precise(e),definition=this.c.def(e),appearance=spellAppearance(e,this.c.registry);
     const result: EntityView = {
       id: e.id,
       definition: e.definition,
@@ -360,21 +407,25 @@ export class Observation {
       y: position.y,
       ...(e.surface?{surface:e.surface}:{}),
       rotation: e.rotation,
+      ...(this.c.spatial.airborne(e)?{elevation:this.c.spatial.elevation(e)}:{}),
       hp: e.hp,
       ...(observer ? { hostile: this.hostility?.(observer, e) ?? false } : {}),
       ...(definition.body ? { stats: this.c.stats(e) } : {}),
+      ...(privateData&&e.spellReturn?{spellReturn:structuredClone(e.spellReturn)}:{}),
       ...(privateData && e.revival
         ? { revival: structuredClone(e.revival) }
         : {}),
       ...(privateData && e.progression
         ? { progression: { ...e.progression } }
         : {}),
-      ...(e.spellStatuses?{spellStatuses:structuredClone(e.spellStatuses)}:{}),
-      ...(privateData && e.abilities ? {abilities:structuredClone(e.abilities)} : {}),
+      ...(e.spellStatuses?{spellStatuses:e.spellStatuses.map(({sourceContext:_sourceContext,...s})=>structuredClone(s))}:{}),
+      ...(e.summoned?{summoned:true,...(privateData?{summonOrigin:{source:e.summoned.source,ability:e.summoned.ability}}:{})}:{}),
+      ...(e.spellStatuses?{concealmentOpacity:concealmentOpacity(e,this.c.registry,this.c.state.tick)*spellFormOpacity(e,this.c.registry)}:{}),
+      ...(privateData && e.abilities ? {abilities:structuredClone(e.abilities),activeAbilities:this.c.state.spellInstances.filter(i=>i.source===e.id).map(i=>i.ability)} : {}),
       ...(e.itemStatuses ? {itemStatuses: structuredClone(e.itemStatuses)} : {}),
       ...(privateData && e.equipmentState ? {equipmentState: structuredClone(e.equipmentState)} : {}),
       ...(privateData && e.equipment ? { equipment: [...e.equipment] } : {}),
-      ...(e.appearance ? { appearance: { ...e.appearance } } : {}),
+      ...(appearance ? { appearance: { ...appearance } } : {}),
       ...(e.construction
         ? { construction: { progress: e.construction.progress } }
         : {}),
@@ -393,6 +444,7 @@ export class Observation {
     };
     if (e.unit)
       result.unit = {
+        ...(e.unit.flight?{flight:{height:e.unit.flight.height}}:{}),
         moving: e.unit.lastMovedTick === this.c.state.tick,
         strolling: !!e.unit.idle?.walking,
         charging: e.unit.charge?.target != null && e.unit.charge.expires > this.c.state.tick,
@@ -519,7 +571,7 @@ export class Observation {
   }
   /** Explicit external updates rescan state; fixed ticks consume simulation change receipts. */
   update(incremental=false) {
-    this.sightStamp="";
+    this.sightStamp="";this.containmentSightStamp="";this.containmentSight.clear();
     const started=performance.now();let maskMs=0,knowledgeMs=0;
     this.cache.clear();
     while (
@@ -565,7 +617,7 @@ export class Observation {
         );
       let mask=this.masks.get(m.owner);
       if(!mask){mask=new VisionMask(m.cells);this.masks.set(m.owner,mask);}
-      const visionChanged=mask.update(sensors.map(e=>({id:e.id,x:e.x,y:e.y,surface:e.surface,elevation:e.unit?.garrison?.height,radius:this.c.def(e).vision??0})),sensor=>{const nodes=this.c.spatial.visibleNodes(sensor,sensor.radius);return this.c.spatial.layers?[...nodes].sort((a,b)=>a-b):nodes;});
+      const visionChanged=mask.update([...sensors.map(e=>({id:e.id,x:e.x,y:e.y,surface:e.surface,elevation:this.c.spatial.elevation(e)+(e.unit?.garrison?.height??0),radius:this.c.def(e).vision??0})),...this.spellSensors(m.owner).map(v=>({id:-v.id,...v.point,radius:v.radius,ignoreTerrain:v.ignoreTerrain}))],sensor=>{const nodes=this.c.spatial.visibleNodes(sensor,sensor.radius,sensor.ignoreTerrain);return this.c.spatial.layers?[...nodes].sort((a,b)=>a-b):nodes;});
       m.cells=mask.cells;m.visibleCells=mask.visible;
       maskMs+=performance.now()-maskStarted;
       const knowledgeStarted=performance.now();
@@ -593,7 +645,7 @@ export class Observation {
       if(visionChanged||staticChanged)
         for(const [id,e] of m.entities)
           if(!observedStatic.has(id)&&this.fogFootprint(e).some(i=>i>=0&&m.cells[i]===2)&&
-            (!this.c.spatial.layers||sensors.some(sensor=>(sensor.x-e.x)**2+(sensor.y-e.y)**2<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(elevatedPoint(sensor),e))))m.entities.delete(id);
+            (!this.c.spatial.layers||this.spellVisible(m.owner,e as Entity)||sensors.some(sensor=>(sensor.x-e.x)**2+(sensor.y-e.y)**2<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(this.c.spatial.elevatedPoint(sensor),e))))m.entities.delete(id);
       // Actors/buildings can change every tick. Forest resources only change on
       // harvest/regrowth, structural edits, or newly revealed coverage.
       if(rebuild||this.c.spatial.layers)for(const id of observedStatic)refresh.add(id);
@@ -606,6 +658,11 @@ export class Observation {
     }
     this.timings['Observation · sight masks']=maskMs;
     this.timings['Observation · scenery knowledge']=knowledgeMs;
+  }
+  /** The same observer policy drives physical missiles and their linked visual deliveries. */
+  missileRecords(owner?:Owner){
+    const memory=this.memories.find(p=>p.owner===owner);
+    return this.c.state.missiles.filter(s=>!owner||(s.viewers.includes(owner)&&memory?.cells[this.c.spatial.cell(s.destination)]===2));
   }
   view(owner?: Owner): SettlementView {
     const cached = this.cache.get(owner);
@@ -633,12 +690,13 @@ export class Observation {
       }
     for (const [id, e] of visible) known.set(id, e);
     const result: SettlementView = {
+      corpses:new SpellCorpses(this.c).views().filter(c=>!owner||this.currentlyVisible(owner,[Math.round(c.y)*this.c.spatial.size+Math.round(c.x)])).map(c=>({...c,relation:!owner?undefined:(this.hostility?.(owner,{id:c.id,owner:c.owner,...(c.camp?{unit:{camp:c.camp}}:{})} as Entity)?'enemy':c.owner==='none'?'neutral':'ally')})),
       research: structuredClone(owner ? {[owner]: this.c.state.research[owner] ?? []} : this.c.state.research),
       observedDeaths: m ? m.observedDeaths.map((d) => ({ ...d })) : [],
       fallenHeroes: this.c.state.entities
         .filter((e) => e.fallen && (!owner || e.owner === owner))
         .map((e) => this.describe(e, true, owner)),
-      missiles: this.c.state.missiles.filter(s=>!owner || (s.viewers.includes(owner) && m?.cells[this.c.spatial.cell(s.destination)] === 2)).map(s=>structuredClone(s)),
+      missiles: this.missileRecords(owner).map(s=>structuredClone(s)),
       shells: this.c.state.shells.filter(s=>!owner || s.viewers.includes(owner)).map(s=>structuredClone(s)),
       deaths: this.deathCues
         .filter((cue) => !owner || cue.viewers.includes(owner))
@@ -731,7 +789,7 @@ export class Observation {
   restore(raw: unknown) {
     const rows = this.validateSnapshot(raw);
     this.masks.clear();this.visibleStatics.clear();this.staticCoverage.clear();this.structureRevision=-1;
-    this.staticRecords.clear();this.staticCells=undefined;this.staticOverlaps.clear();this.sightSectors.clear();this.sightStamp="";
+    this.staticRecords.clear();this.staticCells=undefined;this.staticOverlaps.clear();this.sightSectors.clear();this.sightStamp="";this.containmentSightStamp="";this.containmentSight.clear();
     this.resourceViews.clear();
     this.projectEntities();this.projectWork();
     this.deathCues.length = 0;

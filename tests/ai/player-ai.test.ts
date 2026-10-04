@@ -100,6 +100,26 @@ function seen(base: SettlementView, entities: EntityView[]): SettlementView {
   };
 }
 describe("player AI information and authority boundary", () => {
+  it('lets moving reinforcements approach the join area while recovering a stalled reinforcement',()=>{
+    const {brain,world}=fixture(),base=world.settlement.view(0);
+    const guards=Array.from({length:content.rules.ai.army.homeGuard},(_,i)=>soldier(9000+i,'unit.ants.warrior',60+i,60));
+    const squad=Array.from({length:24},(_,i)=>soldier(9100+i,'unit.ants.warrior',200+i%4,110+Math.floor(i/4)));
+    const progressing=soldier(9200,'unit.ants.warrior',100,130),stalled=soldier(9201,'unit.ants.warrior',100,132);
+    for(const e of [progressing,stalled])e.control!.order={type:'move',destination:{x:195,y:110},attackMove:true};
+    progressing.unit!.moving=true;
+    const state=brain.snapshot();
+    state.guards=guards.map(e=>e.id);state.nextScout=state.nextStrategy=state.nextEconomy=2000;
+    state.mission={kind:'assault',key:'test-front',point:{x:200,y:200},started:0,until:2000,stage:'travel',progressPoint:{x:200,y:110},progressTick:500,members:squad.map(e=>e.id)};
+    brain.restore(state);
+    const view=seen(base,[...base.entities.filter(e=>!e.unit),...guards,...squad,progressing,stalled]);
+    const commands=brain.decide(500,view);
+    const joining=commands.find(c=>'actors' in c.action&&c.action.actors.includes(stalled.id));
+    expect(joining?.action).toMatchObject({type:'move',actors:[stalled.id],destination:{x:200,y:110},attackMove:true});
+    expect(commands.some(c=>'actors' in c.action&&c.action.actors.includes(progressing.id))).toBe(false);
+    // The same saved inputs produce the same decisions without a warm cache.
+    brain.restore(state);expect(brain.decide(500,structuredClone(view))).toEqual(commands);
+  });
+
   it("knows authored camp sites without knowing an unseen camp was cleared", () => {
     const { map, world: a } = fixture(),
       b = new World({ map, slots, seed: 5 });

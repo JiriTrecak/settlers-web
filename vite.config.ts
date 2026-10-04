@@ -7,6 +7,7 @@ import { defineConfig } from "vite";
 export default defineConfig(({ command }) => ({
   base: command === "build" ? "./" : "/",
   clearScreen: false,
+  resolve: {alias: {"@":fileURLToPath(new URL("./src",import.meta.url))}},
   optimizeDeps: {rolldownOptions: {plugins:[fengariBrowser()]}},
   plugins: [fengariBrowser(), tailwindcss(), contentAuthoring()],
   worker: { plugins: () => [fengariBrowser()] },
@@ -16,7 +17,9 @@ export default defineConfig(({ command }) => ({
     strictPort: true,
     fs: {deny:["**/.asset-work/**", "**/.env*", "**/*.{crt,pem}", "**/.git/**"]},
     watch: {
-      ignored: ["**/src-tauri/**"],
+      // Independent workbenches build into nested dist directories. Their HTML
+      // output must not reload an open map editor and discard its live session.
+      ignored: ["**/src-tauri/**", "**/dist/**"],
     },
   },
   build: {

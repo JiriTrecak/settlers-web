@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.assistant-trials.verdant-ward-icon",
+  "name": "Verdant Ward command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "4169eb6376ad1d4a4bf2337131a64609b4653d6c73e02c158d39b571c8f59063",
+      "bytes": 593
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "cc05c5585f633fabf2f3a492b520e6ccf2ea28ff2dc7acd8081f014238523dcb",
+      "bytes": 672116
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "19df93baf88f4327b702fa70e49c1f26db24769e05f744871137cae72c550b30",
+      "bytes": 1492283
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.assistant-trials.verdant-ward-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.assistant-trials.verdant-ward-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

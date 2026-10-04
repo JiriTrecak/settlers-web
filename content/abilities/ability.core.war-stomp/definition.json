@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.war-stomp",
+  "name": "War Stomp",
+  "description": "Stomp the ground, damaging and stunning enemies within five metres of the caster.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 240
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "query": {
+        "center": "caster",
+        "radius": 5,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "amount": 50,
+      "damageType": "spell"
+    },
+    {
+      "op": "status",
+      "target": "target",
+      "query": {
+        "center": "caster",
+        "radius": 5,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "id": "stun",
+      "amount": 120,
+      "heroDuration": 60,
+      "polarity": "negative",
+      "dispel": false,
+      "modifiers": {},
+      "stun": true,
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.war-stomp"
+}

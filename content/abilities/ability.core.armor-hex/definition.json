@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.armor-hex",
+  "name": "Armor Hex",
+  "description": "Reduce armor by eight for twelve seconds. This proof exercises signed armor; it does not grant vision.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "exposed",
+      "amount": 480,
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {
+        "armor": -8
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.armor-hex"
+}

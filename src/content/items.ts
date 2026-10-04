@@ -3,9 +3,9 @@ const n = z.number().int().nonnegative();
 export const permanentBonusesSchema=z.object({maxHp:n.optional(),damage:n.optional(),armor:n.optional(),maxMana:n.optional()}).strict();
 /** Reusable item effect vocabulary. No simulation or UI dispatches on item IDs. */
 export const itemModifiersSchema = z.object({
-  maxHp: n.optional(), maxMana: n.optional(), damage: n.optional(), armor: n.optional(),
+  maxHp: n.optional(), maxMana: n.optional(), damage: z.number().int().min(-10000).max(10000).optional(), armor: z.number().int().min(-1000).max(1000).optional(),
   healthRegenPerSecond: z.number().nonnegative().optional(), manaRegenPerSecond: z.number().nonnegative().optional(),
-  damagePermille: n.max(1000).optional(), attackSpeedPermille: z.number().int().min(-800).max(1000).optional(),
+  damagePermille: z.number().int().min(-1000).max(1000).optional(), attackSpeedPermille: z.number().int().min(-800).max(1000).optional(),
   moveSpeedPermille: z.number().int().min(-800).max(1000).optional(), cooldownReductionPermille: n.max(500).optional(),
   lifestealPermille: n.max(500).optional(), meleeReflectionPermille: n.max(1000).optional(), rooted: z.boolean().optional(), controlImmune: z.boolean().optional(),
   invulnerable: z.boolean().optional(),

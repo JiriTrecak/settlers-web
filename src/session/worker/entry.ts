@@ -1,5 +1,6 @@
 import {SimulationRuntime,type RemoteReceiver,type RuntimeOptions} from './runtime';
 import {SnapshotEncoder} from './snapshots';
+import {simulationWakeDelay} from './scheduling';
 import type {Requests,WorkerInput,WorkerOutput} from './protocol';
 
 const port=self as unknown as {postMessage(message:WorkerOutput,transfer?:Transferable[]):void;onmessage:((event:MessageEvent<WorkerInput>)=>void)|null};
@@ -14,14 +15,15 @@ function publish(force=false){
  encoded.packet.timings.encode=performance.now()-start;
  inFlight=encoded.packet.sequence;dirty=false;urgent=false;lastPublished=performance.now();post({type:'frame',packet:encoded.packet},encoded.transfer);
 }
-function schedule(){
+function schedule(waiting=false){
  if(timer!==undefined)clearTimeout(timer);
  if(!running||!runtime)return;
- timer=setTimeout(pump,runtime.acc>=25?0:Math.max(1,(25-runtime.acc)/runtime.simulationSpeed));
+ timer=setTimeout(pump,simulationWakeDelay(runtime.acc,runtime.simulationSpeed,performance.now()-last,
+  runtime.paused,waiting,runtime.world.clock.tickMs));
 }
 function pump(){
  timer=undefined;if(!running||!runtime)return;
- try{const now=performance.now(),dt=now-last;last=now;const advanced=runtime.advance(dt,1);if(advanced||dirty)publish();schedule();}
+ try{const now=performance.now(),dt=now-last;last=now;const advanced=runtime.advance(dt,1);if(advanced||dirty)publish();schedule(!advanced&&runtime.acc>=runtime.world.clock.tickMs);}
  catch(error){running=false;post({type:'fatal',error:error instanceof Error?error.message:String(error)});}
 }
 function request(method:keyof Requests,params:unknown):unknown{
@@ -60,7 +62,10 @@ port.onmessage=({data})=>{
    const cells=data.method==='navigation'?(value as Requests['navigation']['output']).cells:undefined;
    post({type:'reply',id:data.id,value},cells?[cells.buffer as ArrayBuffer]:undefined);
   }
-  else if(data.type==='network')receive(data.message);
+  else if(data.type==='network'){
+   receive(data.message);
+   if(running&&runtime&&runtime.acc>=runtime.world.clock.tickMs)schedule();
+  }
   else if(data.type==='ack'){if(data.sequence===inFlight){inFlight=0;if(dirty)publish();}}
   else if(data.type==='command'){
    if(runtime?.send(data.action)&&data.action.type!=='noop')pendingCommands.push({id:data.id,sentAt:data.sentAt,key:JSON.stringify(data.action)});

@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.flame-strike",
+  "name": "Flame Strike",
+  "description": "Ignite a fixed ground area for eight seconds. It continues after the caster moves or dies.",
+  "activation": "targeted",
+  "persistent": {
+    "durationTicks": 320,
+    "intervalTicks": 40,
+    "anchor": "point",
+    "endsWithCaster": false,
+    "upkeepMana": 0,
+    "toggle": false
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 20,
+      "cooldownTicks": 160
+    }
+  ],
+  "targeting": {
+    "kind": "point",
+    "radius": 5,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "amount": 20,
+      "damageType": "spell"
+    }
+  ],
+  "presentation": "presentation.core.flame-strike"
+}

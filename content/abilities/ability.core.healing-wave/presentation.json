@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.healing-wave",
+  "icon": "asset.custom.healing-wave-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "main",
+      "effect": "effect.core.healing-wave",
+      "event": "impact",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

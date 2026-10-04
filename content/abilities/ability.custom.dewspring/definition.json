@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.custom.dewspring",
+  "name": "Dewspring",
+  "description": "Place a gentle turquoise spring on targeted ground for five seconds. Allies within radius 4 are healed for 20 each second. The spring persists independently after casting ends.",
+  "activation": "targeted",
+  "persistent": {
+    "durationTicks": 200,
+    "intervalTicks": 40,
+    "anchor": "point",
+    "endsWithCaster": false,
+    "upkeepMana": 0,
+    "toggle": false
+  },
+  "ranks": [
+    {
+      "mana": 35,
+      "cooldownTicks": 320
+    }
+  ],
+  "targeting": {
+    "includeBuildings": false,
+    "kind": "point",
+    "radius": 4,
+    "maxTargets": 32,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 8,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "heal",
+      "target": "target",
+      "query": {
+        "center": "point",
+        "radius": 4,
+        "relations": [
+          "ally"
+        ],
+        "allowSelf": true,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 32,
+        "order": "nearest"
+      },
+      "amount": 20
+    }
+  ],
+  "presentation": "presentation.custom.dewspring"
+}

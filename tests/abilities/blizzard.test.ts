@@ -56,7 +56,7 @@ it('rejects forged channel clocks and validates finite authoring budgets',()=>{
  saved.state.entities.find(e=>e.id===caster)!.abilities!.pending!.channel!.nextWaveTick+=1;
  expect(()=>game.restore(saved)).toThrow(/ability/);expect(game.checksum()).toBe(hash);
  const bad=structuredClone(spell);bad.ranks[0].waves=0;expect(abilitySchema.safeParse(bad).success).toBe(false);
- bad.ranks[0].waves=33;expect(abilitySchema.safeParse(bad).success).toBe(false);
+ bad.ranks[0].waves=64;expect(abilitySchema.safeParse(bad).success).toBe(true);bad.ranks[0].waves=65;expect(abilitySchema.safeParse(bad).success).toBe(false);
 });
 it('uses the declared radius for the ground targeting indicator',()=>{
  const point={x:126,y:120};const outline=abilityOutline({spell,rank:1,origin:{x:120,y:120},point,valid:true});

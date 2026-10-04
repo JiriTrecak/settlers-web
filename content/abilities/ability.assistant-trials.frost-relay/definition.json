@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.assistant-trials.frost-relay",
+  "name": "Frost Relay",
+  "description": "Icy energy strikes an enemy for 80 spell damage, then relays to up to three more distinct nearby enemies within 7 units of each victim. Each jump retains 80% damage. Every victim is slowed by 30% for 3 seconds.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "chain",
+    "skipFullHealth": false,
+    "bounces": {
+      "rankParameter": "targets"
+    },
+    "radius": 7,
+    "intervalTicks": 8,
+    "retentionPermille": 800
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 50,
+      "cooldownTicks": 280,
+      "damage": 80,
+      "targets": 4,
+      "slowTicks": 120
+    }
+  ],
+  "targeting": {
+    "includeBuildings": false,
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "amount": {
+        "rankParameter": "damage"
+      },
+      "damageType": "spell"
+    },
+    {
+      "op": "status",
+      "target": "target",
+      "id": "chill",
+      "amount": {
+        "rankParameter": "slowTicks"
+      },
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {
+        "moveSpeedPermille": -300
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.assistant-trials.frost-relay"
+}

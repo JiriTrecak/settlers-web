@@ -17,17 +17,21 @@ async function setup(){
 describe('independent spell authoring service',()=>{
  it('validates, saves optimistically, replaces the current publication and rejects stale edits',async()=>{
   const {service,doc,root}=await setup();const first=await service.execute({op:'read',id:doc.definition.id}) as {revision:string};
+  await expect(service.execute({op:'publication.status',kind:'spells',id:doc.definition.id})).resolves.toMatchObject({published:false,matchesDraft:false});
   doc.definition.ranks[0].heal=125;
   const saved=await service.execute({op:'save',document:doc,expectedRevision:first.revision}) as {revision:string;document:SpellDocument};
   expect(saved.revision).not.toBe(first.revision);
   await expect(service.execute({op:'save',document:doc,expectedRevision:first.revision})).rejects.toThrow(/conflict/);
   expect(await service.execute({op:'publish',id:doc.definition.id,expectedRevision:saved.revision})).toEqual({published:true,id:doc.definition.id});
+  await expect(service.execute({op:'publication.status',kind:'spells',id:doc.definition.id})).resolves.toMatchObject({published:true,matchesDraft:true});
   const file=path.join(root,'content/abilities/published.json');
   expect(JSON.parse(await readFile(file,'utf8')).library.abilities[0].ranks[0].heal).toBe(125);
   doc.definition.ranks[0].heal=200;
   const next=await service.execute({op:'save',document:doc,expectedRevision:saved.revision}) as {revision:string};
   expect(JSON.parse(await readFile(file,'utf8')).library.abilities[0].ranks[0].heal).toBe(125);
+  await expect(service.execute({op:'publication.status',kind:'spells',id:doc.definition.id})).resolves.toMatchObject({published:true,matchesDraft:false});
   await service.execute({op:'publish',id:doc.definition.id,expectedRevision:next.revision});
+  await expect(service.execute({op:'publication.status',kind:'spells',id:doc.definition.id})).resolves.toMatchObject({published:true,matchesDraft:true});
   const current=JSON.parse(await readFile(file,'utf8'));
   expect(current.library.abilities).toHaveLength(1);expect(current.library.abilities[0].ranks[0].heal).toBe(200);
   expect(current).not.toHaveProperty('releases');expect(current).not.toHaveProperty('resources');
@@ -46,11 +50,33 @@ describe('independent spell authoring service',()=>{
   expect(reset.events).toEqual([]);expect(reset.tick).toBe(0);
   expect(reset.entities.find(e=>e.id===reset.target)?.hp).toBe(40);
  });
+ it('adopts saved visual-only changes into a clean paused take without resetting simulation or replay',async()=>{
+  const {service,doc}=await setup(),saved=await service.execute({op:'read',id:doc.definition.id}) as {revision:string};
+  await service.execute({op:'preview.load',document:doc,settings:{}});await service.execute({op:'preview.cast'});
+  await service.execute({op:'preview.play',playing:false});await service.execute({op:'preview.step',ticks:30});
+  const before=service.state() as PreviewState;
+  const revised=structuredClone(doc);revised.presentation.animations.prepare='idle';
+  await service.execute({op:'save',document:revised,expectedRevision:saved.revision});
+  const after=service.state() as PreviewState;
+  expect(after.document).toEqual(revised);expect(after.epoch).toBeGreaterThan(before.epoch);
+  expect(after).toMatchObject({tick:30,playing:false,checksum:before.checksum,entities:before.entities,events:before.events});
+  const replay=await service.execute({op:'preview.seek',tick:30}) as PreviewState;expect(replay.checksum).toBe(before.checksum);
+  await expect(service.execute({op:'save',document:doc,expectedRevision:saved.revision})).rejects.toThrow(/conflict/);
+  expect((service.state() as PreviewState).document).toEqual(revised);
+ });
+ it.each(['unsaved-preview','mechanical-change'] as const)('preserves the active take on %s instead of silently replacing it',async mode=>{
+  const {service,doc}=await setup(),saved=await service.execute({op:'read',id:doc.definition.id}) as {revision:string};
+  const preview=structuredClone(doc);if(mode==='unsaved-preview')preview.presentation.animations.recover='idle';
+  await service.execute({op:'preview.load',document:preview,settings:{}});const before=service.state() as PreviewState;
+  const revised=structuredClone(doc);revised.presentation.animations.prepare='idle';if(mode==='mechanical-change')revised.definition.cast.prepareTicks++;
+  await service.execute({op:'save',document:revised,expectedRevision:saved.revision});
+  expect(service.state()).toMatchObject({document:preview,epoch:before.epoch,checksum:before.checksum});
+ });
  it('rejects unsafe IDs and bad definitions without changing the encounter',async()=>{
   const {service,doc}=await setup();await service.execute({op:'preview.load',document:doc,settings:{}});
   expect(()=>service.execute({op:'read',id:'../../credentials'})).toThrow();
   const before=service.state() as PreviewState;
-  doc.definition.ranks[0].range=1000;
+  doc.definition.ranks[0].range=5000;
   expect(()=>service.execute({op:'preview.load',document:doc,settings:{}})).toThrow();
   expect((service.state() as PreviewState).checksum).toBe(before.checksum);
  });

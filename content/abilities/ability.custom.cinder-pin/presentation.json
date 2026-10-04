@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.custom.cinder-pin",
+  "icon": "asset.custom.ember-garden-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "projectile",
+      "effect": "effect.custom.cinder-pin.projectile",
+      "event": "projectile",
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery"
+    },
+    {
+      "id": "impact",
+      "effect": "effect.custom.cinder-pin.impact",
+      "event": "impact",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "root-embers",
+      "effect": "effect.custom.cinder-pin.root",
+      "statusId": "cinderPinRoot",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

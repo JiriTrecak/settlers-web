@@ -5,22 +5,24 @@ import {readFile} from 'node:fs/promises';
 import {Readable} from 'node:stream';
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import {within} from '../../asset-studio/server/storage';
-import {SpellEditorService} from './service';
+import {PreviewSessions} from './previewSessions';
 import {spellCommandSchema} from '../shared/protocol';
 import {toolRequestSchema} from '../shared/authoringTools';
 import {Credentials} from './credentials';
 import {CanvasBridge} from './canvasBridge';
 import {AuthoringToolkit} from './authoringTools';
 import {AgentRuntime} from './agentRuntime';
+import {AgentImages} from './agentImages';
+import {requestModelResponse} from './provider';
 import {z} from 'zod';
 
 async function body(req:IncomingMessage,limit=1_000_000){let text='';for await(const chunk of req){text+=chunk;if(Buffer.byteLength(text)>limit)throw Error('Request exceeds size limit');}return text;}
 async function relay(response:Response,res:ServerResponse){res.statusCode=response.status;res.setHeader('Content-Type',response.headers.get('content-type')??'application/json');for(const [key,value] of response.headers)if(key.startsWith('x-eve-'))res.setHeader(key,value);if(!response.body){res.end();return;}const stream=Readable.fromWeb(response.body as import('node:stream/web').ReadableStream);res.once('close',()=>stream.destroy());stream.on('error',()=>res.end());stream.pipe(res);}
 export function spellEditor(root:string):Plugin{
- const service=new SpellEditorService(root),token=randomBytes(24).toString('hex'),capability=randomBytes(32).toString('hex');
- const credentials=new Credentials(root),canvas=new CanvasBridge(),toolkit=new AuthoringToolkit(service,credentials,canvas),agent=new AgentRuntime(root,capability,credentials);
+ const sessions=new PreviewSessions(root),images=new AgentImages(),token=randomBytes(24).toString('hex'),capability=randomBytes(32).toString('hex');
+ const credentials=new Credentials(root),canvas=new CanvasBridge(),toolkit=new AuthoringToolkit(sessions.headless,credentials,canvas,fetch,client=>sessions.resolve(client)),agent=new AgentRuntime(root,capability,credentials);
  return {name:'spell-editor-service',configureServer(server){
-  let last=performance.now();const timer=setInterval(()=>{const now=performance.now();service.advance(now-last);last=now;},25);server.httpServer?.once('close',()=>{clearInterval(timer);canvas.dispose();agent.stop();});
+  let last=performance.now();const timer=setInterval(()=>{const now=performance.now();sessions.advance(now-last);last=now;},25);server.httpServer?.once('close',()=>{clearInterval(timer);canvas.dispose();agent.stop();images.clear();});
   server.middlewares.use(async(req,res,next)=>{
    if(!/^(127\.0\.0\.1|localhost):5177$/.test(req.headers.host??'')){res.statusCode=403;res.end('Local editor only');return;}
    const url=new URL(req.url??'/','http://127.0.0.1:5177');
@@ -39,13 +41,13 @@ export function spellEditor(root:string):Plugin{
       const data=JSON.parse(await body(req)),tool=toolRequestSchema.parse({name:data.name,input:data.input});
       const client=agent.clients.get(data.sessionId);if(!client)throw Error('Unknown authoring session. Start a new conversation.');
       const controller=new AbortController();res.once('close',()=>controller.abort());
-      res.end(JSON.stringify(await toolkit.execute(tool.name,tool.input,client,controller.signal)));return;
+      res.end(JSON.stringify(images.register(await toolkit.execute(tool.name,tool.input,client,controller.signal))));return;
      }
      if(url.pathname!=='/__spells/provider/v1/responses'){res.statusCode=404;res.end();return;}
-     const data=JSON.parse(await body(req,12_000_000));data.store=false;
+     const data=images.hydrate(JSON.parse(await body(req,12_000_000)));data.store=false;
      const controller=new AbortController();res.once('close',()=>controller.abort());
-     const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+await credentials.key()},body:JSON.stringify(data),signal:controller.signal});
-     if(!response.ok){res.statusCode=response.status;res.end(JSON.stringify({error:{message:`OpenAI request failed (${response.status}). Check the API key, quota and selected model in Settings.`,type:'provider_error'}}));return;}
+     const response=await requestModelResponse(JSON.stringify(data),await credentials.key(),controller.signal);
+     if(!response.ok){res.statusCode=response.status;res.end(JSON.stringify({error:{message:response.status>=500?'OpenAI is temporarily unavailable. Retry the request; existing editor changes are preserved.':`OpenAI request failed (${response.status}). Check the API key, quota and selected model in Settings.`,type:'provider_error'}}));return;}
      await relay(response,res);return;
     }
     if(url.pathname==='/__spells/bootstrap'&&req.method==='GET'){res.end(JSON.stringify({token,schema:z.toJSONSchema(spellCommandSchema)}));return;}
@@ -53,8 +55,8 @@ export function spellEditor(root:string):Plugin{
     const client=z.string().uuid().optional().parse(req.headers['x-studio-client']);
     if(url.pathname==='/__spells/settings'){
      if(req.method==='GET')res.end(JSON.stringify(await credentials.status()));
-     else if(req.method==='PUT'){const result=await credentials.save(JSON.parse(await body(req,4096)));agent.stop();res.end(JSON.stringify(result));}
-     else if(req.method==='DELETE'){agent.stop();res.end(JSON.stringify(await credentials.clear()));}
+     else if(req.method==='PUT'){const result=await credentials.save(JSON.parse(await body(req,4096)));agent.stop();images.clear();res.end(JSON.stringify(result));}
+     else if(req.method==='DELETE'){agent.stop();images.clear();res.end(JSON.stringify(await credentials.clear()));}
      else{res.statusCode=405;res.end();}return;
     }
     if(url.pathname==='/__spells/canvas'){
@@ -75,10 +77,10 @@ export function spellEditor(root:string):Plugin{
      if(!sessionId&&response.ok){const result=await response.json();if(result.sessionId)agent.clients.set(result.sessionId,client);res.end(JSON.stringify(result));return;}
      await relay(response,res);return;
     }
-    if(url.pathname==='/__spells/state'&&req.method==='GET'){res.end(JSON.stringify(service.state()));return;}
+    if(url.pathname==='/__spells/state'&&req.method==='GET'){res.end(JSON.stringify(sessions.resolve(client).state()));return;}
     if(url.pathname!=='/__spells/command'){res.statusCode=404;res.end();return;}
     if(req.method!=='POST'){res.statusCode=405;res.end();return;}
-    res.end(JSON.stringify(await service.execute(JSON.parse(await body(req)))));
+    res.end(JSON.stringify(await sessions.resolve(client).execute(JSON.parse(await body(req)))));
    }catch(e){if(!res.headersSent)res.statusCode=400;res.end(JSON.stringify({error:e instanceof Error?e.message:String(e)}));}
   });
  }};

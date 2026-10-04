@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.carrion-spirits-command",
+  "name": "Carrion Spirits command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "b5508027625c32449856abc00c1ad30f97926be923119bf81bf276b52628bfdb",
+      "bytes": 723
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "4829166fc1723fb625aa543215e5fe5b59b476c6f30aea198986d60560c3005a",
+      "bytes": 588827
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "24f8d3a6d238e5f6828351d32ab84d966413e76dc33cb2e4a7d8da21ca34c58a",
+      "bytes": 1516111
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.carrion-spirits-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.carrion-spirits-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

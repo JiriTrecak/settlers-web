@@ -30,3 +30,19 @@ it('gives overlapping instances independent stop handles even with the same visu
 it('sustains continuous emission until explicitly stopped',()=>{
  const fx=new EffectPlayer(),effect=make();effect.layers[0].sustain=true;try{const handle=fx.play(effect,{seed:1});fx.update(4000);expect(fx.liveCues).toBe(1);expect(fx.root.children[0].children.some(p=>p.visible)).toBe(true);fx.stop(handle);expect(fx.liveCues).toBe(0);}finally{fx.dispose();}
 });
+
+class SpellEffects extends EffectPlayer{
+ release(effect:ReturnType<typeof make>,deliveryTicks?:number){
+  const recipes=resolveEffectBindings([{id:'finite',effect:effect.id,event:'released',anchor:'target',lifetime:'finite',...(deliveryTicks?{durationFrom:'delivery' as const}:{})}],[effect]);
+  this.emit({event:'released',ability:'ability.test.spell',cast:1,tick:20,caster:1,target:2,origin:{x:0,y:0},point:{x:2,y:0},durationTicks:deliveryTicks},recipes);
+ }
+}
+it.each(['sustain','loop'] as const)('does not let a finite spell binding leak through effect %s',kind=>{
+ const fx=new SpellEffects(),effect=make();effect.durationTicks=200;
+ if(kind==='sustain')effect.layers[0].sustain=true;else effect.loop=true;
+ try{fx.release(effect);fx.update(229);expect(fx.liveCues).toBe(1);fx.update(230);expect(fx.liveCues).toBe(0);expect(fx.root.children).toHaveLength(0);}finally{fx.dispose();}
+});
+it('uses authoritative delivery duration for finite sustained bindings',()=>{
+ const fx=new SpellEffects(),effect=make();effect.layers[0].sustain=true;
+ try{fx.release(effect,60);fx.update(89);expect(fx.liveCues).toBe(1);fx.update(90);expect(fx.liveCues).toBe(0);}finally{fx.dispose();}
+});

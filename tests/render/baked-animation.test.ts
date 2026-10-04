@@ -147,3 +147,31 @@ describe("baked animation transitions", () => {
     expect(player.state).toBe("idle");
   });
 });
+
+it('keeps concealment per instance without splitting a shared character batch', async()=>{
+ const {BakedCrowd}=await import('../../src/render/characters/bakedCrowd');
+ const {root,clips}=rig(),scene=new Group(),crowd=new BakedCrowd(scene);
+ root.userData.characterProfile={variants:{base:{states:{idle:'idle'}}}};
+ expect(crowd.register('test',root,clips,'base')).toBe(true);
+ const a=crowd.create('test',1)!,b=crowd.create('test',2)!,ha=new Group(),hb=new Group();
+ ha.userData.concealmentOpacity=.28;ha.add(a.root);hb.add(b.root);scene.add(ha,hb);scene.updateMatrixWorld(true);crowd.flush(null);
+ const batches=crowd.warmModels() as import('three').InstancedMesh[];
+ expect(batches.length).toBeGreaterThan(0);
+ for(const batch of batches){const visibility=batch.geometry.getAttribute('bakedVisibility');expect(visibility.getX(0)).toBeCloseTo(.28);expect(visibility.getX(1)).toBe(1);}
+ ha.userData.concealmentOpacity=1;crowd.flush(null);expect(batches[0]!.geometry.getAttribute('bakedVisibility').getX(0)).toBe(1);
+ crowd.dispose();
+});
+
+it('retains declared attachment nodes even when their names do not start with socket',()=>{
+ const {root,socket,clips}=rig();socket.name='PalmAnchor';const bake=bakeCharacter(root,clips,'base',['PalmAnchor'])!;
+ const mixer=new AnimationMixer(root);mixer.clipAction(clips[1]!).play();
+ try{
+  expect(bake.sockets.has('PalmAnchor')).toBe(true);const rows=new Float32Array(12);
+  for(const frame of [0,7,15,22]){
+   mixer.setTime(frame/BAKE_FPS);root.updateMatrixWorld(true);
+   bakedSocketAt(bake.sockets.get('PalmAnchor')!,bake.clips.get('wave')!.start+frame,rows);
+   const expected=new Matrix4().copy(root.matrixWorld).invert().multiply(socket.matrixWorld).elements;
+   for(let r=0;r<3;r++)for(let c=0;c<4;c++)expect(rows[r*4+c]).toBeCloseTo(expected[c*4+r]!,5);
+  }
+ }finally{mixer.stopAllAction();bake.dispose();}
+});

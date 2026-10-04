@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.grove-nursery",
+  "icon": "asset.custom.grove-nursery-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "arrival",
+      "effect": "effect.core.grove-nursery.arrival",
+      "event": "summoned",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "pulse",
+      "effect": "effect.core.grove-nursery.pulse",
+      "event": "interval",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "core",
+      "effect": "effect.core.grove-nursery.core",
+      "statusId": "producing",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    },
+    {
+      "id": "burst",
+      "effect": "effect.core.grove-nursery.burst",
+      "event": "death",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

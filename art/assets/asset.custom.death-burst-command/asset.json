@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.death-burst-command",
+  "name": "Death Burst — Woodland Command",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "1d890f94cbfab75b510e4ca8fd12cccb4348004bbc5ac0ba562cd6fa29dac884",
+      "bytes": 763
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "d767f2fe6f3f6e21f0824bd1d42ebd1f7348b801556f71326a62391eb6a4c6bd",
+      "bytes": 583153
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "894109b43fca8c85b05d5f9a89388f8c5e28d731c926dbee38abdc63a6dede97",
+      "bytes": 1590830
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.death-burst-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.death-burst-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

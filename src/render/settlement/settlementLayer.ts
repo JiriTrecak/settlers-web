@@ -1,3 +1,5 @@
+import {resolveEffectSocket} from '../abilities/effectSocket';
+import {attackPhase} from '../characters/attackPhase';
 import type {AntState} from '../characters/character-player';
 import {castAnimation} from '../abilities/castAnimation';
 import {geometryModel} from '../../shared/assets/models';
@@ -52,6 +54,7 @@ import {
 import { createCharacterInstance } from "../characters/character-player.js";
 import { attachShadowProxies } from "../characters/shadowProxy";
 import { BakedCrowd } from "../characters/bakedCrowd";
+import {ConcealmentVisuals} from '../characters/concealment';
 import type { UnitAnimator } from "../characters/bakedAnimator";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -137,6 +140,7 @@ export class SettlementLayer {
   private readonly characters = new Map<number, UnitCharacter>();
   /** Instanced, texture-skinned units: draws per unit type, not per unit. */
   private readonly crowd = new BakedCrowd(this.root);
+  private readonly concealment = new ConcealmentVisuals();
   private readonly corpses = new Map<
     number,
     { root: Object3D; remaining: number; born: number }
@@ -237,6 +241,7 @@ export class SettlementLayer {
     if (this.modelArrived && this.lastUpdate) this.update(...this.lastUpdate);
     // The editor calls update() only on edits, so a unit frozen at that moment would stay hidden
     // after the camera reaches it; wake it here until the next update() re-evaluates.
+    let woke = false;
     for (const [id, o] of this.frozen)
       if (!frustum || frustum.intersectsSphere(this.cullSphere.set(o.position, UNIT_CULL_MARGIN))) {
         o.visible = true;
@@ -244,7 +249,11 @@ export class SettlementLayer {
         const character = this.characters.get(id);
         if (character) character.player.paused = false;
         this.frozen.delete(id);
+        woke = true;
       }
+    // Editor camera movement does not run update(). Wake the GPU instances as
+    // well as their scene holders; otherwise they remain absent until an edit.
+    if (woke) this.crowd.flush(this.cameraHidden);
   }
   /** Scope residency to requested entities/portraits/placement, deduplicating aliases. */
   private requestModel(id:string){
@@ -334,6 +343,7 @@ export class SettlementLayer {
       if (d.kind === "item" || ((d.kind === "unit" || d.kind === "building") && factions.has(d.id.split(".")[1]!)))
         this.requestModel(d.asset);
   }
+  preloadAssets(assets:Iterable<string>){for(const asset of assets)this.requestModel(asset);}
   /** Keep prepared material variants alive so the GPU program cache survives warm-up. */
   private warmModels: Object3D[] = [];
   private warmDisposers: Array<() => void> = [];
@@ -513,6 +523,7 @@ export class SettlementLayer {
     this.root.add(o);
     return o;
   }
+  setAudioFrame(view:import('../audio/effectSound').AudioView,playing:boolean,speed:number){this.abilityEffects.setAudioFrame(view,playing,speed);}
   update(
     state: SettlementView,
     field: HeightField,
@@ -537,12 +548,12 @@ export class SettlementLayer {
     for(const event of state.abilityEvents??[]){
       if(event.id<=this.abilityEventId)continue;
       const spell=this.registry.abilityLibrary.abilities.find(a=>a.id===event.ability),presentation=spell&&this.registry.abilityLibrary.presentations.find(p=>p.id===spell.presentation);
-      if(presentation)this.abilityEffects.consume(event,presentation,(x,y)=>field.sample(x,y));
+      if(presentation)this.abilityEffects.consume(event,presentation,(x,y)=>field.sample(x,y),id=>{const e=state.entities.find(e=>e.id===id);return e?{x:e.x,y:e.y,height:field.walkSample(e.x,e.y,e.surface)+(e.elevation??0)+(e.unit?.garrison?.height??0)}:undefined;});
       this.abilityEventId=event.id;
     }
     this.abilityEffects.syncDeliveries(state.abilityDeliveries??[],id=>{const a=this.registry.abilityLibrary.abilities.find(a=>a.id===id);return this.registry.abilityLibrary.presentations.find(p=>p.id===a?.presentation);},(x,y)=>field.sample(x,y));
     this.abilityEffects.syncStatuses(state.entities,renderTick,id=>{const a=this.registry.abilityLibrary.abilities.find(a=>a.id===id);return this.registry.abilityLibrary.presentations.find(p=>p.id===a?.presentation);},(x,y)=>field.sample(x,y));
-    this.abilityEffects.update(renderTick,id=>{const e=state.entities.find(e=>e.id===id);return e?{x:e.x,y:e.y,height:field.sample(e.x,e.y)}:undefined;});
+    this.abilityEffects.syncReturns(state.heroReturns??[],renderTick,id=>{const a=this.registry.abilityLibrary.abilities.find(a=>a.id===id);return this.registry.abilityLibrary.presentations.find(p=>p.id===a?.presentation);},(x,y)=>field.sample(x,y));
     this.harvestTrees.update(state.entities, field, renderTick);
     const commandedTargets = new Set(
       this.modelEntities
@@ -576,6 +587,8 @@ export class SettlementLayer {
       o.userData.clickableUnit = d.kind === "unit" && !e.remembered && (e.hp === null || e.hp > 0);
       applyPlayerMaterials(o, ownerSlot(e.owner));
       const parts = this.parts.get(o)!;
+      this.concealment.set(parts.body,e.concealmentOpacity??1);
+      o.userData.concealmentOpacity=e.concealmentOpacity??1;
       if (parts.mine && e.gathering) {
         parts.mine.visible = !e.remembered;
         parts.mine.material = this.mineLabels.material(
@@ -583,7 +596,7 @@ export class SettlementLayer {
           e.gathering.capacity,
         );
       }
-      const target = this.targetPosition.set(e.x, field.walkSample(e.x,e.y,e.surface)+(e.unit?.garrison?.height??0), e.y);
+      const target = this.targetPosition.set(e.x, field.walkSample(e.x,e.y,e.surface)+(e.elevation??0)+(e.unit?.garrison?.height??0), e.y);
       if (e.unit?.garrison) {
         const host=byId.get(e.unit.garrison.building);
         const radius=host?(this.registry.get(host.definition).garrison?.lookoutRadius??0)*(host.appearance?.scale??1):0;
@@ -668,9 +681,7 @@ export class SettlementLayer {
         if(castPose){character.player.sample(castPose.phase,dt);}
         else if (attack && character.player.state === "attack") {
           const contact = character.player.attackContact();
-          const phase = renderTick <= attack.impact
-            ? contact * Math.max(0,renderTick-attack.started) / Math.max(1,attack.impact-attack.started)
-            : contact + (1-contact) * (renderTick-attack.impact) / Math.max(1,attack.ends-attack.impact);
+          const phase = attackPhase(renderTick,attack,contact);
           character.player.sample(Math.min(.999999,phase),dt);
         } else if (cycle && character.player.state === e.unit.work?.animation) {
           // Authoritative work phase locks axe contact to the exact damage tick.
@@ -793,6 +804,7 @@ export class SettlementLayer {
     };
     this.shells.update(state.shells ?? [], field, renderTick, launchPosition, this.registry.rules.unitScale);
     this.projectiles.update(renderTick, state.missiles ?? [], field, launchPosition, this.registry.rules.unitScale);
+    this.abilityEffects.update(renderTick,id=>{const e=state.entities.find(e=>e.id===id);return e?{x:e.x,y:e.y,height:field.sample(e.x,e.y)+(e.elevation??0)}:undefined;},this.projectiles.effectPose,(id,name)=>{const e=byId.get(id),root=this.entities.get(id);return e&&root?.visible&&!e.remembered?resolveEffectSocket(root,this.registry.asset(e.appearance?.asset??this.registry.get(e.definition).asset).sockets,name):undefined;});
     perf.end('Projectiles / shell effects',projectileTiming);
     for (const [id, o] of this.entities)
       if (!seen.has(id)) {
@@ -908,6 +920,7 @@ export class SettlementLayer {
   }
 
   private removeModel(id: number, o: Object3D) {
+    const body=this.parts.get(o)?.body;if(body)this.concealment.remove(body);
     // Socket-attached cargo was added after character cloning, so its materials
     // are owned here rather than by the character factory.
     const cargo=this.parts.get(o)?.cargo;

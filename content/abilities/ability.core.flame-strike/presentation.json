@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.flame-strike",
+  "icon": "asset.custom.flame-strike-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "main",
+      "effect": "effect.core.flame-strike",
+      "event": "released",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "pulse",
+      "effect": "effect.core.flame-strike",
+      "event": "wave",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

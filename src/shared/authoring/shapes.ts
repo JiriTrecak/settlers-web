@@ -33,25 +33,29 @@ function splineIndex(samples:readonly SplineSample[]):SplineNode{
  };
  let index=splineIndexes.get(samples);if(!index){index=build(Array.from({length:samples.length-1},(_,i)=>i));splineIndexes.set(samples,index);}return index;
 }
+type SplineQuery={x:number;z:number;samples:readonly SplineSample[];best:number;index:number;t:number};
+function testSplineSegment(q:SplineQuery,i:number):void{
+ const a=q.samples[i]!,b=q.samples[i+1]!,dx=b.x-a.x,dz=b.z-a.z,length=dx*dx+dz*dz;
+ const t=length?Math.max(0,Math.min(1,((q.x-a.x)*dx+(q.z-a.z)*dz)/length)):0;
+ const offset=Math.hypot(q.x-mix(a.x,b.x,t),q.z-mix(a.z,b.z,t));
+ if(offset>q.best||(offset===q.best&&i>=q.index))return;
+ q.best=offset;q.index=i;q.t=t;
+}
+function splineBound(n:SplineNode,q:SplineQuery):number{
+ const dx=Math.max(n.minX-q.x,0,q.x-n.maxX),dz=Math.max(n.minZ-q.z,0,q.z-n.maxZ);return Math.sqrt(dx*dx+dz*dz);
+}
+function visitSpline(n:SplineNode,q:SplineQuery,bound=splineBound(n,q)):void{
+ if(bound>q.best+1e-10)return;
+ if(n.segments){for(const i of n.segments)testSplineSegment(q,i);return;}
+ const a=n.left!,b=n.right!,ad=splineBound(a,q),bd=splineBound(b,q);
+ if(ad<=bd){visitSpline(a,q,ad);visitSpline(b,q,bd);}else{visitSpline(b,q,bd);visitSpline(a,q,ad);}
+}
 /** Exact nearest segment, indexed for immutable sampled courses. Ties keep original segment order. */
 export function nearestSpline(x:number,z:number,samples:readonly SplineSample[]):SplineSample&{offset:number;direction:Point}{
- let best=Infinity,bestIndex=-1,bestT=0;
- const test=(i:number)=>{
-  const a=samples[i]!,b=samples[i+1]!,dx=b.x-a.x,dz=b.z-a.z,length=dx*dx+dz*dz;
-  const t=length?Math.max(0,Math.min(1,((x-a.x)*dx+(z-a.z)*dz)/length)):0;
-  const offset=Math.hypot(x-mix(a.x,b.x,t),z-mix(a.z,b.z,t));
-  if(offset>best||(offset===best&&i>=bestIndex))return;
-  best=offset;bestIndex=i;bestT=t;
- };
- if(samples.length<=16){for(let i=0;i<samples.length-1;i++)test(i);}
- else{
-  const distance=(n:SplineNode)=>Math.hypot(Math.max(n.minX-x,0,x-n.maxX),Math.max(n.minZ-z,0,z-n.maxZ));
-  const visit=(n:SplineNode)=>{
-   if(distance(n)>best+1e-10)return;
-   if(n.segments){for(const i of n.segments)test(i);return;}
-   const a=n.left!,b=n.right!;if(distance(a)<=distance(b)){visit(a);visit(b);}else{visit(b);visit(a);}
-  };visit(splineIndex(samples));
- }
+ const query:SplineQuery={x,z,samples,best:Infinity,index:-1,t:0};
+ if(samples.length<=16){for(let i=0;i<samples.length-1;i++)testSplineSegment(query,i);}
+ else visitSpline(splineIndex(samples),query);
+ const {best,index:bestIndex,t:bestT}=query;
  if(bestIndex<0)throw Error('Spline requires at least two samples');
  const a=samples[bestIndex]!,b=samples[bestIndex+1]!,t=bestT,dx=b.x-a.x,dz=b.z-a.z,length=dx*dx+dz*dz;
  return {x:mix(a.x,b.x,t),z:mix(a.z,b.z,t),offset:best,elevation:mix(a.elevation,b.elevation,t),widthScale:mix(a.widthScale,b.widthScale,t),depthScale:mix(a.depthScale,b.depthScale,t),flowScale:mix(a.flowScale,b.flowScale,t),distance:mix(a.distance,b.distance,t),direction:{x:dx/Math.sqrt(length||1),z:dz/Math.sqrt(length||1)}};
@@ -91,6 +95,22 @@ export function cellRandom(seed:number,layer:string,x:number,z:number,channel:nu
 /** Smooth world-space mask: clumps remain anchored when a boundary is reshaped. */
 export function patchNoise(seed:number,layer:string,x:number,z:number,scale:number):number{
  const gx=x/scale,gz=z/scale,ix=Math.floor(gx),iz=Math.floor(gz),sx=gx-ix,sz=gz-iz,u=sx*sx*(3-2*sx),v=sz*sz*(3-2*sz);
- const at=(dx:number,dz:number)=>cellRandom(seed,layer,ix+dx,iz+dz,91);
- return mix(mix(at(0,0),at(1,0),u),mix(at(0,1),at(1,1),u),v);
+ return mix(mix(cellRandom(seed,layer,ix,iz,91),cellRandom(seed,layer,ix+1,iz,91),u),mix(cellRandom(seed,layer,ix,iz+1,91),cellRandom(seed,layer,ix+1,iz+1,91),u),v);
+}
+
+/** Reuse deterministic lattice corners while sampling a single immutable noise
+ * field. The arithmetic is identical to patchNoise; only integer-cell hashes are
+ * memoized. Bound memory for unusually fine scales or very large authoring areas. */
+export function patchNoiseSampler(seed:number,layer:string,scale:number):(x:number,z:number)=>number{
+ const rows=new Map<number,Map<number,number>>();let entries=0;
+ const at=(x:number,z:number)=>{
+  let row=rows.get(z),value=row?.get(x);if(value!==undefined)return value;
+  if(entries===65536){rows.clear();entries=0;row=undefined;}
+  if(!row)rows.set(z,row=new Map());
+  value=cellRandom(seed,layer,x,z,91);row.set(x,value);entries++;return value;
+ };
+ return (x,z)=>{
+  const gx=x/scale,gz=z/scale,ix=Math.floor(gx),iz=Math.floor(gz),sx=gx-ix,sz=gz-iz,u=sx*sx*(3-2*sx),v=sz*sz*(3-2*sz);
+  return mix(mix(at(ix,iz),at(ix+1,iz),u),mix(at(ix,iz+1),at(ix+1,iz+1),u),v);
+ };
 }

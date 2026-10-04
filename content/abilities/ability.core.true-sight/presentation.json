@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.true-sight",
+  "icon": "asset.custom.true-sight-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "veil",
+      "effect": "effect.core.true-sight",
+      "statusId": "detector",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

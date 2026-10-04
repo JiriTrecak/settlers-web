@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.ember-garden-icon",
+  "name": "Ember Garden Icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "d563d15a664d046e1fd323da9bf814e607355545af1521d46238781b0d0ac911",
+      "bytes": 584
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "302e677b150ef426e1609dcc71dddecb739250288ecefa14c3e5109e5af5ed90",
+      "bytes": 618101
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "4a57e4e18546159ef49a05323ff176cc008e15f3c6cf692b66d7852f0f7e0deb",
+      "bytes": 1542519
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.ember-garden-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.ember-garden-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

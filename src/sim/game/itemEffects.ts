@@ -1,3 +1,4 @@
+import {spellControl} from '../abilities/statuses';
 import type { Owner } from "../../content/schema";
 import type { ItemRuntime } from "../../content/items";
 import type { GameContext } from "./context";
@@ -57,7 +58,7 @@ export class ItemEffects {
   use(hero: Entity, slot: number): string | null {
     const id = hero.equipment?.[slot], effect = id && this.c.registry.get(id).itemEffect;
     if (!id || !effect || (!effect.active && effect.type !== "consumable")) return "This item cannot be used";
-    if (!alive(hero) || isStunned(hero, this.c.registry) || hero.abilities?.pending) return "Cannot use items while busy or stunned";
+    if (!alive(hero) || isStunned(hero, this.c.registry) || spellControl(hero,this.c.registry,'itemBlocked') || hero.abilities?.pending) return "Cannot use items while busy or stunned";
     if(effect.type==="consumable"&&effect.permanent){if(!this.applyPowerup(hero,id))return "Only a hero can use this item";this.consume(hero,slot);return null;}
     const active = effect.active;
     const runtime = this.runtime(hero, slot);

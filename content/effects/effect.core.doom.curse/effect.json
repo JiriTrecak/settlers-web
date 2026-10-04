@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.doom.curse",
+  "name": "Doom · Curse",
+  "description": "",
+  "durationTicks": 80,
+  "loop": false,
+  "layers": [
+    {
+      "id": "brand",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#9d361f",
+      "accent": "#ffaf36",
+      "durationTicks": 80,
+      "count": 1,
+      "size": 1.4,
+      "height": 0.1,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.45,
+          "max": 1,
+          "easing": "sine"
+        }
+      },
+      "follow": true,
+      "intensity": 0.65
+    },
+    {
+      "id": "embers",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 40,
+        "rate": 12,
+        "speed": 2,
+        "speedVariation": 0.4,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 30,
+        "gravity": -0.8,
+        "drag": 0.4,
+        "spawnRadius": 0.8,
+        "startSize": 0.07,
+        "endSize": 0.015,
+        "spin": 2,
+        "fadeIn": 0.1,
+        "fadeOut": 0.6
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#e56124",
+      "accent": "#ffcf62",
+      "durationTicks": 80,
+      "count": 28,
+      "size": 0.08,
+      "height": 0.1,
+      "follow": true
+    }
+  ]
+}

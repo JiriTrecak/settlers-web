@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.healing-wave",
+  "name": "Healing Wave",
+  "description": "A restorative chain jumps between up to four allies, losing 15% healing per jump.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "chain",
+    "skipFullHealth": true,
+    "bounces": 4,
+    "radius": 8,
+    "intervalTicks": 6,
+    "retentionPermille": 850
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 240
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "heal",
+      "target": "target",
+      "amount": 100
+    }
+  ],
+  "presentation": "presentation.core.healing-wave"
+}

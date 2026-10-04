@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.web",
+  "name": "Web",
+  "description": "Wrap an airborne enemy in silk, forcing a safe landing and rooting it for 6 seconds (3 on heroes). It resumes its underlying movement when the web ends. If no nearby ground is clear it remains airborne until a safe landing opens.",
+  "activation": "targeted",
+  "ranks": [
+    {}
+  ],
+  "targeting": {
+    "filter": {
+      "locomotion": [
+        "air"
+      ]
+    },
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": 14,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 50,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 320,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "webbed",
+      "amount": 240,
+      "heroDuration": 120,
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {
+        "rooted": true
+      },
+      "form": {
+        "movement": {
+          "locomotion": "ground"
+        },
+        "opacity": 1,
+        "scale": 1
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.web"
+}

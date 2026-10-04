@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.unstoppable",
+  "icon": "asset.custom.unstoppable-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "ward",
+      "effect": "effect.core.unstoppable.ward",
+      "statusId": "controlWard",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

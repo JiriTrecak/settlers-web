@@ -5,6 +5,13 @@ const scope=globalThis;
 scope.postMessage=(message,transfer)=>parentPort.postMessage(message,transfer);
 scope.onmessage=null;
 globalThis.self=scope;
+const schedulerStats={attempts:0,empty:0,zeroDelayTimers:0};
+if(workerData?.schedulerStats){
+ const {SimulationRuntime}=require('../../../src/session/worker/runtime.ts');
+ const advance=SimulationRuntime.prototype.advance,setTimer=globalThis.setTimeout;
+ SimulationRuntime.prototype.advance=function(...args){schedulerStats.attempts++;const count=advance.apply(this,args);if(!count)schedulerStats.empty++;return count;};
+ globalThis.setTimeout=(fn,ms,...args)=>{if(fn.name==='pump'&&ms===0)schedulerStats.zeroDelayTimers++;return setTimer(fn,ms,...args);};
+}
 if(workerData?.benchmark){
   const {SimulationRuntime}=require('../../../src/session/worker/runtime.ts');
   const advance=SimulationRuntime.prototype.advance,samples=[];
@@ -21,6 +28,7 @@ if(workerData?.benchmark){
 }
 require('../../../src/session/worker/entry.ts');
 parentPort.on('message',data=>{
+  if(data.type==='test-scheduler-stats'){parentPort.postMessage({type:'test-scheduler-stats',...schedulerStats});return;}
   // Test-only stall; absent from the production worker protocol.
   if(data.type==='test-stall'){
     const end=performance.now()+data.ms;

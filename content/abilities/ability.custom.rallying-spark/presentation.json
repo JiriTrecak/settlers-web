@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.custom.rallying-spark",
+  "icon": "asset.custom.rallying-spark-icon",
+  "animations": {
+    "prepare": "attack_sword",
+    "release": "attack_sword",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "link",
+      "effect": "effect.custom.rallying-spark.link",
+      "event": "impact",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "leaves",
+      "effect": "effect.custom.rallying-spark.impact",
+      "event": "healed",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "ward",
+      "effect": "effect.custom.rallying-spark.ward",
+      "statusId": "rallyWard",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

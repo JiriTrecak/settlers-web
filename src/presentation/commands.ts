@@ -1,4 +1,4 @@
-import {value,releaseEffects} from '../content/abilities/schema';
+import {value} from '../content/abilities/schema';
 import { supplyAdmission } from "../sim/game/supply";
 import {cameraModeName,nextCameraMode,type UnitCameraMode} from '../shared/camera/modes';
 import {prioritizeSelection} from "./selection";
@@ -299,7 +299,7 @@ export function commandCard(
     if(d.behaviors.revival&&focus.revival){
       for(const hero of view.fallenHeroes??[]){
         const definition=registry.get(hero.definition),queued=view.entities.some(b=>b.revival?.queue.some(q=>q.hero===hero.id));
-        const reason=queued?'Hero is already being revived':focus.revival.queue.length>=d.behaviors.revival.queueCapacity?'Revival queue is full':view.supply?supplyAdmission(view.supply,definition.supplyCost!)??undefined:undefined;
+        const reason=hero.spellReturn?'Hero is returning through an ability':queued?'Hero is already being revived':focus.revival.queue.length>=d.behaviors.revival.queueCapacity?'Revival queue is full':view.supply?supplyAdmission(view.supply,definition.supplyCost!)??undefined:undefined;
         result.push({id:`revive:${hero.id}`,type:'revive',name:`Revive ${definition.name}`,description:`Return this level ${hero.stats?.level??1} hero with their items and learned abilities. ${d.behaviors.revival.workTicks*TICK_MS/1000}s.`,icon:definition.icon,costs:[{name:'Supply',icon:registry.rules.supplyIcon,amount:definition.supplyCost!,kind:'supply'}],priority:100,actors:[focus.id],enabled:!view.outcome&&!reason,reason,immediate:{type:'revive',actor:focus.id,hero:hero.id}});
       }
     }
@@ -367,7 +367,7 @@ export function commandCard(
         const rank=spell.ranks[learned-1],mana=value(spell.cast.cost.amount,rank),cooldown=Math.round(value(spell.cast.cooldown.ticks,rank)*(1000-(caster.stats?.cooldownReductionPermille??0))/1000);
         const remaining=Math.max(0,(state.cooldowns[spell.id]??0)-view.revision);
         const reason=spell.activation==='passive'?'Passive ability':state.pending?'Casting':remaining?`Ready in ${Math.ceil(remaining*TICK_MS/1000)}s`:state.mana<mana?'Not enough mana':undefined;
-        const details=spell.targeting.relations.map(relation=>`${relation}: ${releaseEffects(spell,learned,relation as 'ally'|'enemy').map(e=>`${e.amount} ${e.op}`).join(', ')}`).join(' · ');
+        const details=spell.onRelease.some(op=>op.op==='branch')?'Conditional effects':spell.onRelease.flatMap(e=>e.op==='branch'?[]:[e]).map(e=>`${value(e.amount,rank)} ${e.op}`).join(', ');
         const auto=spell.autocast&&(state.autocast?.[binding.id]??spell.autocast.enabledByDefault);
         result.push({...((spell.targeting.kind==='self'&&spell.activation!=='passive')?{immediate:{type:'castAbility' as const,actor:caster.id,binding:binding.id,target:{kind:'unit' as const,entity:caster.id}}}:{}),
           ...(spell.autocast?{autocast:!!auto,alternate:{type:'abilityAutocast' as const,actor:caster.id,binding:binding.id,enabled:!auto}}:{}),id:`cast:${binding.id}`,type:'castAbility',ability:spell.id,binding:binding.id,name:spell.name,icon,hotkey:binding.command.hotkey,priority:60,placement:'bottom-row',column:binding.command.column,

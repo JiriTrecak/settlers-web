@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.spirit-companion-command",
+  "name": "Spirit Companion command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "76e802e7ab5d0b748c52c2c8eb0c66c13ea241b46e5774ae8eab781b2d30eba7",
+      "bytes": 710
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "3ea3801efe974e7de50faeac94f3f37a96b5ab668e06e72e2d7b849db51d6dbb",
+      "bytes": 624302
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "0b075f4a51221922feea7f94a8fee6a6aca9b4f712b35a8aea8f4f8423505d47",
+      "bytes": 1460668
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.spirit-companion-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.spirit-companion-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

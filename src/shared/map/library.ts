@@ -1,5 +1,9 @@
 import { parseUtcMap, type UtcMap } from "./utcmap";
-import { mapRevision, playableMapError, type PlayableMap } from "./playable";
+import { mapRevision, type PlayableMap } from "./playable";
+import {mapOverview,mapSourceHash,hasPlayableSlots,type MapOverview} from './overview';
+import generated from '../../../assets/maps/previews/index.json';
+const overviews=generated as Record<string,MapOverview>;
+const images=import.meta.glob('../../../assets/maps/previews/*.webp',{query:'?url',import:'default',eager:true}) as Record<string,string>;
 const sources = import.meta.glob("../../../assets/maps/{campaign,skirmish,showcase}/**/*.utcmap", {
   query: "?raw",
   import: "default",
@@ -12,26 +16,30 @@ export type MapEntry = {
   revision: string;
   players: number;
   source: "project" | "local";
+  overview?:MapOverview;
+  previewUrl?:string;
 };
 export const LOCAL_MAPS_KEY = "utc.authored-maps.threewater-1";
 function entry(id: string, map: UtcMap, source: MapEntry["source"]): MapEntry {
+  let revision:string|undefined;
   return {
     id,
     name: map.name,
     map,
     source,
-    revision: mapRevision(map),
+    get revision(){return revision??=mapRevision(map);},
     players: map.playerStarts?.length ?? 0,
+    overview:mapOverview(map),
   };
 }
-const project = Object.entries(sources).map(([path, raw]) => {
-  const map = parseUtcMap(JSON.parse(raw));
-  if (!map) throw new Error(`Invalid authored map: ${path}`);
-  return entry(
-    path.split("/").pop()!.replace(".utcmap", "").toLowerCase(),
-    map,
-    "project",
-  );
+const project:MapEntry[] = Object.entries(sources).map(([path, raw]) => {
+  const id=path.split('/').pop()!.replace('.utcmap','').toLowerCase();
+  let parsed:UtcMap|undefined,revision:string|undefined;
+  const load=()=>{if(!parsed){parsed=parseUtcMap(JSON.parse(raw))??undefined;if(!parsed)throw Error(`Invalid authored map: ${path}`);}return parsed;};
+  const saved=overviews[id],overview=saved?.sourceHash===mapSourceHash(raw)?saved:mapOverview(load(),raw);
+  return {id,name:overview.name,source:'project' as const,players:overview.starts.length,overview,
+    previewUrl:overview.image?images[`../../../assets/maps/previews/${overview.image}`]:undefined,
+    get map(){return load();},get revision(){return revision??=mapRevision(load());}};
 });
 export function authoredMaps(): MapEntry[] {
   const maps = new Map(project.map((m) => [m.id, m]));
@@ -51,7 +59,7 @@ export function authoredMaps(): MapEntry[] {
   return [...maps.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 export function playableMaps(): (MapEntry & { map: PlayableMap })[] {
-  return authoredMaps().filter((m) => !m.map.mission && !playableMapError(m.map)) as (MapEntry & {
+  return authoredMaps().filter((m) => {const info=overviewOf(m);return !info.mission&&hasPlayableSlots(info);}) as (MapEntry & {
     map: PlayableMap;
   })[];
 }
@@ -78,4 +86,5 @@ export function rememberAuthoredMap(map: UtcMap): string {
   return id;
 }
 
-export function missionMaps(campaign?:string):MapEntry[]{return authoredMaps().filter(m=>m.map.mission && (!campaign || m.map.mission.campaign===campaign) && !playableMapError(m.map)).sort((a,b)=>a.map.mission!.order-b.map.mission!.order);}
+export function overviewOf(entry:MapEntry):MapOverview{return entry.overview??mapOverview(entry.map);}
+export function missionMaps(campaign?:string):MapEntry[]{return authoredMaps().filter(m=>{const info=overviewOf(m);return info.mission&&(!campaign||info.mission.campaign===campaign)&&hasPlayableSlots(info);}).sort((a,b)=>overviewOf(a).mission!.order-overviewOf(b).mission!.order);}

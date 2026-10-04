@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.devour-command-icon",
+  "name": "Devour — Swallow Command Icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "75ac0e568c84e191f1eaab40a45bb952c2c86771d940fbe4c8de4b06150cb7f6",
+      "bytes": 1414
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "a5434829e66c1d200e3fa51fc8bcdb3e871e5c52734e355aeef163cc5d91e231",
+      "bytes": 622656
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "d485a37e461b7e511e4709343e50b3394c839895c8d2a9b112e417b135a840cf",
+      "bytes": 1556837
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.devour-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.devour-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.tranquility",
+  "icon": "asset.custom.tranquility-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "main",
+      "effect": "effect.core.tranquility",
+      "event": "healed",
+      "anchor": "caster",
+      "lifetime": "finite"
+    }
+  ]
+}

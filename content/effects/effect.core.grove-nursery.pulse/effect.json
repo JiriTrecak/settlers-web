@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.grove-nursery.pulse",
+  "name": "Grove Nursery · Heartbeat",
+  "description": "",
+  "durationTicks": 44,
+  "loop": false,
+  "layers": [
+    {
+      "id": "warmth",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#e6b447",
+      "accent": "#fff0b0",
+      "durationTicks": 40,
+      "count": 1,
+      "size": 2.2,
+      "height": 0.08,
+      "intensity": 0.7
+    },
+    {
+      "id": "spores",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 44,
+        "rate": 30,
+        "speed": 2.3,
+        "speedVariation": 0.4,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 75,
+        "gravity": 0.5,
+        "drag": 1,
+        "spawnRadius": 1.4,
+        "startSize": 0.18,
+        "endSize": 0.02,
+        "spin": 1,
+        "fadeIn": 0.03,
+        "fadeOut": 0.7
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#9cdd69",
+      "accent": "#ffeda0",
+      "durationTicks": 1,
+      "count": 30,
+      "size": 0.13,
+      "height": 1.2
+    }
+  ]
+}

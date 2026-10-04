@@ -12,13 +12,13 @@ export class LoadingScreen {
     if(event.key!=="Tab" && !(event.target instanceof HTMLElement && this.root.contains(event.target))) event.preventDefault();
     event.stopImmediatePropagation();
   };
-  constructor(host:HTMLElement,onLeave:()=>void){
+  constructor(host:HTMLElement,onLeave:()=>void,private readonly labels={title:'Preparing the battlefield',progress:'Match loading progress',waiting:'The match starts when preparation is complete.',error:'The battlefield could not be loaded'}){
     window.addEventListener('keydown',this.blockKeys,true);
     window.addEventListener('keyup',this.blockKeys,true);
     this.root.className='match-loading';this.root.setAttribute('role','status');this.root.setAttribute('aria-live','polite');
     const panel=document.createElement('section'),title=document.createElement('h1'),leave=document.createElement('button');
-    title.textContent='Preparing the battlefield';leave.textContent='Back to menu';leave.onclick=onLeave;
-    this.progress.setAttribute('aria-label','Match loading progress');this.detail.className='match-loading-detail';
+    title.textContent=labels.title;leave.textContent='Back to menu';leave.onclick=onLeave;
+    this.progress.setAttribute('aria-label',labels.progress);this.detail.className='match-loading-detail';
     panel.append(title,this.stage,this.progress,this.detail,leave);this.root.append(panel);host.append(this.root);
     const blockBackground=()=>{
       for(const child of host.children)if(child instanceof HTMLElement && child!==this.root && !this.inert.has(child)){
@@ -27,13 +27,13 @@ export class LoadingScreen {
     };
     blockBackground();this.observer=new MutationObserver(blockBackground);this.observer.observe(host,{childList:true});
     leave.focus();
-    this.update({stage:'Preparing match'});
+    this.update({stage:labels.title});
   }
   update(p:LoadProgress){
     this.stage.textContent=p.stage;
     if(p.total){this.progress.max=p.total;this.progress.value=p.loaded??0;this.detail.textContent=`${p.loaded??0} / ${p.total} files loaded`;}
-    else{this.progress.removeAttribute('value');this.detail.textContent='The match starts when preparation is complete.';}
+    else{this.progress.removeAttribute('value');this.detail.textContent=this.labels.waiting;}
   }
-  error(error:unknown){this.stage.textContent='The battlefield could not be loaded';this.detail.textContent=error instanceof Error?error.message:String(error);this.progress.hidden=true;}
+  error(error:unknown){this.stage.textContent=this.labels.error;this.detail.textContent=error instanceof Error?error.message:String(error);this.progress.hidden=true;}
   destroy(){window.removeEventListener('keydown',this.blockKeys,true);window.removeEventListener('keyup',this.blockKeys,true);this.observer.disconnect();for(const [element,inert] of this.inert)element.inert=inert;this.inert.clear();this.root.remove();if(this.previousFocus instanceof HTMLElement && this.previousFocus.isConnected)this.previousFocus.focus();}
 }

@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.invisibility",
+  "name": "Invisibility",
+  "description": "Conceal an ally after a short fade, for fifteen seconds. Attacking or casting removes the enchantment. Area damage can still hit the hidden unit, and detection reveals it.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 25,
+      "cooldown": 200,
+      "duration": 600,
+      "bonus": 0
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 8,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldown"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "veil",
+      "amount": {
+        "rankParameter": "duration"
+      },
+      "polarity": "positive",
+      "dispel": true,
+      "modifiers": {},
+      "concealment": {
+        "fadeTicks": 16,
+        "breakOnAttack": true,
+        "breakOnCast": true,
+        "attackBonus": {
+          "rankParameter": "bonus"
+        }
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.invisibility"
+}

@@ -1,3 +1,7 @@
+import {SimulationProfiler} from '../profiling';
+import {reconcileFlight} from './flight';
+import {controlImmune} from '../abilities/controlPolicy';
+import {formDefinition,weaponDefinition} from '../abilities/forms';
 import {SectorIndex} from '../../shared/spatial/sectors';
 import {trafficEscape} from './trafficEscape';
 import {trafficRequests} from './trafficRequests';
@@ -30,6 +34,7 @@ import {
 /** Shared native services; never exposed to HUD, player commands, or content JSON. */
 export class GameContext {
   readonly spatial: Spatial;
+  readonly profile=new SimulationProfiler();
   /** Derived presentation invalidation, excluded from saves and lockstep hashes. */
   observationRevision=0;
   motionRevision=0;
@@ -66,7 +71,11 @@ export class GameContext {
       const source = job?.type === "harvest" ? this.get(job.source)
         : e.unit.order?.type === "gather" ? this.get(e.unit.order.target) : undefined;
       return !!source && this.def(source).gatheringUnitCollision !== true;
-    }, () => this.unitEntities);
+    }, () => this.unitEntities,this.profile);
+    this.spatial.beginUnitMovement=this.profile.wrap('Moving-body index',this.spatial.beginUnitMovement.bind(this.spatial));
+    this.spatial.route=this.profile.wrap('Route request',this.spatial.route.bind(this.spatial));
+    this.spatial.findPath=this.profile.wrap('Path search',this.spatial.findPath.bind(this.spatial));
+    this.spatial.sectors.corridor=this.profile.wrap('Sector corridor',this.spatial.sectors.corridor.bind(this.spatial.sectors));
   }
   reindex() {
     this.observationRevision++;this.changedResources.clear();
@@ -81,16 +90,31 @@ export class GameContext {
     return id ? this.index.get(id) : undefined;
   }
   def(e: Entity) {
-    return this.registry.get(e.definition);
+    return formDefinition(this.registry.get(e.definition),e,this.registry);
+  }
+  weaponDefinition(e:Entity){return weaponDefinition(e,this.registry);}
+  reconcileFlight(e:Entity){reconcileFlight(this,e);}
+  reconcileWeapon(e:Entity){
+    if(!e.unit)return;const id=this.weaponDefinition(e);
+    if(e.unit.attack&&!e.unit.attack.released&&(e.unit.attack.profile??e.definition)!==id)delete e.unit.attack;
+    if(e.unit.charge&&(e.unit.charge.profile??e.definition)!==id)delete e.unit.charge;
   }
   stats(e: Entity) {
     return entityStats(this.def(e), e, this.registry, this.state.research[e.owner]);
+  }
+  clampPools(e:Entity) {
+    this.reconcileFlight(e);this.reconcileWeapon(e);
+    const stats=this.stats(e);if(e.hp!==null)e.hp=Math.min(e.hp,stats.maxHp);
+    if(e.abilities)e.abilities.mana=Math.min(e.abilities.mana,Math.max(0,stats.maxMana-(e.abilities.pending?.escrow??0)));
   }
   live() {
     return this.state.entities.filter(alive);
   }
   liveUnits() { return this.unitEntities.filter(alive); }
   liveBodies() { return this.bodyEntities.filter(alive); }
+  /** Maintained in authoritative entity order by create/remove/reindex. Includes
+   * dead bodies awaiting removal; consumers must not mutate the index. */
+  indexedBodies():readonly Entity[] { return this.bodyEntities; }
   liveBuildings() { return this.buildingEntities.filter(alive); }
   populationCandidates() { return [...this.unitEntities, ...this.buildingEntities]; }
   liveSensors() { return this.sightEntities.filter(e => alive(e) && (this.def(e).vision ?? 0) > 0); }
@@ -155,6 +179,7 @@ export class GameContext {
     if(e.hp!==null)this.bodyEntities.push(e);
     if(d.kind === "building")this.buildingEntities.push(e);
     if(this.canProvideSight(e))this.sightEntities.push(e);
+    this.reconcileFlight(e);
     return e;
   }
   freshUnit(): NonNullable<Entity["unit"]> {
@@ -179,7 +204,9 @@ export class GameContext {
       idle: null,
     };
   }
+  onRemoving?: (entity:Entity)=>void;
   remove(e: Entity) {
+    this.onRemoving?.(e);
     for(const occupant of this.liveUnits())if(occupant.unit?.garrison?.building===e.id)this.release(occupant,this.spatial.entrance(e));
     this.observationRevision++;this.changedResources.delete(e);
     this.state.entities.splice(this.state.entities.indexOf(e), 1);
@@ -240,17 +267,18 @@ export class GameContext {
       (e) => this.ready(e) && e.unit && !e.unit.contained && !e.unit.release,
     );
   }
-  move(castFacingOnly=false) {
+  move(castFacingOnly=false,active?:ReadonlySet<number>) {
     this.spatial.beginUnitMovement();
-    try {this.moveUnits(castFacingOnly);} finally {this.spatial.endUnitMovement();this.motionRevision++;}
+    try {this.moveUnits(castFacingOnly,active);} finally {this.spatial.endUnitMovement();this.motionRevision++;}
   }
-  private moveUnits(castFacingOnly=false) {
+  private moveUnits(castFacingOnly=false,active?:ReadonlySet<number>) {
     const units = this.activeUnits();
     let requests:ReturnType<typeof trafficRequests>|undefined;
-    const occupied = new Set(units.filter(e => !this.spatial.ignoresUnits(e)).flatMap(e => e.unit!.detour?.yielding ? [this.spatial.cell(e),e.unit!.detour.waypoint] : [this.spatial.cell(e)]));
+    const occupiedByMode = [false,true].map(air=>new Set(units.filter(e=>this.spatial.airborne(e)===air).filter(e => !this.spatial.ignoresUnits(e)).flatMap(e => e.unit!.detour?.yielding ? [this.spatial.cell(e),e.unit!.detour.waypoint] : [this.spatial.cell(e)])));
     for (const e of this.liveUnits()) {
       const u = e.unit;
       if (!u) continue;
+      const occupied=occupiedByMode[Number(this.spatial.airborne(e))]!;
       if (u.detour && (u.goal !== u.detour.goal || !u.route.length || u.route[0] !== u.detour.waypoint))
         delete u.detour;
       if (u.release) {
@@ -276,13 +304,13 @@ export class GameContext {
       const movement = this.def(e).behaviors.movement;
       const turnStep=(movement?.turnRate ?? 720)*TICK_MS/1000;
       if(e.abilities?.pending){const p=e.abilities.pending,target=this.get(p.target),point=p.point??(target?precise(target):undefined);if(point)turnToward(e,point,turnStep);continue;}
-      if(castFacingOnly)continue;
+      if(castFacingOnly&&!active?.has(e.id))continue;
       const victim=this.get(u.target);
       if(!u.route.length && victim && alive(victim))turnToward(e,{x:victim.unit?.position ? victim.unit.position.x/1000 : victim.x,y:victim.unit?.position ? victim.unit.position.y/1000 : victim.y},turnStep);
       const speed = u.idle?.walking
         ? (movement?.walkSpeed ?? movement?.speed)
         : movement?.speed;
-      if (u.garrison || !speed || !u.route.length || (itemFlag(e, this.registry, "rooted") && !itemFlag(e, this.registry, "controlImmune"))) continue;
+      if (u.garrison || !speed || !u.route.length || (itemFlag(e, this.registry, "rooted") && !controlImmune(e,this.registry,'root'))) continue;
       const ignoresUnits = this.spatial.ignoresUnits(e);
       if (!ignoresUnits) {occupied.delete(this.spatial.cell(e));if(u.detour?.yielding)occupied.delete(u.detour.waypoint);}
       try {
@@ -478,7 +506,7 @@ export class GameContext {
   /** Stationary friendly bodies retain physical collision, not a whole-cell claim.
    * Moving bodies and enemies keep the existing traffic reservation. */
   private localReservations(e:Entity, units:readonly Entity[]) {
-    return new Set(units.filter(b => b.id !== e.id && !this.spatial.ignoresUnits(b) &&
+    return new Set(units.filter(b => b.id !== e.id && this.spatial.sameLocomotion(e,b) && !this.spatial.ignoresUnits(b) &&
       (b.owner !== e.owner || b.unit!.route.length)).flatMap(b => b.unit!.detour?.yielding ? [this.spatial.cell(b),b.unit!.detour.waypoint] : [this.spatial.cell(b)]));
   }
   private moveDetour(e:Entity, budget:number, turnStep:number, units:readonly Entity[]) {

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.rallying-spark.link",
+  "name": "Rallying Spark — Gold-Green Link",
+  "description": "Crisp two-tone restorative chain link; runtime supplies each jump endpoint.",
+  "durationTicks": 12,
+  "loop": false,
+  "layers": [
+    {
+      "id": "green-edge",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "beam",
+      "colour": "#63c88a",
+      "accent": "#a8e2a0",
+      "durationTicks": 12,
+      "count": 1,
+      "size": 0.12,
+      "height": 1.15
+    },
+    {
+      "id": "gold-core",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "beam",
+      "colour": "#edc75b",
+      "accent": "#f5dfa0",
+      "durationTicks": 10,
+      "count": 1,
+      "size": 0.045,
+      "height": 1.15
+    }
+  ]
+}

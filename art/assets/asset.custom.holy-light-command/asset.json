@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.holy-light-command",
+  "name": "Holy Light — original command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "fa7067a0c7370f98f4cfed695f15e62ee2e280a984065988d7b948754cedd926",
+      "bytes": 1074
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "b5e1cf0c8c96d1520117d1dbb393132d72b4555da705159b54e4e075e55a5acb",
+      "bytes": 556732
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "3012af321c9e0e71dcabdabc3a70e42b05a9c6ed8836a5ec524510c40cb77ffc",
+      "bytes": 1225056
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.holy-light-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.holy-light-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.animate-dead",
+  "icon": "asset.custom.animate-dead-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "rise",
+      "effect": "effect.core.animate-dead.rise",
+      "event": "resurrected",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "spiritWard",
+      "effect": "effect.core.animate-dead.ward",
+      "statusId": "spiritWard",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

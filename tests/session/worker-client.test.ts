@@ -10,8 +10,8 @@ import type {MatchConfig,ServerMsg} from '../../src/shared';
 
 const clients:SimulationClient[]=[];
 afterEach(()=>{for(const c of clients)c.stop();clients.length=0;vi.unstubAllGlobals();});
-function fixture(remote?:{player:number;match:MatchConfig;channel:Channel}){
- const worker=new Worker(new URL('./fixtures/simulation-worker.cjs',import.meta.url));
+function fixture(remote?:{player:number;match:MatchConfig;channel:Channel},schedulerStats=false){
+ const worker=new Worker(new URL('./fixtures/simulation-worker.cjs',import.meta.url),{workerData:{schedulerStats}});
  let held:WorkerInput[]|null=null,frames=0;
  const port={postMessage(message:WorkerInput){if(held&&message.type==='ack')held.push(message);else worker.postMessage(message);},terminate(){void worker.terminate();},onmessage:null as ((e:MessageEvent<WorkerOutput>)=>void)|null,onerror:null as ((e:ErrorEvent)=>void)|null,onmessageerror:null as ((e:MessageEvent)=>void)|null};
  worker.on('message',data=>{if(data.type==='frame')frames++;if(!data.type.startsWith('test-'))port.onmessage?.({data} as MessageEvent<WorkerOutput>);});
@@ -21,6 +21,31 @@ function fixture(remote?:{player:number;match:MatchConfig;channel:Channel}){
  return {client,worker,hooks,init:()=>client.request('init',{map,match,player:remote?.player??0,remote:!!remote}),hold(){held=[];},release(){const messages=held??[];held=null;for(const m of messages)worker.postMessage(m);},frames:()=>frames};
 }
 const delay=(ms:number)=>new Promise(resolve=>setTimeout(resolve,ms));
+
+it('backs off while a remote turn is withheld, then resumes on committed input',async()=>{
+ const match=localMatch({mapId:'test',mapRevision:'test',seed:1,slotCount:2,me:0,delay:2});match.slots.forEach(s=>s.kind='human');
+ const room=new Room(match);let receive:(message:ServerMsg)=>void=()=>{};
+ room.subscribe(message=>receive(structuredClone(message)));
+ const f=fixture({player:0,match,channel:{onMessage:fn=>{receive=fn;},send:message=>{
+  if(message.type==='turn')room.confirm(0,message.through,message.bundles);
+ }}},true);
+ await f.init();await f.client.request('start',undefined);
+ const start=performance.now();await delay(180);
+ const counters=await new Promise<{attempts:number;empty:number;zeroDelayTimers:number}>(resolve=>{
+  const listen=(m:{type:string;attempts:number;empty:number;zeroDelayTimers:number})=>{if(m.type==='test-scheduler-stats'){f.worker.off('message',listen);resolve(m);}};
+  f.worker.on('message',listen);f.worker.postMessage({type:'test-scheduler-stats'});
+ });
+ const elapsed=performance.now()-start;
+ expect((await f.client.request('status',undefined)).tick).toBe(0);
+ expect(counters.empty).toBeGreaterThan(0);
+ expect(counters.attempts).toBeLessThanOrEqual(Math.ceil(elapsed/25)+8);
+ // A timer can wake just before the first deadline; allow boundary catch-up,
+ // but not the unbounded zero-delay retry loop used by the old scheduler.
+ expect(counters.zeroDelayTimers).toBeLessThanOrEqual(2);
+ room.confirm(1,8,[]);await delay(100);
+ expect((await f.client.request('status',undefined)).tick).toBeGreaterThan(0);
+ expect(f.hooks.error).not.toHaveBeenCalled();
+},15000);
 
 it('caps ordinary snapshot publication at 40 Hz even at accelerated match speed',async()=>{
  const f=fixture();await f.init();await f.client.request('configure',{speed:4,reveal:false,visionPlayer:0});

@@ -1,6 +1,8 @@
 import {inspectionShotSchema} from '../../shared/camera/inspectionShot';
 import {biomeById,biomeRecipes} from '../../content/biomes';
 import {sceneCommandSchema} from '../../shared/authoring/sceneCommands';
+import {editorPreviewSchema} from '../../shared/authoring/editorPreview';
+import {editorPerformanceSchema} from '../../shared/authoring/editorPerformance';
 import {campSchema} from '../../content/schema';
 import {campCompositions} from '../../content/campCompositions';
 import type {CampStamp} from '../world/entityAuthoring';
@@ -51,28 +53,42 @@ export class EditorControl {
     const fn = this.ops[op];
     if (!fn) throw new Error(`unknown op '${op}'`);
     const result = fn.call(this, params);
-    this.after();
-    return result;
+    // Inspection is not an edit. Rebuilding both panels after every MCP poll
+    // adds measurable UI work and can replace an input the user is typing in.
+    if(op==='performance'||op==='status'||(op==='scene'&&['get','recipes'].includes(String(obj(params).action))))return result;
+    const done=(value:unknown)=>{
+      const finish=()=>{this.after();return value;};
+      return this.editor.compiling?this.editor.editsReady().then(finish):finish();
+    };
+    return result instanceof Promise?result.then(done):done(result);
   }
 
   private readonly ops: Record<string, (params: unknown) => unknown> = {
     scene:params=>{
       const p=sceneCommandSchema.parse(params),e=this.editor;
+      let pending:void|Promise<void>=undefined;
       switch(p.action){
         case 'recipes':return e.authoringAssets.filter(a=>biomeRecipes(biomeById(e.map.biome)).some(p=>p.id===a.id));
-        case 'put-layer':e.putLayer(p.layer);break;
-        case 'put-object':e.putAuthoredObject(p.object);break;
+        case 'put-layer':pending=e.putLayer(p.layer);break;
+        case 'put-object':pending=e.putAuthoredObject(p.object);break;
         case 'select':e.selectLayer({kind:p.kind,id:p.id});break;
-        case 'remove':e.selectLayer({kind:p.kind,id:p.id});e.removeLayerSelection();break;
-        case 'batch':e.applySceneEdits(p.edits);break;
-        case 'lock':e.selectLayer({kind:p.kind,id:p.id});e.lockLayerSelection(p.locked);break;
-        case 'bake':e.selectLayer({kind:'layer',id:p.id});e.bakeSelectedLayer();break;
-        case 'undo':e.undoLayers();break;case 'redo':e.undoLayers(true);break;
+        case 'remove':e.selectLayer({kind:p.kind,id:p.id});pending=e.removeLayerSelection();break;
+        case 'batch':pending=e.applySceneEdits(p.edits);break;
+        case 'lock':e.selectLayer({kind:p.kind,id:p.id});pending=e.lockLayerSelection(p.locked);break;
+        case 'bake':e.selectLayer({kind:'layer',id:p.id});pending=e.bakeSelectedLayer();break;
+        case 'undo':pending=e.undoLayers();break;case 'redo':pending=e.undoLayers(true);break;
         case 'camera':e.authoringCamera(p.mode);break;
       }
-      return {scene:e.layers.scene,selection:e.layers.selection,generated:{objects:e.generatedScene?.objects.length??0,rivers:e.generatedScene?.rivers.length??0,issues:e.generatedScene?.issues??[]}};
+      const response=()=>({scene:e.layers.scene,selection:e.layers.selection,generated:{objects:e.generatedScene?.objects.length??0,rivers:e.generatedScene?.rivers.length??0,issues:e.generatedScene?.issues??[]}});
+      return pending?pending.then(response):response();
     },
     status: () => this.status(),
+    performance:params=>this.editor.performanceControl(editorPerformanceSchema.parse(params??{})),
+    preview:params=>{
+      const settings=editorPreviewSchema.parse(params??{});
+      if(settings.canopy!==undefined)this.editor.setCanopyPreview(settings.canopy);
+      return {canopy:this.editor.canopyPreview};
+    },
     walkSurface: params=>{
       const p=obj(params),id=str(p.id),stamp=this.editor.map.stamps.find(s=>s.id===id);
       if(!stamp||!this.library.entry(stamp.asset)?.deck)throw new Error('Choose a declared walkable asset');
@@ -125,7 +141,7 @@ export class EditorControl {
       };
     },
     decals: (p) => this.decals(p),
-    landscape: (p) => this.landscape(p),
+    landscape: (p) => this.editor.compiling?this.editor.editsReady().then(()=>this.landscape(p)):this.landscape(p),
     catalog: (p) => this.catalog(p),
     place: (p) => this.place(p),
     stamps: (p) => this.stamps(p),

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.hex-command-icon",
+  "name": "Hex — tree frog transformation",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "75b6d35f40ecd56c7574b7f874e42b7f17daf163d8dabe79f0694d8507a4088c",
+      "bytes": 772
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "07e4aaa9eb2258ffa0c71a87a2d120b2d058438b8c534d7418d1b4d456d0abd9",
+      "bytes": 584242
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "ec86410048850ea826596497dfad43e8e2d245473d6f17f31e9c60dd7cd8a59b",
+      "bytes": 1309398
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.hex-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.hex-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

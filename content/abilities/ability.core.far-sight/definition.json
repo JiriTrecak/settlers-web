@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.far-sight",
+  "name": "Far Sight",
+  "description": "Reveal a remote eight-unit radius for twelve seconds, ignoring terrain occlusion. The vision remains after the caster dies, then fades to explored fog.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 128,
+      "mana": 25,
+      "cooldown": 200
+    }
+  ],
+  "targeting": {
+    "includeBuildings": false,
+    "kind": "point",
+    "radius": 8,
+    "alive": true,
+    "visible": false,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 8,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldown"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "vision",
+      "id": "scouting",
+      "target": "point",
+      "amount": 480,
+      "radius": 8,
+      "ignoreTerrain": true,
+      "detectInvisible": false,
+      "endsWithCaster": false
+    }
+  ],
+  "presentation": "presentation.core.far-sight"
+}

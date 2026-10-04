@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.frost-arrows",
+  "icon": "asset.custom.frost-arrows-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "flight",
+      "effect": "effect.core.frost-arrows.flight",
+      "event": "projectile",
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery"
+    },
+    {
+      "id": "impact",
+      "effect": "effect.core.frost-arrows.impact",
+      "event": "enhancedHit",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "chilled",
+      "effect": "effect.core.frost-arrows.chill",
+      "statusId": "chilled",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

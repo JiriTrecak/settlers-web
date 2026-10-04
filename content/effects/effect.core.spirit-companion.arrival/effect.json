@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.spirit-companion.arrival",
+  "name": "Spirit Companion · Arrival",
+  "description": "",
+  "durationTicks": 44,
+  "loop": false,
+  "layers": [
+    {
+      "id": "arrival",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 42,
+        "rate": 26,
+        "speed": 2.6,
+        "speedVariation": 0.4,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 45,
+        "gravity": 0,
+        "drag": 1,
+        "spawnRadius": 0.9,
+        "startSize": 0.16,
+        "endSize": 0.025,
+        "spin": 1.4,
+        "fadeIn": 0.05,
+        "fadeOut": 0.75
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#70f0cd",
+      "accent": "#d8fff3",
+      "durationTicks": 1,
+      "count": 26,
+      "size": 0.14,
+      "height": 0.1
+    },
+    {
+      "id": "emergence",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#3be8a5",
+      "accent": "#e9ffd9",
+      "durationTicks": 30,
+      "count": 1,
+      "size": 1.4,
+      "height": 0.05,
+      "intensity": 0.7
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.carrion-spirits",
+  "icon": "asset.custom.carrion-spirits-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "arrival",
+      "effect": "effect.core.carrion-spirits.arrival",
+      "event": "summoned",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

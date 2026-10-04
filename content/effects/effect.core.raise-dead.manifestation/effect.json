@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.raise-dead.manifestation",
+  "name": "Raise Dead · Manifestation",
+  "description": "",
+  "durationTicks": 56,
+  "loop": false,
+  "layers": [
+    {
+      "id": "soul-glow",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#6b3ba0",
+      "accent": "#ca9fff",
+      "durationTicks": 40,
+      "count": 1,
+      "size": 2.5,
+      "height": 0.15,
+      "intensity": 0.9
+    },
+    {
+      "id": "rising-wisps",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 56,
+        "rate": 1,
+        "speed": 3.5,
+        "speedVariation": 0.4,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 25,
+        "gravity": -0.5,
+        "drag": 0.4,
+        "spawnRadius": 1.1,
+        "startSize": 0.15,
+        "endSize": 0.02,
+        "spin": 3,
+        "fadeIn": 0.05,
+        "fadeOut": 0.7
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#8962bd",
+      "accent": "#dfbbff",
+      "durationTicks": 56,
+      "count": 36,
+      "size": 0.15,
+      "height": 0.1
+    }
+  ]
+}

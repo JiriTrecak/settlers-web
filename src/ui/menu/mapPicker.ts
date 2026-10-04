@@ -1,6 +1,6 @@
 import { GameScreen } from '../screen/screen';
-import { authoredMaps, playableMaps, type MapEntry } from '../../shared/map/library';
-import { playableMapError } from '../../shared/map/playable';
+import { authoredMaps, playableMaps, overviewOf, type MapEntry } from '../../shared/map/library';
+import {hasPlayableSlots} from '../../shared/map/overview';
 import './mapPicker.css';
 export class MapPicker extends GameScreen {
  constructor(mode:'play'|'edit',hooks:{onBack():void;onChoose(map:MapEntry):void;onNew?():void}){
@@ -12,7 +12,8 @@ export class MapPicker extends GameScreen {
   for(const map of maps){
    const b=document.createElement('button');b.type='button';
    const name=document.createElement('strong');name.textContent=map.name;
-   const info=document.createElement('span');info.textContent=`${map.map.size} × ${map.map.size} · ${playableMapError(map.map)?'Landscape study':`${map.players} players`} · ${map.source==='local'?'Saved locally':'Project map'}`;
+   const summary=overviewOf(map);
+   const info=document.createElement('span');info.textContent=`${summary.size} × ${summary.size} · ${hasPlayableSlots(summary)?`${map.players} players`:'Landscape study'} · ${map.source==='local'?'Saved locally':'Project map'}`;
    b.append(name,info);b.onclick=()=>hooks.onChoose(map);list.append(b);
   }
   if(!maps.length){const p=document.createElement('p');p.textContent='Create a map with Player 1 and Player 2 starts in the editor to begin.';list.append(p);}

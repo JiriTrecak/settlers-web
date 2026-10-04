@@ -55,3 +55,15 @@ it('never samples a moved shooter for late or newly revealed flights and clears 
  mesh.getMatrixAt(0,matrix);expect(new Vector3().setFromMatrixPosition(matrix).x).toBe(10);
  fx.dispose();expect((fx as any).origins.size).toBe(0);
 });
+
+it('shares the exact curved weapon pose with enhancement effects and clears it on impact or hiding',()=>{
+ const fx=new ProjectileEffects(new Group()),field=new HeightField();
+ const shot:GameState['missiles'][number]={id:1,source:1,target:2,definition:'unit.ants.archer',owner:'player.1',origin:{x:10,y:10},destination:{x:20,y:10},launched:100,impact:120,damage:25,damageType:'pierce',viewers:['player.1'],resolved:false,enhancement:{rank:1,ability:'ability.core.searing-arrows',bonus:10,cast:42}};
+ fx.update(100,[shot],field,()=>new Vector3(10.4,2.4,10.3));
+ fx.update(110.5,[shot],field,()=>undefined);
+ const mesh=fx.root.getObjectByName('projectiles.arrow') as InstancedMesh,matrix=new Matrix4();mesh.getMatrixAt(0,matrix);
+ const pose=fx.effectPose(42)!;expect(pose.position.distanceTo(new Vector3().setFromMatrixPosition(matrix))).toBeLessThan(.00001);expect(pose.direction.length()).toBeCloseTo(1);
+ expect(pose.position.y).toBeGreaterThan(1.7);expect(fx.effectPose(43)).toBeUndefined();
+ fx.update(111,[],field);expect(fx.effectPose(42)).toBeUndefined();
+ fx.update(112,[shot],field);expect(fx.effectPose(42)).toBeDefined();fx.update(120,[shot],field);expect(fx.effectPose(42)).toBeUndefined();fx.dispose();
+});

@@ -3,9 +3,9 @@ import type { ContentRegistry } from "../../content/registry";
 type Rules = ContentRegistry["rules"];
 export type DamageDefense = { armor: number; armorType: string; reductionPermille?: number };
 
-/** Armor is validated nonnegative in content. Negative armor needs an explicit new rule. */
+/** Negative armor mirrors the positive mitigation curve, approaching double damage. */
 export function armorMultiplier(rules: Rules, armor: number): number {
-  if (armor < 0) throw new Error("Negative armor is unsupported");
+  if (armor < 0) return 2 - 1 / (1 - rules.armorCoefficient * armor);
   return 1 / (1 + rules.armorCoefficient * armor);
 }
 export function resolveDamage(rules: Rules, target: DamageDefense, raw: number, type: string): number {

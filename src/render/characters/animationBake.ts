@@ -73,7 +73,7 @@ function nodes(root: Object3D) {
  * Null when the rig needs the live path: morph targets, rigid meshes, speech bones or more than
  * one skeleton. `scene` is the loaded prototype (after material batching); it is not modified.
  */
-export function bakeCharacter(scene: Object3D, clips: readonly AnimationClip[], variant: string): CharacterBake | null {
+export function bakeCharacter(scene: Object3D, clips: readonly AnimationClip[], variant: string, declaredSockets:readonly string[]=[]): CharacterBake | null {
   const source = nodes(scene);
   const meshes: SkinnedMesh[] = [];
   let supported = clips.length > 0;
@@ -101,7 +101,8 @@ export function bakeCharacter(scene: Object3D, clips: readonly AnimationClip[], 
   rig.updateMatrixWorld(true);
   const rootInverse = rig.matrixWorld.clone().invert();
   const rest = rigNodes.map((o) => ({ o, p: o.position.clone(), q: o.quaternion.clone(), s: o.scale.clone() }));
-  const socketNodes = rigNodes.filter((o) => /^socket/i.test(o.name));
+  const socketNames=new Set(declaredSockets);
+  const socketNodes = rigNodes.filter((o) => /^socket/i.test(o.name)||socketNames.has(o.name));
   const sockets = new Map<string, BakedSocket>();
   for (const s of socketNodes) sockets.set(s.name, { rest: rootInverse.clone().multiply(s.matrixWorld), frames: new Float32Array(0) });
 

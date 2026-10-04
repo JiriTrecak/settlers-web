@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.assistant-trials.frost-relay.chill",
+  "name": "Frost Relay — Lingering Chill",
+  "description": "Low frost ring and drifting ice motes, cleaned up with the three-second chill status.",
+  "durationTicks": 80,
+  "loop": true,
+  "layers": [
+    {
+      "id": "ice-motes",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 30,
+        "rate": 5,
+        "speed": 0.65,
+        "speedVariation": 0.35,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 25,
+        "gravity": 0,
+        "drag": 0.2,
+        "spawnRadius": 0.5,
+        "startSize": 0.13,
+        "endSize": 0.02,
+        "spin": 2,
+        "fadeIn": 0.15,
+        "fadeOut": 0.6
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#ffffff",
+      "accent": "#a3e4ff",
+      "durationTicks": 80,
+      "count": 6,
+      "size": 0.09,
+      "height": 0.6,
+      "follow": true,
+      "texture": {
+        "asset": "asset.effects.blizzard-ice",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "chill-ring",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#358bc4",
+      "accent": "#8edaff",
+      "durationTicks": 80,
+      "count": 1,
+      "size": 0.8,
+      "height": 0.06,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.3,
+          "max": 0.6,
+          "easing": "sine"
+        }
+      },
+      "follow": true
+    }
+  ]
+}

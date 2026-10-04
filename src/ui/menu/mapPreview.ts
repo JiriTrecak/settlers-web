@@ -1,181 +1,23 @@
-import { HeightField, decodeHeight } from "../../shared/map/height";
-import { sampleCurve } from "../../shared/landscape/curve";
-import type { UtcMap } from "../../shared/map/utcmap";
-import { playerCss } from "../../shared/player/player";
-
-/** A small, north-up atlas drawn from the same authored terrain as the match. No world or GPU needed. */
-export function mapPreview(
-  map: UtcMap,
-  human: number | null,
-  terrain?: HTMLCanvasElement,
-): HTMLCanvasElement {
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = 512;
-  canvas.setAttribute("role", "img");
-  canvas.setAttribute(
-    "aria-label",
-    `${map.name} terrain and player starting positions`,
-  );
-  const ctx = canvas.getContext("2d")!;
-  if (terrain) ctx.drawImage(terrain, 0, 0);
-  else drawTerrain(ctx, map);
-  for (const start of map.playerStarts) {
-    const x = (start.x / map.size) * 512,
-      y = (start.z / map.size) * 512,
-      active = start.player - 1 === human;
-    ctx.shadowColor = "#000";
-    ctx.shadowBlur = 8;
-    ctx.beginPath();
-    ctx.arc(x, y, active ? 16 : 13, 0, Math.PI * 2);
-    ctx.fillStyle = "#111a19";
-    ctx.fill();
-    ctx.lineWidth = active ? 3 : 2;
-    ctx.strokeStyle = active ? "#f7e2aa" : playerCss(start.player - 1);
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = playerCss(start.player - 1);
-    ctx.beginPath();
-    ctx.arc(x, y, 6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.font = "bold 12px system-ui";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#f8ecd1";
-    ctx.strokeStyle = "#111a19";
-    ctx.lineWidth = 4;
-    ctx.strokeText(`P${start.player}`, x, y + 30);
-    ctx.fillText(`P${start.player}`, x, y + 30);
-  }
-  ctx.font = "12px Georgia";
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#d5ddc8";
-  ctx.fillText("N", 484, 24);
-  ctx.beginPath();
-  ctx.moveTo(484, 30);
-  ctx.lineTo(480, 42);
-  ctx.lineTo(484, 39);
-  ctx.lineTo(488, 42);
-  ctx.closePath();
-  ctx.fill();
-  return canvas;
+import {overviewOf,type MapEntry} from '../../shared/map/library';
+import {playerCss} from '../../shared/player/player';
+const NS='http://www.w3.org/2000/svg';
+const placeholder='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><rect width="512" height="512" fill="#17241e"/><path d="M0 128H512M0 256H512M0 384H512M128 0V512M256 0V512M384 0V512" stroke="#273b30"/><text x="256" y="250" text-anchor="middle" fill="#a6b8a6" font-family="sans-serif" font-size="18">Preview not published</text></svg>');
+/** Menus only compose an image and a few starting-position markers. Never compile
+ * a map, sample terrain, load models or allocate a WebGL/canvas renderer here. */
+export function mapPreview(entry:MapEntry,human:number|null,thumbnail=false):HTMLDivElement{
+ const info=overviewOf(entry),root=document.createElement('div');root.className='map-atlas';
+ root.setAttribute('role','img');root.setAttribute('aria-label',`${entry.name} terrain and starting positions`);
+ const image=document.createElement('img');image.src=entry.previewUrl??placeholder;image.alt='';image.width=image.height=512;image.decoding='async';image.loading=thumbnail?'lazy':'eager';
+ image.onerror=()=>{image.onerror=null;image.src=placeholder;};root.append(image);
+ if(info.custom)return root;
+ const svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox','0 0 512 512');svg.setAttribute('aria-hidden','true');
+ for(const start of info.starts){
+  const x=start.x/info.size*512,y=start.z/info.size*512,active=start.player-1===human;
+  const group=document.createElementNS(NS,'g');group.setAttribute('transform',`translate(${x} ${y})`);
+  const halo=document.createElementNS(NS,'circle');halo.setAttribute('r',active?'15':'12');halo.setAttribute('fill','#11221dc9');halo.setAttribute('stroke',active?'#fff0b1':'#111b15');halo.setAttribute('stroke-width','2');
+  const cross=document.createElementNS(NS,'path');cross.setAttribute('d','M-7 -7L7 7M7 -7L-7 7');cross.setAttribute('stroke',playerCss(start.player-1));cross.setAttribute('stroke-width','5');cross.setAttribute('stroke-linecap','round');
+  const label=document.createElementNS(NS,'text');label.setAttribute('y',y>480?'-20':'29');label.setAttribute('text-anchor','middle');label.setAttribute('fill','#fff2d0');label.setAttribute('stroke','#172119');label.setAttribute('stroke-width','3');label.setAttribute('paint-order','stroke');label.setAttribute('font-size','13');label.setAttribute('font-family','system-ui');label.setAttribute('font-weight','700');label.textContent=`P${start.player}`;
+  group.append(halo,cross,label);svg.append(group);
+ }
+ root.append(svg);return root;
 }
-export function mapTerrain(map: UtcMap): HTMLCanvasElement {
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = 512;
-  drawTerrain(canvas.getContext("2d")!, map);
-  return canvas;
-}
-function drawTerrain(ctx: CanvasRenderingContext2D, map: UtcMap) {
-  const compiled=projectScene(map),field = compiled?.field??new HeightField(map.size);
-  if(!compiled)field.load(
-    map.height ? decodeHeight(map.height, map.size)! : [],
-    map.waterLevel ?? 0,
-  );
-  const image = ctx.createImageData(512, 512),
-    water = ctx.createImageData(512, 512),
-    scale = 512 / map.size;
-  for (let y = 0; y < 512; y++)
-    for (let x = 0; x < 512; x++) {
-      const wx = x / scale,
-        wz = y / scale,
-        h = field.sample(wx, wz),
-        slope = field.sample(wx - 1, wz - 1) - h;
-      const light = Math.max(0.65, Math.min(1.3, 1 + slope * 0.15)),
-        grain = ((x * 73 + y * 137) % 19) - 9,
-        i = (y * 512 + x) * 4;
-      image.data.set(
-        [
-          Math.round(82 * light + grain),
-          Math.round(88 * light + grain),
-          Math.round(54 * light + grain * 0.4),
-          255,
-        ],
-        i,
-      );
-      if (h < field.waterAt(wx,wz)) {
-        const depth = Math.min(1, (field.waterAt(wx,wz) - h) / 2.6);
-        water.data.set(
-          [99 - depth * 64, 151 - depth * 85, 151 - depth * 76, 255],
-          i,
-        );
-      }
-    }
-  ctx.putImageData(image, 0, 0);
-  ctx.save();
-  ctx.scale(scale, scale);
-  for (const patch of map.landscape?.cover ?? []) {
-    ctx.fillStyle = "#60743b14";
-    ctx.beginPath();
-    ctx.arc(patch.x, patch.z, patch.radius, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  for (const stroke of map.landscape?.strokes ?? []) {
-    ctx.fillStyle = {
-      road: "#aa8152",
-      sand: "#b39a67",
-      mud: "#817054",
-      grass: "#596a38",
-      rock: "#777767",
-      snow: "#bbcbc1",
-    }[stroke.layer];
-    ctx.globalAlpha = stroke.opacity * 0.8;
-    for (const p of sampleCurve(stroke.points, stroke.radius, 1.5)) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.z, p.radius, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-  ctx.globalAlpha = 1;
-  ctx.restore();
-  const waterCanvas = document.createElement("canvas");
-  waterCanvas.width = waterCanvas.height = 512;
-  waterCanvas.getContext("2d")!.putImageData(water, 0, 0);
-  ctx.drawImage(waterCanvas, 0, 0);
-  ctx.save();
-  ctx.scale(scale, scale);
-  const trees = [
-    ...map.stamps
-      .filter((s) => /pine|tree/i.test(s.asset))
-      .map((s) => ({ x: s.x, y: s.y })),
-    ...map.entities
-      .filter((e) => e.definition === "resource.forest.tree")
-      .map((e) => e.position),
-  ];
-  for (const p of trees) {
-    ctx.fillStyle = "#182f25b3";
-    ctx.beginPath();
-    ctx.arc(p.x + 0.6, p.y + 0.7, 1.8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#526743";
-    ctx.beginPath();
-    ctx.arc(p.x - 0.25, p.y - 0.35, 1.2, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.restore();
-  for (const e of map.entities.filter(
-    (e) => e.definition === "building.neutral.amber-mine",
-  )) {
-    const x = e.position.x * scale,
-      y = e.position.y * scale;
-    ctx.fillStyle = "#e3b361";
-    ctx.fillRect(x - 2, y - 2, 4, 4);
-  }
-  for (const camp of map.camps) {
-    const x = camp.home.x * scale,
-      y = camp.home.y * scale;
-    ctx.strokeStyle = "#daa06d";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(x, y - 3);
-    ctx.lineTo(x + 3, y);
-    ctx.lineTo(x, y + 3);
-    ctx.lineTo(x - 3, y);
-    ctx.closePath();
-    ctx.stroke();
-  }
-  const fade = ctx.createRadialGradient(256, 256, 130, 256, 256, 360);
-  fade.addColorStop(0, "#08141100");
-  fade.addColorStop(1, "#08141177");
-  ctx.fillStyle = fade;
-  ctx.fillRect(0, 0, 512, 512);
-}
-import {projectScene} from '../../shared/authoring/project';

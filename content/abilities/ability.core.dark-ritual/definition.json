@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.dark-ritual",
+  "name": "Dark Ritual",
+  "description": "Sacrifice one owned non-hero unit to restore mana equal to 33/66/100% of its maximum health, capped by missing mana. Cost 25 mana, cooldown 15 seconds. A failed sacrifice grants nothing.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "factor": 330
+    },
+    {
+      "factor": 660
+    },
+    {
+      "factor": 1000
+    }
+  ],
+  "targeting": {
+    "filter": {
+      "heroes": false
+    },
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": false,
+    "range": 12,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 10,
+    "cost": {
+      "resource": "mana",
+      "amount": 25,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 600,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "sacrifice",
+      "target": "target",
+      "amount": 1,
+      "record": "offering"
+    },
+    {
+      "op": "mana",
+      "target": "caster",
+      "amount": 0,
+      "scale": {
+        "source": "result",
+        "id": "offering",
+        "stat": "maxHealth",
+        "permille": {
+          "rankParameter": "factor"
+        }
+      }
+    }
+  ],
+  "presentation": "presentation.core.dark-ritual"
+}

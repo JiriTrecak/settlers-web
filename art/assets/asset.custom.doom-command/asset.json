@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.doom-command",
+  "name": "Doom — Woodland Command",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "f5dce9d730bb79bed5ee04b40958694e2589d1ec2066674ead149d548f3e512d",
+      "bytes": 781
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "86c909b60f95fc9abefb769e2369322c3e8932c25f31379e1c993b2801de5ba7",
+      "bytes": 531805
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "50920bdcba37c2c4455060778e270beb936839dd02dd345be1f4d42a43a494d1",
+      "bytes": 1403265
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.doom-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.doom-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

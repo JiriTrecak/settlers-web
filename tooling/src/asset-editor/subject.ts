@@ -20,6 +20,7 @@ export function releaseModel(gltf:GLTF){
 /** One loaded prototype, independent skeleton/materials per preview instance. Uses
  * the same player, transforms and ownership shader as live game entities. */
 export class InspectionSubject {
+ attackContact(){return this.instances[0]?.player?.attackContact()??.55;}
  readonly root=new Group();readonly info:SubjectInfo;
  private instances:{root:Object3D;player?:CharacterPlayer;dispose:()=>void}[]=[];
  private debug=new Group();private helpers:SkeletonHelper[]=[];private sockets:AxesHelper[]=[];

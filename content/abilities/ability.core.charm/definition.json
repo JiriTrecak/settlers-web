@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.charm",
+  "name": "Charm",
+  "description": "Permanently take control of a visible enemy non-hero organic or undead unit. Neutral creatures above level 5 resist. The unit keeps health, equipment and learned spells; its old commands end. Can exceed supply capacity, but never the hard unit limit.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "mana": 150,
+      "cooldown": 1800,
+      "range": 14
+    }
+  ],
+  "targeting": {
+    "condition": {
+      "kind": "any",
+      "conditions": [
+        {
+          "kind": "controller",
+          "of": "target",
+          "is": "player"
+        },
+        {
+          "kind": "matches",
+          "of": "target",
+          "filter": {
+            "maxLevel": 5
+          }
+        }
+      ]
+    },
+    "filter": {
+      "heroes": false,
+      "natures": [
+        "organic",
+        "undead"
+      ]
+    },
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 12,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldown"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "convert",
+      "target": "target",
+      "amount": 1,
+      "supply": "allow-over-cap"
+    }
+  ],
+  "presentation": "presentation.core.charm"
+}

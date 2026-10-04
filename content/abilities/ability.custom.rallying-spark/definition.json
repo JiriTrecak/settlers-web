@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.custom.rallying-spark",
+  "name": "Rallying Spark",
+  "description": "Requires an injured ally (missing health > 0). Heal the primary for 100, then chain to up to three other injured allies within 8 units per jump, retaining 75% healing with integer rounding (100/75/56/42). Full-health units are skipped; enemies are never recipients. Each recipient gains +2 armor for 120 ticks (3 seconds), including a recipient restored to full health by this heal.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "chain",
+    "skipFullHealth": true,
+    "bounces": 4,
+    "radius": 8,
+    "intervalTicks": 8,
+    "retentionPermille": 750
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 240
+    }
+  ],
+  "targeting": {
+    "condition": {
+      "kind": "resource",
+      "of": "target",
+      "resource": "health",
+      "measure": "missing",
+      "comparison": "gt",
+      "value": 0
+    },
+    "includeBuildings": false,
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "heal",
+      "target": "target",
+      "amount": 100
+    },
+    {
+      "op": "status",
+      "target": "target",
+      "id": "rallyWard",
+      "amount": 120,
+      "polarity": "positive",
+      "dispel": true,
+      "modifiers": {
+        "armor": 2
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.custom.rallying-spark"
+}

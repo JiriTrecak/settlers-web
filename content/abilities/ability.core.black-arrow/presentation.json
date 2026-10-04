@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.black-arrow",
+  "icon": "asset.custom.black-arrow-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "flight",
+      "effect": "effect.core.black-arrow.flight",
+      "event": "projectile",
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery"
+    },
+    {
+      "id": "mark",
+      "effect": "effect.core.black-arrow.mark",
+      "statusId": "shadowMark",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    },
+    {
+      "id": "manifestation",
+      "effect": "effect.core.black-arrow.manifestation",
+      "event": "death",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

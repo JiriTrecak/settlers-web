@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.siphon-mana",
+  "name": "Siphon Mana",
+  "description": "Channel a ten-metre tether that transfers available mana from the target each second. Stops when interrupted or the target leaves range.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 20,
+      "cooldownTicks": 160
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "channel": {
+      "waves": 10,
+      "intervalTicks": 40,
+      "tetherRange": 10
+    },
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "drain",
+      "target": "target",
+      "amount": 30,
+      "resource": "mana",
+      "restoreCaster": true,
+      "damageType": "spell",
+      "damagePerDrainedPermille": 0
+    }
+  ],
+  "presentation": "presentation.core.siphon-mana"
+}

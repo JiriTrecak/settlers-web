@@ -1,6 +1,7 @@
 import type {ViewSnapshot} from '../../sim/world/world';
 import type {EntityView,FogView,FogDeckNode} from '../../sim/game/observation';
 import type {RuntimeFrame} from './runtime';
+import {associateResourceScenery,resourceSceneryChanged} from '../../presentation/resourceSceneryRevision';
 
 type Bytes={full:Uint8Array}|{changes:Uint32Array};
 type FogPacket=Omit<FogView,'cells'|'floors'>&{cells:Bytes;floors?:{cells:Bytes;decks?:readonly FogDeckNode[]}};
@@ -42,9 +43,11 @@ class ViewDecoder {
  private entities=new Map<number,EntityView>();
  private order:number[]=[];
  private fog:FogView|undefined;
+ private resourceRevision:object={};
  decode(packet:ViewPacket):ViewSnapshot{
-  for(const id of packet.removed)this.entities.delete(id);
-  for(const e of packet.entities)this.entities.set(e.id,e);
+  let resourcesChanged=!!packet.order;
+  for(const id of packet.removed){resourcesChanged ||=!!this.entities.get(id)?.resource;this.entities.delete(id);}
+  for(const e of packet.entities){resourcesChanged ||=resourceSceneryChanged(this.entities.get(e.id),e);this.entities.set(e.id,e);}
   if(packet.order)this.order=packet.order;
   if(!packet.hasFog)this.fog=undefined;
   if(packet.fog){
@@ -57,7 +60,10 @@ class ViewDecoder {
    this.fog={owner:f.owner,revision:f.revision,cells:bytes(f.cells,this.fog?.cells),
     ...(f.floors?{floors:{cells:bytes(f.floors.cells,this.fog?.floors?.cells),decks:f.floors.decks??this.fog?.floors?.decks??[]}}:{})};
   }
-  return {tick:packet.tick,size:packet.size,settlement:{...packet.meta,entities:this.order.map(id=>this.entities.get(id)!),...(this.fog?{fog:this.fog}:{})}};
+  const entities=this.order.map(id=>this.entities.get(id)!);
+  if(resourcesChanged)this.resourceRevision={};
+  associateResourceScenery(entities,this.resourceRevision);
+  return {tick:packet.tick,size:packet.size,settlement:{...packet.meta,entities,...(this.fog?{fog:this.fog}:{})}};
  }
 }
 /** One acknowledged delta stream. Do not drop packets: coalesce in the sender

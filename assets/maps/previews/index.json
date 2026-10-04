@@ -1,0 +1,182 @@
+{
+  "crown-marsh-forest": {
+    "name": "Crown Marsh · Forest",
+    "size": 256,
+    "starts": [
+      {
+        "player": 1,
+        "x": 64,
+        "z": 58,
+        "setup": "setup.ants",
+        "mainFort": "start.player.1/main-fort"
+      },
+      {
+        "player": 2,
+        "x": 192,
+        "z": 58,
+        "setup": "setup.ants",
+        "mainFort": "start.player.2/main-fort"
+      },
+      {
+        "player": 3,
+        "x": 64,
+        "z": 198,
+        "setup": "setup.ants",
+        "mainFort": "start.player.3/main-fort"
+      },
+      {
+        "player": 4,
+        "x": 192,
+        "z": 198,
+        "setup": "setup.ants",
+        "mainFort": "start.player.4/main-fort"
+      }
+    ],
+    "camps": 0,
+    "sandbox": false,
+    "playable": true,
+    "sourceHash": "76ad8383",
+    "image": "crown-marsh-forest.webp",
+    "custom": false,
+    "generationHash": "ae63fc6702659ddb114b5e2dfe255588b7fe91915327238aaf1962dc4978c848"
+  },
+  "crown-marsh-frost": {
+    "name": "Crown Marsh · Frost",
+    "size": 256,
+    "starts": [
+      {
+        "player": 1,
+        "x": 64,
+        "z": 58,
+        "setup": "setup.ants",
+        "mainFort": "start.player.1/main-fort"
+      },
+      {
+        "player": 2,
+        "x": 192,
+        "z": 58,
+        "setup": "setup.ants",
+        "mainFort": "start.player.2/main-fort"
+      },
+      {
+        "player": 3,
+        "x": 64,
+        "z": 198,
+        "setup": "setup.ants",
+        "mainFort": "start.player.3/main-fort"
+      },
+      {
+        "player": 4,
+        "x": 192,
+        "z": 198,
+        "setup": "setup.ants",
+        "mainFort": "start.player.4/main-fort"
+      }
+    ],
+    "camps": 0,
+    "sandbox": false,
+    "playable": true,
+    "sourceHash": "c0ff6773",
+    "image": "crown-marsh-frost.webp",
+    "custom": false,
+    "generationHash": "a25c47fbe4dcbb4497c76ab36369aac70f662d7857e8070a539b7f7bc138e17d"
+  },
+  "heartroot-glade": {
+    "name": "Heartroot Glade",
+    "size": 512,
+    "description": "Four colonies in a deep pine wood. Neighbours share a root at the edge and another beside a Heartroot giant halfway to the centre; the four richest roots ring the crossroads spring, held by the Rotwood Court.",
+    "starts": [
+      {
+        "player": 1,
+        "x": 84,
+        "z": 428,
+        "setup": "setup.ants",
+        "mainFort": "start.player.1/main-fort"
+      },
+      {
+        "player": 2,
+        "x": 84,
+        "z": 84,
+        "setup": "setup.ants",
+        "mainFort": "start.player.2/main-fort"
+      },
+      {
+        "player": 3,
+        "x": 428,
+        "z": 84,
+        "setup": "setup.ants",
+        "mainFort": "start.player.3/main-fort"
+      },
+      {
+        "player": 4,
+        "x": 428,
+        "z": 428,
+        "setup": "setup.ants",
+        "mainFort": "start.player.4/main-fort"
+      }
+    ],
+    "camps": 48,
+    "sandbox": false,
+    "playable": true,
+    "sourceHash": "8bf73f6e",
+    "image": "heartroot-glade.webp",
+    "custom": false,
+    "generationHash": "cb4bcf44a011e2651ec19f02a2f67bff9f8b3a92440464d896de4d186c86326c"
+  },
+  "oakfall-hollow": {
+    "name": "Oakfall Hollow",
+    "size": 256,
+    "description": "Two dew brooks run from the meres to the ponds beneath the Hollow Oak, a trunk so vast the woods ring it like a hall. Cloverbank's oaks and Capwood's pines hide giants of their own.",
+    "starts": [
+      {
+        "player": 1,
+        "x": 54,
+        "z": 204,
+        "setup": "setup.ants",
+        "mainFort": "start.player.1/main-fort"
+      },
+      {
+        "player": 2,
+        "x": 202,
+        "z": 52,
+        "setup": "setup.ants",
+        "mainFort": "start.player.2/main-fort"
+      }
+    ],
+    "camps": 8,
+    "sandbox": false,
+    "playable": true,
+    "sourceHash": "298c52fc",
+    "image": "oakfall-hollow.webp",
+    "custom": false,
+    "generationHash": "8ca777d85fc5b8597512b5fece9154dce5e675d29d522da674578474f9eca272"
+  },
+  "threewater-forest": {
+    "name": "Threewater Forest",
+    "size": 256,
+    "description": "Oldoak and Amberleaf glades face one another across three woodland crossings. A stranded leaf ferry, raised watchpost, spring hollow and waterworn root snags frame clear base sites and winding supply tracks.",
+    "starts": [
+      {
+        "player": 1,
+        "x": 60,
+        "z": 205,
+        "setup": "setup.ants",
+        "mainFort": "start.player.1/main-fort"
+      },
+      {
+        "player": 2,
+        "x": 163,
+        "z": 56,
+        "setup": "setup.ants",
+        "mainFort": "start.player.2/main-fort"
+      }
+    ],
+    "camps": 0,
+    "sandbox": false,
+    "playable": true,
+    "sourceHash": "8b98fa83",
+    "image": "threewater-forest.webp",
+    "custom": false,
+    "generationHash": "829c4f3cb2e64cbd60cc4008c488ec1fd44b27f5244a7a9fb67c283d9a5ed790"
+  }
+}

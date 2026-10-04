@@ -177,7 +177,10 @@ async function start() {
         return {id:plant.id,landmark:renderer.landmarks(16/9,[plant.id]),subscribers:state.subscriberCount,changedPixels,updateMs,update,restoredBytes,baseline,without,restored};
       }
       if(op==='waterDiagnostics')return renderer.referenceWaterDiagnostics();
-      if(op==='gamePerformance')return perf.report();
+      if(op==='gamePerformance'){
+        if(options.action!==undefined&&options.action!=='get')throw Error('Performance capture requires an active match');
+        return perf.report();
+      }
       throw Error('Reference preview exposes screenshot, gameView, waterDiagnostics, occlusionProbe and gamePerformance only');
     }});
     const inspectPort=Number(params.get('inspectPort')??7380);

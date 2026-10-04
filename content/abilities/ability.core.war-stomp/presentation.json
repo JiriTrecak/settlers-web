@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.war-stomp",
+  "icon": "asset.custom.war-stomp-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "main",
+      "effect": "effect.core.war-stomp",
+      "event": "released",
+      "anchor": "caster",
+      "lifetime": "finite"
+    }
+  ]
+}

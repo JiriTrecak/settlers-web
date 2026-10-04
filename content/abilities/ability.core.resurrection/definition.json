@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.resurrection",
+  "name": "Resurrection",
+  "description": "Return up to six nearby fallen allied units to life at full health and zero mana, strongest first. Units retain their original player and learned abilities. May exceed supply capacity, but never the unit limit. Heroes and summoned or mechanical units leave no eligible corpse.",
+  "activation": "targeted",
+  "ranks": [
+    {}
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 20,
+    "recoverTicks": 16,
+    "cost": {
+      "resource": "mana",
+      "amount": 200,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 9600,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "resurrect",
+      "target": "caster",
+      "amount": 6,
+      "corpses": {
+        "radius": 12,
+        "relations": [
+          "ally"
+        ],
+        "order": "strongest"
+      },
+      "healthPermille": 1000,
+      "manaPermille": 0,
+      "placementRadius": 3,
+      "supply": "allow-over-cap"
+    }
+  ],
+  "presentation": "presentation.core.resurrection"
+}

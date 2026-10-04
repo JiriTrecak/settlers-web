@@ -28,6 +28,7 @@ import { prepareMaskedTeamColor } from "../settlement/maskedTeamColor.js";
 import { TEAM_COLOR_MATERIAL } from "../settlement/playerMaterials";
 import { bakeCharacter, bakedSocketAt, type BakedSocket, type CharacterBake } from "./animationBake";
 import { BakedAnimator } from "./bakedAnimator";
+import {CONCEALMENT_DISCARD} from './concealment';
 
 /** `?liveUnits` keeps every unit on the SkinnedMesh path, for A/B checks of the bake. Read once. */
 const LIVE_UNITS = typeof location !== "undefined" && new URLSearchParams(location.search).has("liveUnits");
@@ -40,6 +41,8 @@ attribute vec4 bakedIndex;
 attribute vec4 bakedWeight;
 attribute vec4 bakedFrames;
 attribute vec4 bakedTeam;
+attribute float bakedVisibility;
+varying float utcConcealment;
 mat4 bakedRead( int frame, int slot ) {
   int i = ( frame * bakedSlots + slot ) * 3;
   vec4 a = texelFetch( bakedBones, ivec2( i % bakedWidth, i / bakedWidth ), 0 ); i++;
@@ -86,15 +89,16 @@ function patchBaked(material: Material, uniforms: Uniforms, team: boolean) {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = shader.vertexShader
       .replace("#include <common>", `#include <common>\n${BAKED_VERTEX}${team ? "varying vec4 vBakedTeam;\n" : ""}`)
-      .replace("#include <skinbase_vertex>", `mat4 bakedMatrix = bakedSkin();${team ? " vBakedTeam = bakedTeam;" : ""}`)
+      .replace("#include <skinbase_vertex>", `utcConcealment=bakedVisibility;mat4 bakedMatrix = bakedSkin();${team ? " vBakedTeam = bakedTeam;" : ""}`)
       .replace("#include <skinnormal_vertex>", "objectNormal = mat3( bakedMatrix ) * objectNormal;\n#ifdef USE_TANGENT\nobjectTangent = mat3( bakedMatrix ) * objectTangent;\n#endif")
       .replace("#include <skinning_vertex>", "transformed = ( bakedMatrix * vec4( transformed, 1.0 ) ).xyz;");
+    shader.fragmentShader='varying float utcConcealment;\n'+shader.fragmentShader.replace('void main() {','void main() {\n'+CONCEALMENT_DISCARD);
     if (team)
       shader.fragmentShader = shader.fragmentShader
         .replace("#include <common>", "#include <common>\nvarying vec4 vBakedTeam;")
         .replace("vec4 diffuseColor = vec4( diffuse, opacity );", "vec4 diffuseColor = vec4( mix( diffuse, vBakedTeam.rgb, vBakedTeam.a ), opacity );");
   };
-  material.customProgramCacheKey = () => key + "|baked-skin-v1" + (team ? "-team" : "");
+  material.customProgramCacheKey = () => key + "|baked-skin-v2" + (team ? "-team" : "");
   material.needsUpdate = true;
 }
 
@@ -163,6 +167,7 @@ class AssetCrowd {
   private matrices!: InstancedBufferAttribute;
   private frames!: InstancedBufferAttribute;
   private team!: InstancedBufferAttribute;
+  private visibility!: InstancedBufferAttribute;
   private readonly matrix = new Matrix4();
   private readonly color = new Color();
 
@@ -208,10 +213,12 @@ class AssetCrowd {
     this.matrices = new InstancedBufferAttribute(new Float32Array(capacity * 16), 16).setUsage(DynamicDrawUsage);
     this.frames = new InstancedBufferAttribute(new Float32Array(capacity * 4), 4).setUsage(DynamicDrawUsage);
     this.team = new InstancedBufferAttribute(new Float32Array(capacity * 4), 4).setUsage(DynamicDrawUsage);
+    this.visibility = new InstancedBufferAttribute(new Float32Array(capacity).fill(1), 1).setUsage(DynamicDrawUsage);
     for (const mesh of this.meshes()) {
       mesh.instanceMatrix = this.matrices;
       mesh.geometry.setAttribute("bakedFrames", this.frames);
       mesh.geometry.setAttribute("bakedTeam", this.team);
+      mesh.geometry.setAttribute("bakedVisibility", this.visibility);
     }
   }
 
@@ -229,7 +236,7 @@ class AssetCrowd {
     for (const mesh of this.batches) { mesh.count = main; mesh.visible = main > 0; }
     if (this.shadow) this.shadow.count = count;
     if (!count) return;
-    for (const [attribute, size] of [[this.matrices, 16], [this.frames, 4], [this.team, 4]] as const) {
+    for (const [attribute, size] of [[this.matrices, 16], [this.frames, 4], [this.team, 4], [this.visibility, 1]] as const) {
       attribute.clearUpdateRanges();
       attribute.addUpdateRange(0, count * size);
       attribute.needsUpdate = true;
@@ -242,6 +249,7 @@ class AssetCrowd {
 
   private write(unit: BakedUnit, i: number) {
     const body = unit.body, holder = body.parent!;
+    this.visibility.setX(i,holder.userData.concealmentOpacity??1);
     holder.updateMatrix();
     body.updateMatrix();
     this.matrix.multiplyMatrices(holder.parent!.matrixWorld, holder.matrix).multiply(body.matrix);
@@ -288,7 +296,7 @@ export class BakedCrowd {
   /** Bakes once per asset id; false when the rig needs the live path. */
   register(asset: string, scene: Object3D, clips: readonly AnimationClip[], variant: string, capabilities?: AssetDefinition["capabilities"]) {
     if (this.assets.has(asset)) return !!this.assets.get(asset);
-    const bake = LIVE_UNITS ? null : bakeCharacter(scene, clips, variant);
+    const bake = LIVE_UNITS ? null : bakeCharacter(scene, clips, variant,capabilities?.sockets?.map(s=>s.node));
     this.assets.set(asset, bake ? new AssetCrowd(bake, clips, scene, variant, capabilities, this.root, asset) : null);
     return !!bake;
   }

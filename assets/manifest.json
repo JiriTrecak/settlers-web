@@ -2,6 +2,1944 @@
   "version": 1,
   "records": [
     {
+      "id": "asset.assistant-trials.frost-relay-icon",
+      "name": "Frost Relay command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.assistant-trials.frost-relay-icon/image.png",
+          "sha256": "a0295a21bfef7b79627ac1fedd901a0c1c4779c68468550a56baf3d9f1f9285f",
+          "bytes": 680023
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.assistant-trials.frost-relay-icon",
+          "image": "assets/library/asset.assistant-trials.frost-relay-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.assistant-trials.verdant-ward-icon",
+      "name": "Verdant Ward command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.assistant-trials.verdant-ward-icon/image.png",
+          "sha256": "cc05c5585f633fabf2f3a492b520e6ccf2ea28ff2dc7acd8081f014238523dcb",
+          "bytes": 672116
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.assistant-trials.verdant-ward-icon",
+          "image": "assets/library/asset.assistant-trials.verdant-ward-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.assistant-trials.verdant-ward-leaf",
+      "name": "Verdant Ward leaf particle",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.assistant-trials.verdant-ward-leaf/image.png",
+          "sha256": "ceae3d2228bf935a448416134e99838539816fdc5a821dc21546b8c64f961af7",
+          "bytes": 197383
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.assistant-trials.verdant-ward-leaf",
+          "image": "assets/library/asset.assistant-trials.verdant-ward-leaf/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.audio.spells.frost-impact",
+      "name": "Frost Impact",
+      "kind": "audio",
+      "tags": [
+        "spell",
+        "audio",
+        "frost-impact"
+      ],
+      "revision": 1,
+      "profile": "audio",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/library/asset.audio.spells.frost-impact/audio.wav",
+          "sha256": "c1ebaf3ca693a22e9bc1f6f6630a5986c947b07fa08c38e01a05a35ecc7f5063",
+          "bytes": 28710
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.audio.spells.radiant-chime",
+      "name": "Radiant Chime",
+      "kind": "audio",
+      "tags": [
+        "spell",
+        "audio",
+        "radiant-chime"
+      ],
+      "revision": 1,
+      "profile": "audio",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/library/asset.audio.spells.radiant-chime/audio.wav",
+          "sha256": "be0b612604a75d8683588b16e4e53fd0b781df166355ce59cb5608f92d738419",
+          "bytes": 52964
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.audio.spells.ward-hum",
+      "name": "Ward Hum",
+      "kind": "audio",
+      "tags": [
+        "spell",
+        "audio",
+        "ward-hum"
+      ],
+      "revision": 1,
+      "profile": "audio",
+      "outputs": [
+        {
+          "role": "data",
+          "path": "assets/library/asset.audio.spells.ward-hum/audio.wav",
+          "sha256": "f2d9d74a20a1b216e0007047424860f7c5e3295364922150efff071f6725d2c1",
+          "bytes": 44144
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.absorption-shield-command",
+      "name": "Absorption Shield — Finite Amber Damage Pool",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.absorption-shield-command/image.png",
+          "sha256": "df5a8db07f0fcf5606899fe33333fca354ebe7d4c1767f8690affbc399e56a06",
+          "bytes": 669473
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.absorption-shield-command",
+          "image": "assets/library/asset.custom.absorption-shield-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.animate-dead-command",
+      "name": "Animate Dead — Woodland Command",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.animate-dead-command/image.png",
+          "sha256": "135fe6d9263f76e86ea8869ab0292d1ad8e405de52be17e53e2d402e71259ca8",
+          "bytes": 642534
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.animate-dead-command",
+          "image": "assets/library/asset.custom.animate-dead-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.anti-magic-shell-command",
+      "name": "Anti-magic Shell — Spell-Damage Protection",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.anti-magic-shell-command/image.png",
+          "sha256": "4b208ac73928e05b21c52bf0210d3028f6c2b480926ce2284f446b0cae2f3436",
+          "bytes": 574748
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.anti-magic-shell-command",
+          "image": "assets/library/asset.custom.anti-magic-shell-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.armor-hex-command-icon",
+      "name": "Armor Hex — weakened chitin",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.armor-hex-command-icon/image.png",
+          "sha256": "eed201e718c0d2e62001516a8f909abf320c1173335ae8d3bf93d788c4e057b0",
+          "bytes": 631419
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.armor-hex-command-icon",
+          "image": "assets/library/asset.custom.armor-hex-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.ashstep-ant-icon",
+      "name": "Ashstep — forest ant command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.ashstep-ant-icon/image.png",
+          "sha256": "c8fda636efc8f911b0186b54b62e23c33b71c7eb4d94a38001941d01031c27fd",
+          "bytes": 592922
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.ashstep-ant-icon",
+          "image": "assets/library/asset.custom.ashstep-ant-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.ashstep-icon",
+      "name": "Ashstep — command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.ashstep-icon/image.png",
+          "sha256": "513167accb1699af942518f9098267bb4a1b27fdbd0eaef6f33ce7e368727fbb",
+          "bytes": 632120
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.ashstep-icon",
+          "image": "assets/library/asset.custom.ashstep-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.avatar-command-icon",
+      "name": "Avatar — command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.avatar-command-icon/image.png",
+          "sha256": "cc4cd788459797ab95f6ebd55e4ca107b421178dddcc746b6af1b66b35fe7165",
+          "bytes": 692161
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.avatar-command-icon",
+          "image": "assets/library/asset.custom.avatar-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.banish-command",
+      "name": "Banish command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.banish-command/image.png",
+          "sha256": "e28aaedf508017029c371785175efda19b8b6e900eb5e3fe97bd2604f69f9825",
+          "bytes": 646579
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.banish-command",
+          "image": "assets/library/asset.custom.banish-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.bash-command-icon",
+      "name": "Bash — command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.bash-command-icon/image.png",
+          "sha256": "af94c3b25c7b25536c4fbfd56f4abefec35b817497ac1bfc148c905da5b9bb1f",
+          "bytes": 537424
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.bash-command-icon",
+          "image": "assets/library/asset.custom.bash-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.battle-rhythm-command-icon",
+      "name": "Battle Rhythm — command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.battle-rhythm-command-icon/image.png",
+          "sha256": "839b1f7fec453808676ce84ddfd9017502d96a551bdc2d870e1fef0fec02f7a0",
+          "bytes": 547443
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.battle-rhythm-command-icon",
+          "image": "assets/library/asset.custom.battle-rhythm-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.black-arrow-command",
+      "name": "Black Arrow — Woodland Command",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.black-arrow-command/image.png",
+          "sha256": "cc76bb6cce5f00140d2adb9c56ccbb108dee7847892d85f4321914f5ccf33e2a",
+          "bytes": 626504
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.black-arrow-command",
+          "image": "assets/library/asset.custom.black-arrow-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.blink-command-icon",
+      "name": "Blink — Single Ant Fold",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.blink-command-icon/image.png",
+          "sha256": "b1a1ee583e91d83735c388939d02e1917cbfe6bbf3ec113168731282b8db76e9",
+          "bytes": 639389
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.blink-command-icon",
+          "image": "assets/library/asset.custom.blink-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.carrion-spirits-command",
+      "name": "Carrion Spirits command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.carrion-spirits-command/image.png",
+          "sha256": "4829166fc1723fb625aa543215e5fe5b59b476c6f30aea198986d60560c3005a",
+          "bytes": 588827
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.carrion-spirits-command",
+          "image": "assets/library/asset.custom.carrion-spirits-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.charm-command-icon",
+      "name": "Charm — Allegiance Command Icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.charm-command-icon/image.png",
+          "sha256": "ced6e30e9ead46660b85b4b1ccd1be2bd1e7cc1157d0d32e13bc085e35d3be47",
+          "bytes": 663843
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.charm-command-icon",
+          "image": "assets/library/asset.custom.charm-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.cleaving-attack-command-icon",
+      "name": "Cleaving Attack — command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.cleaving-attack-command-icon/image.png",
+          "sha256": "a4fa30840c06fc9cc50107126d0b64906c245d32ef47a8f8917dadb99f7a60f6",
+          "bytes": 550546
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.cleaving-attack-command-icon",
+          "image": "assets/library/asset.custom.cleaving-attack-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.critical-strike-command-icon",
+      "name": "Critical Strike — command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.critical-strike-command-icon/image.png",
+          "sha256": "2cad88077349e6b2b704b8ac665a99d21c598b013be6737b247992218b49e975",
+          "bytes": 591618
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.critical-strike-command-icon",
+          "image": "assets/library/asset.custom.critical-strike-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.dark-ritual-command-icon",
+      "name": "Dark Ritual — Mana Offering Command Icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.dark-ritual-command-icon/image.png",
+          "sha256": "6d49304c7573feafa70df8673fb2367af38d78c66f05ae7fa3f6ed46a1b88acb",
+          "bytes": 636845
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.dark-ritual-command-icon",
+          "image": "assets/library/asset.custom.dark-ritual-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.death-and-decay-command",
+      "name": "Death and Decay — original command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.death-and-decay-command/image.png",
+          "sha256": "39f4b4ee1cbf425cf4dcb727e340af09671c3201bd955100a28370b87338497c",
+          "bytes": 548480
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.death-and-decay-command",
+          "image": "assets/library/asset.custom.death-and-decay-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.death-burst-command",
+      "name": "Death Burst — Woodland Command",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.death-burst-command/image.png",
+          "sha256": "d767f2fe6f3f6e21f0824bd1d42ebd1f7348b801556f71326a62391eb6a4c6bd",
+          "bytes": 583153
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.death-burst-command",
+          "image": "assets/library/asset.custom.death-burst-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.death-coil-command",
+      "name": "Death Coil — original command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.death-coil-command/image.png",
+          "sha256": "c13cd360f2e32e36fd14d5040fd0dc1c2694148fce7968cf3a403f7e4eff8ab5",
+          "bytes": 528900
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.death-coil-command",
+          "image": "assets/library/asset.custom.death-coil-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.death-pact-command-icon",
+      "name": "Death Pact — Life Offering Command Icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.death-pact-command-icon/image.png",
+          "sha256": "812d998098309668e5b70ffe54ef3a996470b2c491d1c869ed7982bbadc17be3",
+          "bytes": 672161
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.death-pact-command-icon",
+          "image": "assets/library/asset.custom.death-pact-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.devour-command-icon",
+      "name": "Devour — Swallow Command Icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.devour-command-icon/image.png",
+          "sha256": "a5434829e66c1d200e3fa51fc8bcdb3e871e5c52734e355aeef163cc5d91e231",
+          "bytes": 622656
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.devour-command-icon",
+          "image": "assets/library/asset.custom.devour-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.dismiss-summon-command",
+      "name": "Dismiss Summon command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.dismiss-summon-command/image.png",
+          "sha256": "5c90a2a09899a1528863b876240a7143e0deb3952e3d8964896f99b64c65e21d",
+          "bytes": 676991
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.dismiss-summon-command",
+          "image": "assets/library/asset.custom.dismiss-summon-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.doom-command",
+      "name": "Doom — Woodland Command",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.doom-command/image.png",
+          "sha256": "86c909b60f95fc9abefb769e2369322c3e8932c25f31379e1c993b2801de5ba7",
+          "bytes": 531805
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.doom-command",
+          "image": "assets/library/asset.custom.doom-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.ember-garden-icon",
+      "name": "Ember Garden Icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.ember-garden-icon/image.png",
+          "sha256": "302e677b150ef426e1609dcc71dddecb739250288ecefa14c3e5109e5af5ed90",
+          "bytes": 618101
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.ember-garden-icon",
+          "image": "assets/library/asset.custom.ember-garden-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.evasion-command-icon",
+      "name": "Evasion — command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.evasion-command-icon/image.png",
+          "sha256": "7a1590ad542e8c021ae4f41aa0826fdb5383646cedc26bef13a8b1cadbaa2b43",
+          "bytes": 610158
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.evasion-command-icon",
+          "image": "assets/library/asset.custom.evasion-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.far-sight-command-icon",
+      "name": "Far Sight — Remote Leaf Window",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.far-sight-command-icon/image.png",
+          "sha256": "3c9111454769f6865444eb5736716fb812d277c4922f6be2f3fdee6211aa29f8",
+          "bytes": 555988
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.far-sight-command-icon",
+          "image": "assets/library/asset.custom.far-sight-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.flame-strike-command",
+      "name": "Flame Strike — original command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.flame-strike-command/image.png",
+          "sha256": "b0b67aa9f9f0c180ecf503c824b0a71cb35dc9b9f55202e1c2040b96524f5166",
+          "bytes": 542521
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.flame-strike-command",
+          "image": "assets/library/asset.custom.flame-strike-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.flight-form-command",
+      "name": "Flight Form command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.flight-form-command/image.png",
+          "sha256": "171592658360743ad85b0f41780a2e17f5769cb9a60ff49c0833289b761490bf",
+          "bytes": 689802
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.flight-form-command",
+          "image": "assets/library/asset.custom.flight-form-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.frost-armor-command",
+      "name": "Frost Armor — Iced Chitin and Melee Chill",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.frost-armor-command/image.png",
+          "sha256": "ef7042511b70843e885f82967e17dc35f5cbad4b1ef6037b7c3b62ee1aa26616",
+          "bytes": 645758
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.frost-armor-command",
+          "image": "assets/library/asset.custom.frost-armor-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.frost-arrows-command",
+      "name": "Frost Arrows command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.frost-arrows-command/image.png",
+          "sha256": "3032431733f66b506d15c818e374c9e72f3547adfef71fea876a4d89499eff9b",
+          "bytes": 641805
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.frost-arrows-command",
+          "image": "assets/library/asset.custom.frost-arrows-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.frost-nova-command-icon",
+      "name": "Frost Nova — ice bloom",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.frost-nova-command-icon/image.png",
+          "sha256": "c538da0642cb3f250a069d3146dadd0ed80b2e1da7b0cfb1b57d57d2edd3370f",
+          "bytes": 678693
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.frost-nova-command-icon",
+          "image": "assets/library/asset.custom.frost-nova-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.grove-nursery-command-icon",
+      "name": "Grove Nursery · Command Icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.grove-nursery-command-icon/image.png",
+          "sha256": "5c5b460b18f14519e318109261d176c2b23d5d5497b63a0ae0f71419e0285d92",
+          "bytes": 604842
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.grove-nursery-command-icon",
+          "image": "assets/library/asset.custom.grove-nursery-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.healing-wave-command",
+      "name": "Healing Wave — Allied Restorative Chain",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.healing-wave-command/image.png",
+          "sha256": "c3c7e41bf4bf37063342cb85d4564c3273447e491629e3cb59c7fb1daf6e21e4",
+          "bytes": 542947
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.healing-wave-command",
+          "image": "assets/library/asset.custom.healing-wave-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.hex-command-icon",
+      "name": "Hex — tree frog transformation",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.hex-command-icon/image.png",
+          "sha256": "07e4aaa9eb2258ffa0c71a87a2d120b2d058438b8c534d7418d1b4d456d0abd9",
+          "bytes": 584242
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.hex-command-icon",
+          "image": "assets/library/asset.custom.hex-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.holy-light-command",
+      "name": "Holy Light — original command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.holy-light-command/image.png",
+          "sha256": "b5e1cf0c8c96d1520117d1dbb393132d72b4555da705159b54e4e075e55a5acb",
+          "bytes": 556732
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.holy-light-command",
+          "image": "assets/library/asset.custom.holy-light-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.howl-of-terror-command-icon",
+      "name": "Howl of Terror — weakened offense",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.howl-of-terror-command-icon/image.png",
+          "sha256": "c86920d02c06c21166cb2d5c7cad7291ac76eba399aed61f7615559bf4482d37",
+          "bytes": 510711
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.howl-of-terror-command-icon",
+          "image": "assets/library/asset.custom.howl-of-terror-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.immolation-command",
+      "name": "Immolation — original command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.immolation-command/image.png",
+          "sha256": "1e1a41b489a73907f983384381468957f5306e1b5a6c9b911fc3af8c39dcf71d",
+          "bytes": 591370
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.immolation-command",
+          "image": "assets/library/asset.custom.immolation-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.inferno-command-icon",
+      "name": "Inferno — Golden Fire Command Icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.inferno-command-icon/image.png",
+          "sha256": "3140dfc25c9389dc701ee4c406f82a50ea688a17cd6a0e64e1d062d3a73dcf5a",
+          "bytes": 649987
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.inferno-command-icon",
+          "image": "assets/library/asset.custom.inferno-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.inferno-fire-atlas",
+      "name": "Inferno — Golden Fire Impact Atlas",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.inferno-fire-atlas/image.png",
+          "sha256": "2c976336e009bf6d4a865199270388207b6a606a6fb9add3d00b7c9e21ad0d90",
+          "bytes": 225765
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.inferno-fire-atlas",
+          "image": "assets/library/asset.custom.inferno-fire-atlas/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.invisibility-command-icon",
+      "name": "Invisibility — Quiet Leaf Veil",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.invisibility-command-icon/image.png",
+          "sha256": "6f9f178ce351fa8f0f1d3eaf53dcebb356cfeb0f6d91059c904b1b9abf3f3c72",
+          "bytes": 577763
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.invisibility-command-icon",
+          "image": "assets/library/asset.custom.invisibility-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.life-drain-command",
+      "name": "Life Drain — original command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.life-drain-command/image.png",
+          "sha256": "871759863ac12495f71a03fc4666678a76ca0c81d3e8b1801efda788ddb3f998",
+          "bytes": 504532
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.life-drain-command",
+          "image": "assets/library/asset.custom.life-drain-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.lightning-shield-command",
+      "name": "Lightning Shield — Outward Electrical Damage",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.lightning-shield-command/image.png",
+          "sha256": "25ba863440934b58c75e4cf31c6e58ca269f584aa7fd0ea8fadb9e55c0bc97a3",
+          "bytes": 625211
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.lightning-shield-command",
+          "image": "assets/library/asset.custom.lightning-shield-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.mana-burn-command",
+      "name": "Mana Burn — original command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.mana-burn-command/image.png",
+          "sha256": "86b333a02f2af1a55026bfec0e4f7430494f1c74647973926f22c39f4b676ed2",
+          "bytes": 560446
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.mana-burn-command",
+          "image": "assets/library/asset.custom.mana-burn-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.mana-shield-command",
+      "name": "Mana Shield — Mana-Fed Protection",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.mana-shield-command/image.png",
+          "sha256": "77e00d02a9fee6be3ed47c86fe453666d9669aac218148ffb7c4ec82aa1b7688",
+          "bytes": 649893
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.mana-shield-command",
+          "image": "assets/library/asset.custom.mana-shield-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.mass-teleport-command-icon",
+      "name": "Mass Teleport — Root Circle Caravan",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.mass-teleport-command-icon/image.png",
+          "sha256": "f1bb7c0dd97f2f2ed1e0e20d26aa85e0e232b020b735510db9e69b5473ebdd82",
+          "bytes": 702648
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.mass-teleport-command-icon",
+          "image": "assets/library/asset.custom.mass-teleport-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.metamorphosis-command-icon",
+      "name": "Metamorphosis — command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.metamorphosis-command-icon/image.png",
+          "sha256": "5d0ae9d6c08199f8628b9c76960fc0dcc9639db35849dd3968b18f797cb2bf17",
+          "bytes": 468261
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.metamorphosis-command-icon",
+          "image": "assets/library/asset.custom.metamorphosis-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.moonpetal-ward-symbol",
+      "name": "Moonpetal Ward — Ground Symbol",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.moonpetal-ward-symbol/image.png",
+          "sha256": "f40f846f1532832c7a01c98f9c9ddf7f1e91387923ae236bc3afca3311726227",
+          "bytes": 356093
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.moonpetal-ward-symbol",
+          "image": "assets/library/asset.custom.moonpetal-ward-symbol/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.raise-dead-command",
+      "name": "Raise Dead — Woodland Command",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.raise-dead-command/image.png",
+          "sha256": "c534fdfd8327e78c4cf604be8140934318336a201d1193c4b619a11570b5bd4b",
+          "bytes": 615461
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.raise-dead-command",
+          "image": "assets/library/asset.custom.raise-dead-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.rallying-spark-icon",
+      "name": "Rallying Spark",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.rallying-spark-icon/image.png",
+          "sha256": "54ba3befb9d643feab2985ae7cf0e8f60cdf47b9cfd6ffd7df3e868a0dbb7e2f",
+          "bytes": 572290
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.rallying-spark-icon",
+          "image": "assets/library/asset.custom.rallying-spark-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.reincarnation-command",
+      "name": "Reincarnation — Woodland Command",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.reincarnation-command/image.png",
+          "sha256": "6a227f34d4d8389c824af550e65749e02fd19a09e7a4580c31f926a1c720c3bd",
+          "bytes": 614479
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.reincarnation-command",
+          "image": "assets/library/asset.custom.reincarnation-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.resurrection-command",
+      "name": "Resurrection — Woodland Command",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.resurrection-command/image.png",
+          "sha256": "ec034055c70ec9380fa13401257a26d6a7f87e09a8580706f64b9a6e467781fa",
+          "bytes": 666116
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.resurrection-command",
+          "image": "assets/library/asset.custom.resurrection-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.roar-command-icon",
+      "name": "Roar — command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.roar-command-icon/image.png",
+          "sha256": "c16beceb75e1cfeb1e2b5b568aa8274526060c10d82be85510b5c46ea86612cb",
+          "bytes": 627278
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.roar-command-icon",
+          "image": "assets/library/asset.custom.roar-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.searing-arrows-command",
+      "name": "Searing Arrows command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.searing-arrows-command/image.png",
+          "sha256": "b20d939d70870fe3bb1a987a1f626a4030970b646f0e9e6cc730765ea7a0297b",
+          "bytes": 507292
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.searing-arrows-command",
+          "image": "assets/library/asset.custom.searing-arrows-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.silence-command-icon",
+      "name": "Silence — sealed casting",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.silence-command-icon/image.png",
+          "sha256": "cdd5b1dda7e0fbf55cec7a0b67b21939315e906645bc872dc8f226e8ff839532",
+          "bytes": 549930
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.silence-command-icon",
+          "image": "assets/library/asset.custom.silence-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.siphon-mana-command",
+      "name": "Siphon Mana — original command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.siphon-mana-command/image.png",
+          "sha256": "0186a2f44f69661738d6337f4d0eadcc5ca2330f893c463f62913fb8b30c4bf1",
+          "bytes": 567505
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.siphon-mana-command",
+          "image": "assets/library/asset.custom.siphon-mana-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.sleep-command-icon",
+      "name": "Sleep — dreaming ant",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.sleep-command-icon/image.png",
+          "sha256": "a83c4840a3512a776bcd76e68b3e86b7184d6dc904ab494023a2b6f702f7b9fc",
+          "bytes": 479935
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.sleep-command-icon",
+          "image": "assets/library/asset.custom.sleep-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.sleep-floating-crescent",
+      "name": "Sleep — floating lavender crescent",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.sleep-floating-crescent/image.png",
+          "sha256": "0cc70a08a43fd1add87db6b8a0f67456f0cbb5927be43265ef6380540494e02e",
+          "bytes": 201070
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.sleep-floating-crescent",
+          "image": "assets/library/asset.custom.sleep-floating-crescent/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.soul-harvest-command",
+      "name": "Soul Harvest — Woodland Command",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.soul-harvest-command/image.png",
+          "sha256": "f81c09e32b052641cc64419b9d6bd248fbbbb05183bfbeb8fa3867eb9aaf56f0",
+          "bytes": 605648
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.soul-harvest-command",
+          "image": "assets/library/asset.custom.soul-harvest-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.spell-ward-command",
+      "name": "Spell Ward — Hostile Spell Rejection",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.spell-ward-command/image.png",
+          "sha256": "dfd73329b9e2c47d75267e5621d3523b4808290f882eb914e6166c12423b2aff",
+          "bytes": 666979
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.spell-ward-command",
+          "image": "assets/library/asset.custom.spell-ward-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.spirit-companion-command",
+      "name": "Spirit Companion command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.spirit-companion-command/image.png",
+          "sha256": "3ea3801efe974e7de50faeac94f3f37a96b5ab668e06e72e2d7b849db51d6dbb",
+          "bytes": 624302
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.spirit-companion-command",
+          "image": "assets/library/asset.custom.spirit-companion-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.spirit-swarm-command-icon",
+      "name": "Spirit Swarm · Command Icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.spirit-swarm-command-icon/image.png",
+          "sha256": "365483e789c7802778bfb06c25147ecc4eb34a178623ef0892caf6ecbc06bf4a",
+          "bytes": 671147
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.spirit-swarm-command-icon",
+          "image": "assets/library/asset.custom.spirit-swarm-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.spirit-trinity-command-icon",
+      "name": "Spirit Trinity · Command Icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.spirit-trinity-command-icon/image.png",
+          "sha256": "f9b65041c182e61de635feb60ca1b0840071daec0482f32784e9d2009f4cb92b",
+          "bytes": 676900
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.spirit-trinity-command-icon",
+          "image": "assets/library/asset.custom.spirit-trinity-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.tranquility-command",
+      "name": "Tranquility — Restorative Grove Pulses",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.tranquility-command/image.png",
+          "sha256": "dbcc065232c54d0939ae57e524f530cd49c50c4760bd17410fa34dec128c02c8",
+          "bytes": 701789
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.tranquility-command",
+          "image": "assets/library/asset.custom.tranquility-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.true-sight-command-icon",
+      "name": "True Sight — Amber Detector Eye",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.true-sight-command-icon/image.png",
+          "sha256": "2d2615471ceecc73283e5b7f29a5c1f926f7c91743d8dee43d3c8460dcfa8431",
+          "bytes": 599375
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.true-sight-command-icon",
+          "image": "assets/library/asset.custom.true-sight-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.unstoppable-command",
+      "name": "Unstoppable command icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.unstoppable-command/image.png",
+          "sha256": "73f9939c5f198cc685fffd9e0d8ce4ea811c432b505bdece04deabc8f604b23a",
+          "bytes": 662605
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.unstoppable-command",
+          "image": "assets/library/asset.custom.unstoppable-command/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.war-stomp-command-icon",
+      "name": "War Stomp — earth impact",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.war-stomp-command-icon/image.png",
+          "sha256": "3f429f7523a63a957b492d8270de80aa29762ab868bf0b8c9bb9712b6a8b4dc4",
+          "bytes": 598916
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.war-stomp-command-icon",
+          "image": "assets/library/asset.custom.war-stomp-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.web-command-icon",
+      "name": "Web — silk grounding",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.web-command-icon/image.png",
+          "sha256": "04ef0db8f14bc164bcacc0f148506c6e8b8c933259227a55ac8952dc74eca074",
+          "bytes": 587055
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.web-command-icon",
+          "image": "assets/library/asset.custom.web-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.custom.wind-walk-command-icon",
+      "name": "Wind Walk — Swift Concealed Ant",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.custom.wind-walk-command-icon/image.png",
+          "sha256": "49ceadc2fe07bdef38a4c87dca0caf3cd07e963449838d4f5edefb3ade970093",
+          "bytes": 513222
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.custom.wind-walk-command-icon",
+          "image": "assets/library/asset.custom.wind-walk-command-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.effects.blizzard-ice",
       "name": "Blizzard · falling ice",
       "kind": "texture",
@@ -7873,7 +9811,45 @@
           "scale": 1,
           "healthHeight": 2.15,
           "projectile": "arrow",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "back",
+              "node": "socket_back",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.ants.archer",
@@ -7934,7 +9910,45 @@
           "character": "bombardier",
           "scale": 1,
           "healthHeight": 3.05,
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "back",
+              "node": "socket_back",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.ants.bombardier",
@@ -7983,7 +9997,45 @@
           },
           "character": "warrior",
           "scale": 1,
-          "healthHeight": 2.3
+          "healthHeight": 2.3,
+          "sockets": [
+            {
+              "name": "left-hand",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "right-hand",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "blade-base",
+              "node": "socket_blade_base",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "blade-tip",
+              "node": "socket_blade_tip",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.ants.warrior",
@@ -8061,7 +10113,36 @@
           },
           "character": "base",
           "scale": 1,
-          "healthHeight": 2.15
+          "healthHeight": 2.15,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "back",
+              "node": "socket_back",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.ants.settler",
@@ -8077,7 +10158,36 @@
           },
           "character": "base",
           "scale": 1,
-          "healthHeight": 2.15
+          "healthHeight": 2.15,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "back",
+              "node": "socket_back",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "asset.item.wood",
@@ -8087,7 +10197,36 @@
             "height": 2,
             "formationSpacing": 1
           },
-          "scale": 1
+          "scale": 1,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "back",
+              "node": "socket_back",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "asset.item.amber",
@@ -8097,7 +10236,36 @@
             "height": 2,
             "formationSpacing": 1
           },
-          "scale": 1
+          "scale": 1,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "back",
+              "node": "socket_back",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "asset.item.root",
@@ -8107,7 +10275,36 @@
             "height": 2,
             "formationSpacing": 1
           },
-          "scale": 1
+          "scale": 1,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "back",
+              "node": "socket_back",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         }
       ],
       "scenery": []
@@ -8201,7 +10398,18 @@
           "scale": 1,
           "healthHeight": 2.8600000000000003,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.bloom-witch",
@@ -8395,7 +10603,18 @@
           "scale": 1,
           "healthHeight": 1.87,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.dew-sprite",
@@ -8541,7 +10760,18 @@
           "scale": 1,
           "healthHeight": 2.4200000000000004,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.needle-wasp",
@@ -8639,7 +10869,18 @@
           "scale": 1,
           "healthHeight": 3.5200000000000005,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.old-root",
@@ -8737,7 +10978,18 @@
           "scale": 1,
           "healthHeight": 1.9800000000000002,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.puffcap",
@@ -8787,7 +11039,18 @@
           "scale": 1,
           "healthHeight": 3.08,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.root-seer",
@@ -8933,7 +11196,18 @@
           "scale": 1,
           "healthHeight": 2.75,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.seedcaster",
@@ -8983,7 +11257,18 @@
           "scale": 1,
           "healthHeight": 1.4300000000000002,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.spitter",
@@ -9033,7 +11318,18 @@
           "scale": 1,
           "healthHeight": 1.4300000000000002,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.tadpole-spirit",
@@ -9083,7 +11379,18 @@
           "scale": 1,
           "healthHeight": 1.9800000000000002,
           "projectile": "arrow",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.thorn-slinger",
@@ -9133,7 +11440,18 @@
           "scale": 1,
           "healthHeight": 1.7600000000000002,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.tree-frog",
@@ -9183,7 +11501,18 @@
           "scale": 1,
           "healthHeight": 2.64,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.twigcaster",
@@ -9233,7 +11562,18 @@
           "scale": 1,
           "healthHeight": 2.09,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.violet-sporeling",
@@ -9331,7 +11671,18 @@
           "scale": 1,
           "healthHeight": 2.2,
           "projectile": "thorn",
-          "projectileSocket": "socket_projectile"
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
         },
         {
           "id": "icon.neutral.willow-wisp",

@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.sleep",
+  "name": "Sleep",
+  "description": "Gentle floating lavender crescent and cyclic dream motes, owned by the affected Sleep status.",
+  "durationTicks": 400,
+  "loop": false,
+  "layers": [
+    {
+      "id": "aura",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#9693ed",
+      "accent": "#d9ceff",
+      "durationTicks": 400,
+      "count": 1,
+      "size": 1.1,
+      "height": 1.1,
+      "motion": {
+        "scale": {
+          "periodTicks": 120,
+          "min": 0.9,
+          "max": 1.1,
+          "easing": "sine"
+        },
+        "opacity": {
+          "periodTicks": 120,
+          "min": 0.16,
+          "max": 0.3,
+          "easing": "sine"
+        }
+      },
+      "follow": true
+    },
+    {
+      "id": "crescent",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "billboard",
+      "colour": "#ffffff",
+      "accent": "#ffffff",
+      "durationTicks": 400,
+      "count": 1,
+      "size": 1.7,
+      "height": 4.7,
+      "motion": {
+        "rotation": {
+          "periodTicks": 1200,
+          "direction": "counterclockwise"
+        },
+        "scale": {
+          "periodTicks": 160,
+          "min": 0.92,
+          "max": 1.05,
+          "easing": "sine"
+        },
+        "opacity": {
+          "periodTicks": 160,
+          "min": 0.78,
+          "max": 0.98,
+          "easing": "sine"
+        }
+      },
+      "blend": "normal",
+      "orientation": "camera",
+      "follow": true,
+      "texture": {
+        "asset": "asset.custom.sleep-floating-crescent",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "mote-left",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "offset": {
+        "x": -0.9,
+        "y": 0,
+        "z": 0
+      },
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#c4b2ff",
+      "accent": "#f0eaff",
+      "durationTicks": 400,
+      "count": 1,
+      "size": 0.23,
+      "height": 4.2,
+      "motion": {
+        "scale": {
+          "periodTicks": 100,
+          "min": 0.65,
+          "max": 1.2,
+          "easing": "sine"
+        },
+        "opacity": {
+          "periodTicks": 100,
+          "min": 0.25,
+          "max": 0.8,
+          "easing": "sine"
+        }
+      },
+      "follow": true
+    },
+    {
+      "id": "mote-right",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "offset": {
+        "x": 0.95,
+        "y": 0,
+        "z": 0.15
+      },
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#c4b2ff",
+      "accent": "#f0eaff",
+      "durationTicks": 400,
+      "count": 1,
+      "size": 0.18,
+      "height": 5,
+      "motion": {
+        "scale": {
+          "periodTicks": 120,
+          "min": 0.65,
+          "max": 1.2,
+          "easing": "sine",
+          "phase": 0.5
+        },
+        "opacity": {
+          "periodTicks": 120,
+          "min": 0.25,
+          "max": 0.8,
+          "easing": "sine",
+          "phase": 0.5
+        }
+      },
+      "follow": true
+    }
+  ]
+}

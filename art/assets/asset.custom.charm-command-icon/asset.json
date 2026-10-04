@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.charm-command-icon",
+  "name": "Charm — Allegiance Command Icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "a4b43de778631b6aa00c3d9fef75cae7c9b2f905da6b211040764467b5ba6c83",
+      "bytes": 1162
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "ced6e30e9ead46660b85b4b1ccd1be2bd1e7cc1157d0d32e13bc085e35d3be47",
+      "bytes": 663843
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "f58e4645772bdfb1c43c861bc0792be2c2e9ebb4d65d28428a77b160846d7a27",
+      "bytes": 1730269
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.charm-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.charm-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

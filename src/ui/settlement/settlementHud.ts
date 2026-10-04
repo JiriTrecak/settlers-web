@@ -1,3 +1,4 @@
+import {formDefinition} from '../../sim/abilities/forms';
 import type {UnitCameraMode} from '../../shared/camera/modes';
 import {HUD_CHANGED,readHudLayout,readHudScale} from '../../shared/settings/hud';
 import {workplaceCard} from '../../presentation/workplace';
@@ -504,7 +505,7 @@ export class SettlementHud {
     this.info.hidden = !focus;
     this.experience.hidden = true;
     if (focus) {
-      const d = content.get(focus.definition);
+      const d = formDefinition(content.get(focus.definition),focus,content);
       const xp = experienceMeter(focus, d, this.current?.heroLevelCap);
       this.experience.hidden = !xp;
       if (xp) {

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.raise-dead",
+  "icon": "asset.custom.raise-dead-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "manifestation",
+      "effect": "effect.core.raise-dead.manifestation",
+      "event": "summoned",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

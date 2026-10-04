@@ -1,6 +1,7 @@
 import type {ContentRegistry} from '../../content/registry';
 import type {CampaignCompany} from '../../shared/scenario/company';
 import { PlayerAI } from "../ai/playerAI";
+import type {ChecksumMode} from '../game/checkpoint';
 import { createMapBriefing } from "../ai/briefing";
 import { Geography } from "../ai/frame";
 import { Game } from "../game/game";
@@ -128,17 +129,24 @@ export class World {
   }
 
   tick(): void {
+    const profile=this.settlement.context.profile;
+    profile.reset();
+    profile.measure('World',()=>this.tickMeasured());
+  }
+  private tickMeasured():void {
+    const profile=this.settlement.context.profile;
     this.clock.tick();
-    this.applyDue();
-    this.settlement.tick(this.clock.tickIndex);
+    profile.measure('Command application',()=>this.applyDue());
+    profile.measure('Settlement',()=>this.settlement.tick(this.clock.tickIndex));
     for (const name of Object.keys(this.aiTimings)) delete this.aiTimings[name];
     for (const [player, brain] of this.brains) {
       if (brain.due(this.clock.tickIndex)) {
         const start = performance.now();
-        const commands = brain.decide(
+        brain.profile=profile;
+        const commands = profile.measure(`AI player ${player+1}`,()=>brain.decide(
           this.clock.tickIndex,
-          this.settlement.view(player),
-        );
+          profile.measure('Player projection',()=>this.settlement.view(player)),
+        ));
         for (const command of commands)
           this.enqueue(command.action, this.clock.tickIndex + 1, {
             player,
@@ -247,7 +255,7 @@ export class World {
     this.applied.length = 0;
     this.commandReceipts.length = 0;
   }
-  checksum(): number {
+  checksum(mode:ChecksumMode='signal'): number {
     let h = 2166136261 | 0;
     const mix = (v: number): void => {
       h = Math.imul(h ^ (v | 0), 0x9e3779b1) | 0;
@@ -255,17 +263,23 @@ export class World {
     mix(this.clock.tickIndex);
     mix(this.rng.state());
     mix(this.size);
-    mix(this.settlement.checksum());
+    const profile=this.settlement.context.profile;
+    mix(profile.measure('Settlement hash',()=>this.settlement.checksum(mode)));
+    if(mode==='signal'){
+      // These are already-maintained values, not freshly constructed snapshots.
+      // Commands/AI internals are observed indirectly through gameplay outcomes.
+      mix(this.slots.length);mix(this.brains.size);mix(this.pending.length);
+      return h>>>0;
+    }
     mix(parseInt(fingerprint(this.slots), 16));
-    mix(parseInt(fingerprint(this.pending), 16));
-    mix(
-      parseInt(
+    mix(profile.measure('Pending commands hash',()=>parseInt(fingerprint(this.pending),16)));
+    mix(profile.measure('AI state hash',()=>parseInt(
         fingerprint(
           [...this.brains].map(([player, b]) => [player, b.snapshot()]),
         ),
         16,
       ),
-    );
+    ));
     return h >>> 0;
   }
 

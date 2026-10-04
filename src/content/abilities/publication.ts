@@ -1,4 +1,4 @@
-import {effectImage,presentationImages} from './resources';
+import {effectResource,presentationResources} from './resources';
 import {canonical} from '../registry';
 import {ABILITY_ABI,abilityLibrarySchema} from './schema';
 import published from '../../../content/abilities/published.json';
@@ -9,6 +9,6 @@ export async function verifyAbilityPublication(raw:unknown=published){
  const p=raw as {schemaVersion:number;abi:string;library:unknown}|null;
  if(!p||p.abi!==ABILITY_ABI||p.schemaVersion!==1)throw Error('Unsupported ability publication ABI');
  const library=abilityLibrarySchema.parse(p.library);
- for(const presentation of library.presentations)for(const ref of presentationImages(presentation))effectImage(ref);
+ for(const presentation of library.presentations)for(const ref of presentationResources(presentation))effectResource(ref);
  return library;
 }

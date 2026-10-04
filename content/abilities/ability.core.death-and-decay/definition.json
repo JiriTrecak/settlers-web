@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.death-and-decay",
+  "name": "Death and Decay",
+  "description": "Channel for 35 pulses, once per second. Each pulse deals spell damage equal to 4% of each recipient’s current maximum health, including the caster, allies and buildings in the area. Damage protection still applies. Adapted from Warcraft III; terrain is unaffected.",
+  "activation": "targeted",
+  "ranks": [
+    {}
+  ],
+  "targeting": {
+    "includeBuildings": true,
+    "kind": "point",
+    "radius": 5,
+    "maxTargets": 64,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally",
+      "enemy"
+    ],
+    "allowSelf": true,
+    "range": 18,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 12,
+    "recoverTicks": 8,
+    "channel": {
+      "waves": 35,
+      "intervalTicks": 40
+    },
+    "cost": {
+      "resource": "mana",
+      "amount": 250,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 6000,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "amount": 0,
+      "scale": {
+        "source": "recipient",
+        "stat": "maxHealth",
+        "permille": 40
+      },
+      "damageType": "spell"
+    }
+  ],
+  "presentation": "presentation.core.death-and-decay"
+}

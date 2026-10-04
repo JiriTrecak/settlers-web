@@ -1,14 +1,43 @@
 import {BufferAttribute,Mesh,Texture,type Material,type Object3D,type Color} from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
-/** Merge sibling static surfaces with identical draw state. Authored linear RGB
- * moves to vertex colors; textures, seasonal tints, rigs and animation stay out.
+/** Merge sibling static surfaces with identical draw state. Shared materials
+ * retain textures/tints verbatim. Different compatible untextured colors move
+ * to vertex colors; rigs and animation stay out.
  * Equal local transforms also preserve object-space procedural grain exactly. */
 export function batchStaticMaterials(root:Object3D,animated=false):()=>void {
   if(animated)return ()=>{};
   const oldGeometry=new Set<Mesh['geometry']>(),oldMaterials=new Set<Material>();
   const parents:Object3D[]=[];root.traverse(o=>{if(o.children.some(c=>c instanceof Mesh))parents.push(o);});
   for(const parent of parents){
+    // Exporters often emit hundreds of leaf fans as separate primitives even
+    // though their UVs and positions are already in one shared coordinate space.
+    // Exact material identity allows concatenation without rebaking any color,
+    // texture, shader or seasonal state. Do not flatten different transforms:
+    // that would change object-space wind and procedural material coordinates.
+    const shared=new Map<string,Mesh[]>();
+    for(const child of parent.children){
+      if(!(child instanceof Mesh)||'isSkinnedMesh' in child||child.children.length||child.morphTargetInfluences||Array.isArray(child.material))continue;
+      const m=child.material,g=child.geometry;
+      if(m.transparent||g.groups.length||g.drawRange.start!==0||g.drawRange.count!==Infinity)continue;
+      child.updateMatrix();
+      const attributes=Object.keys(g.attributes).sort().map(k=>{const a=g.attributes[k]!;return [k,a.itemSize,a.normalized,a.array.constructor.name];});
+      const {name:_label,...renderData}=child.userData; // GLTFLoader stores the display name in extras too.
+      const key=JSON.stringify([m.uuid,child.matrix.elements,child.visible,child.renderOrder,child.layers.mask,child.castShadow,child.receiveShadow,child.frustumCulled,child.customDepthMaterial?.uuid,child.customDistanceMaterial?.uuid,renderData,!!g.index,attributes]);
+      const list=shared.get(key)??[];list.push(child);shared.set(key,list);
+    }
+    for(const meshes of shared.values()){
+      if(meshes.length<2)continue;
+      const source=meshes[0]!;
+      // Hooks may depend on a specific object. Keep those draws independent.
+      if(meshes.some(m=>m.onBeforeRender!==source.onBeforeRender||m.onAfterRender!==source.onAfterRender))continue;
+      const geometry=mergeGeometries(meshes.map(m=>m.geometry));if(!geometry)continue;
+      const merged=source.clone(false);merged.geometry=geometry;merged.name=`${source.name}_shared`;
+      merged.customDepthMaterial=source.customDepthMaterial;merged.customDistanceMaterial=source.customDistanceMaterial;
+      merged.onBeforeRender=source.onBeforeRender;merged.onAfterRender=source.onAfterRender;
+      parent.add(merged);
+      for(const mesh of meshes){oldGeometry.add(mesh.geometry);mesh.removeFromParent();}
+    }
     const groups=new Map<string,Mesh[]>();
     for(const child of parent.children){
       if(!(child instanceof Mesh)||'isSkinnedMesh' in child||child.children.length||child.morphTargetInfluences||Array.isArray(child.material))continue;

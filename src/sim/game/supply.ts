@@ -27,7 +27,7 @@ export function colonySupply(entities: readonly Entity[], owner: Owner, registry
     }
   }
   for (const e of entities) {
-    if (e.owner !== owner || !e.fallen || !reviving.has(e.id)) continue;
+    if (e.owner !== owner || !e.fallen || (!reviving.has(e.id)&&!e.spellReturn)) continue;
     reserved += registry.get(e.definition).supplyCost ?? 0;
     queuedUnits++;
   }

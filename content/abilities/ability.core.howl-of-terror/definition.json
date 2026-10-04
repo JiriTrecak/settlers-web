@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.howl-of-terror",
+  "name": "Howl of Terror",
+  "description": "Reduce nearby enemies’ attack damage by 30% for twelve seconds.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "query": {
+        "center": "caster",
+        "radius": 8,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "id": "fear",
+      "amount": 480,
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {
+        "damagePermille": -300
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.howl-of-terror"
+}

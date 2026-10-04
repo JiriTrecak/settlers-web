@@ -18,8 +18,8 @@ export class Garrisons {
  constructor(private readonly c:GameContext){}
  occupant(host:Entity){return this.c.liveUnits().find(e=>e.unit?.garrison?.building===host.id);}
  eligible(e:Entity,host:Entity){
-  return !!e.unit&&!e.unit.contained&&!e.unit.release&&!e.unit.cargo&&this.c.ready(host)&&!host.construction&&
-   host.owner===e.owner&&!!this.c.def(host).garrison?.accepts.includes(e.definition);
+  return !e.summoned?.splitOperation&&!this.c.liveUnits().some(u=>u.spellContainment?.host===e.id)&&!!e.unit&&!e.unit.contained&&!e.unit.release&&!e.unit.cargo&&this.c.ready(host)&&!host.construction&&
+   !this.c.spatial.airborne(e)&&host.owner===e.owner&&!!this.c.def(host).garrison?.accepts.includes(e.definition);
  }
  available(e:Entity,host:Entity){
   return this.eligible(e,host)&&!this.c.liveUnits().some(other=>other.id!==e.id&&

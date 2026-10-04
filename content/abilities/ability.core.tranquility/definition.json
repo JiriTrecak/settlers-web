@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.tranquility",
+  "name": "Tranquility",
+  "description": "Channel ten healing pulses around the caster. Movement or disabling the caster interrupts the channel.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 20,
+      "cooldownTicks": 160
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "channel": {
+      "waves": 10,
+      "intervalTicks": 40
+    },
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "heal",
+      "target": "target",
+      "query": {
+        "center": "caster",
+        "radius": 5,
+        "relations": [
+          "ally"
+        ],
+        "allowSelf": true,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "amount": 25
+    }
+  ],
+  "presentation": "presentation.core.tranquility"
+}

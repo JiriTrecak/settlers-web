@@ -1,4 +1,4 @@
-import {HeightField} from '../../shared/map/height';
+import {HeightField,type HeightDirty} from '../../shared/map/height';
 import {sourceHeight,unpackSourceBytes,type ImportedTerrain} from '../../shared/map/importedTerrain';
 import {sourceWater} from '../../shared/map/importedWater';
 import {riverPoint} from '../../shared/authoring/generate';
@@ -11,6 +11,11 @@ export function waterSurface(input:ImportedTerrain|HeightField):WaterSurfaceData
   return {origin:input.origin,offset:[input.origin[0]-input.sourceOrigin[0],input.origin[1]-input.sourceOrigin[1]],size:[water.width,water.depth],heightOffset:input.heightOffset,ground,groundSize:input.heightSize,groundScale:3,flow:water.flow,color:input.groundColor?{bytes:unpackSourceBytes(input.groundColor.rgba),size:input.groundColor.size}:undefined,tiles:input.water.map(b=>tile(b.x,b.z,input.origin,(x,z)=>water.sample(x,z),()=>true))};
  }
  const field=input,span=field.verts-1,origin:[number,number]=[field.origin,field.origin],flow=new Uint8Array(span*span*4),wet=new Set<string>();
+ // The flow scan already tests every cell center. Mesh topology reuses those
+ // decisions; neighbouring cells share four corners instead of resampling them.
+ // Keep the cache local to this build so mutable sculpted terrain cannot go stale.
+ const centers=new Uint8Array(span*span),stride=Math.ceil(span/16)*16+1,corners=new Uint8Array(stride*stride);
+ const cornerHeights=new Float32Array(stride*stride);
  const profiles=new Float32Array(256*4*4),profileIds=new Map<string,number>();
  const linear=(hex:string)=>[1,3,5].map(i=>{const v=parseInt(hex.slice(i,i+2),16)/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
  for(const river of field.watercourses){if(profileIds.has(river.profile))continue;const id=profileIds.size+1;if(id>255)throw Error('A map supports at most 255 distinct water profiles');profileIds.set(river.profile,id);const p=river.style;
@@ -20,11 +25,18 @@ export function waterSurface(input:ImportedTerrain|HeightField):WaterSurfaceData
  const surface=(x:number,z:number)=>field.waterAt(x,z);
  // Shoreline triangles include dry vertices. Extend the local level a single cell
  // beyond the wet mask so those corners do not plunge to the global ocean height.
- const vertexSurface=(x:number,z:number)=>{let h=surface(x,z);for(const river of field.watercourses){const p=riverPoint(x,z,river);if(p.offset<=river.width*p.widthScale/2+1.5)h=Math.max(h,p.elevation);}return h;};
+ const vertexSurface=(x:number,z:number)=>{const i=(z-origin[1])*stride+x-origin[0];if(corners[i]!&1)return cornerHeights[i]!;let h=surface(x,z);for(const river of field.watercourses){const p=riverPoint(x,z,river);if(p.offset<=river.width*p.widthScale/2+1.5)h=Math.max(h,p.elevation);}corners[i]!|=1;cornerHeights[i]=h;return h;};
+ const isWet=(x:number,z:number)=>{
+  const gx=x-origin[0],gz=z-origin[1];
+  if(!Number.isInteger(gx)){const cx=Math.floor(gx),cz=Math.floor(gz);if(cx>=0&&cz>=0&&cx<span&&cz<span)return centers[cz*span+cx]===2;return field.sample(x,z)<=surface(x,z)+.15;}
+  const i=gz*stride+gx;if(corners[i]!&2)return !!(corners[i]!&4);
+  const result=field.sample(x,z)<=surface(x,z)+.15;corners[i]!|=result?6:2;return result;
+ };
  for(let z=0;z<span;z++)for(let x=0;x<span;x++){
   const wx=x+origin[0]+.5,wz=z+origin[1]+.5,i=(z*span+x)*4;
   flow[i]=flow[i+1]=128;flow[i+3]=0;
-  if(field.sample(wx,wz)>surface(wx,wz)+.15)continue;
+  const cell=z*span+x;centers[cell]=field.sample(wx,wz)>surface(wx,wz)+.15?1:2;
+  if(centers[cell]===1)continue;
   wet.add(Math.floor(x/16)+':'+Math.floor(z/16));
   for(const river of field.watercourses){const p=riverPoint(wx,wz,river);if(p.offset>river.width*p.widthScale/2)continue;
    flow[i+3]=profileIds.get(river.profile)!;
@@ -33,11 +45,25 @@ export function waterSurface(input:ImportedTerrain|HeightField):WaterSurfaceData
    flow[i+2]=Math.round(255*river.style.foamStrength*Math.min(1,river.flow/2)*.35);break;
   }
  }
- return {origin,offset:[0,0],size:[span,span],heightOffset:0,ground:field.samples.slice(),groundSize:[field.verts,field.verts],groundScale:1,flow,profiles:profileIds.size?profiles:undefined,tiles:[...wet].map(key=>{const [x,z]=key.split(':').map(Number);return tile(x!,z!,origin,vertexSurface,(wx,wz)=>field.sample(wx,wz)<=surface(wx,wz)+.15);})};
+ return {origin,offset:[0,0],size:[span,span],heightOffset:0,ground:field.samples.slice(),groundSize:[field.verts,field.verts],groundScale:1,flow,profiles:profileIds.size?profiles:undefined,tiles:[...wet].map(key=>{const [x,z]=key.split(':').map(Number);return tile(x!,z!,origin,vertexSurface,isWet);})};
 }
 function tile(bx:number,bz:number,origin:[number,number],height:(x:number,z:number)=>number,wet:(x:number,z:number)=>boolean){
  const positions=new Float32Array(17*17*3),indices:number[]=[];
  for(let z=0;z<=16;z++)for(let x=0;x<=16;x++){const wx=origin[0]+bx*16+x,wz=origin[1]+bz*16+z,i=(z*17+x)*3;positions[i]=wx;positions[i+1]=height(wx,wz);positions[i+2]=wz;}
  for(let z=0;z<16;z++)for(let x=0;x<16;x++){const wx=origin[0]+bx*16+x,wz=origin[1]+bz*16+z;if(!wet(wx+.5,wz+.5)&&!wet(wx,wz)&&!wet(wx+1,wz)&&!wet(wx,wz+1)&&!wet(wx+1,wz+1))continue;const a=z*17+x,b=a+1,c=a+17,d=c+1;indices.push(a,c,b,b,c,d);}
  return {x:bx,z:bz,positions,indices};
+}
+
+/** With unchanged water courses, geometry/flow only changes when a sampled
+ * center or corner crosses the wetness threshold. Test the bilinear dependency
+ * neighbourhood rather than scanning every cell in the map. */
+export function unchangedWaterTopology(previous:HeightField,field:HeightField,bounds:HeightDirty|null):boolean{
+ if(!bounds)return true;const span=field.verts-1;
+ const same=(x:number,z:number)=>{const level=field.waterAt(x,z)+.15;return (previous.sample(x,z)<=level)===(field.sample(x,z)<=level);};
+ const loX=Math.max(0,bounds.loX-1),hiX=Math.min(span-1,bounds.hiX),loZ=Math.max(0,bounds.loZ-1),hiZ=Math.min(span-1,bounds.hiZ);
+ for(let z=loZ;z<=hiZ;z++)for(let x=loX;x<=hiX;x++){
+  const wx=field.origin+x,wz=field.origin+z;
+  if(!same(wx+.5,wz+.5)||!same(wx,wz)||!same(wx+1,wz)||!same(wx,wz+1)||!same(wx+1,wz+1))return false;
+ }
+ return true;
 }

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.critical-strike-command-icon",
+  "name": "Critical Strike — command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "ca2c8c2a322e4f65300ad1f8df7979d22eee45582f64b4fd868663897245a16d",
+      "bytes": 731
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "2cad88077349e6b2b704b8ac665a99d21c598b013be6737b247992218b49e975",
+      "bytes": 591618
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "2d44a561524c9441653a9bd04537f5cf3269ce327f5200d9366f129be7745549",
+      "bytes": 1586021
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.critical-strike-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.critical-strike-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

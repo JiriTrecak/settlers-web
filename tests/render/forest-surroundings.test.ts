@@ -1,5 +1,8 @@
-import {describe,expect,it} from 'vitest';
-import {Mesh,MeshStandardMaterial,PlaneGeometry,Scene,ShaderLib} from 'three';
+import {describe,expect,it,vi} from 'vitest';
+import {Mesh,MeshStandardMaterial,PlaneGeometry,Scene,ShaderLib,Texture,DataTexture,Vector2} from 'three';
+import {ForestSurroundingsLayer} from '../../src/render/canopy/forestSurroundings';
+import {DEFAULT_CANOPY} from '../../src/shared/landscape/canopy';
+import {HeightField} from '../../src/shared/map/height';
 import {forestAnchors} from '../../src/shared/landscape/forestSurroundings';
 import {BIOMES,biomeById} from '../../src/content/biomes';
 import {FogOfWar} from '../../src/render/visibility/fogOfWar';
@@ -7,6 +10,22 @@ import {inspectionShotSchema} from '../../src/shared/camera/inspectionShot';
 
 describe('biome forest surrounds',()=>{
  const profile=biomeById('vibrant-forest').surroundings!;
+ it('does not load assets while disabled and cancels a pending backdrop before geometry construction',async()=>{
+  const scene=new Scene(),layer=new ForestSurroundingsLayer(scene),internal=layer as any;
+  const field=new HeightField(256),frame={texture:new DataTexture(),offset:new Vector2(),settings:{...DEFAULT_CANOPY,enabled:true}};
+  let finish!:(value:[])=>void;
+  const pending=new Promise<[]>(resolve=>{finish=resolve;});
+  const load=vi.spyOn(internal,'load').mockReturnValue(pending);
+  internal.floorTextures.set(profile.floorTexture,Promise.resolve(new Texture()));
+  layer.configure(undefined,field,undefined,false);await layer.ready;
+  expect(load).not.toHaveBeenCalled();expect(internal.bark).toBeNull();
+  expect(internal.barkReady).toBeUndefined();internal.barkReady=Promise.resolve(new Texture());
+  layer.configure(profile,field,frame,false);const building=layer.ready;
+  expect(load).toHaveBeenCalled();
+  layer.configure(undefined,field,undefined,false);finish([]);await building;
+  expect(internal.generated.size).toBe(0);expect(internal.bark).toBeNull();
+  expect(internal.root.visible).toBe(false);layer.dispose();expect(scene.children).toHaveLength(0);
+ });
  it.each([256,512,1024,2048])('keeps every trunk outside a %s map and bounds the scenery budget',size=>{
   const anchors=forestAnchors(size,731,profile);
   expect(anchors.length).toBeLessThanOrEqual(384);

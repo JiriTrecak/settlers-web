@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.death-burst",
+  "name": "Death Burst",
+  "description": "A volatile neutral creature bursts when it dies, dealing 80/120/160 spell damage to nearby enemies within 6 units. Death chains resolve in a stable order; physical removal, hidden deaths and saved games keep the same result.",
+  "activation": "passive",
+  "piercesSpellImmunity": false,
+  "ranks": [
+    {
+      "damage": 80
+    },
+    {
+      "damage": 120
+    },
+    {
+      "damage": 160
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 0,
+    "recoverTicks": 0,
+    "cost": {
+      "resource": "mana",
+      "amount": 0,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 0,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [],
+  "triggers": [
+    {
+      "id": "burstOnDeath",
+      "event": "death",
+      "chancePermille": 1000,
+      "every": 1,
+      "manaCost": 0,
+      "operations": [
+        {
+          "op": "damage",
+          "target": "target",
+          "query": {
+            "center": "caster",
+            "radius": 6,
+            "relations": [
+              "enemy"
+            ],
+            "allowSelf": false,
+            "includeBuildings": false,
+            "excludePrimary": false,
+            "maxTargets": 32,
+            "order": "nearest"
+          },
+          "amount": {
+            "rankParameter": "damage"
+          },
+          "damageType": "spell"
+        }
+      ]
+    }
+  ],
+  "presentation": "presentation.core.death-burst"
+}

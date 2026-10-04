@@ -68,7 +68,8 @@
       "modifiers": {
         "attackSpeedPermille": 400,
         "moveSpeedPermille": 250
-      }
+      },
+      "lifetime": "duration"
     }
   ],
   "presentation": "presentation.core.bloodlust"

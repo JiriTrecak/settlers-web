@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.assistant-trials.frost-relay",
+  "icon": "asset.assistant-trials.frost-relay-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "icy-link",
+      "effect": "effect.assistant-trials.frost-relay.link",
+      "event": "impact",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "crystal-impact",
+      "effect": "effect.assistant-trials.frost-relay.impact",
+      "event": "damaged",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "lingering-chill",
+      "effect": "effect.assistant-trials.frost-relay.chill",
+      "statusId": "chill",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

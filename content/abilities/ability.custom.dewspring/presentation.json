@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.custom.dewspring",
+  "icon": "asset.icons.spell-holy-light",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "spring",
+      "effect": "effect.custom.dewspring.spring",
+      "event": "released",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "pulse",
+      "effect": "effect.custom.dewspring.pulse",
+      "event": "wave",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

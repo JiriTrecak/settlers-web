@@ -1,3 +1,6 @@
+import {validateFlight} from './flight';
+import {SpellCorpses} from '../abilities/corpses';
+import {formDefinition} from '../abilities/forms';
 import {validateAbilityState,validateSpellWorld} from '../abilities/validation';
 import {createGameAbilities} from '../abilities/gameHost';
 import type {AbilityRuntime} from '../abilities/runtime';
@@ -17,9 +20,11 @@ import { prerequisiteReason } from "../../content/prerequisites";
 import { Revival } from "./revival";
 import { Regeneration } from "./regeneration";
 import { idleMotion } from "./idleMotion";
+import {weaponTargets} from './locomotion';
 import { separateOverlaps } from "./separation";
 import { fixed, lengthCeil } from "./motion";
 import { simulationHash } from "./checksum";
+import {gameplayCheckpoint,type ChecksumMode} from './checkpoint';
 import { z } from "zod";
 import { content } from "../../content/builtin";
 import { ContentRegistry, fingerprint } from "../../content/registry";
@@ -126,15 +131,16 @@ export class Game {
       this.context,
       this.owners,
       (e, item) => this.economy.available(e, item),
-      (owner, e) =>
-        e.owner === "none"
-          ? this.map.camps.some(
+      (owner, e) => {
+        if(e.owner === "none")return this.map.camps.some(
               (c) => c.id === e.unit?.camp && c.aggression === "players",
-            )
-          : (this.slots.find((s) => slotOwner(s.player) === owner)?.team ??
-              ownerSlot(owner)) !==
-            (this.slots.find((s) => slotOwner(s.player) === e.owner)?.team ??
-              ownerSlot(e.owner)),
+            );
+        // Owners and match slots have already passed schema validation. Avoid
+        // building and parsing owner strings for every sensor/owner comparison.
+        const observer=ownerSlot(owner),target=ownerSlot(e.owner);
+        return (this.slots.find(s=>s.player===observer)?.team??observer)!==
+          (this.slots.find(s=>s.player===target)?.team??target);
+      },
     );
     this.combat = new Combat(
       this.context,
@@ -144,6 +150,9 @@ export class Game {
     );
     this.inventory = new Inventory(this.context, this.combat.items);
     this.abilities = createGameAbilities(this);
+    this.combat.onWeaponStatus=(...args)=>this.abilities.weaponStatus(...args);
+    this.combat.onWeaponEnhancement=(...args)=>this.abilities.weaponEvent(...args);
+    this.combat.onSpellModifier=(...args)=>this.abilities.combatEvent(...args);
     if(map.mission) this.mission=new Mission(this);
     else if(!map.sandbox) this.economy.startGathering();
     this.observation.update();
@@ -309,14 +318,14 @@ export class Game {
           target.unit?.release)
       )
         return reject("Target is not visible and damageable");
-      const formationBody=eligible.reduce((body,e)=>{const d=this.spatial.dimensions(e);return {radius:Math.max(body.radius,d.radius),height:Math.max(body.height,d.height),formationSpacing:Math.max(body.formationSpacing,d.formationSpacing)};},{radius:0,height:0,formationSpacing:0});
-      const destinations = action.type === "move" ? formationDestinations(
-        eligible.filter(e=>e.unit && this.context.def(e).behaviors.movement && this.orders.canIssue(e,action.append) && (!action.attackMove || this.context.def(e).behaviors.combat))
-          .map(e=>({id:e.id,...precise(e)})), action.destination, this.spatial.size,
-        p=>this.spatial.unitWalkable(p,formationBody),
-        (from,to)=>this.spatial.clearSegment(fixed(from),fixed(to),undefined,formationBody),
-        formationBody.formationSpacing,
-      ) : null;
+      const destinations=new Map<number,import('./state').Point>();
+      if(action.type==='move')for(const air of [false,true]){
+       const group=eligible.filter(e=>this.spatial.airborne(e)===air&&e.unit&&this.context.def(e).behaviors.movement&&this.orders.canIssue(e,action.append)&&(!action.attackMove||this.context.def(e).behaviors.combat));
+       if(!group.length)continue;
+       const body=group.reduce((body,e)=>{const d=this.spatial.dimensions(e);return {...body,radius:Math.max(body.radius,d.radius),height:Math.max(body.height,d.height),formationSpacing:Math.max(body.formationSpacing,d.formationSpacing)};},{radius:0,height:0,formationSpacing:0,locomotion:air?'air' as const:'ground' as const});
+       const target=air?{x:action.destination.x,y:action.destination.y}:action.destination;
+       for(const [id,p] of formationDestinations(group.map(e=>({id:e.id,...precise(e)})),target,this.spatial.size,p=>this.spatial.unitWalkable(p,body),(a,b)=>this.spatial.clearSegment(fixed(a),fixed(b),undefined,body),body.formationSpacing))destinations.set(id,p);
+      }
       const applied: number[] = [];
       for (const e of eligible) {
         const behaviors = this.context.def(e).behaviors;
@@ -324,7 +333,7 @@ export class Game {
         if (action.type !== "stop" && !this.orders.canIssue(e, action.append)) continue;
         if (action.type === "attack") {
           if (
-            !behaviors.combat ||
+            !behaviors.combat || !weaponTargets(behaviors.combat,this.context.def(target!)) ||
             target!.id === e.id ||
             (!action.force && !this.combat.hostile(e, target!))
           )
@@ -501,11 +510,14 @@ export class Game {
     return { accepted: true, actors: [actor.id] };
   }
   onCombatDeath(dead:Entity){
+    if(dead.fallen||alive(dead)||this.context.get(dead.id)!==dead)return;
+    this.abilities.notifyDeath(dead.id);
     this.abilities.cancel(dead.id,'Caster died');
-    delete dead.spellStatuses;
     this.campLoot.onDeath(dead);
     if(!this.context.def(dead).hero)this.inventory.onDeath(dead);
+    new SpellCorpses(this.context).capture(dead);
     this.observation.recordDeath(dead);
+    delete dead.spellStatuses;
     this.context.event(dead.owner,'Entity destroyed','death');
     this.economy.remove(dead);
     if(this.context.def(dead).hero)this.revival.retain(dead);
@@ -530,7 +542,7 @@ export class Game {
     for (const name in this.timings) this.timings[name] = 0;
     const measure = (name: string, fn: () => void) => {
       const t = performance.now();
-      fn();
+      this.context.profile.measure(name,fn);
       this.timings[name] = performance.now() - t;
     };
     const observe = () => {
@@ -557,6 +569,7 @@ export class Game {
       measure("Assignment · queued orders", () => this.orders.advance((e, order) => this.activateQueuedOrder(e, order)));
       measure("Assignment · workers", () => this.economy.assign());
     });
+    const weaponActors=passiveUnits?new Set(this.context.activeUnits().filter(e=>e.abilities?.weaponOrder).map(e=>e.id)):undefined;
     measure("Orders / navigation", () => {
       if(!passiveUnits){
       measure("Orders · garrisons", () => this.garrisons.tick());
@@ -565,21 +578,22 @@ export class Game {
       measure("Orders · separation", () => separateOverlaps(this.context));
       measure("Orders · idle motion", () => idleMotion(this.context));
       }
-      measure("Orders · movement", () => this.context.move(passiveUnits));
+      if(passiveUnits&&weaponActors!.size)this.combat.plan(weaponActors);
+      measure("Orders · movement", () => this.context.move(passiveUnits,weaponActors));
     });
-    this.combat.items.tick();
-    if(!passiveUnits)measure("Combat", () => {
+    measure('Item effects after movement',()=>this.combat.items.tick());
+    if(!passiveUnits||weaponActors!.size||this.state.missiles.length||this.state.shells.length)measure("Combat", () => {
       const scripted=this.state.mission?.pendingDamage??[];
       if(this.state.mission)this.state.mission.pendingDamage=[];
-      for (const dead of this.combat.resolve(scripted)) {
+      for (const dead of this.combat.resolve(scripted,weaponActors)) {
         this.onCombatDeath(dead);
       }
     });
     measure("Ability delivery", () => this.abilities.resolve());
     measure("Economy", () => {
-      this.economy.advance();
-      this.inventory.advance();
-      this.revival.tick();
+      measure('Economy · jobs and production',()=>this.economy.advance());
+      measure('Economy · inventory',()=>this.inventory.advance());
+      for(const result of this.revival.tick())this.abilities.revivalOutcome(result.hero,result.record,result.success);
       this.upgrades.tick();
       this.research.tick();
     });
@@ -587,19 +601,22 @@ export class Game {
     observe();
     if(this.mission || this.map.sandbox) return;
     const defeated=this.owners.filter(owner=>this.isDefeated(owner));
-    if(defeated.length){
+    if(defeated.length)measure('Colony cleanup',()=>{
       // Losing a Mound eliminates that colony, not the entire FFA. Remove its
       // remaining actors without combat XP/loot and release outstanding jobs.
+      let removed=false;
       for(const owner of defeated){
         const abandoned=this.entities.filter(e=>e.owner===owner);
-        if(abandoned.length)this.context.event(owner,"Colony defeated","death");
+        if(abandoned.length){this.context.event(owner,"Colony defeated","death");removed=true;}
         for(const entity of abandoned)if(this.context.get(entity.id))this.economy.remove(entity);
       }
       const remaining=this.owners.filter(o=>!defeated.includes(o));
       const teams=new Set(remaining.map(owner=>{const slot=this.slots.find(s=>slotOwner(s.player)===owner)!;return slot.team??slot.player;}));
       if(teams.size<=1)this.state.outcome={winner:remaining[0]??null,defeated};
-      this.observation.update();
-    }
+      // The ordinary tick already updated observation. Eliminated slots remain
+      // in the match, so only refresh again when cleanup or victory changed it.
+      if(removed||this.state.outcome)this.observation.update();
+    });
   }
   isDefeated(owner:Owner):boolean {
     if(this.map.sandbox) return false;
@@ -609,11 +626,11 @@ export class Game {
   }
   view(owner?: number | Owner) {
     const viewer=typeof owner==='number'?slotOwner(owner):owner;
-    const view=this.observation.view(viewer);view.abilityEvents=this.abilities.observedEvents(viewer);view.abilityDeliveries=this.abilities.observedDeliveries(viewer);return view;
+    const view=this.observation.view(viewer);view.heroReturns=this.abilities.observedHeroReturns(viewer);view.abilityEvents=this.abilities.observedEvents(viewer);view.abilityDeliveries=this.abilities.observedDeliveries(viewer);return view;
   }
   private learnAbility(actor:Entity,bindingId:string):string|null {
     const state=actor.abilities,bindings=this.context.def(actor).behaviors.abilities?.bindings,binding=bindings?.find(b=>b.id===bindingId);
-    if(!alive(actor)||!state||!binding?.learning||state.pending)return 'Cannot learn this ability';
+    if(!alive(actor)||!state||!binding?.learning||state.pending||state.weaponOrder)return 'Cannot learn this ability';
     const level=this.context.stats(actor).level,rank=state.ranks[bindingId];
     if(binding.learning.requiredLevels[rank]===undefined)return 'Ability is fully learned';
     if(binding.learning.requiredLevels[rank]>level)return 'Hero level is too low';
@@ -646,8 +663,8 @@ export class Game {
     const state = saved.state,
       ids = new Set(state.entities.map((e) => e.id)),
       jobs = new Set(state.jobs.map((j) => j.id));
-    validateSpellWorld(state,this.registry);
-    const casts=state.entities.flatMap(e=>e.abilities?.pending?[e.abilities.pending.id]:[]);
+    validateSpellWorld(state,this.registry,this.map.size,this.map.camps);
+    const casts=state.entities.flatMap(e=>[...(e.abilities?.pending?[e.abilities.pending.id]:[]),...(e.abilities?.weaponOrder?[e.abilities.weaponOrder.id]:[])]);
     if(new Set(casts).size!==casts.length)throw Error('Duplicate saved cast identity');
     for (const [owner, ids] of Object.entries(state.research)) {
       if (!this.owners.includes(owner as Owner) || new Set(ids).size !== ids.length || ids.some(id => !this.registry.rules.research[id]))
@@ -656,7 +673,8 @@ export class Game {
     if (new Set(state.missiles.map(m => m.id)).size !== state.missiles.length ||
         state.nextMissile <= Math.max(0,...state.missiles.map(m => m.id))) throw new Error("Invalid saved missile identity");
     for (const missile of state.missiles) {
-      if (!this.registry.get(missile.definition).behaviors.combat?.projectile ||
+      if(missile.enhancement&&(missile.enhancement.cast>=state.nextCast||!this.registry.abilityLibrary.abilities.some(a=>a.id===missile.enhancement!.ability)))throw Error('Invalid saved weapon enhancement');
+      if (missile.criticalAbility&&!this.registry.abilityLibrary.abilities.some(a=>a.id===missile.criticalAbility) || !this.registry.get(missile.definition).behaviors.combat?.projectile ||
           missile.launched > state.tick || missile.impact <= missile.launched ||
           !this.registry.rules.damageTypes[missile.damageType] ||
           [missile.origin,missile.destination].some(p=>!this.spatial.validPoint(p)))
@@ -740,7 +758,8 @@ export class Game {
             e.unit.position.y > (this.map.size - 1) * 1000))
       )
         throw new Error("Saved position outside map");
-      const d = this.registry.get(e.definition);
+      validateFlight(e,this.registry,state.tick,state.nextCast);
+      const d = formDefinition(this.registry.get(e.definition),e,this.registry);
       if (e.upgrade && (!d.upgrade || e.construction ||
           e.upgrade.target !== d.upgrade.target || e.upgrade.progress >= d.upgrade.workTicks))
         throw new Error("Invalid saved building upgrade");
@@ -755,6 +774,7 @@ export class Game {
             const hero = state.entities.find((h) => h.id === q.hero);
             return (
               !hero?.fallen ||
+              !!hero.spellReturn ||
               hero.owner !== e.owner ||
               q.progress > d.behaviors.revival!.workTicks
             );
@@ -814,15 +834,17 @@ export class Game {
             throw new Error('Invalid saved local detour');
         }
         if(u.pursuit&&(!d.behaviors.combat||u.pursuit.seenTick>state.tick||!this.spatial.validPoint(u.pursuit.position)))throw new Error("Invalid saved pursuit");
-        const timing=d.behaviors.combat&&u.attack?attackTiming(d.behaviors.combat,u.attack.cycleTicks):null;
+        const attackPolicy=u.attack?.profile?this.registry.get(u.attack.profile).behaviors.combat:d.behaviors.combat;
+        const chargePolicy=u.charge?.profile?this.registry.get(u.charge.profile).behaviors.combat?.charge:d.behaviors.combat?.charge;
+        const timing=attackPolicy&&u.attack?attackTiming(attackPolicy,u.attack.cycleTicks):null;
         if(u.lastMovedTick!==undefined&&u.lastMovedTick>state.tick)throw new Error("Invalid saved movement tick");
-        if (u.attack && (!d.behaviors.combat || u.attack.started > state.tick ||
+        if (u.attack && (!attackPolicy || u.attack.started > state.tick ||
           u.attack.impact - u.attack.started !== timing!.windupTicks ||
           u.attack.ends - u.attack.impact !== timing!.recoveryTicks ||
           (u.attack.released && u.attack.impact > state.tick))) throw new Error("Invalid saved attack phase");
-        if (u.charge && (!d.behaviors.combat?.charge ||
-          u.charge.readyTick > state.tick + d.behaviors.combat.charge.cooldownTicks ||
-          u.charge.expires > state.tick + d.behaviors.combat.charge.durationTicks))
+        if (u.charge && (!chargePolicy ||
+          u.charge.readyTick > state.tick + chargePolicy.cooldownTicks ||
+          u.charge.expires > state.tick + chargePolicy.durationTicks))
           throw new Error("Invalid saved charge state");
         for (const order of [u.order, ...u.orderQueue]) {
           if ((order?.type === "move" || order?.type === "patrol") && (!this.spatial.validPoint(order.destination)))
@@ -918,7 +940,9 @@ export class Game {
     this.abilities.clearEvents();
 
   }
-  checksum() {
-    return simulationHash([this.state, this.observation.checksum()]);
+  checksum(mode:ChecksumMode='signal') {
+    if(mode==='signal')return this.context.profile.measure('Gameplay fingerprint',()=>gameplayCheckpoint(this.state,this.context.indexedBodies()));
+    const knowledge=this.context.profile.measure('Fog and knowledge hash',()=>this.observation.checksum());
+    return this.context.profile.measure('Game state hash',()=>simulationHash([this.state,knowledge]));
   }
 }

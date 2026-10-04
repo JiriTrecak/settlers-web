@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.dismiss-summon",
+  "icon": "asset.custom.dismiss-summon-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "effect-0",
+      "effect": "effect.core.dispel-magic.released",
+      "event": "released",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "effect-1",
+      "effect": "effect.core.dispel-magic.dispelled-1",
+      "event": "dispelled",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

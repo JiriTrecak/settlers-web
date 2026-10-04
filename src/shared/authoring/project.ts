@@ -12,8 +12,14 @@ export function rememberProjectScene(map:UtcMap,scene:CompiledMapScene):void{
 }
 export function projectScene(map:UtcMap):CompiledMapScene|undefined{
  if(!map.authoring)return undefined;
- const cached=scenes.get(map);if(cached)return cached;
- const previous=landscapes.get(map.authoring),inputs=sceneInputs(map);
- const scene=previous&&inputs.every((v,i)=>v===previous.inputs[i])?previous.scene:compileMapScene(map,landscapeAssets);
+ const cached=cachedProjectScene(map);if(cached)return cached;
+ const scene=compileMapScene(map,landscapeAssets);
  rememberProjectScene(map,scene);return scene;
+}
+/** Read an existing projection without accidentally triggering generation. */
+export function cachedProjectScene(map:UtcMap):CompiledMapScene|undefined{
+ const cached=scenes.get(map);if(cached)return cached;
+ if(!map.authoring)return undefined;
+ const previous=landscapes.get(map.authoring),inputs=sceneInputs(map);
+ return previous&&inputs.every((v,i)=>v===previous.inputs[i])?previous.scene:undefined;
 }

@@ -1,5 +1,5 @@
 import { GameScreen } from "../screen/screen";
-import { playableMaps, type MapEntry } from "../../shared/map/library";
+import { playableMaps, overviewOf } from "../../shared/map/library";
 import {
   defaultSlots,
   setLocalController,
@@ -7,7 +7,7 @@ import {
 } from "../../shared/match/skirmish";
 import { playerCss } from "../../shared/player/player";
 import type { SlotKind } from "../../shared/match/match";
-import { mapPreview, mapTerrain } from "./mapPreview";
+import { mapPreview } from "./mapPreview";
 import "./skirmish.css";
 
 export class SkirmishScreen extends GameScreen {
@@ -18,13 +18,12 @@ export class SkirmishScreen extends GameScreen {
     playerName: string;
   }) {
     super("screen skirmish-screen");
-    const maps = playableMaps(),
-      cache = new Map<string, HTMLCanvasElement>();
+    const maps = playableMaps();
     let selected = maps.find((m) => m.id === hooks.initial?.mapId) ?? maps[0];
     let slots = selected
       ? hooks.initial?.mapId === selected.id
         ? hooks.initial.slots.map((s) => ({ ...s }))
-        : defaultSlots(selected.map.playerStarts)
+        : defaultSlots(overviewOf(selected).starts)
       : [];
     const main = el("main", "skirmish-shell");
     const header = el("header", "skirmish-heading");
@@ -50,7 +49,7 @@ export class SkirmishScreen extends GameScreen {
     const description = el("p", "skirmish-description");
     const legend = el("div", "skirmish-legend");
     legend.innerHTML =
-      '<span><i class="skirmish-dot"></i> Starting positions</span><span><i class="skirmish-camp"></i> Neutral camps</span>';
+      '<span><i class="skirmish-dot"></i> Starting positions</span><span>△ Neutral camps</span><span>● Amber</span>';
     details.append(preview, legend, title, meta, description);
     const roster = el("section", "skirmish-roster");
     roster.setAttribute("aria-label", "Player setup");
@@ -88,14 +87,6 @@ export class SkirmishScreen extends GameScreen {
         });
     };
     footer.append(launch);
-    const terrain = (m: MapEntry) => {
-      let c = cache.get(m.id);
-      if (!c) {
-        c = mapTerrain(m.map);
-        cache.set(m.id, c);
-      }
-      return c;
-    };
     const refresh = () => {
       if (!selected) {
         details.append(
@@ -104,20 +95,20 @@ export class SkirmishScreen extends GameScreen {
         launch.textContent = "No maps available";
         return;
       }
-      if (selected.map.sandbox) slots = defaultSlots(selected.map.playerStarts);
+      if (overviewOf(selected).sandbox) slots = defaultSlots(overviewOf(selected).starts);
       const human = slots.find((s) => s.kind === "human")?.player ?? null;
       preview.replaceChildren(
-        mapPreview(selected.map, human, terrain(selected)),
+        mapPreview(selected, human),
       );
       title.textContent = selected.name;
-      meta.textContent = `${selected.map.size} × ${selected.map.size} · ${slots.length} players · ${selected.map.camps.length} neutral camps`;
-      if (selected.map.sandbox) meta.textContent = `${selected.map.size} × ${selected.map.size} · Single-player testbed`;
-      hint.textContent = selected.map.sandbox ? "One hero. Full visibility. No opponents." : "Choose your starting position, or set every player to AI to watch the match.";
-      rules.replaceChildren(el("span", "", selected.map.sandbox ? "TESTBED" : "VICTORY"), el("p", "", selected.map.sandbox ? "Explore freely. No base, automatic spawns, or victory conditions." : "Destroy rival Mounds. The last surviving side wins."));
-      if (!selected.map.sandbox) rules.append(el("span", "", "OPPONENT"), el("p", "", "AI builds its economy, leads its hero, and commands its own army."));
-      footer.firstElementChild!.textContent = selected.map.sandbox ? "Local terrain and texture testbed" : "Local match · All map positions are occupied";
+      meta.textContent = `${overviewOf(selected).size} × ${overviewOf(selected).size} · ${slots.length} players · ${overviewOf(selected).camps} neutral camps`;
+      if (overviewOf(selected).sandbox) meta.textContent = `${overviewOf(selected).size} × ${overviewOf(selected).size} · Single-player testbed`;
+      hint.textContent = overviewOf(selected).sandbox ? "One hero. Full visibility. No opponents." : "Choose your starting position, or set every player to AI to watch the match.";
+      rules.replaceChildren(el("span", "", overviewOf(selected).sandbox ? "TESTBED" : "VICTORY"), el("p", "", overviewOf(selected).sandbox ? "Explore freely. No base, automatic spawns, or victory conditions." : "Destroy rival Mounds. The last surviving side wins."));
+      if (!overviewOf(selected).sandbox) rules.append(el("span", "", "OPPONENT"), el("p", "", "AI builds its economy, leads its hero, and commands its own army."));
+      footer.firstElementChild!.textContent = overviewOf(selected).sandbox ? "Local terrain and texture testbed" : "Local match · All map positions are occupied";
       description.textContent =
-        selected.map.description ??
+        overviewOf(selected).description ??
         "A frontier beneath the canopy. Establish your colony, explore the wilds, and overcome your rivals.";
       list.querySelectorAll("button").forEach((b) => {
         const active = b.dataset.mapId === selected.id;
@@ -157,7 +148,7 @@ export class SkirmishScreen extends GameScreen {
           select.append(option);
         }
         select.value = slot.kind;
-        select.disabled = !!selected.map.sandbox;
+        select.disabled = !!overviewOf(selected).sandbox;
         select.onchange = () => {
           slots = setLocalController(
             slots,
@@ -175,14 +166,12 @@ export class SkirmishScreen extends GameScreen {
           : "Playing as Player " + (human + 1);
       observer.dataset.observer = String(human === null);
       launch.textContent =
-        selected.map.sandbox ? "Open testbed →" : human === null ? "Watch match →" : "Start skirmish →";
+        overviewOf(selected).sandbox ? "Open testbed →" : human === null ? "Watch match →" : "Start skirmish →";
     };
     for (const map of maps) {
       const button = el("button", "skirmish-map");
       button.dataset.mapId = map.id;
-      const thumb = el("canvas");
-      thumb.width = thumb.height = 84;
-      thumb.getContext("2d")!.drawImage(terrain(map), 0, 0, 84, 84);
+      const thumb = mapPreview(map,null,true);
       thumb.setAttribute("aria-hidden", "true");
       const name = el("span");
       name.append(
@@ -190,7 +179,7 @@ export class SkirmishScreen extends GameScreen {
         el(
           "small",
           "",
-          `${map.map.sandbox ? "Single-player testbed" : `${map.players} players`} · ${map.map.size} × ${map.map.size}`,
+          `${overviewOf(map).sandbox ? "Single-player testbed" : `${map.players} players`} · ${overviewOf(map).size} × ${overviewOf(map).size}`,
         ),
       );
       button.append(thumb, name);
@@ -198,10 +187,10 @@ export class SkirmishScreen extends GameScreen {
         const human = slots.find((s) => s.kind === "human")?.player ?? null;
         selected = map;
         slots = defaultSlots(
-          map.map.playerStarts,
+          overviewOf(map).starts,
           human !== null &&
-            !map.map.playerStarts.some((s) => s.player === human + 1)
-            ? map.map.playerStarts[0].player - 1
+            !overviewOf(map).starts.some((s) => s.player === human + 1)
+            ? overviewOf(map).starts[0].player - 1
             : human,
         );
         refresh();

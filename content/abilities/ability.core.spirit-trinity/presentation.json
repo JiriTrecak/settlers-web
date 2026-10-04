@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.spirit-trinity",
+  "icon": "asset.custom.spirit-trinity-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "separate",
+      "effect": "effect.core.spirit-trinity.transition",
+      "event": "splitStarted",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "reform",
+      "effect": "effect.core.spirit-trinity.transition",
+      "event": "splitEnded",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

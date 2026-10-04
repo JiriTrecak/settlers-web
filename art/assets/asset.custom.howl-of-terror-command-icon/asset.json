@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.howl-of-terror-command-icon",
+  "name": "Howl of Terror — weakened offense",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "ad6ecb1517372ccc1b8633938782458f35a301ef00b2a44057873fa8f9017af7",
+      "bytes": 909
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "c86920d02c06c21166cb2d5c7cad7291ac76eba399aed61f7615559bf4482d37",
+      "bytes": 510711
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "337a6180689e3214b6d9f7eac85009085b52dbb346d722eae9a7ff055754d147",
+      "bytes": 1279161
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.howl-of-terror-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.howl-of-terror-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

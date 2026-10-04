@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.reincarnation",
+  "icon": "asset.custom.reincarnation-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "waiting",
+      "effect": "effect.core.reincarnation.waiting",
+      "event": "revivalStarted",
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery"
+    },
+    {
+      "id": "return",
+      "effect": "effect.core.reincarnation.return",
+      "event": "revived",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

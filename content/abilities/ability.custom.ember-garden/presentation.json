@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.custom.ember-garden",
+  "icon": "asset.custom.ember-garden-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "garden",
+      "effect": "effect.custom.ember-garden.garden",
+      "event": "released",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "blooms",
+      "effect": "effect.custom.ember-garden.bloom",
+      "event": "wave",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

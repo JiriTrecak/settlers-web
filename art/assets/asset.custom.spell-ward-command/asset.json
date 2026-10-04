@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.spell-ward-command",
+  "name": "Spell Ward — Hostile Spell Rejection",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "a5404499f44f11fb7275edddeface29c6afeacf6f13968cd48bb378e51620007",
+      "bytes": 1191
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "dfd73329b9e2c47d75267e5621d3523b4808290f882eb914e6166c12423b2aff",
+      "bytes": 666979
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "ef3782dd85dc7473ad93c382ef0c1c2621cb3991de3a1b8fd49b90825176d734",
+      "bytes": 1563028
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.spell-ward-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.spell-ward-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

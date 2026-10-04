@@ -60,3 +60,9 @@ select:not([multiple]):not([size]) {
 @media (forced-colors: active) {
   select:not([multiple]):not([size]) { appearance: auto; background-image: none; }
 }
+
+/* Keep long descriptions in the inspector; the canvas is for the scene. */
+.stage-heading{position:static;flex:0 0 auto;padding:5px 14px;background:#131315;border-bottom:1px solid var(--border);text-shadow:none}
+.stage-heading h1{font-size:12px;margin:0;line-height:20px;color:#d4d4d8}
+
+.chat-table{max-width:100%;overflow-x:auto;margin:10px 0;border:1px solid #303034;border-radius:6px}.chat-table:focus-visible{outline:2px solid #a1a1aa;outline-offset:2px}.chat-table table{width:100%;border-collapse:collapse;font-size:11px;text-align:left}.chat-table th,.chat-table td{padding:7px 9px;vertical-align:top;border-bottom:1px solid #303034}.chat-table th{background:#202023;font-weight:600;color:#fafafa}.chat-table tr:last-child td{border-bottom:0}.chat-table td+td,.chat-table th+th{border-left:1px solid #303034}.chat-markdown .contains-task-list{list-style:none;padding-left:0}.chat-markdown .task-list-item input{display:inline-block;width:auto;margin:0 7px 0 0}

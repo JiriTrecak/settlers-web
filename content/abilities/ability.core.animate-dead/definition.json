@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.animate-dead",
+  "name": "Animate Dead",
+  "description": "Reanimate up to six nearby fallen units for your army for 40 seconds, strongest first. They retain their original bodies and are immune to weapon damage, spell damage and hostile spells. Temporary units cannot leave reusable corpses. May exceed supply capacity; the hard unit limit still applies.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "durationTicks": 1600
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 20,
+    "recoverTicks": 16,
+    "cost": {
+      "resource": "mana",
+      "amount": 175,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 7200,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "statuses": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "physicalWard",
+      "amount": {
+        "rankParameter": "durationTicks"
+      },
+      "polarity": "positive",
+      "dispel": false,
+      "modifiers": {},
+      "lifetime": "duration",
+      "immunity": "physical"
+    },
+    {
+      "op": "status",
+      "target": "target",
+      "id": "spiritWard",
+      "amount": {
+        "rankParameter": "durationTicks"
+      },
+      "polarity": "positive",
+      "dispel": false,
+      "modifiers": {},
+      "lifetime": "duration",
+      "immunity": "spell",
+      "spellImmunity": "hostile"
+    }
+  ],
+  "onRelease": [
+    {
+      "op": "resurrect",
+      "ownership": "caster",
+      "durationTicks": {
+        "rankParameter": "durationTicks"
+      },
+      "grants": [
+        "physicalWard",
+        "spiritWard"
+      ],
+      "target": "caster",
+      "amount": 6,
+      "corpses": {
+        "radius": 12,
+        "relations": [
+          "ally",
+          "enemy",
+          "neutral"
+        ],
+        "order": "strongest"
+      },
+      "healthPermille": 1000,
+      "manaPermille": 0,
+      "placementRadius": 3,
+      "supply": "allow-over-cap"
+    }
+  ],
+  "presentation": "presentation.core.animate-dead"
+}

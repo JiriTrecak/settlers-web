@@ -1,7 +1,7 @@
 /**
  * Editor overlay docks. Name + file on top, tools left, mode flyout beside a latched tool.
  */
-import { IconBar, sheet } from "../../ui";
+import { IconBar } from "../../ui";
 import type { CatalogEntry, GridMode } from "../../shared";
 import { AssetChip } from "./assetChip";
 import { BrushDock, type BrushDockHooks, type BrushDockState } from "./brushDock";
@@ -11,8 +11,8 @@ import { SelectDock, type SelectDockHooks, type SelectDockState } from "./select
 import { McpDock, type McpDockHooks, type McpDockState } from "./mcpDock";
 import { SculptDock, type SculptDockHooks, type SculptDockState } from "./sculptDock";
 import { SkyDock, type SkyDockHooks } from "./skyDock";
-import { DocTitle } from "./docTitle";
-import { fileTools, gameTools, type FileToolHooks, type GameToolHooks } from "./tools";
+import { EditorFileBar } from "./fileBar";
+import { gameTools, type FileToolHooks, type GameToolHooks } from "./tools";
 import type { SkyState } from "../../render/sky/sky";
 
 export type EditorChromeHooks = FileToolHooks &
@@ -27,10 +27,8 @@ export type EditorChromeHooks = FileToolHooks &
   };
 
 export class EditorChrome {
-  private readonly top: HTMLElement;
   private readonly rail: HTMLElement;
-  private readonly title: DocTitle;
-  private readonly file: IconBar;
+  private readonly file: EditorFileBar;
   private readonly game: IconBar;
   private readonly modes: IconBar;
   private readonly brush: BrushDock;
@@ -43,15 +41,7 @@ export class EditorChrome {
   private readonly hint: CameraHint;
 
   constructor(host: HTMLElement, hooks: EditorChromeHooks) {
-    this.top = document.createElement("div");
-    this.top.className = `pointer-events-auto absolute left-1/2 top-4 flex -translate-x-1/2 items-center gap-1 rounded-2xl p-1.5 ${sheet}`;
-    host.append(this.top);
-    this.title = new DocTitle(this.top, { onName: hooks.onName });
-    const rule = document.createElement("div");
-    rule.setAttribute("role", "separator");
-    rule.className = "mx-0.5 h-7 w-px bg-white/[0.08]";
-    this.top.append(rule);
-    this.file = new IconBar(this.top, { place: "inline", label: "File", items: fileTools(hooks), surface: "plain" });
+    this.file = new EditorFileBar(host, hooks);
     this.rail = document.createElement("div");
     this.rail.className = "editor-tool-rail pointer-events-none absolute left-4 top-1/2 z-10 flex -translate-y-1/2 flex-row items-center gap-1.5";
     host.append(this.rail);
@@ -143,15 +133,14 @@ export class EditorChrome {
   }
 
   setName(name: string): void {
-    this.title.setName(name);
+    this.file.setName(name);
   }
 
   setDirty(dirty: boolean): void {
-    this.title.setDirty(dirty);
+    this.file.setDirty(dirty);
   }
 
   destroy(): void {
-    this.title.destroy();
     this.file.destroy();
     this.game.destroy();
     this.modes.destroy();
@@ -163,7 +152,6 @@ export class EditorChrome {
     this.sky.destroy();
     this.chip.destroy();
     this.hint.destroy();
-    this.top.remove();
     this.rail.remove();
   }
 }

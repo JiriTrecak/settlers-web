@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.assistant-trials.verdant-ward.impact",
+  "name": "Verdant Ward — Leaf Burst",
+  "description": "Warm green leaves unfurl at the recipient on release, with a restrained golden-green healing glow.",
+  "durationTicks": 40,
+  "loop": false,
+  "layers": [
+    {
+      "id": "leaves",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 32,
+        "rate": 12,
+        "speed": 2.8,
+        "speedVariation": 0.35,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 75,
+        "gravity": -1.8,
+        "drag": 1.2,
+        "spawnRadius": 0.65,
+        "startSize": 0.65,
+        "endSize": 0.18,
+        "spin": 2.4,
+        "fadeIn": 0.05,
+        "fadeOut": 0.55
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#ffffff",
+      "accent": "#d8ef94",
+      "durationTicks": 36,
+      "count": 12,
+      "size": 0.55,
+      "height": 0.7,
+      "blend": "normal",
+      "follow": false,
+      "texture": {
+        "asset": "asset.assistant-trials.verdant-ward-leaf",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "healing-glow",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#9dce62",
+      "accent": "#f4df93",
+      "durationTicks": 26,
+      "count": 1,
+      "size": 1.5,
+      "height": 0.08
+    },
+    {
+      "id": "warm-pulse",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#b6dc70",
+      "accent": "#ead08b",
+      "durationTicks": 24,
+      "count": 1,
+      "size": 1.6,
+      "height": 0.06
+    }
+  ]
+}

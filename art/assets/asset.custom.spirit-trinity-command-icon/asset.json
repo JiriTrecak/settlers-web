@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.spirit-trinity-command-icon",
+  "name": "Spirit Trinity · Command Icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "c4dc11ee6cba4117e2d6351b0f8fdf4f59f317bfd6eb6c4f154a9f5897697c8e",
+      "bytes": 1502
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "f9b65041c182e61de635feb60ca1b0840071daec0482f32784e9d2009f4cb92b",
+      "bytes": 676900
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "d6873ce334f6477c6cd65e0ca9db75244ae7c27edf5e20c21c3dc49ca7edce4a",
+      "bytes": 1839879
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.spirit-trinity-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.spirit-trinity-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

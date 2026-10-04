@@ -1,19 +1,22 @@
-import {expect,it} from 'vitest';
-import {Scene,PointLight} from 'three';
+import {expect,it,vi} from 'vitest';
+import {Scene} from 'three';
+import {SceneryComposition} from '../../src/presentation/sceneryChanges';
 import {SceneryLights} from '../../src/render/prop/sceneryLights';
 import {HeightField} from '../../src/shared/map/height';
-it('keeps a fixed light budget, transforms emitters and reuses lights after camera movement',()=>{
- const scene=new Scene(),lights=new SceneryLights(scene),field=new HeightField(256);
- lights.sync(Array.from({length:12},(_,i)=>({id:`l${i}`,asset:'woodland-amber-lantern',x:10+i*2,y:10,yaw:Math.PI/2,scale:2})),field);
- lights.update(10,10);
- const pool=scene.children.filter((o):o is PointLight=>o instanceof PointLight);
- expect(pool).toHaveLength(4);expect(pool.every(l=>l.intensity>0&&!l.castShadow)).toBe(true);
- expect(pool[0].position.x).toBeCloseTo(10.42);expect(pool[0].position.z).toBeCloseTo(10.5-1.56);expect(pool[0].position.y).toBeCloseTo(4.5);
- lights.update(240,240);expect(pool.every(l=>l.intensity===0)).toBe(true);expect(scene.children).toHaveLength(4);
- lights.dispose();expect(scene.children).toHaveLength(0);
-});
-it('reuses stable scene sources and refreshes after explicit terrain invalidation',()=>{
- const scene=new Scene(),lights=new SceneryLights(scene),field=new HeightField(256),stamps=[{id:'lamp',asset:'woodland-amber-lantern',x:10,y:10}];
- lights.sync(stamps,field);const before=lights.groundSources;lights.sync(stamps,field);expect(lights.groundSources).toBe(before);
- field.samples.fill(4);lights.invalidate();lights.sync(stamps,field);expect(lights.groundSources).not.toBe(before);expect(lights.groundSources[0]!.y-before[0]!.y).toBeCloseTo(4);lights.dispose();
+import {sceneryCatalogue} from '../../src/shared/assets/manifest';
+import {parseCatalogue} from '../../src/shared/asset/catalog';
+
+it('retains lights across unrelated harvests but refreshes moves, terrain and invalidation',()=>{
+ const asset=parseCatalogue(sceneryCatalogue)!.assets.find(a=>a.light)!.id;
+ const scene=new Scene(),lights=new SceneryLights(scene),height=new HeightField(32),sample=vi.spyOn(height,'sample');
+ const compose=new SceneryComposition(),lamp={id:'lamp',asset,x:5,y:5},base=[lamp],tree={id:'tree',asset:'pine',x:2,y:2};
+ lights.sync(compose.compose(base,[tree]),height);const first=lights.groundSources;sample.mockClear();
+ lights.sync(compose.compose(base,[]),height);
+ expect(lights.groundSources).toBe(first);expect(sample).not.toHaveBeenCalled();
+ const moved=compose.compose([{...lamp,x:8}],[]);lights.sync(moved,height);
+ expect(lights.groundSources[0].x-first[0].x).toBeCloseTo(3,12);
+ sample.mockClear();lights.invalidate();lights.sync(moved,height);expect(sample).toHaveBeenCalledOnce();
+ const higher=new HeightField(32);higher.samples.fill(4);lights.sync(moved,higher);expect(lights.groundSources[0].y-first[0].y).toBeCloseTo(4,12);
+ lights.sync(compose.compose([],[]),higher);expect(lights.groundSources).toEqual([]);
+ expect(scene.children.every(light=>!light.visible)).toBe(true);lights.dispose();
 });

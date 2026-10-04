@@ -34,7 +34,7 @@ const materialSchema=z.object({
 }).strict();
 const attachment=z.object({name:authoringId,node:z.string().min(1).max(160),offset:vector.default([0,0,0])}).strict();
 const linkedResource=refSchema.extend({asset:authoringId}).strict();
-const renderBinding=runtimeRenderSchema.omit({file:true,image:true,harvestAnimation:true}).extend({geometry:linkedResource.optional(),image:linkedResource.optional(),harvestAnimation:linkedResource.optional()}).strict();
+const renderBinding=runtimeRenderSchema.omit({file:true,image:true,harvestAnimation:true,sockets:true}).extend({geometry:linkedResource.optional(),image:linkedResource.optional(),harvestAnimation:linkedResource.optional()}).strict();
 const blocker=z.object({width:finite.positive(),depth:finite.positive(),shape:z.literal('ellipse').optional(),x:finite.optional(),z:finite.optional(),yaw:finite.optional()}).strict();
 const sceneryBinding=z.object({
  id:authoringId,name:z.string().min(1),editorHidden:z.boolean().optional(),category:z.enum(['units','foliage','terrain','water','landmark','resource','other']),type:z.enum(['prop','water','span','ground']),geometry:refSchema,

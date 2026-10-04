@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.death-pact-command-icon",
+  "name": "Death Pact — Life Offering Command Icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "26f4688eea53ed02872627a6dd24d1059f3035909b6ef5a676eb9cc9b391ef7f",
+      "bytes": 1304
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "812d998098309668e5b70ffe54ef3a996470b2c491d1c869ed7982bbadc17be3",
+      "bytes": 672161
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "667ad577777c8716f785ebc09d1673e75a8377e578c023160c53a6cb5c54ab5f",
+      "bytes": 1758210
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.death-pact-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.death-pact-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

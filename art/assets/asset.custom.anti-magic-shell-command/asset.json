@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.anti-magic-shell-command",
+  "name": "Anti-magic Shell — Spell-Damage Protection",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "711bbf5d30f4e7b2cf045a57bfcd0bcdfa8d167feeac4746731fefaa97233657",
+      "bytes": 1056
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "4b208ac73928e05b21c52bf0210d3028f6c2b480926ce2284f446b0cae2f3436",
+      "bytes": 574748
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "cb4369ecd38cd8f99bfd5e71c6833d6b279cf06ee5e194765aca9636afce51b6",
+      "bytes": 1583917
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.anti-magic-shell-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.anti-magic-shell-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.far-sight",
+  "icon": "asset.custom.far-sight-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "arrival",
+      "effect": "effect.core.far-sight",
+      "event": "visionCreated",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

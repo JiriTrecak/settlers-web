@@ -1,22 +1,11 @@
-import {terrainTextureUrl} from './terrainTextureUrl';
+import {terrainTileArray as tileArray} from './terrainTileArray';
+import {terrainMaskBytes,sameTerrainMask} from './terrainMasks';
 import {sourceTerrainGLSL} from './sourceTerrainShader';
-import {Color,DataArrayTexture,DataTexture,LinearFilter,LinearMipmapLinearFilter,NearestFilter,RedFormat,RepeatWrapping,SRGBColorSpace,Vector2,Vector4,type WebGLProgramParametersWithUniforms} from 'three';
+import {Color,DataArrayTexture,DataTexture,LinearFilter,NearestFilter,RedFormat,Vector2,Vector4,type WebGLProgramParametersWithUniforms} from 'three';
 import {unpackSourceBytes,sourceHeight,type ImportedTerrain} from '../../shared/map/importedTerrain';
 import {ReferenceGround} from '../prop/referenceGround';
 import {referenceTexture,macroUrl} from './referenceTerrain';
 import {assetUrls} from '../../shared/assets/urls.generated';
-async function tileArray(names:string[],color:boolean):Promise<DataArrayTexture>{
- const size=1024,data=new Uint8Array(size*size*4*names.length);
- // Decode exact independent channels, without premultiplied-alpha canvas conversion.
- for(let i=0;i<names.length;i++){
-  const url=terrainTextureUrl(names[i]!);if(!url)throw Error(`Missing terrain texture ${names[i]}`);
-  const response=await fetch(url);if(!response.ok||!response.body)throw Error(`Failed terrain texture ${names[i]}`);
-  const raw=new Uint8Array(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
-  if(raw.length!==size*size*4)throw Error('Source tile dimensions mismatch');
-  data.set(raw,i*size*size*4);
- }
- const tex=new DataArrayTexture(data,size,size,names.length);tex.wrapS=tex.wrapT=RepeatWrapping;tex.magFilter=LinearFilter;tex.minFilter=LinearMipmapLinearFilter;tex.generateMipmaps=true;tex.anisotropy=8;if(color)tex.colorSpace=SRGBColorSpace;tex.needsUpdate=true;return tex;
-}
 export class ImportedTerrainMaterial {
  readonly ready:Promise<void>;
  private disposed=false;
@@ -28,15 +17,18 @@ export class ImportedTerrainMaterial {
  private slots:DataTexture;
  private macro=referenceTexture(macroUrl,false);
  private ground=new ReferenceGround();
- constructor(readonly source:ImportedTerrain){
+ private currentSource:ImportedTerrain;
+ get source(){return this.currentSource;}
+ constructor(source:ImportedTerrain){
+  this.currentSource=source;
   if(source.layers.some(l=>l.ar.startsWith('asset.terrain.winter-'))){this.macro.dispose();this.macro=referenceTexture(assetUrls['assets/library/asset.texture.winter-macro/albedo.png'],false);}
   this.ground.updateSource(sourceHeight(source));
   const [dw,dh]=source.maskSize;
-  this.displacementMask=new DataTexture(source.displacement?unpackSourceBytes(source.displacement.mask):new Uint8Array(dw*dh),dw,dh,RedFormat);
+  this.displacementMask=new DataTexture(terrainMaskBytes(source.displacement)?.slice()??new Uint8Array(dw*dh),dw,dh,RedFormat);
   this.displacementMask.minFilter=this.displacementMask.magFilter=LinearFilter;this.displacementMask.needsUpdate=true;
   this.displacement.value.needsUpdate=true;
   const [w,h]=source.maskSize,maskData=new Uint8Array(w*h*source.layers.length);maskData.fill(255,0,w*h);
-  source.layers.forEach((layer,i)=>{if(layer.mask)maskData.set(unpackSourceBytes(layer.mask),w*h*i);});
+  source.layers.forEach((layer,i)=>{const bytes=terrainMaskBytes(layer);if(bytes)maskData.set(bytes,w*h*i);});
   this.masks=new DataArrayTexture(maskData,w,h,source.layers.length);this.masks.format=RedFormat;this.masks.minFilter=this.masks.magFilter=LinearFilter;this.masks.needsUpdate=true;
   const sw=source.blocks[0]*4,sh=source.blocks[1]*4,slotData=new Uint8Array(sw*sh*8).fill(255),raw=unpackSourceBytes(source.layerSlots);
   for(let bz=0;bz<source.blocks[1];bz++)for(let bx=0;bx<source.blocks[0];bx++)for(let j=0;j<16;j++){
@@ -49,6 +41,47 @@ export class ImportedTerrainMaterial {
    if(this.disposed){ar.dispose();nh.dispose();displacement?.dispose();return;}this.ar.value.dispose();this.nh.value.dispose();this.ar.value=ar;this.nh.value=nh;
    if(displacement){this.displacement.value.dispose();this.displacement.value=displacement;}
   });
+ }
+ /** Editable terrain changes masks far more often than its biome tiles. Keep the
+  * loaded arrays (and pending loads) alive across compatible edits. Different
+  * assets/layouts require a new owner so an old async load cannot overwrite them. */
+ update(source:ImportedTerrain):boolean {
+  const previous=this.source;
+  const pair=(a:readonly number[],b:readonly number[])=>a[0]===b[0]&&a[1]===b[1];
+  if(this.disposed||!pair(previous.maskSize,source.maskSize)||!pair(previous.blocks,source.blocks)||
+   previous.layers.length!==source.layers.length||previous.layers.some((l,i)=>l.ar!==source.layers[i]!.ar||l.nh!==source.layers[i]!.nh)||
+   previous.displacement?.texture!==source.displacement?.texture)return false;
+  const [w,h]=source.maskSize,data=this.masks.image.data as Uint8Array;
+  let dirty=false;
+  source.layers.forEach((layer,i)=>{
+   if(sameTerrainMask(layer,previous.layers[i]))return;
+   const bytes=terrainMaskBytes(layer);
+   if(bytes)data.set(bytes,w*h*i);
+   else data.fill(i===0?255:0,w*h*i,w*h*(i+1));
+   dirty=true;
+  });
+  if(dirty)this.masks.needsUpdate=true;
+  if(!sameTerrainMask(source.displacement,previous.displacement)){
+   const displacement=this.displacementMask.image.data as Uint8Array;
+   const bytes=terrainMaskBytes(source.displacement);
+   if(bytes)displacement.set(bytes);else displacement.fill(0);
+   this.displacementMask.needsUpdate=true;
+  }
+  if(source.layerSlots!==previous.layerSlots){
+   const sw=source.blocks[0]*4,slots=this.slots.image.data as Uint8Array,raw=unpackSourceBytes(source.layerSlots);
+   slots.fill(255);
+   for(let bz=0;bz<source.blocks[1];bz++)for(let bx=0;bx<source.blocks[0];bx++)for(let j=0;j<16;j++){
+    const offset=((bz*source.blocks[0]+bx)*16+j)*6,to=((bz*4+Math.floor(j/4))*sw+bx*4+j%4)*8;
+    slots.set(raw.subarray(offset,offset+6),to);
+   }
+   this.slots.needsUpdate=true;
+  }
+  if(source.height!==previous.height||source.heightOffset!==previous.heightOffset||source.heightSamplesPerUnit!==previous.heightSamplesPerUnit||
+   !pair(source.heightSize,previous.heightSize)||!pair(source.origin,previous.origin)||!pair(source.sourceOrigin,previous.sourceOrigin)||
+   source.source!==previous.source||source.groundColor!==previous.groundColor||source.underlayMask!==previous.underlayMask||source.occlusion!==previous.occlusion)
+   this.ground.updateSource(sourceHeight(source));
+  this.currentSource=source;
+  return true;
  }
  private uniforms(shader:WebGLProgramParametersWithUniforms){
   const s=this.source;

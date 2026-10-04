@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.charm",
+  "icon": "asset.custom.charm-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "conversion",
+      "effect": "effect.core.charm.conversion",
+      "event": "converted",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

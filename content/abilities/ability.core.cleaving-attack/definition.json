@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.cleaving-attack",
+  "name": "Cleaving Attack",
+  "description": "Successful melee hits also deal 30/45/60% of raw attack damage to at most 16 other enemies in a five-unit, 120-degree forward arc. Each target mitigates damage normally. Cleave cannot trigger weapon-hit procs or another cleave.",
+  "activation": "passive",
+  "combatModifiers": {
+    "cleave": {
+      "damagePermille": {
+        "rankParameter": "cleave"
+      },
+      "radius": 5,
+      "arcDegrees": 120,
+      "maxTargets": 16,
+      "includeBuildings": false
+    }
+  },
+  "ranks": [
+    {
+      "cleave": 300
+    },
+    {
+      "cleave": 450
+    },
+    {
+      "cleave": 600
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 0,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 0,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [],
+  "presentation": "presentation.core.cleaving-attack"
+}

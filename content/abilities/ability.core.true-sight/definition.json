@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.true-sight",
+  "name": "True Sight",
+  "description": "A passive detector reveals concealed enemies within twelve units, provided ordinary sight and line of sight also reach them. Detection alone does not reveal unexplored terrain.",
+  "activation": "passive",
+  "aura": {
+    "radius": 1,
+    "meleeOnly": false
+  },
+  "ranks": [
+    {
+      "range": 0,
+      "mana": 0,
+      "cooldown": 0,
+      "duration": 1,
+      "bonus": 0
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 0,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldown"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "caster",
+      "id": "detector",
+      "amount": {
+        "rankParameter": "duration"
+      },
+      "polarity": "positive",
+      "dispel": false,
+      "modifiers": {},
+      "detectionRadius": 12,
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.true-sight"
+}

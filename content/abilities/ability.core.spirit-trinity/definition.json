@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.spirit-trinity",
+  "name": "Spirit Trinity",
+  "description": "Become three controllable forest spirits for 60 seconds: Earth (War Stomp), Storm (Chain Lightning), and Fire (Immolation). The original caster returns beside the first survivor in that order, with full health and mana. Losing all three bodies kills the original. The caster retains its inventory, progression and supply cost; spirit bodies cannot be converted, swallowed or garrisoned.",
+  "activation": "targeted",
+  "ranks": [
+    {}
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 150,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 7200,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "split",
+      "id": "trinity",
+      "target": "caster",
+      "amount": 2400,
+      "members": [
+        "unit.spell.trinity-earth",
+        "unit.spell.trinity-storm",
+        "unit.spell.trinity-fire"
+      ],
+      "radius": 3,
+      "returnHealthPermille": 1000,
+      "returnManaPermille": 1000,
+      "onAllLost": "kill"
+    }
+  ],
+  "presentation": "presentation.core.spirit-trinity"
+}

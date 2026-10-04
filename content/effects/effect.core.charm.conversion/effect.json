@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.charm.conversion",
+  "name": "Charm · Allegiance Shift",
+  "description": "",
+  "durationTicks": 60,
+  "loop": false,
+  "layers": [
+    {
+      "id": "mind-thread",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "beam",
+      "colour": "#ad68ef",
+      "accent": "#f2daff",
+      "durationTicks": 18,
+      "count": 3,
+      "size": 0.055,
+      "height": 1.8
+    },
+    {
+      "id": "glow",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#a052cc",
+      "accent": "#e7c2ff",
+      "durationTicks": 45,
+      "count": 1,
+      "size": 2.4,
+      "height": 0.08,
+      "intensity": 0.8
+    },
+    {
+      "id": "sparkles",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 55,
+        "rate": 24,
+        "speed": 1.5,
+        "speedVariation": 0.5,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 65,
+        "gravity": 0.3,
+        "drag": 0.5,
+        "spawnRadius": 0.45,
+        "startSize": 0.13,
+        "endSize": 0.025,
+        "spin": 3,
+        "fadeIn": 0.08,
+        "fadeOut": 0.7
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#de98fc",
+      "accent": "#fff0de",
+      "durationTicks": 1,
+      "count": 24,
+      "size": 0.1,
+      "height": 1.6
+    }
+  ]
+}

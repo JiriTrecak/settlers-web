@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.blink",
+  "icon": "asset.custom.blink-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "arrival",
+      "effect": "effect.core.blink",
+      "event": "teleported",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.custom.fireball",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "prepare",
+      "effect": "effect.custom.fireball.prepare",
+      "event": "accepted",
+      "anchor": "caster",
+      "lifetime": "finite"
+    },
+    {
+      "id": "projectile",
+      "effect": "effect.custom.fireball.projectile",
+      "event": "projectile",
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery"
+    },
+    {
+      "id": "impact",
+      "effect": "effect.custom.fireball.impact",
+      "event": "impact",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

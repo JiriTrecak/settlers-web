@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.inferno",
+  "name": "Inferno",
+  "description": "Bounded golden-orange ignition, curved fire tongues and fading embers. Original 4×4 impact atlas; presentation only.",
+  "durationTicks": 48,
+  "loop": false,
+  "layers": [
+    {
+      "id": "ground-ring",
+      "name": "Amber impact rim",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#f9a632",
+      "accent": "#ffdf83",
+      "durationTicks": 24,
+      "count": 1,
+      "size": 3.4,
+      "height": 0.08,
+      "follow": false
+    },
+    {
+      "id": "fire-atlas",
+      "name": "Golden fire — 16 frame impact",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "billboard",
+      "colour": "#ffffff",
+      "accent": "#ffffff",
+      "durationTicks": 48,
+      "count": 1,
+      "size": 4.5,
+      "height": 1.8,
+      "blend": "normal",
+      "orientation": "camera",
+      "follow": false,
+      "flipbook": {
+        "columns": 4,
+        "rows": 4,
+        "firstFrame": 0,
+        "frames": 16,
+        "frameTicks": 3,
+        "mode": "once",
+        "randomStart": false
+      },
+      "texture": {
+        "asset": "asset.custom.inferno-fire-atlas",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "flash",
+      "name": "Warm ignition light",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "light",
+      "colour": "#ffb347",
+      "accent": "#ffe7a8",
+      "durationTicks": 16,
+      "count": 1,
+      "size": 4,
+      "height": 1,
+      "follow": false,
+      "intensity": 2
+    }
+  ]
+}

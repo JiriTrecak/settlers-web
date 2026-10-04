@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.cinder-pin.projectile",
+  "name": "Cinder Pin — Projectile",
+  "description": "A narrow orange pin with a warm gold core, following the authoritative projectile link.",
+  "durationTicks": 40,
+  "loop": false,
+  "layers": [
+    {
+      "id": "cinder-pin",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "missile",
+      "colour": "#ff791f",
+      "accent": "#ffd279",
+      "durationTicks": 40,
+      "count": 1,
+      "size": 0.42,
+      "height": 0.8,
+      "blend": "additive",
+      "length": 1.15
+    }
+  ]
+}

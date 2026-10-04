@@ -1,5 +1,6 @@
-import {waterSurface} from './waterSurface';
-import type {HeightField} from '../../shared/map/height';
+import {heightChange} from '../../shared/map/heightChanges';
+import {waterSurface,unchangedWaterTopology} from './waterSurface';
+import {HeightField} from '../../shared/map/height';
 import {BufferAttribute,BufferGeometry,Color,DataTexture,DepthTexture,FloatType,Frustum,Group,HalfFloatType,LinearFilter,Matrix4,Mesh,PCFShadowMap,RedFormat,RGBAFormat,NearestFilter,Scene,ShaderMaterial,SRGBColorSpace,UnsignedIntType,Vector2,Vector3,WebGLRenderTarget,type Camera,type DirectionalLight,type WebGLRenderer} from 'three';
 import type {DaytimeSample} from '../../shared/environment/dayCycle';
 import type {ImportedTerrain} from '../../shared/map/importedTerrain';
@@ -34,11 +35,15 @@ export class ImportedWater {
  private readonly profiles:DataTexture;
  private readonly groundColor:DataTexture;
  private readonly waves=referenceTexture(wavesUrl,false);
- constructor(_scene:Scene,readonly source:ImportedTerrain|HeightField){
+ private groundUploadPending=true;
+ private currentSource:ImportedTerrain|HeightField;
+ get source(){return this.currentSource;}
+ constructor(_scene:Scene,source:ImportedTerrain|HeightField){
+  this.currentSource=source;
   const water=waterSurface(source);
   this.profiles=new DataTexture(water.profiles??new Float32Array(256*4*4),256,4,RGBAFormat,FloatType);this.profiles.minFilter=this.profiles.magFilter=NearestFilter;this.profiles.needsUpdate=true;
   this.flow=new DataTexture(water.flow,...water.size);this.flow.minFilter=this.flow.magFilter=LinearFilter;this.flow.needsUpdate=true;
-  this.ground=new DataTexture(water.ground,...water.groundSize,RedFormat,FloatType);this.ground.needsUpdate=true;
+  this.ground=new DataTexture(water.ground,...water.groundSize,RedFormat,FloatType);this.ground.needsUpdate=true;this.ground.onUpdate=()=>{this.groundUploadPending=false;};
   this.groundColor=water.color?new DataTexture(water.color.bytes,...water.color.size):new DataTexture(new Uint8Array([128,128,128,255]),1,1);
   this.groundColor.minFilter=this.groundColor.magFilter=LinearFilter;this.groundColor.needsUpdate=true;
   this.opaque.depthTexture=new DepthTexture(1,1,UnsignedIntType);
@@ -57,6 +62,21 @@ export class ImportedWater {
    const mesh=new Mesh(geometry,this.material);mesh.name=`source-water.${block.x}.${block.z}`;this.group.add(mesh);
   }
   this.scene.add(this.group);
+ }
+ /** Preserve shaders, reflection targets and mesh buffers when a height edit
+  * leaves water coverage unchanged. Depth still follows the current ground. */
+ updateHeight(field:HeightField|null):boolean{
+  if(!field||!(this.source instanceof HeightField))return false;
+  const change=heightChange(field,this.source);if(!change?.waterUnchanged||!unchangedWaterTopology(this.source,field,change.bounds))return false;
+  const b=change.bounds;
+  if(b){const data=this.ground.image.data as Float32Array;
+   for(let z=b.loZ;z<=b.hiZ;z++){
+    const offset=z*field.verts+b.loX,count=b.hiX-b.loX+1;data.set(field.samples.subarray(offset,offset+count),offset);
+    if(!this.groundUploadPending)this.ground.addUpdateRange(offset,count);
+   }
+   this.ground.needsUpdate=true;
+  }
+  this.currentSource=field;return true;
  }
  render(gl:WebGLRenderer,target:WebGLRenderTarget,camera:Camera,sun:DirectionalLight,daytime?:DaytimeSample){
   if(!target.depthTexture)return;

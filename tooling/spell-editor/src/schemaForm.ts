@@ -13,7 +13,7 @@ export function initialValue(s:FieldSchema):any{
  return s.pattern?.includes('#')?'#ffffff':s.minLength?'new-value':'';
 }
 function matches(s:FieldSchema,v:any):boolean{if(s.const!==undefined)return v===s.const;if(s.enum)return s.enum.includes(v);if(s.anyOf)return s.anyOf.some(c=>matches(c,v));if(s.oneOf)return s.oneOf.some(c=>matches(c,v));if(s.type==='object')return !!v&&typeof v==='object'&&!Array.isArray(v)&&Object.entries(s.properties??{}).every(([k,c])=>c.const===undefined||v[k]===c.const);if(s.type==='array')return Array.isArray(v);if(s.type==='integer')return typeof v==='number';return typeof v===s.type;}
-function variantName(s:FieldSchema):string{return String(s.properties?.op?.const??s.properties?.kind?.const??(s.properties?.rankParameter?'Rank parameter':s.anyOf?'Operation':s.type==='number'||s.type==='integer'?'Fixed value':label(s.type??'Value')));}
+function variantName(s:FieldSchema):string{return String(s.properties?.op?.const??s.properties?.kind?.const??(s.properties?.rankParameter?'Rank parameter':s.properties?.byRank?'Per rank':s.anyOf?'Operation':s.type==='number'||s.type==='integer'?'Fixed value':label(s.type??'Value')));}
 export function schemaForm(schema:FieldSchema,value:any,options:Options):HTMLElement{
  const root=el('div','schema-form');
  function draw(s:FieldSchema,get:()=>any,set:(v:any)=>void,path:string[],host:HTMLElement){

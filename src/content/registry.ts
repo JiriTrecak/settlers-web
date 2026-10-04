@@ -1,4 +1,4 @@
-import {abilityLibrarySchema,emptyAbilityLibrary,releaseEffects,type AbilityLibrary} from './abilities/schema';
+import {abilityLibrarySchema,emptyAbilityLibrary,allEffects,type AbilityLibrary} from './abilities/schema';
 import { z } from "zod";
 import {scaleUnitDefinition} from './unitScale';
 import {
@@ -283,6 +283,7 @@ export class ContentRegistry {
         if(effect.active?.target === "self" && effect.active.radius !== 0) fail("self item radius must be zero");
         if(effect.active && effect.active.target !== "self" && !effect.active.radius) fail("area item requires radius");
       }
+      if(d.unitNature&&d.kind!=="unit")fail("unit nature requires a unit");
       if (!d.id.startsWith(d.kind + ".")) fail("ID prefix must match kind");
       if (!this.asset(d.asset).file) fail("asset must reference a model");
       if (!this.asset(d.icon).image) fail("icon must reference an image");
@@ -323,6 +324,13 @@ export class ContentRegistry {
           if(binding.learning&&(!d.behaviors.progression||binding.learning.requiredLevels.length!==ability!.ranks.length))fail('Ability learning requires progression and a requirement per rank');
           if(binding.command){if(!binding.controls.includes('player'))fail('A command requires player control');if(columns.has(binding.command.column))fail('Duplicate ability column');columns.add(binding.command.column);if(binding.command.icon)this.asset(binding.command.icon);}
           if(binding.ai&&!binding.controls.includes('ai'))fail('AI policy requires AI control');
+          if(binding.ai?.intent&&binding.ai.intent!=='utility'){
+            const intent=binding.ai.intent,ops=allEffects(ability!);
+            if(intent==='scout'&&(ability!.targeting.kind!=='point'||!ops.some(e=>e.op==='vision')))fail('Scout AI requires point vision');
+            if(intent==='escape'&&(ability!.targeting.kind!=='point'||!ops.some(e=>e.op==='teleport'&&e.target==='caster')))fail('Escape AI requires caster displacement to a point');
+            if(intent==='reinforce'&&(ability!.targeting.kind!=='unit'||!ops.some(e=>e.op==='teleport'&&e.query)))fail('Reinforcement AI requires a unit-anchored group displacement');
+          }
+
         }
       }
       if (d.behaviors.inventory && (!d.hero || !d.behaviors.movement))
@@ -504,11 +512,15 @@ export class ContentRegistry {
         keys.add(a.hotkey);
       }
     }
-    for(const ability of this.abilityLibrary.abilities)for(let rank=1;rank<=ability.ranks.length;rank++)for(const relation of ['ally','enemy'] as const){
-      for(const effect of releaseEffects(ability,rank,relation)){
-        const damageType=effect.op==='damage'||effect.op==='dispel'?effect.damageType:effect.op==='status'?effect.periodic?.damageType:undefined;
+    for(const ability of this.abilityLibrary.abilities){
+      for(const effect of allEffects(ability)){
+        const damageType=effect.op==='damage'||effect.op==='dispel'||effect.op==='drain'?effect.damageType:effect.op==='status'?effect.periodic?.damageType:effect.op==='contain'?effect.digestion?.damageType:undefined;
         if(damageType&&!this.rules.damageTypes[damageType])throw Error(`${ability.id}: unknown damage type ${damageType}`);
-        if(effect.op==='summon'&&this.find(effect.definition)?.kind!=='unit')throw Error(`${ability.id}: summons require a unit definition`);
+        if(effect.op==='status')for(const type of Object.keys(effect.damageTakenPermille??{}))if(!this.rules.damageTypes[type])throw Error(`${ability.id}: unknown damage type ${type}`);
+        if(effect.op==='status'&&effect.form?.combatProfile){const profile=this.find(effect.form.combatProfile);if(profile?.kind!=='unit'||!profile.behaviors.combat)throw Error(`${ability.id}: combat profile requires an armed unit definition`);}
+        if(effect.op==='status'&&effect.form?.asset&&!this.asset(effect.form.asset).file)throw Error(`${ability.id}: form asset must be a model`);
+        if(effect.op==='split')for(const member of effect.members)for(const id of typeof member==='string'?[member]:member.byRank){const d=this.find(id);if(d?.kind!=='unit'||d.hero||d.supplyCost!==0||!d.behaviors.playerControl)throw Error(`${ability.id}: split members require controllable, zero-supply non-hero units (${id})`);}
+        if(effect.op==='summon')for(const id of typeof effect.definition==='string'?[effect.definition]:effect.definition.byRank)if(this.find(id)?.kind!=='unit')throw Error(`${ability.id}: summons require a unit definition (${id})`);
       }
     }
     const setup = this.rules.startingSetup;

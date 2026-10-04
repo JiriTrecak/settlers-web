@@ -19,7 +19,7 @@ export class HeightMesh {
  private sourceMeshes:Mesh[]=[];
  private readonly sourceDepth=new MeshDepthMaterial({depthPacking:RGBADepthPacking});
  constructor(scene:Scene,size=MAP_SIZE){
-  const span=size+MAP_HALO*2;this.verts=span+1;this.material=new TerrainMaterial(size);this.mesh.name='height';
+  const span=size+MAP_HALO*2;this.verts=span+1;this.material=new TerrainMaterial();this.mesh.name='height';
   for(let z=0;z<span;z+=PATCH)for(let x=0;x<span;x+=PATCH){
    const width=Math.min(PATCH,span-x),depth=Math.min(PATCH,span-z),stride=width+1;
    const positions=new Float32Array(stride*(depth+1)*3),normals=new Float32Array(positions.length);

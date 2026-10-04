@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.immolation",
+  "name": "Immolation",
+  "description": "Toggle a moving fire area that damages enemies every second and consumes five mana per pulse.",
+  "activation": "targeted",
+  "persistent": {
+    "durationTicks": 144000,
+    "intervalTicks": 40,
+    "anchor": "caster",
+    "endsWithCaster": true,
+    "upkeepMana": 5,
+    "toggle": true
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 20,
+      "cooldownTicks": 160
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "query": {
+        "center": "caster",
+        "radius": 5,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "amount": 20,
+      "damageType": "spell"
+    }
+  ],
+  "presentation": "presentation.core.immolation"
+}

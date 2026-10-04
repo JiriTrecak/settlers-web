@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.lightning-shield",
+  "icon": "asset.custom.lightning-shield-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "main",
+      "effect": "effect.core.lightning-shield",
+      "event": "released",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "pulse",
+      "effect": "effect.core.lightning-shield",
+      "event": "wave",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

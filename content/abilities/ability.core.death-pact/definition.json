@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.death-pact",
+  "name": "Death Pact",
+  "description": "Sacrifice one owned non-hero unit to restore 100/200/300% of its maximum health to the caster, capped by missing health. The sacrifice must succeed; enemy units, allied players’ units and heroes cannot be consumed.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "factor": 1000
+    },
+    {
+      "factor": 2000
+    },
+    {
+      "factor": 3000
+    }
+  ],
+  "targeting": {
+    "filter": {
+      "heroes": false
+    },
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": false,
+    "range": 12,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 10,
+    "cost": {
+      "resource": "mana",
+      "amount": 50,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 600,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "sacrifice",
+      "target": "target",
+      "amount": 1,
+      "record": "offering"
+    },
+    {
+      "op": "heal",
+      "target": "caster",
+      "amount": 0,
+      "scale": {
+        "source": "result",
+        "id": "offering",
+        "stat": "maxHealth",
+        "permille": {
+          "rankParameter": "factor"
+        }
+      }
+    }
+  ],
+  "presentation": "presentation.core.death-pact"
+}

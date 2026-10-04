@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.custom.cinder-pin",
+  "name": "Cinder Pin",
+  "description": "Fire a quick cinder at one enemy, dealing 70 spell damage and rooting them for 3 seconds.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "projectile",
+    "speed": 24
+  },
+  "ranks": [
+    {
+      "mana": 25,
+      "cooldownTicks": 160
+    }
+  ],
+  "targeting": {
+    "includeBuildings": false,
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 6,
+    "recoverTicks": 6,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "amount": 70,
+      "damageType": "spell"
+    },
+    {
+      "op": "status",
+      "target": "target",
+      "id": "cinderPinRoot",
+      "amount": 120,
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {
+        "rooted": true
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.custom.cinder-pin"
+}

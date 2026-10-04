@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.reincarnation.return",
+  "name": "Reincarnation · Return",
+  "description": "",
+  "durationTicks": 64,
+  "loop": false,
+  "layers": [
+    {
+      "id": "light",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#aaeaff",
+      "accent": "#fff7d5",
+      "durationTicks": 48,
+      "count": 1,
+      "size": 2.4,
+      "height": 0.2,
+      "intensity": 1.2
+    },
+    {
+      "id": "ascending-light",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 64,
+        "rate": 1,
+        "speed": 4,
+        "speedVariation": 0.3,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 12,
+        "gravity": -0.6,
+        "drag": 0.3,
+        "spawnRadius": 1,
+        "startSize": 0.09,
+        "endSize": 0.025,
+        "spin": 2,
+        "fadeIn": 0.1,
+        "fadeOut": 0.65
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#aaeaff",
+      "accent": "#fff7d5",
+      "durationTicks": 64,
+      "count": 32,
+      "size": 0.1,
+      "height": 0.1
+    }
+  ]
+}

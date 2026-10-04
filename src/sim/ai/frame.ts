@@ -1,3 +1,4 @@
+import {formDefinition} from '../abilities/forms';
 import {resourceBlocksCell,resourceCollisionCells} from '../../shared/map/resourceClearance';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
 import {unitDimensions} from '../../content/unitScale';
@@ -216,7 +217,7 @@ export class Frame {
     for (const goods of view.goods ?? []) this.bank[goods.item] = goods.available;
   }
   def(e: EntityView) {
-    return this.registry.get(e.definition);
+    return formDefinition(this.registry.get(e.definition),e,this.registry);
   }
   free(e: EntityView) {
     return (

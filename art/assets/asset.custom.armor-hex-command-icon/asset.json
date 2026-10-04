@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.armor-hex-command-icon",
+  "name": "Armor Hex — weakened chitin",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "34f63ec6bf1c1e933a96311b2d9bbd08207442fb996d15314aba8b03640c3f52",
+      "bytes": 923
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "eed201e718c0d2e62001516a8f909abf320c1173335ae8d3bf93d788c4e057b0",
+      "bytes": 631419
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "8a4fbf465427fbd3b7394ff15f0b8594569b9e8f1ef405e26dec751c7e63d4fa",
+      "bytes": 1461039
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.armor-hex-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.armor-hex-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

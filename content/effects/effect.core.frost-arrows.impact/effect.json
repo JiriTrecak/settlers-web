@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.frost-arrows.impact",
+  "name": "Frost Arrows · Ice Burst",
+  "description": "",
+  "durationTicks": 24,
+  "loop": false,
+  "layers": [
+    {
+      "id": "iceBurst",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 23,
+        "rate": 16,
+        "speed": 3.4,
+        "speedVariation": 0.35,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 140,
+        "gravity": 1.5,
+        "drag": 1.3,
+        "spawnRadius": 0.12,
+        "startSize": 0.12,
+        "endSize": 0.018,
+        "spin": 4,
+        "fadeIn": 0.02,
+        "fadeOut": 0.75
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#2a8cff",
+      "accent": "#bdeeff",
+      "durationTicks": 1,
+      "count": 16,
+      "size": 0.085,
+      "height": 1
+    }
+  ]
+}

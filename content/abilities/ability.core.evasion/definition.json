@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.evasion",
+  "name": "Evasion",
+  "description": "Avoid 15/25/35% of direct weapon hits. Evasion is checked when melee or arrows land, before shields and on-hit effects. Spells, cleave and siege splash cannot be evaded. The strongest evasion chance applies.",
+  "activation": "passive",
+  "combatModifiers": {
+    "evasionPermille": {
+      "rankParameter": "chance"
+    }
+  },
+  "ranks": [
+    {
+      "chance": 150
+    },
+    {
+      "chance": 250
+    },
+    {
+      "chance": 350
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 0,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 0,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [],
+  "presentation": "presentation.core.evasion"
+}

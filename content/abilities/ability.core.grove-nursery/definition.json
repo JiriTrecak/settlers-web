@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.grove-nursery",
+  "name": "Grove Nursery",
+  "description": "Raise an immobile nursery for 40 seconds. It produces one forest spirit every 5/4/3 seconds, up to six at a time. Spirits last 30 seconds, burst for 40/60/80 spell damage on death, and vanish with the nursery. Recasting replaces the nursery. Factory composition inspired by Pocket Factory, using our existing Mound and forest-spirit assets.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "period": 200,
+      "burst": 40
+    },
+    {
+      "period": 160,
+      "burst": 60
+    },
+    {
+      "period": 120,
+      "burst": 80
+    }
+  ],
+  "targeting": {
+    "kind": "point",
+    "radius": 2,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 14,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 125,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 1400,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "statuses": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "producing",
+      "amount": 0,
+      "polarity": "positive",
+      "dispel": false,
+      "modifiers": {},
+      "form": {
+        "opacity": 1,
+        "scale": 0.3
+      },
+      "lifetime": "untilDeath"
+    },
+    {
+      "op": "status",
+      "target": "target",
+      "id": "volatile",
+      "amount": 0,
+      "polarity": "positive",
+      "dispel": false,
+      "modifiers": {},
+      "lifetime": "untilDeath"
+    }
+  ],
+  "onRelease": [
+    {
+      "op": "summon",
+      "target": "point",
+      "amount": 1,
+      "definition": "unit.spell.grove-nursery",
+      "durationTicks": 1600,
+      "maxActive": 1,
+      "replace": true,
+      "radius": 2,
+      "grants": [
+        "producing"
+      ]
+    }
+  ],
+  "triggers": [
+    {
+      "id": "produce",
+      "event": "interval",
+      "intervalTicks": {
+        "rankParameter": "period"
+      },
+      "whileStatus": "producing",
+      "chancePermille": 1000,
+      "every": 1,
+      "manaCost": 0,
+      "operations": [
+        {
+          "op": "summon",
+          "target": "point",
+          "amount": 1,
+          "definition": "unit.spell.feral-spirit",
+          "durationTicks": 1200,
+          "endsWithCaster": true,
+          "maxActive": 6,
+          "replace": false,
+          "radius": 4,
+          "grants": [
+            "volatile"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "burst",
+      "event": "death",
+      "whileStatus": "volatile",
+      "chancePermille": 1000,
+      "every": 1,
+      "manaCost": 0,
+      "operations": [
+        {
+          "op": "damage",
+          "target": "target",
+          "query": {
+            "center": "caster",
+            "radius": 4,
+            "relations": [
+              "enemy"
+            ],
+            "allowSelf": false,
+            "includeBuildings": false,
+            "excludePrimary": false,
+            "maxTargets": 32,
+            "order": "nearest"
+          },
+          "amount": {
+            "rankParameter": "burst"
+          },
+          "damageType": "spell"
+        }
+      ]
+    }
+  ],
+  "presentation": "presentation.core.grove-nursery"
+}

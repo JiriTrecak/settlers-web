@@ -1,3 +1,4 @@
+import {controlImmune} from '../abilities/controlPolicy';
 import type { GameContext } from './context';
 import type { Entity } from './state';
 import { alive } from './state';
@@ -7,6 +8,7 @@ import { fixed } from './motion';
 
 /** Charge changes locomotion budget, never the pathfinder or collision rules. */
 export function maintainCharge(c: GameContext, e: Entity) {
+  c.reconcileWeapon(e);
   const u = e.unit!, charge = u.charge;
   if (!charge || charge.target === null) return;
   const target = c.get(charge.target);
@@ -15,7 +17,7 @@ export function maintainCharge(c: GameContext, e: Entity) {
       (u.order?.type === 'move' && !u.order.attackMove) ||
       (u.order?.type === 'attack' && u.order.target !== charge.target) ||
       isStunned(e, c.registry) || e.abilities?.pending ||
-      (itemFlag(e, c.registry, 'rooted') && !itemFlag(e, c.registry, 'controlImmune'))) {
+      (itemFlag(e, c.registry, 'rooted') && !controlImmune(e,c.registry,'root'))) {
     charge.target = null;
   }
 }
@@ -24,7 +26,7 @@ export function startCharge(c: GameContext, e: Entity, target: Entity) {
   const u = e.unit!, policy = c.def(e).behaviors.combat?.charge;
   if (!policy || !target.unit || u.charge?.target != null ||
       (u.charge?.readyTick ?? 0) > c.state.tick || !u.route.length ||
-      (itemFlag(e, c.registry, 'rooted') && !itemFlag(e, c.registry, 'controlImmune'))) return;
+      (itemFlag(e, c.registry, 'rooted') && !controlImmune(e,c.registry,'root'))) return;
   const distance = c.spatial.range(e, target);
   if (distance < policy.minRange ** 2 || distance > policy.maxRange ** 2) return;
   // Do not spend the cooldown while following a detour behind a wall.
@@ -36,7 +38,7 @@ export function startCharge(c: GameContext, e: Entity, target: Entity) {
         cooldown = Math.max(1, Math.round(cooldown * effect.chargeCooldownPermille / 1000));
     }
   }
-  u.charge = {target: target.id, expires: c.state.tick + policy.durationTicks, readyTick: c.state.tick + cooldown};
+  u.charge = {profile:c.weaponDefinition(e),target: target.id, expires: c.state.tick + policy.durationTicks, readyTick: c.state.tick + cooldown};
 }
 
 export function chargeDamage(c: GameContext, e: Entity, target: Entity) {

@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.black-arrow",
+  "name": "Black Arrow",
+  "description": "Toggle shadow arrows: six mana per shot for 2/10/20 bonus damage. Damaging hits curse organic non-heroes for two seconds. If a cursed target dies, a lesser, standard or greater shadow spirit rises for the archer’s team for 80 seconds, according to ability rank.",
+  "activation": "targeted",
+  "persistent": {
+    "durationTicks": 144000,
+    "intervalTicks": 400,
+    "anchor": "caster",
+    "endsWithCaster": true,
+    "upkeepMana": 0,
+    "toggle": true
+  },
+  "ranks": [
+    {
+      "bonus": 2,
+      "cost": 6
+    },
+    {
+      "bonus": 10,
+      "cost": 6
+    },
+    {
+      "bonus": 20,
+      "cost": 6
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 0,
+    "recoverTicks": 0,
+    "cost": {
+      "resource": "mana",
+      "amount": 0,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 0,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "statuses": [
+    {
+      "op": "status",
+      "target": "target",
+      "filter": {
+        "heroes": false,
+        "natures": [
+          "organic"
+        ]
+      },
+      "id": "shadowMark",
+      "amount": 80,
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {},
+      "lifetime": "duration"
+    }
+  ],
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "caster",
+      "id": "shadowArrows",
+      "amount": 144000,
+      "polarity": "positive",
+      "dispel": false,
+      "combatModifiers": {
+        "attackBonus": {
+          "status": "shadowMark",
+          "amount": {
+            "rankParameter": "bonus"
+          },
+          "manaCost": {
+            "rankParameter": "cost"
+          },
+          "weapon": "projectile",
+          "blockedBySilence": true,
+          "filter": {
+            "natures": [
+              "organic"
+            ]
+          }
+        }
+      },
+      "modifiers": {},
+      "lifetime": "instance"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "raiseSpirit",
+      "event": "death",
+      "executor": "statusSource",
+      "whileStatus": "shadowMark",
+      "chancePermille": 1000,
+      "every": 1,
+      "manaCost": 0,
+      "operations": [
+        {
+          "op": "summon",
+          "target": "point",
+          "amount": 1,
+          "definition": {
+            "byRank": [
+              "unit.spell.shadow-spirit-lesser",
+              "unit.spell.shadow-spirit-standard",
+              "unit.spell.shadow-spirit-greater"
+            ]
+          },
+          "durationTicks": 3200,
+          "replace": false,
+          "radius": 2
+        }
+      ]
+    }
+  ],
+  "presentation": "presentation.core.black-arrow"
+}

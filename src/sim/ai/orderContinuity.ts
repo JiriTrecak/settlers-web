@@ -2,7 +2,21 @@ import {canonical} from '../../content/registry';
 import type {Action} from '../../shared/types/types';
 import type {EntityView} from '../game/observation';
 import type {AIState} from './state';
+import type {Point} from '../game/state';
 import {distance,integerPoint} from './frame';
+
+export const REINFORCEMENT_JOIN_RADIUS=16;
+
+/** A moving reinforcement already approaching the army's join area need not
+ * restart its long route for each small movement of the leader. Actual movement
+ * is required: stalled units, new intentions and changed floors still retarget.
+ * Uses observed, saved unit orders only; no hidden navigation cache or timer.
+ */
+export function approachingArmy(entity:EntityView,leader:Point):boolean {
+ const order=entity.control?.order;
+ return !!entity.unit?.moving&&order?.type==='move'&&order.attackMove&&
+  order.destination.surface===leader.surface&&distance(order.destination,leader)<REINFORCEMENT_JOIN_RADIUS;
+}
 
 /** A reinforcement changes the recipients, not the order existing units follow. */
 export function orderIntent(action:Action):string {

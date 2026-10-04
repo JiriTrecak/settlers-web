@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.inferno-fire-atlas",
+  "name": "Inferno — Golden Fire Impact Atlas",
+  "kind": "texture",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "38b6c8172ba723dae62175a11448e209131660e80b54df568baa6643d7a02654",
+      "bytes": 1197
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "2c976336e009bf6d4a865199270388207b6a606a6fb9add3d00b7c9e21ad0d90",
+      "bytes": 225765
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "a5ff705d2d6d2e0a3231c866ffade9ad111c9be02b568eb969da247918d67309",
+      "bytes": 1276949
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.inferno-fire-atlas",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.inferno-fire-atlas"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

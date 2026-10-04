@@ -1,3 +1,5 @@
+import {EditorPerformanceWindow} from '../../editor/chrome/performanceWindow';
+import {LoadingScreen} from '../../ui/loadingScreen';
 import {EditorDraft} from '../../editor/file/draft';
 import {newMapDialog} from '../../editor/chrome/newMapDialog';
 import {selectedWalk} from '../../editor/select/select';
@@ -31,6 +33,8 @@ import { McpPrefsStore } from "../../editor/control/mcpPrefs";
 
 export class EditorScreen extends GameScreen {
   private scenePanel?:ScenePanel;
+  private performanceWindow?:EditorPerformanceWindow;
+  private loading?:LoadingScreen;
   private draft:EditorDraft;
   private readonly editor: WorldEditor;
   private readonly files: MapStore;
@@ -217,18 +221,26 @@ export class EditorScreen extends GameScreen {
   }
 
   start(): void {
-    this.editor.start();
+    this.performanceWindow=new EditorPerformanceWindow(this.root,this.editor);
+    const loading=this.loading=new LoadingScreen(this.root,this.onLeave,{title:'Opening map',progress:'Editor loading progress',waiting:'Preparing terrain, scenery and models.',error:'The map could not be loaded'});
+    void this.editor.start().then(()=>{
+      if(this.loading===loading){loading.destroy();this.loading=undefined;this.syncRemote();}
+    }).catch(error=>{if(this.loading===loading)loading.error(error);});
     this.applyMcp();
     this.syncSky();
   }
 
   override tick(dtMs: number, _nowMs: number): void {
-    // The modal has its own preview renderer; freeze the covered map canvas.
+    // Opening owns scene publication. Repeated hidden frames compete with asset
+    // decoding and compile shaders/textures for partially constructed scenes.
+    if(this.loading)return;
     this.editor.tick(dtMs);
     if (this.skyOpen && this.editor.sky?.playing) this.syncSky();
   }
 
   override destroy(): void {
+    this.loading?.destroy();this.loading=undefined;
+    this.performanceWindow?.destroy();
     this.scenePanel?.destroy();
     window.removeEventListener("keydown", this.onKey);
 
@@ -292,7 +304,7 @@ export class EditorScreen extends GameScreen {
     this.spawnDock?.setOpen(this.editor.tool === "spawn");
     this.decalDock?.setOpen(this.editor.tool === "decal");
     this.terrainDock?.setOpen(this.editor.tool === "terrain");
-    this.scenePanel?.sync();
+    this.scenePanel?.requestSync();
     const urls = this.library.urls();
     this.chrome.setBrushOpen(this.editor.tool === "brush");
     this.chrome.setBrush({
@@ -316,7 +328,7 @@ export class EditorScreen extends GameScreen {
   private syncSelect(): void {
     this.terrainDock?.setOpen(this.editor.tool === "terrain");
     this.spawnDock?.setOpen(this.editor.tool === "spawn");
-    this.scenePanel?.sync();
+    this.scenePanel?.requestSync();
     this.entityDock?.setOpen(
       this.editor.tool === "entity" || !!this.editor.selectedEntity,
     );
@@ -546,7 +558,7 @@ export class EditorScreen extends GameScreen {
   }
 
   private syncDoc(): void {
-    this.scenePanel?.sync();
+    this.scenePanel?.requestSync();
     this.spawnDock?.sync();
     this.chrome.setName(this.editor.map.name);
     this.chrome.setDirty(this.dirty());
@@ -619,6 +631,7 @@ export class EditorScreen extends GameScreen {
   private async save(asNew = false): Promise<boolean> {
     if (document.activeElement instanceof HTMLElement)
       document.activeElement.blur();
+    await this.editor.editsReady();
     const error = playableMapError(this.editor.map);
     if (error) {
       await this.alert("Player starts", error);
@@ -697,6 +710,7 @@ export class EditorScreen extends GameScreen {
   }
 
   private async ifClean(body: string): Promise<boolean> {
+    await this.editor.editsReady();
     if (!this.dirty()) return true;
     const choice = await this.confirm("Unsaved changes", body, [
       { id: "cancel", label: "Cancel" },

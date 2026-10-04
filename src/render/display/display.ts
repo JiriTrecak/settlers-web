@@ -1,4 +1,6 @@
 import {GpuTimings} from './gpuTimings';
+import {ShaderDiagnostics} from './shaderDiagnostics';
+import {measureWebGLSubmission} from '../../debug/webglSubmission';
 import {AtmospherePass,type AtmosphereFrame} from '../atmosphere/atmospherePass';
 import {SHADOW_KEY,SHADOWS_CHANGED,readShadowMode} from '../../shared/settings/graphics';
 import {RESOLUTION_KEY,GRAPHICS_CHANGED,readResolutionScale,renderPixelRatio,type ResolutionScale} from '../../shared/settings/graphics';
@@ -14,6 +16,7 @@ export class Display {
   readonly gl: WebGLRenderer;
   private atmosphere:AtmospherePass|null=null;
   private readonly gpu:GpuTimings;
+  private readonly shaders:ShaderDiagnostics;
   private scale=readResolutionScale();
   private programs=-1;
   private programChanges=0;
@@ -39,6 +42,8 @@ export class Display {
     // the whole canvas with its own FXAA. A 4× multisampled 3200 × 1800 backbuffer only added a
     // store + resolve per frame (~117 → 147 fps). The portrait antialiases in its own target.
     this.gl = new WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: "high-performance" });
+    this.gl.debug.checkShaderErrors=false;
+    this.shaders=new ShaderDiagnostics(this.gl.getContext());
     this.gl.info.autoReset=false;
     perf.attach();
     this.gpu=new GpuTimings(this.gl.getContext() as WebGL2RenderingContext);
@@ -74,15 +79,18 @@ export class Display {
   }
 
   render(scene: Scene, camera: Camera, after?:()=>void, atmosphere?:AtmosphereFrame): void {
-    // Hidden multiplayer tabs keep simulating, but need no GPU presentation.
-    if(document.hidden)return;
+    // Hidden/collapsed views keep simulating, but need no GPU presentation.
+    // Embedded browser panels can have zero layout size while document.hidden
+    // remains false; clamping the render target to 1px must not render a world.
+    if(document.hidden||this.canvas.clientWidth<=0||this.canvas.clientHeight<=0)return;
     this.gpu.begin();
     const start=perf.start();
     this.gl.info.reset();
     perf.resetCounts();
     try{
       const draw=()=>this.drawWorld(scene,camera,atmosphere,(label,pass)=>this.gpu.measure(label,pass));
-      if(perf.takeCensus()&&'isScene' in scene)perf.setCensus(drawCensus(scene,draw));else draw();
+      if(perf.capturingSync)measureWebGLSubmission(this.gl.getContext(),draw);
+      else if(perf.takeCensus()&&'isScene' in scene)perf.setCensus(drawCensus(scene,draw));else draw();
       if(after)this.gpu.measure('GPU portrait',after);
     }finally{this.gpu.end();}
     perf.finishCounts();
@@ -112,7 +120,11 @@ export class Display {
     try {
     if(this.sceneOffscreen(atmosphere)){this.atmosphere??=new AtmospherePass();this.atmosphere.render(this.gl,scene,camera,atmosphere,measure);}
     else {perf.value('Atmosphere','Off');perf.sample('GPU atmosphere',0);perf.sample('Atmosphere submit (CPU)',0);measure('GPU scene',()=>this.gl.render(scene,camera));}
-    }finally{this.gl.toneMappingExposure=exposure;}
+    }finally{
+      this.gl.toneMappingExposure=exposure;
+      this.shaders.check(this.gl.info.programs??[]);
+      perf.value('Shader link failures',this.shaders.failures);
+    }
   }
 
   destroy(): void {

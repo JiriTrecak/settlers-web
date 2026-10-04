@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.animate-dead-command",
+  "name": "Animate Dead — Woodland Command",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "67a44c957c987e4535fb24e7235666c38922625c0132e128f861c8771d709855",
+      "bytes": 882
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "135fe6d9263f76e86ea8869ab0292d1ad8e405de52be17e53e2d402e71259ca8",
+      "bytes": 642534
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "1f2e752902c42fa9ed5060c01fa4c437681e73975fa7a08b62d9a12a759bc574",
+      "bytes": 1585759
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.animate-dead-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.animate-dead-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

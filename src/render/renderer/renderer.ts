@@ -1,3 +1,9 @@
+import {SceneryFilter} from '../../presentation/sceneryChanges';
+import {measureRenderBenchmark,renderBenchmarkOptions,type RenderBenchmarkOptions} from '../display/renderBenchmark';
+import {installEffectAudio,type AudioView} from '../audio/effectSound';
+import {heightChange} from '../../shared/map/heightChanges';
+import {prefetchTerrain} from '../terrain/prefetchTerrain';
+import type {ImportedTerrain} from '../../shared/map/importedTerrain';
 import type {InspectionShot} from '../../shared/camera/inspectionShot';
 import {ForestSurroundingsLayer} from '../canopy/forestSurroundings';
 import {biomeById,biomeLandscape,type ResolvedLandscape} from '../../content/biomes';
@@ -12,7 +18,7 @@ import {SceneryCutaway} from '../visibility/sceneryCutaway';
 import {CanopyLayer} from '../atmosphere/canopyLayer';
 import {SelectionPortrait} from '../portrait/selectionPortrait';
 import {ownerSlot,type Owner} from '../../content/schema';
-import {bridgeSurfaces,surfaceHeight} from '../../shared/map/bridgeSurface';
+import {bridgeSurfaces,surfaceHeight,isBridgeAsset} from '../../shared/map/bridgeSurface';
 import {SceneryLights} from '../prop/sceneryLights';
 import type { AbilityAim } from "../settlement/abilityTarget";
 import type { CommandFeedback } from "../../presentation/commandFeedback";
@@ -82,6 +88,7 @@ export class Renderer {
   }
   private destroyed = false;
   gameTimeScale = 1;
+  effectAudioPlaying = true;
   private visualClock = 0;
   private visualLast: number | null = null;
   readonly camera = new Camera();
@@ -112,6 +119,17 @@ export class Renderer {
   private readonly reflections: WebGLRenderTarget;
   private readonly scene = new Scene();
   private readonly surroundings = new ForestSurroundingsLayer(this.scene);
+  private canopyPreview=true;
+  /** Local viewport override only; never changes the biome or saved map. */
+  setCanopyPreview(enabled:boolean){
+    if(this.canopyPreview===enabled)return;
+    this.canopyPreview=enabled;
+    this.configureCanopy();this.configureSurroundings();
+  }
+  private configureCanopy(){
+    const settings=this.landscape.environment.canopy;
+    this.canopy.configure(this.canopyPreview?settings:settings?{...settings,enabled:false}:undefined,this.height?.size??256);
+  }
   private readonly ceiling = new InteriorCeiling(this.scene);
   private readonly sceneryLights = new SceneryLights(this.scene);
   private readonly ortho = new OrthographicCamera();
@@ -176,6 +194,7 @@ export class Renderer {
   private readonly ndc = new Vector2();
   private readonly hit = new Vector3();
   private size = 0;
+  private bridgeFilter=new SceneryFilter(s=>isBridgeAsset(s.asset));
   private bridgeStamps: readonly MapStamp[] | null = null;
   private readonly lines = new Group();
   private curvePreview: Line | null = null;
@@ -260,6 +279,7 @@ export class Renderer {
     canvas: HTMLCanvasElement,
     assets: ReadonlyMap<string, string> = new Map(),
   ) {
+    installEffectAudio();
     this.display = new Display(canvas, () => this.present());
     this.hookShadowCulling();
     // The root never moves. With auto-update on, three's updateMatrix() marks it dirty every
@@ -284,6 +304,8 @@ export class Renderer {
 
   /** Tools attach editable/animated subjects to the actual game scene. The owner
    * retains their resources; lighting, shadows, reflections and grading stay here. */
+  effectAudioView():AudioView{const cam=this.threeCam();cam.updateMatrixWorld();const right=new Vector3().setFromMatrixColumn(cam.matrixWorld,0);return {x:this.camera.targetX,z:this.camera.targetZ,rightX:right.x,rightZ:right.z};}
+
   mountInspectionSubject(subject: Object3D): () => void {
     this.scene.add(subject);
     return () => subject.removeFromParent();
@@ -311,6 +333,31 @@ export class Renderer {
     canvas.width = w;
     canvas.height = h;
     try {
+      this.drawOffscreen(target,animationTime,inspection);
+      const bytes = new Uint8Array(w * h * 4);
+      gl.readRenderTargetPixels(target, 0, 0, w, h, bytes);
+      // The editor canvas is opaque. MSAA alpha-to-coverage still leaves partial
+      // alpha in an offscreen target; exporting it darkens foliage when JPEG
+      // flattens those pixels against black, despite already resolved RGB.
+      for (let i = 3; i < bytes.length; i += 4) bytes[i] = 255;
+      const ctx = canvas.getContext("2d")!;
+      const data = ctx.createImageData(w, h);
+      for (let y = 0; y < h; y++)
+        data.data.set(
+          bytes.subarray((h - 1 - y) * w * 4, (h - y) * w * 4),
+          y * w * 4,
+        );
+      ctx.putImageData(data, 0, 0);
+      return canvas;
+    } finally {
+      gl.setRenderTarget(previous);
+      target.dispose();
+      this.present();
+    }
+  }
+  private drawOffscreen(target:WebGLRenderTarget,animationTime?:number,inspection?:InspectionShot,cull=false):void {
+    const gl=this.display.gl,w=target.width,h=target.height,previous=gl.getRenderTarget();
+    try {
       if (animationTime !== undefined) {
         this.importedWater?.tick(animationTime * 1000);
         this.meadow.tick(animationTime * 1000);this.placedGrass.tick(animationTime*1000);
@@ -334,34 +381,39 @@ export class Renderer {
       this.props.updateLOD(cam);
       this.meadow.updateLOD(cam);
       gl.setRenderTarget(target);
+      if(cull){this.props.cull(new Frustum().setFromProjectionMatrix(new Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse),cam.coordinateSystem));this.culledFrame=true;}
       // The RTS overhead cutaway footprint would punch holes in the floor at eye level.
     // Close views use the physical camera boom/near plane instead.
     this.cutaway.update(cam,inspection||this.camera.followingUnit||!(this.cutaway.active||this.interiorCutaway.value)?[]:this.settlement?.cutawaySubjects()??[]);
       this.display.drawWorld(this.scene,cam,this.atmosphereFrame(animationTime===undefined?this.visualClock:animationTime*1000));
-      const bytes = new Uint8Array(w * h * 4);
-      gl.readRenderTargetPixels(target, 0, 0, w, h, bytes);
-      // The editor canvas is opaque. MSAA alpha-to-coverage still leaves partial
-      // alpha in an offscreen target; exporting it darkens foliage when JPEG
-      // flattens those pixels against black, despite already resolved RGB.
-      for (let i = 3; i < bytes.length; i += 4) bytes[i] = 255;
-      const ctx = canvas.getContext("2d")!;
-      const data = ctx.createImageData(w, h);
-      for (let y = 0; y < h; y++)
-        data.data.set(
-          bytes.subarray((h - 1 - y) * w * 4, (h - y) * w * 4),
-          y * w * 4,
-        );
-      ctx.putImageData(data, 0, 0);
-      return canvas;
-    } finally {
-      gl.setRenderTarget(previous);
-      target.dispose();
-      this.present();
-    }
+    }finally{if(cull){this.culledFrame=false;this.props.cull(null);}gl.setRenderTarget(previous);}
+  }
+  private benchmarking=false;
+  async benchmarkRendering(input:RenderBenchmarkOptions={}){
+    if(this.benchmarking)throw Error('A render benchmark is already running');
+    const options=renderBenchmarkOptions(input),target=new WebGLRenderTarget(options.width,options.height);
+    target.texture.colorSpace=SRGBColorSpace;this.benchmarking=true;
+    const time=this.visualClock/1000,revision=this.camera.rev;
+    const camera={x:this.camera.targetX,z:this.camera.targetZ,yaw:this.camera.yaw,pitch:this.camera.pitch,zoom:this.camera.zoom,distance:this.camera.distance,game:this.camera.game,topDown:this.camera.isTopDown};
+    try{const result=await measureRenderBenchmark(this.display.gl,frame=>{
+      if(this.destroyed)throw Error('Renderer closed during benchmark');
+      if(this.camera.rev!==revision)throw Error('Camera moved during benchmark; keep the view still and run it again');
+      this.drawOffscreen(target,time+Math.max(0,frame)/60,undefined,true);
+    },options);
+      if(this.camera.rev!==revision)throw Error('Camera moved during benchmark; keep the view still and run it again');
+      return {...result,camera};}
+    finally{target.dispose();this.benchmarking=false;if(!this.destroyed)this.present();}
   }
   screenPoint(x:number,y:number,z:number):{x:number;y:number}|null{
+    return this.screenProjector()(x,y,z);
+  }
+  /** One camera/viewport snapshot for a batch of overlay points. */
+  screenProjector(){
     const rect=this.display.canvas.getBoundingClientRect(),cam=this.threeCam();this.camera.applyTo(cam,rect.width,rect.height);cam.updateMatrixWorld();
-    const p=new Vector3(x,y,z).project(cam);if(p.z<-1||p.z>1)return null;return {x:rect.left+(p.x+1)*rect.width/2,y:rect.top+(1-p.y)*rect.height/2};
+    const matrix=new Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse),p=new Vector3();
+    return (x:number,y:number,z:number):{x:number;y:number}|null=>{
+      p.set(x,y,z).applyMatrix4(matrix);if(p.z<-1||p.z>1)return null;return {x:rect.left+(p.x+1)*rect.width/2,y:rect.top+(1-p.y)*rect.height/2};
+    };
   }
   previewCurve(points: readonly { x: number; z: number }[]): void {
     if (this.curvePreview) {
@@ -409,7 +461,7 @@ export class Renderer {
     this.interiorCutaway.value=landscape.environment.interior?1:0;
     this.ceiling.configure(this.size||256,landscape.environment);
     this.weather.configure(landscape.environment.weather);
-    this.canopy.configure(landscape.environment.canopy,this.height?.size??256);
+    this.configureCanopy();
     this.configureSurroundings();
     if (presetChanged) this.refreshEnvironment();
     this.sky.setInterior(!!landscape.environment.interior);
@@ -418,22 +470,28 @@ export class Renderer {
     this.props.setSeason(landscape.environment.season);
     if (this.terrain && this.height) {
       const mat = this.terrain.material as TerrainMaterial;
-      mat.setFloor(landscape.environment.floorMaterial);
       if (rebuild) {
         mat.update(this.height, landscape.strokes);
         mat.setCover(landscape.cover);
       }
-      mat.setSeason(landscape.environment.season);
       if (rebuild) this.meadow.rebuild(this.height, landscape);
     }
   }
-  async ready(): Promise<void> {
-    await Promise.all([this.surroundings.ready,this.props.ready(),this.meadow.ready,this.placedGrass.ready,this.terrain?.material.ready,this.importedWater?.ready]);
+  async ready(onReady?:(name:string,durationMs:number)=>void): Promise<void> {
+    const started=performance.now();
+    const pending=[['Surroundings',this.surroundings.ready],['Scenery models and placement',this.props.ready()],['Meadow',this.meadow.ready],['Placed grass',this.placedGrass.ready],['Terrain textures',this.terrain?.material.ready],['Water textures',this.importedWater?.ready]] as const;
+    await Promise.all(pending.map(([name,ready])=>Promise.resolve(ready).then(()=>onReady?.(name,performance.now()-started))));
   }
   async preload(stamps: readonly MapStamp[]): Promise<void> {
     this.settlement ??= new SettlementLayer(this.scene);
     this.settlement.preloadRoster();
     await Promise.all([this.props.preload(stamps), this.gameReady(), this.ready()]);
+  }
+  /** Begin known model loads while the world is compiling. Publication still owns instances. */
+  prefetchWorldAssets(entities:Iterable<string>,terrain:{biome?:string;source?:ImportedTerrain}):void {
+    prefetchTerrain(terrain.biome,terrain.source);
+    this.settlement??=new SettlementLayer(this.scene);
+    this.settlement.preloadAssets(entities);
   }
   private warming: Promise<void> | null = null;
   warmup(): Promise<void> {
@@ -487,6 +545,7 @@ export class Renderer {
     this.pinPrograms();this.warmed=true;
     this.visualLast = null;
   }
+  sceneryConstruction(){return this.props.constructionReport();}
   diagnostics() {
     const context=this.display.gl.getContext() as WebGL2RenderingContext;
     const samplerTypes=new Set<number>([context.SAMPLER_2D,context.SAMPLER_CUBE,context.SAMPLER_3D,context.SAMPLER_2D_ARRAY,context.SAMPLER_2D_SHADOW]);
@@ -547,30 +606,40 @@ export class Renderer {
     const previous=this.height;
     // Immutable compiled fields may differ only in vegetation coverage. Moving a
     // landmark must refresh those masks, but must not rebuild the river meshes.
-    const surfaceOnly=!!(previous&&field&&previous!==field&&!previous.source&&!field.source&&previous.size===field.size&&previous.waterLevel===field.waterLevel&&previous.samples.every((h,i)=>h===field.samples[i])&&JSON.stringify(previous.watercourses)===JSON.stringify(field.watercourses));
+    const change=heightChange(field,previous);
+    const surfaceOnly=change?change.bounds===null&&change.waterUnchanged:!!(previous&&field&&previous!==field&&!previous.source&&!field.source&&previous.size===field.size&&previous.waterLevel===field.waterLevel&&previous.samples.every((h,i)=>h===field.samples[i])&&JSON.stringify(previous.watercourses)===JSON.stringify(field.watercourses));
     this.height = field;
     this.sky.setProfile(biomeById(field?.biome).lightingProfile);
     if(previous?.biome!==field?.biome)this.setLandscape(this.authoredLandscape);
     this.configureSurroundings();
-    if(!surfaceOnly)this.updateCourses();
+    const waterStart=perf.start(),waterUpdated=this.importedWater?.updateHeight(field);if(!surfaceOnly&&!waterUpdated)this.updateCourses();perf.end("Terrain · water geometry (event)",waterStart);
     this.sceneryLights.invalidate();
     this.bridgeStamps = null;
     const sample = field ? (x: number, z: number) => field.sample(x, z) : null;
     this.camera.setTerrain(sample, field?.waterLevel ?? 0);
-    this.props.setHeight(sample,field);
+    let stage=perf.start();
+    this.props.setHeight(sample,field,surfaceOnly);
     this.props.setWaterY(field?.waterLevel ?? 0);
+    perf.end('Terrain · prop grounding (event)',stage);
     if(!surfaceOnly)this.brush.setHeight(sample, dirty);
     if (!this.terrain || !field || field.size !== this.size) {
       perf.end("Terrain update (event)", timing);
       return;
     }
-    if(!surfaceOnly)this.terrain.setFrom(field, dirty);
+    stage=perf.start();
+    const changedRegion=dirty??(change&&!!previous?.rockCoverage===!!field.rockCoverage?change.bounds:undefined);
+    if(!surfaceOnly)this.terrain.setFrom(field,changedRegion);
+    perf.end('Terrain · mesh update (event)',stage);
+    stage=perf.start();
     (this.terrain.material as TerrainMaterial).update(
       field,
       this.landscape.strokes,
+      surfaceOnly,
     );
     (this.terrain.material as TerrainMaterial).setCover(this.landscape.cover);
+    perf.end('Terrain · ground material (event)',stage);stage=perf.start();
     if(surfaceOnly)this.meadow.updateGround(field);else this.meadow.rebuild(field, this.landscape);
+    perf.end('Terrain · grass grounding (event)',stage);
     if(!surfaceOnly)this.decals.rebuild(
       this.landscape.decals ?? [],
       field,
@@ -601,16 +670,13 @@ export class Renderer {
         (this.terrain.material as TerrainMaterial).setCover(
           this.landscape.cover,
         );
-        (this.terrain.material as TerrainMaterial).setSeason(
-          this.landscape.environment.season,
-        );
-        (this.terrain.material as TerrainMaterial).setFloor(this.landscape.environment.floorMaterial);
         this.meadow.rebuild(this.height, this.landscape);
       }
       this.lines.visible = this.gridOn;
       this.refreshGrid();
     }
-    if(this.height && this.bridgeStamps !== stamps){this.bridgeStamps=stamps;const field=this.height;const surfaces=bridgeSurfaces(stamps,(x,z)=>field.sample(x,z));const byId=new Map(surfaces.map(b=>[b.id,b]));field.walkSurface=(x,z,id)=>{const b=byId.get(id);return b?surfaceHeight(b,x,z):undefined;};this.walkPicker.set(surfaces);}
+    const bridges=this.bridgeFilter.select(stamps);
+    if(this.height && this.bridgeStamps !== bridges){this.bridgeStamps=bridges;const field=this.height;const surfaces=bridgeSurfaces(bridges,(x,z)=>field.sample(x,z));const byId=new Map(surfaces.map(b=>[b.id,b]));field.walkSurface=(x,z,id)=>{const b=byId.get(id);return b?surfaceHeight(b,x,z):undefined;};this.walkPicker.set(surfaces);}
     const entities = perf.start();
     if (snapshot.settlement && this.height) {
       this.settlement ??= new SettlementLayer(this.scene);
@@ -624,8 +690,13 @@ export class Renderer {
     perf.end("Settlers / buildings", entities);
     const props = perf.start();
     if(this.height?.source)liveSourceOcclusion(this.height.source.source).sync(stamps);
-    this.props.sync(this.placedGrass.sync(stamps,this.height));
+    let sceneryStage=perf.start();
+    const propStamps=this.placedGrass.sync(stamps,this.height);
+    perf.end('Scenery sync · placed grass',sceneryStage);sceneryStage=perf.start();
+    this.props.sync(propStamps);
+    perf.end('Scenery sync · model placements',sceneryStage);sceneryStage=perf.start();
     if(this.height)this.sceneryLights.sync(stamps,this.height);
+    perf.end('Scenery sync · lights',sceneryStage);
     perf.end("Prop sync", props);
     const visibility = perf.start();
     if (snapshot.settlement?.fog) {
@@ -636,11 +707,6 @@ export class Renderer {
       this.fog.prepare(this.dew.scene);
     }
     perf.end("Fog of war", visibility);
-    (this.terrain?.material as TerrainMaterial | undefined)?.setContacts(
-      this.props.contactRevision,
-      this.props.contacts,
-    );
-    if(this.height&&this.landscape.environment.interior)(this.terrain?.material as TerrainMaterial|undefined)?.setGroundLights(this.sceneryLights.groundSources,this.height);
     this.present();
   }
 
@@ -710,8 +776,12 @@ export class Renderer {
     return true;
   }
 
+  private presentationEnabled=true;
+  /** Loading screens may assemble a scene without rendering intermediate shader
+   * variants. Re-enabling does not submit a frame; the owner publishes once ready. */
+  setPresentationEnabled(enabled:boolean):void {this.presentationEnabled=enabled;this.visualLast=null;}
   present(now = performance.now()): void {
-    if(this.destroyed)return;
+    if(this.destroyed||!this.presentationEnabled)return;
     if (this.visualLast === null) this.visualClock = now;
     else
       this.visualClock +=
@@ -719,6 +789,7 @@ export class Renderer {
     this.visualLast = now;
     now = this.visualClock;
     this.updateUnitCamera();
+    this.settlement?.setAudioFrame(this.effectAudioView(),this.effectAudioPlaying&&this.gameTimeScale>0,this.gameTimeScale);
     this.ceiling.update(this.camera.followingUnit);
     const mode=this.camera.followingUnit?this.unitShot!.mode:'rts',phase=this.camera.closeTransitionComplete?'settled':'moving';
     if(this.display.canvas.dataset.cameraMode!==mode)this.display.canvas.dataset.cameraMode=mode;
@@ -834,9 +905,9 @@ export class Renderer {
   private atmosphereFrame(now:number){
     // Per frame, not per snapshot: prop models load asynchronously and rebatch after the
     // update that placed them. Unchanged revisions return immediately.
-    this.dew.set(this.props.contactRevision,this.props.dew);
+    this.dew.set(this.props.dewRevision,this.props.dew);
     const weather=this.landscape.environment.weather;
-    const close=this.surroundings.closeFactor,profile=biomeById(this.height?.biome).surroundings;
+    const close=this.canopyPreview?this.surroundings.closeFactor:0,profile=biomeById(this.height?.biome).surroundings;
     const atmosphere=profile&&close>0&&!this.landscape.environment.interior?{
       ...this.landscape.environment.atmosphere!,enabled:true,density:0,
       shaftDensity:profile.closeShaftDensity*close,baseHeight:0,heightFalloff:24,
@@ -848,7 +919,7 @@ export class Renderer {
   }
 
   private configureSurroundings(){
-    this.surroundings.configure(biomeById(this.height?.biome).surroundings,this.height,this.canopy.frame(),!!this.landscape.environment.interior);
+    this.surroundings.configure(this.canopyPreview?biomeById(this.height?.biome).surroundings:undefined,this.height,this.canopy.frame(),!!this.landscape.environment.interior);
   }
   private updateAtmosphere(cam: OrthographicCamera | PerspectiveCamera): void {
     this.surroundings.update(cam,this.canopy.frame(),this.sky.sun,this.visualClock);

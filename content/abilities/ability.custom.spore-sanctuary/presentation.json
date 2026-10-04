@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.custom.spore-sanctuary",
+  "icon": "asset.icons.spell-holy-light",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "patch",
+      "effect": "effect.custom.spore-sanctuary.patch",
+      "event": "released",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

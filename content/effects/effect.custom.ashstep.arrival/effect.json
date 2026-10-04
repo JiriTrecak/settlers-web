@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.ashstep.arrival",
+  "name": "Ashstep — arrival burst",
+  "description": "Reusable teal shock ring, orange core and short-lived sparks at a captured landing.",
+  "durationTicks": 32,
+  "loop": false,
+  "layers": [
+    {
+      "id": "teal-shock",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#20d8c9",
+      "accent": "#18b2b0",
+      "durationTicks": 20,
+      "count": 1,
+      "size": 4,
+      "height": 0.12,
+      "follow": false
+    },
+    {
+      "id": "orange-core",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#ff761c",
+      "accent": "#ffa538",
+      "durationTicks": 12,
+      "count": 1,
+      "size": 2.2,
+      "height": 0.25,
+      "follow": false
+    },
+    {
+      "id": "orange-burst",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#ff8429",
+      "accent": "#28cabc",
+      "durationTicks": 14,
+      "count": 12,
+      "size": 0.1,
+      "height": 0.55,
+      "follow": false,
+      "spread": 2.8
+    },
+    {
+      "id": "sparks",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 28,
+        "rate": 40,
+        "speed": 7,
+        "speedVariation": 0.4,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 100,
+        "gravity": 9,
+        "drag": 2,
+        "spawnRadius": 0.7,
+        "startSize": 0.065,
+        "endSize": 0,
+        "spin": 0,
+        "fadeIn": 0,
+        "fadeOut": 0.8
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#ff8a2f",
+      "accent": "#27dbce",
+      "durationTicks": 30,
+      "count": 28,
+      "size": 0.055,
+      "height": 0.6,
+      "follow": false
+    }
+  ]
+}

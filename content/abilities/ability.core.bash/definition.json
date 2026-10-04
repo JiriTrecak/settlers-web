@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.bash",
+  "name": "Bash",
+  "description": "Weapon hits have a 25% chance to deal 25 bonus damage and stun the victim for one second.",
+  "activation": "passive",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [],
+  "triggers": [
+    {
+      "id": "bash",
+      "event": "weaponHit",
+      "chancePermille": 250,
+      "every": 1,
+      "manaCost": 0,
+      "operations": [
+        {
+          "op": "damage",
+          "target": "target",
+          "amount": 25,
+          "damageType": "spell"
+        },
+        {
+          "op": "status",
+          "target": "target",
+          "id": "stun",
+          "amount": 40,
+          "polarity": "negative",
+          "dispel": false,
+          "modifiers": {},
+          "stun": true,
+          "lifetime": "duration"
+        }
+      ]
+    }
+  ],
+  "presentation": "presentation.core.bash"
+}

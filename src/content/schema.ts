@@ -1,3 +1,4 @@
+import {unitNatureSchema,locomotionSchema} from './abilities/conditions';
 import {abilityCasterSchema} from './abilities/schema';
 import { itemEffectSchema } from "./items";
 import { z } from "zod";
@@ -65,12 +66,15 @@ const movement = z
     walkSpeed: positive.max(40).optional(),
     turnRate: positive.max(3600).default(720),
     idleWander: z.boolean().optional(),
+    locomotion: locomotionSchema.optional().describe('Ground by default. Air units ignore ground obstacles and collide only with other air units.'),
+    flightHeight: z.number().min(1).max(30).optional().describe('Air unit height above the highest terrain, water or walk deck at its position; defaults to 6.'),
   })
   .strict();
 const combat = z
   .object({
     damage: positive,
     damageType: idSchema,
+    targets: z.array(locomotionSchema).min(1).max(2).refine(a=>new Set(a).size===a.length).optional().describe('Allowed target locomotion. Defaults to ground for melee/siege and both for straight projectiles.'),
     range: z.number().positive().max(64),
     cooldownTicks: positive,
     attack: z.object({windupTicks: positive.max(120), recoveryTicks: positive.max(120), rangeBuffer: z.number().min(0).max(4)}).strict().default({windupTicks: 12, recoveryTicks: 12, rangeBuffer: .75}),
@@ -204,6 +208,7 @@ const fields = {
   icon: idSchema,
   displayOrder: z.number().int().optional(),
   hero: z.boolean().optional(),
+  unitNature: unitNatureSchema.describe("Spell targeting classification. Units default to organic; does not change armor or movement.").optional(),
   dimensions: unitDimensionsSchema.optional(),
   supplyCost: natural.max(100).optional(),
   supplyProvided: positive.max(1000).optional(),
@@ -346,6 +351,7 @@ export const assetSchema = z
     stackColumns: positive.optional(),
     projectile: z.enum(["arrow", "thorn"]).optional(),
     projectileSocket: z.string().min(1).optional(),
+    sockets:z.array(z.object({name:z.string().min(1).max(160),node:z.string().min(1).max(160),offset:z.tuple([z.number().finite(),z.number().finite(),z.number().finite()])}).strict()).max(128).optional(),
     castContact: z.number().min(0).max(1).optional(),
     sceneryAsset: z.string().optional(),
   })

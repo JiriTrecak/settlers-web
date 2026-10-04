@@ -5,7 +5,7 @@ import {BoxGeometry,BufferAttribute,BufferGeometry,Color,CylinderGeometry,Dynami
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
 export type ProjectileKind='arrow'|'thorn';
-type Flight={kind:ProjectileKind;start:Vector3;end:Vector3;tick:number;duration:number};
+type Flight={cast?:number;kind:ProjectileKind;start:Vector3;end:Vector3;tick:number;duration:number};
 type Batch={mesh:InstancedMesh;capacity:number};
 const UP=new Vector3(0,1,0);
 function colored(geometry:BufferGeometry,tint:number){
@@ -25,6 +25,9 @@ export class ProjectileEffects {
  private readonly geometry={arrow:arrowGeometry(),thorn:colored(new CylinderGeometry(0,.195,.84,4),0xc3a779)};
  private readonly batches=new Map<ProjectileKind,Batch>();
  private flights:Flight[]=[];
+ private readonly effectPoses=new Map<number,{position:Vector3;direction:Vector3}>();
+ /** Read-only world pose shared with linked spell VFX; never a second flight calculation. */
+ effectPose=(cast:number)=>this.effectPoses.get(cast);
  private readonly origins=new Map<number,{launched:number;position:Vector3}>();
  private readonly position=new Vector3();
  private readonly scale=new Vector3(1,1,1);
@@ -42,7 +45,7 @@ export class ProjectileEffects {
   this.root.add(mesh);batch={mesh,capacity};this.batches.set(kind,batch);return batch;
  }
  update(tick:number, missiles:GameState["missiles"], field:HeightField, launchPosition?:(missile:GameState["missiles"][number])=>Vector3|undefined,unitScale=1){
-  this.scale.setScalar(unitScale);
+  this.scale.setScalar(unitScale);this.effectPoses.clear();
   const active=missiles.filter(m=>tick>=m.launched&&tick<m.impact);
   const liveIds=new Set(active.map(m=>m.id));
   for(const id of this.origins.keys())if(!liveIds.has(id))this.origins.delete(id);
@@ -56,9 +59,9 @@ export class ProjectileEffects {
     cached={launched:m.launched,position};this.origins.set(m.id,cached);
    }
    return {
-    kind:content.asset(content.get(m.definition).asset).projectile??'arrow',
+    cast:m.enhancement?.cast,kind:content.asset(content.get(m.definition).asset).projectile??'arrow',
     start:cached.position,
-    end:new Vector3(m.destination.x,field.walkSample(m.destination.x,m.destination.y,m.destination.surface)+1,m.destination.y),
+    end:new Vector3(m.destination.x,field.walkSample(m.destination.x,m.destination.y,m.destination.surface)+1+(m.destination.elevation??0),m.destination.y),
     tick:m.launched,duration:m.impact-m.launched,
    };
   });
@@ -74,10 +77,11 @@ export class ProjectileEffects {
    this.position.lerpVectors(flight.start,flight.end,t);this.position.y+=4*arc*t*(1-t);
    this.tangent.subVectors(flight.end,flight.start);this.tangent.y+=4*arc*(1-2*t);
    if(this.tangent.lengthSq()<1e-10)this.tangent.copy(UP);else this.tangent.normalize();
+   if(flight.cast!==undefined)this.effectPoses.set(flight.cast,{position:this.position.clone(),direction:this.tangent.clone()});
    this.rotation.setFromUnitVectors(UP,this.tangent);this.matrix.compose(this.position,this.rotation,this.scale);
    const mesh=this.batches.get(flight.kind)!.mesh;mesh.setMatrixAt(mesh.count++,this.matrix);
   }
   for(const batch of this.batches.values())if(batch.mesh.count)batch.mesh.instanceMatrix.needsUpdate=true;
  }
- dispose(){for(const b of this.batches.values())b.mesh.dispose();this.batches.clear();this.flights=[];this.origins.clear();this.root.clear();this.root.removeFromParent();this.material.dispose();Object.values(this.geometry).forEach(g=>g.dispose());}
+ dispose(){for(const b of this.batches.values())b.mesh.dispose();this.batches.clear();this.flights=[];this.origins.clear();this.effectPoses.clear();this.root.clear();this.root.removeFromParent();this.material.dispose();Object.values(this.geometry).forEach(g=>g.dispose());}
 }

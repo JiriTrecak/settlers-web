@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.animate-dead.rise",
+  "name": "Animate Dead · Reanimation",
+  "description": "",
+  "durationTicks": 64,
+  "loop": false,
+  "layers": [
+    {
+      "id": "spectral-light",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#4dcbaa",
+      "accent": "#c7ffe3",
+      "durationTicks": 48,
+      "count": 1,
+      "size": 2.2,
+      "height": 0.2,
+      "intensity": 1.1
+    },
+    {
+      "id": "rising-souls",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 64,
+        "rate": 1,
+        "speed": 3.5,
+        "speedVariation": 0.35,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 18,
+        "gravity": -0.4,
+        "drag": 0.3,
+        "spawnRadius": 1,
+        "startSize": 0.09,
+        "endSize": 0.025,
+        "spin": 2,
+        "fadeIn": 0.1,
+        "fadeOut": 0.65
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#37bb8f",
+      "accent": "#d5ffb9",
+      "durationTicks": 64,
+      "count": 30,
+      "size": 0.1,
+      "height": 0.1
+    }
+  ]
+}

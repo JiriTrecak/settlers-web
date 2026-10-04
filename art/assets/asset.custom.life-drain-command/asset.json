@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.life-drain-command",
+  "name": "Life Drain — original command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "da6c7144769cd9a0b53b46a5a470f092767df906d3a1c0d080642826bf0e9389",
+      "bytes": 1103
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "871759863ac12495f71a03fc4666678a76ca0c81d3e8b1801efda788ddb3f998",
+      "bytes": 504532
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "1e89f1e5c7f281552880ce26a4ee711fd15d1ac3f2eef23a310b2f693d983bc9",
+      "bytes": 1358264
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.life-drain-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.life-drain-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

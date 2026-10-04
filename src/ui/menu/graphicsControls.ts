@@ -1,3 +1,4 @@
+import {readEffectVolume,setEffectVolume} from '../../shared/settings/audio';
 import {ATMOSPHERE_QUALITIES,readAtmosphereQuality,setAtmosphereQuality,type AtmosphereQuality} from '../../shared/settings/graphics';
 import {readHudLayout,setHudLayout,readHudScale,setHudScale,type HudLayout} from '../../shared/settings/hud';
 import {keyboardControls} from './keyboardControls';
@@ -43,6 +44,7 @@ export function graphicsControls():HTMLElement {
  updateScaleLabel();hudScale.oninput=()=>{setHudScale(Number(hudScale.value));updateScaleLabel();};
  scaleLabel.append(scaleHeading,hudScale);group.append(scaleLabel);
  const scaleNote=document.createElement('p');scaleNote.className='canopy-settings-status';scaleNote.textContent='30–100%. Resizes the minimap, selection panel and commands together. Applies immediately and is saved. Default: 65%.';group.append(scaleNote);
+ const audioLabel=document.createElement('label');audioLabel.textContent='Spell effect volume';const volume=document.createElement('input');volume.type='range';volume.min='0';volume.max='100';volume.value=String(Math.round(readEffectVolume()*100));volume.setAttribute('aria-label','Spell effect volume');volume.oninput=()=>setEffectVolume(Number(volume.value)/100);audioLabel.append(volume);group.append(audioLabel);
  group.append(keyboardControls());
  return group;
 }

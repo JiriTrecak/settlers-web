@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.inferno",
+  "icon": "asset.custom.inferno-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "main",
+      "effect": "effect.core.inferno",
+      "event": "released",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

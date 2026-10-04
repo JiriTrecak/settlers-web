@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.doom",
+  "icon": "asset.custom.doom-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "curse",
+      "effect": "effect.core.doom.curse",
+      "statusId": "doom",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    },
+    {
+      "id": "manifestation",
+      "effect": "effect.core.doom.manifestation",
+      "event": "death",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

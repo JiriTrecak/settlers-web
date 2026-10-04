@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.grove-nursery.core",
+  "name": "Grove Nursery · Living Core",
+  "description": "",
+  "durationTicks": 160,
+  "loop": true,
+  "layers": [
+    {
+      "id": "core",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#c4b644",
+      "accent": "#9acb63",
+      "durationTicks": 160,
+      "count": 1,
+      "size": 2.2,
+      "height": 0.06,
+      "motion": {
+        "scale": {
+          "periodTicks": 200,
+          "min": 0.88,
+          "max": 1.12,
+          "easing": "sine"
+        }
+      },
+      "follow": true,
+      "intensity": 0.3
+    }
+  ]
+}

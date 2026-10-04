@@ -42,7 +42,8 @@
           "speed": 8,
           "turnRate": 720
         },
-        "campDefense": {}
+        "campDefense": {},
+        "playerControl": {}
       }
     },
     {
@@ -1228,7 +1229,7 @@
       "id": "building.ants.tower",
       "kind": "building",
       "name": "Watchtower",
-      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit\u2019s own weapon and upgrades.",
+      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit’s own weapon and upgrades.",
       "asset": "asset.ants.tower",
       "icon": "icon.ants.tower",
       "body": {
@@ -1714,7 +1715,7 @@
       "id": "item.trailkeeper-flask",
       "kind": "item",
       "itemTier": 1,
-      "name": "Trailkeeper\u2019s Flask",
+      "name": "Trailkeeper’s Flask",
       "description": "3 charges: restore 70 health and 25 mana. 10s cooldown between uses.",
       "asset": "asset.item.chest",
       "icon": "icon.item.trailkeeper-flask",
@@ -1798,7 +1799,7 @@
       "id": "item.scout-whistle",
       "kind": "item",
       "itemTier": 1,
-      "name": "Scout\u2019s Whistle",
+      "name": "Scout’s Whistle",
       "description": "2 charges: allied units within 6 tiles gain 15% movement speed for 8s. 25s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.scout-whistle",
@@ -1866,7 +1867,7 @@
       "id": "item.predator-talon",
       "kind": "item",
       "itemTier": 2,
-      "name": "Predator\u2019s Talon",
+      "name": "Predator’s Talon",
       "description": "+10 damage. Basic attacks restore 10% of damage dealt as health.",
       "asset": "asset.item.chest",
       "icon": "icon.item.predator-talon",
@@ -1913,7 +1914,7 @@
       "id": "item.broodkeeper-lantern",
       "kind": "item",
       "itemTier": 2,
-      "name": "Broodkeeper\u2019s Lantern",
+      "name": "Broodkeeper’s Lantern",
       "description": "Aura: allied living units within 6 tiles regenerate 2 health per second.",
       "asset": "asset.item.chest",
       "icon": "icon.item.broodkeeper-lantern",
@@ -1937,7 +1938,7 @@
       "id": "item.warcaller-standard",
       "kind": "item",
       "itemTier": 2,
-      "name": "Warcaller\u2019s Standard",
+      "name": "Warcaller’s Standard",
       "description": "Aura: allied units within 6 tiles gain 10% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.warcaller-standard",
@@ -2005,7 +2006,7 @@
       "id": "item.rootbinder-idol",
       "kind": "item",
       "itemTier": 2,
-      "name": "Rootbinder\u2019s Idol",
+      "name": "Rootbinder’s Idol",
       "description": "Activate: enemies within 4 tiles take 60 magic damage and are rooted for 2s (they can still attack). 35s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.rootbinder-idol",
@@ -2086,7 +2087,7 @@
       "id": "item.reaper-mandible",
       "kind": "item",
       "itemTier": 3,
-      "name": "Reaper\u2019s Mandible",
+      "name": "Reaper’s Mandible",
       "description": "+18 damage. Every fourth basic hit cleaves up to 4 enemies within 3 tiles of the target for 50% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.reaper-mandible",
@@ -2462,7 +2463,7 @@
       "id": "unit.ants.hunter",
       "kind": "unit",
       "name": "Hunter",
-      "description": "Spear infantry that charges enemy units from 3\u20137 cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
+      "description": "Spear infantry that charges enemy units from 3–7 cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
       "asset": "asset.ants.hunter",
       "icon": "icon.ants.hunter",
       "selectionClass": "army",
@@ -3002,7 +3003,7 @@
     {
       "id": "item.briar-ledger",
       "kind": "item",
-      "name": "Merchant\u2019s Leaf Ledger",
+      "name": "Merchant’s Leaf Ledger",
       "description": "Return this stolen ledger to Pell at the roadside cart.",
       "asset": "asset.briar.leaf-ledger",
       "icon": "icon.briar.leaf-ledger",
@@ -3097,7 +3098,7 @@
     {
       "id": "item.briar-rescue-ring",
       "kind": "item",
-      "name": "Caretaker\u2019s Ring",
+      "name": "Caretaker’s Ring",
       "description": "A gift for bringing the youngling home. +1 armor.",
       "asset": "asset.briar.family-ring",
       "icon": "icon.briar.family-ring",
@@ -3156,7 +3157,7 @@
       "id": "unit.neutral.thorn-slinger",
       "kind": "unit",
       "name": "Thorn Slinger",
-      "description": "Thornback Foragers \u00b7 ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
+      "description": "Thornback Foragers · ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
       "asset": "asset.neutral.thorn-slinger",
       "icon": "icon.neutral.thorn-slinger",
       "selectionClass": "army",
@@ -3202,7 +3203,7 @@
       "id": "unit.neutral.dew-sprite",
       "kind": "unit",
       "name": "Dew Sprite",
-      "description": "Dewdrop Sprites \u00b7 ranged forest creature. Fragile water spirits gathered around wet leaves.",
+      "description": "Dewdrop Sprites · ranged forest creature. Fragile water spirits gathered around wet leaves.",
       "asset": "asset.neutral.dew-sprite",
       "icon": "icon.neutral.dew-sprite",
       "selectionClass": "army",
@@ -3248,7 +3249,7 @@
       "id": "unit.neutral.puddle-wisp",
       "kind": "unit",
       "name": "Puddle Wisp",
-      "description": "Dewdrop Sprites \u00b7 melee forest creature. Fragile water spirits gathered around wet leaves.",
+      "description": "Dewdrop Sprites · melee forest creature. Fragile water spirits gathered around wet leaves.",
       "asset": "asset.neutral.puddle-wisp",
       "icon": "icon.neutral.puddle-wisp",
       "selectionClass": "army",
@@ -3291,7 +3292,7 @@
       "id": "unit.neutral.webling",
       "kind": "unit",
       "name": "Webling",
-      "description": "Hungry Weblings \u00b7 melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "description": "Hungry Weblings · melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
       "asset": "asset.neutral.webling",
       "icon": "icon.neutral.webling",
       "selectionClass": "army",
@@ -3334,7 +3335,7 @@
       "id": "unit.neutral.spitter",
       "kind": "unit",
       "name": "Spitter",
-      "description": "Hungry Weblings \u00b7 ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "description": "Hungry Weblings · ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
       "asset": "asset.neutral.spitter",
       "icon": "icon.neutral.spitter",
       "selectionClass": "army",
@@ -3380,7 +3381,7 @@
       "id": "unit.neutral.capling",
       "kind": "unit",
       "name": "Capling",
-      "description": "Mushroom Circle \u00b7 melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "description": "Mushroom Circle · melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
       "asset": "asset.neutral.capling",
       "icon": "icon.neutral.capling",
       "selectionClass": "army",
@@ -3423,7 +3424,7 @@
       "id": "unit.neutral.puffcap",
       "kind": "unit",
       "name": "Puffcap",
-      "description": "Mushroom Circle \u00b7 ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "description": "Mushroom Circle · ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
       "asset": "asset.neutral.puffcap",
       "icon": "icon.neutral.puffcap",
       "selectionClass": "army",
@@ -3469,7 +3470,7 @@
       "id": "unit.neutral.rootling",
       "kind": "unit",
       "name": "Rootling",
-      "description": "Rootbound Guardians \u00b7 melee forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians · melee forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.rootling",
       "icon": "icon.neutral.rootling",
       "selectionClass": "army",
@@ -3512,7 +3513,7 @@
       "id": "unit.neutral.twigcaster",
       "kind": "unit",
       "name": "Twigcaster",
-      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.twigcaster",
       "icon": "icon.neutral.twigcaster",
       "selectionClass": "army",
@@ -3558,7 +3559,7 @@
       "id": "unit.neutral.old-root",
       "kind": "unit",
       "name": "Old Root",
-      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.old-root",
       "icon": "icon.neutral.old-root",
       "selectionClass": "army",
@@ -3604,7 +3605,7 @@
       "id": "unit.neutral.hornet-guard",
       "kind": "unit",
       "name": "Hornet Guard",
-      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders · melee forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.hornet-guard",
       "icon": "icon.neutral.hornet-guard",
       "selectionClass": "army",
@@ -3647,7 +3648,7 @@
       "id": "unit.neutral.needle-wasp",
       "kind": "unit",
       "name": "Needle Wasp",
-      "description": "Hornet Raiders \u00b7 ranged forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders · ranged forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.needle-wasp",
       "icon": "icon.neutral.needle-wasp",
       "selectionClass": "army",
@@ -3693,7 +3694,7 @@
       "id": "unit.neutral.nest-mother",
       "kind": "unit",
       "name": "Nest Mother",
-      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders · melee forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.nest-mother",
       "icon": "icon.neutral.nest-mother",
       "selectionClass": "army",
@@ -3736,7 +3737,7 @@
       "id": "unit.neutral.young-toad",
       "kind": "unit",
       "name": "Young Toad",
-      "description": "Bog Toad Hunters \u00b7 melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters · melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.young-toad",
       "icon": "icon.neutral.young-toad",
       "selectionClass": "army",
@@ -3779,7 +3780,7 @@
       "id": "unit.neutral.tree-frog",
       "kind": "unit",
       "name": "Tree Frog",
-      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters · ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.tree-frog",
       "icon": "icon.neutral.tree-frog",
       "selectionClass": "army",
@@ -3825,7 +3826,7 @@
       "id": "unit.neutral.tadpole-spirit",
       "kind": "unit",
       "name": "Tadpole Spirit",
-      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters · ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -3871,7 +3872,7 @@
       "id": "unit.neutral.briar-hulk",
       "kind": "unit",
       "name": "Briar Hulk",
-      "description": "Briar Covenant \u00b7 melee forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant · melee forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.briar-hulk",
       "icon": "icon.neutral.briar-hulk",
       "selectionClass": "army",
@@ -3914,7 +3915,7 @@
       "id": "unit.neutral.seedcaster",
       "kind": "unit",
       "name": "Seedcaster",
-      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant · ranged forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.seedcaster",
       "icon": "icon.neutral.seedcaster",
       "selectionClass": "army",
@@ -3960,7 +3961,7 @@
       "id": "unit.neutral.bloom-witch",
       "kind": "unit",
       "name": "Bloom Witch",
-      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant · ranged forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.bloom-witch",
       "icon": "icon.neutral.bloom-witch",
       "selectionClass": "army",
@@ -4006,7 +4007,7 @@
       "id": "unit.neutral.hollow-stag",
       "kind": "unit",
       "name": "Hollow Stag",
-      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.hollow-stag",
       "icon": "icon.neutral.hollow-stag",
       "selectionClass": "army",
@@ -4049,7 +4050,7 @@
       "id": "unit.neutral.barkguard",
       "kind": "unit",
       "name": "Barkguard",
-      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.barkguard",
       "icon": "icon.neutral.barkguard",
       "selectionClass": "army",
@@ -4092,7 +4093,7 @@
       "id": "unit.neutral.willow-wisp",
       "kind": "unit",
       "name": "Willow Wisp",
-      "description": "The Hollow Stag \u00b7 ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag · ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.willow-wisp",
       "icon": "icon.neutral.willow-wisp",
       "selectionClass": "army",
@@ -4138,7 +4139,7 @@
       "id": "unit.neutral.rotwood-ancient",
       "kind": "unit",
       "name": "Rotwood Ancient",
-      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.rotwood-ancient",
       "icon": "icon.neutral.rotwood-ancient",
       "selectionClass": "army",
@@ -4181,7 +4182,7 @@
       "id": "unit.neutral.corrupted-rootbeast",
       "kind": "unit",
       "name": "Corrupted Rootbeast",
-      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.corrupted-rootbeast",
       "icon": "icon.neutral.corrupted-rootbeast",
       "selectionClass": "army",
@@ -4224,7 +4225,7 @@
       "id": "unit.neutral.violet-sporeling",
       "kind": "unit",
       "name": "Violet Sporeling",
-      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.violet-sporeling",
       "icon": "icon.neutral.violet-sporeling",
       "selectionClass": "army",
@@ -4270,7 +4271,7 @@
       "id": "unit.neutral.root-seer",
       "kind": "unit",
       "name": "Root Seer",
-      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.root-seer",
       "icon": "icon.neutral.root-seer",
       "selectionClass": "army",
@@ -4372,6 +4373,351 @@
       },
       "level": 3,
       "experienceYield": 20,
+      "supplyCost": 0
+    },
+    {
+      "id": "unit.spell.shadow-spirit-lesser",
+      "kind": "unit",
+      "name": "Lesser Shadow Spirit",
+      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+      "asset": "asset.neutral.tadpole-spirit",
+      "icon": "icon.neutral.tadpole-spirit",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 1.3,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 215,
+        "armor": 0,
+        "armorType": "heavy"
+      },
+      "vision": 10,
+      "behaviorSets": [],
+      "behaviors": {
+        "playerControl": {},
+        "movement": {
+          "speed": 7,
+          "turnRate": 720
+        },
+        "combat": {
+          "damage": 10,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 80,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 12,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 2,
+      "experienceYield": 20,
+      "supplyCost": 0
+    },
+    {
+      "id": "unit.spell.shadow-spirit-standard",
+      "kind": "unit",
+      "name": "Shadow Spirit",
+      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+      "asset": "asset.neutral.tadpole-spirit",
+      "icon": "icon.neutral.tadpole-spirit",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 1.3,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 290,
+        "armor": 0,
+        "armorType": "heavy"
+      },
+      "vision": 10,
+      "behaviorSets": [],
+      "behaviors": {
+        "playerControl": {},
+        "movement": {
+          "speed": 7,
+          "turnRate": 720
+        },
+        "combat": {
+          "damage": 16,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 80,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 12,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 3,
+      "experienceYield": 30,
+      "supplyCost": 0
+    },
+    {
+      "id": "unit.spell.shadow-spirit-greater",
+      "kind": "unit",
+      "name": "Greater Shadow Spirit",
+      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+      "asset": "asset.neutral.tadpole-spirit",
+      "icon": "icon.neutral.tadpole-spirit",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 1.3,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 405,
+        "armor": 0,
+        "armorType": "heavy"
+      },
+      "vision": 10,
+      "behaviorSets": [],
+      "behaviors": {
+        "playerControl": {},
+        "movement": {
+          "speed": 7,
+          "turnRate": 720
+        },
+        "combat": {
+          "damage": 18,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 80,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 12,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.75
+          }
+        }
+      },
+      "level": 4,
+      "experienceYield": 40,
+      "supplyCost": 0
+    },
+    {
+      "id": "unit.spell.grove-nursery",
+      "kind": "unit",
+      "name": "Grove Nursery",
+      "description": "An immobile summoned nursery. Its producing status is granted by the spell, with no built-in spell behavior.",
+      "asset": "asset.ants.house",
+      "icon": "icon.ants.house",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 1.1,
+        "height": 2.6,
+        "formationSpacing": 2.5
+      },
+      "body": {
+        "maxHp": 500,
+        "armor": 2,
+        "armorType": "structure"
+      },
+      "vision": 10,
+      "behaviorSets": [],
+      "behaviors": {
+        "playerControl": {}
+      },
+      "level": 1,
+      "experienceYield": 30,
+      "supplyCost": 0
+    },
+    {
+      "id": "unit.spell.trinity-earth",
+      "kind": "unit",
+      "name": "Earth Spirit",
+      "description": "A linked, controllable spirit body. Its retained caster returns through surviving bodies in Earth, Storm, Fire order.",
+      "asset": "asset.neutral.tadpole-spirit",
+      "icon": "icon.neutral.tadpole-spirit",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 1.3,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 650,
+        "armor": 0,
+        "armorType": "heavy"
+      },
+      "vision": 10,
+      "behaviorSets": [],
+      "behaviors": {
+        "playerControl": {},
+        "movement": {
+          "speed": 5,
+          "turnRate": 720
+        },
+        "combat": {
+          "damage": 25,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 80,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 12,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.75
+          }
+        },
+        "abilities": {
+          "maxMana": 300,
+          "manaRegenPerSecond": 2,
+          "bindings": [
+            {
+              "id": "gift",
+              "ability": "ability.core.war-stomp",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              }
+            }
+          ]
+        }
+      },
+      "level": 3,
+      "experienceYield": 0,
+      "supplyCost": 0
+    },
+    {
+      "id": "unit.spell.trinity-storm",
+      "kind": "unit",
+      "name": "Storm Spirit",
+      "description": "A linked, controllable spirit body. Its retained caster returns through surviving bodies in Earth, Storm, Fire order.",
+      "asset": "asset.neutral.tadpole-spirit",
+      "icon": "icon.neutral.tadpole-spirit",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 1.3,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 420,
+        "armor": 0,
+        "armorType": "heavy"
+      },
+      "vision": 10,
+      "behaviorSets": [],
+      "behaviors": {
+        "playerControl": {},
+        "movement": {
+          "speed": 8,
+          "turnRate": 720
+        },
+        "combat": {
+          "damage": 17,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 80,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 12,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.75
+          }
+        },
+        "abilities": {
+          "maxMana": 300,
+          "manaRegenPerSecond": 2,
+          "bindings": [
+            {
+              "id": "gift",
+              "ability": "ability.core.chain-lightning",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              }
+            }
+          ]
+        }
+      },
+      "level": 3,
+      "experienceYield": 0,
+      "supplyCost": 0
+    },
+    {
+      "id": "unit.spell.trinity-fire",
+      "kind": "unit",
+      "name": "Fire Spirit",
+      "description": "A linked, controllable spirit body. Its retained caster returns through surviving bodies in Earth, Storm, Fire order.",
+      "asset": "asset.neutral.tadpole-spirit",
+      "icon": "icon.neutral.tadpole-spirit",
+      "selectionClass": "army",
+      "dimensions": {
+        "radius": 0.42,
+        "height": 1.3,
+        "formationSpacing": 0.945
+      },
+      "body": {
+        "maxHp": 340,
+        "armor": 0,
+        "armorType": "heavy"
+      },
+      "vision": 10,
+      "behaviorSets": [],
+      "behaviors": {
+        "playerControl": {},
+        "movement": {
+          "speed": 10,
+          "turnRate": 720
+        },
+        "combat": {
+          "damage": 23,
+          "damageType": "melee",
+          "range": 1.5,
+          "cooldownTicks": 80,
+          "aggroRange": 10,
+          "attack": {
+            "windupTicks": 12,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.75
+          }
+        },
+        "abilities": {
+          "maxMana": 300,
+          "manaRegenPerSecond": 2,
+          "bindings": [
+            {
+              "id": "gift",
+              "ability": "ability.core.immolation",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              }
+            }
+          ]
+        }
+      },
+      "level": 3,
+      "experienceYield": 0,
       "supplyCost": 0
     }
   ]

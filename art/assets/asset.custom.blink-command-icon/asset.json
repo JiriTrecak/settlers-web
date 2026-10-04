@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.blink-command-icon",
+  "name": "Blink — Single Ant Fold",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "ebdf1ca07c68b8c42098788864b56e66fde7d1f5094803c48195bd33844e5060",
+      "bytes": 958
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "b1a1ee583e91d83735c388939d02e1917cbfe6bbf3ec113168731282b8db76e9",
+      "bytes": 639389
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "abbdad1e02e959688d60146e15b0105a611d813cbd1042392a5cce8b0509d4bc",
+      "bytes": 1585280
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.blink-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.blink-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

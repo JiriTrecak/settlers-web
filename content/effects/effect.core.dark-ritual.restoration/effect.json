@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.dark-ritual.restoration",
+  "name": "Dark Ritual · Restoration",
+  "description": "",
+  "durationTicks": 40,
+  "loop": false,
+  "layers": [
+    {
+      "id": "restoration",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 38,
+        "rate": 22,
+        "speed": 3,
+        "speedVariation": 0.45,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 80,
+        "gravity": 0,
+        "drag": 1.1,
+        "spawnRadius": 0.6,
+        "startSize": 0.14,
+        "endSize": 0.025,
+        "spin": 2,
+        "fadeIn": 0.05,
+        "fadeOut": 0.75
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#7872ff",
+      "accent": "#dad7ff",
+      "durationTicks": 1,
+      "count": 22,
+      "size": 0.1,
+      "height": 1
+    },
+    {
+      "id": "glow",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#7872ff",
+      "accent": "#dad7ff",
+      "durationTicks": 32,
+      "count": 1,
+      "size": 1.1,
+      "height": 0.1,
+      "intensity": 0.65
+    }
+  ]
+}

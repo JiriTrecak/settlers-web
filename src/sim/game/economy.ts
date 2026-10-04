@@ -956,6 +956,16 @@ export class Economy {
     u.pendingMove = null;
     return true;
   }
+  /** Release old-owner reservations without deleting the carrier or its carried goods. */
+  detachUnit(w: Entity) {
+    this.interrupt(w);
+    for (const job of [...this.s.jobs])
+      if (job.worker === w.id || job.target === w.id || job.source === w.id) this.eraseJob(job);
+    for (const b of this.c.liveBuildings()) {
+      if (b.production?.staff === w.id) b.production.staff = null;
+      if (b.production?.active?.worker === w.id) b.production.active = null;
+    }
+  }
   cancelEntry(b: Entity, id: number): boolean {
     const p = b.production;
     const entry = p?.queue.find((q) => q.id === id);
@@ -1007,7 +1017,7 @@ export class Economy {
     if (cancel) this.refund(e);
     const inventory = { ...e.inventory };
     this.c.remove(e);
-    this.c.spatial.rebuild();
+    this.c.spatial.refreshAfterRemoval(e.id);
     for (const [item, amount] of Object.entries(inventory))
       if (amount)
         this.c.event(

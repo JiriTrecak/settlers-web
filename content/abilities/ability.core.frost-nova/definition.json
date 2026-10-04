@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.frost-nova",
+  "name": "Frost Nova",
+  "description": "Strike the primary target with frost, then damage and slow surrounding enemies without repeating the primary hit.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 240
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "amount": 100,
+      "damageType": "spell"
+    },
+    {
+      "op": "damage",
+      "target": "target",
+      "query": {
+        "center": "target",
+        "radius": 5,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": false,
+        "excludePrimary": true,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "amount": 50,
+      "damageType": "spell"
+    },
+    {
+      "op": "status",
+      "target": "target",
+      "query": {
+        "center": "target",
+        "radius": 5,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "id": "chill",
+      "amount": 160,
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {
+        "attackSpeedPermille": -200,
+        "moveSpeedPermille": -300
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.frost-nova"
+}

@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.custom.ashstep",
+  "name": "Ashstep",
+  "description": "Blink to clear ground within 20 units, then immediately deal 70 spell damage to enemies within 4 units of the actual landing position. Departure causes no damage.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 20,
+      "mana": 25,
+      "cooldown": 200
+    }
+  ],
+  "targeting": {
+    "includeBuildings": true,
+    "kind": "point",
+    "radius": 4,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally",
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 4,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldown"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "teleport",
+      "target": "caster",
+      "amount": 3,
+      "destination": "point",
+      "preserveOffset": false
+    },
+    {
+      "op": "damage",
+      "target": "target",
+      "query": {
+        "center": "caster",
+        "radius": 4,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": true,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "amount": 70,
+      "damageType": "spell"
+    }
+  ],
+  "presentation": "presentation.custom.ashstep"
+}

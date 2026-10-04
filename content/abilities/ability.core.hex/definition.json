@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.hex",
+  "name": "Hex",
+  "description": "Transform an enemy into a small tree frog for eight seconds (three against heroes). It cannot attack, cast spells or use items and moves 70% slower. Dispelling restores its original appearance and capabilities.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 14,
+      "mana": 50,
+      "cooldown": 400,
+      "duration": 320
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 12,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldown"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "form",
+      "amount": {
+        "rankParameter": "duration"
+      },
+      "heroDuration": 120,
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {
+        "moveSpeedPermille": -700
+      },
+      "disarm": true,
+      "silence": true,
+      "itemBlocked": true,
+      "form": {
+        "opacity": 1,
+        "asset": "asset.neutral.tree-frog",
+        "scale": 0.65
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.hex"
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.life-drain",
+  "name": "Life Drain",
+  "description": "",
+  "durationTicks": 38,
+  "loop": false,
+  "layers": [
+    {
+      "id": "pulse",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "beam",
+      "colour": "#cf3453",
+      "accent": "#ef8a9b",
+      "durationTicks": 38,
+      "count": 1,
+      "size": 0.065,
+      "height": 1.2,
+      "follow": true,
+      "spread": 0
+    }
+  ]
+}

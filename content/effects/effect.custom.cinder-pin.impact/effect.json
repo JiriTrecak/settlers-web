@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.cinder-pin.impact",
+  "name": "Cinder Pin — Impact",
+  "description": "A compact orange burst and six warm sparks at the struck enemy; cosmetic only.",
+  "durationTicks": 16,
+  "loop": false,
+  "layers": [
+    {
+      "id": "pin-burst",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#ff852c",
+      "accent": "#ffd58a",
+      "durationTicks": 12,
+      "count": 5,
+      "size": 0.34,
+      "height": 0.4,
+      "blend": "additive",
+      "spread": 0.45
+    },
+    {
+      "id": "impact-sparks",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 14,
+        "rate": 6,
+        "speed": 2.2,
+        "speedVariation": 0.35,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 65,
+        "gravity": 1,
+        "drag": 1.5,
+        "spawnRadius": 0.15,
+        "startSize": 0.13,
+        "endSize": 0.02,
+        "spin": 1,
+        "fadeIn": 0,
+        "fadeOut": 0.8
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#fff0d0",
+      "accent": "#ffb55a",
+      "durationTicks": 16,
+      "count": 6,
+      "size": 0.12,
+      "height": 0.25,
+      "blend": "additive",
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

@@ -10,7 +10,10 @@ export function statusModifiers(status: NonNullable<Entity["itemStatuses"]>[numb
 }
 export function itemModifiers(e: Pick<Entity, "equipment" | "itemStatuses" | "spellStatuses">, registry?: ContentRegistry): ItemModifiers[] {
   if (!registry) return [];
-  const modifiers: ItemModifiers[] = spellModifiers(e,registry);
+  return [...spellModifiers(e,registry),...nonSpellModifiers(e,registry)];
+}
+export function nonSpellModifiers(e:Pick<Entity,"equipment"|"itemStatuses">,registry:ContentRegistry):ItemModifiers[]{
+  const modifiers:ItemModifiers[]=[];
   // Flat equipment stats stack; each named aura is deduplicated by its interpreter.
   for (const id of e.equipment ?? []) {
     const effect = id && registry.find(id)?.itemEffect;

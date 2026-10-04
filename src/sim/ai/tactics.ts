@@ -1,4 +1,8 @@
-import {abilityTargetScore,value} from '../abilities/ai';
+import {locomotion} from '../game/locomotion';
+import {damageEligibility} from '../abilities/damagePolicy';
+import {controlImmunities} from '../abilities/controlPolicy';
+import {unitNature,spellImmunity,acceptsSpell,matchesSpellTarget} from '../abilities/eligibility';
+import {corpseAbilityAims,abilityAimScore,strategicAbilityAims,value} from '../abilities/ai';
 import type { EntityView } from "../game/observation";
 import type { AIState } from "./state";
 import type { Emit } from "./economy";
@@ -16,16 +20,32 @@ function itemValue(f: Frame, id: string | null) {
 }
 export function abilityActions(f:Frame,emit:Emit){
  for(const caster of [...f.own].sort((a,b)=>a.id-b.id)){
-  const state=caster.abilities;if(!state||state.pending||caster.control?.stunned)continue;
+  const state=caster.abilities;if(!state||state.pending||state.weaponOrder||caster.control?.stunned)continue;
   for(const binding of f.def(caster).behaviors.abilities?.bindings??[]){
    if(!binding.ai||!binding.controls.includes('ai'))continue;
    const ability=f.registry.abilityLibrary.abilities.find(a=>a.id===binding.ability)!,rank=state.ranks[binding.id];
    if(ability.activation==='passive'||ability.autocast)continue;
    if(!rank||(state.cooldowns[ability.id]??0)>f.tick||state.mana<value(ability.cast.cost.amount,ability.ranks[rank-1]))continue;
    const range=value(ability.targeting.range,ability.ranks[rank-1]);
-   const candidates=[...f.own.map(e=>({e,relation:'ally' as const})),...f.hostiles.map(e=>({e,relation:'enemy' as const}))].filter(({e})=>e.unit&&(ability.targeting.kind!=='self'||e.id===caster.id)&&!e.remembered&&(e.hp??0)>0&&(e.id!==caster.id||ability.targeting.allowSelf)&&distance(e,caster)<=range)
-    .map(({e,relation})=>({e,score:abilityTargetScore(ability,rank,relation,e.hp!,e.stats?.maxHp??f.def(e).body!.maxHp,binding.ai!.preference)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.e.id-b.e.id);
-   if(candidates[0]&&emit({type:'castAbility',actor:caster.id,binding:binding.id,target:ability.targeting.kind==='point'?{kind:'point',position:{x:Math.round(candidates[0].e.x),y:Math.round(candidates[0].e.y)}}:{kind:'unit',entity:candidates[0].e.id}},'Cast a declared ability on a visible useful target'))break;
+   const observed=[...f.own,...f.hostiles].filter(e=>!e.remembered&&(e.hp??0)>0).map(e=>({id:e.id,owner:e.owner,x:e.x,y:e.y,hp:e.hp!,maxHp:e.stats?.maxHp??f.def(e).body!.maxHp,maxMana:e.stats?.maxMana??0,mana:e.abilities?.mana,alive:true,targetable:!e.unit?.contained&&!e.unit?.garrison,unit:!!e.unit,locomotion:locomotion(f.def(e)),nature:unitNature(f.def(e)),hero:!!f.def(e).hero,summoned:!!e.summoned,summonOrigin:e.summonOrigin,level:e.stats?.level??f.def(e).level??1,spellImmunity:spellImmunity(e,f.registry),...damageEligibility(e,f.registry),controlImmunity:[...controlImmunities(e,f.registry)]}));
+   const actor=observed.find(e=>e.id===caster.id);if(!actor)continue;
+   const relation=(e:{id:number})=>f.byId.get(e.id)?.hostile?'enemy' as const:'ally' as const;
+   // Active toggles are represented by their instance-linked status or saved instance view.
+   if(ability.persistent?.toggle&&caster.activeAbilities?.includes(ability.id))continue;
+   if(binding.ai.intent&&binding.ai.intent!=='utility'){
+    const aims=strategicAbilityAims(binding.ai.intent,ability,rank,actor,observed,relation,{valid:p=>f.geo.inside(p)&&(binding.ai!.intent!=='escape'||!!f.geo.map.land[f.geo.index(p)]&&!f.blocked.has(f.geo.index(p))),visible:p=>f.visible(p),explored:p=>(f.view.fog?.cells[f.geo.index(p)]??0)>0});
+    const aim=aims[0];
+    if(aim!==undefined&&emit({type:'castAbility',actor:caster.id,binding:binding.id,target:typeof aim==='number'?{kind:'unit',entity:aim}:{kind:'point',position:aim}},'Use declared '+binding.ai.intent+' ability'))break;
+    continue;
+   }
+   const candidates=(ability.targeting.kind==='self'?[actor]:observed).filter(e=>(ability.targeting.kind==='point'||matchesSpellTarget(e,ability,actor,relation(e))&&acceptsSpell(e,ability,relation(e)))&&(e.unit||ability.targeting.includeBuildings)&&(e.id!==caster.id||ability.targeting.allowSelf||ability.targeting.kind==='self')&&distance(e,caster)<=range&&(ability.targeting.kind==='self'||ability.targeting.relations.includes(relation(e))))
+    .map(e=>({e,score:abilityAimScore(ability,rank,actor,ability.targeting.kind==='point'?{id:0,x:Math.round(e.x),y:Math.round(e.y)}:e,observed,relation,binding.ai!.preference,id=>f.byId.get(id)?.spellStatuses?.some(s=>s.ability===ability.id)??false,f.view.corpses??[])})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.e.id-b.e.id);
+   if(ability.targeting.kind==='point'){
+    const points=[...candidates.map(c=>({point:c.e,score:c.score})),...corpseAbilityAims(ability,f.view.corpses??[]).filter(p=>distance(p,caster)<=range&&f.geo.inside(p)&&(!ability.targeting.visible||f.visible(p))).map(point=>({point,score:abilityAimScore(ability,rank,actor,{...point,id:0},observed,relation,binding.ai!.preference,()=>false,f.view.corpses??[])}))].filter(c=>c.score>0).sort((a,b)=>b.score-a.score||a.point.id-b.point.id);
+    if(points[0]&&emit({type:'castAbility',actor:caster.id,binding:binding.id,target:{kind:'point',position:{x:Math.round(points[0].point.x),y:Math.round(points[0].point.y)}}},'Cast a declared ability at a visible useful area'))break;
+    continue;
+   }
+   if(candidates[0]&&emit({type:'castAbility',actor:caster.id,binding:binding.id,target:{kind:'unit',entity:candidates[0].e.id}},'Cast a declared ability on a visible useful target'))break;
   }
  }
 }

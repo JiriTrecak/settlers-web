@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.flight-form.status",
+  "name": "Flight Form · Wing motes",
+  "description": "",
+  "durationTicks": 64,
+  "loop": true,
+  "layers": [
+    {
+      "id": "motes",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 36,
+        "rate": 10,
+        "speed": 1.2,
+        "speedVariation": 0.3,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 60,
+        "gravity": 0,
+        "drag": 1,
+        "spawnRadius": 0.4,
+        "startSize": 0.1,
+        "endSize": 0.01,
+        "spin": 1,
+        "fadeIn": 0.1,
+        "fadeOut": 0.7
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#c4f1bc",
+      "accent": "#fff3c6",
+      "durationTicks": 64,
+      "count": 24,
+      "size": 0.12,
+      "height": 0.6,
+      "follow": true
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import {readAbilityLibrary} from './abilities';
+import {readContentSource} from './source';
 import {validateFiles} from '../asset-studio/server/manifest';
 import type { Plugin } from "vite";
 import { readFile, writeFile, rename, readdir, stat } from "node:fs/promises";
@@ -9,7 +9,7 @@ import {
   type ContentSource,
 } from "../../src/content/registry";
 
-async function readSource(file:string):Promise<ContentSource>{const raw=JSON.parse(await readFile(file,'utf8'));const manifest=JSON.parse(await readFile(resolve(file,'../../assets/manifest.json'),'utf8'));return {...raw,abilityLibrary:await readAbilityLibrary(resolve(file,'../..')),assets:manifest.records.flatMap((r:{render:unknown[]})=>r.render)};}
+const readSource=(file:string)=>readContentSource(resolve(file,'../..'));
 async function validateModels(root: string, registry: ContentRegistry) {
   if(await stat(resolve(root,'.asset-work/publishing')).catch(()=>null))throw Error('Asset publication is in progress. Retry after it completes.');
   await validateFiles(root,JSON.parse(await readFile(resolve(root,'assets/manifest.json'),'utf8')));

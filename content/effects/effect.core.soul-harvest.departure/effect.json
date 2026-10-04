@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.soul-harvest.departure",
+  "name": "Soul Harvest · Departure",
+  "description": "",
+  "durationTicks": 32,
+  "loop": false,
+  "layers": [
+    {
+      "id": "soul",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#9a80ef",
+      "accent": "#e6d9ff",
+      "durationTicks": 20,
+      "count": 1,
+      "size": 2,
+      "height": 1,
+      "intensity": 0.65
+    },
+    {
+      "id": "wisps",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 32,
+        "rate": 1,
+        "speed": 4,
+        "speedVariation": 0.3,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 35,
+        "gravity": -1,
+        "drag": 0.6,
+        "spawnRadius": 0.9,
+        "startSize": 0.13,
+        "endSize": 0.035,
+        "spin": 2,
+        "fadeIn": 0.05,
+        "fadeOut": 0.7
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#9270e8",
+      "accent": "#eadbff",
+      "durationTicks": 32,
+      "count": 22,
+      "size": 0.13,
+      "height": 0.5
+    }
+  ]
+}

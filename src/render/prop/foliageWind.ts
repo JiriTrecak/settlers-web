@@ -2,6 +2,16 @@ import {Mesh,MeshDepthMaterial,RGBADepthPacking,ShaderChunk,type Material,type O
 import {sourceTreeSwayGLSL} from './sourceTreeSway';
 /** Authored GLB extras: metres of tip travel and cycles/second. Roots remain pinned. */
 export type FoliageWind={amplitude:number;speed:number};
+/** Displacement radii used by CPU culling. For length-preserving normalization,
+ * |normalize(p+d)*|p|-p| <= 2|d|. Native bend is <= 1.142a; leaf travel after
+ * normalization <= 1.286a. Their final normalization is therefore < 5a.
+ * Source trunk sway is world-space: |offset| <= .5*sqrt(1.25²+1) and its
+ * normalization stays below 2 m, independently of model scale. Epsilon covers
+ * the shader's tiny normalize bias. Keep this contract alongside the shader. */
+export type FoliageMotionBounds={local:number;world:number};
+export function foliageMotionBounds(settings:FoliageWind,sourceOffset:boolean):FoliageMotionBounds {
+ return {local:5*settings.amplitude+.00001,world:sourceOffset?2:0};
+}
 export function foliageWind(value:unknown):FoliageWind|null{
  if(!value||typeof value!=='object')return null;
  const o=value as Record<string,unknown>;
@@ -68,6 +78,7 @@ export class FoliageWindLayer {
    if(!(node instanceof Mesh))return;
    if(node.userData.underlay)return;
    if(sourceOffset)node.userData.sourceTreeWind=true;
+   node.userData.foliageMotionBounds=foliageMotionBounds(settings,!!sourceOffset);
    for(const m of Array.isArray(node.material)?node.material:[node.material])hook(m);
    const source=(Array.isArray(node.material)?node.material[0]:node.material) as import('three').MeshStandardMaterial;
    const depth=new MeshDepthMaterial({depthPacking:RGBADepthPacking,map:source.map,alphaTest:source.alphaTest,side:source.side});depth.userData.foliage=source.userData.foliage;hook(depth);node.customDepthMaterial=depth;this.depths.add(depth);depths.push(depth);

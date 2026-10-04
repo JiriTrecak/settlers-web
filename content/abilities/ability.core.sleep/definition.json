@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.sleep",
+  "name": "Sleep",
+  "description": "Put an enemy to sleep. Actual health damage wakes it; absorbed damage does not.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "sleep",
+      "amount": 400,
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {},
+      "stun": true,
+      "breakOnDamage": true,
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.sleep"
+}

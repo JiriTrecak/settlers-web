@@ -130,3 +130,63 @@ it('reuses terrain edges without caching bodies, and invalidates changed diagona
   expect(cached.path(start,goal)).toEqual(plain.path(start,goal));
  }
 });
+
+it('shares each directed terrain sweep across diagonal corner checks',()=>{
+ const probes=new Map<string,number>(),size=32;
+ const cached=new Navigation(size,(a,b)=>{const key=`${a}:${b}`;probes.set(key,(probes.get(key)??0)+1);return true;},undefined,true);
+ const plain=new Navigation(size,()=>true);
+ for(const [start,goal] of [[0,1023],[31,992],[500,14],[1000,32]])expect(cached.path(start!,goal!)).toEqual(plain.path(start!,goal!));
+ expect(probes.size).toBeGreaterThan(100);
+ expect(Math.max(...probes.values())).toBe(1);
+ cached.invalidate();probes.clear();
+ expect(cached.path(0,1023)).toEqual(plain.path(0,1023));
+ expect(probes.size).toBeGreaterThan(0);expect(Math.max(...probes.values())).toBe(1);
+});
+
+it('preserves directed slopes, small grids and changing corner occupancy with shared sweeps',()=>{
+ for(const size of [2,3,8,16]){
+  const walls=new Set<number>(),step=(a:number,b:number)=>!walls.has(b)&&!((a*7+b*13)%19===0);
+  const cached=new Navigation(size,step,undefined,true),plain=new Navigation(size,step);
+  for(let turn=0;turn<60;turn++){
+   const changed=(turn*13+3)%(size*size);
+   if(walls.has(changed))walls.delete(changed);else walls.add(changed);
+   cached.invalidate([changed]);
+   const start=turn*7%(size*size),goal=(turn*11+size+1)%(size*size),bodies=new Set([(turn*17+2)%(size*size)]);
+   expect(cached.path(start,goal,bodies)).toEqual(plain.path(start,goal,bodies));
+  }
+ }
+});
+
+it('keeps optimal detour cost and cost limits through a large search frontier',()=>{
+ const size=64,start=32*size+4,goal=32*size+60;
+ const step=(_a:number,b:number)=>{
+  const x=b%size,y=Math.floor(b/size);return !(x>=20&&x<=43&&y>=10&&y<=54);
+ };
+ // Independent Dijkstra oracle: linear minimum selection, no A* heuristic or
+ // shared heap code. The lake creates a large band of equal-priority choices.
+ const distance=new Float64Array(size*size).fill(Infinity),done=new Uint8Array(size*size);
+ distance[start]=0;
+ for(let i=0;i<distance.length;i++){
+  let current=-1;
+  for(let j=0;j<distance.length;j++)if(!done[j]&&(current<0||distance[j]!<distance[current]!))current=j;
+  if(current<0||!Number.isFinite(distance[current])||current===goal)break;
+  done[current]=1;
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+   const x=current%size+dx,y=Math.floor(current/size)+dy,next=y*size+x;
+   if(x<0||y<0||x>=size||y>=size||!canTraverse(size,current,next,step))continue;
+   distance[next]=Math.min(distance[next]!,distance[current]!+(dx&&dy?1414:1000));
+  }
+ }
+ expect(distance[goal]).toBeGreaterThan(56000);
+ for(const cache of [false,true]){
+  const nav=new Navigation(size,step,undefined,cache),route=nav.path(start,goal)!;
+  let previous=start,total=0;
+  for(const next of route){
+   expect(canTraverse(size,previous,next,step)).toBe(true);
+   total+=next%size!==previous%size&&Math.floor(next/size)!==Math.floor(previous/size)?1414:1000;previous=next;
+  }
+  expect(route.at(-1)).toBe(goal);expect(total).toBe(distance[goal]);
+  expect(nav.path(start,goal,undefined,total-1)).toBeNull();
+  expect(nav.path(start,goal,undefined,total)).toEqual(route);
+ }
+});

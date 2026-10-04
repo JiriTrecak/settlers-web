@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.death-burst",
+  "icon": "asset.custom.death-burst-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "explosion",
+      "effect": "effect.core.death-burst.explosion",
+      "event": "death",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.carrion-spirits",
+  "name": "Carrion Spirits",
+  "description": "Consume one nearby corpse to summon a permanent forest spirit, up to five retained per caster across ranks. Spirits survive their caster. Adapts Warcraft III Carrion Beetles mechanics using our existing forest-spirit models; it does not introduce a beetle model.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "tier": 1
+    },
+    {
+      "tier": 2
+    },
+    {
+      "tier": 3
+    }
+  ],
+  "targeting": {
+    "kind": "point",
+    "radius": 4,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 30,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 240,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "summon",
+      "target": "point",
+      "amount": 1,
+      "definition": {
+        "byRank": [
+          "unit.spell.shadow-spirit-lesser",
+          "unit.spell.shadow-spirit-standard",
+          "unit.spell.shadow-spirit-greater"
+        ]
+      },
+      "maxActive": 5,
+      "replace": false,
+      "radius": 2,
+      "corpses": {
+        "radius": 4,
+        "relations": [
+          "ally",
+          "enemy"
+        ],
+        "order": "nearest",
+        "maxTargets": 1
+      }
+    }
+  ],
+  "presentation": "presentation.core.carrion-spirits"
+}

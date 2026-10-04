@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.amber-mend.link",
+  "name": "Amber Mend — Golden Link",
+  "description": "Graceful amber ribbon and fine luminous core between runtime chain endpoints.",
+  "durationTicks": 24,
+  "loop": false,
+  "layers": [
+    {
+      "id": "golden-ribbon",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "beam",
+      "colour": "#eeb649",
+      "accent": "#ffdf88",
+      "durationTicks": 24,
+      "count": 10,
+      "size": 0.12,
+      "height": 1.2
+    },
+    {
+      "id": "warm-core",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "beam",
+      "colour": "#fff0b3",
+      "accent": "#fff8db",
+      "durationTicks": 18,
+      "count": 7,
+      "size": 0.035,
+      "height": 1.2
+    }
+  ]
+}

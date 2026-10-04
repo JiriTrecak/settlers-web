@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.mana-burn",
+  "name": "Mana Burn",
+  "description": "Remove up to fifty available mana, then deal spell damage equal to the mana actually removed.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 20,
+      "cooldownTicks": 160
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "drain",
+      "target": "target",
+      "amount": 50,
+      "resource": "mana",
+      "restoreCaster": false,
+      "damageType": "spell",
+      "damagePerDrainedPermille": 1000
+    }
+  ],
+  "presentation": "presentation.core.mana-burn"
+}

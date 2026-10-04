@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.war-stomp",
+  "name": "War Stomp",
+  "description": "Stomp the ground, damaging and stunning enemies within five metres of the caster.",
+  "durationTicks": 32,
+  "loop": false,
+  "layers": [
+    {
+      "id": "core",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#e9b761",
+      "accent": "#fff5d6",
+      "durationTicks": 32,
+      "count": 24,
+      "size": 4,
+      "height": 1.5
+    },
+    {
+      "id": "flash",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "light",
+      "colour": "#e9b761",
+      "accent": "#ffffff",
+      "durationTicks": 20,
+      "count": 1,
+      "size": 5,
+      "height": 1,
+      "intensity": 4
+    }
+  ]
+}

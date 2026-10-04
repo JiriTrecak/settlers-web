@@ -1,3 +1,4 @@
+import {SceneryFilter} from '../../presentation/sceneryChanges';
 import {PointLight, type Scene} from 'three';
 import {sceneryCatalogue as catalogJson} from '../../shared/assets/manifest';
 import {parseCatalogue} from '../../shared/asset/catalog';
@@ -11,13 +12,15 @@ export class SceneryLights {
  get groundSources(){return this.sources;}
  private stamps:readonly MapStamp[]|null=null;
  private field:HeightField|null=null;
+ private selection=new SceneryFilter(s=>definitions.has(s.asset));
  private lastX=NaN;private lastZ=NaN;
  invalidate(){this.stamps=null;this.lastX=NaN;}
  constructor(private readonly scene:Scene){for(const light of this.pool){light.visible=false;scene.add(light);}}
  sync(stamps:readonly MapStamp[],field:HeightField):void {
+  stamps=this.selection.select(stamps);
   if(this.stamps===stamps&&this.field===field)return;
   this.stamps=stamps;this.field=field;this.lastX=NaN;
-  const selected=stamps.filter(s=>definitions.has(s.asset));
+  const selected=stamps;
   this.sources=selected.map(s=>{
    const d=definitions.get(s.asset)!,scale=s.scale??1,c=Math.cos(s.yaw??0),r=Math.sin(s.yaw??0);
    const x=d.x*scale*(s.widthScale??1),z=d.z*scale*(s.depthScale??1);

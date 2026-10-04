@@ -59,3 +59,8 @@ __pycache__/
 /tooling/spell-editor/agent-app/.eve/
 /tooling/spell-editor/agent-app/.output/
 /tooling/spell-editor/agent-app/.nitro/
+
+# Published strategic atlases are small runtime assets, not world-generation caches.
+!assets/maps/previews/
+!assets/maps/previews/*.webp
+!assets/maps/previews/index.json

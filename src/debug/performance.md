@@ -6,6 +6,25 @@ uses asynchronous EXT_disjoint_timer_query_webgl2 queries, bounded to four
 pending queries; unsupported browsers are labeled. CPU scopes overlap.
 Rebuild events have their own sample history and are not per-frame averages.
 
+Match captures also expose opt-in hierarchical simulation timings under
+`Detail inclusive · …` and `Detail self · …`, through the same debug report and
+`game_performance` MCP. Inclusive parents contain their children; add **self**
+times only. Known idle scopes emit zero each tick, so intermittent AI decisions
+and checksum work are not accidentally reported as per-tick event averages.
+`Worker · tick total` includes lockstep, world tick, bookkeeping and periodic
+network hashing. Projection, encode, transport and main-thread decode remain
+separate costs. Detailed instrumentation adds overhead; use an unprofiled run
+of `scripts/bench/match-budget.ts` for budget comparisons.
+
+The Heartroot four-player CPU target is **3 ms p99**, not a mean. Routine network
+checkpoints target **0.1 ms per check**: existing counters/economy totals plus at
+most 32 actors read directly from the maintained body index. `sim/game/checkpoint.ts`
+contains the exact coverage. Fog, forest payloads and AI internals are deliberately
+omitted; many internal differences will only surface through sampled gameplay
+outcomes, and some may never be detected. No work is relocated into other systems.
+`World.checksum('full')` remains an explicit expensive correctness audit, absent
+from the routine worker path. Neither mode implements resync or anti-cheat.
+
 Frame interval measures the app loop (including the existing 40 Hz unfocused
 fallback), not render submission cadence. GPU time covers the entire render,
 including recursive water reflection renders. Three.js info auto-reset is

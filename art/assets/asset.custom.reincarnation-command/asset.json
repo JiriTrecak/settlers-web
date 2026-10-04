@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.reincarnation-command",
+  "name": "Reincarnation — Woodland Command",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "c2337434fc36cb765c80beb113906f81e2a0732339106a3b58d9f03a86639b0b",
+      "bytes": 844
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "6a227f34d4d8389c824af550e65749e02fd19a09e7a4580c31f926a1c720c3bd",
+      "bytes": 614479
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "649ce64cd251534515f5a4ec0c5773c8c09a102f77c1afe989d2c6b6f2f3444c",
+      "bytes": 1601312
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.reincarnation-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.reincarnation-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

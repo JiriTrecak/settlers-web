@@ -1,3 +1,4 @@
+import {controlImmune} from '../abilities/controlPolicy';
 import {heading,turnDifference} from './facing';
 import {trafficEscape} from './trafficEscape';
 import {isStunned} from './effects';
@@ -13,7 +14,7 @@ type Rank={root:number;depth:number};
 export function trafficRequests(c:GameContext,units:readonly Entity[]) {
  const moving=units.filter(e=>e.unit!.route.length&&!e.unit!.detour&&c.ready(e)&&!e.abilities?.pending&&
   !!c.def(e).behaviors.movement?.speed&&!isStunned(e,c.registry)&&
-  !(itemFlag(e,c.registry,'rooted')&&!itemFlag(e,c.registry,'controlImmune'))&&!c.spatial.ignoresUnits(e));
+  !(itemFlag(e,c.registry,'rooted')&&!controlImmune(e,c.registry,'root'))&&!c.spatial.ignoresUnits(e));
  if(!moving.some(e=>e.unit!.lastMovedTick!==undefined&&c.state.tick-e.unit!.lastMovedTick>=STALL_TICKS))return new Map<number,{leader:Entity;parent:Entity}>();
  const index=new UnitIndex(moving,c.spatial.size,c.spatial.ignoresUnits),edges=new Map<number,number[]>();
  for(const e of moving){
@@ -30,7 +31,7 @@ export function trafficRequests(c:GameContext,units:readonly Entity[]) {
   if(!c.spatial.clearSegment(from,to, undefined, e))continue;
   const blocked:number[]=[];
   for(const b of index.within(from.x-1500,from.y-1500,from.x+1500,from.y+1500)){
-   if(b.id===e.id||b.owner!==e.owner)continue;
+   if(b.id===e.id||b.owner!==e.owner||!c.spatial.sameLocomotion(e,b))continue;
    if(c.spatial.cell(b)!==c.spatial.cell(e)&&!c.spatial.clearSegment(from,to,new Set([c.spatial.cell(b)]), e))blocked.push(b.id);
   }
   const physical:number[]=[];c.spatial.unitSegmentClear(from,to,e.id,physical);
@@ -75,8 +76,8 @@ export function trafficRequests(c:GameContext,units:readonly Entity[]) {
  }
  // A priority must not insist that the actor trapped inside a gate yields
  // when another cycle member has a checked pocket outside that gate.
- const occupied=new Set(units.filter(e=>!c.spatial.ignoresUnits(e)).flatMap(e=>e.unit!.detour?.yielding?[c.spatial.cell(e),e.unit!.detour.waypoint]:[c.spatial.cell(e)]));
- const canEscape=(e:Entity,parent:Entity)=>{const claims=new Set(occupied);claims.delete(c.spatial.cell(e));return !!trafficEscape(c,e,parent,claims);};
+ const occupied=new Set(units.filter(e=>!c.spatial.airborne(e)&&!c.spatial.ignoresUnits(e)).flatMap(e=>e.unit!.detour?.yielding?[c.spatial.cell(e),e.unit!.detour.waypoint]:[c.spatial.cell(e)]));
+ const canEscape=(e:Entity,parent:Entity)=>{const claims=new Set(c.spatial.airborne(e)?units.filter(b=>c.spatial.sameLocomotion(e,b)).map(b=>c.spatial.cell(b)):occupied);claims.delete(c.spatial.cell(e));return !!trafficEscape(c,e,parent,claims);};
  for(const component of new Set(components.values())){
   const candidates=[...requests].filter(([id])=>components.get(id)===component);
   // Preserve normal priority in open traffic. Reverse it only at a terrain

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.resurrection",
+  "icon": "asset.custom.resurrection-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "rise",
+      "effect": "effect.core.resurrection.rise",
+      "event": "resurrected",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

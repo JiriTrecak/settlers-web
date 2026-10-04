@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.immolation-command",
+  "name": "Immolation — original command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "7d5fd7b4dea898f0aa80cd0ffe7f86fa7aa3556c1457ef37d0dbda97d4889e28",
+      "bytes": 979
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "1e1a41b489a73907f983384381468957f5306e1b5a6c9b911fc3af8c39dcf71d",
+      "bytes": 591370
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "068f5d8e88b5453507acdbd7ace9a63a93652e4015d2f9b63789b16481984d3c",
+      "bytes": 1406460
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.immolation-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.immolation-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

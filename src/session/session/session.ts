@@ -1,3 +1,4 @@
+import {SceneryComposition} from '../../presentation/sceneryChanges';
 import {matchContentIdentity} from '../../content/identity';
 import {SIMULATION_BUILD} from '../../shared/simulationBuild';
 import {value as abilityValue} from '../../content/abilities/schema';
@@ -69,7 +70,7 @@ export class Session {
   private input: MapInput | null = null;
   private mini: Minimap | null = null;
   private menuPaused = false;
-  setMenuPaused(paused:boolean):void {if(this.config.channel)return;this.menuPaused=paused;this.input?.reset();const worker=this.worker;void worker?.request("pause",paused).catch(error=>{if(worker===this.worker)this.workerError(error);});}
+  setMenuPaused(paused:boolean):void {if(this.config.channel)return;this.menuPaused=paused;if(this.renderer)this.renderer.effectAudioPlaying=!paused;this.input?.reset();const worker=this.worker;void worker?.request("pause",paused).catch(error=>{if(worker===this.worker)this.workerError(error);});}
   private fps = 60;
   private fpsFrames = 0;
   private fpsMs = 0;
@@ -119,9 +120,12 @@ export class Session {
   private acceptFrame(frame:RuntimeFrame){
     this.desynced=frame.desynced;
     for(const [name,ms] of frame.profileSamples)perf.sample(name,ms);
-    for(const [name,ms] of Object.entries(frame.timings))if(name!=='simulation')perf.sample(`Worker · ${name}`,ms);
+    // Tick metrics arrive in profileSamples once per tick, including zero-cost
+    // checksum ticks. Sampling them again per published frame biases averages.
+    for(const [name,ms] of Object.entries(frame.timings))if(!['simulation','tickTotal','lockstep','checksum'].includes(name))perf.sample(`Worker · ${name}`,ms);
     if(perf.enabled){
       perf.value('Navigation searches (match)',frame.routing.searches);
+      perf.value('Navigation shared corridors (match)',frame.routing.sharedCorridors);
       perf.value('Navigation cells expanded (match)',frame.routing.expanded);
       perf.value('Navigation sector regions expanded (match)',frame.routing.coarseExpanded);
       perf.value('Navigation corridor fallbacks (match)',frame.routing.fallbacks);
@@ -136,6 +140,7 @@ export class Session {
   private terrain = new HeightField();
   private stamps: readonly MapStamp[] = [];
   private resourceScenery = new ResourceScenery();
+  private sceneryComposition = new SceneryComposition();
   private resourceMapStamps: readonly MapStamp[] | undefined;
   private resourceStampsView: readonly MapStamp[] | undefined;
   private resourceEntities: Parameters<typeof resourceStamps>[0] | undefined;
@@ -145,10 +150,12 @@ export class Session {
     const mapStamps=projectScene(this.loadedMap!.map)?.stamps??this.loadedMap!.map.stamps;
     if (this.resourceEntities === entities && this.resourceMapStamps===mapStamps) return;
     this.resourceEntities = entities;
+    const started=perf.start();
     const resources = this.resourceScenery.project(entities);
+    perf.end('Resource scenery projection',started);
     if (resources === this.resourceStampsView && this.resourceMapStamps===mapStamps) return;
     this.resourceStampsView = resources;this.resourceMapStamps=mapStamps;
-    this.stamps = [...mapStamps, ...resources];
+    this.stamps = this.sceneryComposition.compose(mapStamps,resources);
     this.mini?.setStamps(this.stamps);
   }
   private missionHud: MissionHud | null = null;
@@ -510,7 +517,11 @@ export class Session {
               })),
             },
           };
-        if (op === "gamePerformance") return {timings:perf.report(),renderer:renderer.diagnostics(),tick:worker.latest!.tick};
+        if (op === "gamePerformance") {
+          if(o.action!==undefined&&o.action!=='get'&&o.action!=='capture')throw Error('Unknown game performance action');
+          if(o.action==='capture'){if(!perf.enabled)perf.toggle();perf.capture();}
+          return {timings:perf.report(),capture:perf.completedCapture,renderer:renderer.diagnostics(),tick:worker.latest!.tick};
+        }
         if (op === "gameSave") return this.snapshotLocal();
         if (op === "gameLoad") {
           await this.restoreLocal(o.save);

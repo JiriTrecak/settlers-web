@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.resurrection-command",
+  "name": "Resurrection — Woodland Command",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "6da18c43d901c6f437bdb5f81a6ab4e837f0887010917331bb50c64bf2d52cfb",
+      "bytes": 763
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "ec034055c70ec9380fa13401257a26d6a7f87e09a8580706f64b9a6e467781fa",
+      "bytes": 666116
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "2082868a19ba19435c3919fc5bab880d5f0d2b02404436221d3173b8c09dfd69",
+      "bytes": 1507098
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.resurrection-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.resurrection-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

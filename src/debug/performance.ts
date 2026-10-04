@@ -4,7 +4,8 @@ import {shortcuts,inputCaptured} from '../shared/input/shortcuts';
 type TraceEvent={name:string;cat:string;ph:'X'|'C';pid:number;tid:number;ts:number;dur?:number;args?:Record<string,number>};
 const MAX_TRACE_EVENTS=64000;
 const FRAME_BUDGET_MS=1000/120;
-type PerformanceReport={frameBudget:{targetMs:number;samples:number;overBudget:number;overBudgetPercent:number;refreshMs:number;missed:number;missedPercent:number};census?:DrawCensus;shaderLinks?:Array<{atMs:number;name:string;key:string}>;note:string;values:Record<string,string|number>;timings:Record<string,ReturnType<TimingWindow['stats']>>;capturedMs?:number;spikes:Array<{atMs:number;frameMs:number;scopes:Record<string,number>}>;comparison?:Record<string,{baselineMean:number|undefined;currentMean:number;changePercent:number|null}>};
+export type ScopeMeasurement={name:string;totalMs:number;maxMs:number;count:number};
+type PerformanceReport={series:Record<string,number[]>;frameBudget:{targetMs:number;samples:number;overBudget:number;overBudgetPercent:number;refreshMs:number;missed:number;missedPercent:number};census?:DrawCensus;shaderLinks?:Array<{atMs:number;name:string;key:string}>;note:string;values:Record<string,string|number>;timings:Record<string,ReturnType<TimingWindow['stats']>>;capturedMs?:number;spikes:Array<{atMs:number;frameMs:number;scopes:Record<string,number>}>;comparison?:Record<string,{baselineMean:number|undefined;currentMean:number;changePercent:number|null}>};
 export type MatchDebugControls = {
   reveal: boolean;
   speed: number;
@@ -28,6 +29,15 @@ export type MatchDebugControls = {
 /** Opt-in profiler. CPU scopes overlap; GPU samples arrive asynchronously. */
 export class PerformanceDebug {
   enabled = false;
+  private synchronousCaptures=new Set<Map<string,ScopeMeasurement>>();
+  get capturingSync(){return this.synchronousCaptures.size>0;}
+  /** Capture one synchronous operation without enabling the rolling frame profiler.
+   * Nested CPU scopes overlap; totals must not be added together. */
+  measureSync<T>(work:()=>T):{result:T;scopes:ScopeMeasurement[]}{
+    const scopes=new Map<string,ScopeMeasurement>();this.synchronousCaptures.add(scopes);
+    try{return {result:work(),scopes:[...scopes.values()]};}
+    finally{this.synchronousCaptures.delete(scopes);}
+  }
   private matchControls: MatchDebugControls | null = null;
   get match() { return this.matchControls; }
   private controls: HTMLElement | null = null;
@@ -125,6 +135,7 @@ export class PerformanceDebug {
   private recording:Map<string,TimingWindow>|null=null;
   private captureStart=0;private captureEnd=0;
   private captureResult:PerformanceReport|null=null;
+  get completedCapture(){return this.captureResult;}
   /** Set by the Draw census button; the display consumes it on its next frame. */
   censusPending=false;
   census:DrawCensus|null=null;
@@ -158,6 +169,14 @@ export class PerformanceDebug {
   }
   private values: Record<string, string | number> = {};
   private panel: HTMLDivElement | null = null;
+  private presentationToggle:(()=>void)|undefined;
+  /** Editors can present the same sampler/report through their own chrome.
+   * Sampling controls and MCP remain independent from opening/closing that UI. */
+  bindPresentation(toggle:()=>void):()=>void {
+    this.presentationToggle=toggle;const hidden=this.panel?.hidden??false;
+    if(this.panel)this.panel.hidden=true;
+    return ()=>{if(this.presentationToggle!==toggle)return;this.presentationToggle=undefined;if(this.panel)this.panel.hidden=hidden;};
+  }
   private text: HTMLPreElement | null = null;
   private counts: Record<string, number> = {};
   resetTimings(){this.rows.clear();this.latest={};this.lastFrame=0;}
@@ -181,7 +200,7 @@ export class PerformanceDebug {
   private key = (e: KeyboardEvent) => {
     if (!inputCaptured(e) && !e.repeat && shortcuts.matches("debug.toggle",e)) {
       e.preventDefault();
-      this.toggle();
+      if(this.presentationToggle)this.presentationToggle();else this.toggle();
     }
   };
   attach() {
@@ -233,6 +252,7 @@ export class PerformanceDebug {
       !new URLSearchParams(location.search).has("debug")
     )
       root.hidden = true;
+    if(this.presentationToggle)root.hidden=true;
     document.body.append(root);
     window.addEventListener("keydown", this.key);
     this.renderControls();
@@ -269,11 +289,13 @@ export class PerformanceDebug {
     this.panel?.querySelectorAll<HTMLButtonElement>('button[data-profiler]').forEach(button=>{button.hidden=!this.enabled;});
   }
   start() {
-    return this.enabled ? performance.now() : 0;
+    return this.enabled||this.synchronousCaptures.size ? performance.now() : 0;
   }
   end(name: string, start: number) {
-    if (!this.enabled || !start)return;
-    const now=performance.now();this.sample(name,now-start);
+    if ((!this.enabled&&!this.synchronousCaptures.size) || !start)return;
+    const now=performance.now(),ms=now-start;
+    for(const capture of this.synchronousCaptures){const scope=capture.get(name)??{name,totalMs:0,maxMs:0,count:0};scope.totalMs+=ms;scope.maxMs=Math.max(scope.maxMs,ms);scope.count++;capture.set(name,scope);}
+    this.sample(name,ms);
     if(this.recording){const from=Math.max(start,this.captureStart);this.trace({name,cat:'CPU',ph:'X',pid:1,tid:1,ts:(from-this.captureStart)*1000,dur:Math.max(0,now-from)*1000});}
   }
   sample(name: string, ms: number) {
@@ -303,6 +325,7 @@ export class PerformanceDebug {
     // real hitches are counted against the median interval (the display's refresh period).
     const refreshMs=[...frames].sort((a,b)=>a-b)[frames.length>>1]??FRAME_BUDGET_MS,missed=frames.filter(ms=>ms>refreshMs*1.5).length;
     return {
+      series:Object.fromEntries(['Frame interval','App frame total (CPU)','GPU frame'].map(name=>[name,(this.recording??this.rows).get(name)?.values().slice(-120)??[]])),
       frameBudget:{targetMs:FRAME_BUDGET_MS,samples:frames.length,overBudget,overBudgetPercent:frames.length?100*overBudget/frames.length:0,refreshMs,missed,missedPercent:frames.length?100*missed/frames.length:0},
       census:this.census??undefined,
       shaderLinks:this.shaderLinks.length?[...this.shaderLinks]:undefined,
@@ -325,7 +348,7 @@ export class PerformanceDebug {
     if(this.traceButton){this.traceButton.disabled=!this.traceReady;this.traceButton.title=this.traceReady?`${this.traceEvents.length} events · ${this.traceDropped} dropped`:'Record a capture first';}
     if(this.captureButton)this.captureButton.textContent=this.recording?`Capturing… ${Math.max(0,(this.captureEnd-now)/1000).toFixed(1)}s`:this.captureResult?'Capture complete · repeat':'Capture 10 seconds';
     this.lastFrame = now;
-    if (now - this.last < 500 || !this.text) return;
+    if (now - this.last < 500 || !this.text || this.presentationToggle) return;
     this.last = now;
     this.drawGraph();
     const r = this.report();

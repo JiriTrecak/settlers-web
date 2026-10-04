@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.true-sight-command-icon",
+  "name": "True Sight — Amber Detector Eye",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "154bde7ab3b2d598dd13c40c1fe3991c55d5cbc66ee88192677f610738277677",
+      "bytes": 1045
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "2d2615471ceecc73283e5b7f29a5c1f926f7c91743d8dee43d3c8460dcfa8431",
+      "bytes": 599375
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "9655b73b9e9ed5ae5b5115c2e1d6878d7e917c5e43127de51dbdc03e743f53db",
+      "bytes": 1534660
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.true-sight-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.true-sight-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

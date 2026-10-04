@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.cinder-pin.root",
+  "name": "Cinder Pin — Root Embers",
+  "description": "A thin breathing ember ring, low translucent warmth and sparse rising sparks surround the rooted unit without obscuring its body. Sustained only for the root status.",
+  "durationTicks": 80,
+  "loop": true,
+  "layers": [
+    {
+      "id": "ember-glow",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#f87922",
+      "accent": "#ffbd60",
+      "durationTicks": 80,
+      "count": 1,
+      "size": 1.6,
+      "height": 0.14,
+      "motion": {
+        "scale": {
+          "periodTicks": 40,
+          "min": 0.94,
+          "max": 1.06,
+          "easing": "sine"
+        },
+        "opacity": {
+          "periodTicks": 40,
+          "min": 0.3,
+          "max": 0.45,
+          "easing": "sine"
+        }
+      },
+      "follow": true,
+      "intensity": 0.55
+    },
+    {
+      "id": "ember-outline",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#ff8a2c",
+      "accent": "#ffc66e",
+      "durationTicks": 80,
+      "count": 1,
+      "size": 1.65,
+      "height": 0.16,
+      "motion": {
+        "scale": {
+          "periodTicks": 40,
+          "min": 0.96,
+          "max": 1.04,
+          "easing": "sine"
+        },
+        "opacity": {
+          "periodTicks": 40,
+          "min": 0.55,
+          "max": 0.8,
+          "easing": "sine"
+        }
+      },
+      "blend": "additive",
+      "follow": true,
+      "intensity": 0.8
+    },
+    {
+      "id": "root-embers",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 30,
+        "rate": 20,
+        "speed": 1.1,
+        "speedVariation": 0.3,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 25,
+        "gravity": 0,
+        "drag": 0.4,
+        "spawnRadius": 1.25,
+        "startSize": 0.19,
+        "endSize": 0.05,
+        "spin": 0.5,
+        "fadeIn": 0.1,
+        "fadeOut": 0.55
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#ffe3a3",
+      "accent": "#ff9a37",
+      "durationTicks": 80,
+      "count": 15,
+      "size": 0.19,
+      "height": 0.4,
+      "blend": "additive",
+      "follow": true,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

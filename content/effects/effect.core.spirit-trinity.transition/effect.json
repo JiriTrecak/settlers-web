@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.spirit-trinity.transition",
+  "name": "Spirit Trinity · Transition",
+  "description": "",
+  "durationTicks": 40,
+  "loop": false,
+  "layers": [
+    {
+      "id": "burst",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 40,
+        "rate": 24,
+        "speed": 3,
+        "speedVariation": 0.4,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 160,
+        "gravity": 1,
+        "drag": 2,
+        "spawnRadius": 0.5,
+        "startSize": 0.22,
+        "endSize": 0.02,
+        "spin": 1,
+        "fadeIn": 0,
+        "fadeOut": 0.8
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#95e1b6",
+      "accent": "#f5e6a3",
+      "durationTicks": 1,
+      "count": 24,
+      "size": 0.14,
+      "height": 1
+    },
+    {
+      "id": "flash",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#b2f1d1",
+      "accent": "#f7eed1",
+      "durationTicks": 28,
+      "count": 1,
+      "size": 2,
+      "height": 0.6,
+      "intensity": 0.8
+    }
+  ]
+}

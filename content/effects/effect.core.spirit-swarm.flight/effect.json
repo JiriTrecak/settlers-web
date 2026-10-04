@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.spirit-swarm.flight",
+  "name": "Spirit Swarm · Seeker",
+  "description": "Small green-gold seekers with short, narrow fading ribbons following their observed delivery paths.",
+  "durationTicks": 200,
+  "loop": false,
+  "layers": [
+    {
+      "id": "seeker",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "missile",
+      "colour": "#9be875",
+      "accent": "#ebffc2",
+      "durationTicks": 200,
+      "count": 1,
+      "size": 0.3,
+      "height": 0.9,
+      "intensity": 1,
+      "trail": {
+        "durationTicks": 12,
+        "maxPoints": 24,
+        "width": 0.16,
+        "colour": "#d5e99a",
+        "opacity": 0.65,
+        "breakDistance": 2.5
+      }
+    }
+  ]
+}

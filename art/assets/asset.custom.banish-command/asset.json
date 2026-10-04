@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.banish-command",
+  "name": "Banish command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "c99ef802c8fc8665ca79d98e1db44ceef5afff8435b2cc1f0d31c8e11f764a02",
+      "bytes": 630
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "e28aaedf508017029c371785175efda19b8b6e900eb5e3fe97bd2604f69f9825",
+      "bytes": 646579
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "48c0fb966322878115a2e92fff178aa2d932f01c112bf466820e11fab41e8ac5",
+      "bytes": 1478833
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.banish-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.banish-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.lightning-shield",
+  "name": "Lightning Shield",
+  "description": "",
+  "durationTicks": 38,
+  "loop": false,
+  "layers": [
+    {
+      "id": "pulse",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#89beff",
+      "accent": "#fff5db",
+      "durationTicks": 38,
+      "count": 24,
+      "size": 2,
+      "height": 1.2,
+      "follow": false
+    }
+  ]
+}

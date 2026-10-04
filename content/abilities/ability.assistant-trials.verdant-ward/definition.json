@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.assistant-trials.verdant-ward",
+  "name": "Verdant Ward",
+  "description": "Restore 125 health to a friendly unit and grant a shield that absorbs 100 damage for up to 6 seconds.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200,
+      "heal": 125,
+      "shield": 100,
+      "durationTicks": 240
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "heal",
+      "target": "target",
+      "amount": {
+        "rankParameter": "heal"
+      }
+    },
+    {
+      "op": "status",
+      "target": "target",
+      "id": "verdantShield",
+      "amount": {
+        "rankParameter": "durationTicks"
+      },
+      "polarity": "positive",
+      "dispel": true,
+      "modifiers": {},
+      "shield": {
+        "rankParameter": "shield"
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.assistant-trials.verdant-ward"
+}

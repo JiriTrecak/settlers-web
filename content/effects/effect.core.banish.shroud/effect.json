@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.banish.shroud",
+  "name": "Banish Shroud",
+  "description": "",
+  "durationTicks": 160,
+  "loop": true,
+  "layers": [
+    {
+      "id": "halo",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#59edbf",
+      "accent": "#dcfff1",
+      "durationTicks": 160,
+      "count": 1,
+      "size": 1.35,
+      "height": 0.06,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.25,
+          "max": 0.65,
+          "easing": "sine"
+        }
+      },
+      "follow": true
+    },
+    {
+      "id": "soul",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#49dab1",
+      "accent": "#9affdd",
+      "durationTicks": 160,
+      "count": 1,
+      "size": 1.7,
+      "height": 0.8,
+      "follow": true,
+      "intensity": 0.16
+    },
+    {
+      "id": "wisps",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 60,
+        "rate": 10,
+        "speed": 1,
+        "speedVariation": 0.3,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 12,
+        "gravity": 0,
+        "drag": 0.1,
+        "spawnRadius": 0.8,
+        "startSize": 0.13,
+        "endSize": 0,
+        "spin": 1,
+        "fadeIn": 0.15,
+        "fadeOut": 0.65
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#50eebc",
+      "accent": "#d0ffe6",
+      "durationTicks": 160,
+      "count": 20,
+      "size": 0.1,
+      "height": 0.05,
+      "follow": true
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.immolation",
+  "icon": "asset.custom.immolation-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "main",
+      "effect": "effect.core.immolation",
+      "event": "released",
+      "anchor": "caster",
+      "lifetime": "finite"
+    },
+    {
+      "id": "pulse",
+      "effect": "effect.core.immolation",
+      "event": "wave",
+      "anchor": "caster",
+      "lifetime": "finite"
+    }
+  ]
+}

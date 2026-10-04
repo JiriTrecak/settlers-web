@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.soul-harvest",
+  "icon": "asset.custom.soul-harvest-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "departure",
+      "effect": "effect.core.soul-harvest.departure",
+      "event": "kill",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "restoration",
+      "effect": "effect.core.soul-harvest.restoration",
+      "event": "healed",
+      "anchor": "caster",
+      "lifetime": "finite"
+    }
+  ]
+}

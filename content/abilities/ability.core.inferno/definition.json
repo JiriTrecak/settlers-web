@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.inferno",
+  "name": "Inferno",
+  "description": "Summon one forest spirit at the chosen ground position, then damage and stun nearby enemies. The summon is independent of target count.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 240
+    }
+  ],
+  "targeting": {
+    "kind": "point",
+    "radius": 5,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "summon",
+      "target": "point",
+      "amount": 1,
+      "definition": "unit.spell.feral-spirit",
+      "durationTicks": 2400,
+      "replace": true,
+      "radius": 2
+    },
+    {
+      "op": "damage",
+      "target": "target",
+      "query": {
+        "center": "point",
+        "radius": 5,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "amount": 50,
+      "damageType": "spell"
+    },
+    {
+      "op": "status",
+      "target": "target",
+      "query": {
+        "center": "point",
+        "radius": 5,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 128,
+        "order": "nearest"
+      },
+      "id": "stun",
+      "amount": 100,
+      "heroDuration": 60,
+      "polarity": "negative",
+      "dispel": false,
+      "modifiers": {},
+      "stun": true,
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.inferno"
+}

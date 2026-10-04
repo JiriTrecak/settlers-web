@@ -12,17 +12,25 @@
     {
       "id": "effect-0",
       "effect": "effect.core.bloodlust.released",
-      "anchor": "target",
       "event": "released",
+      "anchor": "target",
       "lifetime": "finite"
     },
     {
       "id": "effect-1",
       "effect": "effect.core.bloodlust.statusapplied-1",
-      "anchor": "target",
-      "durationFrom": "delivery",
       "event": "statusApplied",
-      "lifetime": "finite"
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery"
+    },
+    {
+      "id": "hand-flares",
+      "effect": "effect.custom.bloodlust.hand-flares",
+      "statusId": "frenzy",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
     }
   ]
 }

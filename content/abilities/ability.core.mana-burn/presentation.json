@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.mana-burn",
+  "icon": "asset.custom.mana-burn-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "main",
+      "effect": "effect.core.mana-burn",
+      "event": "drained",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.dismiss-summon",
+  "name": "Dismiss Summon",
+  "description": "Dispel an enemy summoned non-hero of level six or lower, dealing 600 spell damage to the summon. This piercing dispel can remove Spell Ward. Ordinary units and heroes cannot be selected.",
+  "activation": "targeted",
+  "piercesSpellImmunity": true,
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200
+    }
+  ],
+  "targeting": {
+    "filter": {
+      "heroes": false,
+      "summoned": true,
+      "maxLevel": 6
+    },
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "dispel",
+      "target": "target",
+      "amount": 600,
+      "damageType": "spell",
+      "polarity": "positive"
+    }
+  ],
+  "presentation": "presentation.core.dismiss-summon"
+}

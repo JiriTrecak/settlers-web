@@ -1,3 +1,4 @@
+import {sceneryChanges} from '../../presentation/sceneryChanges';
 import {bridgePlacementHeight} from '../../shared/map/bridgeSurface';
 import {sceneryModels} from '../../shared/assets/models';
 import type {ModelPlacement} from '../../shared/authoring/modelCatalogue';
@@ -12,10 +13,14 @@ import {ResinShimmerLayer} from './resinShimmer';
 import type {SceneryCutaway} from '../visibility/sceneryCutaway';
 import {colouredInstanceCasterDepth,opaqueCaster} from '../renderer/casterDepth';
 import {batchStaticMaterials} from './staticBatch';
+import {staticPlacementFactory,updatePlacementWorld,placementBounds,visitPlacementMeshes,materializePlacement,type PlacementRoot} from './staticPlacement';
 import {perf} from '../../debug/performance';
 import { prepareVividFoliage, tintVividFoliage } from './vividLook';
 import { prototypeBounds, prototypeGroundOffset } from './grounding';
 import { prototypeDew } from './dewLayer';
+import {EmbeddedTexturePool} from '../loading/embeddedTextures';
+import {VisibleSceneryDraws} from './visibleDraws';
+import {DewPlacements,type DewContributor} from './dewPlacements';
 /**
  * Stamp meshes in the scene. Loads each catalog glTF once, clones per placement.
  * Water-type assets sit on the sea plane, not the lakebed.
@@ -23,10 +28,12 @@ import { prototypeDew } from './dewLayer';
 import { Vector3, type Camera, InstancedMesh, Matrix4, Box3, BoxHelper, Object3D, Mesh, Color, MeshLambertMaterial, Texture, Group, Sphere, type Frustum, type Raycaster, type Scene } from "three";
 
 /** Scatter lower than this (metres, after stamp scale) casts no shadow: at RTS zoom its shadow
- * is a few texels, while it would cost one shadow draw per cell and asset. Contact shade still grounds it. */
+ * is a few texels, while it would cost one shadow draw per cell and asset. Terrain shading still grounds it. */
 const SHADOW_MIN_HEIGHT = 0.75;
-/** Batch cell edge in metres, for shadow casters and for main-pass-only scatter. */
-const CASTER_CELL = 48, SCATTER_CELL = 24;
+/** 48 m scatter cells cut Heartroot's batch count by 38% without changing any
+ * rendered pixels. Casters stay in a separate namespace even at equal sizes. */
+const CASTER_CELL = 48, SCATTER_CELL = 48;
+export type SceneryBatchLayout={caster:number;scatter:number};
 /** Stamps are re-created on every resource observation; compare what `place` reads. */
 const samePlacement = (a: MapStamp | undefined, b: MapStamp) =>
   a === b || (!!a && a.x === b.x && a.y === b.y && a.yaw === b.yaw && a.pitch === b.pitch && a.roll === b.roll &&
@@ -35,19 +42,36 @@ const samePlacement = (a: MapStamp | undefined, b: MapStamp) =>
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import type { MapStamp } from "../../shared";
 
+/** A ray starting inside a cell must not be rejected because its exit lies past
+ * `far`: nearby meshes inside that cell can still obstruct the camera. */
+function rayReachesBox(ray:Raycaster,box:Box3,distance:number,point:Vector3):boolean{
+  return box.containsPoint(ray.ray.origin)||!!ray.ray.intersectBox(box,point)&&point.distanceToSquared(ray.ray.origin)<=distance*distance;
+}
+
 /** An isolated editor alias preserves its original look without replacing map assets. */
 export type PropModelOptions=ModelPlacement&{sourceAsset:string};
 
 export class PropField {
+  private readonly loadTimings=new Map<string,{asset:string;variant?:string;fetchParseMs:number;prepareMs:number;totalMs:number}>();
+  private placementTiming:{count:number;waitMs:number;placeMs:number}|undefined;
+  private batchMs=0;
+  constructionReport(){return {models:[...this.loadTimings.values()].sort((a,b)=>b.totalMs-a.totalMs),placement:this.placementTiming?{...this.placementTiming}:undefined,batchMs:this.batchMs};}
   /** Raycast only nearby static bounds, then exact geometry. No scene-wide triangle scan. */
   cameraObstruction(ray:Raycaster):number {
+    const started=perf.start();let candidates=0;
     let distance=ray.far;
     const point=new Vector3();
-    for(const root of this.placed.values()){
-      const bounds=root.userData.cameraBounds as Box3|undefined;
-      if(!bounds||!ray.ray.intersectBox(bounds,point)||point.distanceTo(ray.ray.origin)>distance)continue;
-      for(const hit of ray.intersectObject(root,true))if(hit.distance<distance)distance=hit.distance;
+    for(const [key,cell] of this.cells){
+      if(!rayReachesBox(ray,cell.box,distance,point))continue;
+      for(const id of this.members.get(key)??[]){
+        const root=this.placed.get(id);if(!root)continue;candidates++;
+        const bounds=root.userData.cameraBounds as Box3|undefined;
+        if(!bounds||!rayReachesBox(ray,bounds,distance,point))continue;
+        for(const hit of ray.intersectObject(materializePlacement(root),true))if(hit.distance<distance)distance=hit.distance;
+      }
     }
+    perf.value('Camera obstruction candidates',candidates);
+    perf.end('Prop camera obstruction',started);
     return distance;
   }
   private readonly wind=new FoliageWindLayer();
@@ -55,40 +79,51 @@ export class PropField {
   private referenceMacro:import('three').Texture|undefined;
   private readonly resin=new ResinShimmerLayer();
   tick(now:number){this.wind.tick(now);this.resin.tick(now);}
-  private readonly loader = new GLTFLoader().register(referenceMaterialPlugin);
+  private readonly embeddedTextures=new EmbeddedTexturePool();
+  private readonly loader = new GLTFLoader().register(referenceMaterialPlugin).register(parser=>this.embeddedTextures.plugin(parser));
   private readonly protos = new Map<string, Promise<Object3D | null>>();
-  private readonly placed = new Map<string, Object3D>();
+  private readonly placed = new Map<string, PlacementRoot>();
   private batches: InstancedMesh[]=[];
   /** Coarse culling. Every batch lives in its spatial cell's group, so an offscreen cell costs one
    * box test instead of a traversal and a frustum test per batch. Low scatter that casts no
    * shadow sits in a sibling group the shadow pass hides: VSM draws every receiver into the
    * map otherwise. `root.userData.materialRevision` lets fog skip the subtree when unchanged. */
   private readonly root=new Group();
+  private readonly draws:VisibleSceneryDraws;
   private readonly cells=new Map<string,{group:Group;casters:Group;scatter:Group;box:Box3}>();
-  private instanceSlots=new Map<string,{batch:InstancedMesh;index:number;source:Mesh}[]>();
+  private instanceSlots=new Map<string,{batch:InstancedMesh;index:number;matrix:Matrix4}[]>();
+  private readonly meshBatchKeys=new WeakMap<Mesh,string>();
   private warmMeshes: InstancedMesh[]=[];
-  contactRevision=0;
-  contacts:{x:number;z:number;radiusX:number;radiusZ:number;strength:number}[]=[];
-  /** World-space dew beads (x, y, z, radius) of every placed model that bakes them; follows `contactRevision`. */
+  private readonly dewPlacements=new DewPlacements();
+  private dewStructureChanged=true;
+  dewRevision=0;
+  /** World-space dew beads (x, y, z, radius) of every placed model that bakes them; follows `dewRevision`. */
   dew=new Float32Array(0);
   private lodGeometries=new Set<Mesh['geometry']>();
   private lodByGeometry=new Map<string,Mesh['geometry']>();
   private queued=false;
   updateLOD(camera:Camera):void {
-    let coarse=0;
+    if(!this.lodByGeometry.size){perf.value('Tree mesh instances at distant LOD',0);return;}
+    let coarse=0,changed=false;
     for(const batch of this.batches){
       const low=batch.userData.lodGeometry as Mesh['geometry']|undefined;if(!low)continue;
       const distance=camera.position.distanceTo(batch.boundingSphere!.center);
       const previous=batch.geometry===low;
       const useLow=('isPerspectiveCamera' in camera)&&distance>(previous?68:76);
+      changed ||= previous!==useLow;
       batch.geometry=useLow?low:batch.userData.fullGeometry;if(useLow)coarse+=batch.count;
     }
+    if(changed)this.draws.sync(this.batches);
     perf.value('Tree mesh instances at distant LOD',coarse);
   }
   private destroyed=false;
   private readonly prototypeDisposers=new Map<Object3D,()=>void>();
   private modelOverrides:ReadonlyMap<string,PropModelOptions>=new Map();
   private lastStamps: readonly MapStamp[] | null=null;
+  private pendingPlacement:Promise<void>=Promise.resolve();
+  /** Parallel roots for a fully resolved stamp list; invalidated by structural edits. */
+  private orderedRoots:readonly PlacementRoot[]|null=null;
+  private readonly placementFactories=new WeakMap<Object3D,()=>PlacementRoot>();
   private height: ((x: number, z: number) => number) | null = null;
   private float = new Set<string>();
   private waterY = 0;
@@ -103,11 +138,14 @@ export class PropField {
     private readonly scene: Scene,
     private urls: ReadonlyMap<string, string>,
     private readonly cutaway?:SceneryCutaway,
-  ) {this.root.name='props';this.root.userData.materialRevision=0;this.root.matrixAutoUpdate=false;this.scene.add(this.root);}
+    private readonly batchLayout:SceneryBatchLayout={caster:CASTER_CELL,scatter:SCATTER_CELL},
+  ) {this.root.name='props';this.root.userData.materialRevision=0;this.root.matrixAutoUpdate=false;this.scene.add(this.root);this.draws=new VisibleSceneryDraws(scene,this.root);}
 
   /** Show only cells intersecting `frustum` (all when null). The shadow pass also hides non-casting scatter. */
   cull(frustum:Frustum|null,shadowPass=false):void {
+    if(frustum&&this.draws.reuse(frustum,shadowPass))return;
     for(const c of this.cells.values()){c.group.visible=!frustum||frustum.intersectsBox(c.box);c.scatter.visible=!shadowPass;}
+    if(frustum)this.draws.cull(frustum,shadowPass);else this.draws.restore();
   }
 
   private cell(key:string){
@@ -122,7 +160,7 @@ export class PropField {
     return c;
   }
 
-  async ready():Promise<void>{await Promise.all([...this.protos.values(),this.referenceGround.ready]);}
+  async ready():Promise<void>{await Promise.all([...this.protos.values(),this.pendingPlacement,this.referenceGround.ready]);}
   async preload(stamps: readonly MapStamp[]): Promise<void> {
     const unique = new Map(stamps.map(s => [`${s.asset}#${s.variant ?? "base"}`, s]));
     const results = await Promise.all([...unique.values()].map(s => this.proto(s.asset, s.variant)));
@@ -147,11 +185,18 @@ export class PropField {
     });
     return this.warmMeshes;
   }
-  diagnostics() { return { loaded:this.placed.size,failed:[...this.failed],bounds:Object.fromEntries(this.bounds) }; }
+  private syncCounts={incremental:0,scanned:0,removed:0,added:0};
+  diagnostics() { return { synchronization:{...this.syncCounts},loaded:this.placed.size,failed:[...this.failed],bounds:Object.fromEntries(this.bounds),embeddedTextures:this.embeddedTextures.diagnostics(),drawGroups:this.draws.count }; }
   boundsFor(ids:readonly string[]):Box3{
-    const box=new Box3();for(const id of ids){const root=this.placed.get(id);if(root){root.updateMatrixWorld(true);box.expandByObject(root,true);}}return box;
+    const box=new Box3();for(const id of ids){const root=this.placed.get(id);if(root)box.expandByObject(materializePlacement(root),true);}return box;
   }
-  setSeason(season:string):void { this.season=season;for(const root of this.placed.values())this.tint(root); }
+  setSeason(season:string):void {
+    if(this.season===season)return;
+    this.season=season;
+    // Placement clones share prototype materials. Recolor each prototype once,
+    // rather than walking every tree and tuft on a large map.
+    for(const pending of this.protos.values())void pending.then(root=>{if(root&&!this.destroyed)this.tint(root);});
+  }
   private tint(root:Object3D):void {
     const evergreen=/pine|spruce|fern|reeds/.test(String(root.userData.lookAsset??root.userData.asset));
     root.traverse(n=>{
@@ -191,7 +236,7 @@ export class PropField {
   landmarks(camera:Camera,ids?:readonly string[]) {
     const uv=(p:Vector3)=>{const v=p.clone().project(camera);return {u:(v.x+1)/2,v:(1-v.y)/2};};
     return [...this.placed].filter(([id])=>!ids||ids.includes(id)).map(([id,root])=>{
-      root.updateMatrixWorld(true);const box=new Box3().setFromObject(root),corners=[];
+      updatePlacementWorld(root);const box=placementBounds(root),corners=[];
       for(const x of [box.min.x,box.max.x])for(const y of [box.min.y,box.max.y])for(const z of [box.min.z,box.max.z])corners.push(uv(new Vector3(x,y,z)));
       return {id,asset:root.userData.asset,anchor:uv(root.position),world:{x:root.position.x,y:root.position.y,z:root.position.z},bounds:{left:Math.min(...corners.map(p=>p.u)),right:Math.max(...corners.map(p=>p.u)),top:Math.min(...corners.map(p=>p.v)),bottom:Math.max(...corners.map(p=>p.v))}};
     });
@@ -205,10 +250,10 @@ export class PropField {
     this.urls = urls;
     this.modelOverrides=models;
     if(!changed.size)return;
-    this.gen++;this.lastStamps=null;this.allDirty=true;
-    for(const [id,root]of this.placed)if(changed.has(root.userData.asset)){root.removeFromParent();this.placed.delete(id);}
+    this.gen++;this.lastStamps=null;this.orderedRoots=null;this.allDirty=true;
+    for(const [id,root]of this.placed)if(changed.has(root.userData.asset)){root.removeFromParent();this.placed.delete(id);this.dewStructureChanged=true;}
     for(const [key,pending]of this.protos)if(changed.has(key.slice(0,key.lastIndexOf('#')))){
-      this.protos.delete(key);void pending.then(root=>{if(root)this.disposePrototype(root);});
+      this.protos.delete(key);this.loadTimings.delete(key);void pending.then(root=>{if(root)this.disposePrototype(root);});
     }
     for(const id of changed){this.failed.delete(id);this.bounds.delete(id);}
     for(const mesh of this.warmMeshes)mesh.dispose();this.warmMeshes=[];
@@ -220,51 +265,105 @@ export class PropField {
     return this.modelOverrides.get(asset)??(sceneryModels.has(asset)?{...sceneryModels.get(asset)!,sourceAsset:asset}:undefined);
   }
 
-  setHeight(sample: ((x: number, z: number) => number) | null,field:HeightField|null=null): void {
+  /** Coverage-only updates still refresh foliage tint and the sampling callback.
+   * The renderer proves unchanged terrain/water before skipping existing poses. */
+  setHeight(sample: ((x: number, z: number) => number) | null,field:HeightField|null=null,surfaceOnly=false): void {
     this.height = sample;
     this.referenceGround.update(field);
-    this.relift();
+    if(!surfaceOnly)this.relift();
   }
 
   setFloat(ids: ReadonlySet<string>, y = 0): void {
+    if(y===this.waterY&&ids.size===this.float.size&&[...ids].every(id=>this.float.has(id)))return;
     this.float = new Set(ids);
     this.waterY = y;
     this.relift();
   }
 
   setWaterY(y: number): void {
+    if(this.waterY===y)return;
     this.waterY = y;
     this.relift();
   }
 
+  private settledStamps:readonly MapStamp[]|null=null;
   sync(stamps: readonly MapStamp[]): void {
     if(stamps===this.lastStamps){this.syncMark();return;}
+    const changes=this.lastStamps===this.settledStamps?sceneryChanges(this.lastStamps,stamps):undefined;
     this.lastStamps=stamps;
+    if(changes){
+      this.syncCounts.incremental++;this.syncCounts.removed+=changes.removed.length;this.syncCounts.added+=changes.added.length;
+      // Immutable game publications identify the exact changed placements.
+      // No forest-wide prototype, transform or membership scan is needed.
+      for(const stamp of changes.removed){
+        const root=this.placed.get(stamp.id);if(!root)continue;
+        this.detach(stamp.id,root);root.removeFromParent();this.placed.delete(stamp.id);
+        if(root.userData.dewWorld?.length)this.dewStructureChanged=true;
+      }
+      this.orderedRoots=null;
+      if(changes.added.length){
+        this.settledStamps=null;
+        const gen=++this.gen,additions=new Map<Promise<Object3D|null>,MapStamp[]>();
+        for(const stamp of changes.added){
+          const prototype=this.proto(stamp.asset,stamp.variant);
+          let group=additions.get(prototype);if(!group)additions.set(prototype,group=[]);
+          group.push(stamp);
+        }
+        this.pendingPlacement=this.spawnBatch(additions,gen).then(()=>{
+          if(gen===this.gen&&!this.destroyed&&this.placed.size===stamps.length)this.settledStamps=stamps;
+        });
+      }else this.settledStamps=stamps;
+      if(changes.removed.length)this.queueBatches();
+      this.syncMark();return;
+    }
+    this.syncCounts.scanned++;
+    this.settledStamps=null;
+    const roots=this.orderedRoots;
+    // Validate the entire layout before changing any roots: a late asset/id
+    // mismatch must take the normal asynchronous add/remove path atomically.
+    if(roots&&roots.length===stamps.length&&roots.every((root,i)=>{
+      const stamp=stamps[i]!;
+      return root.userData.stamp===stamp.id&&root.userData.asset===stamp.asset&&root.userData.variant===stamp.variant;
+    })){
+      for(let i=0;i<stamps.length;i++)this.syncPlacement(roots[i]!,stamps[i]!);
+      if(this.changed.size)this.queueBatches();
+      this.settledStamps=stamps;this.syncMark();return;
+    }
+    this.orderedRoots=null;
     const gen = ++this.gen;
-    const seen = new Set<string>();
+    const additions=new Map<Promise<Object3D|null>,MapStamp[]>();
     for (const stamp of stamps) {
-      seen.add(stamp.id);
       const existing = this.placed.get(stamp.id);
       if (existing && existing.userData.asset===stamp.asset && existing.userData.variant===stamp.variant) {
-        if (!samePlacement(existing.userData.stampRef, stamp)) {
-          this.detach(stamp.id, existing);
-          this.place(existing, stamp);
-          this.changed.add(stamp.id);
-        }
-        existing.userData.stampRef = stamp;
+        existing.userData.syncGeneration=gen;
+        this.syncPlacement(existing,stamp);
         continue;
       }
-      if (existing) {this.detach(stamp.id, existing);this.placed.delete(stamp.id);}
-      void this.spawn(stamp, gen);
+      if (existing) {this.detach(stamp.id, existing);this.placed.delete(stamp.id);if(existing.userData.dewWorld?.length)this.dewStructureChanged=true;}
+      const prototype=this.proto(stamp.asset,stamp.variant);
+      let group=additions.get(prototype);if(!group)additions.set(prototype,group=[]);
+      group.push(stamp);
     }
     for (const [id, mesh] of this.placed) {
-      if (seen.has(id)) continue;
+      if (mesh.userData.syncGeneration===gen) continue;
       this.detach(id, mesh);
-      this.scene.remove(mesh);
-      this.placed.delete(id);
+      mesh.removeFromParent();
+      this.placed.delete(id);if(mesh.userData.dewWorld?.length)this.dewStructureChanged=true;
     }
     this.queueBatches();
     this.syncMark();
+    this.pendingPlacement=this.spawnBatch(additions,gen).then(()=>{
+      if(gen!==this.gen||this.destroyed||this.placed.size!==stamps.length)return;
+      const roots=stamps.map(stamp=>this.placed.get(stamp.id));
+      if(roots.every((root):root is PlacementRoot=>!!root)){this.orderedRoots=roots;this.settledStamps=stamps;}
+    });
+  }
+
+  private syncPlacement(root:PlacementRoot,stamp:MapStamp):void {
+    if(!samePlacement(root.userData.indexedStampRef??root.userData.stampRef,stamp)||!samePlacement(root.userData.stampRef,stamp)){
+      this.detach(stamp.id,root);this.place(root,stamp);this.changed.add(stamp.id);
+    }
+    root.userData.stampRef=stamp;
   }
 
   setSelected(id: string | null): void {
@@ -273,7 +372,12 @@ export class PropField {
   }
 
   pick(ray: Raycaster, maxDistance = Infinity): string | null {
-    const hits = ray.intersectObjects(this.batches, false);
+    const point=new Vector3(),candidates:InstancedMesh[]=[];
+    for(const cell of this.cells.values()){
+      if(!rayReachesBox(ray,cell.box,Math.min(ray.far,maxDistance),point))continue;
+      candidates.push(...cell.casters.children as InstancedMesh[],...cell.scatter.children as InstancedMesh[]);
+    }
+    const hits = ray.intersectObjects(candidates, false);
     for (const hit of hits) {
       if (hit.distance > maxDistance) continue;
       const ids=hit.object.userData.stampIds as string[]|undefined;
@@ -283,14 +387,16 @@ export class PropField {
   }
 
   destroy(): void {
+    this.draws.dispose();
+    this.embeddedTextures.dispose();
     this.destroyed=true;this.wind.dispose();this.referenceGround.dispose();this.referenceMacro?.dispose();
     for(const mesh of this.warmMeshes)mesh.dispose();this.warmMeshes=[];
     this.gen++;
     for(const pending of this.protos.values())void pending.then(root=>{if(root)this.disposePrototype(root);});
-    this.protos.clear();
+    this.protos.clear();this.loadTimings.clear();
     for(const geometry of this.lodGeometries)geometry.dispose();this.lodGeometries.clear();this.lodByGeometry.clear();
-    for (const mesh of this.placed.values()) this.scene.remove(mesh);
-    this.placed.clear();
+    for (const mesh of this.placed.values()) mesh.removeFromParent();
+    this.placed.clear();this.orderedRoots=null;
     for(const batch of this.batches){batch.removeFromParent();batch.dispose();}
     this.batches=[];
     this.cells.clear();this.root.clear();this.scene.remove(this.root);
@@ -314,16 +420,28 @@ export class PropField {
     for(const g of geometry)g.dispose();for(const m of materials)if(!Array.isArray(m))m.dispose();for(const t of textures)t.dispose();
   }
 
-  private async spawn(stamp: MapStamp, gen: number): Promise<void> {
-    const proto = await this.proto(stamp.asset,stamp.variant);
-    if (gen !== this.gen || !proto || this.placed.has(stamp.id)) return;
-    const mesh = proto.clone();
-    this.place(mesh, stamp);
-    this.tint(mesh);
-    this.placed.set(stamp.id, mesh);
-    this.changed.add(stamp.id);
-    this.queueBatches();
-    if (stamp.id === this.picked) this.syncMark();
+  private async spawnBatch(groups:Map<Promise<Object3D|null>,MapStamp[]>,gen:number):Promise<void> {
+    if(!groups.size)return;
+    const waitStarted=performance.now();
+    const prototypes=await Promise.all(groups.keys());
+    const placementStarted=performance.now();
+    if(gen!==this.gen||this.destroyed)return;
+    const timing=perf.start();let index=0,placed=0;
+    for(const stamps of groups.values()){
+      const proto=prototypes[index++];if(!proto)continue;
+      let create=this.placementFactories.get(proto);
+      if(!create){create=staticPlacementFactory(proto,true);this.placementFactories.set(proto,create);}
+      for(const stamp of stamps){
+        if(this.placed.has(stamp.id))continue;
+        const mesh=create();this.place(mesh,stamp);placed++;
+        // Ordinary tree harvesting must not repack dew across the whole forest.
+        this.placed.set(stamp.id,mesh);if(mesh.userData.dew?.length)this.dewStructureChanged=true;this.changed.add(stamp.id);
+      }
+    }
+    // One forest publication, not a complete cell rebuild for every GLB arrival.
+    this.queueBatches();this.syncMark();
+    perf.end('Prop placement (event)',timing);
+    this.placementTiming={count:placed,waitMs:placementStarted-waitStarted,placeMs:performance.now()-placementStarted};
   }
 
   private proto(asset: string, variant?: MapStamp["variant"]): Promise<Object3D | null> {
@@ -339,7 +457,13 @@ export class PropField {
   private async load(url: string, id: string, variant?: MapStamp["variant"],model?:PropModelOptions): Promise<Object3D | null> {
     try {
       const asset=model?.sourceAsset??id;
+      const started=performance.now();
       const gltf = await this.loader.loadAsync(url);
+      const fetched=performance.now();
+      const textureSharing=this.embeddedTextures.diagnostics();
+      perf.value('Scenery embedded images',textureSharing.requests);
+      perf.value('Scenery shared image loads',textureSharing.shared);
+      perf.value('Scenery unique embedded images',textureSharing.unique);
       let disposeBatch=()=>{};
       let wind:ReturnType<typeof foliageWind>=null;
       gltf.scene.traverse(node=>{wind??=foliageWind(node.userData.foliageWind);});
@@ -362,11 +486,16 @@ export class PropField {
       const grounding=model?.groundContact;
       const groundOffset=grounding==='terrain'?-box.min.y:grounding?0:prototypeGroundOffset(asset,box.min.y,this.float.has(id),referenceOrigin);
       const root=transformedModel(gltf.scene,model?.transform??{scale:1,pivot:[0,0,0],up:'Y',forward:'+Z'},groundOffset);
+      root.animations=gltf.animations;
       this.prototypeDisposers.set(root,()=>{disposeBatch();disposeWind();});
       const transformed=prototypeBounds(root);
       this.bounds.set(id,{minY:transformed.min.y,height:transformed.max.y-transformed.min.y});
       root.userData.dew=prototypeDew(root);
       root.userData.variant=variant;
+      root.userData.asset=id;root.userData.lookAsset=asset;
+      this.tint(root);
+      const finished=performance.now();
+      this.loadTimings.set(`${id}#${variant??"base"}`,{asset:id,variant,fetchParseMs:fetched-started,prepareMs:finished-fetched,totalMs:finished-started});
       return root;
     } catch {
       this.failed.add(id);
@@ -374,13 +503,13 @@ export class PropField {
     }
   }
 
-  private place(mesh: Object3D, stamp: MapStamp): void {
+  private place(mesh: PlacementRoot, stamp: MapStamp): void {
     const s = stamp.scale ?? 1;
     const x = stamp.x + 0.5;
     const z = stamp.y + 0.5;
     mesh.userData.asset = stamp.asset;
     mesh.userData.stampRef = stamp;
-    mesh.userData.lookAsset=this.modelOptions(stamp.asset)?.sourceAsset??stamp.asset;
+    mesh.userData.lookAsset=this.modelOverrides.get(stamp.asset)?.sourceAsset??stamp.asset;
     mesh.userData.stamp = stamp.id;
     mesh.userData.elevation=stamp.elevation??0;
     mesh.userData.sourceHeight=stamp.sourceTransform?.height;
@@ -398,11 +527,14 @@ export class PropField {
   }
 
   private relift(): void {
-    for (const mesh of this.placed.values()) {
+    let changed=false;
+    for (const [id,mesh] of this.placed) {
       const asset = typeof mesh.userData.asset === "string" ? mesh.userData.asset : "";
-      mesh.position.y = mesh.userData.sourceHeight ?? (mesh.userData.walkStamp ? bridgePlacementHeight(mesh.userData.walkStamp,()=>0) : this.sitY(asset, mesh.position.x, mesh.position.z)+(Number(mesh.userData.elevation)||0));
+      const y=mesh.userData.sourceHeight ?? (mesh.userData.walkStamp ? bridgePlacementHeight(mesh.userData.walkStamp,()=>0) : this.sitY(asset, mesh.position.x, mesh.position.z)+(Number(mesh.userData.elevation)||0));
+      if(mesh.position.y===y)continue;
+      this.detach(id,mesh);mesh.position.y=y;this.changed.add(id);changed=true;
     }
-    this.allDirty = true;
+    if(!changed)return;
     this.queueBatches();
     this.syncMark();
   }
@@ -414,11 +546,19 @@ export class PropField {
   /** Editor movement changes only this object's instance matrices. Rebatch on commit. */
   previewStamp(stamp:MapStamp):void {
     const root=this.placed.get(stamp.id);if(!root)return;
-    this.place(root,stamp);root.updateMatrixWorld(true);
-    root.userData.cameraBounds=new Box3().setFromObject(root);
+    this.draws.invalidate();
+    this.place(root,stamp);updatePlacementWorld(root);
+    root.userData.cameraBounds=placementBounds(root,undefined,root.userData.renderBounds??=new Box3());
+    // Preview retains old membership until commit. Expand that cell immediately
+    // so both rendering and ray queries can still find a drag across its boundary.
+    const cell=this.cells.get(root.userData.batchCell);
+    if(cell)cell.box.union(root.userData.renderBounds as Box3);
     const touched=new Set<InstancedMesh>();
-    for(const slot of this.instanceSlots.get(stamp.id)??[]){slot.batch.setMatrixAt(slot.index,slot.source.matrixWorld);slot.batch.instanceMatrix.needsUpdate=true;touched.add(slot.batch);}
-    for(const batch of touched){batch.computeBoundingSphere();if(batch.boundingSphere)batch.boundingSphere.radius+=1.25;}
+    for(const slot of this.instanceSlots.get(stamp.id)??[]){slot.batch.setMatrixAt(slot.index,slot.matrix);slot.batch.instanceMatrix.needsUpdate=true;touched.add(slot.batch);}
+    for(const batch of touched){
+      batch.computeBoundingSphere();if(batch.boundingSphere)batch.boundingSphere.radius+=1.25;
+      if(cell&&batch.userData.groundConforming&&batch.boundingSphere)cell.box.union(batch.boundingSphere.getBoundingBox(new Box3()));
+    }
     this.syncMark();
   }
 
@@ -428,22 +568,20 @@ export class PropField {
   private readonly changed=new Set<string>();
   private readonly dirty=new Set<string>();
   private allDirty=true;
-  private detach(id:string,root:Object3D):void {
+  private detach(id:string,root:PlacementRoot):void {
     const cell=root.userData.batchCell as string|undefined;
     if(cell){this.dirty.add(cell);this.members.get(cell)?.delete(id);root.userData.batchCell=undefined;}
     this.changed.delete(id);this.instanceSlots.delete(id);
   }
-  /** World matrices, bounds, contact shade and batch cell of one (re)placed root. */
-  private index(id:string,root:Object3D):void {
-    root.updateMatrixWorld(true);
-    const box=new Box3().setFromObject(root);
+  /** World matrices, bounds, dew and batch cell of one (re)placed root. */
+  private index(id:string,root:PlacementRoot):void {
+    updatePlacementWorld(root);
+    // Drag preview changes the visible pose before sync receives the commit.
+    // Compare future commits against the indexed pose, not that preview pose,
+    // so crossing a cell boundary still updates culling, dew and picking.
+    root.userData.indexedStampRef=root.userData.stampRef;
+    const box=placementBounds(root,undefined,root.userData.renderBounds??=new Box3());
     root.userData.cameraBounds=box;
-    const asset=String(root.userData.lookAsset??root.userData.asset);
-    root.userData.contact=undefined;
-    if(!this.float.has(asset)&&!/(mountain|bridge|pillar-arch)/.test(asset)&&Number(root.userData.elevation??0)<.5){
-      const tree=/tree|pine/.test(asset),spread=tree?.17:.42;
-      root.userData.contact={x:root.position.x,z:root.position.z,radiusX:Math.max(.3,(box.max.x-box.min.x)*spread),radiusZ:Math.max(.3,(box.max.z-box.min.z)*spread),strength:tree?.27:.36};
-    }
     const dew=root.userData.dew as number[]|undefined;
     if(dew?.length){
       const world=new Float32Array(dew.length),p=new Vector3(),scale=root.matrixWorld.getMaxScaleOnAxis();
@@ -451,49 +589,64 @@ export class PropField {
       root.userData.dewWorld=world;
     }
     const height=(this.bounds.get(String(root.userData.asset))?.height??Infinity)*Math.abs(root.scale.y);
-    // Spatial batches allow camera and shadow frusta to reject offscreen forest. Casters use
-    // coarser cells: the sun frustum spans many cells, and each (cell, asset) pair is a draw.
-    const size=height>=SHADOW_MIN_HEIGHT?CASTER_CELL:SCATTER_CELL;
-    const cell=`${size}:${Math.floor(root.position.x/size)},${Math.floor(root.position.z/size)}`;
+    // Spatial batches allow camera and shadow frusta to reject offscreen forest.
+    // Keep shadow classes separate even when their spatial cell sizes match.
+    const kind=height>=SHADOW_MIN_HEIGHT?'caster':'scatter',size=this.batchLayout[kind];
+    const cell=`${kind}:${size}:${Math.floor(root.position.x/size)},${Math.floor(root.position.z/size)}`;
     root.userData.batchCell=cell;root.userData.batchHeight=height;
     let set=this.members.get(cell);if(!set)this.members.set(cell,set=new Set());set.add(id);
     this.dirty.add(cell);
   }
 
   private rebuildBatches():void {
+    const started=performance.now();
     const timing=perf.start();
+    let stage=timing;
     if(this.allDirty){
+      this.dewStructureChanged=true;
       this.allDirty=false;this.members.clear();this.instanceSlots.clear();
       for(const key of this.cells.keys())this.dirty.add(key);
       for(const id of this.placed.keys())this.changed.add(id);
     }
-    const contactsChanged=this.changed.size>0||this.dirty.size>0;
-    for(const id of this.changed){const root=this.placed.get(id);if(root)this.index(id,root);}
+    const dewChanged=this.changed.size>0||this.dirty.size>0;
+    const dewChanges:DewContributor[]=[];
+    for(const id of this.changed){const root=this.placed.get(id);if(root){this.index(id,root);if(!this.dewStructureChanged)dewChanges.push(root.userData);}}
     this.changed.clear();
+    perf.end('Prop batch · index bounds and dew (event)',stage);
     if(!this.dirty.size){perf.end('Prop rebuild (event)',timing);return;}
     const dirty=new Set(this.dirty);this.dirty.clear();
-    if(contactsChanged){
-      this.contacts=[];this.contactRevision++;
-      for(const root of this.placed.values())if(root.userData.contact)this.contacts.push(root.userData.contact);
-      const beads=[...this.placed.values()].map(root=>root.userData.dewWorld as Float32Array|undefined).filter((d):d is Float32Array=>!!d);
-      this.dew=new Float32Array(beads.reduce((n,d)=>n+d.length,0));let offset=0;for(const d of beads){this.dew.set(d,offset);offset+=d.length;}
+    stage=perf.start();
+    if(dewChanged){
+      const placed=this.placed;
+      this.dewPlacements.sync(function*(){for(const root of placed.values())yield root.userData;},dewChanges,this.dewStructureChanged);
+      this.dewStructureChanged=false;
+      if(this.dew!==this.dewPlacements.dew){this.dew=this.dewPlacements.dew;this.dewRevision++;}
     }
+    perf.end('Prop batch · collect dew (event)',stage);stage=perf.start();
     const previous=new Map<string,InstancedMesh>(),kept:InstancedMesh[]=[];
     for(const b of this.batches)if(dirty.has(b.userData.cell))previous.set(b.userData.batchKey,b);else kept.push(b);
     this.batches=kept;
-    const groups=new Map<string,{source:Mesh; poses:Matrix4[];ids:string[];sources:Mesh[];cell:string;height:number}>();
-    for(const cell of dirty)for(const id of this.members.get(cell)??[]){
-      const root=this.placed.get(id);if(!root)continue;
-      this.instanceSlots.delete(id);
-      const height=root.userData.batchHeight as number;
-      root.traverse(n=>{
-        if(!(n instanceof Mesh))return;
-        const mats=Array.isArray(n.material)?n.material:[n.material];
-        const key=cell+':'+n.geometry.uuid+':'+mats.map(m=>m.uuid).join(',');
-        let g=groups.get(key);if(!g){g={source:n,poses:[],ids:[],sources:[],cell,height:0};groups.set(key,g);}
-        g.poses.push(n.matrixWorld);g.ids.push(id);g.sources.push(n);g.height=Math.max(g.height,height);
-      });
+    type InstanceGroup={source:Mesh;poses:Matrix4[];ids:string[];cell:string;height:number};
+    const groups=new Map<string,InstanceGroup>();
+    for(const cell of dirty){
+      // Cell membership already partitions the traversal. Reuse the prototype's
+      // mesh key here instead of allocating/hash-comparing a long cell+UUID key
+      // for every blade, pebble and tree. Compose it only once per output batch.
+      const cellGroups=new Map<string,InstanceGroup>();
+      for(const id of this.members.get(cell)??[]){
+        const root=this.placed.get(id);if(!root)continue;
+        this.instanceSlots.delete(id);
+        const height=root.userData.batchHeight as number;
+        visitPlacementMeshes(root,(n,matrix)=>{
+          let meshKey=this.meshBatchKeys.get(n);
+          if(!meshKey){const mats=Array.isArray(n.material)?n.material:[n.material];meshKey=n.geometry.uuid+':'+mats.map(m=>m.uuid).join(',');this.meshBatchKeys.set(n,meshKey);}
+          let g=cellGroups.get(meshKey);
+          if(!g){g={source:n,poses:[],ids:[],cell,height:0};cellGroups.set(meshKey,g);groups.set(cell+':'+meshKey,g);}
+          g.poses.push(matrix);g.ids.push(id);g.height=Math.max(g.height,height);
+        });
+      }
     }
+    perf.end('Prop batch · group mesh instances (event)',stage);stage=perf.start();
     for(const [key,g] of groups){
       let b=previous.get(key);previous.delete(key);
       const capacity=b?.instanceMatrix.count??0;
@@ -502,6 +655,8 @@ export class PropField {
         b=new InstancedMesh(g.source.geometry,g.source.material,g.poses.length);
         b.customDepthMaterial=g.source.customDepthMaterial;
         b.userData.batchKey=key;b.userData.cell=g.cell;
+        const materials=Array.isArray(g.source.material)?g.source.material:[g.source.material];
+        b.userData.groundConforming=materials.some(m=>m.userData.underlay);
         b.name=`prop ${String(this.placed.get(g.ids[0]!)?.userData.lookAsset??'')}`;
         b.userData.fullGeometry=g.source.geometry;b.userData.lodGeometry=this.lodByGeometry.get(g.source.geometry.uuid);
         let trianglesBefore=0;
@@ -522,7 +677,7 @@ export class PropField {
         if(changed)b.setMatrixAt(i,g.poses[i]);
       }
       b.count=g.poses.length;b.userData.stampIds=g.ids;
-      for(let i=0;i<g.ids.length;i++){const id=g.ids[i]!,slots=this.instanceSlots.get(id)??[];slots.push({batch:b,index:i,source:g.sources[i]!});this.instanceSlots.set(id,slots);}
+      for(let i=0;i<g.ids.length;i++){const id=g.ids[i]!,slots=this.instanceSlots.get(id)??[];slots.push({batch:b,index:i,matrix:g.poses[i]!});this.instanceSlots.set(id,slots);}
       if(g.source.userData.sourceTreeWind){
         const color=new Color();let colorChanged=false;
         for(let i=0;i<g.ids.length;i++){
@@ -540,17 +695,26 @@ export class PropField {
       }
       this.batches.push(b);
     }
+    perf.end('Prop batch · instance buffers and bounds (event)',stage);stage=perf.start();
     for(const b of previous.values()){b.removeFromParent();b.dispose();}
     const sphere=new Sphere();
     for(const key of dirty){
       const c=this.cells.get(key);if(!c)continue;
       c.box.makeEmpty();
-      for(const b of [...c.casters.children,...c.scatter.children] as InstancedMesh[])if(b.boundingSphere)c.box.union(sphere.copy(b.boundingSphere).getBoundingBox(new Box3()));
+      for(const id of this.members.get(key)??[]){const bounds=this.placed.get(id)?.userData.renderBounds as Box3|undefined;if(bounds)c.box.union(bounds);}
+      // Underlays can follow terrain in their vertex shader. Retain their old
+      // conservative bounds until terrain-aware displacement bounds exist.
+      for(const b of [...c.casters.children,...c.scatter.children] as InstancedMesh[])if(b.userData.groundConforming&&b.boundingSphere)c.box.union(sphere.copy(b.boundingSphere).getBoundingBox(new Box3()));
       if(c.box.isEmpty()){c.group.removeFromParent();this.cells.delete(key);this.members.delete(key);}
     }
+    perf.end('Prop batch · cell bounds (event)',stage);
     this.root.userData.materialRevision++;
+    stage=perf.start();
+    this.draws.sync(this.batches);
+    perf.end('Prop batch · draw groups (event)',stage);
     perf.value('Prop batches',this.batches.length);perf.value('Placed props',this.placed.size);perf.value('Prop cells',this.cells.size);
     perf.end('Prop rebuild (event)',timing);
+    this.batchMs=performance.now()-started;
   }
 
   private syncMark(): void {
@@ -559,6 +723,7 @@ export class PropField {
       if (this.mark) this.mark.visible = false;
       return;
     }
+    const inspected=materializePlacement(mesh);
     if (this.mark && this.mark.userData.stamp === this.picked) {
       this.mark.update();
       this.mark.visible = true;
@@ -568,7 +733,7 @@ export class PropField {
       this.scene.remove(this.mark);
       this.mark.geometry.dispose();
     }
-    const mark = new BoxHelper(mesh, 0xe8e0d0);
+    const mark = new BoxHelper(inspected, 0xe8e0d0);
     mark.userData.stamp = this.picked;
     this.scene.add(mark);
     this.mark = mark;

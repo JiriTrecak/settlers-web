@@ -4,9 +4,9 @@ import { fixed } from "./motion";
 
 /** Short, bounded idle strolls. Tick/ID hashing varies cadence without a random source. */
 export function idleMotion(c: GameContext) {
-  const occupied = new Set(c.activeUnits().map(e=>c.spatial.cell(e)));
+  const occupiedByMode=[false,true].map(air=>new Set(c.activeUnits().filter(e=>c.spatial.airborne(e)===air).map(e=>c.spatial.cell(e))));
   for (const e of c.activeUnits()) {
-    const u = e.unit!;
+    const u = e.unit!,occupied=occupiedByMode[Number(c.spatial.airborne(e))]!;
     const busy = u.order || u.orderQueue.length || u.job || u.employment || u.cargo || u.pendingMove ||
       u.target || u.cooldown || u.returning || u.camp;
     if (!c.def(e).behaviors.work || !c.def(e).behaviors.movement?.idleWander || busy) {

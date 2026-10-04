@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.roar-command-icon",
+  "name": "Roar — command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "c430cc34e5abd06039865e73182b070b1247de074dc910ea1381cd5d7a980830",
+      "bytes": 670
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "c16beceb75e1cfeb1e2b5b568aa8274526060c10d82be85510b5c46ea86612cb",
+      "bytes": 627278
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "52ac215c1321202b6f02adc8fcd9e8d7b6b0133fd869bd304cd512cdb2d9ebd8",
+      "bytes": 1437816
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.roar-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.roar-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

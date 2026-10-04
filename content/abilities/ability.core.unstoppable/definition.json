@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.unstoppable",
+  "name": "Unstoppable",
+  "description": "Protect an ally from stuns, roots, silence, disarm, item lockout, movement slows and attack slows for 4/6/8 seconds. Existing controls are suppressed while protected; their timers keep running. Incoming control components are prevented. Damage, armor penalties and other spell components still apply. This protection can be dispelled.",
+  "activation": "targeted",
+  "piercesSpellImmunity": false,
+  "ranks": [
+    {
+      "duration": 160,
+      "mana": 45,
+      "cooldownTicks": 600
+    },
+    {
+      "duration": 240,
+      "mana": 45,
+      "cooldownTicks": 600
+    },
+    {
+      "duration": 320,
+      "mana": 45,
+      "cooldownTicks": 600
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "controlWard",
+      "amount": {
+        "rankParameter": "duration"
+      },
+      "polarity": "positive",
+      "dispel": true,
+      "controlImmunity": [
+        "stun",
+        "root",
+        "silence",
+        "disarm",
+        "itemBlocked",
+        "moveSlow",
+        "attackSlow"
+      ],
+      "modifiers": {},
+      "lifetime": "duration"
+    }
+  ],
+  "presentation": "presentation.core.unstoppable"
+}

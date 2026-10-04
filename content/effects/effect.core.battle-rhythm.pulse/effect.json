@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.battle-rhythm.pulse",
+  "name": "Battle Rhythm · Pulse",
+  "description": "",
+  "durationTicks": 28,
+  "loop": false,
+  "layers": [
+    {
+      "id": "burst",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 26,
+        "rate": 14,
+        "speed": 2.8,
+        "speedVariation": 0.45,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 105,
+        "gravity": 0.6,
+        "drag": 1.2,
+        "spawnRadius": 0.3,
+        "startSize": 0.15,
+        "endSize": 0.025,
+        "spin": 3,
+        "fadeIn": 0.03,
+        "fadeOut": 0.8
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#ffd87a",
+      "accent": "#fff3bd",
+      "durationTicks": 1,
+      "count": 14,
+      "size": 0.1,
+      "height": 1.1
+    }
+  ]
+}

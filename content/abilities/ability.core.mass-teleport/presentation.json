@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.mass-teleport",
+  "icon": "asset.custom.mass-teleport-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "arrival",
+      "effect": "effect.core.mass-teleport",
+      "event": "teleported",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.spirit-swarm",
+  "name": "Spirit Swarm",
+  "description": "Release twenty untargetable seekers over 3.8 seconds. They pursue nearby visible enemies for 30 seconds, sharing targets with at most seven per victim. Each bite drains 10 health; 75% is carried home, delivered only when a seeker returns after collecting 20 health or four bites. Seekers follow their moving caster and stop when it dies or changes control.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "swarm",
+    "count": 20,
+    "durationTicks": 1200,
+    "speed": 18,
+    "radius": 16,
+    "launchIntervalTicks": 8,
+    "attackIntervalTicks": 20,
+    "maxPerTarget": 7,
+    "returnThreshold": 20,
+    "returnPermille": 750,
+    "maxHitsPerTrip": 4,
+    "returnTimeoutTicks": 400,
+    "includeBuildings": true
+  },
+  "ranks": [
+    {}
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 150,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 7200,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "drain",
+      "target": "target",
+      "amount": 10,
+      "resource": "health",
+      "restoreCaster": true,
+      "damageType": "spell",
+      "damagePerDrainedPermille": 0
+    }
+  ],
+  "presentation": "presentation.core.spirit-swarm"
+}

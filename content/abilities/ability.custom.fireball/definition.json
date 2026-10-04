@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.custom.fireball",
+  "name": "Fireball",
+  "description": "Hurl a blazing fireball at an enemy, dealing 100/150/200 spell damage on impact.",
+  "activation": "targeted",
+  "delivery": {
+    "kind": "projectile",
+    "speed": 18
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 240,
+      "damage": 100
+    },
+    {
+      "range": 16,
+      "mana": 50,
+      "cooldownTicks": 240,
+      "damage": 150
+    },
+    {
+      "range": 16,
+      "mana": 60,
+      "cooldownTicks": 240,
+      "damage": 200
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 16,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "amount": {
+        "rankParameter": "damage"
+      },
+      "damageType": "spell"
+    }
+  ],
+  "presentation": "presentation.custom.fireball"
+}

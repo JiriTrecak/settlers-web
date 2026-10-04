@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.spell-ward",
+  "name": "Spell Ward",
+  "description": "Protect an allied unit from hostile spell operations for six seconds, including damage, control, mana drain and ordinary dispels. Friendly healing still works. Existing periodic spell damage is suppressed while protected. Explicitly piercing spells bypass this ward.",
+  "activation": "targeted",
+  "piercesSpellImmunity": false,
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 40,
+      "cooldownTicks": 200
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "ward",
+      "amount": 240,
+      "polarity": "positive",
+      "dispel": true,
+      "modifiers": {},
+      "lifetime": "duration",
+      "spellImmunity": "hostile"
+    }
+  ],
+  "presentation": "presentation.core.spell-ward"
+}

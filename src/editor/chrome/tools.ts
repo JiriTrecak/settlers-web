@@ -8,22 +8,16 @@ import {
   Ban,
   Cable,
   Eraser,
-  FilePlus,
-  FolderOpen,
   Grid3x3,
   LayoutGrid,
   Library,
-  LogOut,
   Mountain,
   MousePointer2,
   Paintbrush,
-  Save,
-  SaveAll,
   Sun,
   TreePine,
   Play,
   Sticker,
-  FileCode,
 } from "lucide";
 import type { GridMode } from "../../shared";
 import type { IconItem } from "../../ui";
@@ -54,18 +48,6 @@ export type GameToolHooks = {
   onMcp(): void;
   onSky(): void;
 };
-
-export function fileTools(hooks: FileToolHooks): IconItem[] {
-  return [
-    { id: "new", label: "New", icon: FilePlus, run: hooks.onNew },
-    { id: "save", label: "Save", icon: Save, run: hooks.onSave },
-    { id: "save-as", label: "Export", icon: SaveAll, run: hooks.onSaveAs },
-    { id: "load", label: "Load", icon: FolderOpen, run: hooks.onLoad },
-    {id:"mission",label:"Mission & Lua",icon:FileCode,run:hooks.onMission},
-    { kind: "sep" },
-    { id: "exit", label: "Exit", icon: LogOut, run: hooks.onLeave },
-  ];
-}
 
 export function gameTools(hooks: GameToolHooks): IconItem[] {
   return [

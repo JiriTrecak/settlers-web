@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.cleaving-attack-command-icon",
+  "name": "Cleaving Attack — command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "ececb260f6f79551ed8d5c7840e3e378accdcd4b35866f65f45ad009e4f9e78a",
+      "bytes": 717
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "a4fa30840c06fc9cc50107126d0b64906c245d32ef47a8f8917dadb99f7a60f6",
+      "bytes": 550546
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "c4825e78aab398db0013bf3913f1f70e4a12955c535d3285e1673067bbf5b38c",
+      "bytes": 1363417
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.cleaving-attack-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.cleaving-attack-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

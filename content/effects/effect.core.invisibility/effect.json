@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.invisibility",
+  "name": "Invisibility veil",
+  "description": "",
+  "durationTicks": 40,
+  "loop": false,
+  "layers": [
+    {
+      "id": "motes",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 30,
+        "rate": 5,
+        "speed": 0.7,
+        "speedVariation": 0.2,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 30,
+        "gravity": 0,
+        "drag": 1,
+        "spawnRadius": 0.6,
+        "startSize": 0.08,
+        "endSize": 0,
+        "spin": 0,
+        "fadeIn": 0.2,
+        "fadeOut": 0.6
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#b497ee",
+      "accent": "#f0eaff",
+      "durationTicks": 40,
+      "count": 12,
+      "size": 0.08,
+      "height": 1,
+      "follow": true
+    }
+  ]
+}

@@ -2,6 +2,30 @@ import {describe,it,expect} from 'vitest';
 import {Group,Mesh,BoxGeometry,MeshStandardMaterial,Box3,Vector3,Texture} from 'three';
 import {batchStaticMaterials} from '../../src/render/prop/staticBatch';
 describe('static scenery draw batching',()=>{
+ it('combines shared textured leaf fans without changing UVs, tint, bounds or shadow state',()=>{
+  const root=new Group(),material=new MeshStandardMaterial({map:new Texture(),alphaTest:.4});
+  material.userData.vividLeaf={base:[.2,.4,.1]};
+  const expectedUv:number[]=[];
+  for(let i=0;i<16;i++){
+   const g=new BoxGeometry();g.clearGroups();g.translate(i,0,0);expectedUv.push(...g.getAttribute('uv').array);
+   const mesh=new Mesh(g,material);mesh.userData.name=`Leaf fan ${i}`;mesh.castShadow=true;root.add(mesh);
+  }
+  const before=new Box3().setFromObject(root);batchStaticMaterials(root);
+  expect(root.children).toHaveLength(1);
+  const mesh=root.children[0] as Mesh;
+  expect(mesh.material).toBe(material);expect(mesh.castShadow).toBe(true);
+  expect([...mesh.geometry.getAttribute('uv').array]).toEqual(expectedUv);
+  expect(new Box3().setFromObject(root).equals(before)).toBe(true);
+  expect(mesh.geometry.index!.count).toBe(16*36);
+ });
+ it('does not flatten different local transforms or rendering metadata',()=>{
+  const root=new Group(),material=new MeshStandardMaterial({map:new Texture()});
+  for(let i=0;i<3;i++){
+   const geometry=new BoxGeometry();geometry.clearGroups();const mesh=new Mesh(geometry,material);
+   if(i===1)mesh.position.x=2;if(i===2)mesh.userData.foliageWind={amplitude:.2};root.add(mesh);
+  }
+  batchStaticMaterials(root);expect(root.children).toHaveLength(3);
+ });
  it('preserves geometry, linear vertex colors and custom surface shaders',()=>{
   const root=new Group();
   const colors=[0xa04b31,0x2878df,0xeeeeee];

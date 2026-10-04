@@ -1,4 +1,10 @@
-import {spellControl} from '../abilities/statuses';
+import {locomotion,weaponTargets} from './locomotion';
+import {spellSource} from '../abilities/source';
+import {isEthereal,weaponCanTarget,spellDamageMultiplier} from '../abilities/damagePolicy';
+import {criticalStrike,evadeWeapon,cleaveWeapon,enhanceWeapon} from '../abilities/combatModifiers';
+import {matchesSpellFilter,unitNature} from '../abilities/eligibility';
+import {spellControl,spellAbsorb,wakeOnDamage} from '../abilities/statuses';
+import {revealForAction} from '../abilities/concealment';
 import {elevatedPoint} from './garrisons';
 import {TargetIndex} from './targetIndex';
 import {routeToAttack} from './attackApproach';
@@ -18,8 +24,20 @@ import { distance2 } from "./spatial";
 import { alive, type Entity, type Point } from "./state";
 import { Progression } from "./progression";
 
-export type DamageHit={owner?:Owner;source:number;target:number;damage:number;damageType:string;weapon?:boolean};
+export type DamageHit={owner?:Owner;source:number;target:number;damage:number;damageType:string;weapon?:boolean;criticalAbility?:string;cleaveAbility?:string;enhancement?:import('./missileState').WeaponEnhancement;weaponOrigin?:{owner:string;x:number;y:number}};
 export class Combat {
+  get spellEvents():import('../abilities/reactions').SpellCombatEvent[]{return this.c.state.spellCombatEvents;}
+  suppressSpellReactions=0;
+  /** Called once for a lethal outcome after rescue, before any entity is removed. */
+  onLethal?:(source:number,target:Entity,owner?:Owner)=>void;
+  onWeaponCastRelease?:(source:Entity,target:Entity,projectile:boolean)=>import('./missileState').WeaponEnhancement|false|undefined;
+  onWeaponRelease?:(source:Entity,target:Entity,weapon:'melee'|'projectile'|'siege')=>void;
+  onWeaponStatus?:(target:number,enhancement:import('./missileState').WeaponEnhancement)=>void;
+  onWeaponEnhancement?:(source:number,target:number,ability:string,cast:number,event:'weaponEnhanced'|'projectile'|'enhancedHit',amount:number,durationTicks?:number,origin?:{owner:string;x:number;y:number})=>void;
+  onSpellModifier?:(source:number,target:number,ability:string,event:'criticalStrike'|'evaded'|'cleaved',amount:number)=>void;
+  private spellEvent(source:number,target:number,damage:number,weapon:boolean,melee:boolean){
+    if(damage>0&&!this.suppressSpellReactions&&this.spellEvents.length<2048)this.spellEvents.push({source,target,damage,weapon,melee});
+  }
   readonly items: ItemEffects;
   readonly shells: ShellCombat;
   readonly missiles: Missiles;
@@ -28,7 +46,11 @@ export class Combat {
     private readonly vision: Observation,
     private readonly camps: readonly Camp[],
     private readonly teams: ReadonlyMap<Owner, number>,
-  ) { this.missiles = new Missiles(c,vision,[...teams.keys()]); this.items = new ItemEffects(c, teams); this.shells = new ShellCombat(c, vision, teams, (a,b)=>this.hostile(a,b)); }
+  ) { this.missiles = new Missiles(c,vision,[...teams.keys()]); this.items = new ItemEffects(c, teams); this.shells = new ShellCombat(c, vision, teams, (a,b)=>this.hostile(a,b));
+    this.closestTarget=c.profile.wrap('Target acquisition',this.closestTarget.bind(this));
+    this.moveOrder=c.profile.wrap('Move orders',this.moveOrder.bind(this));
+    this.searchLastSeen=c.profile.wrap('Pursuit memory',this.searchLastSeen.bind(this));
+  }
   allied(a:Entity,b:Entity) {return a.owner!=="none" && b.owner!=="none" && this.teams.get(a.owner)===this.teams.get(b.owner);}
   hostile(a: Entity, b: Entity): boolean {
     if (
@@ -41,7 +63,8 @@ export class Combat {
       return false;
     return this.opponents(a,b);
   }
-  private opponents(a: Entity, b: Entity): boolean {
+  /** Allegiance only: also valid for corpse and captured-source records. */
+  opponents(a: Entity, b: Entity): boolean {
     if (a.owner !== "none" && b.owner !== "none")
       return this.teams.get(a.owner) !== this.teams.get(b.owner);
     if (a.owner === "none" && b.owner === "none") return false;
@@ -51,7 +74,8 @@ export class Combat {
   }
   private planningSight:Map<string,boolean>|null=null;
   private perceives(a: Entity, b: Entity) {
-    if(a.owner==='none')return this.c.spatial.visible(precise(a),precise(b))&&distance2(precise(a),precise(b))<=
+    if(!this.vision.detects(a.owner,b,a))return false;
+    if(a.owner==='none')return this.c.spatial.visible(this.c.spatial.elevatedPoint(a),this.c.spatial.elevatedPoint(b))&&distance2(precise(a),precise(b))<=
       (this.camps.find(c=>c.id===a.unit?.camp)?.aggroRange??this.c.def(a).behaviors.combat!.aggroRange)**2;
     const key=`${a.owner}:${b.id}`,cached=this.planningSight?.get(key);
     if(cached!==undefined)return cached;
@@ -59,20 +83,22 @@ export class Combat {
   }
   private terrainClear(a:Entity,b:Entity){
     const combat=this.c.def(a).behaviors.combat!;
-    return this.c.spatial.attackClear(elevatedPoint(a),b,!!(combat.projectile||combat.shell));
+    return this.c.spatial.attackClear({...elevatedPoint(a),elevation:this.c.spatial.elevation(a)+(a.unit?.garrison?.height??0)},b,!!(combat.projectile||combat.shell));
   }
-  plan() {
+  plan(only?:ReadonlySet<number>) {
     // Positions/vision do not change during planning. Reuse spatial buckets and
     // shared colony sight only for this pass, then discard before movement.
     this.planningSight=new Map();this.c.spatial.beginUnitMovement();
-    try{this.planUnits();}finally{this.planningSight=null;this.c.spatial.endUnitMovement();}
+    try{this.c.spatial.sharedRoutes(()=>this.planUnits(only));}finally{this.planningSight=null;this.c.spatial.endUnitMovement();}
   }
-  private planUnits() {
+  private planUnits(only?:ReadonlySet<number>) {
     const c = this.c;
     this.shells.expire();
     const approaches=new Map<string, readonly Point[]>();
     const targets=new TargetIndex(c.liveBodies(), c.registry);
     for (const e of c.activeUnits()) {
+      if(only&&!only.has(e.id))continue;
+      c.reconcileWeapon(e);
       const u = e.unit!,
         combat = c.def(e).behaviors.combat,
         order = u.order;
@@ -80,15 +106,19 @@ export class Combat {
       if (u.attack) {
         const victim = c.get(u.attack.target);
         if(victim && alive(victim) && this.perceives(e,victim))this.rememberTarget(e,victim);
-        if (c.state.tick >= u.attack.ends || !victim || !alive(victim) || u.target !== victim.id ||
-            (isStunned(e,c.registry)||spellControl(e,c.registry,"disarm")) || e.abilities?.pending || !this.perceives(e,victim)) delete u.attack;
+        if (c.state.tick >= u.attack.ends || !victim || !alive(victim) || !this.weaponEligible(e,victim) || u.target !== victim.id ||
+            (isStunned(e,c.registry)||spellControl(e,c.registry,"disarm")||isEthereal(e,c.registry)) || e.abilities?.pending || !this.perceives(e,victim)) delete u.attack;
         else if (!u.attack.released) {
           u.route = []; u.goal = null;
           if (u.cooldown > 0) u.cooldown--;
           continue;
         }
       }
-      if(e.abilities?.pending || (isStunned(e,this.c.registry)||spellControl(e,this.c.registry,"disarm")))continue;
+      if(e.abilities?.pending || isStunned(e,this.c.registry))continue;
+      if(spellControl(e,this.c.registry,"disarm")||isEthereal(e,this.c.registry)){
+        if(u.target!==null){u.target=null;delete u.pursuit;u.route=[];u.goal=null;}
+        if(order?.type!=="move"&&order?.type!=="patrol"&&order?.type!=="follow")continue;
+      }
       if (u.job || order?.type === "pickup" || order?.type === "gather" || order?.type === "construct" || order?.type === "garrison") {delete u.pursuit;continue;}
       if (u.cooldown > 0) u.cooldown--;
       const camp = this.camps.find((c) => c.id === u.camp);
@@ -133,7 +163,7 @@ export class Combat {
         (!alive(target) ||
           target.hp === null ||
           target.unit?.contained || target.unit?.garrison ||
-          target.unit?.release ||
+          target.unit?.release || !this.weaponEligible(e,target) ||
           !this.perceives(e, target) ||
           (!(order?.type === "attack" && order.force) &&
             !this.hostile(e, target)))
@@ -188,10 +218,14 @@ export class Combat {
           continue;
         }
         if(order?.type==='hold'||u.garrison){u.target=null;continue;}
-        const staleGoal = u.goal !== null && (c.spatial.pointRange(c.spatial.point(u.goal),target) > combat.range ** 2 || !c.spatial.attackClear(c.spatial.point(u.goal),target,!!(combat.projectile||combat.shell)));
-        if ((!u.route.length || staleGoal) && u.retryAt <= c.state.tick) {
-          routeToAttack(c,e,target,approaches);
-          u.retryAt = c.state.tick + 6;
+        // A goal ray cannot change the decision until this actor may replan.
+        // With no route we already need a new approach, regardless of the ray.
+        if (u.retryAt <= c.state.tick) {
+          const staleGoal = !!u.route.length && u.goal !== null && (c.spatial.pointRange(c.spatial.point(u.goal),target) > combat.range ** 2 || !c.spatial.attackClear({...c.spatial.point(u.goal),elevation:c.spatial.elevation({...e,...c.spatial.point(u.goal)})},target,!!(combat.projectile||combat.shell)));
+          if (!u.route.length || staleGoal) {
+            routeToAttack(c,e,target,approaches);
+            u.retryAt = c.state.tick + 6;
+          }
         }
         startCharge(c, e, target);
         continue;
@@ -209,7 +243,7 @@ export class Combat {
     for (const target of targets.near(precise(actor), range)) {
       const distance = this.c.spatial.range(actor, target);
       if (distance > bestDistance || (best && distance === bestDistance && target.id >= best.id)) continue;
-      if (!this.hostile(actor,target) || !this.perceives(actor,target)) continue;
+      if (!this.weaponEligible(actor,target) || !this.hostile(actor,target) || !this.perceives(actor,target)) continue;
       best = target; bestDistance = distance;
     }
     return best;
@@ -250,40 +284,64 @@ export class Combat {
       u.retryAt = this.c.state.tick + 20;
     }
   }
+  private weaponEligible(a:Entity,b:Entity){return weaponTargets(this.c.def(a).behaviors.combat,this.c.def(b))&&!isEthereal(a,this.c.registry)&&weaponCanTarget(b,this.c.registry,this.c.def(a).behaviors.combat?.damageType??"normal");}
   private beginAttack(a: Entity, b: Entity) {
-    if(!this.terrainClear(a,b)||!facing(a,precise(b)))return;
+    if(!this.weaponEligible(a,b)||!this.terrainClear(a,b)||!facing(a,precise(b)))return;
     const u = a.unit!, cycleTicks=this.c.stats(a).cooldownTicks, policy=attackTiming(this.c.def(a).behaviors.combat!,cycleTicks);
-    u.attack = {target: b.id, cycleTicks, started: this.c.state.tick, impact: this.c.state.tick + policy.windupTicks,
+    u.attack = {profile:this.c.weaponDefinition(a),target: b.id, cycleTicks, started: this.c.state.tick, impact: this.c.state.tick + policy.windupTicks,
       ends: this.c.state.tick + policy.windupTicks + policy.recoveryTicks, released: false};
     u.cooldown = cycleTicks;
     u.route = []; u.goal = null;
   }
   private damage(target:Entity,raw:number,type:string){
-    return this.items.absorb(target, resolveDamage(this.c.registry.rules, {
+    raw*=spellDamageMultiplier(target,this.c.registry,type)/1000;
+    if(raw<=0)return 0;
+    return spellAbsorb(target,this.c.registry,this.items.absorb(target, resolveDamage(this.c.registry.rules, {
       armorType: this.c.def(target).body!.armorType,
       armor: this.c.stats(target).armor,
-    }, raw, type));
+    }, raw, type)),type);
+  }
+  private evaded(target:Entity,raw:number){
+    const ability=evadeWeapon(target,this.c.registry,this.c.state.tick,this.c.state);
+    if(ability)this.onSpellModifier?.(target.id,target.id,ability,'evaded',raw);
+    return !!ability;
+  }
+  private cleave(source:Entity,primary:Entity,raw:number,type:string,entry:ReturnType<typeof cleaveWeapon>|undefined):DamageHit[]{
+    const p=entry?.cleave;if(!entry||!p)return [];
+    const origin=this.c.spatial.elevatedPoint(source),aim=precise(primary),dx=aim.x-origin.x,dy=aim.y-origin.y,n=Math.hypot(dx,dy)||1;
+    const dotLimit=Math.cos(p.arcDegrees*Math.PI/360),radius=p.radius;
+    return this.c.liveBodies().filter(t=>{
+      if(t.id===primary.id||!this.weaponEligible(source,t)||!this.hostile(source,t)||!t.unit&&!p.includeBuildings)return false;
+      const pos=precise(t),x=pos.x-origin.x,y=pos.y-origin.y,dist=Math.hypot(x,y);
+      return dist<=radius&&(p.arcDegrees===360||dist===0||(dx*x+dy*y)/(n*dist)>=dotLimit)&&this.c.spatial.attackClear(origin,t,false)&&matchesSpellFilter({locomotion:locomotion(this.c.def(t)),nature:unitNature(this.c.registry.get(t.definition)),hero:!!this.c.registry.get(t.definition).hero,summoned:!!t.summoned,level:this.c.stats(t).level},p.filter);
+    }).sort((a,b)=>distance2(origin,precise(a))-distance2(origin,precise(b))||a.id-b.id).slice(0,p.maxTargets).map(t=>({source:source.id,target:t.id,owner:source.owner,damage:raw*p.damagePermille/1000,damageType:type,cleaveAbility:entry.ability}));
   }
   /** Direct ability delivery uses ordinary mitigation, item shields/rescue and XP. */
   abilityHit(hit:DamageHit):{damage:number;dead:Entity[]}{
     const a=this.c.get(hit.source)??(hit.owner?{id:hit.source,owner:hit.owner} as Entity:undefined),b=this.c.get(hit.target);
     if(!a||!b||!alive(b)||b.hp===null)return {damage:0,dead:[]};
     const damage=this.damage(b,hit.damage,hit.damageType),before=b.hp;
-    b.hp=Math.max(0,b.hp-damage);
+    wakeOnDamage(b,this.c.registry,damage);
+    b.hp=Math.max(0,b.hp-damage);this.c.clampPools(b);
     const dead=!b.hp&&!this.items.rescue(b)?[b]:[];
+    if(dead.length)this.onLethal?.(hit.source,b,hit.owner??a.owner);
     if(dead.length&&this.opponents(a,b))new Progression(this.c).award(b,hero=>this.opponents(hero,b));
+    this.spellEvent(hit.source,b.id,Math.min(before,damage),false,false);
     return {damage:Math.min(before,damage),dead};
   }
-  resolve(extra:DamageHit[]=[]): Entity[] {
+  resolve(extra:DamageHit[]=[],only?:ReadonlySet<number>): Entity[] {
     extra = [...extra, ...this.items.drainHits(), ...this.shells.resolve(), ...this.missiles.resolve()];
     const hits = new Map<number, number>();
     const contested = new Set<number>();
+    const lethal = new Map<number,{source:number;owner:Owner}>();
     for (const a of this.c.activeUnits()) {
+      if(only&&!only.has(a.id))continue;
+      this.c.reconcileWeapon(a);
       const combat = this.c.def(a).behaviors.combat,
         u = a.unit!,
         b = this.c.get(u.target);
-      if (a.abilities?.pending || (isStunned(a,this.c.registry)||spellControl(a,this.c.registry,"disarm")) || !combat || !b ||
-          !alive(b) || b.hp === null || !this.perceives(a,b) ||
+      if (a.abilities?.pending || (isStunned(a,this.c.registry)||spellControl(a,this.c.registry,"disarm")||isEthereal(a,this.c.registry)) || !combat || !b ||
+          !alive(b) || b.hp === null || !this.weaponEligible(a,b) || !this.perceives(a,b) ||
           (!(u.order?.type === "attack" && u.order.force) && !this.hostile(a,b))) {
         delete u.attack;
         continue;
@@ -297,30 +355,61 @@ export class Combat {
       if (attack.released || this.c.state.tick < attack.impact) continue;
       attack.released = true;
       if (!this.terrainClear(a,b) || this.c.spatial.range(a,b) > (combat.range + combat.attack.rangeBuffer) ** 2) continue;
-      if (combat.shell) { this.shells.launch(a,b); continue; }
-      const raw = chargeDamage(this.c,a,b);
-      if (combat.projectile) { this.missiles.launch(a,b,raw); continue; }
+      const profile=this.c.weaponDefinition(a),baseDamage=combat.shell?this.c.stats(a).damage:chargeDamage(this.c,a,b);
+      const grant=combat.shell||this.onWeaponCastRelease?undefined:enhanceWeapon(a,b,this.c.registry,this.c.state.tick,!!combat.projectile);
+      const enhancement=!combat.shell&&this.onWeaponCastRelease?this.onWeaponCastRelease(a,b,!!combat.projectile):grant?{...grant,cast:this.c.state.nextCast++,...(grant.status?{sourceContext:spellSource(this.c,a)}:{})}:undefined;
+      if(enhancement===false)continue;
+      const critical=combat.shell?undefined:criticalStrike(a,this.c.registry,this.c.state.tick,this.c.state);
+      const cleavePolicy=combat.shell||combat.projectile?undefined:cleaveWeapon(a,this.c.registry,this.c.state.tick);
+      this.onWeaponRelease?.(a,b,combat.shell?'siege':combat.projectile?'projectile':'melee');
+      const bonus=revealForAction(a,this.c.registry,this.c.state.tick,'attack');this.c.clampPools(a);
+      this.planningSight?.clear();
+      if (combat.shell) { this.shells.launch(a,b,bonus,profile,baseDamage); continue; }
+      const raw = (baseDamage+bonus+(enhancement?.bonus??0))*(critical?.multiplier??1000)/1000;
+      if (combat.projectile) {
+        const shot=this.missiles.launch(a,b,raw,profile,critical?.ability,enhancement);
+        if(enhancement)this.onWeaponEnhancement?.(a.id,b.id,enhancement.ability,enhancement.cast,'projectile',enhancement.bonus,shot.impact-shot.launched);
+        continue;
+      }
+      if(enhancement)this.onWeaponEnhancement?.(a.id,b.id,enhancement.ability,enhancement.cast,'weaponEnhanced',enhancement.bonus);
+      if(this.evaded(b,raw))continue;
       const damage = this.damage(b,raw,combat.damageType);
       const actual=Math.min(damage,Math.max(0,b.hp!-(hits.get(b.id)??0)));
+      if(actual>0&&actual===b.hp!-(hits.get(b.id)??0))lethal.set(b.id,{source:a.id,owner:a.owner});
       hits.set(b.id, (hits.get(b.id) ?? 0) + damage);
       extra.push(...this.items.onHit(a, b, actual, combat.damageType));
+      this.spellEvent(a.id,b.id,actual,true,true);
+      if(actual>0){
+        if(enhancement){this.onWeaponStatus?.(b.id,enhancement);this.onWeaponEnhancement?.(a.id,b.id,enhancement.ability,enhancement.cast,'enhancedHit',actual);}
+        if(critical)this.onSpellModifier?.(a.id,b.id,critical.ability,'criticalStrike',actual);
+        extra.push(...this.cleave(a,b,raw,combat.damageType,cleavePolicy));
+      }
       if (damage > 0 && this.opponents(a,b)) contested.add(b.id);
     }
     for(const hit of extra){
       const a=this.c.get(hit.source)??(hit.owner?{id:hit.source,owner:hit.owner} as Entity:undefined),b=this.c.get(hit.target);
       if((!a && hit.owner === undefined)||!b||!alive(b)||b.hp===null||b.unit?.garrison)continue;
-      const damage=this.damage(b,hit.damage,hit.damageType);
+      if(spellDamageMultiplier(b,this.c.registry,hit.damageType)===0)continue;
+      if(hit.weapon&&this.evaded(b,hit.damage))continue;
+      const damage=this.damage(b,hit.damage,hit.damageType),actual=Math.min(damage,Math.max(0,b.hp-(hits.get(b.id)??0)));
+      if(actual>0&&actual===b.hp-(hits.get(b.id)??0))lethal.set(b.id,{source:hit.source,owner:hit.owner??a!.owner});
+      if(actual>0&&hit.enhancement){this.onWeaponStatus?.(b.id,hit.enhancement);this.onWeaponEnhancement?.(hit.source,b.id,hit.enhancement.ability,hit.enhancement.cast,'enhancedHit',actual,undefined,hit.weaponOrigin);}
+      if(actual>0&&hit.criticalAbility)this.onSpellModifier?.(hit.source,b.id,hit.criticalAbility,'criticalStrike',actual);
+      if(actual>0&&hit.cleaveAbility)this.onSpellModifier?.(hit.source,b.id,hit.cleaveAbility,'cleaved',actual);
       if (hit.weapon && a && alive(a)) extra.push(...this.items.onHit(a,b,Math.min(damage,Math.max(0,b.hp-(hits.get(b.id)??0))),hit.damageType));
+      this.spellEvent(hit.source,b.id,Math.min(damage,Math.max(0,b.hp-(hits.get(b.id)??0))),!!hit.weapon,false);
       hits.set(b.id,(hits.get(b.id)??0)+damage);
       if(damage>0 && (a ? this.opponents(a,b) : hit.owner !== b.owner && (hit.owner === "none" || b.owner === "none" || this.teams.get(hit.owner!) !== this.teams.get(b.owner))))contested.add(b.id);
     }
     const dead: Entity[] = [];
     for (const [id, damage] of [...hits].sort((a, b) => a[0] - b[0])) {
       const target = this.c.get(id)!;
-      target.hp = Math.max(0, target.hp! - damage);
+      wakeOnDamage(target,this.c.registry,damage);
+      target.hp = Math.max(0, target.hp! - damage);this.c.clampPools(target);
       if (!target.hp && !this.items.rescue(target)) dead.push(target);
     }
     // A witnessed death completes pursuit; an unseen removal must not disclose it.
+    for(const target of dead){const credit=lethal.get(target.id);if(credit)this.onLethal?.(credit.source,target,credit.owner);}
     for(const target of dead)for(const actor of this.c.activeUnits()){
       if(actor.unit!.pursuit?.target===target.id&&this.perceives(actor,target))delete actor.unit!.pursuit;
     }

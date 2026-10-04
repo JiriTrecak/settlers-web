@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.spirit-swarm-command-icon",
+  "name": "Spirit Swarm · Command Icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "38fed297e904c2b9b074a9ee4cacef6c5a0d36fb3b361ef4fa769f52560a82b1",
+      "bytes": 1365
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "365483e789c7802778bfb06c25147ecc4eb34a178623ef0892caf6ecbc06bf4a",
+      "bytes": 671147
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "83c5b67837365eb89a2052cb786d08662e8d6dd3ad9fbbe9caa9df7a74d9bf7a",
+      "bytes": 1709872
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.spirit-swarm-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.spirit-swarm-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

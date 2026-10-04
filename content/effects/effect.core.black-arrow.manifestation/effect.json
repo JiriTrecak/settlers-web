@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.black-arrow.manifestation",
+  "name": "Black Arrow · Manifestation",
+  "description": "Reusable violet shadow layers for the Black Arrow proof.",
+  "durationTicks": 40,
+  "loop": false,
+  "layers": [
+    {
+      "id": "flash",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#8948da",
+      "accent": "#dca4ff",
+      "durationTicks": 20,
+      "count": 1,
+      "size": 3,
+      "height": 0.4,
+      "intensity": 0.9
+    },
+    {
+      "id": "eruption",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 40,
+        "rate": 1,
+        "speed": 7,
+        "speedVariation": 0.3,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 65,
+        "gravity": 5,
+        "drag": 0.5,
+        "spawnRadius": 1.2,
+        "startSize": 0.16,
+        "endSize": 0.025,
+        "spin": 3,
+        "fadeIn": 0,
+        "fadeOut": 0.7
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#8948da",
+      "accent": "#dca4ff",
+      "durationTicks": 40,
+      "count": 44,
+      "size": 0.16,
+      "height": 0.1
+    }
+  ]
+}

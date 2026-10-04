@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.raise-dead-command",
+  "name": "Raise Dead — Woodland Command",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "379a21703e330f3abcfd20883e703ff6dbd970054f601b10edbb7fa3712f7c3c",
+      "bytes": 790
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "c534fdfd8327e78c4cf604be8140934318336a201d1193c4b619a11570b5bd4b",
+      "bytes": 615461
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "76bd3690e00f3d03181123063252137deb5ad99b3490c9ee01fda2e252170c99",
+      "bytes": 1415789
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.raise-dead-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.raise-dead-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.assistant-trials.verdant-ward",
+  "icon": "asset.assistant-trials.verdant-ward-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "leaf-impact",
+      "effect": "effect.assistant-trials.verdant-ward.impact",
+      "event": "released",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "living-shield",
+      "effect": "effect.assistant-trials.verdant-ward.shield",
+      "statusId": "verdantShield",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

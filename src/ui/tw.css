@@ -4,8 +4,9 @@
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+@import "../editor/ui/theme.css";
 
-@source "../**/*.{ts,html}";
+@source "../**/*.{ts,tsx,html}";
 
 @theme {
   --color-canopy: #e8e0d0;

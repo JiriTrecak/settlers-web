@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.custom.ashstep",
+  "icon": "asset.custom.ashstep-ant-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "departure",
+      "effect": "effect.custom.ashstep.departure",
+      "event": "released",
+      "anchor": "caster",
+      "lifetime": "finite"
+    },
+    {
+      "id": "arrival",
+      "effect": "effect.custom.ashstep.arrival",
+      "event": "teleported",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

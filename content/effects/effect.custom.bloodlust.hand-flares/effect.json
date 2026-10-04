@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.bloodlust.hand-flares",
+  "name": "Bloodlust Hand Flares",
+  "description": "Localized warm red-gold flares and sparse embers following warrior hand sockets, offset clear of equipment. Hides on incompatible actors; bound to status lifetime.",
+  "durationTicks": 80,
+  "loop": true,
+  "layers": [
+    {
+      "id": "left-flare",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "offset": {
+        "x": 0.35,
+        "y": 0.15,
+        "z": 0.45
+      },
+      "anchor": "target",
+      "shape": "billboard",
+      "attachment": {
+        "socket": "left-hand",
+        "fallback": "hide",
+        "inheritRotation": false
+      },
+      "colour": "#ff7945",
+      "accent": "#ffd295",
+      "durationTicks": 80,
+      "count": 1,
+      "size": 1.05,
+      "height": 0,
+      "motion": {
+        "scale": {
+          "periodTicks": 64,
+          "min": 0.9,
+          "max": 1.1,
+          "easing": "sine"
+        },
+        "opacity": {
+          "periodTicks": 64,
+          "min": 0.8,
+          "max": 1,
+          "easing": "sine"
+        }
+      },
+      "blend": "additive",
+      "orientation": "camera",
+      "follow": true,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "right-flare",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "offset": {
+        "x": 0.8,
+        "y": 0.15,
+        "z": 0.95
+      },
+      "anchor": "target",
+      "shape": "billboard",
+      "attachment": {
+        "socket": "right-hand",
+        "fallback": "hide",
+        "inheritRotation": false
+      },
+      "colour": "#ff7945",
+      "accent": "#ffd295",
+      "durationTicks": 80,
+      "count": 1,
+      "size": 1.05,
+      "height": 0,
+      "motion": {
+        "scale": {
+          "periodTicks": 64,
+          "min": 0.9,
+          "max": 1.1,
+          "easing": "sine",
+          "phase": 0.3
+        },
+        "opacity": {
+          "periodTicks": 64,
+          "min": 0.8,
+          "max": 1,
+          "easing": "sine",
+          "phase": 0.3
+        }
+      },
+      "blend": "additive",
+      "orientation": "camera",
+      "follow": true,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "left-sparks",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 18,
+        "rate": 7,
+        "speed": 0.6,
+        "speedVariation": 0.35,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 45,
+        "gravity": -0.2,
+        "drag": 1.2,
+        "spawnRadius": 0.07,
+        "startSize": 0.055,
+        "endSize": 0.005,
+        "spin": 1,
+        "fadeIn": 0.08,
+        "fadeOut": 0.7
+      },
+      "offset": {
+        "x": 0.35,
+        "y": 0.15,
+        "z": 0.45
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "attachment": {
+        "socket": "left-hand",
+        "fallback": "hide",
+        "inheritRotation": false
+      },
+      "colour": "#f4a344",
+      "accent": "#db4627",
+      "durationTicks": 80,
+      "count": 8,
+      "size": 0.06,
+      "height": 0,
+      "blend": "additive",
+      "follow": true
+    },
+    {
+      "id": "right-sparks",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 18,
+        "rate": 7,
+        "speed": 0.6,
+        "speedVariation": 0.35,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 45,
+        "gravity": -0.2,
+        "drag": 1.2,
+        "spawnRadius": 0.07,
+        "startSize": 0.055,
+        "endSize": 0.005,
+        "spin": -1,
+        "fadeIn": 0.08,
+        "fadeOut": 0.7
+      },
+      "offset": {
+        "x": 0.8,
+        "y": 0.15,
+        "z": 0.95
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "attachment": {
+        "socket": "right-hand",
+        "fallback": "hide",
+        "inheritRotation": false
+      },
+      "colour": "#f4a344",
+      "accent": "#db4627",
+      "durationTicks": 80,
+      "count": 8,
+      "size": 0.06,
+      "height": 0,
+      "blend": "additive",
+      "follow": true
+    }
+  ]
+}

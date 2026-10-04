@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.death-pact",
+  "icon": "asset.custom.death-pact-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "offering",
+      "effect": "effect.core.death-pact.offering",
+      "event": "sacrificed",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "restoration",
+      "effect": "effect.core.death-pact.restoration",
+      "event": "healed",
+      "anchor": "caster",
+      "lifetime": "finite"
+    }
+  ]
+}

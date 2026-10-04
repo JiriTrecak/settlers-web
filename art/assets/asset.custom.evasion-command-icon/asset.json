@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.evasion-command-icon",
+  "name": "Evasion — command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "7ce95ba24fd7f790b5c89231e64e97e9bcbce82efa2fe2474a510a33cf3a16df",
+      "bytes": 698
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "7a1590ad542e8c021ae4f41aa0826fdb5383646cedc26bef13a8b1cadbaa2b43",
+      "bytes": 610158
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "ff662c29d1361e3cd3a917a1009e55f500cc59d8cfe79a05f021276e92f75dff",
+      "bytes": 1350571
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.evasion-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.evasion-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

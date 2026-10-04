@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.assistant-trials.verdant-ward.shield",
+  "name": "Verdant Ward — Living Shield",
+  "description": "Subtle target-following green ward, sustained only while the absorption status is active.",
+  "durationTicks": 240,
+  "loop": true,
+  "layers": [
+    {
+      "id": "ward-ring",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#81bc70",
+      "accent": "#d3dd91",
+      "durationTicks": 240,
+      "count": 1,
+      "size": 1.35,
+      "height": 0.08,
+      "motion": {
+        "scale": {
+          "periodTicks": 80,
+          "min": 0.97,
+          "max": 1.03,
+          "easing": "sine"
+        },
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.18,
+          "max": 0.32,
+          "easing": "sine"
+        }
+      },
+      "follow": true
+    },
+    {
+      "id": "ward-glow",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#79ab60",
+      "accent": "#b6cf82",
+      "durationTicks": 240,
+      "count": 1,
+      "size": 1.15,
+      "height": 0.1,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.1,
+          "max": 0.18,
+          "easing": "sine"
+        }
+      },
+      "follow": true
+    }
+  ]
+}

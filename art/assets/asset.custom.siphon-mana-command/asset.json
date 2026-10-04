@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.siphon-mana-command",
+  "name": "Siphon Mana — original command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "fc198784cc20381c11a4656c753c2009d8ab4527509744d239989475919ee7b3",
+      "bytes": 1031
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "0186a2f44f69661738d6337f4d0eadcc5ca2330f893c463f62913fb8b30c4bf1",
+      "bytes": 567505
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "57a451771bbe14a844f4992632bde1faa772c1311a7aa18186d03d431624d892",
+      "bytes": 1280307
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.siphon-mana-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.siphon-mana-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

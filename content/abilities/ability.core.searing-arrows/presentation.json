@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.searing-arrows",
+  "icon": "asset.custom.searing-arrows-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "flight",
+      "effect": "effect.core.searing-arrows.flight",
+      "event": "projectile",
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery"
+    },
+    {
+      "id": "impact",
+      "effect": "effect.core.searing-arrows.impact",
+      "event": "enhancedHit",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

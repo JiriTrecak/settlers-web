@@ -1,5 +1,5 @@
 import {readEffectLibrary} from '../../../content/effects';
-import {presentationImages} from '../../../../src/content/abilities/resources';
+import {presentationResources,layerResources} from '../../../../src/content/abilities/resources';
 import {readAbilityLibrary} from '../../../content/abilities';
 import {inspectGeometry,validateCompleteModel,type ModelQuality} from './modelQuality';
 /** Published snapshots isolate draft edits; one journal commits binaries and every runtime index. */
@@ -46,7 +46,7 @@ export async function planPublication(root:string,assets:AssetDefinition[],chang
  if(content)new ContentRegistry({...content,abilityLibrary:await readAbilityLibrary(root),assets:manifest.records.flatMap(a=>a.render)});
  // Dependents follow stable IDs, but publication must never leave a broken reference.
  const effectLibrary=await readEffectLibrary(root);
- const imageRefs=[...(await readAbilityLibrary(root)).presentations.flatMap(p=>presentationImages(p,effectLibrary.effects).map(ref=>({owner:p.id,ref}))),...effectLibrary.effects.flatMap(e=>e.layers.flatMap(l=>l.texture?[{owner:e.id,ref:l.texture}]:[]))];
+ const imageRefs=[...(await readAbilityLibrary(root)).presentations.flatMap(p=>presentationResources(p,effectLibrary.effects).map(ref=>({owner:p.id,ref}))),...effectLibrary.effects.flatMap(e=>e.layers.flatMap(l=>layerResources(l).map(ref=>({owner:e.id,ref}))))];
  for(const {owner,ref} of imageRefs){const asset=sorted.find(a=>a.id===ref.asset);if(!asset||!runtimeResources(asset).some(r=>r.role===ref.role&&r.index===ref.index))throw Error(`Published content ${owner} requires ${ref.asset}/${ref.role}:${ref.index}`);}
 
  const prior=await readPublished(root),ids=new Set(sorted.map(a=>a.id)),scenery=new Set(manifest.records.flatMap(a=>a.scenery.map(s=>s.id)));

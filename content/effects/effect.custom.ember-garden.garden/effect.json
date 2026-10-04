@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.ember-garden.garden",
+  "name": "Ember Garden — Ground and Sparks",
+  "description": "Six-second amber ground bed with a readable boundary and drifting upward embers.",
+  "durationTicks": 240,
+  "loop": false,
+  "layers": [
+    {
+      "id": "ground",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#d87816",
+      "accent": "#ffbc45",
+      "durationTicks": 240,
+      "count": 1,
+      "size": 3,
+      "height": 0.04,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.3,
+          "max": 0.5,
+          "easing": "sine"
+        }
+      },
+      "blend": "additive",
+      "orientation": "ground"
+    },
+    {
+      "id": "boundary",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#e4982b",
+      "accent": "#ffc15a",
+      "durationTicks": 240,
+      "count": 1,
+      "size": 3,
+      "height": 0.06,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.35,
+          "max": 0.6,
+          "easing": "sine"
+        }
+      }
+    },
+    {
+      "id": "sparks",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 45,
+        "rate": 18,
+        "speed": 1.6,
+        "speedVariation": 0.45,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 22,
+        "gravity": -0.2,
+        "drag": 0.5,
+        "spawnRadius": 2.65,
+        "startSize": 0.1,
+        "endSize": 0.015,
+        "spin": 1.5,
+        "fadeIn": 0.08,
+        "fadeOut": 0.7
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#ff8f28",
+      "accent": "#ffd16c",
+      "durationTicks": 240,
+      "count": 36,
+      "size": 0.09,
+      "height": 0.15,
+      "blend": "additive"
+    }
+  ]
+}

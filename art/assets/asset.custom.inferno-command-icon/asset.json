@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.inferno-command-icon",
+  "name": "Inferno — Golden Fire Command Icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "9d5a2d84892c6e7b81141475ef79a3113a1a0c46436707e57438e5951172df99",
+      "bytes": 720
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "3140dfc25c9389dc701ee4c406f82a50ea688a17cd6a0e64e1d062d3a73dcf5a",
+      "bytes": 649987
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "2b9d1fba5bf2172b0a506650caf8d1da3f3049cda99e593fd770b681768d62b4",
+      "bytes": 1549938
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.inferno-command-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.inferno-command-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

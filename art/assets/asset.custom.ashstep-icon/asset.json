@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.ashstep-icon",
+  "name": "Ashstep — command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "3aab8cdb1360515b8e645d4d5a5d1adf63979aaa5fa4eb7d8a975b6c7b152c5c",
+      "bytes": 662
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "513167accb1699af942518f9098267bb4a1b27fdbd0eaef6f33ce7e368727fbb",
+      "bytes": 632120
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "1deedc0795c9ed41a0ce287c36991b179f32d3f149e0c7a57b92b2a443de42f0",
+      "bytes": 1601308
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.ashstep-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.ashstep-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

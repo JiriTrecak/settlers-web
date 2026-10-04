@@ -13,10 +13,17 @@
     {
       "id": "effect-0",
       "effect": "effect.core.blizzard.wavestarted",
-      "anchor": "target",
-      "durationFrom": "delivery",
       "event": "waveStarted",
-      "spreadFrom": "radius",
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery",
+      "spreadFrom": "radius"
+    },
+    {
+      "id": "frost-impact-sound",
+      "effect": "effect.custom.blizzard.frost-impact-sound",
+      "event": "wave",
+      "anchor": "target",
       "lifetime": "finite"
     }
   ]

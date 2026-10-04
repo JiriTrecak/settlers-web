@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.custom.ember-garden",
+  "name": "Ember Garden",
+  "description": "Plant a glowing fire garden in a 3-unit radius for six seconds, dealing 20 spell damage to enemies inside each second. The caster is free to move immediately after release.",
+  "activation": "targeted",
+  "persistent": {
+    "durationTicks": 240,
+    "intervalTicks": 40,
+    "anchor": "point",
+    "endsWithCaster": false,
+    "upkeepMana": 0,
+    "toggle": false
+  },
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 20,
+      "cooldownTicks": 320
+    }
+  ],
+  "targeting": {
+    "filter": {
+      "locomotion": [
+        "ground"
+      ]
+    },
+    "includeBuildings": false,
+    "kind": "point",
+    "radius": 3,
+    "maxTargets": 32,
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 0,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "damage",
+      "target": "target",
+      "query": {
+        "center": "point",
+        "radius": 3,
+        "relations": [
+          "enemy"
+        ],
+        "allowSelf": false,
+        "includeBuildings": false,
+        "excludePrimary": false,
+        "maxTargets": 32,
+        "order": "nearest"
+      },
+      "filter": {
+        "locomotion": [
+          "ground"
+        ]
+      },
+      "amount": 20,
+      "damageType": "spell"
+    }
+  ],
+  "presentation": "presentation.custom.ember-garden"
+}

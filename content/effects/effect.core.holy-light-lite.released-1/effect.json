@@ -8,6 +8,10 @@
   "layers": [
     {
       "id": "target-illumination",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
       "shape": "light",
       "colour": "#f1ff64",
       "accent": "#fffcd5",
@@ -16,14 +20,14 @@
       "size": 7,
       "height": 3.8,
       "follow": true,
-      "intensity": 90,
-      "anchor": "target",
-      "enabled": true,
-      "startTick": 0,
-      "sustain": false
+      "intensity": 90
     },
     {
       "id": "ground-glow",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
       "shape": "glow",
       "colour": "#f1ff64",
       "accent": "#fffcd5",
@@ -32,14 +36,14 @@
       "size": 2.2,
       "height": 0.05,
       "follow": true,
-      "intensity": 1.8,
-      "anchor": "target",
-      "enabled": true,
-      "startTick": 0,
-      "sustain": false
+      "intensity": 1.8
     },
     {
       "id": "holy-sigil",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
       "shape": "billboard",
       "colour": "#f1ff64",
       "accent": "#fffcd5",
@@ -53,14 +57,14 @@
         "asset": "asset.effects.holy-light-sigil",
         "role": "image",
         "index": 1
-      },
-      "anchor": "target",
-      "enabled": true,
-      "startTick": 0,
-      "sustain": false
+      }
     },
     {
       "id": "rising-rays",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
       "shape": "streaks",
       "colour": "#f1ff64",
       "accent": "#fffcd5",
@@ -76,11 +80,35 @@
         "asset": "asset.effects.holy-light-spark",
         "role": "image",
         "index": 1
-      },
+      }
+    },
+    {
+      "id": "sound",
+      "name": "Radiant chime",
+      "shape": "sound",
       "anchor": "target",
       "enabled": true,
+      "sustain": false,
       "startTick": 0,
-      "sustain": false
+      "durationTicks": 48,
+      "count": 1,
+      "size": 1,
+      "height": 0,
+      "colour": "#ffffff",
+      "accent": "#ffffff",
+      "follow": true,
+      "sound": {
+        "asset": "asset.audio.spells.radiant-chime",
+        "role": "audio",
+        "index": 1,
+        "volume": 0.65,
+        "pitch": 1,
+        "loop": false,
+        "fadeInTicks": 1,
+        "fadeOutTicks": 8,
+        "referenceDistance": 12,
+        "maxDistance": 70
+      }
     }
   ]
 }

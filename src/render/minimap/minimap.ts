@@ -1,5 +1,10 @@
+import {sampleSurfaceRaster,updateSurfaceRaster,type SurfaceRaster} from '../terrain/surfaceRaster';
+import {indexedPaints} from '../../shared/authoring/sparseWeights';
 import {biomeById} from '../../content/biomes';
-import {terrainPixel,sceneryKind} from './terrainStyle';
+import {MinimapSceneryIndex} from './sceneryIndex';
+import {MinimapSceneryRaster} from './sceneryRaster';
+import {rasterTerrainLighting} from './terrainRaster';
+import {rasterCoverage,type CoveragePaint} from './coverageRaster';
 import { entityMarker } from "./presentation";
 import { sampleCurve, type Landscape } from "../../shared/landscape/curve";
 import { content } from "../../content/builtin";
@@ -7,6 +12,7 @@ import type { SettlementView } from "../../sim/game/observation";
 import { PLAYER_COLORS } from "../../shared";
 import type { PlayerStart } from "../../shared/map/utcmap";
 import { DayNightIndicator } from "./dayNight";
+import {perf} from '../../debug/performance';
 import type { SkyState } from "../sky/sky";
 /**
  * North-up square minimap. Canvas 2D — a second WebGL context stalls the game on Mac.
@@ -43,6 +49,9 @@ export class Minimap {
   private readonly clock: DayNightIndicator;
   private readonly ctx: CanvasRenderingContext2D;
   private stamps: readonly MapStamp[]=[];
+  private readonly sceneryIndex=new MinimapSceneryIndex();
+  private readonly sceneryRaster=new MinimapSceneryRaster();
+  private sceneryBaseDirty=true;
   private sceneryDirty=true;
   private readonly sceneryCanvas=document.createElement("canvas");
   private starts: readonly PlayerStart[] = [];
@@ -157,11 +166,15 @@ export class Minimap {
   setStamps(stamps: readonly MapStamp[]): void {
     if(this.stamps===stamps)return;
     this.stamps=stamps;
-    this.sceneryDirty=this.dirty=true;
+    const timing=perf.start();
+    if(this.sceneryIndex.update(stamps))this.sceneryDirty=this.dirty=true;
+    perf.end('Minimap · index scenery (event)',timing);
   }
 
-  setHeight(field: HeightField | null): void {
-    if(this.height===field)return;
+  private surfaceRaster?:SurfaceRaster;
+  setHeight(field: HeightField | null,sameSurface=false): void {
+    if(this.height===field&&sameSurface)return;
+    this.surfaceRaster=updateSurfaceRaster(this.surfaceRaster,field,sameSurface);
     this.height = field;
     this.terrainDirty = this.dirty = true;
   }
@@ -185,8 +198,8 @@ export class Minimap {
     const ctx = this.ctx;
     const w = this.canvas.width;
     const h = this.canvas.height;
-    if(this.terrainDirty) this.paintTerrain(size);
-    if(this.sceneryDirty)this.paintScenery(size);
+    if(this.terrainDirty){const timing=perf.start();this.paintTerrain(size);perf.end('Minimap · terrain raster (event)',timing);}
+    if(this.sceneryDirty){const timing=perf.start();this.paintScenery(size);perf.end('Minimap · scenery raster (event)',timing);}
     ctx.drawImage(this.sceneryCanvas,0,0,w,h);
     if (this.fogState?.fog) {
       ctx.save();
@@ -242,7 +255,8 @@ export class Minimap {
 
   /** Static terrain is rasterized only when map geometry/paint changes. */
   private paintTerrain(size:number):void {
-    this.terrainDirty=false;this.sceneryDirty=true;
+    let stage=perf.start();
+    this.terrainDirty=false;this.sceneryDirty=true;this.sceneryBaseDirty=true;
     const canvas=this.terrainCanvas;canvas.width=canvas.height=PX;
     const ctx=canvas.getContext('2d')!, scale=PX/size;
     const palette=biomeById(this.height?.biome).minimap;
@@ -252,14 +266,12 @@ export class Minimap {
       const field=this.height, data=ctx.getImageData(0,0,PX,PX);
       const rgb=(hex:string)=>[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
       const grass=rgb(palette.grass),forest=rgb(palette.forest);
-      const paints=(field.surfacePaint??[]).map(p=>({...p,color:p.material.includes('pebble')?[129,110,85]:p.material.includes('grass')?grass:p.material.includes('soil')?rgb(palette.ground):null})).filter(p=>p.color);
-      for(let py=0;py<PX;py++)for(let px=0;px<PX;px++){
-        const ix=Math.max(0,Math.min(field.verts-1,Math.round((px+.5)/scale-field.origin)));
-        const iz=Math.max(0,Math.min(field.verts-1,Math.round((py+.5)/scale-field.origin)));
-        const at=iz*field.verts+ix,i=(py*PX+px)*4;
-        const g=Math.min(1,(field.grassCoverage?.[at]??0)*2),f=field.forestCoverage?.[at]??0;
-        for(let c=0;c<3;c++){let v=data.data[i+c]!*(1-g)+grass[c]!*g;for(const p of paints){const w=p.weights[at]??0;v=v*(1-w)+p.color![c]!*w;}data.data[i+c]=v*(1-f)+forest[c]!*f;}
-      }
+      const sourcePaints=field.surfacePaint??[];
+      const paints:CoveragePaint[]=sourcePaints.map(p=>({...p,color:p.material.includes('pebble')?[129,110,85]:p.material.includes('grass')?grass:p.material.includes('soil')?rgb(palette.ground):null}));
+      const paintIndex=indexedPaints(sourcePaints,field.samples.length);
+      perf.end('Minimap · prepare coverage (event)',stage);stage=perf.start();
+      rasterCoverage(data.data,PX,PX,size,field,grass,forest,paints,paintIndex);
+      perf.end('Minimap · coverage blend (event)',stage);stage=perf.start();
       ctx.putImageData(data,0,0);
     }
     const coverColors={meadow:'#64723d',straw:'#80764b',ochre:'#7b6238',sage:'#65715a',forest:'#465735'};
@@ -281,38 +293,24 @@ export class Minimap {
       ctx.fill();
     }
     ctx.globalAlpha=1;
-    const field=this.height,data=ctx.getImageData(0,0,PX,PX);
-    for(let py=0;py<PX;py++)for(let px=0;px<PX;px++) {
-      const x=(px+.5)/scale,z=(py+.5)/scale,y=field?.sample(x,z)??1,i=(py*PX+px)*4;
-      const dx=field?field.sample(x+1,z)-field.sample(x-1,z):0,dz=field?field.sample(x,z+1)-field.sample(x,z-1):0;
-      const color=terrainPixel([data.data[i],data.data[i+1],data.data[i+2]],y,field?.waterAt(x,z)??0,dx,dz,px,py);
-      for(let c=0;c<3;c++)data.data[i+c]=color[c];
-    }
+    const data=ctx.getImageData(0,0,PX,PX);
+    perf.end('Minimap · legacy paint and readback (event)',stage);stage=perf.start();
+    if(!this.surfaceRaster){const coords=Float64Array.from({length:PX},(_,i)=>(i+.5)/scale);this.surfaceRaster=sampleSurfaceRaster(this.height,coords,coords,1);}
+    rasterTerrainLighting(data.data,this.surfaceRaster,PX);
+    perf.end('Minimap · cartographic shading (event)',stage);stage=perf.start();
     ctx.putImageData(data,0,0);
+    perf.end('Minimap · terrain upload (event)',stage);
   }
 
   /** Tree silhouettes are cached separately so chopping a tree never re-rasterizes elevation. */
   private paintScenery(size:number):void{
+    let stage=perf.start();
     this.sceneryDirty=false;
-    const canvas=this.sceneryCanvas;canvas.width=canvas.height=PX;
-    const ctx=canvas.getContext('2d')!,scale=PX/size;
-    ctx.drawImage(this.terrainCanvas,0,0);
-    const palette=biomeById(this.height?.biome).minimap;
-    const stamps=this.stamps.filter(s=>sceneryKind(s.asset)).slice().sort((a,b)=>a.y-b.y);
-    for(const s of stamps){
-      const kind=sceneryKind(s.asset),x=(s.x+.5)*scale,y=(s.y+.5)*scale;
-      const radius=Math.max(.8,Math.min(5,(s.scale??1)*(s.widthScale??1)*1.8*scale));
-      if(kind==='tree'){
-        ctx.fillStyle='#17251485';ctx.beginPath();ctx.ellipse(x+radius*.35,y+radius*.45,radius*1.15,radius*.8,0,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle=s.variant==='gold'?'#796e30':s.variant==='red'?'#774a2a':palette.forest;ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle=s.variant==='gold'?'#9a9146':palette.crown;ctx.beginPath();ctx.ellipse(x-radius*.22,y-radius*.22,radius*.57,radius*.65,-.3,0,Math.PI*2);ctx.fill();
-      }else{
-        ctx.fillStyle='#363e3480';ctx.fillRect(x-radius,y-radius*.5,radius*2.3,radius*1.8);
-        ctx.fillStyle='#999b80';ctx.beginPath();ctx.moveTo(x-radius,y);ctx.lineTo(x-radius*.5,y-radius);ctx.lineTo(x+radius*.7,y-radius*.7);ctx.lineTo(x+radius,y+radius*.55);ctx.lineTo(x,y+radius*.75);ctx.closePath();ctx.fill();
-      }
-    }
-    const vignette=ctx.createRadialGradient(PX/2,PX/2,PX*.3,PX/2,PX/2,PX*.72);
-    vignette.addColorStop(0,'transparent');vignette.addColorStop(1,'#14201955');ctx.fillStyle=vignette;ctx.fillRect(0,0,PX,PX);
+    const canvas=this.sceneryCanvas;
+    if(canvas.width!==PX||canvas.height!==PX){canvas.width=canvas.height=PX;this.sceneryBaseDirty=true;}
+    this.sceneryRaster.paint(canvas.getContext('2d')!,this.terrainCanvas,this.sceneryIndex.items,size,biomeById(this.height?.biome).minimap,this.sceneryBaseDirty);
+    this.sceneryBaseDirty=false;
+    perf.end('Minimap · draw scenery (event)',stage);
   }
 
   destroy(): void {

@@ -1,9 +1,11 @@
+import {weaponCanTarget} from '../abilities/damagePolicy';
+import {controlImmune} from '../abilities/controlPolicy';
 import type {GameContext} from './context';
 import type {Observation} from './observation';
 import type {Entity} from './state';
 import type {Owner} from '../../content/schema';
 import type {DamageHit} from './combat';
-import {elevatedPoint} from './garrisons';
+import {weaponTargets} from './locomotion';
 import {precise} from './motion';
 import {itemFlag} from './itemModifiers';
 
@@ -17,8 +19,8 @@ export class ShellCombat {
   }
   this.c.state.shells=this.c.state.shells.filter(s=>!s.resolved || this.c.state.tick<s.impact+20);
  }
- launch(a:Entity,b:Entity){
-  const combat=this.c.def(a).behaviors.combat!,policy=combat.shell!;
+ launch(a:Entity,b:Entity,bonus=0,definition=this.c.weaponDefinition(a),damage=this.c.stats(a).damage){
+  const combat=this.c.registry.get(definition).behaviors.combat!,policy=combat.shell!;
   let radius=policy.radius,slowPermille=policy.slowPermille;
   for(const id of this.c.state.research[a.owner]??[])for(const effect of this.c.registry.rules.research[id]?.effects??[]){
    if(!effect.units.includes(a.definition))continue;
@@ -28,10 +30,10 @@ export class ShellCombat {
   // Neutral camps may be hit when explicitly targeted; ordinary scenery is not a faction victim.
   if(b.owner==='none' || this.c.live().some(e=>e.owner==='none'&&this.hostile(a,e)))victims.push('none');
   if(a.unit?.order?.type==='attack'&&a.unit.order.force&&!victims.includes(b.owner))victims.push(b.owner);
-  const origin=elevatedPoint(a),target=precise(b);
-  this.c.state.shells.push({id:this.c.state.nextShell++,source:a.id,definition:a.definition,owner:a.owner,
+  const origin=this.c.spatial.elevatedPoint(a),target=precise(b);
+  this.c.state.shells.push({id:this.c.state.nextShell++,source:a.id,definition,owner:a.owner,
    origin:{...origin},target:{...target},launched:this.c.state.tick,impact:this.c.state.tick+policy.flightTicks,
-   damage:this.c.stats(a).damage,damageType:combat.damageType,radius,slowPermille,slowTicks:policy.slowTicks,victims,
+   damage:damage+bonus,damageType:combat.damageType,radius,slowPermille,slowTicks:policy.slowTicks,victims,
    viewers:[...this.teams.keys()].filter(owner=>this.vision.visible(owner,a)&&this.vision.visible(owner,b)),resolved:false});
  }
  resolve():DamageHit[]{
@@ -40,12 +42,12 @@ export class ShellCombat {
    if(shell.resolved||shell.impact>this.c.state.tick)continue;
    shell.resolved=true;
    for(const e of this.c.live()){
-    if(e.hp===null||e.unit?.contained||e.unit?.garrison||e.unit?.release||!shell.victims.includes(e.owner))continue;
+    if(!weaponTargets(this.c.registry.get(shell.definition).behaviors.combat,this.c.def(e))||!weaponCanTarget(e,this.c.registry,shell.damageType)||e.hp===null||e.unit?.contained||e.unit?.garrison||e.unit?.release||!shell.victims.includes(e.owner))continue;
     // Structures use their footprint distance, units their authoritative subcell position.
     if(this.c.spatial.pointRange(shell.target,e)>shell.radius**2)continue;
     if(this.c.spatial.layers&&!this.c.spatial.layers.shotClear(shell.target,precise(e)))continue;
     hits.push({source:shell.source,owner:shell.owner,target:e.id,damage:shell.damage,damageType:shell.damageType});
-    if(e.unit && shell.slowPermille && !itemFlag(e,this.c.registry,'controlImmune') && !itemFlag(e,this.c.registry,'invulnerable')){
+    if(e.unit && shell.slowPermille && !controlImmune(e,this.c.registry,'moveSlow') && !itemFlag(e,this.c.registry,'invulnerable')){
      e.slows??=[];const existing=e.slows.find(s=>s.permille===shell.slowPermille),expires=this.c.state.tick+shell.slowTicks;
      if(existing)existing.expires=Math.max(existing.expires,expires);else e.slows.push({permille:shell.slowPermille,expires});
     }

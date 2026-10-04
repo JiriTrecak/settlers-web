@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.reincarnation.waiting",
+  "name": "Reincarnation · Waiting Spirit",
+  "description": "",
+  "durationTicks": 280,
+  "loop": false,
+  "layers": [
+    {
+      "id": "soul-light",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#82d8ee",
+      "accent": "#e9ffe6",
+      "durationTicks": 280,
+      "count": 1,
+      "size": 2.6,
+      "height": 0.12,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.4,
+          "max": 0.95,
+          "easing": "sine"
+        }
+      },
+      "intensity": 0.8
+    },
+    {
+      "id": "spirit-motes",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 65,
+        "rate": 8,
+        "speed": 1.8,
+        "speedVariation": 0.4,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 16,
+        "gravity": -0.15,
+        "drag": 0.4,
+        "spawnRadius": 0.8,
+        "startSize": 0.08,
+        "endSize": 0.02,
+        "spin": 1,
+        "fadeIn": 0.2,
+        "fadeOut": 0.5
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#b7ecff",
+      "accent": "#fff0ba",
+      "durationTicks": 280,
+      "count": 40,
+      "size": 0.07,
+      "height": 0.1
+    }
+  ]
+}

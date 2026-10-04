@@ -10,22 +10,25 @@ import {authoringTools,type AuthoringToolName} from '../shared/authoringTools';
 import type {SpellEditorService} from './service';
 import type {Credentials} from './credentials';
 import type {CanvasBridge} from './canvasBridge';
+import {authoringResponse} from './toolResponses';
+import {inspectAssetImage} from './assetImage';
 
 export function authoringSchema(section:string){
  const schemas={spell:documentSchema,effect:visualEffectSchema,encounter:encounterSettingsSchema,asset:assetCommandSchema};
  if(section==='commands')return spellCommandSchema.options.map(s=>s.shape.op.value);
- if(section in schemas)return z.toJSONSchema(schemas[section as keyof typeof schemas]);
+ if(section in schemas)return z.toJSONSchema(schemas[section as keyof typeof schemas],{reused:'ref'});
  const command=spellCommandSchema.options.find(s=>s.shape.op.value===section);if(!command)throw Error('Unknown schema. Use commands, spell, effect, encounter, asset, or a command name.');
- return z.toJSONSchema(command);
+ return z.toJSONSchema(command,{reused:'ref'});
 }
 export class AuthoringToolkit {
  private generating=new Set<string>();
- constructor(private service:SpellEditorService,private credentials:Credentials,private canvas:CanvasBridge,private fetcher:typeof fetch=fetch){}
+ constructor(private service:SpellEditorService,private credentials:Credentials,private canvas:CanvasBridge,private fetcher:typeof fetch=fetch,private previewService:(client?:string)=>SpellEditorService=()=>service){}
  async execute(name:AuthoringToolName,raw:unknown,client?:string,signal?:AbortSignal):Promise<unknown>{
   const input=authoringTools[name].inputSchema.parse(raw);
   if(name==='studio_schema')return authoringSchema((input as {section:string}).section);
-  if(name==='studio_author')return this.service.execute(JSON.parse((input as {commandJson:string}).commandJson));
-  if(name==='studio_canvas')return this.canvas.request(authoringTools.studio_canvas.inputSchema.parse(input),client);
+  if(name==='studio_author'){const options=authoringTools.studio_author.inputSchema.parse(input),command=spellCommandSchema.parse(JSON.parse(options.commandJson));return authoringResponse(command,await this.previewService(client).execute(command),options);}
+  if(name==='studio_canvas'){this.previewService(client);return this.canvas.request(authoringTools.studio_canvas.inputSchema.parse(input),client);}
+  if(name==='studio_asset_image'){const ref=authoringTools.studio_asset_image.inputSchema.parse(input);return inspectAssetImage(this.service.root,ref.asset,ref.index);}
   return this.generate(authoringTools.studio_image.inputSchema.parse(input),signal);
  }
  private async generate(input:z.infer<typeof authoringTools.studio_image.inputSchema>,signal?:AbortSignal){
@@ -45,6 +48,11 @@ export class AuthoringToolkit {
   const original=Buffer.from(encoded,'base64');if(original.length>30*1024*1024)throw Error('Generated image exceeds the import limit.');
   const image=await sharp(original,{limitInputPixels:16777216}).resize(512,512,{fit:'inside'}).png().toBuffer();
   const meta=await sharp(image).metadata();if(input.transparent&&!meta.hasAlpha)throw Error('The generated image has no alpha channel. Retry with a transparent-background prompt.');
+  if(meta.hasAlpha){
+   const alpha=(await sharp(image).stats()).channels.at(-1)!;
+   if(alpha.max===0)throw Error('The generated image is completely transparent. No asset was created; retry with visible artwork.');
+   if(input.transparent&&alpha.min===255)throw Error('The generated image is fully opaque despite its alpha channel. No asset was created; retry with a transparent-background prompt.');
+  }
   signal?.throwIfAborted();
   let asset=await store.dispatch({op:'asset.create',definition}) as AssetDefinition;
   for(const [role,bytes,format] of [['source',original,'png'],['image',image,'png'],['generation',Buffer.from(JSON.stringify({provider:'openai',model:settings.imageModel,prompt:input.prompt,transparent:input.transparent,createdAt:new Date().toISOString()})),'json']] as const){asset=await store.dispatch({op:'asset.upload',id:asset.id,expectedRevision:asset.revision,role,index:1,format,base64:bytes.toString('base64')}) as AssetDefinition;}

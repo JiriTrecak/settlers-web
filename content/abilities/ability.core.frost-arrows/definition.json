@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.frost-arrows",
+  "name": "Frost Arrows",
+  "description": "Fire one icy weapon shot: +5/10/15 damage and 30/50/70% movement and attack slow for five seconds (1.5 seconds on heroes). Costs 10 mana at weapon release. Autocast enhances existing attacks when affordable. Uses the caster’s weapon timing and range; choose an Archer in the workbench.",
+  "activation": "targeted",
+  "weaponCast": {
+    "bonus": {
+      "rankParameter": "bonus"
+    },
+    "weapon": "projectile",
+    "status": "chilled"
+  },
+  "autocast": {
+    "intervalTicks": 1,
+    "enabledByDefault": false
+  },
+  "ranks": [
+    {
+      "bonus": 5,
+      "slow": -300
+    },
+    {
+      "bonus": 10,
+      "slow": -500
+    },
+    {
+      "bonus": 15,
+      "slow": -700
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": 30,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 0,
+    "recoverTicks": 0,
+    "cost": {
+      "resource": "mana",
+      "amount": 10,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 0,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "statuses": [
+    {
+      "op": "status",
+      "target": "target",
+      "id": "chilled",
+      "amount": 200,
+      "heroDuration": 60,
+      "polarity": "negative",
+      "dispel": true,
+      "modifiers": {},
+      "rankedModifiers": {
+        "moveSpeedPermille": {
+          "rankParameter": "slow"
+        },
+        "attackSpeedPermille": {
+          "rankParameter": "slow"
+        }
+      },
+      "lifetime": "duration"
+    }
+  ],
+  "onRelease": [],
+  "presentation": "presentation.core.frost-arrows"
+}

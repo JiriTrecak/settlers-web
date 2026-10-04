@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.assistant-trials.frost-relay.link",
+  "name": "Frost Relay — Icy Link",
+  "description": "Bright cyan link with a pale frozen core, rendered between authoritative chain endpoints.",
+  "durationTicks": 14,
+  "loop": false,
+  "layers": [
+    {
+      "id": "ice-ribbon",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "beam",
+      "colour": "#39bfff",
+      "accent": "#a4ebff",
+      "durationTicks": 14,
+      "count": 10,
+      "size": 0.18,
+      "height": 1.2
+    },
+    {
+      "id": "frozen-core",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "beam",
+      "colour": "#c5f3ff",
+      "accent": "#ffffff",
+      "durationTicks": 10,
+      "count": 7,
+      "size": 0.065,
+      "height": 1.2
+    }
+  ]
+}

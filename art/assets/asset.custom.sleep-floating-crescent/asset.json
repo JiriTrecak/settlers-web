@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.sleep-floating-crescent",
+  "name": "Sleep — floating lavender crescent",
+  "kind": "texture",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "3694684d9c672d09cad13c06d67790c8ffe9979596827b18707277017f982b07",
+      "bytes": 992
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "0cc70a08a43fd1add87db6b8a0f67456f0cbb5927be43265ef6380540494e02e",
+      "bytes": 201070
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "79c585e2fdaf28860c4b600c75c59152a77ebd614e2a75fe4aca035cd08851a8",
+      "bytes": 1014128
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.sleep-floating-crescent",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.sleep-floating-crescent"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

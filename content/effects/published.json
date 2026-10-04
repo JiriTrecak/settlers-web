@@ -497,94 +497,6 @@
     },
     {
       "schemaVersion": 1,
-      "id": "effect.core.vampiric-aura.statusapplied",
-      "name": "Vampiric Aura",
-      "description": "",
-      "durationTicks": 320,
-      "loop": true,
-      "layers": [
-        {
-          "id": "ground-glow",
-          "sustain": true,
-          "enabled": true,
-          "startTick": 0,
-          "anchor": "target",
-          "shape": "glow",
-          "colour": "#823bcc",
-          "accent": "#ffffff",
-          "durationTicks": 80,
-          "count": 1,
-          "size": 1.65,
-          "height": 0.045,
-          "blend": "additive",
-          "orientation": "ground",
-          "follow": true,
-          "intensity": 0.5
-        },
-        {
-          "id": "rotating-wreath",
-          "sustain": true,
-          "enabled": true,
-          "startTick": 0,
-          "anchor": "target",
-          "shape": "billboard",
-          "colour": "#ffffff",
-          "accent": "#ffffff",
-          "durationTicks": 80,
-          "count": 1,
-          "size": 4.5,
-          "height": 0.06,
-          "motion": {
-            "rotation": {
-              "periodTicks": 320,
-              "direction": "clockwise"
-            }
-          },
-          "blend": "additive",
-          "orientation": "ground",
-          "follow": true,
-          "intensity": 0.85,
-          "texture": {
-            "asset": "asset.effects.vampiric-wreath",
-            "role": "image",
-            "index": 1
-          }
-        },
-        {
-          "id": "pulsing-heart",
-          "sustain": true,
-          "enabled": true,
-          "startTick": 0,
-          "anchor": "target",
-          "shape": "billboard",
-          "colour": "#ffffff",
-          "accent": "#ffffff",
-          "durationTicks": 80,
-          "count": 1,
-          "size": 2.6,
-          "height": 0.075,
-          "motion": {
-            "scale": {
-              "periodTicks": 80,
-              "min": 0.72,
-              "max": 1.06,
-              "easing": "bounce"
-            }
-          },
-          "blend": "additive",
-          "orientation": "ground",
-          "follow": true,
-          "intensity": 0.9,
-          "texture": {
-            "asset": "asset.effects.vampiric-crest",
-            "role": "image",
-            "index": 1
-          }
-        }
-      ]
-    },
-    {
-      "schemaVersion": 1,
       "id": "effect.core.entangling-roots.released-1",
       "name": "Entangling Roots Cast",
       "description": "",
@@ -730,6 +642,4212 @@
     },
     {
       "schemaVersion": 1,
+      "id": "effect.core.blizzard.wavestarted",
+      "name": "Blizzard Shards",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "falling-ice",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "rain",
+          "colour": "#ffffff",
+          "accent": "#f0fcff",
+          "durationTicks": 40,
+          "count": 128,
+          "size": 1.05,
+          "height": 9,
+          "fallSpeed": 2.6,
+          "launchDelayMs": 50,
+          "fallAngleDegrees": 30,
+          "fallAzimuthDegrees": -35,
+          "impact": {
+            "durationTicks": 16,
+            "count": 4,
+            "size": 0.25,
+            "spread": 1.1,
+            "height": 0.85,
+            "colour": "#197dff",
+            "accent": "#74dfff"
+          },
+          "intensity": 1,
+          "spread": 1,
+          "length": 1.7,
+          "texture": {
+            "asset": "asset.effects.blizzard-ice",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.healing-wave",
+      "name": "Healing Wave",
+      "description": "A restorative chain jumps between up to four allies, losing 15% healing per jump.",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#64f1b5",
+          "accent": "#fff5d6",
+          "durationTicks": 32,
+          "count": 10,
+          "size": 0.08,
+          "height": 1.5
+        },
+        {
+          "id": "flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "light",
+          "colour": "#64f1b5",
+          "accent": "#ffffff",
+          "durationTicks": 20,
+          "count": 1,
+          "size": 5,
+          "height": 1,
+          "intensity": 4
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.war-stomp",
+      "name": "War Stomp",
+      "description": "Stomp the ground, damaging and stunning enemies within five metres of the caster.",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#e9b761",
+          "accent": "#fff5d6",
+          "durationTicks": 32,
+          "count": 24,
+          "size": 4,
+          "height": 1.5
+        },
+        {
+          "id": "flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "light",
+          "colour": "#e9b761",
+          "accent": "#ffffff",
+          "durationTicks": 20,
+          "count": 1,
+          "size": 5,
+          "height": 1,
+          "intensity": 4
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.frost-nova",
+      "name": "Frost Nova",
+      "description": "Strike the primary target with frost, then damage and slow surrounding enemies without repeating the primary hit.",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#72cfff",
+          "accent": "#fff5d6",
+          "durationTicks": 32,
+          "count": 24,
+          "size": 4,
+          "height": 1.5
+        },
+        {
+          "id": "flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "light",
+          "colour": "#72cfff",
+          "accent": "#ffffff",
+          "durationTicks": 20,
+          "count": 1,
+          "size": 5,
+          "height": 1,
+          "intensity": 4
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.golden-mend.burst",
+      "name": "Golden Mend Burst",
+      "description": "A warm amber-gold healing flash with a soft ground halo and rising sparks.",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "ground-glow",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#ffc35c",
+          "accent": "#ffe8b0",
+          "durationTicks": 32,
+          "count": 1,
+          "size": 1.8,
+          "height": 0.05,
+          "follow": true,
+          "intensity": 1.1
+        },
+        {
+          "id": "golden-burst",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#ffca66",
+          "accent": "#fff0c2",
+          "durationTicks": 22,
+          "count": 16,
+          "size": 1.3,
+          "height": 1.2
+        },
+        {
+          "id": "rising-sparks",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 2,
+          "anchor": "target",
+          "shape": "streaks",
+          "colour": "#ffd080",
+          "accent": "#fff0c2",
+          "durationTicks": 38,
+          "count": 14,
+          "size": 0.07,
+          "height": 2.8,
+          "follow": true,
+          "intensity": 1,
+          "spread": 0.8,
+          "length": 0.9,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "warm-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "light",
+          "colour": "#ffbd55",
+          "accent": "#ffe8b0",
+          "durationTicks": 24,
+          "count": 1,
+          "size": 4,
+          "height": 2,
+          "follow": true,
+          "intensity": 35
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.fireball.projectile",
+      "name": "Fireball Projectile",
+      "description": "A bright amber core surrounded by orange fire, travelling along the authoritative projectile link.",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "flame",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#ff620e",
+          "accent": "#ffe89a",
+          "durationTicks": 32,
+          "count": 1,
+          "size": 0.9,
+          "height": 1.3,
+          "blend": "additive",
+          "length": 1.8
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.fireball.impact",
+      "name": "Fireball Impact",
+      "description": "An orange impact flash with a short expanding ground ring and scattered cooling embers.",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#ff7518",
+          "accent": "#ffe4a0",
+          "durationTicks": 16,
+          "count": 10,
+          "size": 1.5,
+          "height": 1.1,
+          "blend": "additive"
+        },
+        {
+          "id": "shock-ring",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#e84a0c",
+          "accent": "#ffb83d",
+          "durationTicks": 20,
+          "count": 1,
+          "size": 1.7,
+          "height": 0.06
+        },
+        {
+          "id": "embers",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 28,
+            "rate": 24,
+            "speed": 4,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 110,
+            "gravity": 6,
+            "drag": 1.8,
+            "spawnRadius": 0.25,
+            "startSize": 0.15,
+            "endSize": 0.02,
+            "spin": 3,
+            "fadeIn": 0,
+            "fadeOut": 0.8
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ff7b12",
+          "accent": "#ffd967",
+          "durationTicks": 32,
+          "count": 18,
+          "size": 0.15,
+          "height": 1,
+          "blend": "additive"
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.fireball.prepare",
+      "name": "Fireball Preparation",
+      "description": "A brief warm glow gathers around the caster before release.",
+      "durationTicks": 16,
+      "loop": false,
+      "layers": [
+        {
+          "id": "gather",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "source",
+          "shape": "glow",
+          "colour": "#ec4f0d",
+          "accent": "#ffbb46",
+          "durationTicks": 16,
+          "count": 1,
+          "size": 0.9,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.silence",
+      "name": "Silence",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "aura",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#b19ade",
+          "accent": "#ffffff",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 1.8,
+          "height": 0.05,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.75,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.frost-armor",
+      "name": "Frost Armor",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "aura",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#7fcaff",
+          "accent": "#ffffff",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 1.8,
+          "height": 0.05,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.75,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.bash",
+      "name": "Bash",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "aura",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#eed09a",
+          "accent": "#ffffff",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 1.8,
+          "height": 0.05,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.75,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.roar",
+      "name": "Roar",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "aura",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#e7c788",
+          "accent": "#ffffff",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 1.8,
+          "height": 0.05,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.75,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.howl-of-terror",
+      "name": "Howl of Terror",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "aura",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#b77bbf",
+          "accent": "#ffffff",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 1.8,
+          "height": 0.05,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.75,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.armor-hex",
+      "name": "Armor Hex",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "aura",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#cbb2e6",
+          "accent": "#ffffff",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 1.8,
+          "height": 0.05,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.75,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.anti-magic-shell",
+      "name": "Anti-magic Shell",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "aura",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#9ce2b4",
+          "accent": "#ffffff",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 1.8,
+          "height": 0.05,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.75,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.absorption-shield",
+      "name": "Absorption Shield",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "aura",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#96d5ff",
+          "accent": "#ffffff",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 1.8,
+          "height": 0.05,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.75,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.flame-strike",
+      "name": "Flame Strike",
+      "description": "",
+      "durationTicks": 38,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pulse",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "pillar",
+          "colour": "#ff993d",
+          "accent": "#fff5db",
+          "durationTicks": 38,
+          "count": 24,
+          "size": 3,
+          "height": 4,
+          "follow": false
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.immolation",
+      "name": "Immolation",
+      "description": "",
+      "durationTicks": 38,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pulse",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#f79d40",
+          "accent": "#fff5db",
+          "durationTicks": 38,
+          "count": 24,
+          "size": 2,
+          "height": 1.2,
+          "follow": false
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.lightning-shield",
+      "name": "Lightning Shield",
+      "description": "",
+      "durationTicks": 38,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pulse",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#89beff",
+          "accent": "#fff5db",
+          "durationTicks": 38,
+          "count": 24,
+          "size": 2,
+          "height": 1.2,
+          "follow": false
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.siphon-mana",
+      "name": "Siphon Mana",
+      "description": "",
+      "durationTicks": 38,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pulse",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#6d9af5",
+          "accent": "#fff5db",
+          "durationTicks": 38,
+          "count": 8,
+          "size": 0.08,
+          "height": 1.2,
+          "follow": false
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.mana-burn",
+      "name": "Mana Burn",
+      "description": "",
+      "durationTicks": 38,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pulse",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#b78af2",
+          "accent": "#fff5db",
+          "durationTicks": 38,
+          "count": 8,
+          "size": 0.08,
+          "height": 1.2,
+          "follow": false
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.tranquility",
+      "name": "Tranquility",
+      "description": "",
+      "durationTicks": 38,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pulse",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#76e9ba",
+          "accent": "#fff5db",
+          "durationTicks": 38,
+          "count": 24,
+          "size": 2,
+          "height": 0.05,
+          "follow": false
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.mana-shield",
+      "name": "Mana Shield",
+      "description": "",
+      "durationTicks": 38,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pulse",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#8bcafa",
+          "accent": "#fff5db",
+          "durationTicks": 38,
+          "count": 24,
+          "size": 2,
+          "height": 0.05,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.blink",
+      "name": "Blink arrival",
+      "description": "",
+      "durationTicks": 36,
+      "loop": false,
+      "layers": [
+        {
+          "id": "ground-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#cbb1ff",
+          "accent": "#fff6dc",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 2,
+          "height": 0.04
+        },
+        {
+          "id": "sparks",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 32,
+            "rate": 40,
+            "speed": 4,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 60,
+            "gravity": 0,
+            "drag": 2,
+            "spawnRadius": 1,
+            "startSize": 0.13,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.1,
+            "fadeOut": 0.8
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#cbb1ff",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 32,
+          "size": 0.1,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.mass-teleport",
+      "name": "Mass Teleport arrival",
+      "description": "",
+      "durationTicks": 36,
+      "loop": false,
+      "layers": [
+        {
+          "id": "ground-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#8ad7ff",
+          "accent": "#fff6dc",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 2,
+          "height": 0.04
+        },
+        {
+          "id": "sparks",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 32,
+            "rate": 40,
+            "speed": 4,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 60,
+            "gravity": 0,
+            "drag": 2,
+            "spawnRadius": 1,
+            "startSize": 0.13,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.1,
+            "fadeOut": 0.8
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#8ad7ff",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 32,
+          "size": 0.1,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.far-sight",
+      "name": "Far Sight arrival",
+      "description": "",
+      "durationTicks": 36,
+      "loop": false,
+      "layers": [
+        {
+          "id": "ground-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#9cdff5",
+          "accent": "#fff6dc",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 5,
+          "height": 0.04
+        },
+        {
+          "id": "sparks",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 32,
+            "rate": 40,
+            "speed": 4,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 60,
+            "gravity": 0,
+            "drag": 2,
+            "spawnRadius": 4,
+            "startSize": 0.13,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.1,
+            "fadeOut": 0.8
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#9cdff5",
+          "accent": "#ffffff",
+          "durationTicks": 24,
+          "count": 32,
+          "size": 0.1,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.hex",
+      "name": "Hex transformation",
+      "description": "",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "transform",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 30,
+            "rate": 5,
+            "speed": 2,
+            "speedVariation": 0.6,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 90,
+            "gravity": 0,
+            "drag": 2,
+            "spawnRadius": 0.7,
+            "startSize": 0.14,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.1,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#9cdc5e",
+          "accent": "#ffedbc",
+          "durationTicks": 32,
+          "count": 24,
+          "size": 0.1,
+          "height": 1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.avatar",
+      "name": "Avatar transformation",
+      "description": "",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "transform",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 30,
+            "rate": 5,
+            "speed": 2,
+            "speedVariation": 0.6,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 90,
+            "gravity": 0,
+            "drag": 2,
+            "spawnRadius": 0.7,
+            "startSize": 0.14,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.1,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#eac67b",
+          "accent": "#ffedbc",
+          "durationTicks": 32,
+          "count": 24,
+          "size": 0.1,
+          "height": 1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.metamorphosis",
+      "name": "Metamorphosis transformation",
+      "description": "",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "transform",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 30,
+            "rate": 5,
+            "speed": 2,
+            "speedVariation": 0.6,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 90,
+            "gravity": 0,
+            "drag": 2,
+            "spawnRadius": 0.7,
+            "startSize": 0.14,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.1,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#eac67b",
+          "accent": "#ffedbc",
+          "durationTicks": 32,
+          "count": 24,
+          "size": 0.1,
+          "height": 1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.death-coil.burst",
+      "name": "Death Coil Burst",
+      "description": "",
+      "durationTicks": 28,
+      "loop": false,
+      "layers": [
+        {
+          "id": "burst",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 28,
+            "rate": 5,
+            "speed": 3,
+            "speedVariation": 0.6,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 120,
+            "gravity": 0,
+            "drag": 2,
+            "spawnRadius": 0.35,
+            "startSize": 0.18,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.05,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#79e756",
+          "accent": "#c45cfa",
+          "durationTicks": 28,
+          "count": 30,
+          "size": 0.12,
+          "height": 1.3
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.death-coil.projectile",
+      "name": "Death Coil Flight",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "soul",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#80e94c",
+          "accent": "#b04de8",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 0.65,
+          "height": 1.5
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.critical-strike",
+      "name": "Critical Strike Impact",
+      "description": "",
+      "durationTicks": 18,
+      "loop": false,
+      "layers": [
+        {
+          "id": "impact",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 18,
+            "rate": 1,
+            "speed": 4,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 130,
+            "gravity": 1,
+            "drag": 3,
+            "spawnRadius": 0.2,
+            "startSize": 0.2,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.03,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffbb45",
+          "accent": "#fff1bc",
+          "durationTicks": 18,
+          "count": 18,
+          "size": 0.16,
+          "height": 1.2
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.evasion",
+      "name": "Evasion Impact",
+      "description": "",
+      "durationTicks": 18,
+      "loop": false,
+      "layers": [
+        {
+          "id": "impact",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 18,
+            "rate": 1,
+            "speed": 4,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 130,
+            "gravity": 1,
+            "drag": 3,
+            "spawnRadius": 0.2,
+            "startSize": 0.2,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.03,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#79d2de",
+          "accent": "#dafdff",
+          "durationTicks": 18,
+          "count": 18,
+          "size": 0.16,
+          "height": 1.2
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.cleaving-attack",
+      "name": "Cleaving Attack Impact",
+      "description": "",
+      "durationTicks": 18,
+      "loop": false,
+      "layers": [
+        {
+          "id": "impact",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 18,
+            "rate": 1,
+            "speed": 4,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 130,
+            "gravity": 1,
+            "drag": 3,
+            "spawnRadius": 0.2,
+            "startSize": 0.2,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.03,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#f58444",
+          "accent": "#ffd379",
+          "durationTicks": 18,
+          "count": 18,
+          "size": 0.16,
+          "height": 1.2
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.searing-arrows.impact",
+      "name": "Searing Arrow Sparks",
+      "description": "",
+      "durationTicks": 22,
+      "loop": false,
+      "layers": [
+        {
+          "id": "sparks",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 22,
+            "rate": 1,
+            "speed": 3.5,
+            "speedVariation": 0.5,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 160,
+            "gravity": 2,
+            "drag": 2,
+            "spawnRadius": 0.15,
+            "startSize": 0.16,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.03,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ff772c",
+          "accent": "#ffed94",
+          "durationTicks": 22,
+          "count": 18,
+          "size": 0.12,
+          "height": 1.2
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.searing-arrows.flight",
+      "name": "Searing Arrow Flight",
+      "description": "A soft orange flame and small golden core locked to the released weapon flight.",
+      "durationTicks": 30,
+      "loop": false,
+      "layers": [
+        {
+          "id": "flame",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#ff691a",
+          "accent": "#ffd161",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 0.24,
+          "height": 1.35,
+          "intensity": 0.8,
+          "length": 2.8
+        },
+        {
+          "id": "core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#fff3ad",
+          "accent": "#fff8d7",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 0.09,
+          "height": 1.35,
+          "intensity": 1.5,
+          "length": 3.5
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.unstoppable.ward",
+      "name": "Unstoppable Ward",
+      "description": "",
+      "durationTicks": 160,
+      "loop": false,
+      "layers": [
+        {
+          "id": "ward",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#f7db83",
+          "accent": "#fff0c2",
+          "durationTicks": 160,
+          "count": 1,
+          "size": 1.5,
+          "height": 0.06,
+          "motion": {
+            "rotation": {
+              "periodTicks": 240,
+              "direction": "clockwise"
+            },
+            "opacity": {
+              "periodTicks": 100,
+              "min": 0.45,
+              "max": 0.9,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        },
+        {
+          "id": "warmth",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#e5ba48",
+          "accent": "#fff0c2",
+          "durationTicks": 160,
+          "count": 1,
+          "size": 1.4,
+          "height": 0.035,
+          "follow": true,
+          "intensity": 0.2
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.banish.shroud",
+      "name": "Banish Shroud",
+      "description": "",
+      "durationTicks": 160,
+      "loop": true,
+      "layers": [
+        {
+          "id": "halo",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#59edbf",
+          "accent": "#dcfff1",
+          "durationTicks": 160,
+          "count": 1,
+          "size": 1.35,
+          "height": 0.06,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.25,
+              "max": 0.65,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        },
+        {
+          "id": "soul",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#49dab1",
+          "accent": "#9affdd",
+          "durationTicks": 160,
+          "count": 1,
+          "size": 1.7,
+          "height": 0.8,
+          "follow": true,
+          "intensity": 0.16
+        },
+        {
+          "id": "wisps",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 60,
+            "rate": 10,
+            "speed": 1,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 12,
+            "gravity": 0,
+            "drag": 0.1,
+            "spawnRadius": 0.8,
+            "startSize": 0.13,
+            "endSize": 0,
+            "spin": 1,
+            "fadeIn": 0.15,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#50eebc",
+          "accent": "#d0ffe6",
+          "durationTicks": 160,
+          "count": 20,
+          "size": 0.1,
+          "height": 0.05,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.death-burst.explosion",
+      "name": "Death Burst Explosion",
+      "description": "",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#e5e568",
+          "accent": "#ffffbf",
+          "durationTicks": 16,
+          "count": 1,
+          "size": 3,
+          "height": 0.7,
+          "intensity": 0.8
+        },
+        {
+          "id": "spores",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 32,
+            "rate": 1,
+            "speed": 8,
+            "speedVariation": 0.5,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 120,
+            "gravity": 4,
+            "drag": 1,
+            "spawnRadius": 0.7,
+            "startSize": 0.28,
+            "endSize": 0.04,
+            "spin": 3,
+            "fadeIn": 0,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#b2d149",
+          "accent": "#f2ffb0",
+          "durationTicks": 32,
+          "count": 48,
+          "size": 0.18,
+          "height": 0.6
+        },
+        {
+          "id": "shock",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#c5e86e",
+          "accent": "#f8ffba",
+          "durationTicks": 24,
+          "count": 12,
+          "size": 0.12,
+          "height": 0.35,
+          "spread": 5
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.soul-harvest.departure",
+      "name": "Soul Harvest · Departure",
+      "description": "",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "soul",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#9a80ef",
+          "accent": "#e6d9ff",
+          "durationTicks": 20,
+          "count": 1,
+          "size": 2,
+          "height": 1,
+          "intensity": 0.65
+        },
+        {
+          "id": "wisps",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 32,
+            "rate": 1,
+            "speed": 4,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 35,
+            "gravity": -1,
+            "drag": 0.6,
+            "spawnRadius": 0.9,
+            "startSize": 0.13,
+            "endSize": 0.035,
+            "spin": 2,
+            "fadeIn": 0.05,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#9270e8",
+          "accent": "#eadbff",
+          "durationTicks": 32,
+          "count": 22,
+          "size": 0.13,
+          "height": 0.5
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.soul-harvest.restoration",
+      "name": "Soul Harvest · Restoration",
+      "description": "",
+      "durationTicks": 36,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pool",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#ad7ee9",
+          "accent": "#e5e6ff",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 1.8,
+          "height": 0.1,
+          "intensity": 0.5
+        },
+        {
+          "id": "rise",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 36,
+            "rate": 1,
+            "speed": 3,
+            "speedVariation": 0.2,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 15,
+            "gravity": -1,
+            "drag": 0.4,
+            "spawnRadius": 1,
+            "startSize": 0.09,
+            "endSize": 0.025,
+            "spin": 1,
+            "fadeIn": 0.1,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#b895ed",
+          "accent": "#f1ecff",
+          "durationTicks": 36,
+          "count": 20,
+          "size": 0.09,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.doom.manifestation",
+      "name": "Doom · Manifestation",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#d84e20",
+          "accent": "#ffdd61",
+          "durationTicks": 20,
+          "count": 1,
+          "size": 3,
+          "height": 0.4,
+          "intensity": 0.9
+        },
+        {
+          "id": "eruption",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 40,
+            "rate": 1,
+            "speed": 7,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 65,
+            "gravity": 5,
+            "drag": 0.5,
+            "spawnRadius": 1.2,
+            "startSize": 0.16,
+            "endSize": 0.025,
+            "spin": 3,
+            "fadeIn": 0,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ec6e29",
+          "accent": "#ffe5a6",
+          "durationTicks": 40,
+          "count": 44,
+          "size": 0.16,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.black-arrow.flight",
+      "name": "Black Arrow · Flight",
+      "description": "Reusable violet shadow layers for the Black Arrow proof.",
+      "durationTicks": 30,
+      "loop": false,
+      "layers": [
+        {
+          "id": "flame",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#8948da",
+          "accent": "#dca4ff",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 0.24,
+          "height": 1.35,
+          "intensity": 0.8,
+          "length": 2.8
+        },
+        {
+          "id": "core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#e8c5ff",
+          "accent": "#dca4ff",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 0.09,
+          "height": 1.35,
+          "intensity": 1.5,
+          "length": 3.5
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.black-arrow.manifestation",
+      "name": "Black Arrow · Manifestation",
+      "description": "Reusable violet shadow layers for the Black Arrow proof.",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#8948da",
+          "accent": "#dca4ff",
+          "durationTicks": 20,
+          "count": 1,
+          "size": 3,
+          "height": 0.4,
+          "intensity": 0.9
+        },
+        {
+          "id": "eruption",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 40,
+            "rate": 1,
+            "speed": 7,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 65,
+            "gravity": 5,
+            "drag": 0.5,
+            "spawnRadius": 1.2,
+            "startSize": 0.16,
+            "endSize": 0.025,
+            "spin": 3,
+            "fadeIn": 0,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#8948da",
+          "accent": "#dca4ff",
+          "durationTicks": 40,
+          "count": 44,
+          "size": 0.16,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.resurrection.rise",
+      "name": "Resurrection · Rise",
+      "description": "",
+      "durationTicks": 64,
+      "loop": false,
+      "layers": [
+        {
+          "id": "light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#fff0a4",
+          "accent": "#fff9e4",
+          "durationTicks": 48,
+          "count": 1,
+          "size": 2.4,
+          "height": 0.2,
+          "intensity": 1.2
+        },
+        {
+          "id": "ascending-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 64,
+            "rate": 1,
+            "speed": 4,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 12,
+            "gravity": -0.6,
+            "drag": 0.3,
+            "spawnRadius": 1,
+            "startSize": 0.09,
+            "endSize": 0.025,
+            "spin": 2,
+            "fadeIn": 0.1,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffd55b",
+          "accent": "#fffbe5",
+          "durationTicks": 64,
+          "count": 32,
+          "size": 0.1,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.raise-dead.manifestation",
+      "name": "Raise Dead · Manifestation",
+      "description": "",
+      "durationTicks": 56,
+      "loop": false,
+      "layers": [
+        {
+          "id": "soul-glow",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#6b3ba0",
+          "accent": "#ca9fff",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 2.5,
+          "height": 0.15,
+          "intensity": 0.9
+        },
+        {
+          "id": "rising-wisps",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 56,
+            "rate": 1,
+            "speed": 3.5,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 25,
+            "gravity": -0.5,
+            "drag": 0.4,
+            "spawnRadius": 1.1,
+            "startSize": 0.15,
+            "endSize": 0.02,
+            "spin": 3,
+            "fadeIn": 0.05,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#8962bd",
+          "accent": "#dfbbff",
+          "durationTicks": 56,
+          "count": 36,
+          "size": 0.15,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.animate-dead.rise",
+      "name": "Animate Dead · Reanimation",
+      "description": "",
+      "durationTicks": 64,
+      "loop": false,
+      "layers": [
+        {
+          "id": "spectral-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#4dcbaa",
+          "accent": "#c7ffe3",
+          "durationTicks": 48,
+          "count": 1,
+          "size": 2.2,
+          "height": 0.2,
+          "intensity": 1.1
+        },
+        {
+          "id": "rising-souls",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 64,
+            "rate": 1,
+            "speed": 3.5,
+            "speedVariation": 0.35,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 18,
+            "gravity": -0.4,
+            "drag": 0.3,
+            "spawnRadius": 1,
+            "startSize": 0.09,
+            "endSize": 0.025,
+            "spin": 2,
+            "fadeIn": 0.1,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#37bb8f",
+          "accent": "#d5ffb9",
+          "durationTicks": 64,
+          "count": 30,
+          "size": 0.1,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.reincarnation.waiting",
+      "name": "Reincarnation · Waiting Spirit",
+      "description": "",
+      "durationTicks": 280,
+      "loop": false,
+      "layers": [
+        {
+          "id": "soul-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#82d8ee",
+          "accent": "#e9ffe6",
+          "durationTicks": 280,
+          "count": 1,
+          "size": 2.6,
+          "height": 0.12,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.4,
+              "max": 0.95,
+              "easing": "sine"
+            }
+          },
+          "intensity": 0.8
+        },
+        {
+          "id": "spirit-motes",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 65,
+            "rate": 8,
+            "speed": 1.8,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 16,
+            "gravity": -0.15,
+            "drag": 0.4,
+            "spawnRadius": 0.8,
+            "startSize": 0.08,
+            "endSize": 0.02,
+            "spin": 1,
+            "fadeIn": 0.2,
+            "fadeOut": 0.5
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#b7ecff",
+          "accent": "#fff0ba",
+          "durationTicks": 280,
+          "count": 40,
+          "size": 0.07,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.reincarnation.return",
+      "name": "Reincarnation · Return",
+      "description": "",
+      "durationTicks": 64,
+      "loop": false,
+      "layers": [
+        {
+          "id": "light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#aaeaff",
+          "accent": "#fff7d5",
+          "durationTicks": 48,
+          "count": 1,
+          "size": 2.4,
+          "height": 0.2,
+          "intensity": 1.2
+        },
+        {
+          "id": "ascending-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 64,
+            "rate": 1,
+            "speed": 4,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 12,
+            "gravity": -0.6,
+            "drag": 0.3,
+            "spawnRadius": 1,
+            "startSize": 0.09,
+            "endSize": 0.025,
+            "spin": 2,
+            "fadeIn": 0.1,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#aaeaff",
+          "accent": "#fff7d5",
+          "durationTicks": 64,
+          "count": 32,
+          "size": 0.1,
+          "height": 0.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.charm.conversion",
+      "name": "Charm · Allegiance Shift",
+      "description": "",
+      "durationTicks": 60,
+      "loop": false,
+      "layers": [
+        {
+          "id": "mind-thread",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#ad68ef",
+          "accent": "#f2daff",
+          "durationTicks": 18,
+          "count": 3,
+          "size": 0.055,
+          "height": 1.8
+        },
+        {
+          "id": "glow",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#a052cc",
+          "accent": "#e7c2ff",
+          "durationTicks": 45,
+          "count": 1,
+          "size": 2.4,
+          "height": 0.08,
+          "intensity": 0.8
+        },
+        {
+          "id": "sparkles",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 55,
+            "rate": 24,
+            "speed": 1.5,
+            "speedVariation": 0.5,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 65,
+            "gravity": 0.3,
+            "drag": 0.5,
+            "spawnRadius": 0.45,
+            "startSize": 0.13,
+            "endSize": 0.025,
+            "spin": 3,
+            "fadeIn": 0.08,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#de98fc",
+          "accent": "#fff0de",
+          "durationTicks": 1,
+          "count": 24,
+          "size": 0.1,
+          "height": 1.6
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.devour.swallow",
+      "name": "Devour · Swallow",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pull",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#70c779",
+          "accent": "#cfef8a",
+          "durationTicks": 15,
+          "count": 2,
+          "size": 0.085,
+          "height": 1.2
+        },
+        {
+          "id": "puff",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 35,
+            "rate": 20,
+            "speed": 1.8,
+            "speedVariation": 0.5,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 90,
+            "gravity": 0.6,
+            "drag": 0.7,
+            "spawnRadius": 0.5,
+            "startSize": 0.18,
+            "endSize": 0.02,
+            "spin": 2,
+            "fadeIn": 0.05,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#91ca53",
+          "accent": "#dbf190",
+          "durationTicks": 1,
+          "count": 20,
+          "size": 0.13,
+          "height": 1.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.battle-rhythm.pulse",
+      "name": "Battle Rhythm · Pulse",
+      "description": "",
+      "durationTicks": 28,
+      "loop": false,
+      "layers": [
+        {
+          "id": "burst",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 26,
+            "rate": 14,
+            "speed": 2.8,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 105,
+            "gravity": 0.6,
+            "drag": 1.2,
+            "spawnRadius": 0.3,
+            "startSize": 0.15,
+            "endSize": 0.025,
+            "spin": 3,
+            "fadeIn": 0.03,
+            "fadeOut": 0.8
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffd87a",
+          "accent": "#fff3bd",
+          "durationTicks": 1,
+          "count": 14,
+          "size": 0.1,
+          "height": 1.1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.frost-arrows.flight",
+      "name": "Frost Arrows · Flight",
+      "description": "",
+      "durationTicks": 30,
+      "loop": false,
+      "layers": [
+        {
+          "id": "ice",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#359dff",
+          "accent": "#a1e9ff",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 0.15,
+          "height": 1.35,
+          "intensity": 1,
+          "length": 2.8
+        },
+        {
+          "id": "core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#cef7ff",
+          "accent": "#f2fdff",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 0.045,
+          "height": 1.35,
+          "intensity": 1.4,
+          "length": 3.5
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.frost-arrows.impact",
+      "name": "Frost Arrows · Ice Burst",
+      "description": "",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "iceBurst",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 23,
+            "rate": 16,
+            "speed": 3.4,
+            "speedVariation": 0.35,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 140,
+            "gravity": 1.5,
+            "drag": 1.3,
+            "spawnRadius": 0.12,
+            "startSize": 0.12,
+            "endSize": 0.018,
+            "spin": 4,
+            "fadeIn": 0.02,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#2a8cff",
+          "accent": "#bdeeff",
+          "durationTicks": 1,
+          "count": 16,
+          "size": 0.085,
+          "height": 1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.death-pact.offering",
+      "name": "Death Pact · Offering",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "soulLink",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#62de9b",
+          "accent": "#c8ffe0",
+          "durationTicks": 22,
+          "count": 8,
+          "size": 0.1,
+          "height": 1.2,
+          "intensity": 1.4
+        },
+        {
+          "id": "soulFragments",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 38,
+            "rate": 22,
+            "speed": 3,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 80,
+            "gravity": 0,
+            "drag": 1.1,
+            "spawnRadius": 0.6,
+            "startSize": 0.14,
+            "endSize": 0.025,
+            "spin": 2,
+            "fadeIn": 0.05,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#62de9b",
+          "accent": "#c8ffe0",
+          "durationTicks": 1,
+          "count": 22,
+          "size": 0.1,
+          "height": 1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.death-pact.restoration",
+      "name": "Death Pact · Restoration",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "restoration",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 38,
+            "rate": 22,
+            "speed": 3,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 80,
+            "gravity": 0,
+            "drag": 1.1,
+            "spawnRadius": 0.6,
+            "startSize": 0.14,
+            "endSize": 0.025,
+            "spin": 2,
+            "fadeIn": 0.05,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#62de9b",
+          "accent": "#c8ffe0",
+          "durationTicks": 1,
+          "count": 22,
+          "size": 0.1,
+          "height": 1
+        },
+        {
+          "id": "glow",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#62de9b",
+          "accent": "#c8ffe0",
+          "durationTicks": 32,
+          "count": 1,
+          "size": 1.1,
+          "height": 0.1,
+          "intensity": 0.65
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.dark-ritual.offering",
+      "name": "Dark Ritual · Offering",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "soulLink",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#7872ff",
+          "accent": "#dad7ff",
+          "durationTicks": 22,
+          "count": 8,
+          "size": 0.1,
+          "height": 1.2,
+          "intensity": 1.4
+        },
+        {
+          "id": "soulFragments",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 38,
+            "rate": 22,
+            "speed": 3,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 80,
+            "gravity": 0,
+            "drag": 1.1,
+            "spawnRadius": 0.6,
+            "startSize": 0.14,
+            "endSize": 0.025,
+            "spin": 2,
+            "fadeIn": 0.05,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#7872ff",
+          "accent": "#dad7ff",
+          "durationTicks": 1,
+          "count": 22,
+          "size": 0.1,
+          "height": 1
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.dark-ritual.restoration",
+      "name": "Dark Ritual · Restoration",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "restoration",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 38,
+            "rate": 22,
+            "speed": 3,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 80,
+            "gravity": 0,
+            "drag": 1.1,
+            "spawnRadius": 0.6,
+            "startSize": 0.14,
+            "endSize": 0.025,
+            "spin": 2,
+            "fadeIn": 0.05,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#7872ff",
+          "accent": "#dad7ff",
+          "durationTicks": 1,
+          "count": 22,
+          "size": 0.1,
+          "height": 1
+        },
+        {
+          "id": "glow",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#7872ff",
+          "accent": "#dad7ff",
+          "durationTicks": 32,
+          "count": 1,
+          "size": 1.1,
+          "height": 0.1,
+          "intensity": 0.65
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.death-and-decay.pulse",
+      "name": "Death and Decay · Blight Pulse",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "blight",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 38,
+            "rate": 32,
+            "speed": 2,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 30,
+            "gravity": 0,
+            "drag": 1.1,
+            "spawnRadius": 4,
+            "startSize": 0.14,
+            "endSize": 0.025,
+            "spin": 2,
+            "fadeIn": 0.05,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#7dbc4b",
+          "accent": "#d4ff88",
+          "durationTicks": 1,
+          "count": 32,
+          "size": 0.1,
+          "height": 0.1
+        },
+        {
+          "id": "ground",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#406a2d",
+          "accent": "#b8f466",
+          "durationTicks": 38,
+          "count": 1,
+          "size": 4,
+          "height": 0.04,
+          "intensity": 0.35
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.carrion-spirits.arrival",
+      "name": "Carrion Spirits · Arrival",
+      "description": "",
+      "durationTicks": 44,
+      "loop": false,
+      "layers": [
+        {
+          "id": "arrival",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 42,
+            "rate": 26,
+            "speed": 2.6,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 45,
+            "gravity": 0,
+            "drag": 1,
+            "spawnRadius": 0.9,
+            "startSize": 0.16,
+            "endSize": 0.025,
+            "spin": 1.4,
+            "fadeIn": 0.05,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#b8d778",
+          "accent": "#edffc9",
+          "durationTicks": 1,
+          "count": 26,
+          "size": 0.14,
+          "height": 0.1
+        },
+        {
+          "id": "emergence",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#86a547",
+          "accent": "#e9ffd9",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 1.4,
+          "height": 0.05,
+          "intensity": 0.7
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.spirit-companion.arrival",
+      "name": "Spirit Companion · Arrival",
+      "description": "",
+      "durationTicks": 44,
+      "loop": false,
+      "layers": [
+        {
+          "id": "arrival",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 42,
+            "rate": 26,
+            "speed": 2.6,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 45,
+            "gravity": 0,
+            "drag": 1,
+            "spawnRadius": 0.9,
+            "startSize": 0.16,
+            "endSize": 0.025,
+            "spin": 1.4,
+            "fadeIn": 0.05,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#70f0cd",
+          "accent": "#d8fff3",
+          "durationTicks": 1,
+          "count": 26,
+          "size": 0.14,
+          "height": 0.1
+        },
+        {
+          "id": "emergence",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#3be8a5",
+          "accent": "#e9ffd9",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 1.4,
+          "height": 0.05,
+          "intensity": 0.7
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.flight-form.status",
+      "name": "Flight Form · Wing motes",
+      "description": "",
+      "durationTicks": 64,
+      "loop": true,
+      "layers": [
+        {
+          "id": "motes",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 36,
+            "rate": 10,
+            "speed": 1.2,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 60,
+            "gravity": 0,
+            "drag": 1,
+            "spawnRadius": 0.4,
+            "startSize": 0.1,
+            "endSize": 0.01,
+            "spin": 1,
+            "fadeIn": 0.1,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#c4f1bc",
+          "accent": "#fff3c6",
+          "durationTicks": 64,
+          "count": 24,
+          "size": 0.12,
+          "height": 0.6,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.web.status",
+      "name": "Web · Silk bindings",
+      "description": "",
+      "durationTicks": 64,
+      "loop": true,
+      "layers": [
+        {
+          "id": "motes",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 36,
+            "rate": 10,
+            "speed": 0.4,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 60,
+            "gravity": 0,
+            "drag": 1,
+            "spawnRadius": 0.65,
+            "startSize": 0.1,
+            "endSize": 0.01,
+            "spin": 1,
+            "fadeIn": 0.1,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#e2f4ff",
+          "accent": "#83b8d2",
+          "durationTicks": 64,
+          "count": 24,
+          "size": 0.12,
+          "height": 0.2,
+          "follow": true
+        },
+        {
+          "id": "silk",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#c1e8ed",
+          "accent": "#e5faff",
+          "durationTicks": 64,
+          "count": 1,
+          "size": 1.05,
+          "height": 0.1,
+          "motion": {
+            "rotation": {
+              "periodTicks": 240,
+              "direction": "clockwise"
+            }
+          },
+          "follow": true,
+          "intensity": 0.7
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.grove-nursery.arrival",
+      "name": "Grove Nursery · Emergence",
+      "description": "",
+      "durationTicks": 44,
+      "loop": false,
+      "layers": [
+        {
+          "id": "arrival",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 42,
+            "rate": 26,
+            "speed": 2.6,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 45,
+            "gravity": 0,
+            "drag": 1,
+            "spawnRadius": 0.9,
+            "startSize": 0.16,
+            "endSize": 0.025,
+            "spin": 1.4,
+            "fadeIn": 0.05,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#70f0cd",
+          "accent": "#d8fff3",
+          "durationTicks": 1,
+          "count": 26,
+          "size": 0.14,
+          "height": 0.1
+        },
+        {
+          "id": "emergence",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#3be8a5",
+          "accent": "#e9ffd9",
+          "durationTicks": 30,
+          "count": 1,
+          "size": 1.4,
+          "height": 0.05,
+          "intensity": 0.7
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.grove-nursery.pulse",
+      "name": "Grove Nursery · Heartbeat",
+      "description": "",
+      "durationTicks": 44,
+      "loop": false,
+      "layers": [
+        {
+          "id": "warmth",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#e6b447",
+          "accent": "#fff0b0",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 2.2,
+          "height": 0.08,
+          "intensity": 0.7
+        },
+        {
+          "id": "spores",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 44,
+            "rate": 30,
+            "speed": 2.3,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 75,
+            "gravity": 0.5,
+            "drag": 1,
+            "spawnRadius": 1.4,
+            "startSize": 0.18,
+            "endSize": 0.02,
+            "spin": 1,
+            "fadeIn": 0.03,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#9cdd69",
+          "accent": "#ffeda0",
+          "durationTicks": 1,
+          "count": 30,
+          "size": 0.13,
+          "height": 1.2
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.grove-nursery.core",
+      "name": "Grove Nursery · Living Core",
+      "description": "",
+      "durationTicks": 160,
+      "loop": true,
+      "layers": [
+        {
+          "id": "core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#c4b644",
+          "accent": "#9acb63",
+          "durationTicks": 160,
+          "count": 1,
+          "size": 2.2,
+          "height": 0.06,
+          "motion": {
+            "scale": {
+              "periodTicks": 200,
+              "min": 0.88,
+              "max": 1.12,
+              "easing": "sine"
+            }
+          },
+          "follow": true,
+          "intensity": 0.3
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.grove-nursery.burst",
+      "name": "Grove Nursery · Spirit Burst",
+      "description": "",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#58e7b7",
+          "accent": "#eaffba",
+          "durationTicks": 18,
+          "count": 1,
+          "size": 2.5,
+          "height": 0.2,
+          "intensity": 0.9
+        },
+        {
+          "id": "fragments",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 32,
+            "rate": 38,
+            "speed": 7,
+            "speedVariation": 0.25,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 150,
+            "gravity": 5,
+            "drag": 2,
+            "spawnRadius": 0.3,
+            "startSize": 0.2,
+            "endSize": 0.01,
+            "spin": 2,
+            "fadeIn": 0,
+            "fadeOut": 0.75
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#b9f989",
+          "accent": "#42b89f",
+          "durationTicks": 1,
+          "count": 38,
+          "size": 0.15,
+          "height": 0.8
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.spirit-swarm.bite",
+      "name": "Spirit Swarm · Bite",
+      "description": "",
+      "durationTicks": 20,
+      "loop": false,
+      "layers": [
+        {
+          "id": "bite",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 20,
+            "rate": 8,
+            "speed": 2,
+            "speedVariation": 0.25,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 120,
+            "gravity": 1,
+            "drag": 2,
+            "spawnRadius": 0.15,
+            "startSize": 0.12,
+            "endSize": 0.01,
+            "spin": 1,
+            "fadeIn": 0,
+            "fadeOut": 0.8
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#c5f882",
+          "accent": "#70c9a5",
+          "durationTicks": 1,
+          "count": 8,
+          "size": 0.08,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.spirit-swarm.return",
+      "name": "Spirit Swarm · Homecoming",
+      "description": "",
+      "durationTicks": 22,
+      "loop": false,
+      "layers": [
+        {
+          "id": "restoration",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#b2f689",
+          "accent": "#ecffd8",
+          "durationTicks": 22,
+          "count": 1,
+          "size": 1.3,
+          "height": 0.7,
+          "intensity": 0.6
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.spirit-trinity.transition",
+      "name": "Spirit Trinity · Transition",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "burst",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 40,
+            "rate": 24,
+            "speed": 3,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 160,
+            "gravity": 1,
+            "drag": 2,
+            "spawnRadius": 0.5,
+            "startSize": 0.22,
+            "endSize": 0.02,
+            "spin": 1,
+            "fadeIn": 0,
+            "fadeOut": 0.8
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#95e1b6",
+          "accent": "#f5e6a3",
+          "durationTicks": 1,
+          "count": 24,
+          "size": 0.14,
+          "height": 1
+        },
+        {
+          "id": "flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#b2f1d1",
+          "accent": "#f7eed1",
+          "durationTicks": 28,
+          "count": 1,
+          "size": 2,
+          "height": 0.6,
+          "intensity": 0.8
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.assistant-trials.verdant-ward.impact",
+      "name": "Verdant Ward — Leaf Burst",
+      "description": "Warm green leaves unfurl at the recipient on release, with a restrained golden-green healing glow.",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "leaves",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 32,
+            "rate": 12,
+            "speed": 2.8,
+            "speedVariation": 0.35,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 75,
+            "gravity": -1.8,
+            "drag": 1.2,
+            "spawnRadius": 0.65,
+            "startSize": 0.65,
+            "endSize": 0.18,
+            "spin": 2.4,
+            "fadeIn": 0.05,
+            "fadeOut": 0.55
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffffff",
+          "accent": "#d8ef94",
+          "durationTicks": 36,
+          "count": 12,
+          "size": 0.55,
+          "height": 0.7,
+          "blend": "normal",
+          "follow": false,
+          "texture": {
+            "asset": "asset.assistant-trials.verdant-ward-leaf",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "healing-glow",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#9dce62",
+          "accent": "#f4df93",
+          "durationTicks": 26,
+          "count": 1,
+          "size": 1.5,
+          "height": 0.08
+        },
+        {
+          "id": "warm-pulse",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#b6dc70",
+          "accent": "#ead08b",
+          "durationTicks": 24,
+          "count": 1,
+          "size": 1.6,
+          "height": 0.06
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.assistant-trials.verdant-ward.shield",
+      "name": "Verdant Ward — Living Shield",
+      "description": "Subtle target-following green ward, sustained only while the absorption status is active.",
+      "durationTicks": 240,
+      "loop": true,
+      "layers": [
+        {
+          "id": "ward-ring",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#81bc70",
+          "accent": "#d3dd91",
+          "durationTicks": 240,
+          "count": 1,
+          "size": 1.35,
+          "height": 0.08,
+          "motion": {
+            "scale": {
+              "periodTicks": 80,
+              "min": 0.97,
+              "max": 1.03,
+              "easing": "sine"
+            },
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.18,
+              "max": 0.32,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        },
+        {
+          "id": "ward-glow",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#79ab60",
+          "accent": "#b6cf82",
+          "durationTicks": 240,
+          "count": 1,
+          "size": 1.15,
+          "height": 0.1,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.1,
+              "max": 0.18,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.assistant-trials.frost-relay.link",
+      "name": "Frost Relay — Icy Link",
+      "description": "Bright cyan link with a pale frozen core, rendered between authoritative chain endpoints.",
+      "durationTicks": 14,
+      "loop": false,
+      "layers": [
+        {
+          "id": "ice-ribbon",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#39bfff",
+          "accent": "#a4ebff",
+          "durationTicks": 14,
+          "count": 10,
+          "size": 0.18,
+          "height": 1.2
+        },
+        {
+          "id": "frozen-core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#c5f3ff",
+          "accent": "#ffffff",
+          "durationTicks": 10,
+          "count": 7,
+          "size": 0.065,
+          "height": 1.2
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.assistant-trials.frost-relay.impact",
+      "name": "Frost Relay — Crystal Impact",
+      "description": "Readable blue shock ring and ice splinters using the published Blizzard ice texture.",
+      "durationTicks": 28,
+      "loop": false,
+      "layers": [
+        {
+          "id": "crystal-splinters",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 27,
+            "rate": 18,
+            "speed": 4,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 145,
+            "gravity": 2,
+            "drag": 1.4,
+            "spawnRadius": 0.15,
+            "startSize": 0.32,
+            "endSize": 0.04,
+            "spin": 4,
+            "fadeIn": 0.02,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffffff",
+          "accent": "#bdeeff",
+          "durationTicks": 1,
+          "count": 18,
+          "size": 0.18,
+          "height": 1,
+          "texture": {
+            "asset": "asset.effects.blizzard-ice",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "frost-shock",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#49caff",
+          "accent": "#daf8ff",
+          "durationTicks": 22,
+          "count": 1,
+          "size": 1.65,
+          "height": 0.1
+        },
+        {
+          "id": "cold-flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "light",
+          "colour": "#67d5ff",
+          "accent": "#ffffff",
+          "durationTicks": 12,
+          "count": 1,
+          "size": 2.6,
+          "height": 1,
+          "intensity": 1.7
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.ember-garden.garden",
+      "name": "Ember Garden — Ground and Sparks",
+      "description": "Six-second amber ground bed with a readable boundary and drifting upward embers.",
+      "durationTicks": 240,
+      "loop": false,
+      "layers": [
+        {
+          "id": "ground",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#d87816",
+          "accent": "#ffbc45",
+          "durationTicks": 240,
+          "count": 1,
+          "size": 3,
+          "height": 0.04,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.5,
+              "easing": "sine"
+            }
+          },
+          "blend": "additive",
+          "orientation": "ground"
+        },
+        {
+          "id": "boundary",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#e4982b",
+          "accent": "#ffc15a",
+          "durationTicks": 240,
+          "count": 1,
+          "size": 3,
+          "height": 0.06,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.35,
+              "max": 0.6,
+              "easing": "sine"
+            }
+          }
+        },
+        {
+          "id": "sparks",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 45,
+            "rate": 18,
+            "speed": 1.6,
+            "speedVariation": 0.45,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 22,
+            "gravity": -0.2,
+            "drag": 0.5,
+            "spawnRadius": 2.65,
+            "startSize": 0.1,
+            "endSize": 0.015,
+            "spin": 1.5,
+            "fadeIn": 0.08,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ff8f28",
+          "accent": "#ffd16c",
+          "durationTicks": 240,
+          "count": 36,
+          "size": 0.09,
+          "height": 0.15,
+          "blend": "additive"
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.ember-garden.bloom",
+      "name": "Ember Garden — Fire Blooms",
+      "description": "Short small amber fire bursts scattered across the garden at each damage pulse.",
+      "durationTicks": 28,
+      "loop": false,
+      "layers": [
+        {
+          "id": "blooms",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#f2791d",
+          "accent": "#ffc45e",
+          "durationTicks": 24,
+          "count": 7,
+          "size": 0.42,
+          "height": 0.2,
+          "distribution": "disc",
+          "blend": "additive",
+          "spread": 2.6
+        },
+        {
+          "id": "bloom-embers",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 25,
+            "rate": 16,
+            "speed": 2.3,
+            "speedVariation": 0.5,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 35,
+            "gravity": 1.2,
+            "drag": 1,
+            "spawnRadius": 2.5,
+            "startSize": 0.13,
+            "endSize": 0.02,
+            "spin": 2,
+            "fadeIn": 0,
+            "fadeOut": 0.8
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ff9a35",
+          "accent": "#ffd678",
+          "durationTicks": 28,
+          "count": 16,
+          "size": 0.12,
+          "height": 0.12,
+          "blend": "additive"
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.amber-mend.link",
+      "name": "Amber Mend — Golden Link",
+      "description": "Graceful amber ribbon and fine luminous core between runtime chain endpoints.",
+      "durationTicks": 24,
+      "loop": false,
+      "layers": [
+        {
+          "id": "golden-ribbon",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#eeb649",
+          "accent": "#ffdf88",
+          "durationTicks": 24,
+          "count": 10,
+          "size": 0.12,
+          "height": 1.2
+        },
+        {
+          "id": "warm-core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#fff0b3",
+          "accent": "#fff8db",
+          "durationTicks": 18,
+          "count": 7,
+          "size": 0.035,
+          "height": 1.2
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.amber-mend.impact",
+      "name": "Amber Mend — Impact Petals",
+      "description": "Small bright warm-spark petals open around the healed ally, with a restrained amber halo.",
+      "durationTicks": 30,
+      "loop": false,
+      "layers": [
+        {
+          "id": "bright-petals",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 28,
+            "rate": 16,
+            "speed": 1.8,
+            "speedVariation": 0.25,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 105,
+            "gravity": 0.4,
+            "drag": 1.2,
+            "spawnRadius": 0.22,
+            "startSize": 0.24,
+            "endSize": 0.06,
+            "spin": 2.2,
+            "fadeIn": 0.05,
+            "fadeOut": 0.7
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#fff1cc",
+          "accent": "#ffe5a1",
+          "durationTicks": 28,
+          "count": 7,
+          "size": 0.22,
+          "height": 1.1,
+          "blend": "additive",
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "amber-halo",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#eeb951",
+          "accent": "#ffe2a0",
+          "durationTicks": 20,
+          "count": 1,
+          "size": 0.55,
+          "height": 0.8,
+          "intensity": 0.65
+        },
+        {
+          "id": "opening-ring",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#edc16a",
+          "accent": "#fff0c2",
+          "durationTicks": 18,
+          "count": 1,
+          "size": 0.6,
+          "height": 0.08
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.moonpetal-ward.shield",
+      "name": "Moonpetal Ward — Lunar Veil",
+      "description": "Cool sustained glow, original rotating moon-petal ground glyph, and an independent two-second breathing glyph. Bound to the shield status.",
+      "durationTicks": 320,
+      "loop": true,
+      "layers": [
+        {
+          "id": "cool-glow",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#90bdea",
+          "accent": "#dfebff",
+          "durationTicks": 320,
+          "count": 1,
+          "size": 1.2,
+          "height": 0.2,
+          "follow": true,
+          "intensity": 0.55
+        },
+        {
+          "id": "moonpetal-orbit",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#e7f0ff",
+          "accent": "#d9e7ff",
+          "durationTicks": 320,
+          "count": 1,
+          "size": 2.4,
+          "height": 0.04,
+          "motion": {
+            "rotation": {
+              "periodTicks": 320,
+              "direction": "clockwise"
+            }
+          },
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "texture": {
+            "asset": "asset.custom.moonpetal-ward-symbol",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "breathing-petals",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#bdd7ff",
+          "accent": "#e8efff",
+          "durationTicks": 320,
+          "count": 1,
+          "size": 2.05,
+          "height": 0.06,
+          "motion": {
+            "scale": {
+              "periodTicks": 80,
+              "min": 0.88,
+              "max": 1.06,
+              "easing": "sine"
+            },
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.12,
+              "max": 0.5,
+              "easing": "sine"
+            }
+          },
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "texture": {
+            "asset": "asset.custom.moonpetal-ward-symbol",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.cinder-pin.projectile",
+      "name": "Cinder Pin — Projectile",
+      "description": "A narrow orange pin with a warm gold core, following the authoritative projectile link.",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "cinder-pin",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#ff791f",
+          "accent": "#ffd279",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 0.42,
+          "height": 0.8,
+          "blend": "additive",
+          "length": 1.15
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.cinder-pin.impact",
+      "name": "Cinder Pin — Impact",
+      "description": "A compact orange burst and six warm sparks at the struck enemy; cosmetic only.",
+      "durationTicks": 16,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pin-burst",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#ff852c",
+          "accent": "#ffd58a",
+          "durationTicks": 12,
+          "count": 5,
+          "size": 0.34,
+          "height": 0.4,
+          "blend": "additive",
+          "spread": 0.45
+        },
+        {
+          "id": "impact-sparks",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 14,
+            "rate": 6,
+            "speed": 2.2,
+            "speedVariation": 0.35,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 65,
+            "gravity": 1,
+            "drag": 1.5,
+            "spawnRadius": 0.15,
+            "startSize": 0.13,
+            "endSize": 0.02,
+            "spin": 1,
+            "fadeIn": 0,
+            "fadeOut": 0.8
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#fff0d0",
+          "accent": "#ffb55a",
+          "durationTicks": 16,
+          "count": 6,
+          "size": 0.12,
+          "height": 0.25,
+          "blend": "additive",
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.dewspring.pulse",
+      "name": "Dewspring — Healing Ripple",
+      "description": "A subtle turquoise ripple marking each healing pulse at the spring point.",
+      "durationTicks": 18,
+      "loop": false,
+      "layers": [
+        {
+          "id": "healing-ripple",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#76dfc9",
+          "accent": "#c8f8e9",
+          "durationTicks": 18,
+          "count": 1,
+          "size": 3.8,
+          "height": 0.08
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.cinder-pin.root",
+      "name": "Cinder Pin — Root Embers",
+      "description": "A thin breathing ember ring, low translucent warmth and sparse rising sparks surround the rooted unit without obscuring its body. Sustained only for the root status.",
+      "durationTicks": 80,
+      "loop": true,
+      "layers": [
+        {
+          "id": "ember-glow",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#f87922",
+          "accent": "#ffbd60",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 1.6,
+          "height": 0.14,
+          "motion": {
+            "scale": {
+              "periodTicks": 40,
+              "min": 0.94,
+              "max": 1.06,
+              "easing": "sine"
+            },
+            "opacity": {
+              "periodTicks": 40,
+              "min": 0.3,
+              "max": 0.45,
+              "easing": "sine"
+            }
+          },
+          "follow": true,
+          "intensity": 0.55
+        },
+        {
+          "id": "ember-outline",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#ff8a2c",
+          "accent": "#ffc66e",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 1.65,
+          "height": 0.16,
+          "motion": {
+            "scale": {
+              "periodTicks": 40,
+              "min": 0.96,
+              "max": 1.04,
+              "easing": "sine"
+            },
+            "opacity": {
+              "periodTicks": 40,
+              "min": 0.55,
+              "max": 0.8,
+              "easing": "sine"
+            }
+          },
+          "blend": "additive",
+          "follow": true,
+          "intensity": 0.8
+        },
+        {
+          "id": "root-embers",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 30,
+            "rate": 20,
+            "speed": 1.1,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 25,
+            "gravity": 0,
+            "drag": 0.4,
+            "spawnRadius": 1.25,
+            "startSize": 0.19,
+            "endSize": 0.05,
+            "spin": 0.5,
+            "fadeIn": 0.1,
+            "fadeOut": 0.55
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffe3a3",
+          "accent": "#ff9a37",
+          "durationTicks": 80,
+          "count": 15,
+          "size": 0.19,
+          "height": 0.4,
+          "blend": "additive",
+          "follow": true,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
       "id": "effect.core.holy-light-lite.released-1",
       "name": "Holy Light Lite Cast",
       "description": "",
@@ -811,51 +4929,1761 @@
             "role": "image",
             "index": 1
           }
+        },
+        {
+          "id": "sound",
+          "name": "Radiant chime",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "sound",
+          "sound": {
+            "asset": "asset.audio.spells.radiant-chime",
+            "role": "audio",
+            "index": 1,
+            "volume": 0.65,
+            "pitch": 1,
+            "loop": false,
+            "fadeInTicks": 1,
+            "fadeOutTicks": 8,
+            "referenceDistance": 12,
+            "maxDistance": 70
+          },
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 48,
+          "count": 1,
+          "size": 1,
+          "height": 0,
+          "follow": true
         }
       ]
     },
     {
       "schemaVersion": 1,
-      "id": "effect.core.blizzard.wavestarted",
-      "name": "Blizzard Shards",
+      "id": "effect.core.vampiric-aura.statusapplied",
+      "name": "Vampiric Aura",
       "description": "",
+      "durationTicks": 320,
+      "loop": true,
+      "layers": [
+        {
+          "id": "ground-glow",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#823bcc",
+          "accent": "#ffffff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 1.65,
+          "height": 0.045,
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.5
+        },
+        {
+          "id": "rotating-wreath",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 4.5,
+          "height": 0.06,
+          "motion": {
+            "rotation": {
+              "periodTicks": 320,
+              "direction": "clockwise"
+            }
+          },
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.85,
+          "texture": {
+            "asset": "asset.effects.vampiric-wreath",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "pulsing-heart",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 2.6,
+          "height": 0.075,
+          "motion": {
+            "scale": {
+              "periodTicks": 80,
+              "min": 0.72,
+              "max": 1.06,
+              "easing": "bounce"
+            }
+          },
+          "blend": "additive",
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.9,
+          "texture": {
+            "asset": "asset.effects.vampiric-crest",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "sound",
+          "name": "Sustained ward tone",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "sound",
+          "sound": {
+            "asset": "asset.audio.spells.ward-hum",
+            "role": "audio",
+            "index": 1,
+            "volume": 0.12,
+            "pitch": 1,
+            "loop": true,
+            "fadeInTicks": 16,
+            "fadeOutTicks": 8,
+            "referenceDistance": 12,
+            "maxDistance": 70
+          },
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 48,
+          "count": 1,
+          "size": 1,
+          "height": 0,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.blizzard.frost-impact-sound",
+      "name": "Blizzard — Frost Impact Sound",
+      "description": "One Frost Impact one-shot at each Blizzard damage wave. Sound only; bound to wave, not waveStarted.",
       "durationTicks": 40,
       "loop": false,
       "layers": [
         {
-          "id": "falling-ice",
+          "id": "frost-impact-sound",
+          "name": "Frost Impact one-shot",
           "sustain": false,
           "enabled": true,
           "startTick": 0,
           "anchor": "target",
-          "shape": "rain",
-          "colour": "#ffffff",
-          "accent": "#f0fcff",
-          "durationTicks": 40,
-          "count": 128,
-          "size": 1.05,
-          "height": 9,
-          "fallSpeed": 2.6,
-          "launchDelayMs": 50,
-          "fallAngleDegrees": 30,
-          "fallAzimuthDegrees": -35,
-          "impact": {
-            "durationTicks": 16,
-            "count": 4,
-            "size": 0.25,
-            "spread": 1.1,
-            "height": 0.85,
-            "colour": "#197dff",
-            "accent": "#74dfff"
+          "shape": "sound",
+          "sound": {
+            "asset": "asset.audio.spells.frost-impact",
+            "role": "audio",
+            "index": 1,
+            "volume": 0.8,
+            "pitch": 1,
+            "loop": false,
+            "fadeInTicks": 0,
+            "fadeOutTicks": 0,
+            "referenceDistance": 8,
+            "maxDistance": 64
           },
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 40,
+          "count": 1,
+          "size": 1,
+          "height": 0,
+          "follow": false
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.holy-light.burst",
+      "name": "Holy Light Burst",
+      "description": "",
+      "durationTicks": 160,
+      "loop": false,
+      "layers": [
+        {
+          "id": "burst",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 28,
+            "rate": 5,
+            "speed": 3,
+            "speedVariation": 0.6,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 120,
+            "gravity": 0,
+            "drag": 2,
+            "spawnRadius": 0.35,
+            "startSize": 0.18,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.05,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffd969",
+          "accent": "#fff4ce",
+          "durationTicks": 28,
+          "count": 30,
+          "size": 0.12,
+          "height": 1.3
+        },
+        {
+          "id": "sound",
+          "name": "Radiant chime",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "sound",
+          "sound": {
+            "asset": "asset.audio.spells.radiant-chime",
+            "role": "audio",
+            "index": 1,
+            "volume": 0.65,
+            "pitch": 1,
+            "loop": false,
+            "fadeInTicks": 1,
+            "fadeOutTicks": 8,
+            "referenceDistance": 12,
+            "maxDistance": 70
+          },
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 160,
+          "count": 1,
+          "size": 1,
+          "height": 0,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.bloodlust.hand-flares",
+      "name": "Bloodlust Hand Flares",
+      "description": "Localized warm red-gold flares and sparse embers following warrior hand sockets, offset clear of equipment. Hides on incompatible actors; bound to status lifetime.",
+      "durationTicks": 80,
+      "loop": true,
+      "layers": [
+        {
+          "id": "left-flare",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "offset": {
+            "x": 0.35,
+            "y": 0.15,
+            "z": 0.45
+          },
+          "anchor": "target",
+          "shape": "billboard",
+          "attachment": {
+            "socket": "left-hand",
+            "fallback": "hide",
+            "inheritRotation": false
+          },
+          "colour": "#ff7945",
+          "accent": "#ffd295",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 1.05,
+          "height": 0,
+          "motion": {
+            "scale": {
+              "periodTicks": 64,
+              "min": 0.9,
+              "max": 1.1,
+              "easing": "sine"
+            },
+            "opacity": {
+              "periodTicks": 64,
+              "min": 0.8,
+              "max": 1,
+              "easing": "sine"
+            }
+          },
+          "blend": "additive",
+          "orientation": "camera",
+          "follow": true,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "right-flare",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "offset": {
+            "x": 0.8,
+            "y": 0.15,
+            "z": 0.95
+          },
+          "anchor": "target",
+          "shape": "billboard",
+          "attachment": {
+            "socket": "right-hand",
+            "fallback": "hide",
+            "inheritRotation": false
+          },
+          "colour": "#ff7945",
+          "accent": "#ffd295",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 1.05,
+          "height": 0,
+          "motion": {
+            "scale": {
+              "periodTicks": 64,
+              "min": 0.9,
+              "max": 1.1,
+              "easing": "sine",
+              "phase": 0.3
+            },
+            "opacity": {
+              "periodTicks": 64,
+              "min": 0.8,
+              "max": 1,
+              "easing": "sine",
+              "phase": 0.3
+            }
+          },
+          "blend": "additive",
+          "orientation": "camera",
+          "follow": true,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "left-sparks",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 18,
+            "rate": 7,
+            "speed": 0.6,
+            "speedVariation": 0.35,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 45,
+            "gravity": -0.2,
+            "drag": 1.2,
+            "spawnRadius": 0.07,
+            "startSize": 0.055,
+            "endSize": 0.005,
+            "spin": 1,
+            "fadeIn": 0.08,
+            "fadeOut": 0.7
+          },
+          "offset": {
+            "x": 0.35,
+            "y": 0.15,
+            "z": 0.45
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "attachment": {
+            "socket": "left-hand",
+            "fallback": "hide",
+            "inheritRotation": false
+          },
+          "colour": "#f4a344",
+          "accent": "#db4627",
+          "durationTicks": 80,
+          "count": 8,
+          "size": 0.06,
+          "height": 0,
+          "blend": "additive",
+          "follow": true
+        },
+        {
+          "id": "right-sparks",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 18,
+            "rate": 7,
+            "speed": 0.6,
+            "speedVariation": 0.35,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 45,
+            "gravity": -0.2,
+            "drag": 1.2,
+            "spawnRadius": 0.07,
+            "startSize": 0.055,
+            "endSize": 0.005,
+            "spin": -1,
+            "fadeIn": 0.08,
+            "fadeOut": 0.7
+          },
+          "offset": {
+            "x": 0.8,
+            "y": 0.15,
+            "z": 0.95
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "attachment": {
+            "socket": "right-hand",
+            "fallback": "hide",
+            "inheritRotation": false
+          },
+          "colour": "#f4a344",
+          "accent": "#db4627",
+          "durationTicks": 80,
+          "count": 8,
+          "size": 0.06,
+          "height": 0,
+          "blend": "additive",
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.dewspring.spring",
+      "name": "Dewspring — Spring",
+      "description": "A soft turquoise five-second ground pool with a restrained boundary and sparse rising droplets. Emission ends early enough for its 44-tick particle tails to finish at spring expiry.",
+      "durationTicks": 200,
+      "loop": false,
+      "layers": [
+        {
+          "id": "soft-pool",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#36baae",
+          "accent": "#b3f4e4",
+          "durationTicks": 200,
+          "count": 1,
+          "size": 4,
+          "height": 0.04,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.25,
+              "max": 0.42,
+              "easing": "sine"
+            }
+          },
+          "blend": "additive",
+          "orientation": "ground",
+          "intensity": 0.4
+        },
+        {
+          "id": "waterline",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#51cbbd",
+          "accent": "#b3f4e4",
+          "durationTicks": 200,
+          "count": 1,
+          "size": 4,
+          "height": 0.06,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.2,
+              "max": 0.36,
+              "easing": "sine"
+            }
+          }
+        },
+        {
+          "id": "rising-dew",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 44,
+            "rate": 12,
+            "speed": 1.1,
+            "speedVariation": 0.25,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 12,
+            "gravity": 0,
+            "drag": 0.3,
+            "spawnRadius": 3.5,
+            "startSize": 0.12,
+            "endSize": 0.045,
+            "spin": 0,
+            "fadeIn": 0.15,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#73eadb",
+          "accent": "#d1fff2",
+          "durationTicks": 156,
+          "count": 20,
+          "size": 0.12,
+          "height": 0.12,
+          "blend": "additive",
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.spore-sanctuary.patch",
+      "name": "Spore Sanctuary · Mushroom Patch",
+      "description": "Cosmetic woodland mushroom mesh with gently drifting green-gold spores and subdued ground light. Emission ends early so all tails clear at five seconds.",
+      "durationTicks": 200,
+      "loop": false,
+      "layers": [
+        {
+          "id": "ground",
+          "name": "Subtle sanctuary glow",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#6dbe76",
+          "accent": "#d4bb69",
+          "durationTicks": 200,
+          "count": 1,
+          "size": 4,
+          "height": 0.08,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.4,
+              "max": 0.55,
+              "easing": "sine"
+            }
+          },
+          "intensity": 0.65
+        },
+        {
+          "id": "mushrooms",
+          "name": "Woodland mushroom cluster",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "mesh",
+          "model": {
+            "asset": "asset.models.environment.woodland-mushroom-cluster",
+            "role": "geometry",
+            "index": 1,
+            "rotation": {
+              "x": 0,
+              "y": 25,
+              "z": 0
+            }
+          },
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 200,
+          "count": 1,
+          "size": 2,
+          "height": 0,
+          "follow": false
+        },
+        {
+          "id": "spores",
+          "name": "Green-gold floating spores",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 40,
+            "rate": 18,
+            "speed": 0.48,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 35,
+            "gravity": 0,
+            "drag": 0.3,
+            "spawnRadius": 2.6,
+            "startSize": 0.2,
+            "endSize": 0.07,
+            "spin": 0.4,
+            "fadeIn": 0.15,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#b0dc86",
+          "accent": "#eed497",
+          "durationTicks": 160,
+          "count": 24,
+          "size": 0.2,
+          "height": 1.3,
+          "blend": "additive",
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.inferno",
+      "name": "Inferno",
+      "description": "Bounded golden-orange ignition, curved fire tongues and fading embers. Original 4×4 impact atlas; presentation only.",
+      "durationTicks": 48,
+      "loop": false,
+      "layers": [
+        {
+          "id": "ground-ring",
+          "name": "Amber impact rim",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#f9a632",
+          "accent": "#ffdf83",
+          "durationTicks": 24,
+          "count": 1,
+          "size": 3.4,
+          "height": 0.08,
+          "follow": false
+        },
+        {
+          "id": "fire-atlas",
+          "name": "Golden fire — 16 frame impact",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 48,
+          "count": 1,
+          "size": 4.5,
+          "height": 1.8,
+          "blend": "normal",
+          "orientation": "camera",
+          "follow": false,
+          "flipbook": {
+            "columns": 4,
+            "rows": 4,
+            "firstFrame": 0,
+            "frames": 16,
+            "frameTicks": 3,
+            "mode": "once",
+            "randomStart": false
+          },
+          "texture": {
+            "asset": "asset.custom.inferno-fire-atlas",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "flash",
+          "name": "Warm ignition light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "light",
+          "colour": "#ffb347",
+          "accent": "#ffe7a8",
+          "durationTicks": 16,
+          "count": 1,
+          "size": 4,
+          "height": 1,
+          "follow": false,
+          "intensity": 2
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.spirit-swarm.flight",
+      "name": "Spirit Swarm · Seeker",
+      "description": "Small green-gold seekers with short, narrow fading ribbons following their observed delivery paths.",
+      "durationTicks": 200,
+      "loop": false,
+      "layers": [
+        {
+          "id": "seeker",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "missile",
+          "colour": "#9be875",
+          "accent": "#ebffc2",
+          "durationTicks": 200,
+          "count": 1,
+          "size": 0.3,
+          "height": 0.9,
           "intensity": 1,
-          "spread": 1,
-          "length": 1.7,
+          "trail": {
+            "durationTicks": 12,
+            "maxPoints": 24,
+            "width": 0.16,
+            "colour": "#d5e99a",
+            "opacity": 0.65,
+            "breakDistance": 2.5
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.rallying-spark.link",
+      "name": "Rallying Spark — Gold-Green Link",
+      "description": "Crisp two-tone restorative chain link; runtime supplies each jump endpoint.",
+      "durationTicks": 12,
+      "loop": false,
+      "layers": [
+        {
+          "id": "green-edge",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#63c88a",
+          "accent": "#a8e2a0",
+          "durationTicks": 12,
+          "count": 1,
+          "size": 0.12,
+          "height": 1.15
+        },
+        {
+          "id": "gold-core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#edc75b",
+          "accent": "#f5dfa0",
+          "durationTicks": 10,
+          "count": 1,
+          "size": 0.045,
+          "height": 1.15
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.rallying-spark.impact",
+      "name": "Rallying Spark — Leafy Burst",
+      "description": "Brief readable leaf unfurl with a restrained golden pulse at each healed recipient.",
+      "durationTicks": 28,
+      "loop": false,
+      "layers": [
+        {
+          "id": "leaves",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 24,
+            "rate": 8,
+            "speed": 2.8,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 80,
+            "gravity": -1.8,
+            "drag": 1.2,
+            "spawnRadius": 0.55,
+            "startSize": 0.5,
+            "endSize": 0.12,
+            "spin": 2.4,
+            "fadeIn": 0.05,
+            "fadeOut": 0.55
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffffff",
+          "accent": "#d8ef94",
+          "durationTicks": 26,
+          "count": 8,
+          "size": 0.5,
+          "height": 0.8,
+          "blend": "normal",
+          "follow": false,
+          "texture": {
+            "asset": "asset.assistant-trials.verdant-ward-leaf",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "gold-pulse",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#e2c46c",
+          "accent": "#a4cf82",
+          "durationTicks": 18,
+          "count": 1,
+          "size": 1.2,
+          "height": 0.08
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.rallying-spark.ward",
+      "name": "Rallying Spark — Quiet Ward",
+      "description": "Restrained attached green-gold ward, owned by the armor status.",
+      "durationTicks": 120,
+      "loop": true,
+      "layers": [
+        {
+          "id": "ward-ring",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#7abd85",
+          "accent": "#d7bb66",
+          "durationTicks": 120,
+          "count": 1,
+          "size": 0.85,
+          "height": 0.12,
+          "motion": {
+            "scale": {
+              "periodTicks": 80,
+              "min": 0.95,
+              "max": 1.05,
+              "easing": "sine"
+            },
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.5,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        },
+        {
+          "id": "ward-leaf",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 120,
+          "count": 1,
+          "size": 0.45,
+          "height": 4,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.45,
+              "max": 0.65,
+              "easing": "sine"
+            }
+          },
+          "blend": "normal",
+          "orientation": "camera",
+          "follow": true,
+          "texture": {
+            "asset": "asset.assistant-trials.verdant-ward-leaf",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.ashstep.departure",
+      "name": "Ashstep — departure flash",
+      "description": "Reusable fixed-position orange and teal teleport flash; no gameplay.",
+      "durationTicks": 20,
+      "loop": false,
+      "layers": [
+        {
+          "id": "orange-flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "source",
+          "shape": "glow",
+          "colour": "#ff781f",
+          "accent": "#ffae48",
+          "durationTicks": 10,
+          "count": 1,
+          "size": 2,
+          "height": 0.15,
+          "follow": false
+        },
+        {
+          "id": "teal-ring",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "source",
+          "shape": "ring",
+          "colour": "#20d8c9",
+          "accent": "#25aba8",
+          "durationTicks": 16,
+          "count": 1,
+          "size": 2.6,
+          "height": 0.12,
+          "follow": false
+        },
+        {
+          "id": "embers",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 18,
+            "rate": 40,
+            "speed": 5,
+            "speedVariation": 0.3,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 85,
+            "gravity": 6,
+            "drag": 3,
+            "spawnRadius": 0.8,
+            "startSize": 0.055,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0,
+            "fadeOut": 0.8
+          },
+          "anchor": "source",
+          "shape": "particles",
+          "colour": "#ff872c",
+          "accent": "#25d2c4",
+          "durationTicks": 18,
+          "count": 18,
+          "size": 0.05,
+          "height": 0.5,
+          "follow": false
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.custom.ashstep.arrival",
+      "name": "Ashstep — arrival burst",
+      "description": "Reusable teal shock ring, orange core and short-lived sparks at a captured landing.",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "teal-shock",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#20d8c9",
+          "accent": "#18b2b0",
+          "durationTicks": 20,
+          "count": 1,
+          "size": 4,
+          "height": 0.12,
+          "follow": false
+        },
+        {
+          "id": "orange-core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#ff761c",
+          "accent": "#ffa538",
+          "durationTicks": 12,
+          "count": 1,
+          "size": 2.2,
+          "height": 0.25,
+          "follow": false
+        },
+        {
+          "id": "orange-burst",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "burst",
+          "colour": "#ff8429",
+          "accent": "#28cabc",
+          "durationTicks": 14,
+          "count": 12,
+          "size": 0.1,
+          "height": 0.55,
+          "follow": false,
+          "spread": 2.8
+        },
+        {
+          "id": "sparks",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 28,
+            "rate": 40,
+            "speed": 7,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 100,
+            "gravity": 9,
+            "drag": 2,
+            "spawnRadius": 0.7,
+            "startSize": 0.065,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0,
+            "fadeOut": 0.8
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ff8a2f",
+          "accent": "#27dbce",
+          "durationTicks": 30,
+          "count": 28,
+          "size": 0.055,
+          "height": 0.6,
+          "follow": false
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.sleep",
+      "name": "Sleep",
+      "description": "Gentle floating lavender crescent and cyclic dream motes, owned by the affected Sleep status.",
+      "durationTicks": 400,
+      "loop": false,
+      "layers": [
+        {
+          "id": "aura",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#9693ed",
+          "accent": "#d9ceff",
+          "durationTicks": 400,
+          "count": 1,
+          "size": 1.1,
+          "height": 1.1,
+          "motion": {
+            "scale": {
+              "periodTicks": 120,
+              "min": 0.9,
+              "max": 1.1,
+              "easing": "sine"
+            },
+            "opacity": {
+              "periodTicks": 120,
+              "min": 0.16,
+              "max": 0.3,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        },
+        {
+          "id": "crescent",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffffff",
+          "durationTicks": 400,
+          "count": 1,
+          "size": 1.7,
+          "height": 4.7,
+          "motion": {
+            "rotation": {
+              "periodTicks": 1200,
+              "direction": "counterclockwise"
+            },
+            "scale": {
+              "periodTicks": 160,
+              "min": 0.92,
+              "max": 1.05,
+              "easing": "sine"
+            },
+            "opacity": {
+              "periodTicks": 160,
+              "min": 0.78,
+              "max": 0.98,
+              "easing": "sine"
+            }
+          },
+          "blend": "normal",
+          "orientation": "camera",
+          "follow": true,
+          "texture": {
+            "asset": "asset.custom.sleep-floating-crescent",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "mote-left",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "offset": {
+            "x": -0.9,
+            "y": 0,
+            "z": 0
+          },
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#c4b2ff",
+          "accent": "#f0eaff",
+          "durationTicks": 400,
+          "count": 1,
+          "size": 0.23,
+          "height": 4.2,
+          "motion": {
+            "scale": {
+              "periodTicks": 100,
+              "min": 0.65,
+              "max": 1.2,
+              "easing": "sine"
+            },
+            "opacity": {
+              "periodTicks": 100,
+              "min": 0.25,
+              "max": 0.8,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        },
+        {
+          "id": "mote-right",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "offset": {
+            "x": 0.95,
+            "y": 0,
+            "z": 0.15
+          },
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#c4b2ff",
+          "accent": "#f0eaff",
+          "durationTicks": 400,
+          "count": 1,
+          "size": 0.18,
+          "height": 5,
+          "motion": {
+            "scale": {
+              "periodTicks": 120,
+              "min": 0.65,
+              "max": 1.2,
+              "easing": "sine",
+              "phase": 0.5
+            },
+            "opacity": {
+              "periodTicks": 120,
+              "min": 0.25,
+              "max": 0.8,
+              "easing": "sine",
+              "phase": 0.5
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.life-drain",
+      "name": "Life Drain",
+      "description": "",
+      "durationTicks": 38,
+      "loop": false,
+      "layers": [
+        {
+          "id": "pulse",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "beam",
+          "colour": "#cf3453",
+          "accent": "#ef8a9b",
+          "durationTicks": 38,
+          "count": 1,
+          "size": 0.065,
+          "height": 1.2,
+          "follow": true,
+          "spread": 0
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.animate-dead.ward",
+      "name": "Animate Dead · Spirit Ward",
+      "description": "",
+      "durationTicks": 80,
+      "loop": false,
+      "layers": [
+        {
+          "id": "spirit-glow",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#43b996",
+          "accent": "#a7ffd5",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 1.6,
+          "height": 0.08,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.55,
+              "max": 0.9,
+              "easing": "sine"
+            }
+          },
+          "follow": true,
+          "intensity": 0.6
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.frost-arrows.chill",
+      "name": "Frost Arrows · Chill",
+      "description": "",
+      "durationTicks": 80,
+      "loop": true,
+      "layers": [
+        {
+          "id": "iceMotes",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 35,
+            "rate": 7,
+            "speed": 0.7,
+            "speedVariation": 0.35,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 25,
+            "gravity": 0,
+            "drag": 0.2,
+            "spawnRadius": 0.55,
+            "startSize": 0.075,
+            "endSize": 0.015,
+            "spin": 2,
+            "fadeIn": 0.15,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#3386dd",
+          "accent": "#a3e4ff",
+          "durationTicks": 80,
+          "count": 8,
+          "size": 0.06,
+          "height": 0.6,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.assistant-trials.frost-relay.chill",
+      "name": "Frost Relay — Lingering Chill",
+      "description": "Low frost ring and drifting ice motes, cleaned up with the three-second chill status.",
+      "durationTicks": 80,
+      "loop": true,
+      "layers": [
+        {
+          "id": "ice-motes",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 30,
+            "rate": 5,
+            "speed": 0.65,
+            "speedVariation": 0.35,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 25,
+            "gravity": 0,
+            "drag": 0.2,
+            "spawnRadius": 0.5,
+            "startSize": 0.13,
+            "endSize": 0.02,
+            "spin": 2,
+            "fadeIn": 0.15,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffffff",
+          "accent": "#a3e4ff",
+          "durationTicks": 80,
+          "count": 6,
+          "size": 0.09,
+          "height": 0.6,
+          "follow": true,
           "texture": {
             "asset": "asset.effects.blizzard-ice",
             "role": "image",
             "index": 1
           }
+        },
+        {
+          "id": "chill-ring",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "ring",
+          "colour": "#358bc4",
+          "accent": "#8edaff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 0.8,
+          "height": 0.06,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.3,
+              "max": 0.6,
+              "easing": "sine"
+            }
+          },
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.wind-walk",
+      "name": "Wind Walk veil",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "motes",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 30,
+            "rate": 5,
+            "speed": 0.7,
+            "speedVariation": 0.2,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 30,
+            "gravity": 0,
+            "drag": 1,
+            "spawnRadius": 0.6,
+            "startSize": 0.08,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.2,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#b497ee",
+          "accent": "#f0eaff",
+          "durationTicks": 40,
+          "count": 12,
+          "size": 0.08,
+          "height": 1,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.invisibility",
+      "name": "Invisibility veil",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "motes",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 30,
+            "rate": 5,
+            "speed": 0.7,
+            "speedVariation": 0.2,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 30,
+            "gravity": 0,
+            "drag": 1,
+            "spawnRadius": 0.6,
+            "startSize": 0.08,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.2,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#b497ee",
+          "accent": "#f0eaff",
+          "durationTicks": 40,
+          "count": 12,
+          "size": 0.08,
+          "height": 1,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.true-sight",
+      "name": "True Sight veil",
+      "description": "",
+      "durationTicks": 40,
+      "loop": false,
+      "layers": [
+        {
+          "id": "motes",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 30,
+            "rate": 5,
+            "speed": 0.7,
+            "speedVariation": 0.2,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 30,
+            "gravity": 0,
+            "drag": 1,
+            "spawnRadius": 0.6,
+            "startSize": 0.08,
+            "endSize": 0,
+            "spin": 0,
+            "fadeIn": 0.2,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#b8edff",
+          "accent": "#f0eaff",
+          "durationTicks": 40,
+          "count": 12,
+          "size": 0.08,
+          "height": 1,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.battle-rhythm.momentum",
+      "name": "Battle Rhythm · Momentum",
+      "description": "",
+      "durationTicks": 80,
+      "loop": true,
+      "layers": [
+        {
+          "id": "embers",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 28,
+            "rate": 8,
+            "speed": 1.1,
+            "speedVariation": 0.35,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 20,
+            "gravity": 0,
+            "drag": 0.2,
+            "spawnRadius": 0.45,
+            "startSize": 0.08,
+            "endSize": 0.01,
+            "spin": 1,
+            "fadeIn": 0.1,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffb647",
+          "accent": "#fff0ad",
+          "durationTicks": 80,
+          "count": 12,
+          "size": 0.065,
+          "height": 0.7,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.doom.curse",
+      "name": "Doom · Curse",
+      "description": "",
+      "durationTicks": 80,
+      "loop": false,
+      "layers": [
+        {
+          "id": "brand",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#9d361f",
+          "accent": "#ffaf36",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 1.4,
+          "height": 0.1,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.45,
+              "max": 1,
+              "easing": "sine"
+            }
+          },
+          "follow": true,
+          "intensity": 0.65
+        },
+        {
+          "id": "embers",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 40,
+            "rate": 12,
+            "speed": 2,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 30,
+            "gravity": -0.8,
+            "drag": 0.4,
+            "spawnRadius": 0.8,
+            "startSize": 0.07,
+            "endSize": 0.015,
+            "spin": 2,
+            "fadeIn": 0.1,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#e56124",
+          "accent": "#ffcf62",
+          "durationTicks": 80,
+          "count": 28,
+          "size": 0.08,
+          "height": 0.1,
+          "follow": true
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.core.black-arrow.mark",
+      "name": "Black Arrow · Mark",
+      "description": "Reusable violet shadow layers for the Black Arrow proof.",
+      "durationTicks": 80,
+      "loop": false,
+      "layers": [
+        {
+          "id": "brand",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#8948da",
+          "accent": "#dca4ff",
+          "durationTicks": 80,
+          "count": 1,
+          "size": 1.4,
+          "height": 0.1,
+          "motion": {
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.45,
+              "max": 1,
+              "easing": "sine"
+            }
+          },
+          "follow": true,
+          "intensity": 0.65
+        },
+        {
+          "id": "embers",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 40,
+            "rate": 12,
+            "speed": 2,
+            "speedVariation": 0.4,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 30,
+            "gravity": -0.8,
+            "drag": 0.4,
+            "spawnRadius": 0.8,
+            "startSize": 0.07,
+            "endSize": 0.015,
+            "spin": 2,
+            "fadeIn": 0.1,
+            "fadeOut": 0.6
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#8948da",
+          "accent": "#dca4ff",
+          "durationTicks": 80,
+          "count": 28,
+          "size": 0.08,
+          "height": 0.1,
+          "follow": true
         }
       ]
     }

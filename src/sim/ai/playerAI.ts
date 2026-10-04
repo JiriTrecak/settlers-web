@@ -1,4 +1,5 @@
-import {continuesOrder,orderIntent} from './orderContinuity';
+import {SimulationProfiler} from '../profiling';
+import {continuesOrder,orderIntent,approachingArmy,REINFORCEMENT_JOIN_RADIUS} from './orderContinuity';
 import { canonical, type ContentRegistry } from "../../content/registry";
 import type { Owner } from "../../content/schema";
 import type { Action } from "../../shared/types/types";
@@ -29,6 +30,7 @@ const spends = (a: Action) => a.type === "build" || a.type === "produce" || a.ty
 /** The only AI entry point. Dependencies deliberately exclude Game, Spatial and authoritative state. */
 export class PlayerAI {
   private state: AIState;
+  profile=new SimulationProfiler();
   constructor(
     readonly owner: Owner,
     readonly registry: ContentRegistry,
@@ -100,14 +102,14 @@ export class PlayerAI {
     const s = this.state,
       rules = this.registry.rules.ai;
     if (input.outcome || !this.due(tick)) return [];
-    const f = new Frame(
+    const f = this.profile.measure('Observation and frame',()=>new Frame(
       playerObservation(input, this.owner),
       this.owner,
       this.registry,
       this.geography,
       tick,
-    );
-    this.observe(f);
+    ));
+    this.profile.measure('Memory',()=>this.observe(f));
     const output: AICommand[] = [],
       claimed = new Set<number>();
     let budgetSpent = false;
@@ -172,19 +174,19 @@ export class PlayerAI {
       return true;
     };
     // Skill/item management and immediate survival claim their actors before ordinary missions.
-    abilityActions(f,emit);
-    heroActions(f, s, emit);
+    this.profile.measure('Ability decisions',()=>abilityActions(f,emit));
+    this.profile.measure('Hero decisions',()=>heroActions(f,s,emit));
     if (tick >= s.nextStrategy) {
-      this.strategy(f);
+      this.profile.measure('Strategy',()=>this.strategy(f));
       s.nextStrategy = tick + rules.strategyTicks;
     }
     if (tick >= s.nextEconomy) {
-      economy(f, s, emit);
+      this.profile.measure('Economy',()=>economy(f,s,emit));
       s.nextEconomy = tick + rules.economyTicks;
     }
-    reactions(f, s, emit);
+    this.profile.measure('Tactical reactions',()=>reactions(f,s,emit));
     if (tick >= s.nextOperation) {
-      this.operations(f, emit);
+      this.profile.measure('Operations',()=>this.operations(f,emit));
       s.nextOperation = tick + rules.operationTicks;
     }
     return output;
@@ -623,13 +625,14 @@ export class PlayerAI {
     const leader = squad.find((e) => f.def(e).hero) ?? squad[0]!;
     const reinforcements = available.filter((e) => !m.members.includes(e.id));
     for (const e of reinforcements)
-      if (distance(e, leader) < 16 && m.members.length < 24) {
+      if (distance(e, leader) < REINFORCEMENT_JOIN_RADIUS && m.members.length < 24) {
         m.members.push(e.id);
         squad.push(e);
       }
     const joining = reinforcements.filter(
       (e) =>
         !m.members.includes(e.id) &&
+        !approachingArmy(e,leader) &&
         !f.hostiles.some((h) => distance(h, e) < 14),
     );
     if (joining.length)

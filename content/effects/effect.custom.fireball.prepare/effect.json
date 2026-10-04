@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.custom.fireball.prepare",
+  "name": "Fireball Preparation",
+  "description": "A brief warm glow gathers around the caster before release.",
+  "durationTicks": 16,
+  "loop": false,
+  "layers": [
+    {
+      "id": "gather",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "source",
+      "shape": "glow",
+      "colour": "#ec4f0d",
+      "accent": "#ffbb46",
+      "durationTicks": 16,
+      "count": 1,
+      "size": 0.9,
+      "height": 0.1
+    }
+  ]
+}

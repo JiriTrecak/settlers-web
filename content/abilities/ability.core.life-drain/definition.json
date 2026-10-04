@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.life-drain",
+  "name": "Life Drain",
+  "description": "Channel for ten seconds, draining health once per second and restoring only the health actually removed. Movement, disabling the caster or breaking the ten-metre tether ends it.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "range": 16,
+      "mana": 20,
+      "cooldownTicks": 160
+    }
+  ],
+  "targeting": {
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "enemy"
+    ],
+    "allowSelf": false,
+    "range": 16,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "channel": {
+      "waves": 10,
+      "intervalTicks": 40,
+      "tetherRange": 10
+    },
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "drain",
+      "target": "target",
+      "amount": 30,
+      "resource": "health",
+      "restoreCaster": true,
+      "damageType": "spell",
+      "damagePerDrainedPermille": 0
+    }
+  ],
+  "presentation": "presentation.core.life-drain"
+}

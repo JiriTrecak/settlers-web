@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.frost-arrows.flight",
+  "name": "Frost Arrows · Flight",
+  "description": "",
+  "durationTicks": 30,
+  "loop": false,
+  "layers": [
+    {
+      "id": "ice",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "missile",
+      "colour": "#359dff",
+      "accent": "#a1e9ff",
+      "durationTicks": 30,
+      "count": 1,
+      "size": 0.15,
+      "height": 1.35,
+      "intensity": 1,
+      "length": 2.8
+    },
+    {
+      "id": "core",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "missile",
+      "colour": "#cef7ff",
+      "accent": "#f2fdff",
+      "durationTicks": 30,
+      "count": 1,
+      "size": 0.045,
+      "height": 1.35,
+      "intensity": 1.4,
+      "length": 3.5
+    }
+  ]
+}

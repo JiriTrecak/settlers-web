@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.soul-harvest.restoration",
+  "name": "Soul Harvest · Restoration",
+  "description": "",
+  "durationTicks": 36,
+  "loop": false,
+  "layers": [
+    {
+      "id": "pool",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#ad7ee9",
+      "accent": "#e5e6ff",
+      "durationTicks": 30,
+      "count": 1,
+      "size": 1.8,
+      "height": 0.1,
+      "intensity": 0.5
+    },
+    {
+      "id": "rise",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 36,
+        "rate": 1,
+        "speed": 3,
+        "speedVariation": 0.2,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 15,
+        "gravity": -1,
+        "drag": 0.4,
+        "spawnRadius": 1,
+        "startSize": 0.09,
+        "endSize": 0.025,
+        "spin": 1,
+        "fadeIn": 0.1,
+        "fadeOut": 0.7
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#b895ed",
+      "accent": "#f1ecff",
+      "durationTicks": 36,
+      "count": 20,
+      "size": 0.09,
+      "height": 0.1
+    }
+  ]
+}

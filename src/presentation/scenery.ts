@@ -2,6 +2,7 @@ import { content } from "../content/builtin";
 import type { EntityView, SettlementView } from "../sim/game/observation";
 import type { MapStamp, UtcMap } from "../shared/map/utcmap";
 import { expandMap } from "../content/map";
+import {resourceSceneryRevision} from './resourceSceneryRevision';
 export function authoredScene(
   entities: EntityView[],
   _size = 256,
@@ -84,7 +85,12 @@ export function editorEntities(map: UtcMap): EntityView[] {
 export class ResourceScenery {
   private readonly cache = new WeakMap<EntityView, MapStamp | null>();
   private previous: readonly MapStamp[] = [];
+  private byId = new Map<string,MapStamp>();
+  private published:object|undefined;
   project(entities: readonly EntityView[]): readonly MapStamp[] {
+    const published=resourceSceneryRevision(entities);
+    if(published&&published===this.published)return this.previous;
+    this.published=published;
     const next: MapStamp[] = [];
     for (const e of entities) {
       if (!e.resource) continue;
@@ -93,13 +99,21 @@ export class ResourceScenery {
         stamp = resourceStamps([e])[0] ?? null;
         this.cache.set(e, stamp);
       }
-      if (stamp) next.push(stamp);
+      if (stamp) {
+        const prior=this.byId.get(stamp.id);
+        next.push(prior&&sameResourceStamp(prior,stamp)?prior:stamp);
+      }
     }
     if (next.length === this.previous.length && next.every((s,i) => {
       const p=this.previous[i]!;
       return s===p || (s.id===p.id && s.asset===p.asset && s.x===p.x && s.y===p.y && s.yaw===p.yaw && s.scale===p.scale);
     })) return this.previous;
     this.previous = next;
+    this.byId = new Map(next.map(s=>[s.id,s]));
     return next;
   }
+}
+
+function sameResourceStamp(a:MapStamp,b:MapStamp){
+ return a===b||(a.id===b.id&&a.asset===b.asset&&a.x===b.x&&a.y===b.y&&a.yaw===b.yaw&&a.scale===b.scale);
 }

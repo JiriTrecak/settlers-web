@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.battle-rhythm",
+  "icon": "asset.custom.battle-rhythm-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "pulse",
+      "effect": "effect.core.battle-rhythm.pulse",
+      "event": "weaponRelease",
+      "anchor": "caster",
+      "lifetime": "finite"
+    },
+    {
+      "id": "momentum",
+      "effect": "effect.core.battle-rhythm.momentum",
+      "statusId": "momentum",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

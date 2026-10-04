@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.custom.frost-arrows-command",
+  "name": "Frost Arrows command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "fef1ff3a3ebae3dd4e0b78426e15e3ce1c6a49621d95de71081f7fda3b5e92e1",
+      "bytes": 715
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "3032431733f66b506d15c818e374c9e72f3547adfef71fea876a4d89499eff9b",
+      "bytes": 641805
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "88da0294801b062d6b94311d6c149e51a7b1cdaf5850b82fb921584e0a3615e5",
+      "bytes": 1680806
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.custom.frost-arrows-command",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.custom.frost-arrows-command"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

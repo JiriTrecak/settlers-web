@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.spirit-swarm",
+  "icon": "asset.custom.spirit-swarm-command-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle",
+    "channel": "attack"
+  },
+  "effects": [
+    {
+      "id": "flight",
+      "effect": "effect.core.spirit-swarm.flight",
+      "event": "projectile",
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery"
+    },
+    {
+      "id": "bite",
+      "effect": "effect.core.spirit-swarm.bite",
+      "event": "impact",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "return",
+      "effect": "effect.core.spirit-swarm.return",
+      "event": "returned",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

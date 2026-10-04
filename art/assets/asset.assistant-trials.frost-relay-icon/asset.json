@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.assistant-trials.frost-relay-icon",
+  "name": "Frost Relay command icon",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "60cbacbda3d1e2340b5e9f8bf3b117611d5b72971f15a982b229cc979cf5f154",
+      "bytes": 744
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "a0295a21bfef7b79627ac1fedd901a0c1c4779c68468550a56baf3d9f1f9285f",
+      "bytes": 680023
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "986a1cc7cd1d4745a824995e69e31b84fe673ed8c4dac2b6192191676682fa00",
+      "bytes": 1799946
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.assistant-trials.frost-relay-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.assistant-trials.frost-relay-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

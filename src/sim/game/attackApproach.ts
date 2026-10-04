@@ -11,11 +11,11 @@ export function routeToAttack(c: GameContext, actor: Entity, target: Entity, geo
   const halfX = footprint ? (rotated ? footprint.depth : footprint.width) / 2 : 0;
   const halfY = footprint ? (rotated ? footprint.width : footprint.depth) / 2 : 0;
   const reservations = new Set(c.activeUnits()
-    .filter(e => e.id !== actor.id && e.owner === actor.owner && e.unit!.target === target.id && e.unit!.route.length)
+    .filter(e => e.id !== actor.id && c.spatial.sameLocomotion(e,actor) && e.owner === actor.owner && e.unit!.target === target.id && e.unit!.route.length)
     .map(e => e.unit!.goal));
   // This cache lasts only one planning pass: terrain and targets cannot move
   // within it. Body occupancy and friendly reservations remain actor-specific.
-  const key = `${target.id}:${range}:${!!(combat.projectile || combat.shell)}`;
+  const key = `${target.id}:${actor.definition}:${c.spatial.airborne(actor)}:${c.spatial.dimensions(actor).radius}:${range}:${!!(combat.projectile || combat.shell)}`;
   let positions = geometry?.get(key);
   if (!positions) {
     const points: Point[] = [];
@@ -24,8 +24,8 @@ export function routeToAttack(c: GameContext, actor: Entity, target: Entity, geo
         for(const point of c.spatial.pointsAt(x,y)){
         const dx = Math.max(0, Math.abs(x - center.x) - halfX);
         const dy = Math.max(0, Math.abs(y - center.y) - halfY);
-        if (dx * dx + dy * dy > range * range || !c.spatial.walkable(c.spatial.cell(point))) continue;
-        if(!c.spatial.attackClear(point,target,!!(combat.projectile||combat.shell)))continue;
+        if (dx * dx + dy * dy > range * range || !c.spatial.unitWalkable(point,actor)) continue;
+        if(!c.spatial.attackClear({...point,elevation:c.spatial.elevation({...actor,...point})},target,!!(combat.projectile||combat.shell)))continue;
         points.push(point);
         }
       }
@@ -37,7 +37,7 @@ export function routeToAttack(c: GameContext, actor: Entity, target: Entity, geo
   const detours: Point[] = [];
   // Prefer a clear approach on this side of terrain before searching detours.
   for (const candidate of candidates) {
-    if (!c.spatial.free(candidate.point, actor.id)) continue;
+    if (!c.spatial.free(candidate.point, actor.id, actor)) continue;
     if (c.spatial.clearSegment(fixed(origin), fixed(candidate.point), undefined, actor) && c.spatial.route(actor, candidate.point, false)) return true;
     if (detours.length < 8) detours.push(candidate.point);
   }

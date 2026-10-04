@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.core.holy-light",
+  "icon": "asset.custom.holy-light-command",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "attack",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "heal",
+      "effect": "effect.core.holy-light.burst",
+      "event": "healed",
+      "anchor": "target",
+      "lifetime": "finite"
+    },
+    {
+      "id": "damage",
+      "effect": "effect.core.holy-light.burst",
+      "event": "damaged",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

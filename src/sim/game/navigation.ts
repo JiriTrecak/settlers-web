@@ -1,3 +1,5 @@
+import {SimulationProfiler} from '../profiling';
+import {MonotonicNavigationQueue} from './monotonicNavigationQueue';
 import {SECTOR_SIZE} from '../../shared/spatial/sectors';
 export const CARDINAL_COST = 1000;
 export const DIAGONAL_COST = 1414;
@@ -23,14 +25,13 @@ export class Navigation {
   lastExpanded=0;
   private readonly edges: Uint8Array;
   private readonly knownEdges: Uint8Array;
-  private heapIds=new Int32Array(256);
-  private heapCosts=new Int32Array(256);
-  private heapHeuristics=new Int32Array(256);
+  private readonly queue=new MonotonicNavigationQueue();
   constructor(
     readonly size: number,
     private readonly canStep: (from: number, to: number) => boolean,
     private readonly connected?: (start:number,goal:number) => boolean,
     private readonly cacheTerrain = false,
+    private readonly profile=new SimulationProfiler(),
   ) {
     const n = size * size;
     this.edges = new Uint8Array(cacheTerrain ? n : 0);
@@ -53,14 +54,24 @@ export class Navigation {
       }
     }
   }
-  private edgeMask(cell:number):number {
-    if(this.knownEdges[cell])return this.edges[cell]!;
-    const x=cell%this.size,y=Math.floor(cell/this.size);let mask=0;
-    for(let i=0;i<DIRECTIONS.length;i++){
-      const [dx,dy]=DIRECTIONS[i]!,nx=x+dx,ny=y+dy;
-      if(nx>=0&&ny>=0&&nx<this.size&&ny<this.size&&canTraverse(this.size,cell,ny*this.size+nx,this.canStep))mask|=1<<i;
+  private edge(from:number,to:number,bit:number):boolean {
+    // Reverse pocket probes often need only one outgoing edge per cell.
+    // Cache requested directions rather than sweeping all eight body paths.
+    if(!(this.knownEdges[from]!&bit)){
+      // A diagonal checks four cardinal side corridors. Those are the same
+      // directed edges requested by neighboring searches, so share their cache
+      // instead of repeating full body sweeps for every diagonal. Cardinal
+      // calls already have valid adjacent coordinates from the caller.
+      const clear=bit<16?this.canStep(from,to):canTraverse(this.size,from,to,(a,b)=>{
+        if(a===from&&b===to)return this.canStep(a,b);
+        const delta=b-a,side=delta===-this.size?1:delta===-1?2:delta===1?4:8;
+        return this.edge(a,b,side);
+      });
+      if(clear)this.edges[from]!|=bit;
+      else this.edges[from]!&=~bit;
+      this.knownEdges[from]!|=bit;
     }
-    this.knownEdges[cell]=1;this.edges[cell]=mask;return mask;
+    return !!(this.edges[from]!&bit);
   }
   /** A small closed start region can be reused across one worker's candidate
    * probes. Null means the region is larger than the bounded local search. */
@@ -92,7 +103,7 @@ export class Navigation {
     // rediscovering it with divisions for every edge of a large search.
     const directionBits=[16,1,32,2,0,4,64,8,128];
     const traverse=this.cacheTerrain
-      ? (a:number,b:number,dx:number,dy:number)=>!!(this.edgeMask(a)&directionBits[(dy+1)*3+dx+1]!)&&
+      ? (a:number,b:number,dx:number,dy:number)=>this.edge(a,b,directionBits[(dy+1)*3+dx+1]!)&&
         (!obstacles||(!obstacles.has(b)&&(!(dx&&dy)||(!obstacles.has(a+dx)&&!obstacles.has(a+dy*this.size)))))
       : (a:number,b:number,dx:number,dy:number)=>step(a,b)&&
       (!(dx&&dy)||(step(a,a+dx)&&step(a,a+dy*this.size)&&step(a+dx,b)&&step(a+dy*this.size,b)));
@@ -114,6 +125,7 @@ export class Navigation {
     // Small goal-side pockets are common in crowded bases. A bounded reverse
     // reachability check proves failure cheaply; larger regions fall through
     // to the unchanged forward A* and retain its deterministic route choice.
+    const reachable=this.profile.measure('Destination reachability',()=>{
     const reverse = [goal], reverseSeen = new Set<number>(reverse);
     let connected = false, cursor = 0;
     for (; cursor < reverse.length && reverse.length < 128; cursor++) {
@@ -129,34 +141,11 @@ export class Navigation {
       }
       if (connected) break;
     }
-    if (!connected && cursor === reverse.length) return null;
-    let ids=this.heapIds,gs=this.heapCosts,hs=this.heapHeuristics,length=0;
-    const better=(g:number,h:number,id:number,b:number)=>g+h<gs[b]!+hs[b]!||
-      (g+h===gs[b]!+hs[b]!&&(h<hs[b]!||(h===hs[b]!&&id<ids[b]!)));
-    const push=(id:number,g:number,h:number)=>{
-      if(length===ids.length){
-        const nextIds=new Int32Array(length*2),nextGs=new Int32Array(length*2),nextHs=new Int32Array(length*2);
-        nextIds.set(ids);nextGs.set(gs);nextHs.set(hs);
-        ids=this.heapIds=nextIds;gs=this.heapCosts=nextGs;hs=this.heapHeuristics=nextHs;
-      }
-      let i=length++;
-      while(i){const parent=(i-1)>>1;if(!better(g,h,id,parent))break;
-        ids[i]=ids[parent]!;gs[i]=gs[parent]!;hs[i]=hs[parent]!;i=parent;}
-      ids[i]=id;gs[i]=g;hs[i]=h;
-    };
-    const top={id:0,g:0};
-    const pop=()=>{
-      top.id=ids[0]!;top.g=gs[0]!;
-      const end=--length,id=ids[end]!,g=gs[end]!,h=hs[end]!;
-      if(length){let i=0;
-        while(i*2+1<length){let child=i*2+1;
-          if(child+1<length&&better(gs[child+1]!,hs[child+1]!,ids[child+1]!,child))child++;
-          if(!better(gs[child]!,hs[child]!,ids[child]!,end))break;
-          ids[i]=ids[child]!;gs[i]=gs[child]!;hs[i]=hs[child]!;i=child;}
-        ids[i]=id;gs[i]=g;hs[i]=h;
-      }
-      return top;
-    };
+    return connected || cursor < reverse.length;
+    });
+    if(!reachable)return null;
+    return this.profile.measure('A-star expansion',()=>{
+    const queue=this.queue;queue.reset();
     const gx = goal % this.size,
       gz = Math.floor(goal / this.size);
     const heuristic = (id: number) => {
@@ -166,9 +155,9 @@ export class Navigation {
     if(heuristic(start)>maxCost)return null;
     seen[start] = epoch;
     cost[start] = 0;
-    push(start, 0, heuristic(start));
-    while (length) {
-      const cur = pop(),
+    queue.push(start, 0, heuristic(start));
+    while (queue.length) {
+      const cur = queue.pop(),
         id = cur.id;
       if (closed[id] === epoch || cur.g !== cost[id]) continue;
       if (id === goal) {
@@ -183,22 +172,27 @@ export class Navigation {
       closed[id] = epoch;this.lastExpanded++;
       const x = id % this.size,
         z = Math.floor(id / this.size);
-      for (const [dx, dy] of DIRECTIONS) {
+      for (let direction=0;direction<DIRECTIONS.length;direction++) {
+        const dx=DIRECTIONS[direction]![0],dy=DIRECTIONS[direction]![1];
         const nx = x + dx, ny = z + dy;
         if (nx < 0 || ny < 0 || nx >= this.size || ny >= this.size) continue;
         if(corridor&&!corridor[Math.floor(ny/SECTOR_SIZE)*sectorWidth+Math.floor(nx/SECTOR_SIZE)])continue;
         const next = ny * this.size + nx;
-        if (closed[next] === epoch || !traverse(id, next, dx, dy)) continue;
+        if (closed[next] === epoch) continue;
         const g = cur.g + (dx && dy ? DIAGONAL_COST : CARDINAL_COST);
         if (seen[next] === epoch && g >= cost[next]!) continue;
         const h=heuristic(next);
         if(g+h>maxCost)continue;
+        // A dominated candidate cannot affect the route. Reject it before
+        // consulting terrain edges or dynamic body occupancy.
+        if(!traverse(id,next,dx,dy))continue;
         seen[next] = epoch;
         cost[next] = g;
         prev[next] = id;
-        push(next, g, h);
+        queue.push(next, g, h);
       }
     }
     return null;
+    });
   }
 }

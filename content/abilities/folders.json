@@ -60,6 +60,126 @@
       "id": "folder.dreadlord",
       "name": "dreadlord",
       "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.5680aff8-9419-4f52-9704-13c783e0bda1",
+      "name": "shadow-hunter",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.af49344f-bd2f-4c0e-b67e-7efcec65ecb7",
+      "name": "lich",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.7e71ad31-b437-4fb9-8e9c-fa2de0bd69f8",
+      "name": "dark-ranger",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.e6b92380-e28b-4c83-9857-d89fe639b7dd",
+      "name": "blood-mage",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.6cebed26-af1e-4821-8ada-0edfef1e39c7",
+      "name": "demon-hunter",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.38e4bfa1-1296-437b-ab13-cd8a1c779b52",
+      "name": "naga-sea-witch",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.34b7f3e5-87f5-4b44-a99f-0add50cf2256",
+      "name": "pit-lord",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.68f862c6-2fa8-43b7-93ba-d967bd92f65c",
+      "name": "neutral",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.0c841760-2c80-4524-b84b-28ed56742106",
+      "name": "shaman",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.a11f4823-1217-4337-9912-f62ac8077370",
+      "name": "warden",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.63218d43-28e5-490b-9038-21613bf06769",
+      "name": "blademaster",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.406e1740-968a-482a-b3c5-31eb8fd311a2",
+      "name": "sorceress",
+      "parent": "folder.units"
+    },
+    {
+      "id": "folder.50d9edfd-eb54-4d45-afa4-9f0b39e4ec8e",
+      "name": "neutral",
+      "parent": "folder.units"
+    },
+    {
+      "id": "folder.5b7548b4-2568-4e5a-9f37-3e714e661556",
+      "name": "death-knight",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.bef829ff-fd36-49a3-84f0-ad7b966863ef",
+      "name": "priestess-of-the-moon",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.cbd88e38-c712-4bd5-9759-9b92c41b51c2",
+      "name": "necromancer",
+      "parent": "folder.units"
+    },
+    {
+      "id": "folder.47fd41bd-7c58-4878-84a5-d655593538da",
+      "name": "kodo-beast",
+      "parent": "folder.units"
+    },
+    {
+      "id": "folder.24b53067-9b16-4354-8de3-161aa2c881cc",
+      "name": "neutral",
+      "parent": "folder.spells"
+    },
+    {
+      "id": "folder.9f445fc3-b76f-41b3-ab6b-b6effe1190dc",
+      "name": "crypt-lord",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.760d3e14-131c-4481-9451-ad57ea88e1a1",
+      "name": "druid-of-the-talon",
+      "parent": "folder.units"
+    },
+    {
+      "id": "folder.cd18f8e3-6e93-4ebe-924b-610d204b059e",
+      "name": "crypt-fiend",
+      "parent": "folder.units"
+    },
+    {
+      "id": "folder.03fbeb79-c633-409a-a10a-577529c5a80a",
+      "name": "tinker",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.c5d14714-6664-4dbd-80cf-7466c251f9b1",
+      "name": "brewmaster",
+      "parent": "folder.heroes"
+    },
+    {
+      "id": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+      "name": "assistant-trials",
+      "parent": "folder.spells"
     }
   ],
   "items": {
@@ -73,6 +193,78 @@
     "ability.core.chain-lightning": "folder.far-seer",
     "ability.core.shockwave": "folder.tauren-chieftain",
     "ability.core.vampiric-aura": "folder.dreadlord",
-    "ability.core.thorns-aura": "folder.keeper-of-the-grove"
+    "ability.core.thorns-aura": "folder.keeper-of-the-grove",
+    "ability.core.healing-wave": "folder.5680aff8-9419-4f52-9704-13c783e0bda1",
+    "ability.core.war-stomp": "folder.tauren-chieftain",
+    "ability.core.frost-nova": "folder.af49344f-bd2f-4c0e-b67e-7efcec65ecb7",
+    "ability.core.frost-armor": "folder.af49344f-bd2f-4c0e-b67e-7efcec65ecb7",
+    "ability.core.inferno": "folder.dreadlord",
+    "ability.core.sleep": "folder.dreadlord",
+    "ability.core.silence": "folder.7e71ad31-b437-4fb9-8e9c-fa2de0bd69f8",
+    "ability.core.life-drain": "folder.7e71ad31-b437-4fb9-8e9c-fa2de0bd69f8",
+    "ability.core.bash": "folder.mountain-king",
+    "ability.core.tranquility": "folder.keeper-of-the-grove",
+    "ability.core.flame-strike": "folder.e6b92380-e28b-4c83-9857-d89fe639b7dd",
+    "ability.core.siphon-mana": "folder.e6b92380-e28b-4c83-9857-d89fe639b7dd",
+    "ability.core.immolation": "folder.6cebed26-af1e-4821-8ada-0edfef1e39c7",
+    "ability.core.mana-burn": "folder.6cebed26-af1e-4821-8ada-0edfef1e39c7",
+    "ability.core.mana-shield": "folder.38e4bfa1-1296-437b-ab13-cd8a1c779b52",
+    "ability.core.howl-of-terror": "folder.34b7f3e5-87f5-4b44-a99f-0add50cf2256",
+    "ability.core.roar": "folder.68f862c6-2fa8-43b7-93ba-d967bd92f65c",
+    "ability.core.armor-hex": "folder.68f862c6-2fa8-43b7-93ba-d967bd92f65c",
+    "ability.core.anti-magic-shell": "folder.68f862c6-2fa8-43b7-93ba-d967bd92f65c",
+    "ability.core.absorption-shield": "folder.68f862c6-2fa8-43b7-93ba-d967bd92f65c",
+    "ability.core.lightning-shield": "folder.0c841760-2c80-4524-b84b-28ed56742106",
+    "ability.core.blink": "folder.a11f4823-1217-4337-9912-f62ac8077370",
+    "ability.core.mass-teleport": "folder.archmage",
+    "ability.core.far-sight": "folder.far-seer",
+    "ability.core.wind-walk": "folder.63218d43-28e5-490b-9038-21613bf06769",
+    "ability.core.invisibility": "folder.406e1740-968a-482a-b3c5-31eb8fd311a2",
+    "ability.core.true-sight": "folder.68f862c6-2fa8-43b7-93ba-d967bd92f65c",
+    "ability.core.hex": "folder.5680aff8-9419-4f52-9704-13c783e0bda1",
+    "ability.core.avatar": "folder.mountain-king",
+    "ability.core.metamorphosis": "folder.6cebed26-af1e-4821-8ada-0edfef1e39c7",
+    "ability.core.spell-ward": "folder.50d9edfd-eb54-4d45-afa4-9f0b39e4ec8e",
+    "ability.core.dismiss-summon": "folder.50d9edfd-eb54-4d45-afa4-9f0b39e4ec8e",
+    "ability.core.holy-light": "folder.paladin",
+    "ability.core.death-coil": "folder.5b7548b4-2568-4e5a-9f37-3e714e661556",
+    "ability.core.critical-strike": "folder.63218d43-28e5-490b-9038-21613bf06769",
+    "ability.core.evasion": "folder.6cebed26-af1e-4821-8ada-0edfef1e39c7",
+    "ability.core.cleaving-attack": "folder.34b7f3e5-87f5-4b44-a99f-0add50cf2256",
+    "ability.core.searing-arrows": "folder.bef829ff-fd36-49a3-84f0-ad7b966863ef",
+    "ability.core.unstoppable": "folder.50d9edfd-eb54-4d45-afa4-9f0b39e4ec8e",
+    "ability.core.banish": "folder.e6b92380-e28b-4c83-9857-d89fe639b7dd",
+    "ability.core.death-burst": "folder.50d9edfd-eb54-4d45-afa4-9f0b39e4ec8e",
+    "ability.core.soul-harvest": "folder.50d9edfd-eb54-4d45-afa4-9f0b39e4ec8e",
+    "ability.core.doom": "folder.34b7f3e5-87f5-4b44-a99f-0add50cf2256",
+    "ability.core.black-arrow": "folder.7e71ad31-b437-4fb9-8e9c-fa2de0bd69f8",
+    "ability.core.resurrection": "folder.paladin",
+    "ability.core.raise-dead": "folder.cbd88e38-c712-4bd5-9759-9b92c41b51c2",
+    "ability.core.animate-dead": "folder.5b7548b4-2568-4e5a-9f37-3e714e661556",
+    "ability.core.reincarnation": "folder.tauren-chieftain",
+    "ability.core.charm": "folder.7e71ad31-b437-4fb9-8e9c-fa2de0bd69f8",
+    "ability.core.devour": "folder.47fd41bd-7c58-4878-84a5-d655593538da",
+    "ability.core.battle-rhythm": "folder.24b53067-9b16-4354-8de3-161aa2c881cc",
+    "ability.core.frost-arrows": "folder.38e4bfa1-1296-437b-ab13-cd8a1c779b52",
+    "ability.core.death-pact": "folder.5b7548b4-2568-4e5a-9f37-3e714e661556",
+    "ability.core.dark-ritual": "folder.af49344f-bd2f-4c0e-b67e-7efcec65ecb7",
+    "ability.core.death-and-decay": "folder.af49344f-bd2f-4c0e-b67e-7efcec65ecb7",
+    "ability.core.carrion-spirits": "folder.9f445fc3-b76f-41b3-ab6b-b6effe1190dc",
+    "ability.core.spirit-companion": "folder.24b53067-9b16-4354-8de3-161aa2c881cc",
+    "ability.core.flight-form": "folder.760d3e14-131c-4481-9451-ad57ea88e1a1",
+    "ability.core.web": "folder.cd18f8e3-6e93-4ebe-924b-610d204b059e",
+    "ability.core.grove-nursery": "folder.03fbeb79-c633-409a-a10a-577529c5a80a",
+    "ability.core.spirit-swarm": "folder.9f445fc3-b76f-41b3-ab6b-b6effe1190dc",
+    "ability.core.spirit-trinity": "folder.c5d14714-6664-4dbd-80cf-7466c251f9b1",
+    "ability.assistant-trials.verdant-ward": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+    "ability.assistant-trials.frost-relay": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+    "ability.custom.ember-garden": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+    "ability.custom.amber-mend": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+    "ability.custom.moonpetal-ward": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+    "ability.custom.cinder-pin": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+    "ability.custom.dewspring": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+    "ability.custom.spore-sanctuary": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+    "ability.custom.rallying-spark": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+    "ability.custom.ashstep": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76"
   }
 }

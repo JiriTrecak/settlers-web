@@ -2,6 +2,7 @@ import {describe,expect,it,vi} from 'vitest';
 import {game,placed} from './helpers';
 import {fixed} from '../../src/sim/game/motion';
 import {UnitIndex} from '../../src/sim/game/unitIndex';
+import {separateOverlaps} from '../../src/sim/game/separation';
 
 describe('movement broad phase',()=>{
  it('matches full collision scans across bucket boundaries and sequential movement',()=>{
@@ -50,6 +51,21 @@ describe('movement broad phase',()=>{
   g.spatial.beginUnitMovement();probe();g.spatial.endUnitMovement();
   expect(ignore.mock.calls.length).toBeLessThan(bruteCalls/20);
  });
+});
+
+it('uses local buckets for idle separation while retaining route choices and releasing the index',()=>{
+ const fixtures=Array.from({length:240},(_,i)=>placed('idle'+i,'unit.ants.warrior',20+(i%20)*8,20+Math.floor(i/20)*8));
+ // Two genuinely stacked groups exercise nearest-position choice, not just empty probes.
+ for(const i of [1,2,22,23])fixtures[i]={...fixtures[i],position:{...fixtures[i<3?0:21].position}};
+ const a=game(fixtures),b=game(fixtures);
+ vi.spyOn(b.spatial,'beginUnitMovement').mockImplementation(()=>{});
+ const indexed=vi.spyOn(a.spatial,'ignoresUnits'),brute=vi.spyOn(b.spatial,'ignoresUnits');
+ for(let tick=0;tick<20;tick++){
+  a.state.tick=b.state.tick=tick;separateOverlaps(a.context);separateOverlaps(b.context);
+  expect(a.checksum()).toBe(b.checksum());expect((a.spatial as any).unitIndex).toBe(null);
+ }
+ expect(indexed.mock.calls.length).toBeLessThan(brute.mock.calls.length/3);
+ expect(a.entities.some(e=>e.placement?.startsWith('idle')&&e.unit!.route.length)).toBe(true);
 });
 
 it('waits at a temporarily occupied passage instead of marching around the map edge',()=>{

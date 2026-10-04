@@ -13,11 +13,16 @@ export class AuthoringHistory{
  get scene():AuthoringScene{return structuredClone(this.current);}
  get canUndo(){return this.past.length>0;}
  get canRedo(){return this.future.length>0;}
+ /** Prepare an isolated transaction without duplicating immutable history scenes. */
+ fork():AuthoringHistory{
+  const copy=new AuthoringHistory(this.current);copy.past=[...this.past];copy.future=[...this.future];
+  copy.selection=this.selection?{...this.selection}:null;copy.revision=this.revision;return copy;
+ }
  private commit(scene:AuthoringScene,selection=this.selection){
   const parsed=authoringSceneSchema.parse(scene);this.past.push({scene:this.current,selection:this.selection});this.past=this.past.slice(-64);this.future=[];this.current=parsed;this.selection=selection;this.revision++;
  }
- putLayer(input:ProceduralLayer){const layer=proceduralLayerSchema.parse(input),old=this.current.layers.find(l=>l.id===layer.id);if(old?.locked)throw Error('Layer is locked');this.commit({...this.current,layers:[...this.current.layers.filter(l=>l.id!==layer.id),layer]},{kind:'layer',id:layer.id});}
- putObject(input:AuthoredObject){const obj=authoredObjectSchema.parse(input),old=this.current.objects.find(o=>o.id===obj.id);if(old?.locked)throw Error('Object is locked');this.commit({...this.current,objects:[...this.current.objects.filter(o=>o.id!==obj.id),obj]},{kind:'object',id:obj.id});}
+ putLayer(input:ProceduralLayer){const layer=proceduralLayerSchema.parse(input);this.commit(applySceneEdits(this.current,[{action:'put-layer',layer}]),{kind:'layer',id:layer.id});}
+ putObject(input:AuthoredObject){const object=authoredObjectSchema.parse(input);this.commit(applySceneEdits(this.current,[{action:'put-object',object}]),{kind:'object',id:object.id});}
  setLocked(selection:NonNullable<SceneSelection>,locked:boolean){
   const field=selection.kind==='layer'?'layers':'objects';if(!this.current[field].some(o=>o.id===selection.id))throw Error('Selection no longer exists');
   this.commit({...this.current,[field]:this.current[field].map(o=>o.id===selection.id?{...o,locked}:o)});

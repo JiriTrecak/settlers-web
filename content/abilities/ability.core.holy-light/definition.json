@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.core.holy-light",
+  "name": "Holy Light",
+  "description": "Heal an allied organic unit for 200 health, or deal 100 spell damage to an enemy undead unit. Mechanical targets and the opposite class/relationship combinations are invalid.",
+  "activation": "targeted",
+  "ranks": [
+    {
+      "mana": 25,
+      "heal": 200,
+      "damage": 100,
+      "range": 12,
+      "cooldownTicks": 200
+    }
+  ],
+  "targeting": {
+    "condition": {
+      "kind": "any",
+      "conditions": [
+        {
+          "kind": "matches",
+          "of": "target",
+          "relations": [
+            "ally"
+          ],
+          "filter": {
+            "natures": [
+              "organic"
+            ]
+          }
+        },
+        {
+          "kind": "matches",
+          "of": "target",
+          "relations": [
+            "enemy"
+          ],
+          "filter": {
+            "natures": [
+              "undead"
+            ]
+          }
+        }
+      ]
+    },
+    "kind": "unit",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally",
+      "enemy"
+    ],
+    "allowSelf": true,
+    "range": {
+      "rankParameter": "range"
+    },
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 12,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": {
+        "rankParameter": "mana"
+      },
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": {
+        "rankParameter": "cooldownTicks"
+      },
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [
+    {
+      "op": "branch",
+      "condition": {
+        "kind": "matches",
+        "of": "target",
+        "relations": [
+          "ally"
+        ],
+        "filter": {
+          "natures": [
+            "organic"
+          ]
+        }
+      },
+      "then": [
+        {
+          "op": "heal",
+          "target": "target",
+          "amount": {
+            "rankParameter": "heal"
+          }
+        }
+      ],
+      "else": [
+        {
+          "op": "damage",
+          "target": "target",
+          "amount": {
+            "rankParameter": "damage"
+          },
+          "damageType": "spell"
+        }
+      ]
+    }
+  ],
+  "presentation": "presentation.core.holy-light"
+}

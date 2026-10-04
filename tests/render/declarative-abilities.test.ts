@@ -4,7 +4,7 @@ import {it,expect,vi} from 'vitest';
 import {AbilityEffects} from '../../src/render/abilities/abilityEffects';
 import {castAnimation} from '../../src/render/abilities/castAnimation';
 import {coreAbilities} from '../../src/content/abilities/core';
-import {TextureLoader,Texture,PointLight,Sprite} from 'three';
+import {TextureLoader,Texture,PointLight,Sprite,Vector3,Quaternion} from 'three';
 import {presentationSchema} from '../../src/content/abilities/schema';
 import type {AbilityEvent} from '../../src/sim/abilities/runtime';
 const event=(id:number,event:AbilityEvent['event']):AbilityEvent=>({id,cast:id,tick:10,ability:coreAbilities.abilities[0].id,caster:1,target:2,event,origin:{x:1,y:1},point:{x:6,y:1},viewers:['player.1']});
@@ -106,12 +106,63 @@ it('reconstructs and clears travelling visuals from authoritative deliveries',()
   fx.syncDeliveries([],()=>p);expect(fx.liveCues).toBe(0);
  }finally{fx.dispose();loader.mockRestore();}
 });
+it('renders elevated deliveries and chain endpoints without replacing snapshots with current actor anchors',()=>{
+ const loader=vi.spyOn(TextureLoader.prototype,'load').mockReturnValue(new Texture()),fx=new AbilityEffects();
+ const p=coreAbilities.presentations.find(p=>p.id==='presentation.core.storm-bolt')!,r=presentationRecipes(p).find(r=>r.shape==='missile')!;
+ try{
+  fx.syncDeliveries([{cast:42,ability:'ability.core.storm-bolt',tick:20,position:{x:4,y:5,height:9},direction:{x:.6,y:0,height:.8}}],()=>p,()=>2);
+  fx.update(20);expect(fx.root.children[0].children[0].position.y).toBeCloseTo(9+r.height);
+  fx.clear();const chain=coreAbilities.presentations.find(p=>p.id==='presentation.core.chain-lightning')!;
+  fx.consume({...event(43,'impact'),origin:{x:2,y:3,height:7},point:{x:8,y:3,height:12}},chain,()=>0,()=>({x:100,y:100,height:99}));fx.update(10);
+  const root=fx.root.children[0],first=root.children[0],last=root.children.at(-1)!,offset=presentationRecipes(chain).find(r=>r.shape==='beam')!.height;
+  const endpoint=(mesh:typeof first,sign:number)=>mesh.position.clone().add(new Vector3(0,sign*mesh.scale.y*.5,0).applyQuaternion(mesh.quaternion));
+  expect(endpoint(first,-1).y).toBeCloseTo(7+offset);expect(endpoint(last,1).y).toBeCloseTo(12+offset);
+ }finally{fx.dispose();loader.mockRestore();}
+});
 it('reconstructs a persistent buff after load and removes it immediately on dispel',()=>{
  const loader=vi.spyOn(TextureLoader.prototype,'load').mockReturnValue(new Texture()),fx=new AbilityEffects();
  const p=coreAbilities.presentations.find(p=>p.id==='presentation.core.bloodlust')!;
- const e={id:2,x:4,y:5,hp:100,spellStatuses:[{ability:'ability.core.bloodlust',cast:42,source:1,started:10,expires:2410,aura:false}]};
+ const e={id:2,x:4,y:5,hp:100,spellStatuses:[{ability:'ability.core.bloodlust',status:'frenzy',cast:42,source:1,started:10,expires:2410,aura:false}]};
  try{
-  fx.syncStatuses([e],500,()=>p);fx.update(500);expect(fx.liveCues).toBe(1);
+  fx.syncStatuses([e],500,()=>p);fx.update(500);expect(fx.liveCues).toBe(5);expect(fx.root.children.filter(c=>c.visible)).toHaveLength(1);
+  // Hand flares remain hidden on incompatible actors, then resolve when the model loads.
+  fx.update(501,undefined,undefined,()=>({position:new Vector3(4,2,5),rotation:new Quaternion()}));expect(fx.root.children.every(c=>c.visible)).toBe(true);
   fx.syncStatuses([{...e,spellStatuses:[]}],501,()=>p);expect(fx.liveCues).toBe(0);
  }finally{fx.dispose();loader.mockRestore();}
+});
+it('snapshots the target height for finite impacts while area events stay on the terrain',()=>{
+ const loader=vi.spyOn(TextureLoader.prototype,'load').mockReturnValue(new Texture()),fx=new AbilityEffects();
+ try{
+  const p=coreAbilities.presentations.find(p=>p.id===coreAbilities.abilities.find(a=>a.id==='ability.core.holy-light')!.presentation)!;
+  fx.consume(event(1,'healed'),p,()=>2,id=>id===2?{x:6,y:1,height:8}:undefined);
+  expect(fx.root.children.length).toBeGreaterThan(0);expect(fx.root.children.every(c=>Math.abs(c.position.y-8.035)<.001)).toBe(true);
+  fx.update(11,()=>({x:6,y:1,height:14}));
+  const visual=fx.root.children.filter(c=>c.children.length>0),audio=fx.root.children.filter(c=>c.children.length===0);
+  expect(visual.length).toBeGreaterThan(0);expect(visual.every(c=>Math.abs(c.position.y-8.035)<.001)).toBe(true);
+  expect(audio.length).toBeGreaterThan(0);expect(audio.every(c=>Math.abs(c.position.y-14.035)<.001)).toBe(true);
+  fx.clear();fx.consume({...event(2,'healed'),target:0},p,()=>2,id=>id===2?{x:6,y:1,height:8}:undefined);
+  expect(fx.root.children.every(c=>Math.abs(c.position.y-2.035)<.001)).toBe(true);
+ }finally{fx.dispose();loader.mockRestore();}
+});
+
+it('reconstructs long-lived seekers from delivery poses without launch history and removes them on cancellation',()=>{
+ const effects=new AbilityEffects(),p=coreAbilities.presentations.find(p=>p.id==='presentation.core.spirit-swarm')!;
+ try{
+  effects.syncDeliveries([{cast:700,ability:'ability.core.spirit-swarm',tick:800,position:{x:120,y:120,height:6},direction:{x:1,y:0,height:0}}],()=>p);effects.update(801);expect(effects.liveCues).toBe(1);
+  const root=effects.root.children[0],mesh=root.children[0];expect(mesh.position.x).toBe(120);expect(mesh.position.y).toBeCloseTo(6.9);
+  effects.syncDeliveries([{cast:700,ability:'ability.core.spirit-swarm',tick:801,position:{x:119,y:120,height:5},direction:{x:-1,y:0,height:-1}}],()=>p);effects.update(802);expect(mesh.position.x).toBe(119);expect(mesh.position.y).toBeCloseTo(5.9);
+  effects.update(5000);expect(effects.liveCues).toBe(1);effects.syncDeliveries([],()=>p);expect(effects.liveCues).toBe(0);
+ }finally{effects.dispose();}
+});
+
+it('target inspection includes elevated glyph bounds and drops them after status cleanup',async()=>{
+ const {visibleBounds}=await import('../../tooling/spell-editor/src/framing');
+ const effect=visualEffectSchema.parse({schemaVersion:1,id:'effect.test.focus',name:'Focus',durationTicks:80,layers:[{id:'glyph',shape:'glow',colour:'#ffffff',accent:'#ffffff',durationTicks:80,count:1,size:2,height:12,follow:true,sustain:true}]});
+ const p=presentationSchema.parse({schemaVersion:1,id:'presentation.test.focus',animations:{prepare:'idle',release:'idle',recover:'idle',fallback:'idle'},effects:[{id:'status',effect:effect.id,event:'statusApplied',anchor:'target',lifetime:'status',statusId:'ward'}]});
+ const fx=new AbilityEffects(()=>[effect]),entity={id:2,x:4,y:5,hp:100,spellStatuses:[{ability:'ability.test.focus',status:'ward',cast:42,source:1,started:10,expires:90,aura:false}]};
+ try{
+  fx.syncStatuses([entity],50,()=>p);fx.update(50);const bounds=visibleBounds(fx.rootsForEntity(2));
+  expect(bounds.min.y).toBeGreaterThan(12);expect(bounds.max.x-bounds.min.x).toBeCloseTo(4);expect(fx.rootsForEntity(1)).toEqual([]);
+  fx.syncStatuses([{...entity,spellStatuses:[]}],51,()=>p);expect(visibleBounds(fx.rootsForEntity(2)).isEmpty()).toBe(true);
+ }finally{fx.dispose();}
 });

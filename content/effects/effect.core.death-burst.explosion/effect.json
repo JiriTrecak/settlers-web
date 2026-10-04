@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.core.death-burst.explosion",
+  "name": "Death Burst Explosion",
+  "description": "",
+  "durationTicks": 32,
+  "loop": false,
+  "layers": [
+    {
+      "id": "flash",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#e5e568",
+      "accent": "#ffffbf",
+      "durationTicks": 16,
+      "count": 1,
+      "size": 3,
+      "height": 0.7,
+      "intensity": 0.8
+    },
+    {
+      "id": "spores",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 32,
+        "rate": 1,
+        "speed": 8,
+        "speedVariation": 0.5,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 120,
+        "gravity": 4,
+        "drag": 1,
+        "spawnRadius": 0.7,
+        "startSize": 0.28,
+        "endSize": 0.04,
+        "spin": 3,
+        "fadeIn": 0,
+        "fadeOut": 0.75
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#b2d149",
+      "accent": "#f2ffb0",
+      "durationTicks": 32,
+      "count": 48,
+      "size": 0.18,
+      "height": 0.6
+    },
+    {
+      "id": "shock",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "burst",
+      "colour": "#c5e86e",
+      "accent": "#f8ffba",
+      "durationTicks": 24,
+      "count": 12,
+      "size": 0.12,
+      "height": 0.35,
+      "spread": 5
+    }
+  ]
+}
