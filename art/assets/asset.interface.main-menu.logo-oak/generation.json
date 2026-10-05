@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Isolated UNDER THE CANOPY sculpted ivory and bronze wordmark with green oak-leaf crest; transparent exterior.",
+  "processing": "Alpha trim for isolated UI, downsize without enlargement, WebP quality 92. Background unchanged except encoding.",
+  "effects": "Runtime shafts, fire, smoke and embers are separate; labels remain HTML."
+}

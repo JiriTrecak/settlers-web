@@ -64,3 +64,6 @@ __pycache__/
 !assets/maps/previews/
 !assets/maps/previews/*.webp
 !assets/maps/previews/index.json
+
+# Temporary shared release-log lock
+/releases/log.json.lock

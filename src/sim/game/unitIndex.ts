@@ -73,7 +73,8 @@ export class UnitIndex {
     return this.buckets.get(y * this.size + x) ?? [];
   }
 
-  reservedInCell(x:number,y:number):Iterable<Entity>{return this.reserved.get(y*this.size+x)??[];}
+  reservedAt(cell:number):Iterable<Entity>{return this.reserved.get(cell)??[];}
+  reservedInCell(x:number,y:number):Iterable<Entity>{return this.reservedAt(y*this.size+x);}
 
   *within(minX: number, minY: number, maxX: number, maxY: number): Iterable<Entity> {
     // Coordinates are fixed-point, while cells are rounded about their centers.

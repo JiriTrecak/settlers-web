@@ -1,8 +1,10 @@
+import {releaseMenu} from "./releases";
 import { graphicsControls } from "./graphicsControls";
+import {MenuEffects} from './menuEffects';
 /** Illustrated first screen with real, keyboard-accessible menu controls. */
 import { GameScreen } from "../screen/screen";
-import menuArt from "../../../assets/library/asset.interface.main-menu.forest-heroes/image.png";
-import logoArt from "../../../assets/library/asset.interface.main-menu.logo-iron-wordmark/image.png";
+import menuArt from "../../../assets/library/asset.interface.main-menu.forest-aftermath/image.webp";
+import logoArt from "../../../assets/library/asset.interface.main-menu.logo-oak/image.webp";
 import "./mainMenu.css";
 
 export type MainMenuHooks = {
@@ -15,6 +17,9 @@ export type MainMenuHooks = {
 };
 
 export class MainMenu extends GameScreen {
+  private readonly disposeReleases:()=>void;
+  private readonly effects:MenuEffects;
+  override destroy(){this.effects.destroy();this.disposeReleases();super.destroy();}
   constructor(hooks: MainMenuHooks) {
     super("screen canopy-menu");
     const stage = document.createElement("main");
@@ -68,6 +73,7 @@ export class MainMenu extends GameScreen {
       campaign,
       button("Skirmish", hooks.onSkirmish),
       button("Multiplayer", hooks.onMultiplayer),
+      button("Map Editor", hooks.onEditor),
       button("Settings", () => {
         fullscreen.textContent = document.fullscreenElement
           ? "Exit fullscreen"
@@ -78,7 +84,6 @@ export class MainMenu extends GameScreen {
         settings.querySelector(".canopy-settings-actions")!.before(graphics);
         settings.showModal();
       }),
-      button("Editor", hooks.onEditor),
       button("Exit", () => {
         window.close();
         if (!window.closed) exitDialog.showModal();
@@ -86,7 +91,9 @@ export class MainMenu extends GameScreen {
     );
     rig.append(title, nav);
     stage.append(art, rig);
+    this.effects=new MenuEffects(stage);
     this.root.append(stage, settings, exitDialog);
+    this.disposeReleases=releaseMenu(this.root);
   }
 }
 

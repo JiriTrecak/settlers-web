@@ -4320,6 +4320,27 @@
       "scenery": []
     },
     {
+      "id": "asset.interface.main-menu.button-charcoal",
+      "name": "button charcoal",
+      "kind": "interface",
+      "tags": [
+        "main-menu",
+        "original"
+      ],
+      "revision": 4,
+      "profile": "interface-image",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.interface.main-menu.button-charcoal/image.webp",
+          "sha256": "687ae2a32598a13ae07fe5a359885bfcc1b27df6abf51c065ed8f61a31dfbf34",
+          "bytes": 31246
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
       "id": "asset.interface.main-menu.buttons",
       "name": "Buttons",
       "kind": "interface",
@@ -4356,6 +4377,27 @@
           "path": "assets/library/asset.interface.main-menu.chain/image.png",
           "sha256": "545f002af298d62d3a238fb3404d7ae1c47ec69677f73e10695307d9fd76bfc4",
           "bytes": 493781
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.interface.main-menu.forest-aftermath",
+      "name": "forest aftermath",
+      "kind": "interface",
+      "tags": [
+        "main-menu",
+        "original"
+      ],
+      "revision": 4,
+      "profile": "interface-image",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.interface.main-menu.forest-aftermath/image.webp",
+          "sha256": "6a9a874d5525795dc93727df0a514a70beae883f0c8ff7f2223db04ee65b883e",
+          "bytes": 453418
         }
       ],
       "render": [],
@@ -4425,6 +4467,27 @@
       "scenery": []
     },
     {
+      "id": "asset.interface.main-menu.logo-oak",
+      "name": "logo oak",
+      "kind": "interface",
+      "tags": [
+        "main-menu",
+        "original"
+      ],
+      "revision": 4,
+      "profile": "interface-image",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.interface.main-menu.logo-oak/image.webp",
+          "sha256": "b07c22b0e8fd1048db4b043d139ff145694bc4ae7a4b1139c5b5d75af28a5af6",
+          "bytes": 142020
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
       "id": "asset.interface.main-menu.menu-concept",
       "name": "Menu Concept",
       "kind": "interface",
@@ -4440,6 +4503,27 @@
           "path": "assets/library/asset.interface.main-menu.menu-concept/image.png",
           "sha256": "aac2442836147e05a5aff1b094fbee7776c1dbf02806be76ae9c7d3ee83a79c1",
           "bytes": 2356562
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.interface.main-menu.panel-charcoal",
+      "name": "panel charcoal",
+      "kind": "interface",
+      "tags": [
+        "main-menu",
+        "original"
+      ],
+      "revision": 4,
+      "profile": "interface-image",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.interface.main-menu.panel-charcoal/image.webp",
+          "sha256": "0b80286b56ce49d29fb97b9a9f4f2f67ed45c01dfd01436439ed93493f8bc6f5",
+          "bytes": 282380
         }
       ],
       "render": [],

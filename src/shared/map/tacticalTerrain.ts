@@ -4,6 +4,7 @@ export const MAX_GROUND_STEP_CM = 90;
 export const MAX_FOUNDATION_RELIEF_CM = 50;
 /** Sorted non-overlapping half-open intervals of visible cell IDs. Immutable. */
 export type VisibilityFootprint={readonly spans:Uint32Array;readonly cellCount:number};
+type CachedFootprint={key:string;footprint:VisibilityFootprint;dense?:Uint32Array};
 type SightWork={rays:number;coarseClear:number;groups:number;groupsClear:number;samples:number;blocked:number};
 export type TerrainPoint = {x:number;y:number;elevation?:number};
 
@@ -12,26 +13,29 @@ export type TerrainPoint = {x:number;y:number;elevation?:number};
 export class TacticalTerrain {
   /** Optional render-independent work counters; never consulted by sight rules. */
   diagnostics?:{readonly enabled:boolean;count(name:string,value?:number):void};
-  private readonly views = new Map<string, VisibilityFootprint>();
+  private readonly views = new Map<string, CachedFootprint>();
   private cachedCells=0;
-  private denseViews=new WeakMap<VisibilityFootprint,Uint32Array>();
-  // Charge both spans and potential dense materialization against the 4 MiB budget.
+  // Charge allocated spans and dense cells, not hypothetical dense expansions.
+  // Both representations share one bounded LRU and leave it together.
   private readonly cacheCellBudget=1024*1024;
   private readonly flat:boolean;
   // Four-cell maxima allow clear portions of an otherwise occluded ray to skip
   // eight original samples at a time. 32 KiB for a 512-square map.
   private readonly fineBlocks:Int16Array;
+  private readonly fineMinimums:Int16Array;
   private readonly fineSize:number;
   private readonly blocks:Int16Array;
   private readonly blockMinimums:Int16Array;
   private readonly blockSize:number;
   constructor(readonly size:number, readonly heights:Int16Array){
     this.fineSize=Math.ceil(size/4);this.fineBlocks=new Int16Array(this.fineSize**2).fill(-32768);
+    this.fineMinimums=new Int16Array(this.fineSize**2).fill(32767);
     this.flat=heights.every(h=>h===heights[0]);
     this.blockSize=Math.ceil(size/16);this.blocks=new Int16Array(this.blockSize**2).fill(-32768);
     this.blockMinimums=new Int16Array(this.blockSize**2).fill(32767);
     for(let y=0;y<size;y++)for(let x=0;x<size;x++){
       const f=Math.floor(y/4)*this.fineSize+Math.floor(x/4);this.fineBlocks[f]=Math.max(this.fineBlocks[f],heights[y*size+x]);
+      this.fineMinimums[f]=Math.min(this.fineMinimums[f],heights[y*size+x]);
       const i=Math.floor(y/16)*this.blockSize+Math.floor(x/16);this.blocks[i]=Math.max(this.blocks[i],heights[y*size+x]);
       this.blockMinimums[i]=Math.min(this.blockMinimums[i],heights[y*size+x]);
     }
@@ -111,13 +115,26 @@ export class TacticalTerrain {
     return true;
   }
   visibleCells(a:TerrainPoint,radius:number):Uint32Array {
-    const footprint=this.visibleSpans(a,radius),prior=this.denseViews.get(footprint);if(prior)return prior;
+    const entry=this.sightFootprint(a,radius);if(entry.dense)return entry.dense;
+    const {footprint}=entry;
     const cells=new Uint32Array(footprint.cellCount);let at=0;
     for(let i=0;i<footprint.spans.length;i+=2)for(let cell=footprint.spans[i]!;cell<footprint.spans[i+1]!;cell++)cells[at++]=cell;
-    this.denseViews.set(footprint,cells);return cells;
+    entry.dense=cells;
+    if(this.views.get(entry.key)===entry){this.cachedCells+=cells.length;this.trimViews();}
+    return cells;
   }
   /** Fog coverage consumes intervals directly; clear circles never expand to cells. */
   visibleSpans(a:TerrainPoint,radius:number):VisibilityFootprint{
+    return this.sightFootprint(a,radius).footprint;
+  }
+  private trimViews(){
+    while(this.views.size&&(this.views.size>4096||this.cachedCells>this.cacheCellBudget)){
+      if(this.diagnostics?.enabled)this.diagnostics.count('Footprint cache evictions');
+      const oldest=this.views.keys().next().value!,entry=this.views.get(oldest)!;
+      this.cachedCells-=entry.footprint.spans.length+(entry.dense?.length??0);this.views.delete(oldest);
+    }
+  }
+  private sightFootprint(a:TerrainPoint,radius:number):CachedFootprint{
     const x=Math.round(a.x),y=Math.round(a.y),r=Math.ceil(radius),key=`${x}:${y}:${radius}:${a.elevation??0}`;
     const profile=this.diagnostics?.enabled?this.diagnostics:undefined;
     const cached=this.views.get(key);if(cached){profile?.count('Footprint cache hits');this.views.delete(key);this.views.set(key,cached);return cached;}
@@ -134,7 +151,18 @@ export class TacticalTerrain {
       for(let bx=Math.max(0,Math.floor((x-r)/16));bx<=Math.min(this.blockSize-1,Math.floor((x+r+1)/16));bx++){
         const i=by*this.blockSize+bx;low=Math.min(low,this.blockMinimums[i]);high=Math.max(high,this.blocks[i]);
       }
-    const allClear=this.flat||high<=Math.min(from,low+SIGHT_HEIGHT_CM);
+    let allClear=this.flat||high<=Math.min(from,low+SIGHT_HEIGHT_CM);
+    // Coarse blocks can include a distant cliff outside this sight footprint.
+    // Refine that conservative bound once, before resorting to a ray per cell.
+    if(!allClear){
+      low=32767;high=-32768;
+      for(let by=Math.max(0,Math.floor((y-r)/4));by<=Math.min(this.fineSize-1,Math.floor((y+r+1)/4));by++)
+        for(let bx=Math.max(0,Math.floor((x-r)/4));bx<=Math.min(this.fineSize-1,Math.floor((x+r+1)/4));bx++){
+          const i=by*this.fineSize+bx;low=Math.min(low,this.fineMinimums[i]);high=Math.max(high,this.fineBlocks[i]);
+        }
+      allClear=high<=Math.min(from,low+SIGHT_HEIGHT_CM);
+      if(allClear)profile?.count('Fine shelf footprints');
+    }
     profile?.count(allClear?'Clear shelf footprints':'Ray tested footprints');
     for(let dy=-r;dy<=r;dy++){
       if(y+dy<0||y+dy>=this.size||dy*dy>radius*radius)continue;
@@ -163,15 +191,10 @@ export class TacticalTerrain {
       profile.count('Bilinear height samples',work.samples);profile.count('Occluded rays',work.blocked);
       profile.count('Computed visible cells',cellCount);profile.count('Computed spans',spans.length/2);
     }
-    const chargedCells=result.cellCount+result.spans.length;
+    const entry:CachedFootprint={key,footprint:result},chargedCells=result.spans.length;
     if(chargedCells<=this.cacheCellBudget){
-      while(this.views.size&&(this.views.size>=4096||this.cachedCells+chargedCells>this.cacheCellBudget)){
-        profile?.count('Footprint cache evictions');
-        const oldest=this.views.keys().next().value!,entry=this.views.get(oldest)!;
-        this.cachedCells-=entry.cellCount+entry.spans.length;this.views.delete(oldest);
-      }
-      this.views.set(key,result);this.cachedCells+=chargedCells;
+      this.views.set(key,entry);this.cachedCells+=chargedCells;this.trimViews();
     }
-    return result;
+    return entry;
   }
 }

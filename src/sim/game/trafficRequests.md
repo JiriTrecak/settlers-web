@@ -1,5 +1,20 @@
 # Persistent traffic recovery
 
+Long terrain routing and short traffic recovery are separate. Move/attack orders
+use the terrain corridor; a blocked movement step does not run a map-wide search
+with all live units as obstacles. It tries a bounded local detour that rejoins
+the corridor, then waits/yields if no checked escape exists. The destination is
+adjusted for occupancy only within seven cells (the four-cell recovery radius
+plus the existing three-cell endpoint search). A physically blocked terrain
+step still discards the stale route and lets the order planner reconnect it.
+
+The local search is a quarter-cell grid bounded to four cells around the mover
+and 256 visited nodes. Moving units and enemies retain cell reservations;
+stationary allies retain physical collision. Terrain and body clearance are
+checked again on every movement step. Recovery keeps the existing six-tick retry
+cadence. This is not a flow field; shared group routing can be added independently
+of the local collision and yielding contract.
+
 Profiling splits discovery into candidates, body indexing, dependencies, cycles,
 priority propagation and escape feasibility. Dependency discovery stops at the
 first non-coincident route waypoint: the distant tail cannot affect the next

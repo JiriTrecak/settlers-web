@@ -57,6 +57,18 @@ it('batch sight footprints match individual rays on shelves, cliffs and edge blo
  }
 });
 
+it('does not ray-march a clear shelf because a coarse block includes a distant cliff',()=>{
+ const size=48,heights=new Int16Array(size*size);
+ for(let y=0;y<size;y++)heights[y*size+31]=700;
+ const terrain=new TacticalTerrain(size,heights),counts=new Map<string,number>();
+ terrain.diagnostics={enabled:true,count:(name,value=1)=>counts.set(name,(counts.get(name)??0)+value)};
+ const origin={x:20,y:20},cells=terrain.visibleCells(origin,4),brute=reference(size,heights);
+ const expected:number[]=[];
+ for(let y=0;y<size;y++)for(let x=0;x<size;x++)if((x-origin.x)**2+(y-origin.y)**2<=16&&brute.visible(origin,{x,y}))expected.push(y*size+x);
+ expect([...cells]).toEqual(expected);
+ expect(counts.get('Fine shelf footprints')).toBe(1);expect(counts.get('Terrain rays')).toBe(0);
+});
+
 
 it('keeps large clear footprints compact and materializes stable dense views only on demand',()=>{
  const terrain=new TacticalTerrain(512,new Int16Array(512*512)),origin={x:250,y:250};
@@ -67,6 +79,44 @@ it('keeps large clear footprints compact and materializes stable dense views onl
  expect(dense.length).toBe(footprint.cellCount);
  terrain.visibleSpans({x:251,y:250},30);
  expect(terrain.visibleCells(origin,30)).toBe(dense);expect(dense).toEqual(saved);
+});
+
+it('retains compact footprints without reserving memory for unused dense cells',()=>{
+ const terrain=new TacticalTerrain(512,new Int16Array(512*512));
+ const origins=Array.from({length:3000},(_,i)=>({x:40+i%100,y:40+Math.floor(i/100)}));
+ const footprints=origins.map(p=>terrain.visibleSpans(p,30));
+ // All 3,000 compact footprints fit easily in 4 MiB; their hypothetical dense
+ // arrays would exceed 32 MiB. Revisiting must not repeat the terrain work.
+ for(let i=0;i<origins.length;i++)expect(terrain.visibleSpans(origins[i],30)).toBe(footprints[i]);
+});
+
+it('accounts for dense expansion in the same LRU without changing retained caller views',()=>{
+ const terrain=new TacticalTerrain(512,new Int16Array(512*512));
+ const origin=(i:number)=>({x:40+i%100,y:40+Math.floor(i/100)});
+ const first=terrain.visibleSpans(origin(0),30),dense=terrain.visibleCells(origin(0),30),saved=dense.slice();
+ let last=dense;
+ for(let i=1;i<=1500;i++)last=terrain.visibleCells(origin(i),30);
+ expect(terrain.visibleCells(origin(1500),30)).toBe(last);
+ expect(terrain.visibleSpans(origin(0),30)).not.toBe(first);
+ expect(terrain.visibleCells(origin(0),30)).toEqual(saved);expect(dense).toEqual(saved);
+ // Check actual retained storage, including both representations, against the
+ // resource contract. Evicted externally held arrays belong to the caller.
+ const cache=terrain as unknown as {cachedCells:number;views:Map<string,{footprint:{spans:Uint32Array};dense?:Uint32Array}>};
+ const allocated=[...cache.views.values()].reduce((n,e)=>n+e.footprint.spans.byteLength+(e.dense?.byteLength??0),0);
+ expect(cache.cachedCells*4).toBe(allocated);expect(allocated).toBeLessThanOrEqual(4*1024*1024);
+});
+
+it('limits compact cache entries and handles a single dense view larger than its budget',()=>{
+ const terrain=new TacticalTerrain(1100,new Int16Array(1100*1100));
+ const first=terrain.visibleSpans({x:10,y:10},0);
+ for(let i=0;i<4200;i++)terrain.visibleSpans({x:100+i%100,y:100+Math.floor(i/100)},0);
+ expect(terrain.visibleSpans({x:10,y:10},0)).not.toBe(first);
+ const origin={x:550,y:550},large=terrain.visibleCells(origin,1600);
+ expect(large.length).toBe(1100*1100);
+ expect(terrain.visibleCells(origin,1600)).not.toBe(large);
+ const small=terrain.visibleCells({x:10,y:10},0);
+ expect(terrain.visibleCells({x:10,y:10},0)).toBe(small);
+ expect(large[0]).toBe(0);expect(large.at(-1)).toBe(1100*1100-1);
 });
 
 it('preserves grazing obstructions between clear chunks, including clamped map edges',()=>{

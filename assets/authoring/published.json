@@ -9800,6 +9800,56 @@
     },
     {
       "version": 1,
+      "id": "asset.interface.main-menu.button-charcoal",
+      "name": "button charcoal",
+      "kind": "interface",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "main-menu",
+        "original"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "6cae8580e1957b60c1bcd280ce4c331056633ce7ee33681546e99b60b4802a74",
+          "bytes": 395
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "webp",
+          "sha256": "687ae2a32598a13ae07fe5a359885bfcc1b27df6abf51c065ed8f61a31dfbf34",
+          "bytes": 31246
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "interface-image",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original Under the Canopy menu artwork, generated from approved concept."
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.interface.main-menu.buttons",
       "name": "Buttons",
       "kind": "interface",
@@ -9882,6 +9932,56 @@
       "provenance": {
         "method": "migration",
         "sourceHash": "545f002af298d62d3a238fb3404d7ae1c47ec69677f73e10695307d9fd76bfc4"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.interface.main-menu.forest-aftermath",
+      "name": "forest aftermath",
+      "kind": "interface",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "main-menu",
+        "original"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "d6484a8f31b5c862a214e81bcd360c90eaa6a735fe9ed4113f5e37e0ff9e3038",
+          "bytes": 422
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "webp",
+          "sha256": "6a9a874d5525795dc93727df0a514a70beae883f0c8ff7f2223db04ee65b883e",
+          "bytes": 453418
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "interface-image",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original Under the Canopy menu artwork, generated from approved concept."
       }
     },
     {
@@ -10015,6 +10115,56 @@
     },
     {
       "version": 1,
+      "id": "asset.interface.main-menu.logo-oak",
+      "name": "logo oak",
+      "kind": "interface",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "main-menu",
+        "original"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "b5dbfdfd8eebce23254c862df596fe4bd26c4d9d52350f1fd49e3195be805545",
+          "bytes": 381
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "webp",
+          "sha256": "b07c22b0e8fd1048db4b043d139ff145694bc4ae7a4b1139c5b5d75af28a5af6",
+          "bytes": 142020
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "interface-image",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original Under the Canopy menu artwork, generated from approved concept."
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.interface.main-menu.menu-concept",
       "name": "Menu Concept",
       "kind": "interface",
@@ -10054,6 +10204,56 @@
       "provenance": {
         "method": "migration",
         "sourceHash": "aac2442836147e05a5aff1b094fbee7776c1dbf02806be76ae9c7d3ee83a79c1"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.interface.main-menu.panel-charcoal",
+      "name": "panel charcoal",
+      "kind": "interface",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "main-menu",
+        "original"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "d5166d2b4def422c6c1575cd7cd9cdf26311a53ad62b1f1323f6e865c508b6f5",
+          "bytes": 393
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "webp",
+          "sha256": "0b80286b56ce49d29fb97b9a9f4f2f67ed45c01dfd01436439ed93493f8bc6f5",
+          "bytes": 282380
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "interface-image",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original Under the Canopy menu artwork, generated from approved concept."
       }
     },
     {

@@ -40,6 +40,8 @@ export const distance2 = (a: Point, b: Point) =>
   (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
 let spatialRevisions = 0;
 type Body = {radius:number;height:number;formationSpacing:number;locomotion?:'ground'|'air'};
+/** Sweeps only need membership, not an army-wide materialized set. */
+export type CellReservations = Pick<ReadonlySet<number>,'has'>;
 type Actor = Pick<Entity,'definition'> & Partial<Pick<Entity,'spellStatuses'|'unit'>>|Body;
 type OccupancyInput = {id:number;definition:string;x:number;y:number;rotation:number;surface?:string;scale:number;building:boolean;resource:boolean};
 /** Separating motion may escape an existing overlap; moving into it may not. */
@@ -78,17 +80,47 @@ export class Spatial {
     }
     return navigation;
   }
-  private unitIndex:UnitIndex|null=null;
+  private movementScope=false;
+  private currentUnitIndex:UnitIndex|null=null;
   private reusableUnitIndex:UnitIndex|undefined;
-  /** Scoped to one synchronous planning or movement pass; other queries use live entities. */
-  beginUnitMovement(){
-    const units=this.units();
-    if(this.reusableUnitIndex)this.reusableUnitIndex.refresh(units);
-    else this.reusableUnitIndex=new UnitIndex(units,this.size,this.ignoresUnits);
-    this.unitIndex=this.reusableUnitIndex;
+  /** Merely entering a planning pass does not require collision data. Materialize
+   * on the first body query, using live state at that point; later moves update
+   * that same index. Outside the scope queries continue to use live entities. */
+  private get unitIndex():UnitIndex|null {
+    if(!this.movementScope)return null;
+    if(!this.currentUnitIndex)this.profile.measure('Moving-body refresh',()=>{
+      const units=this.units();this.profile.count('Bodies indexed',units.length);
+      if(this.reusableUnitIndex)this.reusableUnitIndex.refresh(units);
+      else this.reusableUnitIndex=new UnitIndex(units,this.size,this.ignoresUnits);
+      this.currentUnitIndex=this.reusableUnitIndex;
+    });
+    return this.currentUnitIndex;
   }
-  updateUnitMovement(e:Entity){this.unitIndex?.update(e);}
-  endUnitMovement(){this.unitIndex=null;}
+  beginUnitMovement(){
+    this.movementScope=true;this.currentUnitIndex=null;
+  }
+  updateUnitMovement(e:Entity){this.currentUnitIndex?.update(e);}
+  endUnitMovement(){this.movementScope=false;this.currentUnitIndex=null;}
+
+  /** Live cell membership for a synchronous local decision. Includes remote
+   * yield pockets, and distinguishes stacked walk surfaces at the same x/y.
+   * The movement scope updates buckets after each actor; outside it use live
+   * records rather than retaining an index across untracked mutations. */
+  unitReservations(accept:(entity:Entity)=>boolean):CellReservations {
+    const matches=(e:Entity)=>{
+      this.profile.count('Local reservation candidates');
+      return accept(e);
+    };
+    return {has:cell=>{
+      const index=this.unitIndex;
+      if(index){
+        const p=this.point(cell);
+        for(const e of index.inCell(p.x,p.y))if(this.cell(e)===cell&&matches(e))return true;
+        for(const e of index.reservedAt(cell))if(matches(e))return true;
+      }else for(const e of this.units())if((this.cell(e)===cell||e.unit?.detour?.yielding&&e.unit.detour.waypoint===cell)&&matches(e))return true;
+      return false;
+    }};
+  }
 
   readonly layers: WalkSurfaces | undefined;
   readonly size: number;
@@ -694,7 +726,7 @@ export class Spatial {
   }
   /** Local search terrain edges may repeat across actors and retries. Only
    * immutable terrain clearance is reused; live reservations are tested first. */
-  clearLocalSegment(from:FixedPoint,to:FixedPoint,blocked:ReadonlySet<number>,actor:Actor):boolean {
+  clearLocalSegment(from:FixedPoint,to:FixedPoint,blocked:CellReservations,actor:Actor):boolean {
     if(this.layers||this.airborne(actor))return this.clearSegment(from,to,blocked,actor);
     if(!clearRay(from,to,(_a,b)=>!blocked.has(b),this.size))return false;
     const radius=Math.round(this.dimensions(actor).radius*1000);
@@ -717,7 +749,7 @@ export class Spatial {
   clearSegment(
     from: FixedPoint,
     to: FixedPoint,
-    blocked?: ReadonlySet<number>,
+    blocked?: CellReservations,
     actor?:Actor,
   ) {
     const dimensions=this.dimensions(actor),radius=Math.round(dimensions.radius*1000);

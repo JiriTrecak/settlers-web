@@ -42,6 +42,17 @@ export class GameContext {
    * reclassifying stationary scenery. Other revision changes remain conservative. */
   readonly observationEntityChanges:{type:'add'|'remove';entity:Entity}[]=[];
   motionRevision=0;
+  private sightMotionTick=-1;
+  private sightMotionFrom=0;
+  private sightMotionThrough=-1;
+  private readonly sightMovers=new Set<Entity>();
+  /** Only ordinary movement is tracked. An external revision increment (blink,
+   * release, editor mutation, etc.) deliberately requests full reconciliation.
+   * Receipts are bounded to one tick and are never authoritative state. */
+  sightMovesSince(revision:number):ReadonlySet<Entity>|null {
+    return this.sightMotionTick===this.state.tick && revision>=this.sightMotionFrom &&
+      this.sightMotionThrough===this.motionRevision ? this.sightMovers : null;
+  }
   readonly changedResources=new Set<Entity>();
   private readonly resourceSectors=new SectorIndex<Entity>();
   private indexResource(e:Entity){if(e.resource)this.resourceSectors.set(e.id,e,{minX:e.x,minY:e.y,maxX:e.x,maxY:e.y});}
@@ -105,7 +116,7 @@ export class GameContext {
         : e.unit.order?.type === "gather" ? this.get(e.unit.order.target) : undefined;
       return !!source && this.def(source).gatheringUnitCollision !== true;
     }, () => this.unitEntities,this.profile);
-    this.spatial.beginUnitMovement=this.profile.wrap('Moving-body index',this.spatial.beginUnitMovement.bind(this.spatial));
+    this.spatial.beginUnitMovement=this.profile.wrap('Moving-body scope',this.spatial.beginUnitMovement.bind(this.spatial));
     this.spatial.route=this.profile.wrap('Route request',this.spatial.route.bind(this.spatial));
     this.spatial.findPath=this.profile.wrap('Path search',this.spatial.findPath.bind(this.spatial));
     this.spatial.sectors.corridor=this.profile.wrap('Sector corridor',this.spatial.sectors.corridor.bind(this.spatial.sectors));
@@ -125,6 +136,7 @@ export class GameContext {
     this.moveDetour=this.profile.wrap('Detour movement',this.moveDetour.bind(this));
   }
   reindex() {
+    this.sightMovers.clear();this.sightMotionTick=-1;this.sightMotionThrough=-1;
     this.membershipSnapshot=undefined;
     this.observationRevision++;this.changedResources.clear();this.observationEntityChanges.length=0;
     this.index = new Map(this.state.entities.map((e) => [e.id, e]));
@@ -330,8 +342,13 @@ export class GameContext {
     );
   }
   move(castFacingOnly=false,active?:ReadonlySet<number>) {
+    if(this.sightMotionTick!==this.state.tick||this.sightMotionThrough!==this.motionRevision){
+      this.sightMovers.clear();this.sightMotionTick=this.state.tick;this.sightMotionFrom=this.motionRevision;
+    }
     this.spatial.beginUnitMovement();
-    try {this.moveUnits(castFacingOnly,active);} finally {this.spatial.endUnitMovement();this.motionRevision++;}
+    try {this.moveUnits(castFacingOnly,active);} finally {
+      this.spatial.endUnitMovement();this.sightMotionThrough=++this.motionRevision;
+    }
   }
   private moveUnits(castFacingOnly=false,active?:ReadonlySet<number>) {
     const units = this.activeUnits();
@@ -353,6 +370,7 @@ export class GameContext {
           u.position = null;
           u.segment = null;
           u.release = null;
+          this.sightMovers.add(e);
           this.spatial.updateUnitMovement(e);
           if (!this.spatial.ignoresUnits(e)) occupied.add(this.spatial.cell(e));
         }
@@ -377,6 +395,7 @@ export class GameContext {
       this.profile.count('Moving units');
       const ignoresUnits = this.spatial.ignoresUnits(e);
       if (!ignoresUnits) {occupied.delete(this.spatial.cell(e));if(u.detour?.yielding)occupied.delete(u.detour.waypoint);}
+      const beforeX=u.position?.x??e.x*POSITION_SCALE,beforeY=u.position?.y??e.y*POSITION_SCALE;
       try {
         const charge = u.charge?.target !== null && u.charge?.target === u.target && u.charge.expires > this.state.tick
           ? (this.def(e).behaviors.combat?.charge?.speedPermille ?? 1000) : 1000;
@@ -384,7 +403,7 @@ export class GameContext {
         let budget = Math.floor((speed * POSITION_SCALE * this.stats(e).moveSpeedPermille * charge) / 40000000);
         u.position ??= fixed(e);
         if (u.detour) {
-          this.moveDetour(e, budget, turnStep, units);
+          this.moveDetour(e, budget, turnStep);
           continue;
         }
         // Retry/yield paths may begin at the exact position already reached.
@@ -451,14 +470,14 @@ export class GameContext {
               const request=(requests??=this.profile.measure('Traffic request discovery',()=>trafficRequests(this,units))).get(e.id);
               if(request&&this.beginTrafficYield(e,request,occupied))break;
               const desired = this.spatial.point(u.goal);
-              const target = this.spatial.nearest(desired, 3, e.id);
-              if (units.some(b => b.id !== e.id && b.owner === e.owner && !b.unit!.route.length && Math.hypot(b.x-e.x, b.y-e.y) <= 2) &&
-                this.beginLocalDetour(e, units, target)) break;
-              // Temporary traffic must not send the army around the far end of
-              // a terrain wall. Bound this retry against the existing corridor.
-              let length=0,anchor={x:current.x/1000,y:current.y/1000};
-              for(const waypoint of u.route){const p=this.spatial.point(waypoint);length+=Math.hypot(p.x-anchor.x,p.y-anchor.y);anchor=p;}
-              if (target) this.spatial.route(e, target, true, Math.ceil(length*1.25+4)*1000);
+              // Bodies are temporary local obstructions, not changes to the
+              // map-wide terrain corridor. Adjust an occupied destination only
+              // on arrival; repair/rejoin nearby or wait without throwing away
+              // the long route. Terrain invalidation above still replans it.
+              const target = Math.hypot(desired.x-current.x/1000,desired.y-current.y/1000)<=7
+                ? this.spatial.nearest(desired,3,e.id) : null;
+              if(this.beginLocalDetour(e,target))break;
+              this.profile.count('Local traffic waits');
               {
                 // Stable yielding lets opposing friendly traffic pass without teleports.
                 const near = units.find(
@@ -511,6 +530,7 @@ export class GameContext {
           }
         }
       } finally {
+        if((u.position?.x??e.x*POSITION_SCALE)!==beforeX||(u.position?.y??e.y*POSITION_SCALE)!==beforeY)this.sightMovers.add(e);
         this.spatial.updateUnitMovement(e);
         if (!ignoresUnits) {occupied.add(this.spatial.cell(e));if(u.detour?.yielding)occupied.add(u.detour.waypoint);}
       }
@@ -525,16 +545,12 @@ export class GameContext {
     return true;
   }
 
-  /** Rejoin the current corridor after a bounded escape around parked allies.
+  /** Rejoin the current corridor after a bounded escape around nearby bodies.
    * A distant order must not disable local clearance at the unit's feet. */
-  private beginLocalDetour(e:Entity, units:readonly Entity[], destination:Point|null) {
+  private beginLocalDetour(e:Entity, destination:Point|null) {
     const u=e.unit!, current=u.position!;
     if (u.goal===null || !u.route.length) return false;
     const nearbyDestination=destination && Math.hypot(destination.x-current.x/1000,destination.y-current.y/1000)<=4;
-    // Active traffic keeps its existing negotiation. This extension is for
-    // escaping parked bodies, not for overtaking a moving stream.
-    if (!nearbyDestination && units.some(b=>b.id!==e.id && b.unit!.route.length &&
-      Math.hypot(b.x-e.x,b.y-e.y)<=4)){this.profile.count('Local rejected moving traffic');return false;}
     // A parked ally can occupy an intermediate waypoint after this route was
     // planned. Rejoining that point would reproduce the same blockage forever.
     const rejoin=nearbyDestination?0:u.route.findIndex(i=>{
@@ -544,7 +560,7 @@ export class GameContext {
     if(rejoin<0&&!replaceGoal)return false;
     const next=nearbyDestination||replaceGoal ? destination! : this.spatial.point(u.route[rejoin]), dx=next.x-current.x/1000, dy=next.y-current.y/1000;
     const distance=Math.hypot(dx,dy);
-    const reservations=this.localReservations(e,units), edge=(this.spatial.size-1)*POSITION_SCALE;
+    const reservations=this.localReservations(e), edge=(this.spatial.size-1)*POSITION_SCALE;
     const projected={x:current.x/1000+dx/distance*3,y:current.y/1000+dy/distance*3};
     const center={x:Math.round(projected.x),y:Math.round(projected.y)};
     const candidates=distance<=4 ? [next] : [-1,0,1].flatMap(y=>[-1,0,1].map(x=>({x:center.x+x,y:center.y+y,...(e.surface?{surface:e.surface}:{})})))
@@ -580,11 +596,11 @@ export class GameContext {
   }
   /** Stationary friendly bodies retain physical collision, not a whole-cell claim.
    * Moving bodies and enemies keep the existing traffic reservation. */
-  private localReservations(e:Entity, units:readonly Entity[]) {
-    return new Set(units.filter(b => b.id !== e.id && this.spatial.sameLocomotion(e,b) && !this.spatial.ignoresUnits(b) &&
-      (b.owner !== e.owner || b.unit!.route.length)).flatMap(b => b.unit!.detour?.yielding ? [this.spatial.cell(b),b.unit!.detour.waypoint] : [this.spatial.cell(b)]));
+  private localReservations(e:Entity) {
+    return this.spatial.unitReservations(b=>b.id!==e.id && this.ready(b) && !!b.unit && !b.unit.contained && !b.unit.release &&
+      this.spatial.sameLocomotion(e,b) && !this.spatial.ignoresUnits(b) && (b.owner!==e.owner || b.unit.route.length>0));
   }
-  private moveDetour(e:Entity, budget:number, turnStep:number, units:readonly Entity[]) {
+  private moveDetour(e:Entity, budget:number, turnStep:number) {
     const u = e.unit!, detour = u.detour!, current = u.position!, target = detour.points[0];
     let finishedYield=false;
     if(detour.yielding&&detour.points.length===1&&current.x===target.x&&current.y===target.y){
@@ -600,7 +616,7 @@ export class GameContext {
       y:current.y + Math.round((target.y-current.y)*travel/length),
     };
     if(current.surface)(proposed as FixedPoint).surface=current.surface;
-    if (!this.spatial.clearSegment(current,proposed,this.localReservations(e,units), e) ||
+    if (!this.spatial.clearSegment(current,proposed,this.localReservations(e), e) ||
       !this.spatial.unitSegmentClear(current,proposed,e.id)) {
       delete u.detour;
       u.retryAt = this.state.tick+6;

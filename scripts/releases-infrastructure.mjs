@@ -28,11 +28,11 @@ writeFileSync(join(root,'infrastructure/releases/deployment.json'),JSON.stringif
 const temp=mkdtempSync(join(tmpdir(),'canopy-release-bootstrap-'));
 try{
  for(const [name,document] of Object.entries({
-  'health.json':{service:'under-the-canopy-releases',status:'ready',updateFeed:'awaiting-first-signed-release'},
+  'health.json':{service:'under-the-canopy-releases',status:'ready'},
   'changelog.json':{schemaVersion:1,releases:[]},
  })){
   const file=join(temp,name);writeFileSync(file,JSON.stringify(document,null,2)+'\n');
-  try{aws(['s3api','put-object','--bucket',outputs.BucketName,'--key','updates/'+name,'--body',file,'--content-type','application/json','--cache-control','public, max-age=60','--if-none-match','*']);}
+  try{aws(['s3api','put-object','--bucket',outputs.BucketName,'--key','updates/'+name,'--body',file,'--content-type','application/json','--cache-control','public, max-age=60',...(name==='changelog.json'?['--if-none-match','*']:[])]);}
   catch(error){if(!String(error.stderr).includes('PreconditionFailed'))throw error;}
  }
 }finally{rmSync(temp,{recursive:true,force:true});}
@@ -41,4 +41,4 @@ if(!response.ok)throw Error(`Stack deployed, but HTTPS health check returned ${r
 if((await response.json()).service!=='under-the-canopy-releases')throw Error('Unexpected release-host response');
 console.log(`Release hosting ready: ${outputs.BaseUrl}`);
 console.log(`Changelog index: ${outputs.ChangelogIndexUrl}`);
-console.log('The update feed is intentionally absent until the first signed release is published.');
+console.log('The update feed is managed by release:publish; infrastructure deployment preserves published releases.');

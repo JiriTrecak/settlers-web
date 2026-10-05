@@ -3595,3 +3595,193 @@ sanctuary-model test remains conditionally skipped while that asset is a
 placeholder. TypeScript, map-preview freshness and whitespace checks pass. All
 six published maps validate as playable. The network tests ran with loopback
 ports available; no test was disabled to accommodate sandbox restrictions.
+
+### 33. Collision-index demand and scheduling boundaries
+
+Re-established the active battle against current content (`35f35466`) after the
+Rootworks repair. The 6,000-tick starting checkpoint has three real AIs; the next
+4,800 ticks add the same 32-unit human attack. This is a new fixture, not directly
+comparable to the old content's 4.909 ms p99.
+
+Combat planning, idle separation and movement each previously refreshed the
+moving-body index on entry, even without a collision query. A movement scope now
+materializes it at its first query; subsequent body moves update it immediately.
+An unused scope does no refresh. Standalone queries still scan live entities,
+and each new scope revalidates membership (including restore, death, garrison,
+ghost workers and yield reservations). No tick cadence or decisions changed.
+
+The detailed run reduces combat-planning refreshes from 1/tick to approximately
+0.227/tick, eliminating 77% of that pass's refreshes. Separation and movement
+still refresh once/tick in this workload. The profiler attributes real work to
+`Moving-body refresh` and counts `Bodies indexed`; entering a scope is separate.
+
+Paired full-workload runs (`/tmp/index-{before,lazy}-paired.json`) measured
+3.094/5.863 versus 2.958/5.836 ms mean/p99; reverse-order confirmation measured
+3.535/6.973 versus 3.486/6.665. Absolute timings vary substantially across runs.
+This is a modest reduction in redundant work, not a major p99 win or achievement
+of the 3 ms budget. Baseline and optimized runs share full audit `4133723339`.
+Browser IPC, input and HUD remain outside this headless measurement.
+
+Scheduling candidates must distinguish decisions from invalidations. Ordinary
+automatic target acquisition is already staggered by ID every eight ticks;
+attack-move acquisition is not, and idle separation is staggered every 20 ticks.
+At 40 Hz, 2–4 ticks correspond to 50–100 ms. Any future reduction should distribute
+entities across phases, preserve immediate orders/invalidations and deterministic
+tick-based scheduling, and measure same-tick p99 rather than merely reducing
+average work. No additional delayed update policy is implemented in this pass.
+
+Verification: 429 files / 2,317 tests pass (one existing placeholder-asset skip),
+TypeScript passes, and four peers agree at all 13 full-audit checkpoints from
+tick 6000 through 7200, including a synthetic 32-beat upstream stall. Final full
+snapshots are equal, audit `1183943094` (`/tmp/index-four-peer.json`).
+
+### 34. Fog footprint work without delaying visibility
+
+Kept all tick cadences unchanged. Continued from section 33's frozen Heartroot
+battle (content `35f35466`, map `52de6e71`, ticks 6000–10800, three real AIs and
+the same 32-unit human attack). Independent V8 sampling still identifies movement,
+combat planning and terrain sight among the substantial CPU consumers.
+
+Fog's compact-footprint cache charged each entry for a dense cell array even
+when no caller materialized it. This caused 4.627 evictions/tick versus 4.655
+misses/tick. Entries now share one LRU that charges actual allocated spans and
+dense cells. Dense expansion triggers eviction immediately. The existing 4 MiB
+retained typed-array budget and 4,096-entry bound remain; caller-held evicted
+arrays remain immutable. No visibility rules or simulation state are cached
+across mutations.
+
+A second conservative shelf test uses four-cell minimum/maximum heights when the
+sixteen-cell bound fails. This avoids marching every target ray just because a
+coarse block contains a cliff beyond the footprint. Unresolved cases retain the
+same quarter-cell samples and uphill visibility rule. The extra minimum grid is
+32 KiB on a 512-square map.
+
+Deterministic work reduction, from `/tmp/index-lazy-details.json` to
+`/tmp/actions-fine-details.json`:
+
+- Footprint misses: 4.655 → 3.474/tick (25.4% fewer).
+- Terrain rays: 2,174.61 → 1,438.11/tick (33.9% fewer).
+- Bilinear height samples: 3,393.04 → 2,381.23/tick (29.8% fewer).
+- Instrumented footprint self time: 0.139 → 0.115 ms/tick. Diagnostic timings
+  include profiling overhead and are not the budget acceptance measurement.
+
+Unprofiled whole-workload baseline `/tmp/actions-cache-before.json` measured
+3.267 ms mean / 6.266 ms p99; final `/tmp/actions-final-after.json` measured
+3.132 / 6.254. This establishes reduced work, with a modest average improvement
+in this pair and essentially unchanged p99. It does not meet the 3 ms p99 goal;
+host variance remains significant, and real browser delivery/input/HUD remain
+outside the headless measurement. All detailed and ordinary battle runs end with
+the same full audit `4133723339`.
+
+Four-peer continuation from ticks 6000–7200 agrees at all 13 full-audit checkpoints,
+including the synthetic 32-beat upstream stall; final snapshots are identical and
+retain audit `1183943094` (`/tmp/actions-final-four-peer.json`). Tests additionally
+cover compact retention, dense expansion accounting, LRU eviction, oversized
+dense views, and exact equivalence to brute-force terrain rays.
+
+Final verification: 430 test files / 2,325 tests pass, with the one existing
+placeholder-asset skip. TypeScript and whitespace checks pass. No tests were
+removed, weakened or newly skipped; update cadence is unchanged.
+
+### 35. Target-query experiment and live-traffic routing probe
+
+Continued without changing update cadence. The frozen battle's target lookup
+examines 419.87 candidates/tick and rejects 413.31 by allegiance. A prototype
+partitioned each spatial bucket by owner, preserving neutral camp policies,
+visibility, forced attacks and stable distance/ID ties. It reduced candidates to
+7.95/tick and instrumented acquisition self time from 0.113 to 0.078 ms/tick.
+However, paired unprofiled whole-match runs were essentially unchanged:
+3.132/6.173 versus 3.130/6.175 ms mean/p99, and in reverse order 3.047/5.794 versus
+3.046/5.865. All runs retained full audit `4133723339`. **The prototype was removed**:
+fewer candidates and faster instrumented queries did not establish a whole-match
+benefit sufficient to justify the extra grouping machinery.
+
+Added `bench:match -- --probe-traffic-mesh` for the next structural decision. For
+eligible long routes with live body blockers it runs both the production grid
+solver and the existing mesh candidate against the same live request, alternating
+which runs first. It always returns the production route. The mesh candidate
+still passes the real footprint, corner, traffic and cost-bound validation.
+Statistics appear under `trafficMeshProbe`; no routing mode is exposed in the
+game. This is **duplicate diagnostic work, not budget acceptance timing**. It
+also warms derived mesh caches; timings are exploratory, not a promise about a
+replacement solver. Diagnostic routing counters exclude the shadow calls.
+
+`/tmp/traffic-mesh-probe.json` contains 451 eligible requests, accounting for
+573,132 of 595,968 grid expansions (96.2%). The grid finds 446 routes; the mesh
+passes traffic validation for only 25 (5.5%), all already reachable by the grid.
+All 25 differ from the production path; the greatest grid-cost stretch is 1.091.
+The mesh attempts total 27.05 ms. They replace only 6.73 ms worth of successful
+grid requests at a successful-mesh cost of 3.05 ms. Simply trying the mesh before
+every traffic route would add failed work. Full audit remains `4133723339`.
+
+The remaining structural candidate is local traffic recovery: preserve a valid
+long terrain route and repair/rejoin a short section around nearby bodies,
+rather than searching to the distant goal again. Existing local detours primarily
+handle parked allies; moving streams retain global traffic replans. Extending
+this changes yielding/detour choices, so it is a gameplay decision to discuss,
+not an unannounced cadence change or an unconditional solver switch. No such
+behavior change is included in this pass.
+
+### 36. Separate long terrain routes from local unit traffic
+
+With approval to change traffic decisions, movement now keeps its long terrain
+corridor when a nearby body blocks the next step. It tries the existing bounded
+local recovery/rejoin search for moving traffic as well as parked allies, then
+waits or yields. It no longer collects all bodies and runs a map-wide traffic
+route to the distant destination. Occupied endpoints are adjusted only near
+arrival. Actual terrain blockage still clears the stale route for replanning.
+The four-cell local search, 256-node limit, collision sweeps, six-tick retry and
+five-second cycle recovery cadence remain unchanged. No flow field is introduced.
+
+This changes simulation decisions: build is now `declarative-sim-93`. Benchmark
+comparisons use identical frozen build-92 tick-6000 state with a benchmark-only
+copy relabeled for build 93 (`/tmp/local-traffic-6000-build93.json`). Production
+save/build compatibility is not relaxed. Content remains `35f35466`, Heartroot
+map `52de6e71`, three AIs and a staged 32-unit human attack, through tick 10800.
+
+Deterministic diagnostic work (`/tmp/movement-demand.json` versus
+`/tmp/local-traffic-details.json`):
+
+- Map-wide grid searches: 2,025 → 78; expanded nodes: 595,968 → 3,882.
+- Terrain mesh searches: 700 → 234; expanded polygons: 168,846 → 37,749.
+- Local grid expansions: 45,065 → 161,713; successful detours: 111 → 706.
+  Recovery becomes local work rather than disappearing from measurement.
+- Combat-active ticks: 4,007 → 3,920; distinct attackers: 75 → 74; human
+  survivors: 31 in both. End population is 263 versus 260. These are different
+  battle trajectories, not bit-identical workloads, despite identical input.
+
+Two unprofiled pairs, reversing run order, measured:
+
+- Movement mean/p99: 0.609/2.323 → 0.516/1.267 ms, then
+  0.592/2.252 → 0.482/1.201 ms.
+- Whole accounted non-render mean/p99: 3.057/6.002 → 3.064/5.772 ms, then
+  2.916/5.886 → 2.767/5.320 ms.
+
+Reports are `/tmp/local-traffic-{before,after}.json` and
+`/tmp/local-traffic-{before,after}-confirm.json`. Host variance remains visible;
+the repeatable result is roughly halved movement p99 and reduced search work,
+not a proportional whole-game improvement. Both new runs end at full audit
+`3527651004`; both old runs retain `4133723339`. **The 3 ms whole-match p99 goal
+is still unmet**, and actual browser IPC, input and HUD remain outside this
+headless accounting.
+
+Regression contracts cover four rotated opposing moves with restore during a
+detour, a temporarily blocked gate, a newly placed building, and two compact
+eight-unit formations passing through each other. Every step checks terrain
+and/or physical body clearance. The old implementation fails five of the new
+contracts; at the blocked gate it performs 46 global searches while waiting,
+where the replacement performs none and resumes after the gate opens.
+
+Four-peer continuation from the active battle at ticks 10800–12000 agrees at
+all 13 full-audit checkpoints, including a synthetic 32-beat upstream stall.
+Final snapshots are identical with audit `1278100042`
+(`/tmp/local-traffic-four-peer.json`). The complete battle also passes snapshot
+encode/decode comparison each tick and warm/cold save reconstruction across
+13 checkpoints, ending at audit `3527651004`
+(`/tmp/local-traffic-verified.json`). Verification timings are not acceptance data.
+
+The full suite passes 432 files / 2,334 tests with the existing placeholder-asset
+skip. The additional opposing-formation regression also passes. Final movement,
+save-library and worker-snapshot tests pass on build 93; TypeScript and whitespace
+checks pass. No tests were removed, weakened or newly skipped. Recovery remains
+a bounded heuristic, not a guarantee against every possible crowd deadlock.

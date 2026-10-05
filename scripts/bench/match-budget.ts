@@ -35,6 +35,44 @@ let combatTicks=0,humanOrderMs=0;
 const pathQueries:{tick:number;ms:number;actor?:number;definition?:string;order?:string;start:number;goal:number;startPoint:unknown;goalPoint:unknown;blocked:number;maxCost:number|null;result:number|null;expanded:number;fallbacks:number;meshSearches:number;meshExpanded:number;meshRebuiltTiles:number}[]=[];
 const actorRoutes=new Map<number,{actor:number;calls:number;failed:number;repeatedUnchanged:number;maxStalledTicks:number;startX:number;startY:number;goalX:number;goalY:number;revision:number}>();
 const routeDemand={queries:0,failed:0,expanded:0,untrackedQueries:0};
+// Diagnostic shadow solver: compare the mesh with live traffic against the
+// exact same requests, but always return the production route to the simulation.
+// Timing includes duplicate work and must never be used as budget evidence.
+const trafficMeshProbe=args.includes('--probe-traffic-mesh')?{queries:0,meshAccepted:0,gridAccepted:0,meshOnly:0,differentRoutes:0,gridMs:0,meshMs:0,acceptedGridMs:0,acceptedMeshMs:0,gridExpanded:0,maxStretch:0}:undefined;
+if(trafficMeshProbe){
+ const spatial=runtime.world.settlement.spatial,find=spatial.findPath.bind(spatial);
+ // Deliberately benchmark-only access: no alternate routing switch in the game.
+ const mesh=(spatial as unknown as {meshPath:typeof spatial.findPath}).meshPath.bind(spatial);
+ spatial.findPath=(start,goal,blocked,maxCost=Infinity,actor)=>{
+  const eligible=blocked?.size&&!spatial.layers&&!spatial.airborne(actor)&&spatial.unitRadius<=16000&&
+   Math.round(spatial.dimensions(actor).radius*1000)===spatial.unitRadius&&spatial.validNode(start)&&spatial.validNode(goal)&&
+   Math.max(Math.abs(start%spatial.size-goal%spatial.size),Math.abs(Math.floor(start/spatial.size)-Math.floor(goal/spatial.size)))>=16;
+  if(!eligible)return find(start,goal,blocked,maxCost,actor);
+  let candidate:number[]|null=null,meshMs=0;
+  const shadow=()=>{
+   const counters={...spatial.routing},began=performance.now();
+   try{candidate=mesh(start,goal,blocked,maxCost,actor);}finally{meshMs=performance.now()-began;Object.assign(spatial.routing,counters);}
+  };
+  // Alternate order to expose warm-cache bias. Both calls see identical world
+  // state; only disposable navigation caches and diagnostic counters can change.
+  if(trafficMeshProbe.queries%2===0)shadow();
+  const expanded=spatial.routing.expanded,began=performance.now(),route=find(start,goal,blocked,maxCost,actor),gridMs=performance.now()-began;
+  if(trafficMeshProbe.queries%2!==0)shadow();
+  trafficMeshProbe.queries++;trafficMeshProbe.gridMs+=gridMs;trafficMeshProbe.meshMs+=meshMs;trafficMeshProbe.gridExpanded+=spatial.routing.expanded-expanded;
+  if(route)trafficMeshProbe.gridAccepted++;
+  if(candidate){
+   const alternative=candidate as number[];
+   trafficMeshProbe.meshAccepted++;trafficMeshProbe.acceptedGridMs+=gridMs;trafficMeshProbe.acceptedMeshMs+=meshMs;
+   if(!route)trafficMeshProbe.meshOnly++;
+   else {
+    if(route.length!==alternative.length||route.some((cell,i)=>cell!==alternative[i]))trafficMeshProbe.differentRoutes++;
+    const cost=(path:number[])=>{let total=0,previous=start;for(const cell of path){total+=cell%spatial.size!==previous%spatial.size&&Math.floor(cell/spatial.size)!==Math.floor(previous/spatial.size)?1414:1000;previous=cell;}return total;};
+    trafficMeshProbe.maxStretch=Math.max(trafficMeshProbe.maxStretch,cost(alternative)/cost(route));
+   }
+  }
+  return route;
+ };
+}
 const destinationDemand=new Map<number,{queries:number;failed:number;expanded:number;ms:number;starts:Set<number>;actors:Set<number>;revisions:Set<number>;distinctCountsCapped:boolean}>();
 if(args.includes('--trace-routes')){
  const spatial=runtime.world.settlement.spatial,find=spatial.findPath.bind(spatial),route=spatial.route.bind(spatial);
@@ -217,6 +255,7 @@ const report={work,...(args.includes('--trace-routes')?{actorRouteDemand:{scope:
  coverage:'Runtime + periodic network checksum + production projection/encode/decode + in-process transfer clone. Excludes browser IPC, main-thread UI/input and rendering. Inclusive parents overlap children; sum self times only.',
  verifyProjection,verifyRestore,restoreChecks,details:runtime.profiling,budgetTail,threadCpu,cpuProfile:cpuProfile||undefined,allocationProfile:allocationProfile?{path:allocationProfile,samplingInterval:65536,includesCollected:true,scope:'After warm-up; includes timed runtime and benchmark bookkeeping. Diagnostic overhead is not acceptance timing.'}:undefined,gc,traceRoutes:args.includes('--trace-routes'),pathQueries,startTick,endTick:runtime.world.clock.tickIndex,ticks,warmupTicks:200,budgetMs:3,budgetPercentile:99,checkpointBudgetMs:.1,wallMs:performance.now()-begin,
  runtime:{node:process.version,platform:process.platform,arch:process.arch},timings:Object.fromEntries([...series].map(([k,a])=>[k,stats(a)])),profile,tailProfile,slowTicks,windows,
+ trafficMeshProbe:trafficMeshProbe?{...trafficMeshProbe,scope:'Shadow mesh and production grid on identical live traffic requests; duplicate diagnostic work, not budget evidence. Production routes always used.'}:undefined,
  checksum:runtime.world.checksum(),fullAuditChecksum:runtime.world.checksum('full'),outcome:runtime.world.settlement.state.outcome,entities:runtime.world.settlement.state.entities.length,units:runtime.world.settlement.context.liveUnits().length,ai:runtime.world.aiSummary(),routing:runtime.world.settlement.spatial.routing};
 const save=option('--save','');if(save)writeFileSync(save,JSON.stringify(runtime.snapshotLocal()));
 runtime.destroy();restored?.destroy();const path=option('--output','/tmp/match-budget.json');writeFileSync(path,JSON.stringify(report,null,2));console.log(JSON.stringify({path,total:report.timings['Accounted non-render CPU']}));

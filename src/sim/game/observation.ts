@@ -311,19 +311,43 @@ export class Observation {
     return this.spellSensors(owner).some(v=>v.detectInvisible&&(p.x-v.point.x)**2+(p.y-v.point.y)**2<=v.radius*v.radius&&(v.ignoreTerrain||this.c.spatial.visible(v.point,p)));
   }
   private readonly sightSectors=new SectorIndex<Entity>();
-  private sightStamp='';
+  private readonly sightRecords=new Map<number,{entity:Entity;x:number;y:number;radius:number}>();
+  private sightTick=-1;
+  private sightStructure=-1;
+  private sightMotion=-1;
+  private refreshSightSensor(sensor:Entity){
+    this.c.profile.count('Sensor records checked');
+    const radius=alive(sensor)?(this.c.def(sensor).vision??0)+1:0;
+    if(radius<=1){
+      if(this.sightRecords.delete(sensor.id)){this.sightSectors.delete(sensor.id);this.c.profile.count('Sensor entries removed');}
+      return;
+    }
+    const p=precise(sensor),old=this.sightRecords.get(sensor.id);
+    if(old?.entity===sensor&&old.x===p.x&&old.y===p.y&&old.radius===radius)return;
+    this.sightRecords.set(sensor.id,{entity:sensor,x:p.x,y:p.y,radius});
+    this.sightSectors.set(sensor.id,sensor,{minX:p.x-radius,minY:p.y-radius,maxX:p.x+radius,maxY:p.y+radius});
+    this.c.profile.count('Sensor entries updated');
+  }
   private nearbySensors(e:Entity):Iterable<Entity> {
-    const stamp=`${this.c.state.tick}:${this.c.observationRevision}:${this.c.motionRevision}`;
-    if(stamp!==this.sightStamp){
-      this.c.profile.count('Sensor index rebuilds');
-      const ids=new Set<number>();
-      const liveSensors=this.c.liveSensors();this.c.profile.count('Sensors indexed',liveSensors.length);
-      for(const sensor of liveSensors){
-        const p=precise(sensor),radius=(this.c.def(sensor).vision??0)+1;
-        this.sightSectors.set(sensor.id,sensor,{minX:p.x-radius,minY:p.y-radius,maxX:p.x+radius,maxY:p.y+radius});ids.add(sensor.id);
+    const c=this.c,changed=this.sightMotion!==c.motionRevision;
+    if(this.sightTick!==c.state.tick||this.sightStructure!==c.observationRevision||changed){
+      const movers=this.sightTick===c.state.tick&&this.sightStructure===c.observationRevision&&changed
+        ?c.sightMovesSince(this.sightMotion):null;
+      if(movers){
+        c.profile.count('Incremental sensor refreshes');
+        for(const sensor of movers)this.refreshSightSensor(sensor);
+      }else{
+        // Tick boundaries still reconcile direct lifecycle writes. Bounds are
+        // rewritten only for changed sensors; an explicit editor refresh and
+        // untracked motion revision take this same conservative path.
+        c.profile.count('Full sensor reconciliations');
+        const sensors=c.liveSensors(),ids=new Set(sensors.map(s=>s.id));
+        for(const sensor of sensors)this.refreshSightSensor(sensor);
+        for(const id of this.sightRecords.keys())if(!ids.has(id)){
+          this.sightRecords.delete(id);this.sightSectors.delete(id);c.profile.count('Sensor entries removed');
+        }
       }
-      for(const id of this.sightSectors.ids())if(!ids.has(id))this.sightSectors.delete(id);
-      this.sightStamp=stamp;
+      this.sightTick=c.state.tick;this.sightStructure=c.observationRevision;this.sightMotion=c.motionRevision;
     }
     const p=precise(e),f=this.c.def(e).footprint,rotated=Math.round(e.rotation/90)%2!==0;
     const x=f?(rotated?f.depth:f.width)/2:0,y=f?(rotated?f.width:f.depth)/2:0;
@@ -618,7 +642,7 @@ export class Observation {
   }
   /** Explicit external updates rescan state; fixed ticks consume simulation change receipts. */
   update(incremental=false) {
-    this.sightStamp="";this.containmentSightStamp="";this.containmentSight.clear();
+    this.sightTick=-1;this.containmentSightStamp="";this.containmentSight.clear();
     const started=performance.now();let maskMs=0,knowledgeMs=0;
     this.cache.clear();
     while (
@@ -900,7 +924,7 @@ export class Observation {
   restore(raw: unknown) {
     const rows = this.validateSnapshot(raw);
     this.masks.clear();this.visibleStatics.clear();this.staticCoverage.clear();this.staleStatics.clear();this.structureRevision=-1;
-    this.staticRecords.clear();this.staticCells=undefined;this.staticOverlaps.clear();this.sightSectors.clear();this.sightStamp="";this.containmentSightStamp="";this.containmentSight.clear();
+    this.staticRecords.clear();this.staticCells=undefined;this.staticOverlaps.clear();this.sightSectors.clear();this.sightRecords.clear();this.sightTick=-1;this.containmentSightStamp="";this.containmentSight.clear();
     this.resourceViews.clear();
     this.projectEntities();this.projectWork();
     this.deathCues.length = 0;

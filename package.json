@@ -40,7 +40,13 @@
     "bench:textures": "vite --config scripts/bench/texture-sharing/vite.config.ts --open /scripts/bench/texture-sharing/index.html",
     "bench:scenery-cells": "vite --config scripts/bench/scenery-cells/vite.config.ts --open /scripts/bench/scenery-cells/index.html",
     "bench:scenery-visibility": "node --import tsx scripts/bench/scenery-visibility.ts",
-    "bench:worker-decode": "vite --config scripts/bench/worker-decode/vite.config.ts --open /scripts/bench/worker-decode/index.html"
+    "bench:worker-decode": "vite --config scripts/bench/worker-decode/vite.config.ts --open /scripts/bench/worker-decode/index.html",
+    "release:note": "node --import tsx scripts/releases/log.ts note",
+    "release:prepare": "node --import tsx scripts/releases/log.ts prepare",
+    "release:check": "node --import tsx scripts/releases/log.ts check",
+    "release:build": "node --import tsx scripts/releases/build.ts",
+    "release:publish": "node --import tsx scripts/releases/publish.ts",
+    "release:image": "node --import tsx scripts/releases/log.ts image"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.83",
@@ -56,6 +62,9 @@
     "@radix-ui/react-tabs": "^1.1.21",
     "@radix-ui/react-tooltip": "^1.2.16",
     "@tanstack/react-virtual": "^3.14.13",
+    "@tauri-apps/api": "^2.12.1",
+    "@tauri-apps/plugin-process": "^2.4.0",
+    "@tauri-apps/plugin-updater": "^2.13.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "eve": "^0.70.0",
@@ -65,8 +74,8 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1",
     "react-resizable-panels": "^4.14.1",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.7.0",
     "three": "^0.185.1",
     "ws": "^8.21.3",
@@ -74,7 +83,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
-    "@tauri-apps/cli": "^2",
+    "@tauri-apps/cli": "^2.12.1",
     "@types/node": "^26.2.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

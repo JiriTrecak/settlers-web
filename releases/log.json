@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "unreleased": {
+    "added": [
+      "Release notes can include image galleries with captions and a larger keyboard-accessible viewer."
+    ],
+    "improved": [
+      "Reduced unnecessary collision-index preparation during combat planning while preserving movement and combat behavior.",
+      "A zinc changelog timeline shows release history, with category icons and automatic desktop update availability on the main menu.",
+      "Reduced fog-of-war terrain calculations by retaining compact visibility footprints and skipping ray tests over proven-clear terrain. Visibility still updates at the same frequency.",
+      "Rebuilt the main menu with a dark woodland battlefield, carved charcoal controls, animated canopy light shafts and small fires, and a compact version label.",
+      "Units now handle nearby traffic with local detours and yielding instead of repeatedly recalculating routes across the map, reducing movement spikes in crowded matches.",
+      "Made menu light shafts brighter with drifting beams and dust, narrowed menu buttons, and enlarged and aligned fires with damaged buildings.",
+      "Shifted menu canopy rays away from the right trunk and added finer shafts through the left opening.",
+      "Extended menu fire smoke into taller drifting plumes and tripled the rising sparks."
+    ],
+    "fixed": [],
+    "knownIssues": []
+  },
+  "releases": [
+    {
+      "added": [
+        "Check for signed desktop updates from the main menu, with download progress and installation on restart.",
+        "Read the installed release's changelog directly from the main menu, even offline."
+      ],
+      "improved": [
+        "Desktop releases and changelogs are delivered over HTTPS from dedicated release hosting."
+      ],
+      "fixed": [
+        "Desktop builds find the standard Rust installation when Cargo is missing from the shell PATH.",
+        "Generated spell icons now use the game's supported size, preventing startup failures."
+      ],
+      "knownIssues": [
+        "macOS builds are locally signed but not yet notarized by Apple."
+      ],
+      "version": "0.2.0",
+      "publishedAt": "2026-10-05T13:54:27.932Z",
+      "title": "Desktop updates and release notes"
+    },
+    {
+      "added": [],
+      "improved": [],
+      "fixed": [],
+      "knownIssues": [
+        "This baseline predates the shared release log; earlier changes are not itemized."
+      ],
+      "version": "0.1.0",
+      "publishedAt": "2026-10-05T00:00:00Z",
+      "title": "Development baseline"
+    }
+  ]
+}

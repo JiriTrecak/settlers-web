@@ -5,6 +5,24 @@ import {UnitIndex} from '../../src/sim/game/unitIndex';
 import {separateOverlaps} from '../../src/sim/game/separation';
 
 describe('movement broad phase',()=>{
+ it('materializes collision membership only on demand, then follows movement in the same pass',()=>{
+  const g=game([placed('a','unit.ants.warrior',100,100),placed('b','unit.ants.warrior',110,100)]);
+  const a=g.entities.find(e=>e.placement==='a')!,b=g.entities.find(e=>e.placement==='b')!;
+  const refresh=vi.spyOn(UnitIndex.prototype,'refresh');
+  const probe=()=>g.spatial.unitSegmentClear(fixed(a),fixed({x:103,y:100}),a.id);
+  try {
+   g.spatial.beginUnitMovement();g.spatial.endUnitMovement();expect(refresh).not.toHaveBeenCalled();
+   g.spatial.beginUnitMovement();
+   b.x=102;b.unit!.position=fixed(b);g.spatial.updateUnitMovement(b);
+   expect(refresh).not.toHaveBeenCalled();expect(probe()).toBe(false);expect(refresh).toHaveBeenCalledTimes(1);
+   b.x=110;b.unit!.position=fixed(b);g.spatial.updateUnitMovement(b);
+   expect(probe()).toBe(true);expect(refresh).toHaveBeenCalledTimes(1);
+   g.spatial.endUnitMovement();
+   b.x=102;b.unit!.position=fixed(b);
+   expect(probe()).toBe(false);expect(refresh).toHaveBeenCalledTimes(1);
+   g.spatial.beginUnitMovement();expect(probe()).toBe(false);expect(refresh).toHaveBeenCalledTimes(2);
+  } finally {g.spatial.endUnitMovement();refresh.mockRestore();}
+ });
  it('reuses local body snapshots only within a synchronous search, preserving every sweep result',()=>{
   const g=game(Array.from({length:30},(_,i)=>placed('probe'+i,'unit.ants.warrior',100+i%6,100+Math.floor(i/6))));
   const units=g.entities.filter(e=>e.placement?.startsWith('probe')),mover=units[0];

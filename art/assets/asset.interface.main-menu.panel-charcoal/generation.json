@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Isolated blank charcoal carved-oak menu panel with pewter leaf ornaments; transparent exterior; no logo, buttons or text.",
+  "processing": "Alpha trim for isolated UI, downsize without enlargement, WebP quality 92. Background unchanged except encoding.",
+  "effects": "Runtime shafts, fire, smoke and embers are separate; labels remain HTML."
+}
