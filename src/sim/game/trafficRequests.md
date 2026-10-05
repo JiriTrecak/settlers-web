@@ -15,6 +15,13 @@ checked again on every movement step. Recovery keeps the existing six-tick retry
 cadence. This is not a flow field; shared group routing can be added independently
 of the local collision and yielding contract.
 
+Local clearance asks the movement index about each touched cell, including yield
+pockets and the exact walk-surface ID. It does not build an army-wide reservation
+set for each detouring actor. Start-of-pass actor eligibility is materialized
+lazily once if local recovery needs it; a unit released during that pass joins
+reservations on the next pass, preserving the original eligibility snapshot.
+Buckets update after each mover, so later movers see positions already reached.
+
 Profiling splits discovery into candidates, body indexing, dependencies, cycles,
 priority propagation and escape feasibility. Dependency discovery stops at the
 first non-coincident route waypoint: the distant tail cannot affect the next

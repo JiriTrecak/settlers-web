@@ -14,6 +14,26 @@ const compare=(fast:TestGame,reference:TestGame)=>{
  expect(fast.checksum('full')).toBe(reference.checksum('full'));
 };
 
+it('retains fallen heroes locally and matches a full index rebuild through removal, revival and restore',()=>{
+ const fast=create(),reference=create(),spy=classify(fast);
+ const indexed=vi.spyOn(fast.context,'reindex');
+ for(const g of [fast,reference]){
+  const hero=g.entities.find(e=>e.equipment&&e.owner==='player.1')!;
+  hero.hp=0;g.economy.remove(hero);g.revival.retain(hero);
+  g.context.create(placed('after','unit.ants.warrior',115,115));
+  if(g===reference)g.context.reindex();
+ }
+ compare(fast,reference);expect(spy).not.toHaveBeenCalled();expect(indexed).not.toHaveBeenCalled();
+ expect(fast.context.indexedUnits().map(e=>e.id)).toEqual(reference.context.indexedUnits().map(e=>e.id));
+ for(const g of [fast,reference]){
+  const hero=g.entities.find(e=>e.fallen)!;hero.hp=100;delete hero.fallen;
+  g.context.create(placed('later','unit.ants.warrior',116,116));
+ }
+ compare(fast,reference);
+ const saved=fast.snapshot(),view=fast.view('player.1');fast.restore(saved);
+ expect(fast.view('player.1')).toEqual(view);expect(fast.snapshot()).toEqual(saved);
+});
+
 it('updates actor membership without reclassifying scenery, including transient actors and resource receipts',()=>{
  const fast=create(),reference=create(),spy=classify(fast),oldView=fast.view();
  const oldIds=oldView.entities.map(e=>e.id);

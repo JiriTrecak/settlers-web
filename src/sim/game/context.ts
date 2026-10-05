@@ -40,7 +40,7 @@ export class GameContext {
   observationRevision=0;
   /** Creation/removal receipts let observation update actor membership without
    * reclassifying stationary scenery. Other revision changes remain conservative. */
-  readonly observationEntityChanges:{type:'add'|'remove';entity:Entity}[]=[];
+  readonly observationEntityChanges:{type:'add'|'remove'|'retain';entity:Entity}[]=[];
   motionRevision=0;
   private sightMotionTick=-1;
   private sightMotionFrom=0;
@@ -60,6 +60,7 @@ export class GameContext {
   private readonly growingResources=new Set<Entity>();
   private entityOrder=new WeakMap<Entity,number>();
   private nextEntityOrder=0;
+  private entitiesInIdOrder=true;
   resourceChanged(e:Entity){
     this.changedResources.add(e);this.indexResource(e);
     if(e.resource?.growingUntil!=null)this.growingResources.add(e);else this.growingResources.delete(e);
@@ -141,8 +142,10 @@ export class GameContext {
     this.observationRevision++;this.changedResources.clear();this.observationEntityChanges.length=0;
     this.index = new Map(this.state.entities.map((e) => [e.id, e]));
     this.jobIndex=new Map(this.state.jobs.map(j=>[j.id,j]));
-    this.entityOrder=new WeakMap();this.nextEntityOrder=0;this.growingResources.clear();
+    this.entityOrder=new WeakMap();this.nextEntityOrder=0;this.growingResources.clear();this.entitiesInIdOrder=true;
+    let previousId=-1;
     for(const e of this.state.entities){
+      if(e.id<=previousId)this.entitiesInIdOrder=false;previousId=e.id;
       this.entityOrder.set(e,this.nextEntityOrder++);
       if(e.resource?.growingUntil!=null)this.growingResources.add(e);
     }
@@ -277,6 +280,25 @@ export class GameContext {
     };
   }
   onRemoving?: (entity:Entity)=>void;
+  /** Restore a removed hero's identity in ID order without reindexing the forest.
+   * Exotic resource-bearing forms retain the conservative reconstruction path. */
+  retainUnit(e:Entity) {
+    if(this.index.has(e.id))throw Error('Retained entity is already indexed');
+    if(!e.unit||e.resource||!this.entityOrder.has(e)||!this.entitiesInIdOrder){
+      this.state.entities.push(e);this.state.entities.sort((a,b)=>a.id-b.id);this.reindex();return;
+    }
+    const insert=(rows:Entity[])=>{
+      let lo=0,hi=rows.length;
+      while(lo<hi){const mid=(lo+hi)>>>1;if(rows[mid]!.id<e.id)lo=mid+1;else hi=mid;}
+      rows.splice(lo,0,e);
+    };
+    insert(this.state.entities);insert(this.unitEntities);
+    if(e.hp!==null)insert(this.bodyEntities);
+    if(this.def(e).kind==='building')insert(this.buildingEntities);
+    if(this.canProvideSight(e))insert(this.sightEntities);
+    this.index.set(e.id,e);this.membershipSnapshot=undefined;
+    this.observationRevision++;this.observationEntityChanges.push({type:'retain',entity:e});
+  }
   remove(e: Entity) {
     this.onRemoving?.(e);
     for(const occupant of this.liveUnits())if(occupant.unit?.garrison?.building===e.id)this.release(occupant,this.spatial.entrance(e));
@@ -352,6 +374,11 @@ export class GameContext {
   }
   private moveUnits(castFacingOnly=false,active?:ReadonlySet<number>) {
     const units = this.activeUnits();
+    // Preserve the pass's eligibility snapshot (e.g. units released later in
+    // this pass join reservations next pass). Materialize membership only if
+    // local recovery is actually needed, once rather than per detouring actor.
+    let localMembers:Set<Entity>|undefined;
+    const localEligibility=()=>localMembers??=new Set(units);
     let requests:ReturnType<typeof trafficRequests>|undefined;
     const occupiedByMode = this.profile.measure('Movement reservation sets',()=>[false,true].map(air=>new Set(units.filter(e=>this.spatial.airborne(e)===air).filter(e => !this.spatial.ignoresUnits(e)).flatMap(e => e.unit!.detour?.yielding ? [this.spatial.cell(e),e.unit!.detour.waypoint] : [this.spatial.cell(e)]))));
     for (const e of this.liveUnits()) {
@@ -403,7 +430,7 @@ export class GameContext {
         let budget = Math.floor((speed * POSITION_SCALE * this.stats(e).moveSpeedPermille * charge) / 40000000);
         u.position ??= fixed(e);
         if (u.detour) {
-          this.moveDetour(e, budget, turnStep);
+          this.moveDetour(e, budget, turnStep, localEligibility());
           continue;
         }
         // Retry/yield paths may begin at the exact position already reached.
@@ -476,7 +503,7 @@ export class GameContext {
               // the long route. Terrain invalidation above still replans it.
               const target = Math.hypot(desired.x-current.x/1000,desired.y-current.y/1000)<=7
                 ? this.spatial.nearest(desired,3,e.id) : null;
-              if(this.beginLocalDetour(e,target))break;
+              if(this.beginLocalDetour(e,target,localEligibility()))break;
               this.profile.count('Local traffic waits');
               {
                 // Stable yielding lets opposing friendly traffic pass without teleports.
@@ -547,7 +574,7 @@ export class GameContext {
 
   /** Rejoin the current corridor after a bounded escape around nearby bodies.
    * A distant order must not disable local clearance at the unit's feet. */
-  private beginLocalDetour(e:Entity, destination:Point|null) {
+  private beginLocalDetour(e:Entity, destination:Point|null, eligible:ReadonlySet<Entity>) {
     const u=e.unit!, current=u.position!;
     if (u.goal===null || !u.route.length) return false;
     const nearbyDestination=destination && Math.hypot(destination.x-current.x/1000,destination.y-current.y/1000)<=4;
@@ -560,7 +587,7 @@ export class GameContext {
     if(rejoin<0&&!replaceGoal)return false;
     const next=nearbyDestination||replaceGoal ? destination! : this.spatial.point(u.route[rejoin]), dx=next.x-current.x/1000, dy=next.y-current.y/1000;
     const distance=Math.hypot(dx,dy);
-    const reservations=this.localReservations(e), edge=(this.spatial.size-1)*POSITION_SCALE;
+    const reservations=this.localReservations(e,eligible), edge=(this.spatial.size-1)*POSITION_SCALE;
     const projected={x:current.x/1000+dx/distance*3,y:current.y/1000+dy/distance*3};
     const center={x:Math.round(projected.x),y:Math.round(projected.y)};
     const candidates=distance<=4 ? [next] : [-1,0,1].flatMap(y=>[-1,0,1].map(x=>({x:center.x+x,y:center.y+y,...(e.surface?{surface:e.surface}:{})})))
@@ -596,11 +623,11 @@ export class GameContext {
   }
   /** Stationary friendly bodies retain physical collision, not a whole-cell claim.
    * Moving bodies and enemies keep the existing traffic reservation. */
-  private localReservations(e:Entity) {
-    return this.spatial.unitReservations(b=>b.id!==e.id && this.ready(b) && !!b.unit && !b.unit.contained && !b.unit.release &&
+  private localReservations(e:Entity,eligible:ReadonlySet<Entity>) {
+    return this.spatial.unitReservations(b=>b.id!==e.id && eligible.has(b) && this.ready(b) && !!b.unit && !b.unit.contained && !b.unit.release &&
       this.spatial.sameLocomotion(e,b) && !this.spatial.ignoresUnits(b) && (b.owner!==e.owner || b.unit.route.length>0));
   }
-  private moveDetour(e:Entity, budget:number, turnStep:number) {
+  private moveDetour(e:Entity, budget:number, turnStep:number, eligible:ReadonlySet<Entity>) {
     const u = e.unit!, detour = u.detour!, current = u.position!, target = detour.points[0];
     let finishedYield=false;
     if(detour.yielding&&detour.points.length===1&&current.x===target.x&&current.y===target.y){
@@ -616,7 +643,7 @@ export class GameContext {
       y:current.y + Math.round((target.y-current.y)*travel/length),
     };
     if(current.surface)(proposed as FixedPoint).surface=current.surface;
-    if (!this.spatial.clearSegment(current,proposed,this.localReservations(e), e) ||
+    if (!this.spatial.clearSegment(current,proposed,this.localReservations(e,eligible), e) ||
       !this.spatial.unitSegmentClear(current,proposed,e.id)) {
       delete u.detour;
       u.retryAt = this.state.tick+6;

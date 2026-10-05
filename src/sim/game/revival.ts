@@ -9,7 +9,7 @@ export class Revival {
  retain(hero:Entity){
   hero.hp=0;hero.fallen=true;hero.unit=this.c.freshUnit();hero.inventory={};delete hero.stunnedUntil;delete hero.itemStatuses;delete hero.itemHits;
   if(hero.abilities){hero.abilities.pending=null;delete hero.abilities.weaponOrder;}
-  this.c.state.entities.push(hero);this.c.state.entities.sort((a,b)=>a.id-b.id);this.c.reindex();
+  this.c.retainUnit(hero);
  }
  enqueue(building:Entity,id:number):string|null {
   const policy=this.c.def(building).behaviors.revival,hero=this.c.get(id);

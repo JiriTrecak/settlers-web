@@ -117,7 +117,8 @@ export class Spatial {
         const p=this.point(cell);
         for(const e of index.inCell(p.x,p.y))if(this.cell(e)===cell&&matches(e))return true;
         for(const e of index.reservedAt(cell))if(matches(e))return true;
-      }else for(const e of this.units())if((this.cell(e)===cell||e.unit?.detour?.yielding&&e.unit.detour.waypoint===cell)&&matches(e))return true;
+      }else for(const e of this.units())if((this.cell(e)===cell||e.unit?.detour?.yielding&&e.unit.detour.waypoint===cell)&&
+        e.unit&&alive(e)&&!e.unit.contained&&!e.unit.release&&!this.ignoresUnits(e)&&matches(e))return true;
       return false;
     }};
   }
@@ -196,7 +197,7 @@ export class Spatial {
     this.tactical=new TacticalTerrain(this.size,this.heights);this.tactical.diagnostics=this.profile;
     this.sectors = new SectorNavigation(this.size,i=>this.walkable(i),(a,b)=>this.walkable(b)&&Math.abs(this.heights[a]!-this.heights[b]!)<=MAX_GROUND_STEP_CM,
       this.layers?{count:this.layers.nodes.length,cell:id=>this.layers!.nodes[id]!.cell,
-        neighbors:id=>this.layers!.neighbors(id,n=>!!this.occupied[n.id]||!!this.resources[n.id])}:undefined);
+        neighbors:id=>this.layers!.neighbors(id,n=>!!this.occupied[n.id]||!!this.resources[n.id])}:undefined,this.profile);
     this.navigation = new Navigation(
       this.size,
       (a, b) =>

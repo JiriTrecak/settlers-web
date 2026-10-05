@@ -17,6 +17,20 @@ import {emptyMissionState} from '../../src/shared/scenario/schema';
 const map=()=>({...emptyUtcMap(),playerStarts:emptyUtcMap().playerStarts.map((s,i)=>({...s,x:200,z:i?80:200})),stamps:[{id:'arch',asset:'leafbound-twig-bridge',x:40,y:40}]});
 const setup=()=>new GameContext(emptyState(),new ContentRegistry(builtinSource),map());
 function move(c:GameContext,n=1600){for(let i=0;i<n;i++){c.state.tick++;c.move();}}
+it('keeps indexed reservations on their walk surface, including distant yield pockets',()=>{
+ const c=setup(),lower=c.create(placed('lower','unit.ants.warrior',40,40));
+ const upper=c.create({...placed('upper','unit.ants.warrior',40,40),position:{x:40,y:40,surface:'arch'}});
+ const ground=c.spatial.cell(lower),deck=c.spatial.cell(upper),pocket=c.spatial.cell({x:40,y:43,surface:'arch'});
+ upper.unit!.detour={goal:pocket,waypoint:pocket,points:[fixed(c.spatial.point(pocket))],yielding:{leader:lower.id,until:100}};
+ c.spatial.beginUnitMovement();
+ try{
+  const mask=c.spatial.unitReservations(e=>e.id!==lower.id);
+  expect(mask.has(ground)).toBe(false);expect(mask.has(deck)).toBe(true);expect(mask.has(pocket)).toBe(true);
+  delete upper.surface;c.spatial.updateUnitMovement(upper);
+  expect(mask.has(ground)).toBe(true);expect(mask.has(deck)).toBe(false);expect(mask.has(pocket)).toBe(true);
+  delete upper.unit!.detour;c.spatial.updateUnitMovement(upper);expect(mask.has(pocket)).toBe(false);
+ }finally{c.spatial.endUnitMovement();}
+});
 it('moves under an occupied deck without collision or height snapping',()=>{
  const c=setup(),lower=c.create(placed('lower','unit.ants.warrior',30,40)),upper=c.create({...placed('upper','unit.ants.warrior',40,40),position:{x:40,y:40,surface:'arch'}});
  c.spatial.rebuild();expect(c.spatial.route(lower,{x:50,y:40},false)).toBe(true);

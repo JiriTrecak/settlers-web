@@ -5,7 +5,7 @@ import type {CellReservations} from '../../src/sim/game/spatial';
 import {fixed} from '../../src/sim/game/motion';
 
 function mask(g:ReturnType<typeof game>,e:Entity){
- return (g.context as unknown as {localReservations(e:Entity):CellReservations}).localReservations(e);
+ return (g.context as unknown as {localReservations(e:Entity,eligible:ReadonlySet<Entity>):CellReservations}).localReservations(e,new Set(g.context.activeUnits()));
 }
 function brute(g:ReturnType<typeof game>,e:Entity){
  return new Set(g.context.activeUnits().filter(b=>b.id!==e.id&&g.spatial.sameLocomotion(e,b)&&!g.spatial.ignoresUnits(b)&&
@@ -17,9 +17,10 @@ it('matches materialized reservations through movement, lifecycle changes and re
  const army=g.entities.filter(e=>e.placement?.startsWith('unit')),mover=army[0];g.state.tick=10;
  const pocket=g.spatial.cell({x:180,y:180});
  army.forEach((e,i)=>{e.owner=i%3?'player.1':'player.2';e.unit!.route=i%2?[g.spatial.cell({x:140,y:100})]:[];});
- army[1].unit!.detour={goal:pocket,waypoint:pocket,points:[fixed({x:180,y:180})],yielding:{leader:mover.id,until:100}};
+ army[8].unit!.flight={height:6}; // Other locomotion never reserves ground traffic.
  const cells=[...army.map(e=>g.spatial.cell(e)),pocket,g.spatial.cell({x:120,y:100}),0];
  for(const indexed of [false,true]){
+  army[1].unit!.detour={goal:pocket,waypoint:pocket,points:[fixed({x:180,y:180})],yielding:{leader:mover.id,until:100}};
   if(indexed)g.spatial.beginUnitMovement();
   const live=mask(g,mover);
   for(let round=0;round<6;round++){
@@ -51,4 +52,15 @@ it('does not inspect distant armies for a local reservation probe',()=>{
   expect(live.has(g.spatial.cell({x:21,y:20}))).toBe(false);
   expect(ignores.mock.calls.length).toBeLessThan(4);
  }finally{ignores.mockRestore();g.spatial.endUnitMovement();}
+});
+
+it('retains start-of-pass eligibility when a previously releasing enemy becomes solid',()=>{
+ const g=game([placed('mover','unit.ants.warrior',100,100),{...placed('released','unit.ants.warrior',101,100),owner:'player.2'}]);
+ const mover=g.entities.find(e=>e.placement==='mover')!,released=g.entities.find(e=>e.placement==='released')!;g.state.tick=10;
+ released.unit!.release={x:101,y:100};g.spatial.beginUnitMovement();
+ try{
+  const current=mask(g,mover),cell=g.spatial.cell(released);expect(current.has(cell)).toBe(false);
+  released.unit!.release=null;g.spatial.updateUnitMovement(released);
+  expect(current.has(cell)).toBe(false);expect(mask(g,mover).has(cell)).toBe(true);
+ }finally{g.spatial.endUnitMovement();}
 });

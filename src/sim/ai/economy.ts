@@ -181,9 +181,8 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     // A specialized outpost is discovered from its placement and storage declarations.
     for (const d of defs.filter(d => d.placementNear && d.behaviors.storage?.dropoff)) {
       if (f.buildings.some(b => b.definition===d.id)) continue;
-      const source=f.resources.filter(e => !e.remembered && e.definition===d.placementNear!.source &&
-        !f.hostiles.some(h=>distance(h,e)<16) && f.geo.connected(f.home,e))
-        .sort((a,b)=>distance(a,f.home)-distance(b,f.home)||a.id-b.id)[0];
+      const source=f.nearestResource(f.home,e => !e.remembered && e.definition===d.placementNear!.source &&
+        !f.hostiles.some(h=>distance(h,e)<16) && f.geo.connected(f.home,e));
       if(source && build(f,s,d,emit,`Claim observed ${f.def(source).name} with ${d.name}`,source))return;
     }
     for (const b of ready) {
@@ -357,18 +356,16 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
       continue;
     const old = f.byId.get(order.target);
     if (old?.resource?.amount) continue;
-    const replacement = f.resources
-      .filter(
+    const replacement = f.nearestResource(w,
         (r) =>
-          f.def(w).behaviors.work!.harvests?.some((id) => {
+          !!f.def(w).behaviors.work!.harvests?.some((id) => {
             const c = f.registry.get(id).creation;
             return c?.method === "harvest" && c.source === r.definition && f.accepts(id);
           }) &&
           (!r.gathering || r.gathering.workers < r.gathering.capacity) &&
           f.geo.connected(w, r) &&
           !f.hostiles.some((h) => distance(h, r) < 12),
-      )
-      .sort((a, b) => distance(a, w) - distance(b, w))[0];
+      false);
     if (
       replacement &&
       emit(
@@ -403,15 +400,6 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
   for (const item of harvests) {
     const creation = f.registry.get(item).creation;
     if (creation?.method !== "harvest" || !f.accepts(item)) continue;
-    const targets = f.resources
-      .filter(
-        (r) =>
-          r.definition === creation.source &&
-          (!r.gathering || r.gathering.workers < r.gathering.capacity) &&
-          f.geo.connected(f.home, r) &&
-          !f.hostiles.some((h) => distance(h, r) < 12),
-      )
-      .sort((a, b) => distance(a, f.home) - distance(b, f.home) || a.id - b.id);
     let worker = spare.find((w) =>
       f.def(w).behaviors.work!.harvests?.includes(item),
     );
@@ -420,7 +408,7 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
     // resource, retaining at least two workers on that source. Hysteresis and a
     // five-second review interval prevent oscillation and abandoned cargo.
     let rebalanced = false;
-    if (!worker && targets[0] && (s.inspected['economy:rebalance'] ?? 0) <= f.tick) {
+    if (!worker && (s.inspected['economy:rebalance'] ?? 0) <= f.tick) {
       const donor = [...harvests].reverse().find(other => {
         if (other === item || demand(other) <= demand(item) * 2) return false;
         const c = f.registry.get(other).creation;
@@ -437,11 +425,17 @@ export function economy(f: Frame, s: AIState, emit: Emit) {
         rebalanced = !!worker;
       }
     }
+    // No order can result without a free worker or an eligible donor. Do not
+    // inspect the forest just to discover that after choosing a resource.
+    if(!worker){f.profile.count('Harvest searches skipped without worker');continue;}
+    const target=f.nearestResource(f.home,r=>
+      r.definition===creation.source &&
+      (!r.gathering||r.gathering.workers<r.gathering.capacity) &&
+      f.geo.connected(f.home,r) && !f.hostiles.some(h=>distance(h,r)<12));
     if (
-      worker &&
-      targets[0] &&
+      target &&
       emit(
-        { type: "gather", actors: [worker.id], target: targets[0].id },
+        { type: "gather", actors: [worker.id], target: target.id },
         rebalanced ? `Rebalance an empty-handed gatherer to ${item}` : `Assign an available worker to ${item}`,
       )
     ) {

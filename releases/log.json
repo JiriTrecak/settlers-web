@@ -12,7 +12,11 @@
       "Units now handle nearby traffic with local detours and yielding instead of repeatedly recalculating routes across the map, reducing movement spikes in crowded matches.",
       "Made menu light shafts brighter with drifting beams and dust, narrowed menu buttons, and enlarged and aligned fires with damaged buildings.",
       "Shifted menu canopy rays away from the right trunk and added finer shafts through the left opening.",
-      "Extended menu fire smoke into taller drifting plumes and tripled the rising sparks."
+      "Extended menu fire smoke into taller drifting plumes and tripled the rising sparks.",
+      "Reduced nearby collision and visibility bookkeeping during unit movement while preserving movement and sight rules.",
+      "Added a forest-backed campaign selector with ant, beetle and bee crests, Play and Locked states, fading navigation, and a campaign-only dark backdrop.",
+      "Reduced simulation spikes from fallen heroes and AI building placement, and reused navigation connectivity when local obstacle edits leave routes connected the same way.",
+      "Reduced temporary simulation allocations and unnecessary AI harvesting searches while preserving combat and harvesting decisions."
     ],
     "fixed": [],
     "knownIssues": []

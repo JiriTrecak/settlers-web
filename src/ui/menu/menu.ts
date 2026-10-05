@@ -1,6 +1,7 @@
 import {releaseMenu} from "./releases";
 import { graphicsControls } from "./graphicsControls";
 import {MenuEffects} from './menuEffects';
+import {MenuTransition} from './menuTransition';
 /** Illustrated first screen with real, keyboard-accessible menu controls. */
 import { GameScreen } from "../screen/screen";
 import menuArt from "../../../assets/library/asset.interface.main-menu.forest-aftermath/image.webp";
@@ -19,9 +20,11 @@ export type MainMenuHooks = {
 export class MainMenu extends GameScreen {
   private readonly disposeReleases:()=>void;
   private readonly effects:MenuEffects;
-  override destroy(){this.effects.destroy();this.disposeReleases();super.destroy();}
+  private readonly transition:MenuTransition;
+  override destroy(){this.transition.destroy();this.effects.destroy();this.disposeReleases();super.destroy();}
   constructor(hooks: MainMenuHooks) {
     super("screen canopy-menu");
+    this.transition=new MenuTransition(this.root);
     const stage = document.createElement("main");
     stage.className = "canopy-stage";
     const art = document.createElement("img");
@@ -68,7 +71,7 @@ export class MainMenu extends GameScreen {
     exitDialog.className = "canopy-settings";
     exitDialog.setAttribute("aria-labelledby", "canopy-exit-title");
     exitDialog.innerHTML = `<form method="dialog"><h2 id="canopy-exit-title">Until next time</h2><p class="canopy-settings-status">You can close this tab to exit Under the Canopy.</p><div class="canopy-settings-actions"><button type="submit">Return to menu</button></div></form>`;
-    const campaign = button("Campaign", hooks.onCampaign);
+    const campaign = button("Campaign", () => this.transition.run(hooks.onCampaign));
     nav.append(
       campaign,
       button("Skirmish", hooks.onSkirmish),

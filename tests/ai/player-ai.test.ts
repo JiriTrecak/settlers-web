@@ -1,6 +1,6 @@
 import { entityStats } from "../../src/sim/game/stats";
 import { economy } from "../../src/sim/ai/economy";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { World } from "../../src/sim/world/world";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { content } from "../../src/content/builtin";
@@ -312,6 +312,35 @@ describe("disruption and scaling gates", () => {
       actors: [900],
       target: 901,
     });
+  });
+
+  it("skips harvesting searches when every worker is occupied, then assigns immediately when one is free",()=>{
+    const {world,geo}=fixture(),base=world.settlement.view(0);
+    const worker=soldier(900,"unit.ants.settler",218,223);
+    worker.control!.order={type:'gather',target:901};
+    const resource:EntityView={id:901,definition:'building.neutral.amber-mine',owner:'none',x:230,y:223,rotation:0,hp:null,resource:{amount:1000,growingUntil:null}};
+    const view=seen({...base,goods:base.goods!.map(g=>({...g,available:0,stored:0}))},[worker,resource,{...base.entities.find(e=>e.owner==='player.1'&&e.definition==='building.ants.fort')!,inventory:{}}]);
+    const f=new Frame(view,'player.1',content,geo,100),state=newAIState(geo.map.fingerprint,1);
+    const search=vi.spyOn(f,'nearestResource'),actions:Action[]=[];
+    const emit=(a:Action)=>{actions.push(a);return true;};
+    economy(f,state,emit);
+    expect(search).not.toHaveBeenCalled();expect(actions).toEqual([]);
+    worker.control!.order=null;
+    economy(f,state,emit);
+    expect(search).toHaveBeenCalled();
+    expect(actions).toContainEqual({type:'gather',actors:[900],target:901});
+  });
+
+  it("nearest-resource selection matches full sorting, including equal distances and rejected candidates",()=>{
+    const {world,geo}=fixture(),base=world.settlement.view(0);
+    const resources:EntityView[]=Array.from({length:100},(_,i)=>({id:1000-i,definition:'resource.forest.tree',owner:'none',x:120+(i%5)*2,y:120+Math.floor(i/5)%5*2,rotation:0,hp:null,resource:{amount:100,growingUntil:null}}));
+    const f=new Frame(seen(base,resources),'player.1',content,geo,100);
+    for(const tieById of [true,false])for(let i=0;i<25;i++){
+      const p={x:115+i/2,y:120+i%7},accept=(e:EntityView)=>e.id%(i+2)===0;
+      const expected=f.resources.filter(accept).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y)||(tieById?a.id-b.id:0))[0];
+      expect(f.nearestResource(p,accept,tieById)).toBe(expected);
+    }
+    expect(f.nearestResource({x:120,y:120},()=>false)).toBeUndefined();
   });
 
   it("preserves witnessed death reports through a save between AI reviews", () => {

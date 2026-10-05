@@ -1,5 +1,6 @@
 import {SECTOR_SIZE} from '../../shared/spatial/sectors';
 import {canTraverse} from './navigation';
+import {SimulationProfiler} from '../profiling';
 const directions=[[0,-1],[-1,0],[1,0],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]] as const;
 type Region={sector:number;links:Set<number>};
 export type SectorTopology={count:number;cell:(node:number)=>number;neighbors:(node:number)=>readonly number[]};
@@ -18,7 +19,7 @@ export class SectorNavigation {
  private readonly regionStride:number;
  private readonly plans=new Map<string,readonly number[]|null>();
  constructor(readonly size:number,private readonly walkable:(id:number)=>boolean,
-  private readonly step:(a:number,b:number)=>boolean,private readonly topology?:SectorTopology){
+  private readonly step:(a:number,b:number)=>boolean,private readonly topology?:SectorTopology,private readonly profile=new SimulationProfiler()){
   this.width=Math.ceil(size/SECTOR_SIZE);this.labels=new Int32Array(topology?.count??size*size).fill(-1);
   this.sectorRegions=Array.from({length:this.width*this.width},()=>[]);
   if(topology){this.nodesBySector=Array.from({length:this.width*this.width},()=>[]);for(let id=0;id<topology.count;id++)this.nodesBySector[this.sector(id)]!.push(id);}
@@ -41,6 +42,14 @@ export class SectorNavigation {
   for(const sector of this.dirty){
    const sx=sector%this.width,sy=Math.floor(sector/this.width);
    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(sx+dx>=0&&sy+dy>=0&&sx+dx<this.width&&sy+dy<this.width)boundary.add((sy+dy)*this.width+sx+dx);
+  }
+  // Only these regions can change. Preserve their outgoing links before local
+  // reconstruction; an opened interior cell often changes no graph edge at all.
+  const previous=new Map<number,Set<number>>();
+  for(const sector of boundary)for(const id of this.sectorRegions[sector]!)previous.set(id,new Set(this.regions.get(id)!.links));
+  this.profile.count('Dirty sectors',this.dirty.size);
+  this.profile.measure('Sector components',()=>{
+  for(const sector of this.dirty){
    for(const id of this.sectorRegions[sector]!)this.regions.delete(id);
    const list:number[]=this.sectorRegions[sector]=[],b=this.bounds(sector);
    for(const node of this.nodesIn(sector))this.labels[node]=-1;
@@ -63,6 +72,8 @@ export class SectorNavigation {
     }
    }
   }
+  });
+  this.profile.measure('Sector boundary links',()=>{
   // All endpoints adjacent to changed clusters are rebuilt together. Links
   // farther away continue referring to unchanged region IDs.
   for(const sector of boundary)for(const id of this.sectorRegions[sector]!)this.regions.get(id)!.links.clear();
@@ -84,6 +95,19 @@ export class SectorNavigation {
     }
    }
   }
+  });
+  let sameGraph=true,regionCount=0;
+  for(const sector of boundary)for(const id of this.sectorRegions[sector]!){
+   regionCount++;const old=previous.get(id),links=this.regions.get(id)!.links;
+   if(!old||old.size!==links.size){sameGraph=false;continue;}
+   for(const link of links)if(!old.has(link)){sameGraph=false;break;}
+  }
+  if(sameGraph&&regionCount===previous.size){
+   this.profile.count('Connectivity reuse');this.dirty.clear();return;
+  }
+  this.profile.count('Connectivity regions',this.regions.size);
+  this.profile.count('Connectivity rebuilds');
+  this.profile.measure('Sector connectivity',()=>{
   this.networks.clear();let component=0;
   for(const start of this.regions.keys()){
    if(this.networks.has(start))continue;
@@ -92,6 +116,7 @@ export class SectorNavigation {
     if(this.networks.has(next))continue;this.networks.set(next,component);queue.push(next);
    }
   }
+  });
   this.dirty.clear();
  }
  connected(start:number,goal:number){

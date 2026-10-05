@@ -5,12 +5,33 @@ import {Spatial} from '../../src/sim/game/spatial';
 import {ContentRegistry} from '../../src/content/registry';
 import {builtinSource} from '../../src/content/builtin';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
+import {SimulationProfiler} from '../../src/sim/profiling';
 
 function field(size:number,blocked=new Set<number>()){
  const walk=(i:number)=>i>=0&&i<size*size&&!blocked.has(i),step=(_a:number,b:number)=>walk(b);
  const sectors=new SectorNavigation(size,walk,step),nav=new Navigation(size,step,(a,b)=>sectors.connected(a,b),true);
  sectors.prepare();return {sectors,nav,step,blocked};
 }
+it('retains global connectivity for unchanged local topology, but rebuilds for splits and joins',()=>{
+ const size=64,blocked=new Set<number>([10*size+10]),walk=(i:number)=>i>=0&&i<size*size&&!blocked.has(i),step=(_a:number,b:number)=>walk(b);
+ const profile=new SimulationProfiler();profile.enabled=true;
+ const sectors=new SectorNavigation(size,walk,step,undefined,profile);sectors.prepare();profile.reset();
+ blocked.delete(10*size+10);sectors.invalidate([10*size+10]);sectors.prepare();
+ expect(profile.workSnapshot().find(w=>w.path==='Connectivity reuse')?.value).toBe(1);
+ expect(profile.workSnapshot().find(w=>w.path==='Connectivity rebuilds')?.value).toBe(0);
+ const wall=Array.from({length:size},(_,y)=>y*size+31);
+ for(const cell of wall)blocked.add(cell);sectors.invalidate(wall);sectors.prepare();
+ expect(sectors.connected(0,size-1)).toBe(false);
+ const gap=32*size+31;blocked.delete(gap);sectors.invalidate([gap]);sectors.prepare();
+ expect(sectors.connected(0,size-1)).toBe(true);
+ // New isolated interior region: unchanged portal links alone are insufficient.
+ const ring:number[]=[];for(let y=20;y<=22;y++)for(let x=20;x<=22;x++)if(x!==21||y!==21){ring.push(y*size+x);blocked.add(y*size+x);}
+ profile.reset();sectors.invalidate(ring);sectors.prepare();
+ expect(profile.workSnapshot().find(w=>w.path==='Connectivity rebuilds')?.value).toBe(1);
+ expect(sectors.connected(0,21*size+21)).toBe(false);
+ const fresh=new SectorNavigation(size,walk,step);fresh.prepare();
+ for(const a of [0,15*size+15,32*size+32,63*size+63])for(const b of [0,gap,21*size+21,40*size+40])expect(sectors.connected(a,b)).toBe(fresh.connected(a,b));
+});
 it('keeps disconnected pieces within one sector separate and updates a new opening locally',()=>{
  const n=128,blocked=new Set<number>();for(let y=0;y<n;y++)blocked.add(y*n+7);
  const {sectors}=field(n,blocked);

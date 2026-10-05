@@ -16,6 +16,26 @@ describe('map-scale acceleration preserves observations and combat candidates',(
    }
   }
  });
+ it('refreshes pooled target buckets through movement, rotation, removal and restored identities',()=>{
+  const g=game([placed('soldier','unit.ants.warrior',23,23),placed('hall','building.ants.fort',36,36)]);
+  const bodies=g.context.liveBodies(),index=new TargetIndex(bodies,g.registry);
+  const before=[...index.near({x:30,y:30},100)];
+  let current=bodies;
+  for(let step=0;step<20;step++){
+   // A restore supplies fresh records with the same IDs. Empty frames must also
+   // remove every previous occupant before a later refill.
+   current=step%5===4?[]:structuredClone(bodies).reverse();
+   for(const e of current){e.x+=step*3-24;e.y-=step;e.rotation=(step%4)*90;if(e.unit)e.unit.position=null;}
+   index.refresh(current);
+   const fresh=new TargetIndex(current,g.registry);
+   for(let y=-30;y<85;y+=11)for(let x=-30;x<85;x+=13){
+    const a=[...index.near({x,y},17)],b=[...fresh.near({x,y},17)];
+    expect(a.map(e=>e.id)).toEqual(b.map(e=>e.id));
+    for(let i=0;i<a.length;i++)expect(a[i]).toBe(b[i]);
+   }
+  }
+  expect(before.every(e=>bodies.includes(e))).toBe(true);
+ });
  it('reuses unchanged scenery and leaves previous tree snapshots intact after damage',()=>{
   const tree={...placed('tree','resource.forest.tree',40,40),owner:'none' as const};
   const g=game([tree]),scenery=new ResourceScenery(),before=g.view().entities;

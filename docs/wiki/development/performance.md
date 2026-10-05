@@ -3785,3 +3785,170 @@ skip. The additional opposing-formation regression also passes. Final movement,
 save-library and worker-snapshot tests pass on build 93; TypeScript and whitespace
 checks pass. No tests were removed, weakened or newly skipped. Recovery remains
 a bounded heuristic, not a guarantee against every possible crowd deadlock.
+
+### 37. Local reservation membership and incremental sight indexing
+
+Local detour sweeps now query the existing moving-body cell buckets and yield
+reservations instead of filtering the whole army into a new Set for every actor.
+`CellReservations` requires only `has(cell)`. Queries retain exact walk-surface
+IDs, locomotion, collision exemptions, ownership and live route checks. A lazy
+once-per-movement-pass membership Set preserves the original eligibility snapshot;
+units released during the pass join reservations next pass. Outside a movement
+scope, the query falls back to live records rather than trusting a stale index.
+
+Sight indexing records normal movement changes in a bounded, one-tick receipt
+Set. Between phases in the same tick, only those movers are reconciled. Sensor
+entries retain their last entity identity, precise coordinates and radius, so
+unchanged bounds need no index write. Removed entities cannot be reinserted from
+earlier receipts. Tick boundaries, structure changes, explicit editor refreshes,
+and untracked motion revisions retain full reconciliation: direct lifecycle
+writes still exist in the engine, so removing that safety path would be incorrect.
+This optimizes indexing, not sight rules or fog update frequency.
+
+The frozen Heartroot battle retains full audit `3527651004` before and after,
+with identical routing counters and engagement. Diagnostic counters in
+`/tmp/local-index-details.json` versus `/tmp/local-traffic-details.json` show:
+
+- Full sensor reconciliation: 1.712 → 0.859/tick, with 0.853 incremental refreshes.
+- Sensor records examined for the index: 487.07 → 286.08/tick.
+- Sensor entries sent to the spatial index: 487.07 → 41.96/tick.
+- Local reservation predicates examine 12.97 candidate bodies/tick. A regression
+  with 400 units proves that an isolated cell query does not inspect distant
+  armies. Other observation passes' sensor selection is unchanged.
+
+Final ordinary confirmation reports `/tmp/local-index-before-confirm.json` and
+`/tmp/local-index-after-confirm.json` measure movement mean/p99
+0.497/1.241 → 0.389/1.037 ms, combat mean 0.165 → 0.126 ms, and total accounted
+non-render mean/p99 2.868/5.594 → 2.772/5.576 ms. An earlier timing pair was worse
+overall despite lower movement cost. The supported result is less recurring
+movement/visibility work; **whole-match p99 has not materially improved and the
+3 ms goal is still unmet**. Instrumented profiles include diagnostic overhead;
+actual browser IPC/input/HUD remain outside the headless accounting.
+
+Validation for this pass: 434 test files / 2,342 tests pass, with the existing
+placeholder-asset skip; TypeScript and whitespace checks pass. New tests compare
+cell membership with materialized reservations, cover remote yield pockets,
+stacked surfaces, release eligibility, and compare sight to a full-sensor oracle.
+They also exercise lifecycle/editor invalidation and removed movement receipts.
+Existing private-helper test callers were updated for the changed signature;
+their movement, collision and save assertions remain intact.
+
+`/tmp/local-index-verified.json` verifies snapshot encode/decode every tick and
+warm/cold reconstruction at 13 checkpoints, ending with unchanged audit
+`3527651004`. Four-peer continuation from ticks 10800–12000 agrees at all
+13 full-audit checkpoints, including the synthetic upstream stall, and ends
+with identical snapshots and unchanged audit `1278100042`
+(`/tmp/local-index-four-peer.json`). Simulation remains build 93: no rule,
+update cadence, serialized state or lockstep result changed.
+
+### 38. Replay individual spikes and remove local-event rebuilds
+
+`bench:match -- --capture-ticks 6726,6811,7603,9640` enables hierarchical profiling
+only at those absolute tick IDs and retains their complete profiles/work counters
+in `capturedTicks`. IDs must lie after warm-up inside the measured interval.
+Combine with `--budget-tail` for ordinary coarse timings of the slowest 1%.
+Selected-tick profiling, allocation sampling and GC reporting are diagnostic;
+use a separate ordinary replay for acceptance timings. CPU/allocation profiles
+now retain their matching `.bundle.mjs` and `.bundle.mjs.map` beside the requested
+output, so generated stack locations remain inspectable after temporary cleanup.
+Sector work is split into local components, boundary links and global connectivity;
+AI placement reports site checks, known blocker footprints and approach searches.
+
+The frozen battle exposed three distinct sources rather than a single slow
+subsystem. GC can interrupt unrelated scopes; the method recording a pause is
+not necessarily the allocation source. Tick 9640 retained a fallen hero through
+a full context reindex and forest classification. Tick 6811 removed a harvested
+tree and refreshed sector navigation. AI economic decisions at 6726/7603 spent
+substantial time checking construction approaches.
+
+Changes preserve the existing decisions and update cadence:
+
+- Retained heroes return to ordered entity/body/sight indexes through membership
+  receipts. Unsupported or unsorted inputs retain the full reconstruction path.
+- Each AI caches only footprints present in its authorized observation, with
+  overlap reference counts and immutable previous results. Changed geometry,
+  depletion and disappearance reconcile locally; restore starts a cold cache.
+- Placement BFS uses reusable bounded buffers and squared range comparisons.
+  Direction order, admission rules and the 4096-node cap remain unchanged.
+- Sector connectivity is reused only when exact region IDs and outgoing links
+  in the affected neighborhood match. Splits, merges and new isolated regions
+  still rebuild. The tree at tick 6811 changes topology and correctly takes
+  that rebuild path; this optimization does not eliminate every tree-removal cost.
+- Containment sight compares numeric tick/revision stamps instead of constructing
+  a string on each cross-owner visibility query.
+
+Ordinary local comparison: `/tmp/spike-before-ordinary.json` versus
+`/tmp/spike-acceptance.json`, same frozen content/checkpoint and 32-unit human
+assault against three AIs. Mean/p99: **2.590/5.105 → 2.558/4.772 ms**.
+The improvement is modest (~6.5% p99); GC outliers remain and **the complete 3 ms
+p99 target is not achieved**. Browser IPC, input and HUD CPU remain outside this
+headless accounting. Both runs finish with full audit `3527651004`.
+
+Validation: 436 files / 2346 tests pass with the existing placeholder skip;
+subsequent visibility and AI refinements pass their focused regressions. TypeScript
+and whitespace checks pass. New oracles compare cached footprints to complete
+reconstruction, BFS results and expansion counts to the previous search, and
+hero membership/visibility to full reindexing. Sector tests cover unchanged
+connectivity, splits, joins and isolated components. Simulation remains build 93.
+
+Final transport/projection and restore replay (`/tmp/spike-final-verified.json`)
+compares decoded projections on every tick and warm/cold full state at 13
+checkpoints; audit remains `3527651004`. Four independent peers from ticks
+10800–12000 (`/tmp/spike-final-four-peer.json`) agree at 13 checkpoints and on
+final snapshots, audit `1278100042`, including the synthetic upstream stall.
+Routing counters and combat engagement also match the pre-change replay exactly.
+
+### 39. Allocation pressure versus expensive ticks
+
+Allocation investigation keeps engine pauses separate from the work interrupted
+by them. `node scripts/bench/allocation-report.mjs /tmp/allocations.json` maps the
+sampling profile to its retained `.bundle.mjs.map`, ranking self allocations by
+source location and caller stack. Estimates include collected objects and bench
+bookkeeping; they are not live heap measurements or acceptance timings.
+`--gc-report` now also reports percentiles with observed pauses subtracted, as a
+diagnostic lower bound. `--pace-ms 25` yields between fixed ticks outside timed
+work, to investigate idle GC; it never changes simulation cadence or decisions.
+GC totals cover the window including gaps; `overlapMs` covers timed intervals.
+
+Changes in this pass:
+
+- Run status callbacks only for entities with statuses. The old outer loop
+  captured an entity in a callback scope even for status-free forest scenery.
+- Isolate containment-sight reconstruction from hot visibility queries and avoid
+  temporary visibility predicates.
+- Reuse combat target-grid buckets with numeric coordinates. Refresh membership
+  each planning pass in the same input order; old query results remain independent.
+- AI harvesting checks for an assignable worker before searching known resources.
+  Nearest-target selection uses one scan instead of sorting all candidates; both
+  original tie policies (ID and input order) are preserved. Profiling exposes
+  harvest searches, examined resources, distance evaluations and skipped searches.
+
+Frozen Heartroot battle, 4600 measured ticks, 32-unit human assault and three AIs:
+`gc-baseline-final-*` versus `gc-final-ai-*` profiles in `/tmp` estimate
+**14150 → 12573 MiB allocated** (~11% reduction), **232 → 202 GC events**, and
+**257 → 217 ms** total pause overlap. Status-file allocation estimates drop
+791 → 11 MiB. Sampling perturbs execution; these are diagnostic comparisons.
+Ordinary initial baseline mean/p99 was 2.636/4.962 ms; repeating the baseline later
+returned 2.524/4.746 ms. The optimized run returned 2.455/4.736 ms. These ranges
+do **not** establish a reliable overall p99 improvement. The 3 ms goal is unmet.
+
+Subtracting all observed GC pauses still leaves ~4.94 ms p99 in the final sampled
+run. Captures also identify group-order route sweeps (6201), navmesh tile/link
+updates plus tree-removal sector work (6411), and construction/navigation updates
+(9371). GC reduction alone cannot resolve these bursts. A pre-harvesting-fix
+paced Node experiment moved almost all GC out of timed ticks but was slower
+(9.27 ms p99); it is neither a browser result nor evidence of a speed regression
+from these changes. Continuous Node timings cannot certify the live-game budget.
+
+Validation: 436 files, 2349 tests passed, one existing skip. New regressions cover
+reused target buckets across movement/removal/restored identities, nearest-resource
+selection against full sorting, and busy workers becoming available again. Final
+state audit and routing counters match the frozen baseline (`3527651004`).
+The final correctness replay (`/tmp/gc-verified.json`) also compares decoded
+projections every tick and warm/cold restored state at 13 checkpoints. At AI
+reviews 8650 and 8730, two harvest searches per review are now skipped because
+no worker can use them; no known-resource target scan runs on those branches.
+Four independent peers (`/tmp/gc-four-peer.json`, ticks 10800–12000) agree at all
+13 checkpoints and on complete final snapshots, audit `1278100042`, including
+the synthetic upstream stall. TypeScript and whitespace checks pass. Simulation
+build 93 is unchanged; no rules, update frequencies or saved state changed.

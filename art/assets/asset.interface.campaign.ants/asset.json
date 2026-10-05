@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "id": "asset.interface.campaign.ants",
+  "name": "ants campaign crest",
+  "kind": "interface",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "campaign",
+    "original"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "881693b216c76f282bbd7f35b01c61ae6911c92d62c4a8cc50bf193bb0256c49",
+      "bytes": 1187
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "webp",
+      "sha256": "023fbdd4ed83878c586db2d2c46ba0285ec95531b98ba91bd31c140bde437b2d",
+      "bytes": 238538
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "interface-image",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original Under the Canopy faction crest, generated with built-in ImageGen."
+  }
+}

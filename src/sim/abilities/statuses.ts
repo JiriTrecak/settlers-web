@@ -43,24 +43,26 @@ export class SpellStatuses{
   this.c.profile.measure('World effects',()=>this.world.tick());
   this.c.profile.measure('Corpse expiry',()=>new SpellCorpses(this.c).tick());
   this.c.profile.measure('Summon lifetimes',()=>new SpellSummons(this.game).tick());
-  for(const e of this.c.entitySnapshot()){
-   // Auras are reconstructed every tick in stable source order, before combat/navigation.
-   if(e.spellStatuses){
-    e.spellStatuses=e.spellStatuses.filter(s=>!s.aura&&s.expires>=this.c.state.tick&&alive(e));
-    for(const s of [...e.spellStatuses]){
-     const d=spellStatusDefinition(s,this.c.registry),a=this.c.registry.findAbility(s.ability)!;
-     if(d?.periodic&&s.nextTick<=this.c.state.tick){
-      s.nextTick+=d.periodic.intervalTicks;
-      if(!this.accepts(e,a,s.source,s.owner,s.sourceContext))continue;
-      const result=this.game.combat.abilityHit({source:s.source,owner:s.owner as Owner,target:e.id,damage:value(d.periodic.damage,a.ranks[s.rank-1]),damageType:d.periodic.damageType});
-      for(const dead of result.dead)this.game.onCombatDeath(dead);
-     }
-    }
-    e.spellStatuses=e.spellStatuses?.filter(s=>s.expires>this.c.state.tick);
-    if(!e.spellStatuses?.length)delete e.spellStatuses;
+  // Keep callbacks out of the world scan: capturing e in the filters below
+  // gives every iteration a closure scope, even scenery without any statuses.
+  for(const e of this.c.entitySnapshot())if(e.spellStatuses)this.tickEntity(e);
+ }
+ private tickEntity(e:Entity){
+  // Auras are reconstructed every tick in stable source order, before combat/navigation.
+  e.spellStatuses=e.spellStatuses!.filter(s=>!s.aura&&s.expires>=this.c.state.tick&&alive(e));
+  for(const s of [...e.spellStatuses]){
+   const d=spellStatusDefinition(s,this.c.registry),a=this.c.registry.findAbility(s.ability)!;
+   if(d?.periodic&&s.nextTick<=this.c.state.tick){
+    s.nextTick+=d.periodic.intervalTicks;
+    if(!this.accepts(e,a,s.source,s.owner,s.sourceContext))continue;
+    const result=this.game.combat.abilityHit({source:s.source,owner:s.owner as Owner,target:e.id,damage:value(d.periodic.damage,a.ranks[s.rank-1]),damageType:d.periodic.damageType});
+    for(const dead of result.dead)this.game.onCombatDeath(dead);
    }
   }
+  e.spellStatuses=e.spellStatuses?.filter(s=>s.expires>this.c.state.tick);
+  if(!e.spellStatuses?.length)delete e.spellStatuses;
  }
+
  has(target:number,ability:string){return this.c.get(target)?.spellStatuses?.some(s=>s.ability===ability)??false;}
  apply(source:number,target:number,ability:AbilityDefinition,rank:number,cast:number,effect:ReturnType<typeof releaseEffects>[number],aura=false,owner?:string,point?:{x:number;y:number},context?:{aim:{x:number;y:number};origin:{x:number;y:number;sourceContext?:SpellSource};creationGrant?:boolean}):number{
   const e=this.c.get(target),caster=this.c.get(source)??(owner?{id:source,owner,rotation:0} as Entity:undefined);if(!caster)return 0;

@@ -39,6 +39,7 @@ export class Combat {
   private spellEvent(source:number,target:number,damage:number,weapon:boolean,melee:boolean){
     if(damage>0&&!this.suppressSpellReactions&&this.spellEvents.length<2048)this.spellEvents.push({source,target,damage,weapon,melee});
   }
+  private readonly targets: TargetIndex;
   readonly items: ItemEffects;
   readonly shells: ShellCombat;
   readonly missiles: Missiles;
@@ -47,7 +48,7 @@ export class Combat {
     private readonly vision: Observation,
     private readonly camps: readonly Camp[],
     private readonly teams: ReadonlyMap<Owner, number>,
-  ) { this.missiles = new Missiles(c,vision,[...teams.keys()]); this.items = new ItemEffects(c, teams); this.shells = new ShellCombat(c, vision, teams, (a,b)=>this.hostile(a,b));
+  ) { this.targets = new TargetIndex([],c.registry); this.missiles = new Missiles(c,vision,[...teams.keys()]); this.items = new ItemEffects(c, teams); this.shells = new ShellCombat(c, vision, teams, (a,b)=>this.hostile(a,b));
     this.closestTarget=c.profile.wrap('Target acquisition',this.closestTarget.bind(this));
     this.moveOrder=c.profile.wrap('Move orders',this.moveOrder.bind(this));
     this.searchLastSeen=c.profile.wrap('Pursuit memory',this.searchLastSeen.bind(this));
@@ -99,7 +100,8 @@ export class Combat {
     const c = this.c;
     this.shells.expire();
     const approaches=new Map<string, readonly Point[]>();
-    const targets=c.profile.measure('Target index',()=>new TargetIndex(c.liveBodies(), c.registry));
+    c.profile.measure('Target index',()=>this.targets.refresh(c.liveBodies()));
+    const targets=this.targets;
     for (const e of c.activeUnits()) {
       c.profile.count('Planning units visited');
       if(only&&!only.has(e.id))continue;

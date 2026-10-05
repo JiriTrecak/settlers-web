@@ -84,7 +84,7 @@ it.each([0,1,2,3].flatMap(rotation=>[false,true].map(occupiedGoal=>({rotation,oc
   mover.unit!.position=turn({x:100300,y:100000},1000);mover.unit!.segment=null;
   mover.unit!.route=[turn({x:101,y:100}),destination].map(p=>g.spatial.cell(p));mover.unit!.goal=g.spatial.cell(destination);
   const parked=guards.map(e=>({...precise(e)}));
-  const repaired=(g.context as unknown as {beginLocalDetour(e:typeof mover,units:typeof guards,p:typeof alternative):boolean}).beginLocalDetour(mover,g.context.activeUnits(),alternative);
+  const repaired=(g.context as unknown as {beginLocalDetour(e:typeof mover,p:typeof alternative,eligible:ReadonlySet<typeof mover>):boolean}).beginLocalDetour(mover,alternative,new Set(g.context.activeUnits()));
   expect(repaired).toBe(true);
   expect(mover.unit!.route).not.toContain(g.spatial.cell(turn({x:101,y:100})));
   const copy=game(placements);copy.restore(g.snapshot());
@@ -110,7 +110,7 @@ it.each([0,1,2,3])('finds a local rejoin outside a fully occupied projected squa
  const goal=turn({x:150,y:122});g.command('player.1',{type:'move',actors:[mover.id],destination:goal});
  mover.unit!.position=turn({x:145497,y:121437},1000);mover.unit!.segment=null;mover.unit!.route=[g.spatial.cell(goal)];mover.unit!.goal=g.spatial.cell(goal);
  const parked=guards.map(e=>({...precise(e)}));
- const repaired=(g.context as any).beginLocalDetour(mover,g.context.activeUnits(),goal);
+ const repaired=(g.context as unknown as {beginLocalDetour(e:typeof mover,p:typeof goal,eligible:ReadonlySet<typeof mover>):boolean}).beginLocalDetour(mover,goal,new Set(g.context.activeUnits()));
  expect(repaired).toBe(true);
  const waypoint=g.spatial.point(mover.unit!.detour!.waypoint),p=precise(mover);
  expect(Math.hypot(waypoint.x-p.x,waypoint.y-p.y)).toBeLessThanOrEqual(4);

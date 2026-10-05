@@ -17,6 +17,8 @@ import {stageHumanArmy} from './match-workload';
 import {benchmarkContent} from './content-fixture';
 const args=process.argv.slice(2),option=(name:string,fallback:string)=>{const i=args.indexOf(name);return i<0?fallback:args[i+1]??fallback;};
 const mapId=option('--map','heartroot-glade'),ticks=Number(option('--ticks','6000'));
+const paceMs=Number(option('--pace-ms','0'));
+if(!Number.isFinite(paceMs)||paceMs<0||paceMs>1000)throw Error('--pace-ms must be between 0 and 1000');
 const map=parseUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${mapId}.utcmap`,'utf8')));
 if(!map||map.playerStarts.length!==4||!Number.isSafeInteger(ticks)||ticks<400)throw Error('Requires a four-player map and >=400 ticks');
 const match=localMatch({mapId,mapRevision:fingerprint(map),seed:731942,slotCount:4,me:0});
@@ -24,6 +26,8 @@ const contentInput=option('--content',''),{fixture:contentFixture}=benchmarkCont
 const runtimeOptions={map,match,player:0,remote:false,...(contentInput?{content:contentFixture}:{})};
 const runtime=new SimulationRuntime(runtimeOptions);
 runtime.reveal=false;runtime.profiling=args.includes('--details');
+const captureTicks=new Set(option('--capture-ticks','').split(',').filter(Boolean).map(Number));
+if([...captureTicks].some(t=>!Number.isSafeInteger(t)||t<0)||captureTicks.size>64)throw Error('--capture-ticks requires at most 64 nonnegative integer tick IDs');
 const verifyProjection=args.includes('--verify-projection'),verifyRestore=args.includes('--verify-restore');
 let restored:SimulationRuntime|undefined;const restoreChecks:{tick:number;fullAuditChecksum:number}[]=[];
 const resume=option('--resume','');if(resume)runtime.restoreLocal(JSON.parse(readFileSync(resume,'utf8')));
@@ -111,6 +115,7 @@ if(args.includes('--trace-routes')){
  };
 }
 const startTick=runtime.world.clock.tickIndex,encoder=new SnapshotEncoder(),decoder=new SnapshotDecoder();
+if([...captureTicks].some(t=>t<=startTick+200||t>startTick+ticks))throw Error('--capture-ticks must fall inside the measured window, after the 200-tick warm-up');
 const series=new Map<string,number[]>(),detail=new Map<string,{inclusiveMs:number;selfMs:number;calls:number;activeTicks:number;maxMs:number}>();
 const sample=(key:string,ms:number)=>{let a=series.get(key);if(!a){a=[];series.set(key,a);}a.push(ms);};
 const stats=(a:number[])=>{const sorted=[...a].sort((a,b)=>a-b);return {mean:a.reduce((n,v)=>n+v,0)/a.length,p95:sorted[Math.ceil(a.length*.95)-1],p99:sorted[Math.ceil(a.length*.99)-1],max:sorted.at(-1),samples:a.length};};
@@ -122,6 +127,7 @@ const tailSize=Math.max(1,Math.ceil((ticks-200)*.01));
 const budgetTail=args.includes('--budget-tail'),threadCpu=args.includes('--thread-cpu');
 if(threadCpu&&typeof process.threadCpuUsage!=='function')throw Error('--thread-cpu requires Node with threadCpuUsage');
 const slowTicks:{tick:number;totalMs:number;simulationMs:number;checksumMs:number;projectionMs:number;encodeMs:number;transferMs:number;decodeMs:number;threadCpuMs?:number;offCpuMs?:number;profile:SimulationTiming[];work:SimulationWork[];stages?:Record<string,number>;ai?:Record<string,number>}[]=[];
+const capturedTicks:typeof slowTicks=[];
 // Optional sampling starts after map compilation/restore so startup cannot hide
 // the live costs. Its timing run is diagnostic, never budget acceptance evidence.
 const cpuProfile=option('--cpu-profile',''),allocationProfile=option('--allocation-profile','');
@@ -137,12 +143,13 @@ type StageSpan={path:string;start:number;end:number};
 let stageSpans:StageSpan[]=[];
 // Disjoint coarse stages only. Never store every tiny scope or count the same
 // pause in both a parent and child. Scope time includes an interrupted GC pause.
-if(gcObserver&&runtime.profiling)runtime.world.settlement.context.profile.onSpan=(path,start,end)=>{
+if(gcObserver&&(runtime.profiling||captureTicks.size))runtime.world.settlement.context.profile.onSpan=(path,start,end)=>{
  if(/^World \/ Settlement \/ (Orders \/ navigation \/ Orders · (movement|combat planning)|Observation|Combat|Ability lifecycle)$/.test(path)||/^World \/ AI player \d+$/.test(path))stageSpans.push({path,start,end});
 };
 const gcTicks:{tick:number;start:number;end:number;stages:StageSpan[]}[]=[];
 let measuredStart=Infinity,measuredEnd=0;
 for(let i=0;i<ticks;i++){
+ runtime.profiling=args.includes('--details')||captureTicks.has(runtime.world.clock.tickIndex+1);
  stageSpans=[];
  if(i===200&&allocationProfile)await inspector!.post('HeapProfiler.startSampling',{samplingInterval:65536,includeObjectsCollectedByMajorGC:true,includeObjectsCollectedByMinorGC:true});
  const cpuStart=threadCpu?process.threadCpuUsage():undefined;
@@ -200,20 +207,27 @@ for(let i=0;i<ticks;i++){
   sample('Transfer clone proxy',transferred-encodedAt);sample('Decode',decoded-transferred);
   sample('Snapshot exchange',decoded-projected);
   for(const [key,ms] of Object.entries(runtime.world.settlement.timings))sample(`Sim · ${key}`,ms);
-  const rows=runtime.world.settlement.context.profile.snapshot(),work=runtime.world.settlement.context.profile.workSnapshot();
+  const rows=runtime.profiling?runtime.world.settlement.context.profile.snapshot():[],work=runtime.profiling?runtime.world.settlement.context.profile.workSnapshot():[];
   for(const row of work){const sum=workTotals.get(row.path)??{total:0,maxPerTick:0,activeTicks:0};sum.total+=row.value;sum.maxPerTick=Math.max(sum.maxPerTick,row.value);sum.activeTicks+=Number(row.value>0);workTotals.set(row.path,sum);}
   for(const row of rows){
    const sum=detail.get(row.path)??{inclusiveMs:0,selfMs:0,calls:0,activeTicks:0,maxMs:0};
    sum.inclusiveMs+=row.inclusiveMs;sum.selfMs+=row.selfMs;sum.calls+=row.calls;sum.activeTicks+=Number(row.calls>0);sum.maxMs=Math.max(sum.maxMs,row.inclusiveMs);detail.set(row.path,sum);
   }
-  if((runtime.profiling||budgetTail)&&(slowTicks.length<tailSize||decoded-start>slowTicks.at(-1)!.totalMs)){
+  const capture=captureTicks.has(runtime.world.clock.tickIndex);
+  const retainTail=(runtime.profiling||budgetTail)&&(slowTicks.length<tailSize||decoded-start>slowTicks.at(-1)!.totalMs);
+  if(capture||retainTail){
    // Core stage timers already exist in ordinary play. Copy only retained tail
    // candidates, outside measured CPU; no hierarchical instrumentation needed.
-   slowTicks.push({tick:runtime.world.clock.tickIndex,totalMs:decoded-start,simulationMs:runtime.timings.simulation!,checksumMs:hashed-advanced,projectionMs:projected-hashed,encodeMs:encodedAt-projected,transferMs:transferred-encodedAt,decodeMs:decoded-transferred,...(threadCpuMs!==undefined?{threadCpuMs,offCpuMs:Math.max(0,decoded-start-threadCpuMs)}:{}),profile:rows.filter(row=>row.calls>0),work:work.filter(row=>row.value>0),...(budgetTail?{stages:{...runtime.world.settlement.timings},ai:{...runtime.world.aiTimings}}:{})});
-   slowTicks.sort((a,b)=>b.totalMs-a.totalMs);if(slowTicks.length>tailSize)slowTicks.pop();
+   const row={tick:runtime.world.clock.tickIndex,totalMs:decoded-start,simulationMs:runtime.timings.simulation!,checksumMs:hashed-advanced,projectionMs:projected-hashed,encodeMs:encodedAt-projected,transferMs:transferred-encodedAt,decodeMs:decoded-transferred,...(threadCpuMs!==undefined?{threadCpuMs,offCpuMs:Math.max(0,decoded-start-threadCpuMs)}:{}),profile:rows.filter(row=>row.calls>0),work:work.filter(row=>row.value>0),...((budgetTail||capture)?{stages:{...runtime.world.settlement.timings},ai:{...runtime.world.aiTimings}}:{})};
+   if(capture)capturedTicks.push(row);
+   if(retainTail){slowTicks.push(row);slowTicks.sort((a,b)=>b.totalMs-a.totalMs);if(slowTicks.length>tailSize)slowTicks.pop();}
   }
  }
  if((i+1)%1200===0){const row={tick:runtime.world.clock.tickIndex,units:runtime.world.settlement.context.liveUnits().length,total:stats(series.get('Accounted non-render CPU')!.slice(-1200))};windows.push(row);console.log(JSON.stringify(row));}
+ // Optional real-time cadence gives the JS engine idle time between fixed ticks.
+ // Sleep and profiler delivery are outside CPU accounting; tick rules/order stay
+ // identical. This is still Node, not browser-worker/UI acceptance evidence.
+ if(paceMs)await new Promise<void>(resolve=>setTimeout(resolve,Math.max(0,paceMs-(performance.now()-start))));
 }
 if(cpuProfile){const {profile}=await inspector!.post('Profiler.stop');writeFileSync(cpuProfile,JSON.stringify(profile));}
 if(allocationProfile){const {profile}=await inspector!.post('HeapProfiler.stopSampling');writeFileSync(allocationProfile,JSON.stringify(profile));}
@@ -240,7 +254,7 @@ const gcOverlaps=gcTicks.map(t=>{
  });
  return {tick:t.tick,totalMs:t.end-t.start,gcMs:ms,stages};
 });
-const gc=gcObserver?{scope:'Measured non-render intervals only; pauses overlap total CPU, never add them. Diagnostic collection can perturb timings.',events:measuredGc.length,totalPauseMs:measuredGc.reduce((n,e)=>n+e.duration,0),overlapMs:gcOverlaps.reduce((n,e)=>n+e.gcMs,0),ticksWithPause:gcOverlaps.filter(e=>e.gcMs>0).length,stages:[...gcStages].map(([path,row])=>({path,...row})),slowTicks:gcOverlaps.sort((a,b)=>b.totalMs-a.totalMs).slice(0,tailSize),pauses:measuredGc.map(e=>({...e,elapsedMs:e.startTime-measuredStart}))}:undefined;
+const gc=gcObserver?{scope:'GC events throughout the measured window, including gaps. overlapMs counts only measured non-render intervals and already overlaps CPU; never add it. Diagnostic collection can perturb timings.',events:measuredGc.length,withoutObservedPauses:{scope:'Diagnostic lower bound with observed GC pauses subtracted; not a shippable budget result.',...stats(gcOverlaps.map(t=>Math.max(0,t.totalMs-t.gcMs)))},totalPauseMs:measuredGc.reduce((n,e)=>n+e.duration,0),overlapMs:gcOverlaps.reduce((n,e)=>n+e.gcMs,0),ticksWithPause:gcOverlaps.filter(e=>e.gcMs>0).length,stages:[...gcStages].map(([path,row])=>({path,...row})),slowTicks:gcOverlaps.sort((a,b)=>b.totalMs-a.totalMs).slice(0,tailSize),pauses:measuredGc.map(e=>({...e,elapsedMs:e.startTime-measuredStart}))}:undefined;
 const n=ticks-200,profile=[...detail].map(([path,row])=>({path,inclusiveMean:row.inclusiveMs/n,selfMean:row.selfMs/n,callsPerTick:row.calls/n,activeTicks:row.activeTicks,maxMs:row.maxMs})).sort((a,b)=>b.selfMean-a.selfMean);
 const tailCosts=new Map<string,{selfMs:number;inclusiveMs:number}>();
 for(const tick of slowTicks)for(const row of tick.profile){const cost=tailCosts.get(row.path)??{selfMs:0,inclusiveMs:0};cost.selfMs+=row.selfMs;cost.inclusiveMs+=row.inclusiveMs;tailCosts.set(row.path,cost);}
@@ -253,8 +267,8 @@ const report={work,...(args.includes('--trace-routes')?{actorRouteDemand:{scope:
  workload:assault?'Staged mixed human army attacks nearest enemy hall through production input; three real AI controllers.':'Human slot idle; three real AI controllers. Startup baseline, not a four-army human battle acceptance test.',
  engagement:{humanArmy:humanCount,humanOrderMs,humanSurvivors:assault?.units.filter(id=>(runtime.world.settlement.context.get(id)?.hp??0)>0).length,combatTicks,attackers:attackers.size,attacksByOwner},
  coverage:'Runtime + periodic network checksum + production projection/encode/decode + in-process transfer clone. Excludes browser IPC, main-thread UI/input and rendering. Inclusive parents overlap children; sum self times only.',
- verifyProjection,verifyRestore,restoreChecks,details:runtime.profiling,budgetTail,threadCpu,cpuProfile:cpuProfile||undefined,allocationProfile:allocationProfile?{path:allocationProfile,samplingInterval:65536,includesCollected:true,scope:'After warm-up; includes timed runtime and benchmark bookkeeping. Diagnostic overhead is not acceptance timing.'}:undefined,gc,traceRoutes:args.includes('--trace-routes'),pathQueries,startTick,endTick:runtime.world.clock.tickIndex,ticks,warmupTicks:200,budgetMs:3,budgetPercentile:99,checkpointBudgetMs:.1,wallMs:performance.now()-begin,
- runtime:{node:process.version,platform:process.platform,arch:process.arch},timings:Object.fromEntries([...series].map(([k,a])=>[k,stats(a)])),profile,tailProfile,slowTicks,windows,
+ verifyProjection,verifyRestore,restoreChecks,details:args.includes('--details'),budgetTail,threadCpu,paceMs,cpuProfile:cpuProfile||undefined,allocationProfile:allocationProfile?{path:allocationProfile,samplingInterval:65536,includesCollected:true,scope:'After warm-up; includes timed runtime and benchmark bookkeeping. Diagnostic overhead is not acceptance timing.'}:undefined,gc,traceRoutes:args.includes('--trace-routes'),pathQueries,startTick,endTick:runtime.world.clock.tickIndex,ticks,warmupTicks:200,budgetMs:3,budgetPercentile:99,checkpointBudgetMs:.1,wallMs:performance.now()-begin,
+ runtime:{node:process.version,platform:process.platform,arch:process.arch},timings:Object.fromEntries([...series].map(([k,a])=>[k,stats(a)])),profile,tailProfile,slowTicks,capturedTicks,profileScope:captureTicks.size&&!args.includes('--details')?'Only explicitly captured ticks; profile means are diluted across the run. See capturedTicks for event costs.':'Entire run when --details is enabled',windows,
  trafficMeshProbe:trafficMeshProbe?{...trafficMeshProbe,scope:'Shadow mesh and production grid on identical live traffic requests; duplicate diagnostic work, not budget evidence. Production routes always used.'}:undefined,
  checksum:runtime.world.checksum(),fullAuditChecksum:runtime.world.checksum('full'),outcome:runtime.world.settlement.state.outcome,entities:runtime.world.settlement.state.entities.length,units:runtime.world.settlement.context.liveUnits().length,ai:runtime.world.aiSummary(),routing:runtime.world.settlement.spatial.routing};
 const save=option('--save','');if(save)writeFileSync(save,JSON.stringify(runtime.snapshotLocal()));

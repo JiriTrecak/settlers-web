@@ -277,25 +277,29 @@ export class Observation {
   private nativeSharesVision(owner:Owner,sensor:Entity):boolean {
     return sensor.owner===owner || (sensor.owner!=="none" && this.hostility?.(owner,sensor)===false);
   }
-  private containmentSightStamp='';
+  private containmentSightTick=-1;
+  private containmentSightRevision=-1;
   private readonly containmentSight=new Map<number,Entity[]>();
   /** Borrow only ordinary sight. Ownership, control and stealth detection remain independent. */
   private sharesVision(owner:Owner,sensor:Entity):boolean {
     if(this.nativeSharesVision(owner,sensor))return true;
     if(!sensor.id||owner==='none')return false;
-    const stamp=`${this.c.state.tick}:${this.c.observationRevision}`;
-    if(stamp!==this.containmentSightStamp){
-      this.containmentSight.clear();
-      for(const e of this.c.indexedUnits()){
-        const s=e.spellContainment;if(!s||!alive(e)||e.unit?.contained!==s.host||s.expires<=this.c.state.tick)continue;
-        const host=this.c.get(s.host),a=this.c.registry.abilityLibrary.abilities.find(a=>a.id===s.ability);
-        if(!host||!alive(host)||host.owner!==s.owner||host.unit?.contained||host.unit?.release||!a||!allEffects(a).some(op=>op.op==='contain'&&op.id===s.operation&&op.shareVision))continue;
-        const recipients=this.containmentSight.get(s.host)??[];recipients.push(e);this.containmentSight.set(s.host,recipients);
-      }
-      this.containmentSightStamp=stamp;
-    }
-    return this.containmentSight.get(sensor.id)?.some(e=>this.nativeSharesVision(owner,e))??false;
+    if(this.c.state.tick!==this.containmentSightTick||this.c.observationRevision!==this.containmentSightRevision)this.refreshContainmentSight();
+    const recipients=this.containmentSight.get(sensor.id);
+    if(recipients)for(const recipient of recipients)if(this.nativeSharesVision(owner,recipient))return true;
+    return false;
   }
+  private refreshContainmentSight(){
+    this.containmentSight.clear();
+    for(const e of this.c.indexedUnits()){
+      const s=e.spellContainment;if(!s||!alive(e)||e.unit?.contained!==s.host||s.expires<=this.c.state.tick)continue;
+      const host=this.c.get(s.host),a=this.c.registry.abilityLibrary.abilities.find(a=>a.id===s.ability);
+      if(!host||!alive(host)||host.owner!==s.owner||host.unit?.contained||host.unit?.release||!a||!allEffects(a).some(op=>op.op==='contain'&&op.id===s.operation&&op.shareVision))continue;
+      const recipients=this.containmentSight.get(s.host)??[];recipients.push(e);this.containmentSight.set(s.host,recipients);
+    }
+    this.containmentSightTick=this.c.state.tick;this.containmentSightRevision=this.c.observationRevision;
+  }
+
   private spellSensors(owner:Owner){
     return this.c.state.spellVisions.filter(v=>v.expires>this.c.state.tick&&this.sharesVision(owner,{owner:v.owner as Owner} as Entity));
   }
@@ -316,37 +320,39 @@ export class Observation {
   private sightStructure=-1;
   private sightMotion=-1;
   private refreshSightSensor(sensor:Entity){
-    this.c.profile.count('Sensor records checked');
     const radius=alive(sensor)?(this.c.def(sensor).vision??0)+1:0;
     if(radius<=1){
-      if(this.sightRecords.delete(sensor.id)){this.sightSectors.delete(sensor.id);this.c.profile.count('Sensor entries removed');}
-      return;
+      if(this.sightRecords.delete(sensor.id)){this.sightSectors.delete(sensor.id);return -1;}
+      return 0;
     }
     const p=precise(sensor),old=this.sightRecords.get(sensor.id);
-    if(old?.entity===sensor&&old.x===p.x&&old.y===p.y&&old.radius===radius)return;
+    if(old?.entity===sensor&&old.x===p.x&&old.y===p.y&&old.radius===radius)return 0;
     this.sightRecords.set(sensor.id,{entity:sensor,x:p.x,y:p.y,radius});
     this.sightSectors.set(sensor.id,sensor,{minX:p.x-radius,minY:p.y-radius,maxX:p.x+radius,maxY:p.y+radius});
-    this.c.profile.count('Sensor entries updated');
+    return 1;
   }
   private nearbySensors(e:Entity):Iterable<Entity> {
     const c=this.c,changed=this.sightMotion!==c.motionRevision;
     if(this.sightTick!==c.state.tick||this.sightStructure!==c.observationRevision||changed){
+      let checked=0,updated=0,removed=0;
+      const refresh=(sensor:Entity)=>{checked++;const change=this.refreshSightSensor(sensor);if(change>0)updated++;else if(change<0)removed++;};
       const movers=this.sightTick===c.state.tick&&this.sightStructure===c.observationRevision&&changed
         ?c.sightMovesSince(this.sightMotion):null;
       if(movers){
         c.profile.count('Incremental sensor refreshes');
-        for(const sensor of movers)this.refreshSightSensor(sensor);
+        for(const sensor of movers)if(c.get(sensor.id)===sensor)refresh(sensor);
       }else{
         // Tick boundaries still reconcile direct lifecycle writes. Bounds are
         // rewritten only for changed sensors; an explicit editor refresh and
         // untracked motion revision take this same conservative path.
         c.profile.count('Full sensor reconciliations');
         const sensors=c.liveSensors(),ids=new Set(sensors.map(s=>s.id));
-        for(const sensor of sensors)this.refreshSightSensor(sensor);
+        for(const sensor of sensors)refresh(sensor);
         for(const id of this.sightRecords.keys())if(!ids.has(id)){
-          this.sightRecords.delete(id);this.sightSectors.delete(id);c.profile.count('Sensor entries removed');
+          this.sightRecords.delete(id);this.sightSectors.delete(id);removed++;
         }
       }
+      c.profile.count('Sensor records checked',checked);c.profile.count('Sensor entries updated',updated);c.profile.count('Sensor entries removed',removed);
       this.sightTick=c.state.tick;this.sightStructure=c.observationRevision;this.sightMotion=c.motionRevision;
     }
     const p=precise(e),f=this.c.def(e).footprint,rotated=Math.round(e.rotation/90)%2!==0;
@@ -371,12 +377,14 @@ export class Observation {
   previouslyVisible(owner: Owner, e: Entity): boolean {
     if (e.owner === owner) return true;
     if(!this.detects(owner,e))return false;
-    const m = this.memories.find((p) => p.owner === owner);
-    if(this.c.spatial.layers)return !!m&&this.fogFootprint(e).some(i=>i>=0&&m.cells[i]===2)&&this.visible(owner,e);
-    return (
-      !!m && this.fogFootprint(e).some((i) => i >= 0 && m.cells[i] === 2)
-    );
+    for(const m of this.memories)if(m.owner===owner){
+      for(const i of this.fogFootprint(e))if(i>=0&&m.cells[i]===2)
+        return !this.c.spatial.layers||this.visible(owner,e);
+      return false;
+    }
+    return false;
   }
+
   explored(owner: Owner, indices: readonly number[]) {
     const m = this.memories.find((p) => p.owner === owner);
     return !!m && indices.every((i) => i >= 0 && m.cells[i] > 0);
@@ -594,7 +602,7 @@ export class Observation {
   }
   /** Receipts must explain every revision. Unknown edits/forms and restoration
    * retain full classification; creation/removal touches only affected records. */
-  private updateEntityMembership():readonly {type:'add'|'remove';entity:Entity}[]|null {
+  private updateEntityMembership():readonly {type:'add'|'remove'|'retain';entity:Entity}[]|null {
     const changes=this.c.observationEntityChanges;
     if(this.structureRevision<0||!changes.length||this.c.observationRevision-this.structureRevision!==changes.length)return null;
     const removed=new Set(changes.filter(c=>c.type==='remove').map(c=>c.entity.id));
@@ -608,6 +616,14 @@ export class Observation {
       for(const id of removed){this.forestIds.delete(id);this.resourceViews.delete(id);}
     }
     for(const {type,entity} of changes)if(type==='add'&&!removed.has(entity.id))this.classifyEntity(entity,this.stationary);
+    // A fallen hero can be removed and retained in the same batch. Its final
+    // membership, including original ordering, must survive those two receipts.
+    const retained=new Set(changes.filter(c=>c.type==='retain').map(c=>c.entity.id));
+    if(retained.size){
+      this.actors=this.actors.filter(e=>!retained.has(e.id));
+      for(const id of retained){const e=this.c.get(id);if(e)this.classifyEntity(e,this.stationary);}
+      this.actors.sort((a,b)=>a.id-b.id);
+    }
     this.structureRevision=this.c.observationRevision;
     // The caller consumes/clears the journal before refreshing static coverage.
     return [...changes];
@@ -642,7 +658,7 @@ export class Observation {
   }
   /** Explicit external updates rescan state; fixed ticks consume simulation change receipts. */
   update(incremental=false) {
-    this.sightTick=-1;this.containmentSightStamp="";this.containmentSight.clear();
+    this.sightTick=-1;this.containmentSightTick=-1;this.containmentSight.clear();
     const started=performance.now();let maskMs=0,knowledgeMs=0;
     this.cache.clear();
     while (
@@ -924,7 +940,7 @@ export class Observation {
   restore(raw: unknown) {
     const rows = this.validateSnapshot(raw);
     this.masks.clear();this.visibleStatics.clear();this.staticCoverage.clear();this.staleStatics.clear();this.structureRevision=-1;
-    this.staticRecords.clear();this.staticCells=undefined;this.staticOverlaps.clear();this.sightSectors.clear();this.sightRecords.clear();this.sightTick=-1;this.containmentSightStamp="";this.containmentSight.clear();
+    this.staticRecords.clear();this.staticCells=undefined;this.staticOverlaps.clear();this.sightSectors.clear();this.sightRecords.clear();this.sightTick=-1;this.containmentSightTick=-1;this.containmentSight.clear();
     this.resourceViews.clear();
     this.projectEntities();this.projectWork();
     this.deathCues.length = 0;

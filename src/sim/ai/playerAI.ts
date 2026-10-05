@@ -6,6 +6,7 @@ import type { Action } from "../../shared/types/types";
 import type { SettlementView } from "../game/observation";
 import type { Point } from "../game/state";
 import {
+  ObservedBlockers,
   Frame,
   Geography,
   ordinal,
@@ -30,6 +31,7 @@ const spends = (a: Action) => a.type === "build" || a.type === "produce" || a.ty
 /** The only AI entry point. Dependencies deliberately exclude Game, Spatial and authoritative state. */
 export class PlayerAI {
   private state: AIState;
+  private blockers=new ObservedBlockers();
   profile=new SimulationProfiler();
   constructor(
     readonly owner: Owner,
@@ -55,6 +57,7 @@ export class PlayerAI {
   }
   restore(raw: unknown) {
     this.state = this.validate(raw);
+    this.blockers=new ObservedBlockers();
   }
   summary() {
     const s = this.state;
@@ -108,6 +111,8 @@ export class PlayerAI {
       this.registry,
       this.geography,
       tick,
+      this.blockers,
+      this.profile,
     ));
     this.profile.measure('Memory',()=>this.observe(f));
     const output: AICommand[] = [],

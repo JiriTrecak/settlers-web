@@ -1,4 +1,6 @@
 import {formDefinition} from '../abilities/forms';
+import {SimulationProfiler} from '../profiling';
+import {PlacementSearch} from './placementSearch';
 import {resourceBlocksCell,resourceCollisionCells} from '../../shared/map/resourceClearance';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
 import {unitDimensions} from '../../content/unitScale';
@@ -84,6 +86,7 @@ export function playerObservation(
 /** Static, authorized geography. Components use the same slopes/corner rules as movement. */
 export class Geography {
   readonly regions: Int32Array;
+  readonly placementSearch=new PlacementSearch();
   readonly layers?: WalkSurfaces;
   constructor(readonly map: MapBriefing) {
     const { size, land, heights } = map;
@@ -145,6 +148,38 @@ export class Geography {
     );
   }
 }
+type BlockerRecord={x:number;y:number;rotation:number;building:boolean;width:number;depth:number;radius:number|undefined;scale:number;cells:number[]};
+/** Per-controller, derived from its authorized observation only. Reference counts
+ * preserve overlaps; copy-on-write sets keep previously constructed frames valid. */
+export class ObservedBlockers {
+  private readonly records=new Map<number,BlockerRecord>();
+  private readonly counts=new Map<number,number>();
+  private cells=new Set<number>();
+  readonly work={checked:0,rebuilt:0,removed:0};
+  update(frame:Frame):ReadonlySet<number>{
+    const seen=new Set<number>();let changed=false;
+    this.work.checked=0;this.work.rebuilt=0;this.work.removed=0;
+    const ownCells=()=>{if(!changed){this.cells=new Set(this.cells);changed=true;}};
+    const remove=(record:BlockerRecord)=>{
+      ownCells();for(const cell of record.cells){const n=this.counts.get(cell)!-1;if(n){this.counts.set(cell,n);}else{this.counts.delete(cell);this.cells.delete(cell);}}
+    };
+    for(const e of frame.view.entities){
+      const d=frame.def(e),building=d.kind==='building';
+      if(!building&&!(e.resource&&e.resource.amount>0))continue;
+      seen.add(e.id);this.work.checked++;
+      const x=Math.round(e.x),y=Math.round(e.y),width=d.footprint?.width??1,depth=d.footprint?.depth??1,radius=d.collisionRadius,scale=e.appearance?.scale??1;
+      const old=this.records.get(e.id);
+      if(old&&old.x===x&&old.y===y&&old.rotation===e.rotation&&old.building===building&&old.width===width&&old.depth===depth&&old.radius===radius&&old.scale===scale)continue;
+      if(old)remove(old);else ownCells();
+      const p={x,y};
+      const cells=(building?footprint(d,p,e.rotation):resourceCollisionCells(p,d.footprint,radius,scale,e.rotation)).filter(q=>frame.geo.inside(q)).map(q=>frame.geo.index(q));
+      this.records.set(e.id,{x:p.x,y:p.y,rotation:e.rotation,building,width,depth,radius,scale,cells});this.work.rebuilt++;
+      for(const cell of cells){this.counts.set(cell,(this.counts.get(cell)??0)+1);this.cells.add(cell);}
+    }
+    for(const [id,record] of this.records)if(!seen.has(id)){remove(record);this.records.delete(id);this.work.removed++;}
+    return this.cells;
+  }
+}
 export class Frame {
   readonly own: EntityView[];
   readonly workers: EntityView[];
@@ -155,18 +190,12 @@ export class Frame {
   readonly stores: EntityView[];
   readonly resources: EntityView[];
   readonly bank: Record<string, number> = {};
-  private _blocked: Set<number> | null = null;
+  private _blocked: ReadonlySet<number> | null = null;
   get blocked() {
     if (!this._blocked) {
-      this._blocked = new Set<number>();
-      for (const e of this.view.entities) {
-        const d = this.def(e);
-        const cells = d.kind === "building" ? footprint(d, integerPoint(e), e.rotation)
-          : e.resource && e.resource.amount > 0
-            ? resourceCollisionCells(integerPoint(e), d.footprint, d.collisionRadius, e.appearance?.scale ?? 1, e.rotation)
-            : [];
-        for (const p of cells) if (this.geo.inside(p)) this._blocked.add(this.geo.index(p));
-      }
+      this._blocked = this.profile.measure('Known blocker footprints',()=>this.blockers.update(this));
+      this.profile.count('Blocker records checked',this.blockers.work.checked);
+      this.profile.count('Blocker footprints rebuilt',this.blockers.work.rebuilt);
     }
     return this._blocked;
   }
@@ -177,7 +206,13 @@ export class Frame {
     readonly registry: ContentRegistry,
     readonly geo: Geography,
     readonly tick: number,
+    private readonly blockers=new ObservedBlockers(),
+    readonly profile=new SimulationProfiler(),
   ) {
+    this.placeable=this.profile.wrap('Building site checks',this.placeable.bind(this));
+    this.doorReachable=this.profile.wrap('Building approach search',this.doorReachable.bind(this));
+    this.nearestSafe=this.profile.wrap('Safe position search',this.nearestSafe.bind(this));
+    this.nearestResource=this.profile.wrap('Harvest target selection',this.nearestResource.bind(this));
     this.byId = new Map(view.entities.map((e) => [e.id, e]));
     this.own = view.entities.filter((e) => e.owner === owner && e.hp !== 0);
     this.workers = this.own.filter(
@@ -273,6 +308,20 @@ export class Frame {
       armorType: body.armorType, armor: target.stats?.armor ?? body.armor,
     }, raw, type);
   }
+  /** Only one target is used. Preserve the former distance sort and its tie
+   * policy without sorting/allocating the entire known-resource candidate list. */
+  nearestResource(origin:Point,accept:(resource:EntityView)=>boolean,tieById=true):EntityView|undefined {
+    let best:EntityView|undefined,bestDistance=Infinity,eligible=0;
+    for(const resource of this.resources){
+      if(!accept(resource))continue;
+      eligible++;
+      const d=distance(resource,origin);
+      if(!best||d<bestDistance||(tieById&&d===bestDistance&&resource.id<best.id)){best=resource;bestDistance=d;}
+    }
+    this.profile.count('Known resources considered',this.resources.length);
+    this.profile.count('Resource distance evaluations',eligible);
+    return best;
+  }
   nearestSafe(p: Point) {
     const base = integerPoint(p);
     for (let r = 0; r <= 8; r++)
@@ -292,6 +341,7 @@ export class Frame {
   }
   /** Local placement view: no authoritative canBuild query, including resource buffers and entrances. */
   placeable(d: Definition, p: Point, r: number) {
+    this.profile.count('Candidates checked');
     if (!this.available(d) || p.surface) return false;
     if (d.placementNear && !this.resources.some(e => !e.remembered && e.definition === d.placementNear!.source && distance(e,p) <= d.placementNear!.radius)) return false;
     const cells = footprint(d, p, r),
@@ -344,35 +394,10 @@ export class Frame {
     // Outposts check a local approach after the terrain-connectivity check above.
     // A home-centered flood would reject every remote resource site.
     const approach = d.placementNear ? this.nearestSafe({x:p.x,y:p.y+12}) : this.home;
+    return this.doorReachable(cells,approach,door,!!d.placementNear);
+  }
+  private doorReachable(cells:Point[],approach:Point,door:Point,outpost:boolean){
     // Bounded flood verifies a usable doorway without reading hidden blockers.
-    const proposed = new Set(cells.map((q) => this.geo.index(q))),
-      seen = new Set<number>(),
-      queue = [integerPoint(approach)];
-    for (let i = 0; i < queue.length && i < 4096; i++) {
-      const a = queue[i]!;
-      if (distance(a, door) < 1) return true;
-      for (const [dx, dy] of [
-        [1, 0],
-        [-1, 0],
-        [0, 1],
-        [0, -1],
-      ]) {
-        const q = { x: a.x + dx!, y: a.y + dy! },
-          idx = this.geo.index(q);
-        if (
-          !this.geo.inside(q) ||
-          distance(q, approach) > (d.placementNear ? 24 : 44) ||
-          seen.has(idx) ||
-          proposed.has(idx) ||
-          this.blocked.has(idx) ||
-          !this.geo.map.land[idx] ||
-          Math.abs(heights[idx]! - heights[this.geo.index(a)]!) > MAX_GROUND_STEP_CM
-        )
-          continue;
-        seen.add(idx);
-        queue.push(q);
-      }
-    }
-    return false;
+    return this.geo.placementSearch.reachable(this.geo.map,this.blocked,new Set(cells.map(q=>this.geo.index(q))),approach,door,outpost?24:44,this.profile);
   }
 }

@@ -1,0 +1,44 @@
+/* Shared forest and live effects, with three independent carved faction panels. */
+.campaign-selector { color:#eeeee9; }
+.campaign-stage::after { content:'';position:absolute;inset:0;z-index:2;background:rgb(0 0 0 / 70%);pointer-events:none; }
+.campaign-content { position:relative;z-index:3;min-height:100svh;box-sizing:border-box;display:flex;flex-direction:column;padding:24px clamp(20px,5vw,90px) 22px; }
+.campaign-heading { text-align:center;text-shadow:0 3px 12px #000;margin:0 0 18px; }
+.campaign-heading p { margin:0 0 8px;font:10px/1.4 Georgia,serif;letter-spacing:.32em;color:#c1bcae; }
+.campaign-heading h1 { margin:0;font:normal clamp(27px,3vw,42px)/1.2 Georgia,serif; }
+.campaign-factions { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2vw,36px);width:min(1180px,100%);margin:auto; }
+.faction-panel {
+ position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ box-sizing:border-box;min-height:490px;height:clamp(490px,72svh,850px);padding:15% 12% 19%;
+ background:url('../../../assets/library/asset.interface.main-menu.panel-charcoal/image.webp') center/100% 100% no-repeat;
+ filter:drop-shadow(0 10px 18px #000a);text-align:center;
+}
+.faction-crest { width:100%;height:43%;object-fit:contain;margin:0 0 12px;filter:drop-shadow(0 4px 12px #b34c251c); }
+.faction-copy { width:100%; }
+.faction-chapter { font:11px/1.4 Georgia,serif;letter-spacing:.17em;text-transform:uppercase;color:#c5ae88;margin:0 0 9px; }
+.faction-copy h2 { margin:0;font:normal clamp(28px,3.1vw,46px)/1.1 Georgia,serif;color:#f4f1e8;text-shadow:0 3px 6px #000; }
+.faction-rule { width:42%;height:1px;background:linear-gradient(90deg,transparent,#a39270,transparent);margin:18px auto 14px; }
+.faction-status { color:#b9b9b3;font:12px/1.6 Georgia,serif;margin:0 auto;max-width:190px; }
+.faction-play { width:86%;height:clamp(42px,5.5svh,58px);flex-shrink:0;margin-top:25px;font-size:18px;padding:0 12%; }
+.is-locked .faction-crest { filter:saturate(.5) brightness(.72) drop-shadow(0 4px 10px #0008); }
+.is-locked .faction-copy h2 { color:#c1c3bd; }
+.is-locked .faction-chapter { color:#949b91; }
+.is-locked .faction-play:disabled { opacity:.65; }
+.campaign-footer { display:flex;align-items:center;gap:24px;margin:18px auto 0;width:min(1180px,100%); }
+.campaign-back-action { width:170px;height:46px;font-size:17px;padding:0 20px;flex-shrink:0; }
+.campaign-footer>span { font:12px Georgia,serif;color:#a4aaa3;text-shadow:0 2px 5px #000; }
+.campaign-missions { background:linear-gradient(120deg,#141817f0,#080c0be8);border:1px solid #72746b;padding:clamp(24px,4vw,48px);margin:auto;width:min(850px,100%);box-sizing:border-box;box-shadow:0 15px 55px #0008; }
+.campaign-missions .campaign-intro { font-size:17px;margin-bottom:24px; }
+.campaign-missions .campaign-chapter { width:100%; }
+@media(max-width:720px) {
+ .campaign-content { padding:26px 16px 24px; }
+ .campaign-factions { grid-template-columns:1fr;max-width:340px;gap:20px; }
+ .faction-panel { height:560px;padding:18% 12% 20%; }
+ .faction-copy h2 { font-size:38px; }
+ .campaign-footer { max-width:340px; }
+ .campaign-footer>span { font-size:11px; }
+ .campaign-missions .campaign-chapter { gap:12px;padding:15px; }
+ .campaign-missions .campaign-play { display:none; }
+}
+@keyframes canopy-reveal { from {opacity:0} to {opacity:1} }
+.canopy-menu { animation:canopy-reveal .3s ease-out; }
+@media(prefers-reduced-motion:reduce) { .canopy-menu { animation:none; } }
