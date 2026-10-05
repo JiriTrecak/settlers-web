@@ -48,6 +48,7 @@ export class Economy {
   constructor(private readonly c: GameContext) {
     this.advanceHarvest=c.profile.wrap('Harvest progression',this.advanceHarvest.bind(this));
     this.completeUnit=c.profile.wrap('Unit deployment',this.completeUnit.bind(this));
+    this.advanceRegrowth=c.profile.wrap('Resource regrowth',this.advanceRegrowth.bind(this));
     this.canRegrow=c.profile.wrap('Regrowth clearance',this.canRegrow.bind(this));
     this.deliver=c.profile.wrap('Cargo delivery',this.deliver.bind(this));
   }
@@ -112,7 +113,7 @@ export class Economy {
     );
   }
   private findJob(id: number | null) {
-    return this.s.jobs.find((j) => j.id === id);
+    return this.c.job(id);
   }
   /** Called before the project exists. This creates no state on failure. */
   reserveBill(
@@ -185,7 +186,7 @@ export class Economy {
       queue: null,
       ...options,
     };
-    this.s.jobs.push(j);
+    this.c.addJob(j);
     worker.unit!.job = j.id;
     return j;
   }
@@ -223,8 +224,7 @@ export class Economy {
       w.unit.goal = null;
       delete w.unit.detour;
     }
-    const i = this.s.jobs.indexOf(job);
-    if (i >= 0) this.s.jobs.splice(i, 1);
+    this.c.removeJob(job);
   }
   private at(e: Entity, p: Point) {
     return atPoint(e, p);
@@ -766,8 +766,7 @@ export class Economy {
       if (job.type === "plant") {
         job.progress++;
         if (job.progress >= creation.workTicks) {
-          resource.resource.growingUntil = this.s.tick + target.regrowthTicks!;
-          this.c.resourceChanged(resource);
+          this.c.setRegrowth(resource,this.s.tick + target.regrowthTicks!);
           this.eraseJob(job);
           this.finishCycle(b);
         }
@@ -789,20 +788,16 @@ export class Economy {
       }
     }
 
-    for (const r of this.c
-      .live()
-      .filter(
-        (e) =>
-          e.resource?.growingUntil !== null &&
-          e.resource?.growingUntil !== undefined,
-      ))
+    this.advanceRegrowth();
+  }
+  private advanceRegrowth() {
+    for (const r of this.c.regrowingResources())
       if (
         r.resource!.growingUntil! <= this.s.tick &&
         this.canRegrow(r)
       ) {
-        this.c.resourceChanged(r);
         r.resource!.amount = this.c.def(r).yield!;
-        r.resource!.growingUntil = null;
+        this.c.setRegrowth(r,null);
         if (this.c.def(r).felling) r.resource!.felling = {
           hp: this.c.def(r).felling!.maxHp, lastHitTick: null, fallTick: null, direction: {x: 0, y: 1},
         };

@@ -110,9 +110,11 @@ it('keeps the parent event loop responsive during a worker stall and applies the
 
 it('main-thread commands show feedback immediately and restore resets camera and controls after the worker completes',async()=>{
  const f=fixture();await f.init();const feedback=vi.fn(),camera=vi.fn(),controls=vi.fn(),reset=vi.fn();
- const session=Object.assign(Object.create(Session.prototype),{worker:f.client,me:0,config:{player:0},desynced:false,renderer:{gameCommandFeedback:feedback,unitCamera:camera},economyHud:{restoreControls:controls},input:{reset},unitCameraMode:'first-person',cinematicFocus:{x:10,z:10}});
+ const navigation=vi.fn(),navDebug={paths:true,walkability:true,navmesh:true,revision:4,meshRevision:9,epoch:3,pending:true,next:99,shown:true};
+ const session=Object.assign(Object.create(Session.prototype),{worker:f.client,me:0,config:{player:0},desynced:false,navDebug,renderer:{gameCommandFeedback:feedback,unitCamera:camera,gameNavigation:navigation},economyHud:{restoreControls:controls},input:{reset},unitCameraMode:'first-person',cinematicFocus:{x:10,z:10}});
  expect(session.send({type:'move',actors:[1],destination:{x:40,y:40}})).toBe(true);expect(feedback).toHaveBeenCalledOnce();
  session.setMenuPaused(true);expect(reset).toHaveBeenCalledOnce();
  const save=await f.client.request('save',undefined);await session.restoreLocal({...save,controlGroups:[[1]]});
+ expect(navigation).toHaveBeenCalledWith(null);expect(navDebug).toMatchObject({revision:-1,meshRevision:-1,epoch:4,pending:false,shown:false});
  expect(session.unitCameraMode).toBe('rts');expect(session.cinematicFocus).toBeNull();expect(camera).toHaveBeenCalledWith(null);expect(controls).toHaveBeenCalledWith([[1]]);
 },15000);

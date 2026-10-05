@@ -1,4 +1,3 @@
-import { canTraverse } from './navigation';
 import type { Entity, Point } from './state';
 import {unitDimensions} from '../../content/unitScale';
 
@@ -29,7 +28,13 @@ export function lengthCeil(dx: number, dy: number) {
 export function clearRay(from: FixedPoint, to: FixedPoint, step: (a: number, b: number) => boolean,size=256): boolean {
   return clearRayCoordinates(from.x,from.y,to.x,to.y,step,size);
 }
-function clearRayCoordinates(fromX:number,fromY:number,toX:number,toY:number,step:(a:number,b:number)=>boolean,size:number):boolean {
+/** Rasterize the actual sub-cell polyline, rather than connecting rounded mesh
+ * corners (which can cut across an obstacle). Only accepted center cells enter
+ * the route; diagonal side-cell validation is not mistaken for path traversal. */
+export function appendRayCells(from:FixedPoint,to:FixedPoint,step:(a:number,b:number)=>boolean,size:number,path:number[]):boolean {
+  return clearRayCoordinates(from.x,from.y,to.x,to.y,step,size,cell=>path.push(cell));
+}
+function clearRayCoordinates(fromX:number,fromY:number,toX:number,toY:number,step:(a:number,b:number)=>boolean,size:number,visit?:(cell:number)=>void):boolean {
   const dx = toX - fromX, dy = toY - fromY;
   const ax = Math.abs(dx), ay = Math.abs(dy), sx = Math.sign(dx), sy = Math.sign(dy);
   let x = Math.floor((fromX + 500) / 1000), y = Math.floor((fromY + 500) / 1000);
@@ -43,7 +48,16 @@ function clearRayCoordinates(fromX:number,fromY:number,toX:number,toY:number,ste
     const vertical = x === tx ? 1 : y === ty ? -1 : !sx ? 1 : !sy ? -1 : crossX * ay - crossY * ax;
     if (vertical <= 0) {x += sx; crossX += 1000;}
     if (vertical >= 0) {y += sy; crossY += 1000;}
-    if (!canTraverse(size, prior, y * size + x, step)) return false;
+    const next = y * size + x;
+    // DDA already established adjacency, bounds and which axes crossed.
+    // Recomputing those from cell IDs repeats divisions for every footprint ray.
+    if (!step(prior, next)) return false;
+    if (vertical === 0) {
+      const sideX = prior + sx, sideY = prior + sy * size;
+      if (!step(prior, sideX) || !step(prior, sideY) ||
+          !step(sideX, next) || !step(sideY, next)) return false;
+    }
+    visit?.(y*size+x);
   }
   return true;
 }
@@ -60,8 +74,13 @@ function sweepPattern(radius:number):readonly (readonly number[])[]{
     for (let x = 0; x <= divisions; x++) for (let y = 0; y <= divisions; y++)
       offsets.push([Math.round(-radius + 2 * radius * x / divisions), Math.round(-radius + 2 * radius * y / divisions)]);
   }
+  // The interior lattice also contains all four corners (and, for even
+  // divisions, the center). Trace each physical ray once, in its original order.
+  const seen=new Set<string>(),unique=offsets.filter(([x,y])=>{
+    const key=`${x}/${y}`;if(seen.has(key))return false;seen.add(key);return true;
+  });
   if(sweepPatterns.size>=32)sweepPatterns.delete(sweepPatterns.keys().next().value!);
-  sweepPatterns.set(radius,offsets);return offsets;
+  sweepPatterns.set(radius,unique);return unique;
 }
 /** Sweep a conservative square footprint around the center line. */
 export function clearSweep(from: FixedPoint, to: FixedPoint, step: (a: number, b: number) => boolean,size=256,radius=BASE_UNIT_RADIUS): boolean {

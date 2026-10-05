@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "category": "resources",
+  "slug": "amber-deposit-empty",
+  "entry": "model.py",
+  "files": {
+    "model.glb": {
+      "asset": "asset.models.resources.amber-deposit-empty",
+      "role": "geometry",
+      "index": 1
+    },
+    "source.blend": {
+      "asset": "asset.models.resources.amber-deposit-empty",
+      "role": "source",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.resources.amber-deposit-empty",
+      "role": "preview",
+      "index": 1
+    },
+    "reference.png": {
+      "asset": "asset.models.resources.amber-deposit-empty",
+      "role": "reference",
+      "index": 1
+    },
+    "soil-albedo.png": {
+      "asset": "asset.models.resources.amber-deposit-empty",
+      "role": "source",
+      "index": 2
+    },
+    "model.py": {
+      "asset": "asset.models.resources.amber-deposit-empty",
+      "role": "recipe",
+      "index": 1
+    }
+  }
+}

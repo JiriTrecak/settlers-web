@@ -3,42 +3,16 @@
   "id": "asset.models.resources.amber-deposit",
   "name": "Amber Deposit",
   "kind": "building",
-  "revision": 2,
+  "revision": 15,
   "status": "published",
   "tags": [
     "original",
     "neutral",
+    "woodland",
+    "resource",
     "tripo"
   ],
   "resources": [
-    {
-      "role": "geometry",
-      "index": 1,
-      "format": "glb",
-      "sha256": "5c30b9bd20649b542c3cd3733b63339a6054febf11306d722b0c5fc6f698a40b",
-      "bytes": 12822188
-    },
-    {
-      "role": "source",
-      "index": 1,
-      "format": "blend",
-      "sha256": "3a7d13bd605e3e24c19a4c787b468c273b86624268f976e2e5d1d2738d3332d9",
-      "bytes": 24304982
-    },
-    {
-      "role": "reference",
-      "index": 1,
-      "format": "png",
-      "sha256": "7980e7c56d1d801b706c403b18de5f4b492b70da2d54388246b0319ebae6db47",
-      "bytes": 1868584
-    },
-    {
-      "role": "preview",
-      "index": 1,
-      "format": "png",
-      "sha256": "86b1af7a7fdc85faec8ce62c2d5f2a93206070816e29a1bed0e188701dc88a33",
-      "bytes": 1345831
-    },
     {
       "role": "albedo",
       "index": 1,
@@ -47,18 +21,25 @@
       "bytes": 6561225
     },
     {
-      "role": "normal",
+      "role": "build",
       "index": 1,
-      "format": "png",
-      "sha256": "f536079a7a324cc2e7a0a4e386b7ec372f29bc8353cb41b719fce345e51d4c0c",
-      "bytes": 3796966
+      "format": "json",
+      "sha256": "fead17da54f8d4389e390fab72f70be997e4cf91ce3d6d4659befd306824f9be",
+      "bytes": 860
     },
     {
-      "role": "roughness",
+      "role": "generation",
       "index": 1,
-      "format": "png",
-      "sha256": "67a9c7c02a89f603287b116858b777859c6b384ac4ef004709c760d9977f5ec4",
-      "bytes": 1953719
+      "format": "json",
+      "sha256": "aa5382580a77726a88c3a597ae7031da624cbf2074b0301b7f357f28f24de95d",
+      "bytes": 370
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "f3359659efe8bb99aab48d016f241ea823cca94eca9db6892a9d924232929ce9",
+      "bytes": 3932528
     },
     {
       "role": "image",
@@ -68,11 +49,53 @@
       "bytes": 25961
     },
     {
-      "role": "generation",
+      "role": "normal",
       "index": 1,
-      "format": "json",
-      "sha256": "9eeac2b07a3254227233cb5abf5bfb63e7eafc75a8acc015e9bd0c388312b28b",
-      "bytes": 11285
+      "format": "png",
+      "sha256": "f536079a7a324cc2e7a0a4e386b7ec372f29bc8353cb41b719fce345e51d4c0c",
+      "bytes": 3796966
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "3fdb4de48e4a61258d62c93e6f4415940cbc868da7b343bb07eeef95ecfb729d",
+      "bytes": 704777
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "db6019de42ca848b92938e1a1d3008532e69e9639bd40715097debf18fe504f3",
+      "bytes": 5300
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "9bf4863cdf94232e010973a6ba4a14a6a35ff90a5d9903adabf0aa1c66712596",
+      "bytes": 250
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "e581e2b2975f00371336c39f76c2263086fa5fa0321326158eb357ec14baed72",
+      "bytes": 2441426
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "67a9c7c02a89f603287b116858b777859c6b384ac4ef004709c760d9977f5ec4",
+      "bytes": 1953719
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "8cb765e0cffefb843b75792b35ff98de14f2ad3ef0bb325ced087bf993cb7551",
+      "bytes": 12503477
     },
     {
       "role": "source",
@@ -96,13 +119,6 @@
       "bytes": 1116
     },
     {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "a846fc61b6c05663ce4145f6c0f9390fd991bf980ba803f983bfe158c2c79b04",
-      "bytes": 263
-    },
-    {
       "role": "source",
       "index": 5,
       "format": "png",
@@ -122,13 +138,6 @@
       "format": "json",
       "sha256": "125f7e342e265902ba495dce2199966668c44df6b0f7c589bf835a40124336d4",
       "bytes": 6263
-    },
-    {
-      "role": "recipe",
-      "index": 2,
-      "format": "py",
-      "sha256": "9bf4863cdf94232e010973a6ba4a14a6a35ff90a5d9903adabf0aa1c66712596",
-      "bytes": 250
     },
     {
       "role": "source",
@@ -169,8 +178,8 @@
       "role": "source",
       "index": 13,
       "format": "glb",
-      "sha256": "ab1d5c284efb827f9eb96641262057ce6ebfc9f8ca15327d0af2449b680b008f",
-      "bytes": 9021364
+      "sha256": "53782bb881721e43d91e7bffabab10aada62091d31c9e7592f0fe77096fa2e12",
+      "bytes": 11444740
     },
     {
       "role": "source",
@@ -178,13 +187,6 @@
       "format": "png",
       "sha256": "54853360befcb3949cecc6c5df2d01f2b9a344a70cd2825e633c61c66be4c574",
       "bytes": 16354
-    },
-    {
-      "role": "build",
-      "index": 1,
-      "format": "json",
-      "sha256": "85ff2851f807220280bcd44d2b2f37c8eebdd2b2977d5d9eed13a32d2c8ba723",
-      "bytes": 2543
     }
   ],
   "usesGeometry": true,
@@ -198,40 +200,15 @@
     "up": "Y",
     "forward": "+Z"
   },
-  "materials": [
-    {
-      "slot": "Natural_Materials",
-      "shader": "standard",
-      "color": "#ffffff",
-      "roughness": 0.72,
-      "metalness": 0,
-      "alphaMode": "opaque",
-      "alphaCutoff": 0.4,
-      "doubleSided": true,
-      "textures": {
-        "albedo": {
-          "role": "albedo",
-          "index": 1
-        },
-        "normal": {
-          "role": "normal",
-          "index": 1
-        },
-        "roughness": {
-          "role": "roughness",
-          "index": 1
-        }
-      }
-    }
-  ],
+  "materials": [],
   "bindings": {
     "faction": "neutral",
     "profile": "building",
     "render": [
       {
         "id": "asset.resource.amber-seam",
-        "scale": 1,
-        "healthHeight": 4.8,
+        "scale": 2,
+        "healthHeight": 7.6,
         "geometry": {
           "role": "geometry",
           "index": 1,
@@ -240,8 +217,8 @@
       },
       {
         "id": "asset.resource.woodland-amber-deposit",
-        "scale": 1,
-        "healthHeight": 4.8,
+        "scale": 2,
+        "healthHeight": 7.6,
         "geometry": {
           "role": "geometry",
           "index": 1,
@@ -263,15 +240,15 @@
     "blocker": {
       "shape": "box",
       "size": [
-        7,
-        7
+        15,
+        15
       ],
       "offset": [
         0,
         0
       ]
     },
-    "vegetationClearance": 3.5,
+    "vegetationClearance": 7.5,
     "groundContact": {
       "mode": "pivot"
     }

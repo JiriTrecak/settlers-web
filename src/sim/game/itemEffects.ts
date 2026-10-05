@@ -26,13 +26,13 @@ export class ItemEffects {
   }
   tick(): void {
     const sources = this.c.activeUnits();
-    for (const e of this.c.state.entities) {
+    for (const e of this.c.indexedUnits()) {
       if (e.itemStatuses) {
         e.itemStatuses = e.itemStatuses.filter(s => s.kind !== "aura" && s.expires > this.c.state.tick && alive(e));
         if (!e.itemStatuses.length) delete e.itemStatuses;
       }
     }
-    for (const source of sources) for (const id of new Set(source.equipment ?? [])) {
+    for (const source of sources) if(source.equipment?.length) for (const id of new Set(source.equipment)) {
       const aura = id && this.c.registry.get(id).itemEffect?.aura;
       if (!id || !aura) continue;
       for (const target of this.targets(source, aura.target, aura.radius)) {
@@ -93,7 +93,7 @@ export class ItemEffects {
   }
   drainHits(): DamageHit[] {
     const hits: DamageHit[] = [];
-    for (const e of this.c.state.entities) { if (!e.itemHits) continue; if (alive(e)) hits.push(...e.itemHits); delete e.itemHits; }
+    for (const e of this.c.indexedUnits()) { if (!e.itemHits) continue; if (alive(e)) hits.push(...e.itemHits); delete e.itemHits; }
     return hits;
   }
   onHit(source: Entity, target: Entity, damage: number, damageType: string): DamageHit[] {
@@ -107,6 +107,7 @@ export class ItemEffects {
       if (reflected > 0) hits.push({source: target.id, target: source.id, damage: reflected, damageType: 'spell'});
     }
     source.hp = Math.min(stats.maxHp, source.hp! + Math.floor(Math.min(target.hp!, damage) * stats.lifestealPermille / 1000));
+    if(!source.equipment?.length)return hits;
     const seen = new Set<string>();
     for (let slot = 0; slot < (source.equipment?.length ?? 0); slot++) {
       const id = source.equipment![slot];

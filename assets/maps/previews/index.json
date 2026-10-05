@@ -1,4 +1,36 @@
 {
+  "the-amber-watch": {
+    "name": "The Amber Watch",
+    "size": 256,
+    "description": "Chapter I — The Amber Watch. Lead Marshal Rowan and a small patrol along the lantern road. Rally the scattered watch, cross the Lantern Brook, and relieve a neutral ant outpost besieged by Briar raiders. Defeat every siege attacker to win. Rowan must survive. No base building is required.",
+    "starts": [
+      {
+        "player": 1,
+        "x": 36,
+        "z": 219,
+        "setup": "setup.ants",
+        "mainFort": "start.player.1/main-fort"
+      },
+      {
+        "player": 2,
+        "x": 205,
+        "z": 105,
+        "setup": "setup.ants",
+        "mainFort": "start.player.2/main-fort"
+      }
+    ],
+    "camps": 3,
+    "sandbox": false,
+    "mission": {
+      "campaign": "vanguard",
+      "order": 1
+    },
+    "playable": true,
+    "sourceHash": "7efa0444",
+    "image": "the-amber-watch.webp",
+    "custom": false,
+    "generationHash": "ea9fbccc2dcc50984109f42bea7dc06a61d9a5e2385f2e4ec55e4123aba9e133"
+  },
   "crown-marsh-forest": {
     "name": "Crown Marsh · Forest",
     "size": 256,

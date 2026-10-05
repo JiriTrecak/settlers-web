@@ -16,6 +16,7 @@ export type AbilityVisualPoint=AbilityPoint&{height?:number};
 type EventTarget=AbilityVisualPoint&{id:number};
 export type AbilityActor=AbilityVisualPoint&SpellEligibility&{sourceContext?:SpellSource;id:number;owner:string;camp?:string;hp:number;maxHp:number;maxMana?:number;mana?:number;alive:boolean;unit:boolean;hero?:boolean;melee?:boolean;blocked:boolean;targetable:boolean};
 export type CasterAccess={actor:AbilityActor;state:AbilityState;bindings:readonly AbilityBinding[];maxMana:number;regenPerSecond:number;cooldownReductionPermille?:number};
+export type CasterBindings=Pick<CasterAccess,'state'|'bindings'>;
 export type HeroReturnView={id:number;owner:string;x:number;y:number;ability:string;cast:number;started:number;due:number};
 export type AbilityDeliveryView={cast:number;ability:string;position:AbilityVisualPoint;direction:AbilityVisualPoint;tick:number};
 export type AbilityEvent={id:number;cast:number;tick:number;ability:string;caster:number;target:number;event:'splitStarted'|'splitEnded'|'returned'|'interval'|'accepted'|'released'|'healed'|'damaged'|'cancelled'|'finished'|'waveStarted'|'wave'|'projectile'|'impact'|'statusApplied'|'dispelled'|'summoned'|'drained'|'manaRestored'|'teleported'|'visionCreated'|'criticalStrike'|'evaded'|'cleaved'|'weaponEnhanced'|'enhancedHit'|'death'|'kill'|'weaponRelease'|'weaponOrdered'|'weaponOrderCancelled'|'resurrected'|'revivalStarted'|'revived'|'revivalCancelled'|'converted'|'contained'|'releasedContained'|'digested'|'sacrificed';spawned?:number[];untilDeath?:boolean;amount?:number;statusId?:string;reason?:string;durationTicks?:number;radius?:number;origin:AbilityVisualPoint;point:AbilityVisualPoint;viewers:string[]};
@@ -48,6 +49,9 @@ export interface AbilityHost {
  visibleTargets?(caster:AbilityActor):number[];
  tick():number; nextCast():number; casters():number[];
  get(id:number):AbilityActor|undefined; caster(id:number):CasterAccess|undefined;
+ /** Live ability state and authored bindings, without materializing combat/source data.
+  * Used only to reject passes that have no work; never cached across mutations. */
+ casterBindings?(id:number):CasterBindings|undefined;
  definition(id:string):AbilityDefinition|undefined;
  relation(a:AbilityActor,b:AbilityActor):Relation;
  visible(owner:string,target:AbilityActor,caster?:AbilityActor):boolean; viewers():string[];
@@ -70,6 +74,7 @@ export class AbilityRuntime {
    this.deliver=profile.wrap('Projectiles and chains',this.deliver.bind(this));
   }
  }
+ private casterBindings(id:number):CasterBindings|undefined{return this.host.casterBindings?this.host.casterBindings(id):this.host.caster(id);}
  observedEvents(owner?:string){return this.events.filter(e=>(!owner||e.viewers.includes(owner))&&this.host.tick()-e.tick<=400).map(e=>structuredClone(e));}
  observedDeliveries(owner?:string):AbilityDeliveryView[]{
   return [...(this.host.weaponDeliveries?.(owner)??[]).filter(d=>!owner||this.host.visiblePoint(owner,{x:Math.round(d.position.x),y:Math.round(d.position.y)})),...(this.host.deliveries?.()??[]).filter(s=>s.swarm?.phase!=='waiting'&&this.host.definition(s.ability)?.delivery?.kind!=='chain'&&(!owner||this.host.visiblePoint(owner,{x:Math.round(s.position.x),y:Math.round(s.position.y)}))).map(s=>{const dx=s.point.x-s.position.x,dy=s.point.y-s.position.y,dh=s.point.height-s.position.height,n=Math.hypot(dx,dy,dh)||1;return {cast:s.cast,ability:s.ability,position:{...s.position},direction:{x:dx/n,y:dy/n,height:dh/n},tick:this.host.tick()};})];
@@ -78,7 +83,7 @@ export class AbilityRuntime {
  clearEvents(){this.events=[];this.sequence=0;}
  private emit(caster:EventTarget&{owner:string},target:EventTarget,cast:number,ability:string,event:AbilityEvent['event'],extra:Partial<Pick<AbilityEvent,'amount'|'statusId'|'reason'|'durationTicks'|'origin'|'radius'|'untilDeath'|'spawned'>>={},audience?:string[]){
   const viewers=audience??this.host.viewers().filter(owner=>!target.id&&owner===caster.owner&&this.host.definition(ability)?.targeting.visible===false||!!this.host.get(caster.id)&&this.host.visible(owner,this.host.get(caster.id)!)&&(target.id?!!this.host.get(target.id)&&this.host.visible(owner,this.host.get(target.id)!):this.host.visiblePoint(owner,target,this.host.get(caster.id))));
-  const spell=this.host.definition(ability),p=this.host.caster(caster.id)?.state.pending;
+  const spell=this.host.definition(ability),p=this.casterBindings(caster.id)?.state.pending;
   const radius=spell?.targeting.radius!==undefined&&p?value(spell.targeting.radius,spell.ranks[p.rank-1]):undefined;
   const durationTicks=p?.channel?(event==='waveStarted'?p.channel.nextWaveTick-this.host.tick():event==='released'?p.channel.endTick-this.host.tick():undefined):undefined;
   this.events.push({...(radius!==undefined?{radius}:{}),...(durationTicks!==undefined?{durationTicks}:{}),id:++this.sequence,cast,tick:this.host.tick(),ability,caster:caster.id,target:target.id,event,origin:{x:caster.x,y:caster.y,height:caster.height??this.host.height?.(caster)},point:{x:target.x,y:target.y,height:target.height??this.host.get(target.id)?.height??this.host.height?.(target)},viewers,...extra});
@@ -177,20 +182,22 @@ export class AbilityRuntime {
  ambient(){
   const ambient=new Set(this.host.ambientCasters?.()??[]);
   for(const id of this.host.casters().sort((a,b)=>a-b)){
-   const caster=this.host.caster(id);if(!caster||caster.state.pending||caster.state.weaponOrder)continue;
-   for(const binding of caster.bindings){
-    const spell=this.host.definition(binding.ability)!,rank=caster.state.ranks[binding.id];if(!rank||spell.activation==='passive'||spell.weaponCast)continue;
-    const auto=spell.autocast && (caster.state.autocast?.[binding.id]??spell.autocast.enabledByDefault);
+   const data=this.casterBindings(id);if(!data||data.state.pending||data.state.weaponOrder)continue;
+   let cachedCaster:CasterAccess|undefined;
+   for(const binding of data.bindings){
+    const spell=this.host.definition(binding.ability)!,rank=data.state.ranks[binding.id];if(!rank||spell.activation==='passive'||spell.weaponCast)continue;
+    const auto=spell.autocast && (data.state.autocast?.[binding.id]??spell.autocast.enabledByDefault);
     const interval=auto?spell.autocast!.intervalTicks:binding.ai?.intervalTicks;
     if((!auto&&(!ambient.has(id)||!binding.ai))||!interval||this.host.tick()%interval!==id%interval)continue;
     if(!binding.controls.includes('ai'))continue;
     if(spell.persistent?.toggle&&this.host.instances?.().some(i=>i.source===id&&i.ability===spell.id))continue;
+    const caster=cachedCaster??(cachedCaster=this.host.caster(id));if(!caster)break;
     const aim=(target:number):AbilityAim=>spell.targeting.kind==='self'?id:spell.targeting.kind==='point'?{x:Math.round(this.host.get(target)!.x),y:Math.round(this.host.get(target)!.y)}:target;
     const observed=this.profile.measure('Visible target enumeration',()=>{
      const selected=this.host.visibleTargets?this.profile.measure('Visibility candidate query',()=>this.host.visibleTargets!(caster.actor)):undefined;
      const actors=this.profile.measure('Actor materialization',()=>(selected??this.host.targets?.()??[]).map(target=>this.host.get(target)!));
      const visible=selected?actors:this.profile.measure('Visibility filtering',()=>actors.filter(t=>t?.alive&&this.host.visible(caster.actor.owner,t,caster.actor)));
-     return this.profile.measure('Allied mana lookup',()=>visible.map(t=>({...t,...(t.owner===caster.actor.owner?{mana:this.host.caster(t.id)?.state.mana??0}:{})})));
+     return this.profile.measure('Allied mana lookup',()=>visible.map(t=>({...t,...(t.owner===caster.actor.owner?{mana:this.casterBindings(t.id)?.state.mana??0}:{})})));
     });
     const intent=binding.ai?.intent;
     if(intent&&intent!=='utility'){
@@ -217,6 +224,7 @@ export class AbilityRuntime {
   this.persistent();
   this.deliver();
   for(const id of this.host.casters().sort((a,b)=>a-b)){
+   if(!this.casterBindings(id)?.state.pending)continue;
    const access=this.host.caster(id),p=access?.state.pending;
    if(!access||!p)continue;
    const spell=this.host.definition(p.ability)!,target=this.target(p,access.actor);
@@ -381,10 +389,12 @@ export class AbilityRuntime {
  }
  private auras(){
   for(const id of this.host.casters().sort((a,b)=>a-b)){
-   const access=this.host.caster(id)!;if(!access.actor.alive||!access.actor.targetable)continue;
-   for(const binding of access.bindings){
-    const spell=this.host.definition(binding.ability),rank=access.state.ranks[binding.id];
+   const data=this.casterBindings(id);if(!data)continue;
+   let access:CasterAccess|undefined;
+   for(const binding of data.bindings){
+    const spell=this.host.definition(binding.ability),rank=data.state.ranks[binding.id];
     if(!rank||!spell?.aura||spell.activation!=='passive')continue;
+    access??=this.host.caster(id);if(!access?.actor.alive||!access.actor.targetable)break;
     for(const target of this.candidates(access.actor,spell,access.actor,spell.aura.radius)){
      if(spell.aura.meleeOnly&&!target.melee)continue;
      this.hit(access.actor,target,1,spell,rank,1000,true);

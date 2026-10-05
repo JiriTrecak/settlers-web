@@ -185,7 +185,7 @@ export function editorTools(hub: EditorHub) {
     game_performance: createTool({
       id: "game_performance",
       description: "Read active-match CPU/GPU timings, draw calls, assets and completed capture. action capture enables profiling and starts a 10-second window; read get later for results. Detail inclusive / Detail self rows expose hierarchical simulation categories: abilities, autocast, path searches, AI, economy and checksums. Inclusive parents overlap children: do not sum them; use self rows for attribution. Worker tick total includes simulation, lockstep and periodic hashing; projection/encode/decode are separate. Detailed profiling adds overhead; compare an unprofiled benchmark for budget acceptance. Does not change simulation behavior or graphics settings.",
-      inputSchema: z.object({action:z.enum(['get','capture']).default('get')}).strict(),
+      inputSchema: z.object({action:z.enum(['get','capture']).default('get'),mode:z.enum(['budget','details']).optional().describe('Capture mode: budget disables the simulation hierarchy and trace and hides the debug panel during capture; details retains diagnostic attribution. Both retain core CPU/GPU and HUD timings.')}).strict(),
       execute: async (input) => call("gamePerformance",input),
     }),
     game_checkpoint: createTool({

@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "id": "asset.models.resources.amber-deposit-one-third",
+  "name": "Amber Deposit — One Third Mined",
+  "kind": "prop",
+  "revision": 23,
+  "status": "published",
+  "tags": [
+    "original",
+    "neutral",
+    "woodland",
+    "resource",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "5726ec3f469c7a8166cd79b34776d530535f0e215ccaeda7cd7ccbe6ffa8bc2b",
+      "bytes": 929
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "5e7d3288443a22d0b7be9417ba2014e3f81a8cf1fb4287eba69072e0c2cdc065",
+      "bytes": 370
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "63419067ab907a26f5c0e3bd221aba7cdbcad17b0f5718bb3f68fe92ad7e6730",
+      "bytes": 4189052
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "8c952932e9cf23e2beea7b3fa7e24a209c2583fde836334a95fbfdb8a125029d",
+      "bytes": 687511
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "db6019de42ca848b92938e1a1d3008532e69e9639bd40715097debf18fe504f3",
+      "bytes": 5300
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "c1daf0d098dedb07da9f59114cba1e966a813bac480cf1f74bb377b88aec4c72",
+      "bytes": 2222933
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "30daf84eec19774a17000736502512201738784eee619a7b5b2108c8e527657e",
+      "bytes": 13194358
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "e5d1f3d55e222a72750a8b37ed22231dd07c97e9c6c23a0070b13db4f5d7660d",
+      "bytes": 12142088
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.resource.amber-seam-one-third",
+        "scale": 2,
+        "healthHeight": 7,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.resources.amber-deposit-one-third"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "blocker": {
+      "shape": "box",
+      "size": [
+        15,
+        15
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 7.5,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

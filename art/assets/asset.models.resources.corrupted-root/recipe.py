@@ -1,48 +1,130 @@
-"""Harvestable heartroot: reuse our painted stump, with readable violet root growth."""
+"""Adapt a Tripo resource deposit for the existing neutral building bindings.
+
+Run in background Blender with ``-- amber-deposit`` or ``-- corrupted-root``.
+The provider GLB and reference live in .asset-work/build/resources/<slug>-v2/.
+The editable Blend keeps the provider paint; only the exported GLB gets 1K maps.
+"""
+
+import json
+import math
+import sys
 from pathlib import Path
-import bpy,sys,math,json,random
-from mathutils import Vector
-assert bpy.app.background
-P=Path(__file__).resolve().parent;ROOT=P.parents[3]
-sys.path.insert(0,str(ROOT/'art/recipes'))
-from forest_warfare import ForestKit
-from stage import create_stage
+
+import bpy
+from mathutils import Matrix, Vector
+
+
+assert bpy.app.background, "Use a background Blender process, not the open document"
+slug = sys.argv[sys.argv.index("--") + 1]
+if slug not in {"amber-deposit", "amber-deposit-one-third", "amber-deposit-two-thirds", "amber-deposit-empty", "corrupted-root"}:
+    raise ValueError(slug)
+root = Path.cwd()
+work = root / ".asset-work/build/resources" / (slug + "-v2")
+provider = work / "source.glb"
+if not provider.exists():
+    raise FileNotFoundError(provider)
+
 bpy.ops.wm.read_factory_settings(use_empty=True)
-bpy.ops.import_scene.gltf(filepath=str(ROOT/'art/assets/asset.models.environment.woodland-giant-stump/geometry.glb'))
-meshes=[o for o in bpy.context.scene.objects if o.type=='MESH']
-# Flatten imported transforms before fitting to the existing 5x5 resource footprint.
-for o in meshes:
- bpy.ops.object.select_all(action='DESELECT');o.select_set(True);bpy.context.view_layer.objects.active=o
- world=o.matrix_world.copy();o.parent=None;o.matrix_world=world;bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
-points=[v.co.copy() for o in meshes for v in o.data.vertices]
-lo=Vector(tuple(min(v[j] for v in points) for j in range(3)));hi=Vector(tuple(max(v[j] for v in points) for j in range(3)));center=(lo+hi)*.5
-factor=4.5/max(hi.x-lo.x,hi.y-lo.y)
-for o in meshes:
- for v in o.data.vertices:v.co=Vector(((v.co.x-center.x)*factor,(v.co.y-center.y)*factor,(v.co.z-lo.z)*factor))
-k=ForestKit.__new__(ForestKit);k.palette={};k.rng=random.Random(2719);k.groups={};k.group('Corrupted root growth')
-k.cut=k.mat('Root sap heart','#806486',rough=.7,glow=.1);k.wood=k.mat('Corrupted outer root','#493d48');k.sap=k.mat('Violet root tips','#735681',rough=.65)
-for i in range(7):
- a=i*math.tau/7+.18;rad=Vector((math.cos(a),math.sin(a),0));side=Vector((-rad.y,rad.x,0))
- pts=[rad*.55+Vector((0,0,.65)),rad*1.05+side*.15+Vector((0,0,.35)),rad*1.6+side*.25+Vector((0,0,.18)),rad*2.25+side*.12+Vector((0,0,.05))]
- k.tube('Exposed living root',pts,[.26,.24,.15,.025],k.wood,9,True)
- k.tube('Sap ridge',[p+Vector((0,0,r*.8)) for p,r in zip(pts,[.26,.24,.15,.025])],[.065,.06,.04,.01],k.sap,6)
-for i in range(5):
- a=i*2.4;r=.65+(i%2)*.3
- k.ell('Root knot',(math.cos(a)*r,math.sin(a)*r,.35),(.3,.22,.25),k.sap,10,6)
-scene=bpy.context.scene
-for o in scene.objects:
- if o.type=='MESH':
-  o.select_set(True)
- else:o.select_set(False)
-for im in bpy.data.images:
- if im.source=='FILE':im.pack()
-# Merge disposable runtime copies; keep named editable source parts in Blender.
-bpy.context.view_layer.objects.active=next(o for o in scene.objects if o.type=='MESH')
-bpy.ops.object.duplicate();bpy.ops.object.join();runtime=bpy.context.object;runtime.name='Corrupted Root Runtime'
-bpy.ops.export_scene.gltf(filepath=str(P/'geometry.glb'),export_format='GLB',use_selection=True,export_apply=True)
-bpy.data.objects.remove(runtime,do_unlink=True)
-cfg={'camera':{'azimuth':25,'elevation':30,'scale':6.2,'target':[0,0,.8],'distance':12},'render':{'width':768,'height':768,'samples':24},'light':{'key_energy':650,'fill_energy':300,'rim_energy':350,'scale':1,'target':[0,0,1]}}
-c=bpy.data.collections.new('Studio');scene.collection.children.link(c);create_stage(cfg,c)
-bpy.data.texts.load(str(P/'model.py'));bpy.ops.wm.save_as_mainfile(filepath=str(P/'source.blend'),compress=True)
-scene.render.filepath=str(P/'render.png');bpy.ops.render.render(write_still=True)
-print('ROOT_READY')
+bpy.ops.import_scene.gltf(filepath=str(provider))
+meshes = [obj for obj in bpy.context.scene.objects if obj.type == "MESH"]
+if not meshes:
+    raise RuntimeError("Tripo export has no mesh")
+for obj in meshes:
+    world = obj.matrix_world.copy()
+    obj.parent = None
+    obj.data.transform(world)
+    obj.matrix_world = Matrix.Identity(4)
+for obj in list(bpy.context.scene.objects):
+    if obj.type != "MESH":
+        bpy.data.objects.remove(obj, do_unlink=True)
+
+lo = Vector(min(v.co[axis] for obj in meshes for v in obj.data.vertices) for axis in range(3))
+hi = Vector(max(v.co[axis] for obj in meshes for v in obj.data.vertices) for axis in range(3))
+extent = hi - lo
+width = max(extent.x, extent.y)
+scale = min(6.6 / width, 4.9 / extent.z)
+center = Vector(((lo.x + hi.x) / 2, (lo.y + hi.y) / 2, lo.z))
+for obj in meshes:
+    for vertex in obj.data.vertices:
+        vertex.co = (vertex.co - center) * scale
+    obj.data.update()
+    obj.name = slug.replace("-", "_") + "_painted"
+    obj.data.name = obj.name
+    for face in obj.data.polygons:
+        face.use_smooth = True
+
+# Source is intentionally high resolution and editable. Lights and stage are absent.
+for image in bpy.data.images:
+    if image.source == "FILE" and image.filepath:
+        try:
+            image.pack()
+        except RuntimeError:
+            pass
+bpy.ops.wm.save_as_mainfile(filepath=str(work / "source.blend"), compress=False)
+
+# Reduce only copied images referenced by the runtime material nodes. The provider
+# source remains available in source.glb and the saved Blend.
+reduced = {}
+for material in bpy.data.materials:
+    if not material.use_nodes:
+        continue
+    for node in material.node_tree.nodes:
+        if node.type != "TEX_IMAGE" or not node.image:
+            continue
+        image = node.image
+        if max(image.size) <= 1024:
+            continue
+        if image.name not in reduced:
+            copy = image.copy()
+            factor = 1024 / max(image.size)
+            copy.scale(max(1, round(image.size[0] * factor)), max(1, round(image.size[1] * factor)))
+            copy.pack()
+            reduced[image.name] = copy
+        node.image = reduced[image.name]
+
+bpy.ops.object.select_all(action="DESELECT")
+for obj in meshes:
+    obj.select_set(True)
+bpy.context.view_layer.objects.active = meshes[0]
+bpy.ops.export_scene.gltf(
+    filepath=str(work / "model.glb"), export_format="GLB", use_selection=True,
+    export_yup=True, export_image_format="AUTO", export_apply=True,
+)
+
+# A neutral catalogue view; the game screenshot is checked separately.
+scene = bpy.context.scene
+scene.render.engine = "BLENDER_EEVEE"
+scene.render.resolution_x = scene.render.resolution_y = 768
+scene.render.resolution_percentage = 100
+scene.render.image_settings.file_format = "PNG"
+scene.render.film_transparent = False
+world = bpy.data.worlds.new("Preview world")
+world.use_nodes = True
+world.node_tree.nodes["Background"].inputs["Color"].default_value = (.035, .035, .04, 1)
+world.node_tree.nodes["Background"].inputs["Strength"].default_value = .7
+scene.world = world
+
+min_corner = Vector(min(v.co[i] for obj in meshes for v in obj.data.vertices) for i in range(3))
+max_corner = Vector(max(v.co[i] for obj in meshes for v in obj.data.vertices) for i in range(3))
+dims = max_corner - min_corner
+radius = max(dims.x, dims.y, dims.z) * 2.1
+camera_data = bpy.data.cameras.new("Preview camera")
+camera = bpy.data.objects.new("Preview camera", camera_data)
+scene.collection.objects.link(camera)
+camera.location = (radius * .70, -radius * .78, radius * .72)
+target = Vector((0, 0, dims.z * .40))
+camera.rotation_euler = (target - camera.location).to_track_quat("-Z", "Y").to_euler()
+camera_data.type = "ORTHO"
+camera_data.ortho_scale = max(dims.x, dims.y) * 1.65
+scene.camera = camera
+sun_data = bpy.data.lights.new("Preview sun", "SUN")
+sun_data.energy = 3.0
+sun = bpy.data.objects.new("Preview sun", sun_data)
+scene.collection.objects.link(sun)
+sun.rotation_euler = (math.radians(30), math.radians(-20), math.radians(35))
+scene.render.filepath = str(work / "render.png")
+bpy.ops.render.render(write_still=True)
+
+triangles = sum(len(face.vertices) - 2 for obj in meshes for face in obj.data.polygons)
+print(json.dumps({"slug": slug, "triangles": triangles, "dimensions": list(dims),
+                  "materials": len(bpy.data.materials), "runtimeTextureSize": 1024}))

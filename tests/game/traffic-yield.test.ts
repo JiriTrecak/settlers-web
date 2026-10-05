@@ -1,4 +1,4 @@
-import {expect,it} from 'vitest';
+import {expect,it,vi} from 'vitest';
 import {originalScaleGame as game,placed} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
 import {TrafficRecoveryTrace} from '../../scripts/bench/traffic-recovery';
@@ -20,6 +20,18 @@ function fixture(rotation=0){
  g.state.tick=200;
  return {g,army,canonical:(p:{x:number;y:number})=>{let {x,y}=p;for(let n=0;n<(4-rotation)%4;n++)[x,y]=[255-y,x];return {x,y};}};
 }
+
+it('inspects the next traffic step without visiting the distant route tail',()=>{
+ const {g,army}=fixture();
+ const before=trafficRequests(g.context,army);
+ const tail=Array.from({length:200},(_,i)=>g.spatial.cell({x:20+i,y:20}));
+ for(const e of army)e.unit!.route.push(...tail);
+ const points=vi.spyOn(g.spatial,'point');
+ const after=trafficRequests(g.context,army);
+ expect([...after].map(([id,r])=>[id,r.leader.id,r.parent.id])).toEqual([...before].map(([id,r])=>[id,r.leader.id,r.parent.id]));
+ const distant=new Set(tail);expect(points.mock.calls.some(([cell])=>distant.has(cell))).toBe(false);
+ points.mockRestore();
+});
 
 it.each([0,1,2,3])('finishes a yielding maneuver and resumes orders, rotation %i',rotation=>{
  const {g,army,canonical}=fixture(rotation);let sawYield=false,waited=false;

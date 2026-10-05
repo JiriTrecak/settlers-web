@@ -21,8 +21,25 @@ export const resolvedStatsSchema = z.object({
   manaRegenPerSecond: z.number().nonnegative(),
 }).strict();
 
-/** One resolved stat path for simulation, observation, HUD, AI and the encyclopedia. */
-export function entityStats(d: Definition, e: Pick<Entity,"progression"|"equipment"|"itemStatuses"|"slows"|"spellStatuses">, registry?: ContentRegistry, research: readonly string[] = []) {
+type Stats=Readonly<z.infer<typeof resolvedStatsSchema>>;
+type StatHolder=Pick<Entity,"progression"|"equipment"|"itemStatuses"|"slows"|"spellStatuses">;
+const baseStats=new WeakMap<ContentRegistry,WeakMap<Definition,Map<string,Stats>>>();
+/** One resolved stat path for simulation, observation, HUD, AI and the encyclopedia.
+ * Unmodified actors share immutable definition/research results. Any actor-local
+ * modifier takes the live path; no tick cache or invalidation hooks are required. */
+export function entityStats(d:Definition,e:StatHolder,registry?:ContentRegistry,research:readonly string[]=[]):Stats {
+  if(registry&&!e.progression&&!e.equipment?.some(Boolean)&&!e.itemStatuses?.length&&!e.spellStatuses?.length&&!e.slows?.length&&registry.find(d.id)===d){
+    let definitions=baseStats.get(registry);if(!definitions){definitions=new WeakMap();baseStats.set(registry,definitions);}
+    let variants=definitions.get(d);if(!variants){variants=new Map();definitions.set(d,variants);}
+    // Research arrays can be changed in place. Key their values, not identity.
+    const key=research.join('\0'),existing=variants.get(key);if(existing)return existing;
+    const result=Object.freeze(resolveEntityStats(d,e,registry,research));
+    if(variants.size>=64)variants.delete(variants.keys().next().value!);
+    variants.set(key,result);return result;
+  }
+  return resolveEntityStats(d,e,registry,research);
+}
+function resolveEntityStats(d:Definition,e:StatHolder,registry:ContentRegistry|undefined,research:readonly string[]) {
   if(registry)d=formDefinition(d,e,registry);
   const levels = d.behaviors.progression?.levels;
   const rank = levels ? levels.filter(l => l.experience <= (e.progression?.experience ?? 0)).length - 1 : 0;

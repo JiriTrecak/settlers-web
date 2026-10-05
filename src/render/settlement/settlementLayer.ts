@@ -50,6 +50,7 @@ import {
   type Frustum,
   type Scene,
   type Raycaster,
+  type WebGLRenderer,
 } from "three";
 import { createCharacterInstance } from "../characters/character-player.js";
 import { attachShadowProxies } from "../characters/shadowProxy";
@@ -57,6 +58,7 @@ import { BakedCrowd } from "../characters/bakedCrowd";
 import {ConcealmentVisuals} from '../characters/concealment';
 import type { UnitAnimator } from "../characters/bakedAnimator";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
+import type {WebGLProgramParametersWithUniforms} from 'three/src/renderers/webgl/WebGLPrograms.js';
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { content } from "../../content/builtin";
 import type {ContentRegistry} from "../../content/registry";
@@ -67,6 +69,7 @@ import type { EntityView, SettlementView } from "../../sim/game/observation";
 import { PLAYER_COLORS, clampPlayer } from "../../shared/player/player";
 import { TEAM_COLOR_MATERIAL, applyPlayerMaterials } from "./playerMaterials";
 import { placementGrid } from "./placementGrid";
+import {resourceDepositVisual} from './resourceDepositVisual';
 
 const UNIT_CULL_MARGIN = 6;
 /** A live rig (CharacterPlayer + SkinnedMesh) or a baked crowd member; `pose` syncs baked sockets. */
@@ -398,6 +401,17 @@ export class SettlementLayer {
         ).map((m) => {
           const copy = m.clone();
           copy.onBeforeCompile=m.onBeforeCompile;copy.customProgramCacheKey=m.customProgramCacheKey;
+          if(asset==='asset.resource.corrupted-root'||(asset.startsWith('asset.resource.amber-seam')&&asset!=='asset.resource.amber-seam-empty')){
+            const sourceCompile=copy.onBeforeCompile,sourceKey=copy.customProgramCacheKey;
+            copy.onBeforeCompile=(shader:WebGLProgramParametersWithUniforms,renderer:WebGLRenderer)=>{
+              sourceCompile.call(copy,shader,renderer);
+              const glow=asset==='asset.resource.corrupted-root'
+                ? 'float depositGlow = smoothstep(0.06, 0.25, diffuseColor.b - diffuseColor.g) * smoothstep(0.025, 0.18, diffuseColor.r - diffuseColor.g); totalEmissiveRadiance += vec3(0.76, 0.025, 0.82) * depositGlow * 1.3;'
+                : 'float depositGlow = smoothstep(0.12, 0.40, diffuseColor.r - diffuseColor.b) * smoothstep(0.035, 0.19, diffuseColor.g - diffuseColor.b) * smoothstep(0.40, 0.75, diffuseColor.r); totalEmissiveRadiance += vec3(0.95, 0.38, 0.025) * depositGlow * 0.65;';
+              shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>\n${glow}`);
+            };
+            copy.customProgramCacheKey=()=>`${sourceKey.call(copy)}|resource-glow-${asset}`;
+          }
           return copy;
         });
         child.material = Array.isArray(child.material) ? mats : mats[0];
@@ -407,7 +421,7 @@ export class SettlementLayer {
   }
   private make(e: EntityView) {
     const d = this.registry.get(e.definition),
-      assetId = e.appearance?.asset ?? d.asset;
+      assetId = e.appearance?.asset ?? resourceDepositVisual(e.definition,e.resource?.amount,d.yield,d.asset);
     const visualScale = d.kind === "unit" ? this.registry.rules.unitScale : 1;
     const modelScale = (this.registry.asset(assetId).scale ?? 1) * (e.appearance?.scale ?? 1) * visualScale;
     let o = this.entities.get(e.id);

@@ -5,7 +5,9 @@
  * that tick. Both use normal World validation; neither modifies the input.
  */
 import {readFileSync,writeFileSync} from 'node:fs';
+import {deepStrictEqual} from 'node:assert';
 import {World} from '../../src/sim/world/world';
+import {benchmarkContent} from './content-fixture';
 import {Room,Lockstep} from '../../src/net';
 import type {Channel} from '../../src/net/channel';
 import {localMatch,type ClientMsg,type ServerMsg,type MatchConfig} from '../../src/shared';
@@ -25,12 +27,16 @@ if(checkpoint&&resume)throw Error('Choose either --checkpoint or --resume');
 const snapshot=resume?JSON.parse(readFileSync(resume,'utf8')):undefined;
 const save=checkpoint?localSaveSchema.parse(JSON.parse(readFileSync(checkpoint,'utf8'))):undefined;
 if(save&&save.mapId!==mapId)throw Error('Checkpoint belongs to another map');
+const {registry}=benchmarkContent(option('--content',''),option('--save-content',''));
+const sourceGame=(save?.world as {game?:{content:string;map:string}}|undefined)?.game??snapshot?.game;
+if(sourceGame&&(sourceGame.content!==registry.fingerprint||sourceGame.map!==fingerprint(map)))
+ throw Error(`Checkpoint identity mismatch: content ${sourceGame.content} / ${registry.fingerprint}, map ${sourceGame.map} / ${fingerprint(map)}`);
 const config:MatchConfig=save?.match??{...localMatch({mapId,mapRevision:'benchmark',seed:731942,slotCount:4,me:0,delay:4}),slots:snapshot?.slots??[0,1,2,3].map(player=>({player,kind:'ai' as const,team:player}))};
 if(config.slots.length!==4)throw Error('This benchmark requires four player slots');
 const begin=performance.now();
 const worlds=Array.from({length:4},()=>{
- if(save)return restoreSavedWorld(save,map);
- const world=new World({map,slots:config.slots,seed:config.seed});
+ if(save)return restoreSavedWorld(save,map,registry);
+ const world=new World({map,slots:config.slots,seed:config.seed,registry});
  if(snapshot)world.restore(snapshot);
  return world;
 });
@@ -73,7 +79,9 @@ const checks=new Map<number,Map<number,number>>();
 const verify=(index:number)=>{
  const world=worlds[index]!,tick=world.clock.tickIndex;
  if(tick!==start&&tick!==end&&(tick-start)%100!==0)return;
- const values=checks.get(tick)??new Map<number,number>();values.set(index,world.checksum());checks.set(tick,values);
+ // This is an offline correctness harness, not the deliberately lightweight
+ // runtime checkpoint. Check complete state at every comparison boundary.
+ const values=checks.get(tick)??new Map<number,number>();values.set(index,world.checksum('full'));checks.set(tick,values);
  if(new Set(values.values()).size!==1)throw Error(`Desync at tick ${tick}: ${JSON.stringify([...values])}`);
 };
 worlds.forEach((_,i)=>verify(i));
@@ -99,9 +107,11 @@ if([...checks.values()].some(v=>v.size!==4))throw Error('A replica did not reach
 if(injectedStalls!==1)throw Error('The transport stall was not exercised');
 const fullAudits=worlds.map(w=>w.checksum('full'));
 if(new Set(fullAudits).size!==1)throw Error(`Full end-state audit diverged: ${fullAudits.join(', ')}`);
+const reference=worlds[0]!.snapshot();
+for(const world of worlds.slice(1))deepStrictEqual(world.snapshot(),reference);
 const stats=(v:number[])=>{const sorted=[...v].sort((a,b)=>a-b);return {mean:v.reduce((a,b)=>a+b,0)/v.length,p95:sorted[Math.floor(v.length*.95)],p99:sorted[Math.floor(v.length*.99)],max:sorted.at(-1)};};
 const report={map:mapId,mapSize:map.size,mapFingerprint:fingerprint(map),contentFingerprint:worlds[0]!.settlement.registry.fingerprint,slots:config.slots,source:save?'local-save':snapshot?'simulation-snapshot':'fresh',startTick:start,endTick:end,initializeMs,wallMs:performance.now()-begin,
  transport:'Synthetic ordered per-direction delivery, 1–4 beats; one 32-beat upstream stall. Not a network or FPS benchmark.',
  beats:beat,delivered,injectedStalls,waitingBeats:stalls,checks:[...checks].map(([tick,values])=>({tick,checksum:[...values.values()][0],replicas:values.size})),
- fullAuditChecksum:fullAudits[0],units:worlds.map(w=>w.settlement.context.liveUnits().length),simulationMs:samples.map(stats)};
+ checkpointHash:'full',fullStateEqual:true,fullAuditChecksum:fullAudits[0],units:worlds.map(w=>w.settlement.context.liveUnits().length),simulationMs:samples.map(stats)};
 const output=option('--output','/tmp/heartroot-four-peer.json');writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

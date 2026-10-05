@@ -43,3 +43,30 @@ it('matches full minimap rebuilding through removals, additions, reorders, repla
  compose.compose(base,[b]);const skipped=compose.compose(base,[b,c]);
  incremental.update(skipped);const full=new MinimapSceneryIndex();full.update([...skipped]);expect(incremental.items).toEqual(full.items);
 });
+
+it('never refilters an unchanged static base for discovery, regrowth, reordering or skipped publications',()=>{
+ const compose=new SceneryComposition(),base=Array.from({length:10000},(_,i)=>stamp('base'+i,i%10?'grass':'pine'));
+ const accepts=vi.fn((s:MapStamp)=>s.asset==='pine'),filter=new SceneryFilter(accepts);
+ const a=stamp('a'),b=stamp('b'),ignored=stamp('ignored','grass');
+ filter.select(compose.compose(base,[a]));
+ for(const dynamic of [[a,b],[b,a],[b,{...a,x:8}],[b,ignored],[a,b,ignored]]){
+  accepts.mockClear();const input=compose.compose(base,dynamic),output=filter.select(input);
+  expect(output).toEqual(input.filter(s=>s.asset==='pine'));
+  expect(accepts.mock.calls.every(([s])=>!s.id.startsWith('base'))).toBe(true);
+ }
+ compose.compose(base,[]);accepts.mockClear();
+ const skipped=compose.compose(base,[b]);expect(filter.select(skipped)).toEqual([...base.filter(s=>s.asset==='pine'),b]);
+ expect(accepts.mock.calls.every(([s])=>!s.id.startsWith('base'))).toBe(true);
+ accepts.mockClear();const nextBase=[...base,stamp('new-static')],replaced=compose.compose(nextBase,[a]);
+ expect(filter.select(replaced)).toEqual(replaced.filter(s=>s.asset==='pine'));
+ expect(accepts.mock.calls.some(([s])=>s.id==='base0')).toBe(true);
+});
+
+it('forwards immutable composition through chained filters without losing order',()=>{
+ const compose=new SceneryComposition(),base=[stamp('base'),stamp('grass','grass')],first=new SceneryFilter(s=>s.asset==='pine');
+ const accepts=vi.fn((s:MapStamp)=>s.x>0),second=new SceneryFilter(accepts);
+ second.select(first.select(compose.compose(base,[])));accepts.mockClear();
+ const a=stamp('a'),b={...stamp('b'),x:-1};
+ expect(second.select(first.select(compose.compose(base,[b,a])))).toEqual([base[0],a]);
+ expect(accepts.mock.calls.every(([s])=>s.id!=='base')).toBe(true);
+});

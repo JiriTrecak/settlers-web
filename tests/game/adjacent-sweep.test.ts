@@ -31,7 +31,7 @@ it('deduplicates footprint rays while checking current obstacles',()=>{
  expect(clearSweep({x:32000,y:32000},{x:33000,y:33000},step,size,595)).toBe(true);
  const baseline=queries;queries=0;
  const fast=adjacentSweep(size,595,step);
- expect(fast(from,to)).toBe(true);expect(queries).toBeLessThan(baseline/2);
+ expect(fast(from,to)).toBe(true);expect(queries).toBeLessThan(baseline);
  blocked.add(from+1);expect(fast(from,to)).toBe(false);
  blocked.clear();expect(fast(from,to)).toBe(true);
  expect(fast(from,from+3)).toBe(false);

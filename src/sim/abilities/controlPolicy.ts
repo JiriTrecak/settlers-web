@@ -1,4 +1,4 @@
-import {controlKindSchema,statusDefinition,value,type AbilityDefinition,type StatusEffect,type ControlKind} from '../../content/abilities/schema';
+import {controlKindSchema,value,type AbilityDefinition,type StatusEffect,type ControlKind} from '../../content/abilities/schema';
 import type {ContentRegistry} from '../../content/registry';
 import type {Entity} from '../game/state';
 import type {SpellStatus} from './state';
@@ -10,13 +10,20 @@ export function controlImmunities(e:Holder,registry:ContentRegistry):Set<Control
  const kinds=new Set<ControlKind>();
  if(nonSpellModifiers(e,registry).some(m=>m.controlImmune))return new Set(CONTROL_KINDS);
  for(const s of e.spellStatuses??[]){
-  const a=registry.abilityLibrary.abilities.find(a=>a.id===s.ability),d=a&&statusDefinition(a,s.status);if(!d)continue;
+  const d=registry.findStatus(s.ability,s.status);if(!d)continue;
   if(d.modifiers.controlImmune)return new Set(CONTROL_KINDS);
   for(const kind of d.controlImmunity??[])kinds.add(kind);
  }
  return kinds;
 }
-export const controlImmune=(e:Holder,registry:ContentRegistry,kind:ControlKind)=>controlImmunities(e,registry).has(kind);
+export const controlImmune=(e:Holder,registry:ContentRegistry,kind:ControlKind)=>{
+ // Most actors have no immunity source. Avoid allocating modifier arrays and a
+ // Set for every movement/control predicate on those actors; no cached state.
+ if(!e.spellStatuses?.length&&!e.itemStatuses?.length&&!e.equipment?.some(Boolean))return false;
+ if(nonSpellModifiers(e,registry).some(m=>m.controlImmune))return true;
+ for(const s of e.spellStatuses??[]){const d=registry.findStatus(s.ability,s.status);if(d?.modifiers.controlImmune||d?.controlImmunity?.includes(kind))return true;}
+ return false;
+};
 export function statusModifiersRaw(d:StatusEffect,a:AbilityDefinition,rank:number){return {...d.modifiers,...Object.fromEntries(Object.entries(d.rankedModifiers??{}).map(([key,n])=>[key,value(n,a.ranks[rank-1])]))};}
 export function statusControls(d:StatusEffect,a:AbilityDefinition,rank:number):ControlKind[]{
  const m=statusModifiersRaw(d,a,rank),k:ControlKind[]=[];

@@ -1,10 +1,10 @@
 import {expect,it} from 'vitest';
 import {coreAbilities} from '../../src/content/abilities/core';
-import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
+import {abilitySchema,releaseEffects,statusDefinition} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses,spellControl} from '../../src/sim/abilities/statuses';
-import {spellAppearance} from '../../src/sim/abilities/forms';
+import {spellAppearance,activeSpellFormEntry} from '../../src/sim/abilities/forms';
 const spell=(id:string)=>coreAbilities.abilities.find(a=>a.id==='ability.core.'+id)!;
 function fixture(id='hex'){
  const a=spell(id),f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',combat:true,distance:3,targetHealth:500}));
@@ -55,4 +55,18 @@ it('does not clamp away health during the transient removal/rebuild of a health 
  f.game.tick(undefined,{passiveUnits:true});const c=f.game.context.get(f.caster)!;c.hp=600;
  for(let i=0;i<10;i++)f.game.tick(undefined,{passiveUnits:true});expect(c.hp).toBe(600);
  c.abilities!.ranks.preview=0;f.game.tick(undefined,{passiveUnits:true});expect(c.hp).toBe(500);
+});
+
+it('selects the same latest form through ties and live ordering changes without sorting the actor statuses',()=>{
+ const f=fixture();apply(f,'avatar',f.target);apply(f,'hex',f.target);
+ const statuses=f.t().spellStatuses!,original=statuses.slice();
+ const expected=()=>statuses.map(s=>({s,form:statusDefinition(f.game.registry.findAbility(s.ability)!,s.status)?.form})).filter(p=>p.form)
+  .sort((a,b)=>b.s.started-a.s.started||b.s.cast-a.s.cast||(a.s.ability<b.s.ability?-1:a.s.ability>b.s.ability?1:a.s.status<b.s.status?-1:a.s.status>b.s.status?1:0))[0];
+ for(let i=0;i<40;i++){
+  statuses[0].started=i%3;statuses[1].started=i%2;statuses[0].cast=i%5;statuses[1].cast=i%4;
+  expect(activeSpellFormEntry(f.t(),f.game.registry)).toEqual(expected());
+  expect(statuses).toEqual(original); // original objects, same authoritative order
+ }
+ statuses.reverse();expect(activeSpellFormEntry(f.t(),f.game.registry)).toEqual(expected());
+ statuses.length=0;expect(activeSpellFormEntry(f.t(),f.game.registry)).toBeUndefined();
 });

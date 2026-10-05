@@ -190,3 +190,31 @@ it('keeps optimal detour cost and cost limits through a large search frontier',(
   expect(nav.path(start,goal,undefined,total)).toEqual(route);
  }
 });
+
+it('keeps biased traffic search within its cost limit and reopens improved paths',()=>{
+ // A mix of directed edges and changing bodies exercises decreases in weighted
+ // priorities. Reuse the same frontier across exact, biased and failed queries.
+ const size=24,costOf=(start:number,path:number[]|null)=>{
+  let total=path?0:Infinity,previous=start;
+  for(const next of path??[]){total+=next%size!==previous%size&&Math.floor(next/size)!==Math.floor(previous/size)?1414:1000;previous=next;}
+  return total;
+ };
+ for(let seed=1;seed<=40;seed++){
+  let random=seed;const walls=new Set<number>(),bodies=new Set<number>();
+  for(let i=1;i<size*size-1;i++){
+   random=(Math.imul(random,1664525)+1013904223)>>>0;
+   if(random%9===0)walls.add(i);else if(random%23===0)bodies.add(i);
+  }
+  const step=(a:number,b:number)=>!walls.has(b)&&(a*7+b*13)%97!==0;
+  const nav=new Navigation(size,step,undefined,true),goal=size*size-1,exact=nav.path(0,goal,bodies),optimal=costOf(0,exact);
+  const route=nav.path(0,goal,bodies,Infinity,undefined,1200);
+  expect(route===null).toBe(exact===null);
+  if(!route)continue;
+  let previous=0;
+  for(const next of route){expect(canTraverse(size,previous,next,(a,b)=>!bodies.has(b)&&step(a,b))).toBe(true);previous=next;}
+  expect(route.at(-1)).toBe(goal);expect(costOf(0,route)).toBeLessThanOrEqual(optimal*1.2);
+  expect(costOf(0,nav.path(0,goal,bodies,optimal,undefined,1200))).toBe(optimal);
+  expect(nav.path(0,goal,bodies,optimal-1,undefined,1200)).toBeNull();
+  expect(nav.path(0,goal,bodies)).toEqual(exact);
+ }
+});

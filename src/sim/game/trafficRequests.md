@@ -1,5 +1,11 @@
 # Persistent traffic recovery
 
+Profiling splits discovery into candidates, body indexing, dependencies, cycles,
+priority propagation and escape feasibility. Dependency discovery stops at the
+first non-coincident route waypoint: the distant tail cannot affect the next
+attempted step and must not be materialized. These scopes appear under Traffic
+request discovery in the simulation profiler, including debug/MCP captures.
+
 `trafficRequests.ts` derives friendly movement dependencies when a mover has made no positional progress for 200 ticks (five seconds). A predicted movement dependency is included only if that actor can finish facing its next waypoint within the current tick's turn allowance, matching movement's one-degree tolerance. Units still turning do not close a false waiting cycle. It combines occupied-cell and swept-body blockers, identifies directed cycles, and propagates a stable root priority through their incoming dependencies. The graph is temporary; it is not saved or sent over the network.
 
 `GameContext.beginTrafficYield` tries up to six nearby escape pockets using the bounded local path search. A successful maneuver records its original goal, reserved waypoint, path points, waiting leader and deadline in native unit state. Both ordinary movement and free-cell searches respect the reservation. The reservation does not create an invisible physical body.

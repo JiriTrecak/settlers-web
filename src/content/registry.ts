@@ -1,4 +1,4 @@
-import {abilityLibrarySchema,emptyAbilityLibrary,allEffects,type AbilityLibrary} from './abilities/schema';
+import {abilityLibrarySchema,emptyAbilityLibrary,allEffects,type AbilityLibrary,type AbilityDefinition,type StatusEffect} from './abilities/schema';
 import { z } from "zod";
 import {scaleUnitDefinition} from './unitScale';
 import {
@@ -61,6 +61,8 @@ export class ContentRegistry {
   readonly fingerprint: string;
   private readonly byId: Readonly<Record<string, Definition>>;
   private readonly byAsset: Readonly<Record<string, Asset>>;
+  private readonly byAbility: Readonly<Record<string, AbilityDefinition>>;
+  private readonly byStatus: Readonly<Record<string, Readonly<Record<string, StatusEffect>>>>;
   constructor(source: ContentSource) {
     z.object({
       definitions: z.array(z.unknown()),
@@ -160,6 +162,17 @@ export class ContentRegistry {
         .sort(ordinal),
     );
     this.abilityLibrary = freeze(abilityLibrarySchema.parse(source.abilityLibrary ?? emptyAbilityLibrary()));
+    this.byAbility = Object.fromEntries(this.abilityLibrary.abilities.map(a=>[a.id,a]));
+    const statuses: Record<string, Record<string, StatusEffect>> = Object.create(null);
+    for(const ability of this.abilityLibrary.abilities){
+      const index:Record<string,StatusEffect>=Object.create(null);
+      // Preserve statusDefinition's first-declaration semantics, including
+      // release branches and triggers. Only registry-owned frozen content is
+      // indexed; an edited draft gets a new registry on publication.
+      for(const effect of allEffects(ability))if(effect.op==='status'&&!Object.hasOwn(index,effect.id))index[effect.id]=effect;
+      statuses[ability.id]=Object.freeze(index);
+    }
+    this.byStatus = Object.freeze(statuses);
     this.byId = Object.fromEntries(this.definitions.map((d) => [d.id, d]));
     this.validate();
     for(const presentation of this.abilityLibrary.presentations)if(presentation.icon&&!this.asset(presentation.icon).image)throw Error(`Spell icon must reference an image: ${presentation.icon}`);
@@ -172,6 +185,7 @@ export class ContentRegistry {
     });
     freeze(this.byId);
     freeze(this.byAsset);
+    Object.freeze(this.byAbility);
     Object.freeze(this);
   }
   get(id: string): Definition {
@@ -181,6 +195,12 @@ export class ContentRegistry {
   }
   find(id: string): Definition | undefined {
     return this.byId[id];
+  }
+  findAbility(id:string):AbilityDefinition|undefined {
+    return Object.hasOwn(this.byAbility,id)?this.byAbility[id]:undefined;
+  }
+  findStatus(ability:string,status:string):StatusEffect|undefined {
+    return this.byStatus[ability]?.[status];
   }
   asset(id: string): Asset {
     const a = this.byAsset[id];

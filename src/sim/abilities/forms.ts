@@ -1,4 +1,4 @@
-import {statusDefinition} from '../../content/abilities/schema';
+import type {StatusEffect} from '../../content/abilities/schema';
 import type {ContentRegistry} from '../../content/registry';
 import type {Definition} from '../../content/schema';
 import type {Entity} from '../game/state';
@@ -8,11 +8,14 @@ import type {Entity} from '../game/state';
  */
 export function activeSpellFormEntry(e:Pick<Entity,'spellStatuses'>,registry:ContentRegistry) {
  if(!e.spellStatuses?.length)return;
- const forms=(e.spellStatuses??[]).flatMap(s=>{
-  const a=registry.abilityLibrary.abilities.find(a=>a.id===s.ability),form=a&&statusDefinition(a,s.status)?.form;
-  return form?[{s,form}]:[];
- }).sort((a,b)=>b.s.started-a.s.started||b.s.cast-a.s.cast||(a.s.ability<b.s.ability?-1:a.s.ability>b.s.ability?1:a.s.status<b.s.status?-1:a.s.status>b.s.status?1:0));
- return forms[0];
+ let latest:{s:NonNullable<Entity['spellStatuses']>[number];form:NonNullable<StatusEffect['form']>}|undefined;
+ for(const s of e.spellStatuses){
+  const form=registry.findStatus(s.ability,s.status)?.form;if(!form)continue;
+  const previous=latest?.s;
+  if(!previous||s.started>previous.started||s.started===previous.started&&
+    (s.cast>previous.cast||s.cast===previous.cast&&(s.ability<previous.ability||s.ability===previous.ability&&s.status<previous.status)))latest={s,form};
+ }
+ return latest;
 }
 export function activeSpellForm(e:Pick<Entity,'spellStatuses'>,registry:ContentRegistry){return activeSpellFormEntry(e,registry)?.form;}
 /** Requested movement excludes retained airborne state during a blocked landing. */
@@ -27,6 +30,7 @@ export function spellAppearance(e:Pick<Entity,'spellStatuses'|'appearance'>,regi
 const resolved=new WeakMap<Definition,Map<string,Definition>>();
 /** Identity/body/ownership stay authored; the latest form selects weapon and movement policies. */
 export function formDefinition(d:Definition,e:Pick<Entity,'spellStatuses'> & {unit?:{flight?:{height:number}}},registry:ContentRegistry):Definition {
+ if(!e.spellStatuses?.length&&!e.unit?.flight)return d;
  const form=activeSpellForm(e,registry),combat=form?.combatProfile?registry.get(form.combatProfile).behaviors.combat:d.behaviors.combat;
  let movement=d.behaviors.movement;if(movement&&form?.movement)movement={...movement,...form.movement};
  if(movement&&e.unit?.flight&&(movement.locomotion??'ground')==='ground')movement={...movement,locomotion:'air',flightHeight:e.unit.flight.height};

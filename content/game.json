@@ -1641,19 +1641,19 @@
       "id": "building.neutral.amber-mine",
       "kind": "building",
       "name": "Amber Deposit",
-      "description": "An exposed amber seam among weathered rocks and roots. Workers carry amber back to the Main Hall.",
+      "description": "Amber nodules rise from the forest soil. Workers carry the resin back to the Main Hall.",
       "asset": "asset.resource.amber-seam",
       "icon": "icon.neutral.amber-deposit",
       "footprint": {
-        "width": 7,
-        "depth": 7
+        "width": 15,
+        "depth": 15
       },
       "constructionClearance": 3,
       "behaviors": {},
       "yield": 12000,
       "entrance": {
         "x": 0,
-        "y": 4
+        "y": 8
       },
       "body": {
         "maxHp": 1500,
@@ -2386,15 +2386,15 @@
       "asset": "asset.resource.corrupted-root",
       "icon": "icon.item.root",
       "footprint": {
-        "width": 5,
-        "depth": 5
+        "width": 15,
+        "depth": 15
       },
       "constructionClearance": 3,
       "behaviors": {},
       "yield": 3000,
       "entrance": {
         "x": 0,
-        "y": 3
+        "y": 8
       },
       "body": {
         "maxHp": 1500,

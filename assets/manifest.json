@@ -9668,22 +9668,30 @@
       "tags": [
         "original",
         "neutral",
+        "woodland",
+        "resource",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 15,
       "profile": "building",
       "outputs": [
-        {
-          "role": "model",
-          "path": "assets/library/asset.models.resources.amber-deposit/geometry.glb",
-          "sha256": "5c30b9bd20649b542c3cd3733b63339a6054febf11306d722b0c5fc6f698a40b",
-          "bytes": 12822188
-        },
         {
           "role": "image",
           "path": "assets/library/asset.models.resources.amber-deposit/albedo.png",
           "sha256": "b2393b43d237b2ed927dfc5b8f5c871aace7ab68b5e11c346b1bd3d25d073288",
           "bytes": 6561225
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-deposit/geometry.glb",
+          "sha256": "f3359659efe8bb99aab48d016f241ea823cca94eca9db6892a9d924232929ce9",
+          "bytes": 3932528
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.resources.amber-deposit/image.png",
+          "sha256": "9a24f37483c3a48609587f969806908a690acfe4bfec8be476d2776e2834c34f",
+          "bytes": 25961
         },
         {
           "role": "data",
@@ -9696,30 +9704,117 @@
           "path": "assets/library/asset.models.resources.amber-deposit/roughness.png",
           "sha256": "67a9c7c02a89f603287b116858b777859c6b384ac4ef004709c760d9977f5ec4",
           "bytes": 1953719
-        },
-        {
-          "role": "image",
-          "path": "assets/library/asset.models.resources.amber-deposit/image.png",
-          "sha256": "9a24f37483c3a48609587f969806908a690acfe4bfec8be476d2776e2834c34f",
-          "bytes": 25961
         }
       ],
       "render": [
         {
           "id": "asset.resource.amber-seam",
           "file": "assets/library/asset.models.resources.amber-deposit/geometry.glb",
-          "scale": 1,
-          "healthHeight": 4.8
+          "scale": 2,
+          "healthHeight": 7.6
         },
         {
           "id": "asset.resource.woodland-amber-deposit",
           "file": "assets/library/asset.models.resources.amber-deposit/geometry.glb",
-          "scale": 1,
-          "healthHeight": 4.8
+          "scale": 2,
+          "healthHeight": 7.6
         },
         {
           "id": "icon.neutral.amber-deposit",
           "image": "assets/library/asset.models.resources.amber-deposit/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.resources.amber-deposit-empty",
+      "name": "Amber Deposit — Exhausted",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "woodland",
+        "resource",
+        "authored"
+      ],
+      "revision": 33,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-deposit-empty/geometry.glb",
+          "sha256": "d3b4a239cae490e27e79f9660f5fbe7b402b33ea7d5b4ca4effc72dafb1525ac",
+          "bytes": 3577472
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-seam-empty",
+          "file": "assets/library/asset.models.resources.amber-deposit-empty/geometry.glb",
+          "scale": 2,
+          "healthHeight": 1.1
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.resources.amber-deposit-one-third",
+      "name": "Amber Deposit — One Third Mined",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "woodland",
+        "resource",
+        "tripo"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-deposit-one-third/geometry.glb",
+          "sha256": "63419067ab907a26f5c0e3bd221aba7cdbcad17b0f5718bb3f68fe92ad7e6730",
+          "bytes": 4189052
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-seam-one-third",
+          "file": "assets/library/asset.models.resources.amber-deposit-one-third/geometry.glb",
+          "scale": 2,
+          "healthHeight": 7
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.resources.amber-deposit-two-thirds",
+      "name": "Amber Deposit — Two Thirds Mined",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "woodland",
+        "resource",
+        "tripo"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-deposit-two-thirds/geometry.glb",
+          "sha256": "8f920b5e1e3112c6c9de22ff35f187d5e1155b05eff24c2d721df08b10e1d9da",
+          "bytes": 3687828
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-seam-two-thirds",
+          "file": "assets/library/asset.models.resources.amber-deposit-two-thirds/geometry.glb",
+          "scale": 2,
+          "healthHeight": 3.8
         }
       ],
       "scenery": []
@@ -9730,16 +9825,19 @@
       "kind": "model",
       "tags": [
         "original",
-        "woodland"
+        "neutral",
+        "woodland",
+        "resource",
+        "tripo"
       ],
-      "revision": 3,
+      "revision": 15,
       "profile": "prop",
       "outputs": [
         {
           "role": "model",
           "path": "assets/library/asset.models.resources.corrupted-root/geometry.glb",
-          "sha256": "4a759b91b177242fb8e19005cde992934542d12f7e081e408f578029580669f6",
-          "bytes": 1622452
+          "sha256": "171a625896a0c2b5529c7fba1e0dae9120458ff72085795f4b9a0e4179707da0",
+          "bytes": 4497308
         },
         {
           "role": "image",
@@ -9752,8 +9850,8 @@
         {
           "id": "asset.resource.corrupted-root",
           "file": "assets/library/asset.models.resources.corrupted-root/geometry.glb",
-          "scale": 1,
-          "healthHeight": 3.2
+          "scale": 2,
+          "healthHeight": 7.6
         }
       ],
       "scenery": []

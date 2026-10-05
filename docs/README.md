@@ -14,11 +14,13 @@ These pages describe the maintained game and tools. Gameplay values come from `c
 
 - [Map editor and procedural layers](editor.md)
 - [Art direction](game/art.md), [asset publication](asset-pipeline/publication.md), [Asset Studio](asset-pipeline/studio.md)
+- [World and campaign design](wiki/factions/story.md): working narrative cornerstones, faction arcs and open story decisions.
 - [Weather](expansion/weather.md), [atmosphere](expansion/volumetric-atmosphere.md), [graphics settings](expansion/graphics-settings.md)
 - [Spell effects](expansion/spell-effects.md), [unit cameras](expansion/unit-camera-modes.md), [team colors](declarations/team-color.md)
 
 ## Proposed changes
 
+- [Queensguard campaign draft](../art/campaign/queensguard-take-3/storyboard.md): proposed twelve-mission Ant story and comic beats, building on the agreed [campaign cornerstones](wiki/factions/story.md).
 - [Declarative abilities architecture](design/abilities.md): proposed replacement for spells, including external publication, authoring, campaign bindings and lockstep. The current spell-effects page describes the implementation until this migration lands.
 
 ## Documentation policy

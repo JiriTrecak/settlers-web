@@ -12,14 +12,18 @@ const STALL_TICKS=200;
 type Rank={root:number;depth:number};
 /** Ephemeral priority inheritance along actual friendly movement dependencies. */
 export function trafficRequests(c:GameContext,units:readonly Entity[]) {
- const moving=units.filter(e=>e.unit!.route.length&&!e.unit!.detour&&c.ready(e)&&!e.abilities?.pending&&
+ const moving=c.profile.measure('Traffic candidates',()=>units.filter(e=>e.unit!.route.length&&!e.unit!.detour&&c.ready(e)&&!e.abilities?.pending&&
   !!c.def(e).behaviors.movement?.speed&&!isStunned(e,c.registry)&&
-  !(itemFlag(e,c.registry,'rooted')&&!controlImmune(e,c.registry,'root'))&&!c.spatial.ignoresUnits(e));
+  !(itemFlag(e,c.registry,'rooted')&&!controlImmune(e,c.registry,'root'))&&!c.spatial.ignoresUnits(e)));
  if(!moving.some(e=>e.unit!.lastMovedTick!==undefined&&c.state.tick-e.unit!.lastMovedTick>=STALL_TICKS))return new Map<number,{leader:Entity;parent:Entity}>();
- const index=new UnitIndex(moving,c.spatial.size,c.spatial.ignoresUnits),edges=new Map<number,number[]>();
+ const index=c.profile.measure('Traffic body index',()=>new UnitIndex(moving,c.spatial.size,c.spatial.ignoresUnits)),edges=new Map<number,number[]>();
+ c.profile.measure('Traffic dependencies',()=>{
  for(const e of moving){
   const u=e.unit!,from=u.position??fixed(e);
-  const waypoint=u.detour?.points[0]??u.route.map(i=>fixed(c.spatial.point(i))).find(q=>q.x!==from.x||q.y!==from.y);
+  let waypoint=u.detour?.points[0];
+  // Dependencies concern the next attempted step, not the distant destination.
+  // Do not materialize hundreds of later waypoints for every stalled unit.
+  if(!waypoint)for(const cell of u.route){const q=fixed(c.spatial.point(cell));if(q.x!==from.x||q.y!==from.y){waypoint=q;break;}}
   if(!waypoint)continue;
   // Match movement: a unit still turning cannot attempt this leg this tick.
   if(Math.abs(turnDifference(e.rotation,heading(e,{x:waypoint.x/1000,y:waypoint.y/1000})))>(c.def(e).behaviors.movement?.turnRate??720)/40+1)continue;
@@ -38,6 +42,7 @@ export function trafficRequests(c:GameContext,units:readonly Entity[]) {
   for(const id of physical){const b=index.entities.get(id);if(b&&b.owner===e.owner&&!blocked.includes(id))blocked.push(id);}
   edges.set(e.id,blocked.sort((a,b)=>a-b));
  }
+ });
  // Only a genuine directed waiting cycle needs coordinated recovery.
  const incoming=new Map<number,number[]>(),components=new Map<number,number>();
  for(const [from,to] of edges)for(const id of to){const list=incoming.get(id)??[];list.push(from);incoming.set(id,list);}
@@ -50,8 +55,9 @@ export function trafficRequests(c:GameContext,units:readonly Entity[]) {
   const members:number[]=[];for(;;){const next=stack.pop()!;active.delete(next);members.push(next);if(next===id)break;}
   if(members.length>1){const component=Math.min(...members);for(const member of members)components.set(member,component);}
  };
- for(const e of moving)if(!seen.has(e.id))visit(e.id);
+ c.profile.measure('Traffic cycles',()=>{for(const e of moving)if(!seen.has(e.id))visit(e.id);});
  const ranks=new Map<number,Rank>(moving.map(e=>[e.id,{root:e.id,depth:0}]));
+ c.profile.measure('Traffic priorities',()=>{
  for(const e of [...moving].sort((a,b)=>a.id-b.id)){
   if(ranks.get(e.id)!.root<e.id || e.unit!.lastMovedTick===undefined || c.state.tick-e.unit!.lastMovedTick<STALL_TICKS)continue;
   const queue=[e.id];
@@ -64,6 +70,7 @@ export function trafficRequests(c:GameContext,units:readonly Entity[]) {
    }
   }
  }
+ });
  const requests=new Map<number,{leader:Entity;parent:Entity}>();
  for(const e of moving){
   const rank=ranks.get(e.id)!;
@@ -78,7 +85,7 @@ export function trafficRequests(c:GameContext,units:readonly Entity[]) {
  // when another cycle member has a checked pocket outside that gate.
  const occupied=new Set(units.filter(e=>!c.spatial.airborne(e)&&!c.spatial.ignoresUnits(e)).flatMap(e=>e.unit!.detour?.yielding?[c.spatial.cell(e),e.unit!.detour.waypoint]:[c.spatial.cell(e)]));
  const canEscape=(e:Entity,parent:Entity)=>{const claims=new Set(c.spatial.airborne(e)?units.filter(b=>c.spatial.sameLocomotion(e,b)).map(b=>c.spatial.cell(b)):occupied);claims.delete(c.spatial.cell(e));return !!trafficEscape(c,e,parent,claims);};
- for(const component of new Set(components.values())){
+ c.profile.measure('Traffic escape feasibility',()=>{for(const component of new Set(components.values())){
   const candidates=[...requests].filter(([id])=>components.get(id)===component);
   // Preserve normal priority in open traffic. Reverse it only at a terrain
   // constriction where neither immediate lateral direction is traversable.
@@ -96,6 +103,6 @@ export function trafficRequests(c:GameContext,units:readonly Entity[]) {
    for(const[id]of candidates)requests.delete(id);
    requests.set(e.id,{leader:parent,parent});break;
   }
- }
+ }});
  return requests;
 }

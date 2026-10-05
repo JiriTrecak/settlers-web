@@ -5,7 +5,7 @@ import {isEthereal} from './damagePolicy';
 import {controlImmunities,blockedStatusControls,statusModifiersRaw,statusControls,statusHasPayload} from './controlPolicy';
 import {unitNature,acceptsSpell,spellImmunity,matchesSpellFilter,operationFilter} from './eligibility';
 import {SpellWorldEffects} from './worldEffects';
-import {statusDefinition,value,type AbilityDefinition,releaseEffects} from '../../content/abilities/schema';
+import {value,type AbilityDefinition,releaseEffects} from '../../content/abilities/schema';
 import type {ContentRegistry} from '../../content/registry';
 import type {Owner} from '../../content/schema';
 import type {Game} from '../game/game';
@@ -15,13 +15,13 @@ import {UNTIL_DEATH,type SpellStatus,type SpellSource} from './state';
 import {spellSource} from './source';
 
 export function spellStatusDefinition(s:SpellStatus,registry:ContentRegistry){
- const ability=registry.abilityLibrary.abilities.find(a=>a.id===s.ability);
- return ability&&statusDefinition(ability,s.status);
+ return registry.findStatus(s.ability,s.status);
 }
 export function spellModifiers(e:Pick<Entity,'equipment'|'itemStatuses'|'spellStatuses'>,registry:ContentRegistry):ItemModifiers[]{
+ if(!e.spellStatuses?.length)return [];
  const immune=controlImmunities(e,registry);
  return (e.spellStatuses??[]).flatMap(s=>{
-  const d=spellStatusDefinition(s,registry),a=registry.abilityLibrary.abilities.find(a=>a.id===s.ability);if(!d||!a)return [];
+  const d=spellStatusDefinition(s,registry),a=registry.findAbility(s.ability);if(!d||!a)return [];
   const m=statusModifiersRaw(d,a,s.rank),blocked=blockedStatusControls(s,immune);
   if(blocked.has('root'))delete m.rooted;
   if(blocked.has('moveSlow')&&(m.moveSpeedPermille??0)<0)delete m.moveSpeedPermille;
@@ -30,6 +30,7 @@ export function spellModifiers(e:Pick<Entity,'equipment'|'itemStatuses'|'spellSt
  });
 }
 export function spellControl(e:Entity,registry:ContentRegistry,kind:'stun'|'disarm'|'silence'|'itemBlocked'){
+ if(!e.spellStatuses?.length)return false;
  if(controlImmunities(e,registry).has(kind))return false;
  return (e.spellStatuses??[]).some(s=>!s.blockedControls?.includes(kind)&&spellStatusDefinition(s,registry)?.[kind]);
 }
@@ -42,12 +43,12 @@ export class SpellStatuses{
   this.c.profile.measure('World effects',()=>this.world.tick());
   this.c.profile.measure('Corpse expiry',()=>new SpellCorpses(this.c).tick());
   this.c.profile.measure('Summon lifetimes',()=>new SpellSummons(this.game).tick());
-  for(const e of [...this.c.state.entities]){
+  for(const e of this.c.entitySnapshot()){
    // Auras are reconstructed every tick in stable source order, before combat/navigation.
    if(e.spellStatuses){
     e.spellStatuses=e.spellStatuses.filter(s=>!s.aura&&s.expires>=this.c.state.tick&&alive(e));
     for(const s of [...e.spellStatuses]){
-     const d=spellStatusDefinition(s,this.c.registry),a=this.c.registry.abilityLibrary.abilities.find(a=>a.id===s.ability)!;
+     const d=spellStatusDefinition(s,this.c.registry),a=this.c.registry.findAbility(s.ability)!;
      if(d?.periodic&&s.nextTick<=this.c.state.tick){
       s.nextTick+=d.periodic.intervalTicks;
       if(!this.accepts(e,a,s.source,s.owner,s.sourceContext))continue;

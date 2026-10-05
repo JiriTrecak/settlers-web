@@ -31,7 +31,7 @@ export class SpellWeaponCasts {
   const u=e.unit;if(u?.order?.type==='attack'&&u.order.target===target){delete u.attack;u.order=null;u.target=null;u.route=[];u.goal=null;delete u.pursuit;}
  }
  tick(){
-  for(const e of this.c.state.entities){
+  for(const e of this.c.indexedUnits()){
    const order=e.abilities?.weaponOrder;if(!order)continue;
    const u=e.unit,b=this.c.def(e).behaviors.abilities?.bindings.find(b=>b.id===order.binding);
    const invalid=!u||e.owner!==order.owner||this.c.weaponDefinition(e)!==order.profile||u.order?.type!=='attack'||u.order.target!==order.target||!b||e.abilities!.ranks[order.binding]!==order.rank;

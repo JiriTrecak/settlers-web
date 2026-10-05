@@ -24,7 +24,7 @@ worker.on('message',message=>{
  if(message.type==='benchmark-complete'){done(message);return;}
  const begin=performance.now();
  if(message.type==='frame'&&message.packet.tick>=200){
-  warm=true;frames++;entityUpdates+=message.packet.visual.entities.length;
+  warm=true;frames++;entityUpdates+=message.packet.visual.entities.length+message.packet.visual.patches.length;
   const f=message.packet.visual.fog;for(const b of [f?.cells,f?.floors?.cells])if(b)fogBytes+=('full' in b?b.full.byteLength:b.changes.byteLength);
  }
  port.onmessage?.({data:message} as MessageEvent<WorkerOutput>);

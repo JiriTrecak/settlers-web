@@ -13,7 +13,10 @@ function publish(force=false){
  if(inFlight||!urgent&&performance.now()-lastPublished<25)return;
  const frame=runtime.project(),start=performance.now(),encoded=encoder.encode(frame);
  encoded.packet.timings.encode=performance.now()-start;
- inFlight=encoded.packet.sequence;dirty=false;urgent=false;lastPublished=performance.now();post({type:'frame',packet:encoded.packet},encoded.transfer);
+ inFlight=encoded.packet.sequence;dirty=false;urgent=false;lastPublished=performance.now();
+ const postStart=runtime.profiling?performance.now():0;
+ post({type:'frame',packet:encoded.packet},encoded.transfer);
+ if(runtime.profiling)runtime.recordTransportSample(performance.now()-postStart);
 }
 function schedule(waiting=false){
  if(timer!==undefined)clearTimeout(timer);
@@ -42,7 +45,7 @@ function request(method:keyof Requests,params:unknown):unknown{
   case 'pause':runtime.setPaused(params as boolean);last=performance.now();schedule();return;
   case 'configure':{
    const config=params as Requests['configure']['input'];
-   runtime.speed=config.speed;runtime.profiling=config.profiling??false;
+   runtime.speed=config.speed;runtime.configureProfiling(config.profiling??false,config.profilingDetails??true);
    if(!runtime.options.remote&&runtime.match.slots.some(s=>s.player===config.visionPlayer)){runtime.reveal=config.reveal;runtime.visionPlayer=config.visionPlayer;}
    publish(true);schedule();return;
   }

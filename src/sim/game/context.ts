@@ -28,6 +28,7 @@ import {
   type Entity,
   type Fact,
   type GameState,
+  type Job,
   type Point,
 } from "./state";
 
@@ -45,8 +46,37 @@ export class GameContext {
   private readonly resourceSectors=new SectorIndex<Entity>();
   private indexResource(e:Entity){if(e.resource)this.resourceSectors.set(e.id,e,{minX:e.x,minY:e.y,maxX:e.x,maxY:e.y});}
   nearbyResources(p:Point,radius:number){return [...this.resourceSectors.query({minX:p.x-radius,minY:p.y-radius,maxX:p.x+radius,maxY:p.y+radius})].filter(alive);}
-  resourceChanged(e:Entity){this.changedResources.add(e);this.indexResource(e);}
+  private readonly growingResources=new Set<Entity>();
+  private entityOrder=new WeakMap<Entity,number>();
+  private nextEntityOrder=0;
+  resourceChanged(e:Entity){
+    this.changedResources.add(e);this.indexResource(e);
+    if(e.resource?.growingUntil!=null)this.growingResources.add(e);else this.growingResources.delete(e);
+  }
+  /** Resource timers use the same authoritative entity order as a full scan.
+   * The derived membership is rebuilt on restore; ordinary ticks never scan forest. */
+  regrowingResources():Entity[]{
+    return [...this.growingResources].filter(e=>alive(e)&&e.resource?.growingUntil!=null)
+      .sort((a,b)=>this.entityOrder.get(a)!-this.entityOrder.get(b)!);
+  }
+  setRegrowth(e:Entity,until:number|null){
+    if(!e.resource)throw Error('Regrowth requires a resource');
+    e.resource.growingUntil=until;this.resourceChanged(e);
+  }
+  private membershipSnapshot:readonly Entity[]|undefined;
+  /** Stable membership for mutation-capable passes; entity fields remain live.
+   * Reuse until membership changes instead of copying the whole forest per tick. */
+  entitySnapshot():readonly Entity[]{return this.membershipSnapshot??=this.state.entities.slice();}
   private index = new Map<number, Entity>();
+  // Derived identity lookup. Job fields remain live authoritative records;
+  // creation/removal update membership, and restore rebuilds it in reindex().
+  private jobIndex=new Map<number,Job>();
+  job(id:number|null|undefined):Job|undefined{return id==null?undefined:this.jobIndex.get(id);}
+  addJob(job:Job):void {this.state.jobs.push(job);this.jobIndex.set(job.id,job);}
+  removeJob(job:Job):void {
+    const i=this.state.jobs.indexOf(job);
+    if(i>=0){this.state.jobs.splice(i,1);this.jobIndex.delete(job.id);}
+  }
   // Structural indexes include dead/contained entities; callers still evaluate
   // current life/readiness. Recruitment and revival retain entity identity.
   private unitEntities: Entity[] = [];
@@ -69,7 +99,7 @@ export class GameContext {
       if (!e.unit || !this.def(e).behaviors.work) return false;
       // Harvest traffic (to the resource, working it, carrying back) ghosts through units like
       // SC2 workers, so gather lines never jam. A resource may opt back in with `true`.
-      const job = e.unit.job == null ? undefined : state.jobs.find(j => j.id === e.unit!.job);
+      const job = e.unit.job == null ? undefined : this.job(e.unit.job);
       if (job?.type === "deliver") return true;
       const source = job?.type === "harvest" ? this.get(job.source)
         : e.unit.order?.type === "gather" ? this.get(e.unit.order.target) : undefined;
@@ -83,10 +113,24 @@ export class GameContext {
     this.spatial.refreshAfterRemoval=this.profile.wrap('Static occupancy removal',this.spatial.refreshAfterRemoval.bind(this.spatial));
     this.spatial.appendOccupancy=this.profile.wrap('Static occupancy addition',this.spatial.appendOccupancy.bind(this.spatial));
     this.spatial.sectors.prepare=this.profile.wrap('Sector preparation',this.spatial.sectors.prepare.bind(this.spatial.sectors));
+    this.spatial.clearSegment=this.profile.wrap('Terrain and reservation sweep',this.spatial.clearSegment.bind(this.spatial));
+    this.spatial.clearLocalSegment=this.profile.wrap('Local terrain and reservation sweep',this.spatial.clearLocalSegment.bind(this.spatial));
+    this.spatial.unitSegmentClear=this.profile.wrap('Moving-body sweep',this.spatial.unitSegmentClear.bind(this.spatial));
+    this.spatial.nearest=this.profile.wrap('Nearby free position',this.spatial.nearest.bind(this.spatial));
+    this.beginLocalDetour=this.profile.wrap('Local detour search',this.beginLocalDetour.bind(this));
+    this.beginTrafficYield=this.profile.wrap('Traffic yield search',this.beginTrafficYield.bind(this));
+    this.moveDetour=this.profile.wrap('Detour movement',this.moveDetour.bind(this));
   }
   reindex() {
+    this.membershipSnapshot=undefined;
     this.observationRevision++;this.changedResources.clear();this.observationEntityChanges.length=0;
     this.index = new Map(this.state.entities.map((e) => [e.id, e]));
+    this.jobIndex=new Map(this.state.jobs.map(j=>[j.id,j]));
+    this.entityOrder=new WeakMap();this.nextEntityOrder=0;this.growingResources.clear();
+    for(const e of this.state.entities){
+      this.entityOrder.set(e,this.nextEntityOrder++);
+      if(e.resource?.growingUntil!=null)this.growingResources.add(e);
+    }
     this.resourceSectors.clear();for(const e of this.state.entities)this.indexResource(e);
     this.unitEntities = this.state.entities.filter(e => e.unit);
     this.bodyEntities = this.state.entities.filter(e => e.hp !== null);
@@ -107,6 +151,7 @@ export class GameContext {
     if(e.unit.charge&&(e.unit.charge.profile??e.definition)!==id)delete e.unit.charge;
   }
   stats(e: Entity) {
+    if(this.profile.enabled)return this.profile.measure('Resolved unit stats',()=>entityStats(this.def(e), e, this.registry, this.state.research[e.owner]));
     return entityStats(this.def(e), e, this.registry, this.state.research[e.owner]);
   }
   clampPools(e:Entity) {
@@ -117,6 +162,9 @@ export class GameContext {
   live() {
     return this.state.entities.filter(alive);
   }
+  /** Structural membership includes fallen, held and split-form units. Lifecycle
+   * consumers still evaluate current state; never mutate the returned index. */
+  indexedUnits():readonly Entity[] { return this.unitEntities; }
   liveUnits() { return this.unitEntities.filter(alive); }
   liveBodies() { return this.bodyEntities.filter(alive); }
   /** Maintained in authoritative entity order by create/remove/reindex. Includes
@@ -181,7 +229,8 @@ export class GameContext {
     if (d.body && complete && initial?.health === undefined) e.hp = this.stats(e).maxHp;
     this.observationRevision++;
     this.observationEntityChanges.push({type:'add',entity:e});
-    this.state.entities.push(e);
+    this.membershipSnapshot=undefined;
+    this.state.entities.push(e);this.entityOrder.set(e,this.nextEntityOrder++);
     this.index.set(e.id, e);this.indexResource(e);
     if(e.unit)this.unitEntities.push(e);
     if(e.hp!==null)this.bodyEntities.push(e);
@@ -218,8 +267,9 @@ export class GameContext {
     for(const occupant of this.liveUnits())if(occupant.unit?.garrison?.building===e.id)this.release(occupant,this.spatial.entrance(e));
     this.observationRevision++;this.changedResources.delete(e);
     this.observationEntityChanges.push({type:'remove',entity:e});
+    this.membershipSnapshot=undefined;
     this.state.entities.splice(this.state.entities.indexOf(e), 1);
-    this.index.delete(e.id);this.resourceSectors.delete(e.id);
+    this.index.delete(e.id);this.resourceSectors.delete(e.id);this.growingResources.delete(e);
     if(e.unit)this.unitEntities.splice(this.unitEntities.indexOf(e),1);
     if(e.hp!==null)this.bodyEntities.splice(this.bodyEntities.indexOf(e),1);
     const buildingIndex=this.buildingEntities.indexOf(e);if(buildingIndex>=0)this.buildingEntities.splice(buildingIndex,1);
@@ -377,18 +427,19 @@ export class GameContext {
                     ),
                 };
           this.spatial.adoptSurface(current,proposed,goal);
-          if (!this.spatial.clearSegment(current, proposed, undefined, e)) {
+          const obstruction=this.spatial.movementSegmentBlocker(current,proposed,ignoresUnits?undefined:occupied,e);
+          if (obstruction==='terrain') {
             u.route = [];
             u.segment = null;
             u.retryAt = this.state.tick + 6;
             break;
           }
           if (
-            (!ignoresUnits && !this.spatial.clearSegment(current, proposed, occupied, e)) ||
+            obstruction==='reservation' ||
             !this.spatial.unitSegmentClear(current, proposed, e.id)
           ) {
             if (this.state.tick >= u.retryAt && u.goal !== null) {
-              const request=(requests??=trafficRequests(this,units)).get(e.id);
+              const request=(requests??=this.profile.measure('Traffic request discovery',()=>trafficRequests(this,units))).get(e.id);
               if(request&&this.beginTrafficYield(e,request,occupied))break;
               const desired = this.spatial.point(u.goal);
               const target = this.spatial.nearest(desired, 3, e.id);
@@ -501,8 +552,11 @@ export class GameContext {
     const target=candidates.find(usable) ?? (distance>4?fallback():undefined);
     if (!target) return false;
     const end=fixed(target);
-    const points=localPath(current,end,(a,b)=>b.x>=0&&b.y>=0&&b.x<=edge&&b.y<=edge&&
-      this.spatial.clearSegment(a,b,reservations, e)&&this.spatial.unitSegmentClear(a,b,e.id));
+    const points=this.spatial.withLocalUnitClearance(current,4250,e.id,unitClear=>{
+      const clear=this.profile.wrap('Local body sweep',unitClear);
+      return localPath(current,end,(a,b)=>b.x>=0&&b.y>=0&&b.x<=edge&&b.y<=edge&&
+        clear(a,b)&&this.spatial.clearLocalSegment(a,b,reservations,e));
+    });
     if (!points) return false;
     const waypoint=this.spatial.cell(target);
     if (nearbyDestination) {u.goal=waypoint;u.route=[waypoint];}

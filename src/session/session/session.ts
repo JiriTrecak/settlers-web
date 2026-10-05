@@ -92,30 +92,33 @@ export class Session {
   private visualView() {return this.worker!.latest!.visual;}
   private selectionView() {return this.worker!.latest!.selection.settlement;}
   private workerProfiling=false;
+  private workerProfilingDetails=true;
   /** Debug navigation overlay: panel toggles, the grid revision the renderer holds, and a
    * single in-flight worker request. With both toggles off (or the profiler closed) the
    * worker is never asked and the renderer owns no overlay. */
-  private navDebug={paths:false,walkability:false,revision:-1,pending:false,next:0,shown:false};
+  private navDebug={paths:false,walkability:false,navmesh:false,revision:-1,meshRevision:-1,epoch:0,pending:false,next:0,shown:false};
   private pollNavigation(){
     const d=this.navDebug,worker=this.worker,renderer=this.renderer;
-    if(!perf.enabled||!(d.paths||d.walkability)){
-      if(d.shown){renderer?.gameNavigation(null);d.shown=false;d.revision=-1;}
+    if(!perf.enabled||!(d.paths||d.walkability||d.navmesh)){
+      if(d.shown){renderer?.gameNavigation(null);d.shown=false;d.revision=d.meshRevision=-1;}
       return;
     }
     const now=performance.now();
     if(d.pending||now<d.next||!worker||!renderer)return;
-    const grid=d.walkability,paths=d.paths;
+    const grid=d.walkability,paths=d.paths,mesh=d.navmesh,epoch=d.epoch;
     d.pending=true;d.next=now+250;
-    void worker.request('navigation',{grid,paths,revision:grid?d.revision:-1}).then(state=>{
+    void worker.request('navigation',{grid,paths,revision:grid?d.revision:-1,mesh,meshRevision:d.meshRevision}).then(state=>{
+      if(epoch!==d.epoch)return;
       d.pending=false;
       // A stale reply may carry a grid the renderer no longer expects; the next poll corrects it.
-      if(worker!==this.worker||renderer!==this.renderer||grid!==d.walkability||paths!==d.paths)return;
-      renderer.gameNavigation({grid,size:state.size,cells:state.cells,paths:state.paths});
+      if(!perf.enabled||worker!==this.worker||renderer!==this.renderer||grid!==d.walkability||paths!==d.paths||mesh!==d.navmesh)return;
+      renderer.gameNavigation({grid,size:state.size,cells:state.cells,paths:state.paths,mesh,meshInput:state.mesh});
       d.shown=true;
       if(grid)d.revision=state.revision;
-    },error=>{d.pending=false;if(worker===this.worker)this.workerError(error);});
+      if(state.mesh)d.meshRevision=state.revision;
+    },error=>{if(epoch!==d.epoch)return;d.pending=false;if(worker===this.worker)this.workerError(error);});
   }
-  private configureWorker(){const worker=this.worker;void worker?.request('configure',{speed:this.simulationSpeed,reveal:this.reveal,visionPlayer:this.visionPlayer,profiling:perf.enabled}).catch(error=>{if(worker===this.worker)this.workerError(error);});}
+  private configureWorker(){const worker=this.worker;return worker?.request('configure',{speed:this.simulationSpeed,reveal:this.reveal,visionPlayer:this.visionPlayer,profiling:perf.enabled,profilingDetails:perf.detailedSimulation}).catch(error=>{if(worker===this.worker)this.workerError(error);});}
   private workerError(error:unknown){console.error(error);this.economyHud?.showError(`Simulation stopped: ${error instanceof Error?error.message:String(error)}`);}
   private acceptFrame(frame:RuntimeFrame){
     this.desynced=frame.desynced;
@@ -126,9 +129,16 @@ export class Session {
     if(perf.enabled){
       perf.value('Navigation searches (match)',frame.routing.searches);
       perf.value('Navigation shared corridors (match)',frame.routing.sharedCorridors);
+      perf.value('Traffic terrain budget reuse (match)',frame.routing.trafficBudgetHits);
+      perf.value('Biased long traffic searches (match)',frame.routing.trafficBiasedSearches);
       perf.value('Navigation cells expanded (match)',frame.routing.expanded);
       perf.value('Navigation sector regions expanded (match)',frame.routing.coarseExpanded);
       perf.value('Navigation corridor fallbacks (match)',frame.routing.fallbacks);
+      perf.value('Ground mesh searches (match)',frame.routing.meshSearches);
+      perf.value('Ground mesh routes accepted (match)',frame.routing.meshAccepted);
+      perf.value('Ground mesh polygons expanded (match)',frame.routing.meshExpanded);
+      perf.value('Ground mesh fallbacks (match)',frame.routing.meshFallbacks);
+      perf.value('Ground mesh tiles built (match + load)',frame.routing.meshRebuiltTiles);
       perf.value('Worker profiling samples dropped',frame.droppedSamples);
     }
     if(frame.observer&&frame.observer.tick!==this.observerStatsTick){this.observerStatsTick=frame.observer.tick;this.observerPanel?.update(frame.observer);}
@@ -482,6 +492,11 @@ export class Session {
       },
       paths: this.navDebug.paths,
       walkability: this.navDebug.walkability,
+      navmesh: this.navDebug.navmesh,
+      onNavmesh: (value) => {
+        this.navDebug.navmesh = value;
+        if (!value) this.navDebug.meshRevision = -1;
+      },
       onPaths: (value) => {
         this.navDebug.paths = value;
       },
@@ -519,7 +534,14 @@ export class Session {
           };
         if (op === "gamePerformance") {
           if(o.action!==undefined&&o.action!=='get'&&o.action!=='capture')throw Error('Unknown game performance action');
-          if(o.action==='capture'){if(!perf.enabled)perf.toggle();perf.capture();}
+          if(o.mode!==undefined&&o.mode!=='budget'&&o.mode!=='details')throw Error('Unknown game performance mode');
+          if(o.action==='capture'){
+            if(!perf.enabled)perf.toggle();
+            const budget=o.mode==='budget';perf.detailedSimulation=!budget;
+            this.workerProfiling=perf.enabled;this.workerProfilingDetails=perf.detailedSimulation;
+            await this.configureWorker();
+            perf.capture({quiet:budget,trace:!budget});
+          }
           return {timings:perf.report(),capture:perf.completedCapture,renderer:renderer.diagnostics(),tick:worker.latest!.tick};
         }
         if (op === "gameSave") return this.snapshotLocal();
@@ -600,7 +622,7 @@ export class Session {
     const renderer = this.renderer;
     const worker=this.worker;
     if(!this.started||!renderer||!worker?.latest)return;
-    if(this.workerProfiling!==perf.enabled){this.workerProfiling=perf.enabled;this.configureWorker();}
+    if(this.workerProfiling!==perf.enabled||this.workerProfilingDetails!==perf.detailedSimulation){this.workerProfiling=perf.enabled;this.workerProfilingDetails=perf.detailedSimulation;this.configureWorker();}
     if(perf.enabled)perf.value('Worker snapshot age (ms)',performance.now()-worker.receivedAt);
     // Keep the authoritative match and network running in a hidden tab, but
     // defer snapshots, DOM, animation, minimap and GPU work until it is visible.
@@ -624,15 +646,25 @@ export class Session {
     const hud = perf.start();
     if (view.settlement) {
       this.updateResourceStamps(view.settlement.entities);
+      const fog=perf.start();
       this.mini?.setFog(view.settlement);
+      perf.end('HUD · fog state',fog);
+      const settlement=perf.start();
       this.economyHud?.update(this.selectionView());
+      perf.end('HUD · settlement controls',settlement);
+      const mission=perf.start();
       this.missionHud?.update(view.settlement);
+      perf.end('HUD · mission controls',mission);
+      const selection=perf.start();
       renderer.gameSelect(cinematic ? [] : this.economyHud?.selectedIds ?? []);
+      perf.end('HUD · selection overlays',selection);
       // Re-pick on a short cadence so units walking under a still cursor pre-select.
       this.hoverAge += dtMs;
       if (this.hoverPointer && this.hoverAge > 120) {
         this.hoverAge = 0;
+        const hover=perf.start();
         const id = renderer.pickGameHover(this.hoverPointer.clientX, this.hoverPointer.clientY);
+        perf.end('HUD · hover raycast',hover);
         this.hoverId = id != null && view.settlement.entities.some((e) => e.id === id && content.get(e.definition).selectable !== false) ? id : null;
       }
       renderer.gameHover(cinematic || this.economyHud?.mode ? null : this.hoverId);
@@ -674,6 +706,8 @@ export class Session {
   async restoreLocal(raw:unknown){
     if(!this.worker||this.config.channel)throw Error('Local load requires a singleplayer match');
     const worker=this.worker;await worker.load(raw);if(worker!==this.worker)return;
+    this.renderer?.gameNavigation(null);
+    Object.assign(this.navDebug,{revision:-1,meshRevision:-1,epoch:this.navDebug.epoch+1,pending:false,next:0,shown:false});
     this.unitCameraMode='rts';this.cinematicFocus=null;this.renderer?.unitCamera(null);
     this.resourceEntities=undefined;this.placementResult=undefined;
     this.economyHud?.restoreControls((raw as LocalSave).controlGroups);

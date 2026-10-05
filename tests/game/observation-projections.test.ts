@@ -44,3 +44,31 @@ it('publishes independent nested orders without exposing mutable state',()=>{
  unit.unit!.order.destination.x=125;(unit.unit!.orderQueue[0] as {destination:{x:number}}).destination.x=126;
  expect(before.order).toMatchObject({destination:{x:115}});expect(before.orderQueue[0]).toMatchObject({destination:{x:116}});
 });
+
+it('keeps rich actor projections independent while hiding owner-only state and unseen attack targets',()=>{
+ const g=game([placed('hero','unit.ants.marshal',110,110),
+  {...placed('enemy','unit.ants.warrior',112,110),owner:'player.2'},
+  placed('hidden','unit.ants.warrior',220,220)]);
+ const hero=g.entities.find(e=>e.placement==='hero')!,hidden=g.entities.find(e=>e.placement==='hidden')!;
+ hero.progression!.bonuses={maxHp:20,damage:3};
+ hero.abilities!.cooldowns['ability.core.holy-light']=17;
+ hero.unit!.order={type:'attack',target:hidden.id,force:false};
+ hero.unit!.attack={target:hidden.id,cycleTicks:20,started:0,impact:10,ends:20,released:false};
+ hero.unit!.cargo={item:'item.wood',amount:2};
+ g.observation.update();
+ const own=g.view('player.1').entities.find(e=>e.id===hero.id)!;
+ const enemy=g.view('player.2').entities.find(e=>e.id===hero.id)!;
+ expect(own.progression?.bonuses).toEqual({maxHp:20,damage:3});
+ expect(own.unit).toMatchObject({commandedTarget:hidden.id,attack:{target:hidden.id},cargo:{amount:2}});
+ expect(enemy.unit).toMatchObject({commandedTarget:null,attack:{target:null},cargo:{amount:2}});
+ for(const key of ['progression','abilities','activeAbilities','control','inventory','job'])expect(enemy).not.toHaveProperty(key);
+ hero.progression!.bonuses.damage=8;
+ hero.abilities!.cooldowns['ability.core.holy-light']=4;
+ hero.unit!.attack.released=true;
+ hero.unit!.cargo.amount=9;
+ expect(own.progression?.bonuses?.damage).toBe(3);
+ expect(own.abilities?.cooldowns['ability.core.holy-light']).toBe(17);
+ expect(own.unit?.attack?.released).toBe(false);
+ expect(own.unit?.cargo?.amount).toBe(2);
+ expect(enemy.unit?.cargo?.amount).toBe(2);
+});

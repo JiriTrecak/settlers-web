@@ -31,13 +31,11 @@ it('updates actor membership without reclassifying scenery, including transient 
  expect(fast.snapshot()).toEqual(saved);expect(fast.view()).toEqual(view);
 });
 
-it.each(['add static','remove static','generic invalidation','reindex'] as const)(
+it.each(['generic invalidation','reindex'] as const)(
  'retains the conservative refresh for %s mixed with actor creation',change=>{
   const fast=create(),reference=create(),spy=classify(fast);
   for(const g of [fast,reference]){
    g.context.create(placed('new','unit.ants.warrior',111,111));
-   if(change==='add static')g.context.create({...placed('new-tree','resource.forest.tree',114,110),owner:'none'});
-   if(change==='remove static')g.context.remove(g.entities.find(e=>e.placement==='tree')!);
    if(change==='generic invalidation'){
     g.entities.find(e=>e.placement==='tree')!.appearance={scale:1.4};g.context.observationRevision++;
    }
@@ -51,4 +49,34 @@ it('explicit editor refreshes still discover changes without receipts',()=>{
  tree.appearance={scale:1.8};g.observation.update();
  expect(spy).toHaveBeenCalledTimes(1);
  expect(g.view().entities.find(e=>e.id===tree.id)!.appearance?.scale).toBe(1.8);
+});
+
+it('updates overlapping static footprints locally and matches full rebuilds through removal and restore',()=>{
+ const fast=create(),reference=create(),spy=classify(fast);
+ for(let step=0;step<5;step++){
+  for(const g of [fast,reference]){
+   if(step===0){
+    g.context.create(placed('hall','building.ants.fort',112,110));
+    g.context.create({...placed('overlap','resource.forest.tree',112,110),owner:'none'});
+    const transient=g.context.create({...placed('transient','resource.forest.tree',111,110),owner:'none'});g.context.remove(transient);
+   }
+   if(step===1)g.context.remove(g.entities.find(e=>e.placement==='tree')!);
+   if(step===2){g.context.remove(g.entities.find(e=>e.placement==='hall')!);g.entities.find(e=>e.placement==='scout')!.x=180;}
+   if(step===3)g.context.remove(g.entities.find(e=>e.placement==='overlap')!);
+   if(step===4)g.entities.find(e=>e.placement==='scout')!.x=110;
+  }
+  compare(fast,reference);
+ }
+ expect(spy).not.toHaveBeenCalled();
+ const saved=fast.snapshot(),view=fast.view('player.1');fast.restore(saved);
+ expect(fast.snapshot()).toEqual(saved);expect(fast.view('player.1')).toEqual(view);
+});
+
+it('adding a building does not query unrelated forest footprints',()=>{
+ const g=create();
+ g.context.create(placed('hall','building.ants.fort',120,110));
+ const footprint=vi.spyOn(g.spatial,'footprint');
+ g.observation.update(true);
+ expect(footprint.mock.calls.filter(([e])=>e.definition==='resource.forest.tree')).toHaveLength(0);
+ expect(g.view('player.1').entities.some(e=>e.definition==='building.ants.fort')).toBe(true);
 });

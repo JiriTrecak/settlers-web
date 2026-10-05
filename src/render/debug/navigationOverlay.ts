@@ -3,14 +3,16 @@
  * the debug toggles turn off, so a normal match never allocates or draws any of it. */
 import {
   BufferAttribute, BufferGeometry, DataTexture, Group, Mesh, NearestFilter, Points, PointsMaterial,
-  RGBAFormat, ShaderMaterial, Vector2, type Scene,
+  RGBAFormat, ShaderMaterial, Vector2, LineSegments, LineBasicMaterial, type Scene,
 } from "three";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2.js";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry.js";
 import type { HeightField } from "../../shared/map/height";
 import type { Owner } from "../../content/schema";
-import { NAV_CELL, type NavigationPath } from "../../sim/game/navigationDebug";
+import { NAV_CELL, type NavigationPath, type NavigationMeshSnapshot } from "../../sim/game/navigationDebug";
+import type { MeshReply } from './navigationMeshWorker';
+import { perf } from '../../debug/performance';
 
 type Relation = "own" | "ally" | "neutral" | "enemy";
 /** Grid texel colours (RGBA 0–255), indexed by NAV_CELL. Walkable ground gets a faint tint so gaps read. */
@@ -53,6 +55,70 @@ export class NavigationOverlay {
   private centre: { x: number; z: number; field: HeightField } | null = null;
   private readonly lines: LineSegments2;
   private readonly marks: Points;
+  private meshWorker:Worker|null=null;
+  private meshBusy=false;
+  private meshPending:NavigationMeshSnapshot|null=null;
+  private meshReply:MeshReply|null=null;
+  private meshLines:LineSegments<BufferGeometry,LineBasicMaterial>|null=null;
+  private meshField:HeightField|null=null;
+  private meshDirty=false;
+
+  /** Revisions coalesce while a build is in flight. Disabling terminates the worker,
+   * releases its collision copy, and prevents late replies from resurrecting geometry. */
+  setMesh(enabled:boolean,input?:NavigationMeshSnapshot){
+    if(!enabled){this.disposeMesh();return;}
+    if(!input)return;
+    this.meshPending=input;
+    if(!this.meshWorker){
+      let worker:Worker;
+      try{worker=new Worker(new URL('./navigationMeshWorker.ts',import.meta.url),{type:'module'});}
+      catch(error){this.meshPending=null;perf.value('Navigation mesh',`Worker unavailable: ${String(error)}`);return;}
+      this.meshWorker=worker;
+      worker.onmessage=({data}:MessageEvent<MeshReply>)=>{
+        if(this.meshWorker!==worker)return;
+        this.meshBusy=false;
+        if(data.error){
+          this.meshLines?.removeFromParent();
+          perf.value('Navigation mesh',`Build failed: ${data.error}`);
+        }else{
+          this.meshReply=data;this.meshDirty=true;
+          perf.value('Navigation mesh',`${data.polygons.toLocaleString()} polygons (${data.triangles.toLocaleString()} source triangles) · radius ${data.radius} · ${data.buildMs.toFixed(1)}ms build · ${data.rebuiltTiles} tiles rebuilt · revision ${data.revision}${data.decks?' · WARNING: bridge decks excluded':''}`);
+        }
+        this.buildMesh();
+      };
+      worker.onerror=()=>{
+        if(this.meshWorker!==worker)return;
+        this.disposeMesh();perf.value('Navigation mesh','Worker failed; toggle off/on to retry');
+      };
+    }
+    this.buildMesh();
+  }
+
+  private buildMesh(){
+    const input=this.meshPending;
+    if(this.meshBusy||!input||!this.meshWorker)return;
+    this.meshPending=null;this.meshBusy=true;
+    perf.value('Navigation mesh',`Building revision ${input.revision} in debug worker; cyan is previous snapshot`);
+    this.meshWorker.postMessage(input,[input.walkable.buffer,input.heights.buffer]);
+  }
+
+  private drapeMesh(field:HeightField|null){
+    if(!field||!this.meshReply||!this.meshDirty&&field===this.meshField)return;
+    const edges=this.meshReply.edges,positions=new Float32Array(edges.length/2*3);
+    for(let i=0;i<edges.length;i+=2){const x=edges[i]!,z=edges[i+1]!;positions.set([x,field.sample(x,z)+.17,z],i/2*3);}
+    const geometry=new BufferGeometry();geometry.setAttribute('position',new BufferAttribute(positions,3));
+    if(!this.meshLines){
+      this.meshLines=new LineSegments(geometry,new LineBasicMaterial({color:0x35ddff,transparent:true,opacity:.72,depthTest:false,depthWrite:false}));
+      this.meshLines.name='candidate-ground-navmesh';this.meshLines.renderOrder=8;
+    }else{this.meshLines.geometry.dispose();this.meshLines.geometry=geometry;}
+    this.group.add(this.meshLines);this.meshField=field;this.meshDirty=false;
+  }
+
+  private disposeMesh(){
+    this.meshWorker?.terminate();this.meshWorker=null;this.meshBusy=false;this.meshPending=null;this.meshReply=null;this.meshField=null;
+    if(this.meshLines){this.meshLines.geometry.dispose();this.meshLines.material.dispose();this.meshLines.removeFromParent();this.meshLines=null;}
+    this.meshDirty=false;
+  }
 
   constructor(private readonly scene: Scene) {
     this.group.name = "navigation-debug";
@@ -90,6 +156,7 @@ export class NavigationOverlay {
 
   /** Re-drape the grid window when the camera has moved far enough. Cheap when nothing changed. */
   follow(x: number, z: number, field: HeightField | null): void {
+    this.drapeMesh(field);
     if (!this.texture || !field) return;
     const c = this.centre;
     if (c && c.field === field && Math.abs(c.x - x) < RECENTER && Math.abs(c.z - z) < RECENTER) return;
@@ -179,6 +246,7 @@ export class NavigationOverlay {
   }
 
   dispose(): void {
+    this.disposeMesh();
     this.disposeGrid();
     this.lines.geometry.dispose();
     this.lines.material.dispose();

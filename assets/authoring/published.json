@@ -26005,42 +26005,16 @@
       "id": "asset.models.resources.amber-deposit",
       "name": "Amber Deposit",
       "kind": "building",
-      "revision": 2,
+      "revision": 15,
       "status": "published",
       "tags": [
         "original",
         "neutral",
+        "woodland",
+        "resource",
         "tripo"
       ],
       "resources": [
-        {
-          "role": "geometry",
-          "index": 1,
-          "format": "glb",
-          "sha256": "5c30b9bd20649b542c3cd3733b63339a6054febf11306d722b0c5fc6f698a40b",
-          "bytes": 12822188
-        },
-        {
-          "role": "source",
-          "index": 1,
-          "format": "blend",
-          "sha256": "3a7d13bd605e3e24c19a4c787b468c273b86624268f976e2e5d1d2738d3332d9",
-          "bytes": 24304982
-        },
-        {
-          "role": "reference",
-          "index": 1,
-          "format": "png",
-          "sha256": "7980e7c56d1d801b706c403b18de5f4b492b70da2d54388246b0319ebae6db47",
-          "bytes": 1868584
-        },
-        {
-          "role": "preview",
-          "index": 1,
-          "format": "png",
-          "sha256": "86b1af7a7fdc85faec8ce62c2d5f2a93206070816e29a1bed0e188701dc88a33",
-          "bytes": 1345831
-        },
         {
           "role": "albedo",
           "index": 1,
@@ -26049,18 +26023,25 @@
           "bytes": 6561225
         },
         {
-          "role": "normal",
+          "role": "build",
           "index": 1,
-          "format": "png",
-          "sha256": "f536079a7a324cc2e7a0a4e386b7ec372f29bc8353cb41b719fce345e51d4c0c",
-          "bytes": 3796966
+          "format": "json",
+          "sha256": "fead17da54f8d4389e390fab72f70be997e4cf91ce3d6d4659befd306824f9be",
+          "bytes": 860
         },
         {
-          "role": "roughness",
+          "role": "generation",
           "index": 1,
-          "format": "png",
-          "sha256": "67a9c7c02a89f603287b116858b777859c6b384ac4ef004709c760d9977f5ec4",
-          "bytes": 1953719
+          "format": "json",
+          "sha256": "aa5382580a77726a88c3a597ae7031da624cbf2074b0301b7f357f28f24de95d",
+          "bytes": 370
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "f3359659efe8bb99aab48d016f241ea823cca94eca9db6892a9d924232929ce9",
+          "bytes": 3932528
         },
         {
           "role": "image",
@@ -26070,11 +26051,53 @@
           "bytes": 25961
         },
         {
-          "role": "generation",
+          "role": "normal",
           "index": 1,
-          "format": "json",
-          "sha256": "9eeac2b07a3254227233cb5abf5bfb63e7eafc75a8acc015e9bd0c388312b28b",
-          "bytes": 11285
+          "format": "png",
+          "sha256": "f536079a7a324cc2e7a0a4e386b7ec372f29bc8353cb41b719fce345e51d4c0c",
+          "bytes": 3796966
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "3fdb4de48e4a61258d62c93e6f4415940cbc868da7b343bb07eeef95ecfb729d",
+          "bytes": 704777
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "db6019de42ca848b92938e1a1d3008532e69e9639bd40715097debf18fe504f3",
+          "bytes": 5300
+        },
+        {
+          "role": "recipe",
+          "index": 2,
+          "format": "py",
+          "sha256": "9bf4863cdf94232e010973a6ba4a14a6a35ff90a5d9903adabf0aa1c66712596",
+          "bytes": 250
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "e581e2b2975f00371336c39f76c2263086fa5fa0321326158eb357ec14baed72",
+          "bytes": 2441426
+        },
+        {
+          "role": "roughness",
+          "index": 1,
+          "format": "png",
+          "sha256": "67a9c7c02a89f603287b116858b777859c6b384ac4ef004709c760d9977f5ec4",
+          "bytes": 1953719
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "8cb765e0cffefb843b75792b35ff98de14f2ad3ef0bb325ced087bf993cb7551",
+          "bytes": 12503477
         },
         {
           "role": "source",
@@ -26098,13 +26121,6 @@
           "bytes": 1116
         },
         {
-          "role": "recipe",
-          "index": 1,
-          "format": "py",
-          "sha256": "a846fc61b6c05663ce4145f6c0f9390fd991bf980ba803f983bfe158c2c79b04",
-          "bytes": 263
-        },
-        {
           "role": "source",
           "index": 5,
           "format": "png",
@@ -26124,13 +26140,6 @@
           "format": "json",
           "sha256": "125f7e342e265902ba495dce2199966668c44df6b0f7c589bf835a40124336d4",
           "bytes": 6263
-        },
-        {
-          "role": "recipe",
-          "index": 2,
-          "format": "py",
-          "sha256": "9bf4863cdf94232e010973a6ba4a14a6a35ff90a5d9903adabf0aa1c66712596",
-          "bytes": 250
         },
         {
           "role": "source",
@@ -26171,8 +26180,8 @@
           "role": "source",
           "index": 13,
           "format": "glb",
-          "sha256": "ab1d5c284efb827f9eb96641262057ce6ebfc9f8ca15327d0af2449b680b008f",
-          "bytes": 9021364
+          "sha256": "53782bb881721e43d91e7bffabab10aada62091d31c9e7592f0fe77096fa2e12",
+          "bytes": 11444740
         },
         {
           "role": "source",
@@ -26180,13 +26189,6 @@
           "format": "png",
           "sha256": "54853360befcb3949cecc6c5df2d01f2b9a344a70cd2825e633c61c66be4c574",
           "bytes": 16354
-        },
-        {
-          "role": "build",
-          "index": 1,
-          "format": "json",
-          "sha256": "85ff2851f807220280bcd44d2b2f37c8eebdd2b2977d5d9eed13a32d2c8ba723",
-          "bytes": 2543
         }
       ],
       "usesGeometry": true,
@@ -26200,40 +26202,15 @@
         "up": "Y",
         "forward": "+Z"
       },
-      "materials": [
-        {
-          "slot": "Natural_Materials",
-          "shader": "standard",
-          "color": "#ffffff",
-          "roughness": 0.72,
-          "metalness": 0,
-          "alphaMode": "opaque",
-          "alphaCutoff": 0.4,
-          "doubleSided": true,
-          "textures": {
-            "albedo": {
-              "role": "albedo",
-              "index": 1
-            },
-            "normal": {
-              "role": "normal",
-              "index": 1
-            },
-            "roughness": {
-              "role": "roughness",
-              "index": 1
-            }
-          }
-        }
-      ],
+      "materials": [],
       "bindings": {
         "faction": "neutral",
         "profile": "building",
         "render": [
           {
             "id": "asset.resource.amber-seam",
-            "scale": 1,
-            "healthHeight": 4.8,
+            "scale": 2,
+            "healthHeight": 7.6,
             "geometry": {
               "role": "geometry",
               "index": 1,
@@ -26242,8 +26219,8 @@
           },
           {
             "id": "asset.resource.woodland-amber-deposit",
-            "scale": 1,
-            "healthHeight": 4.8,
+            "scale": 2,
+            "healthHeight": 7.6,
             "geometry": {
               "role": "geometry",
               "index": 1,
@@ -26265,15 +26242,393 @@
         "blocker": {
           "shape": "box",
           "size": [
-            7,
-            7
+            15,
+            15
           ],
           "offset": [
             0,
             0
           ]
         },
-        "vegetationClearance": 3.5,
+        "vegetationClearance": 7.5,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.resources.amber-deposit-empty",
+      "name": "Amber Deposit — Exhausted",
+      "kind": "prop",
+      "revision": 33,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "woodland",
+        "resource",
+        "authored"
+      ],
+      "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "99ca56df6282b25c76a2117efce43d6e9bd234b739bd5657f1863183445d8bed",
+          "bytes": 906
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "1ebe6a4d76138f20bc85c18f6207c8b20d157c918a2c397c50fa5b5ef7260d23",
+          "bytes": 336
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "d3b4a239cae490e27e79f9660f5fbe7b402b33ea7d5b4ca4effc72dafb1525ac",
+          "bytes": 3577472
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "2af522989f96095b289de95a950c0cd2ffa98f2db3ddd50e6c967b4bb46be955",
+          "bytes": 695937
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "8fd196761f96cce9f1efd2fb6072d18f1f1ce599093bccec72aaac5f72bbbdcf",
+          "bytes": 6177
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "358e2d6e7eacd6814e4074244663a201b65089696282678fb573c9e4c0dfcf2b",
+          "bytes": 2138520
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "c98cdb382fef49f0cac4fbff101d95e602a1b12ea196eed3fc8f9c539b06d7bb",
+          "bytes": 4108081
+        },
+        {
+          "role": "source",
+          "index": 2,
+          "format": "png",
+          "sha256": "add10b35a6059965f467f3da746f1fed88e130afd89a865f262880d565b2e42f",
+          "bytes": 3192302
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.resource.amber-seam-empty",
+            "scale": 2,
+            "healthHeight": 1.1,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.resources.amber-deposit-empty"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "blocker": {
+          "shape": "box",
+          "size": [
+            15,
+            15
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "vegetationClearance": 7.5,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.resources.amber-deposit-one-third",
+      "name": "Amber Deposit — One Third Mined",
+      "kind": "prop",
+      "revision": 23,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "woodland",
+        "resource",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "5726ec3f469c7a8166cd79b34776d530535f0e215ccaeda7cd7ccbe6ffa8bc2b",
+          "bytes": 929
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "5e7d3288443a22d0b7be9417ba2014e3f81a8cf1fb4287eba69072e0c2cdc065",
+          "bytes": 370
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "63419067ab907a26f5c0e3bd221aba7cdbcad17b0f5718bb3f68fe92ad7e6730",
+          "bytes": 4189052
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "8c952932e9cf23e2beea7b3fa7e24a209c2583fde836334a95fbfdb8a125029d",
+          "bytes": 687511
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "db6019de42ca848b92938e1a1d3008532e69e9639bd40715097debf18fe504f3",
+          "bytes": 5300
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "c1daf0d098dedb07da9f59114cba1e966a813bac480cf1f74bb377b88aec4c72",
+          "bytes": 2222933
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "30daf84eec19774a17000736502512201738784eee619a7b5b2108c8e527657e",
+          "bytes": 13194358
+        },
+        {
+          "role": "source",
+          "index": 2,
+          "format": "glb",
+          "sha256": "e5d1f3d55e222a72750a8b37ed22231dd07c97e9c6c23a0070b13db4f5d7660d",
+          "bytes": 12142088
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.resource.amber-seam-one-third",
+            "scale": 2,
+            "healthHeight": 7,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.resources.amber-deposit-one-third"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "blocker": {
+          "shape": "box",
+          "size": [
+            15,
+            15
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "vegetationClearance": 7.5,
+        "groundContact": {
+          "mode": "pivot"
+        }
+      },
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork created for Under the Canopy.",
+        "generation": {
+          "role": "generation",
+          "index": 1
+        }
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.models.resources.amber-deposit-two-thirds",
+      "name": "Amber Deposit — Two Thirds Mined",
+      "kind": "prop",
+      "revision": 23,
+      "status": "published",
+      "tags": [
+        "original",
+        "neutral",
+        "woodland",
+        "resource",
+        "tripo"
+      ],
+      "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "a142678fcc043059da5832b5745ef9b263055c77063ef6efcf3b49ea8efac048",
+          "bytes": 936
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "59a263b631a7ebb3ca348853497d70926b99f7225106807ff59aebe67bb2a073",
+          "bytes": 370
+        },
+        {
+          "role": "geometry",
+          "index": 1,
+          "format": "glb",
+          "sha256": "8f920b5e1e3112c6c9de22ff35f187d5e1155b05eff24c2d721df08b10e1d9da",
+          "bytes": 3687828
+        },
+        {
+          "role": "preview",
+          "index": 1,
+          "format": "png",
+          "sha256": "e0009c243ad047aa1021ccd0c478c15473381680a8a0b528bb26ca055c4d8ea9",
+          "bytes": 692350
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "db6019de42ca848b92938e1a1d3008532e69e9639bd40715097debf18fe504f3",
+          "bytes": 5300
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "d2fd5ee56585422548b1f4700678954ca802b3f1f620bf2fbbd437457dc2b8a2",
+          "bytes": 2125662
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "e627ee8ac8a02f81df438f74210c0e28a1717e76b35495672d87d2ea17cb736b",
+          "bytes": 11092020
+        },
+        {
+          "role": "source",
+          "index": 2,
+          "format": "glb",
+          "sha256": "dbb3aefb82529ae648c1c1022808c3fd0ffa25dda199c917416f4b945dc08045",
+          "bytes": 10039432
+        }
+      ],
+      "usesGeometry": true,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "model",
+        "render": [
+          {
+            "id": "asset.resource.amber-seam-two-thirds",
+            "scale": 2,
+            "healthHeight": 3.8,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.models.resources.amber-deposit-two-thirds"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {
+        "blocker": {
+          "shape": "box",
+          "size": [
+            15,
+            15
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "vegetationClearance": 7.5,
         "groundContact": {
           "mode": "pivot"
         }
@@ -26292,33 +26647,36 @@
       "id": "asset.models.resources.corrupted-root",
       "name": "Corrupted Root Deposit",
       "kind": "prop",
-      "revision": 3,
+      "revision": 15,
       "status": "published",
       "tags": [
         "original",
-        "woodland"
+        "neutral",
+        "woodland",
+        "resource",
+        "tripo"
       ],
       "resources": [
+        {
+          "role": "build",
+          "index": 1,
+          "format": "json",
+          "sha256": "c0307cbf1f17af79f41f032e3a8343cb744b57948757e23e87e293f93a078084",
+          "bytes": 866
+        },
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "100b700df50cb5438fb471d1097d46e4e2ce9fc171367fb0b46c1926062b2afe",
+          "bytes": 370
+        },
         {
           "role": "geometry",
           "index": 1,
           "format": "glb",
-          "sha256": "4a759b91b177242fb8e19005cde992934542d12f7e081e408f578029580669f6",
-          "bytes": 1622452
-        },
-        {
-          "role": "source",
-          "index": 1,
-          "format": "blend",
-          "sha256": "2089ee988316360cf0053cdc48b26cb74b76c9c1a3796f964d627b646f7d0aab",
-          "bytes": 1660895
-        },
-        {
-          "role": "preview",
-          "index": 1,
-          "format": "png",
-          "sha256": "fc2e8b3ad00157f27bd90c33966ed10cda5d1d3d6ed06dd7406a6eae1f230e29",
-          "bytes": 263525
+          "sha256": "171a625896a0c2b5529c7fba1e0dae9120458ff72085795f4b9a0e4179707da0",
+          "bytes": 4497308
         },
         {
           "role": "image",
@@ -26328,11 +26686,32 @@
           "bytes": 8224
         },
         {
-          "role": "generation",
+          "role": "preview",
           "index": 1,
-          "format": "json",
-          "sha256": "27483375264fae929fe2bca8c0dfc22723360c30d5cbe803316c007b7a61b7d7",
-          "bytes": 3492
+          "format": "png",
+          "sha256": "e20b654122a47a094ada3a699d7a62035803c9e2337b9528b2a5a964b4d5b5f9",
+          "bytes": 694941
+        },
+        {
+          "role": "recipe",
+          "index": 1,
+          "format": "py",
+          "sha256": "db6019de42ca848b92938e1a1d3008532e69e9639bd40715097debf18fe504f3",
+          "bytes": 5300
+        },
+        {
+          "role": "reference",
+          "index": 1,
+          "format": "png",
+          "sha256": "be2c7cb13a2699da1a439480b8b47b65ad578cbc8e3690ac444549fccc4ff5d0",
+          "bytes": 2237251
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "blend",
+          "sha256": "28d1d52339d64126011e44a6866e36722aa1c6f57ffa671649cac7b069cf58d7",
+          "bytes": 13734714
         },
         {
           "role": "source",
@@ -26342,18 +26721,11 @@
           "bytes": 649
         },
         {
-          "role": "recipe",
-          "index": 1,
-          "format": "py",
-          "sha256": "a903c5be6fe461c3b06bb17933852fade6a2dd82c4f67f6fab2afee27e9a3342",
-          "bytes": 3275
-        },
-        {
-          "role": "build",
-          "index": 1,
-          "format": "json",
-          "sha256": "2bc45f1bddd9e99578151eb57772e87f3517332f9517578c3435517563416142",
-          "bytes": 738
+          "role": "source",
+          "index": 3,
+          "format": "glb",
+          "sha256": "d6e571c73faa35bf2ec96fb0967677d307b5f6e0b5d411b533e6ceec8eb74d5a",
+          "bytes": 12671408
         }
       ],
       "usesGeometry": true,
@@ -26372,8 +26744,8 @@
         "render": [
           {
             "id": "asset.resource.corrupted-root",
-            "scale": 1,
-            "healthHeight": 3.2,
+            "scale": 2,
+            "healthHeight": 7.6,
             "geometry": {
               "role": "geometry",
               "index": 1,
@@ -26384,12 +26756,24 @@
         "scenery": []
       },
       "capabilities": {
+        "blocker": {
+          "shape": "box",
+          "size": [
+            15,
+            15
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "vegetationClearance": 7.5,
         "groundContact": {
           "mode": "pivot"
         }
       },
       "provenance": {
-        "method": "authored",
+        "method": "generated",
         "licenseNote": "Original artwork created for Under the Canopy.",
         "generation": {
           "role": "generation",

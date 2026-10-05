@@ -1,4 +1,5 @@
 import {SimulationProfiler} from '../profiling';
+import {NavigationQueue} from './navigationQueue';
 import {MonotonicNavigationQueue} from './monotonicNavigationQueue';
 import {SECTOR_SIZE} from '../../shared/spatial/sectors';
 export const CARDINAL_COST = 1000;
@@ -22,10 +23,12 @@ export class Navigation {
   private readonly seen: Uint32Array;
   private readonly closed: Uint32Array;
   private epoch = 0;
+  private blockedNodes:Uint32Array|undefined;
   lastExpanded=0;
   private readonly edges: Uint8Array;
   private readonly knownEdges: Uint8Array;
   private readonly queue=new MonotonicNavigationQueue();
+  private readonly weightedQueue=new NavigationQueue();
   constructor(
     readonly size: number,
     private readonly canStep: (from: number, to: number) => boolean,
@@ -88,23 +91,26 @@ export class Navigation {
     }
     return seen;
   }
-  path(start: number, goal: number, blocked?: ReadonlySet<number>, maxCost = Infinity, corridor?:Uint8Array): number[] | null {
+  path(start: number, goal: number, blocked?: ReadonlySet<number>, maxCost = Infinity, corridor?:Uint8Array,heuristicPermille=1000): number[] | null {
     this.lastExpanded=0;
     const sectorWidth=Math.ceil(this.size/SECTOR_SIZE);
     if (!Number.isInteger(start) || !Number.isInteger(goal) || start < 0 || goal < 0 || start >= this.size ** 2 || goal >= this.size ** 2) return null;
     if (start === goal) return [];
     if (this.connected && !this.connected(start,goal)) return null;
-    if (++this.epoch >= 0xffffffff) { this.seen.fill(0); this.closed.fill(0); this.epoch = 1; }
+    if (++this.epoch >= 0xffffffff) { this.seen.fill(0); this.closed.fill(0); this.blockedNodes?.fill(0); this.epoch = 1; }
     const {prev, cost, seen, closed, epoch} = this;
     if (blocked?.has(goal)) return null;
-    const obstacles=blocked?.size?blocked:undefined;
-    const step = (a: number, b: number) => !obstacles?.has(b) && this.canStep(a, b);
+    // Mark the small set once, then use integer array reads in the hot loop.
+    // Epochs avoid clearing a map-sized mask on each changing traffic query.
+    const obstacles=blocked?.size?(this.blockedNodes??=new Uint32Array(this.size*this.size)):undefined;
+    if(obstacles)for(const cell of blocked!)obstacles[cell]=epoch;
+    const step = (a: number, b: number) => obstacles?.[b]!==epoch && this.canStep(a, b);
     // Callers already checked neighbor bounds and know the direction. Avoid
     // rediscovering it with divisions for every edge of a large search.
     const directionBits=[16,1,32,2,0,4,64,8,128];
     const traverse=this.cacheTerrain
       ? (a:number,b:number,dx:number,dy:number)=>this.edge(a,b,directionBits[(dy+1)*3+dx+1]!)&&
-        (!obstacles||(!obstacles.has(b)&&(!(dx&&dy)||(!obstacles.has(a+dx)&&!obstacles.has(a+dy*this.size)))))
+        (!obstacles||(obstacles[b]!==epoch&&(!(dx&&dy)||(obstacles[a+dx]!==epoch&&obstacles[a+dy*this.size]!==epoch))))
       : (a:number,b:number,dx:number,dy:number)=>step(a,b)&&
       (!(dx&&dy)||(step(a,a+dx)&&step(a,a+dy*this.size)&&step(a+dx,b)&&step(a+dy*this.size,b)));
     // A boxed-in unit cannot reach any other goal. Check the cheap local fact
@@ -120,7 +126,7 @@ export class Navigation {
       const x = goalX + dx, y = goalY + dy;
       if (x < 0 || y < 0 || x >= this.size || y >= this.size) return false;
       const from = y * this.size + x;
-      return (from === start || !blocked?.has(from)) && traverse(from, goal, -dx, -dy);
+      return (from === start || obstacles?.[from]!==epoch) && traverse(from, goal, -dx, -dy);
     })) return null;
     // Small goal-side pockets are common in crowded bases. A bounded reverse
     // reachability check proves failure cheaply; larger regions fall through
@@ -134,7 +140,7 @@ export class Navigation {
         const nx = x + dx, ny = y + dy;
         if (nx < 0 || ny < 0 || nx >= this.size || ny >= this.size) continue;
         const from = ny * this.size + nx;
-        if (reverseSeen.has(from) || (from !== start && blocked?.has(from)) ||
+        if (reverseSeen.has(from) || (from !== start && obstacles?.[from]===epoch) ||
             !traverse(from, to, -dx, -dy)) continue;
         if (from === start) { connected = true; break; }
         reverseSeen.add(from); reverse.push(from);
@@ -145,7 +151,13 @@ export class Navigation {
     });
     if(!reachable)return null;
     return this.profile.measure('A-star expansion',()=>{
-    const queue=this.queue;queue.reset();
+    // Inflated heuristics are not consistent: their priorities may decrease,
+    // so they require the binary frontier and reopening improved closed cells.
+    // The exact octile lower bound still enforces maxCost and reachability.
+    const weighted=heuristicPermille>1000;
+    const queue=weighted?this.weightedQueue:this.queue;
+    if(weighted)this.weightedQueue.length=0;else this.queue.reset();
+    const priority=(h:number)=>weighted?Math.floor(h*heuristicPermille/1000):h;
     const gx = goal % this.size,
       gz = Math.floor(goal / this.size);
     const heuristic = (id: number) => {
@@ -155,7 +167,7 @@ export class Navigation {
     if(heuristic(start)>maxCost)return null;
     seen[start] = epoch;
     cost[start] = 0;
-    queue.push(start, 0, heuristic(start));
+    queue.push(start, 0, priority(heuristic(start)));
     while (queue.length) {
       const cur = queue.pop(),
         id = cur.id;
@@ -172,24 +184,39 @@ export class Navigation {
       closed[id] = epoch;this.lastExpanded++;
       const x = id % this.size,
         z = Math.floor(id / this.size);
+      // Known impassable edges cannot contribute a successor. Reject them
+      // before coordinate/heuristic work; unknown edges still take the full test.
+      const candidates=this.cacheTerrain?(this.edges[id]!|(~this.knownEdges[id]!&255)):255;
       for (let direction=0;direction<DIRECTIONS.length;direction++) {
+        if(!(candidates&(1<<direction)))continue;
         const dx=DIRECTIONS[direction]![0],dy=DIRECTIONS[direction]![1];
         const nx = x + dx, ny = z + dy;
         if (nx < 0 || ny < 0 || nx >= this.size || ny >= this.size) continue;
         if(corridor&&!corridor[Math.floor(ny/SECTOR_SIZE)*sectorWidth+Math.floor(nx/SECTOR_SIZE)])continue;
         const next = ny * this.size + nx;
-        if (closed[next] === epoch) continue;
+        if (!weighted && closed[next] === epoch) continue;
         const g = cur.g + (dx && dy ? DIAGONAL_COST : CARDINAL_COST);
         if (seen[next] === epoch && g >= cost[next]!) continue;
-        const h=heuristic(next);
+        const hx=Math.abs(nx-gx),hy=Math.abs(ny-gz);
+        const h=CARDINAL_COST*Math.max(hx,hy)+(DIAGONAL_COST-CARDINAL_COST)*Math.min(hx,hy);
         if(g+h>maxCost)continue;
         // A dominated candidate cannot affect the route. Reject it before
         // consulting terrain edges or dynamic body occupancy.
-        if(!traverse(id,next,dx,dy))continue;
+        // Most expanded edges already have a terrain verdict. Read that mask
+        // directly and reject live reservations before a cold terrain sweep.
+        // The direction order is the bit order used by edge(); diagonal body
+        // reservations must still cover both cardinal side cells.
+        if(obstacles&&(obstacles[next]===epoch||(dx&&dy&&(obstacles[id+dx]===epoch||obstacles[id+dy*this.size]===epoch))))continue;
+        if(this.cacheTerrain){
+          const bit=1<<direction;
+          if(this.knownEdges[id]!&bit){if(!(this.edges[id]!&bit))continue;}
+          else if(!this.edge(id,next,bit))continue;
+        }else if(!traverse(id,next,dx,dy))continue;
+        if(weighted)closed[next]=0;
         seen[next] = epoch;
         cost[next] = g;
         prev[next] = id;
-        queue.push(next, g, h);
+        queue.push(next, g, priority(h));
       }
     }
     return null;

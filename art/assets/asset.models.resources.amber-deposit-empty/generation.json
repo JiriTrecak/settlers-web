@@ -1,0 +1,9 @@
+{
+  "method": "Blender authored + ImageGen soil albedo",
+  "tripoTask": null,
+  "triangleCount": 3162,
+  "runtimeTextureSize": 1024,
+  "reference": "reference.png",
+  "recipe": "scripts/assets/build-empty-amber-deposit.py",
+  "description": "Four amber stages are separate textured geometry; the renderer selects by remaining yield."
+}

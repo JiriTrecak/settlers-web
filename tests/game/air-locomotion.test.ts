@@ -36,6 +36,20 @@ describe('air locomotion',()=>{
   g.state.tick=a.unit!.attack!.impact;g.combat.resolve();expect(g.state.missiles[0].origin.elevation).toBe(6);
   const save=g.snapshot();g.restore(save);expect(g.snapshot()).toEqual(save);
  });
+ it('samples flight floor at the precise position without copying unrelated entity state',()=>{
+  const {g,a,b}=setup(),s=g.spatial;
+  a.unit!.position=fixed({x:100.6,y:100});
+  s.waterHeights[100*s.size+101]=1200;
+  a.unit!.garrison={building:999,height:3};
+  const position=precise(a),expected=s.elevation({...a,...position})+3;
+  expect(s.elevatedPoint(a)).toEqual({...position,elevation:expected});
+  expect(expected).toBe(21);
+  // Presentation metadata has no role in physical sight elevation.
+  Object.defineProperty(a,'appearance',{enumerable:true,get(){throw Error('Unrelated entity property copied');}});
+  expect(s.elevatedPoint(a)).toEqual({...position,elevation:expected});
+  b.unit!.position=fixed({x:104.8,y:100});b.unit!.garrison={building:999,height:4};
+  expect(s.elevatedPoint(b)).toEqual({...precise(b),elevation:4});
+ });
  it('exposes flight elevation and handles explicit target classes',()=>{
   const {g,a}=setup();g.observation.update();expect(g.view('player.1').entities.find(e=>e.id===a.id)?.elevation).toBe(6);
   expect(matchesTargetFilter({locomotion:'air'},{locomotion:['ground']})).toBe(false);

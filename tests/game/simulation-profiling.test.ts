@@ -48,3 +48,29 @@ it('publishes the hierarchy through the production worker frame and emits idle A
   expect(sawDecision&&sawIdle).toBe(true);
  }finally{runtime.destroy();}
 });
+
+it('samples core budgets without hierarchy overhead or stale detailed frames when modes change',()=>{
+ const options={map:emptyUtcMap(),match:localMatch({mapId:'test',mapRevision:'test',seed:123,slotCount:2,me:0}),player:0,remote:false};
+ const measured=new SimulationRuntime(options),plain=new SimulationRuntime(options);
+ try{
+  measured.configureProfiling(true,true);
+  measured.advance(25,1);plain.advance(25,1);
+  measured.configureProfiling(true,false);
+  for(let i=0;i<20;i++){measured.advance(25,1);plain.advance(25,1);}
+  const frame=measured.project();
+  expect(frame.profileSamples.filter(([name])=>name==='Worker · tick total')).toHaveLength(20);
+  expect(frame.profileSamples.some(([name])=>name.startsWith('Detail '))).toBe(false);
+  expect(frame.profileSamples.some(([name])=>name.startsWith('Sim ·'))).toBe(true);
+  expect(measured.world.settlement.context.profile.enabled).toBe(false);
+  expect(measured.world.snapshot()).toEqual(plain.world.snapshot());
+  measured.recordTransportSample(.25);
+  expect(measured.project().profileSamples).toEqual([['Worker · snapshot postMessage CPU',.25]]);
+  expect(measured.project().profileSamples).toEqual([]);
+  measured.configureProfiling(true,true);measured.advance(25,1);plain.advance(25,1);
+  expect(measured.project().profileSamples.some(([name])=>name.startsWith('Detail '))).toBe(true);
+  measured.configureProfiling(false);measured.advance(25,1);plain.advance(25,1);
+  measured.recordTransportSample(.5);
+  expect(measured.project().profileSamples).toEqual([]);
+  expect(measured.world.snapshot()).toEqual(plain.world.snapshot());
+ }finally{measured.destroy();plain.destroy();}
+});

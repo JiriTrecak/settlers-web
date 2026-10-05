@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Under the Canopy — The Queen’s Guard</title>
+  <style>
+    :root{--bg:#121711;--paper:#f0ecd9;--muted:#b4bea8;--line:#46543d;--button:#24301f;--available-height:72vh}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--paper);font:15px/1.4 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1240px;margin:auto;padding:18px 20px 12px}
+    h1{font:25px/1.15 Georgia,serif;letter-spacing:.02em;margin:0 0 4px}
+    header p{margin:0;color:var(--muted);font-size:13px}
+    .sources{display:flex;gap:16px;flex-wrap:wrap;font-size:13px}
+    a{color:var(--paper);text-underline-offset:4px}
+    a:hover{color:#d2e4bb}
+    nav{position:sticky;top:0;z-index:2;background:#121711f5;border-block:1px solid #2e3a28;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 16px}
+    button,select,.open-image{font:inherit;background:var(--button);color:var(--paper);border:1px solid var(--line);border-radius:5px;padding:8px 11px;min-height:38px}
+    button{cursor:pointer}
+    button:hover:not(:disabled),.open-image:hover{background:#34432c}
+    button:disabled{opacity:.35;cursor:default}
+    button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #b8cc98;outline-offset:3px}
+    select{max-width:min(340px,80vw)}
+    .open-image{text-decoration:none;font-size:13px;display:inline-flex;align-items:center}
+    main{max-width:1240px;margin:0 auto;padding:12px 14px 0}
+    figure{margin:0 0 18px}
+    figure[hidden]{display:none}
+    .art{display:flex;align-items:center;justify-content:center}
+    .art img{display:block;max-width:100%;height:auto;border-radius:2px;cursor:zoom-in}
+    body.fit:not(.all) .art img{max-height:var(--available-height);width:auto;object-fit:contain}
+    body.width:not(.all) .art img{width:min(100%,1100px)}
+    figcaption{text-align:center;font-size:13px;color:var(--muted);padding:10px 0 0}
+    body.all main{max-width:900px;padding-top:24px}
+    body.all figure{margin-bottom:38px}
+    body.all .art img{width:100%}
+    body.all figcaption{font-size:14px;padding-top:12px}
+    footer{text-align:center;font-size:12px;color:var(--muted);padding:0 16px 18px}
+    dialog{border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--paper);padding:0;width:calc(100vw - 32px);height:calc(100dvh - 32px);max-width:1600px;max-height:none;overflow:hidden}
+    dialog::backdrop{background:#050805e8}
+    .zoom-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line)}
+    .zoom-tools span{font-size:13px}
+    .zoom-tools div{display:flex;gap:8px}
+    .zoom-viewport{height:calc(100% - 57px);overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:12px}
+    .zoom-viewport img{display:block;max-width:100%;max-height:100%;object-fit:contain;cursor:zoom-in;margin:auto}
+    .zoom-viewport.enlarged{display:block;text-align:center}
+    .zoom-viewport.enlarged img{width:150%;max-width:none;max-height:none;height:auto;cursor:zoom-out;margin:0}
+    @media(max-width:650px){header{padding:14px 16px 10px;align-items:flex-start}h1{font-size:22px}.sources{gap:8px;flex-direction:column;font-size:12px}nav{gap:6px;padding:8px}button,select{font-size:13px;padding:7px 9px}select{max-width:calc(100vw - 145px)}.open-image{font-size:12px;min-height:34px}main{padding:8px 6px 0}dialog{width:calc(100vw - 12px);height:calc(100dvh - 12px)}.zoom-tools{padding:8px}.zoom-viewport{padding:6px}}
+  </style>
+</head>
+<body class="fit">
+  <header>
+    <div><h1>Under the Canopy</h1><p>The Queen’s Guard · A twelve-page campaign comic</p></div>
+    <div class="sources"><a href="storyboard.md" target="_blank" rel="noopener">Storyboard</a><a href="prompts.json" target="_blank" rel="noopener">Art prompts</a><a href="cast.png" target="_blank" rel="noopener">Character designs</a></div>
+  </header>
+  <nav aria-label="Comic reader">
+    <button id="prev" aria-label="Previous page">←</button>
+    <select id="page" aria-label="Choose comic page"></select>
+    <button id="next" aria-label="Next page">→</button>
+    <button id="fit" aria-pressed="true">Fit width</button>
+    <button id="mode" aria-pressed="false">Show all</button>
+    <button id="zoom">Zoom</button>
+    <a id="open" class="open-image" target="_blank" rel="noopener">Open image ↗</a>
+  </nav>
+  <main id="pages" aria-label="Comic pages"></main>
+  <footer>Exploratory campaign treatment · Arrow keys turn pages · Click artwork to zoom</footer>
+  <dialog id="viewer" aria-label="Full comic page">
+    <div class="zoom-tools"><span id="zoom-title"></span><div><button id="zoom-size">Zoom in</button><button id="close">Close ✕</button></div></div>
+    <div id="zoom-viewport" class="zoom-viewport"><img id="zoom-image" alt=""></div>
+  </dialog>
+  <script>
+    const titles = [
+      'The Queen’s Banner', 'Beyond the Boundary', 'Beneath the Fallen Giant',
+      'A New Strength', 'The Crown’s Reach', 'The Silent Hive',
+      'No One Commands', 'What the Root Remembers', 'The Price of Passage',
+      'The Forbidden Approach', 'A Voice Within', 'The Queen Returns'
+    ];
+    const selector = document.getElementById('page');
+    const main = document.getElementById('pages');
+    const prev = document.getElementById('prev');
+    const next = document.getElementById('next');
+    const fitButton = document.getElementById('fit');
+    const modeButton = document.getElementById('mode');
+    const viewer = document.getElementById('viewer');
+    const viewport = document.getElementById('zoom-viewport');
+    const zoomImage = document.getElementById('zoom-image');
+    const zoomSize = document.getElementById('zoom-size');
+    let current = 0;
+    let all = false;
+    let fit = true;
+    const filename = i => `page-${String(i + 1).padStart(2, '0')}.png`;
+    const label = i => `${String(i + 1).padStart(2, '0')} · ${titles[i]}`;
+    const figures = titles.map((title, i) => {
+      const option = document.createElement('option');
+      option.value = i;
+      option.textContent = label(i);
+      selector.append(option);
+      const figure = document.createElement('figure');
+      figure.id = `page-${String(i + 1).padStart(2, '0')}`;
+      figure.hidden = i !== 0;
+      const art = document.createElement('div');
+      art.className = 'art';
+      const img = document.createElement('img');
+      img.src = filename(i);
+      img.alt = `Comic page ${i + 1}: ${title}`;
+      img.loading = 'eager';
+      img.decoding = 'async';
+      img.addEventListener('click', () => openZoom(i));
+      img.addEventListener('load', sizePage);
+      const caption = document.createElement('figcaption');
+      caption.textContent = label(i);
+      art.append(img);
+      figure.append(art, caption);
+      main.append(figure);
+      return figure;
+    });
+    function sizePage() {
+      const top = document.querySelector('nav').getBoundingClientRect().bottom;
+      const available = Math.max(180, window.innerHeight - top - 100);
+      document.documentElement.style.setProperty('--available-height', `${available}px`);
+    }
+    function render(updateHash = true) {
+      figures.forEach((figure, i) => figure.hidden = !all && i !== current);
+      document.body.classList.toggle('all', all);
+      document.body.classList.toggle('fit', fit);
+      document.body.classList.toggle('width', !fit);
+      selector.value = current;
+      prev.disabled = all || current === 0;
+      next.disabled = all || current === titles.length - 1;
+      fitButton.disabled = all;
+      fitButton.textContent = fit ? 'Fit width' : 'Fit page';
+      fitButton.setAttribute('aria-pressed', String(fit));
+      modeButton.textContent = all ? 'Single page' : 'Show all';
+      modeButton.setAttribute('aria-pressed', String(all));
+      document.getElementById('open').href = filename(current);
+      document.title = `${label(current)} — Under the Canopy`;
+      if (updateHash) history.replaceState(null, '', all ? '#all' : `#${figures[current].id}`);
+      sizePage();
+    }
+    function changePage(i) {
+      if (viewer.open) viewer.close();
+      current = Math.max(0, Math.min(titles.length - 1, i));
+      all = false;
+      render();
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      requestAnimationFrame(sizePage);
+    }
+    function openZoom(i = current) {
+      current = i;
+      render();
+      zoomImage.src = filename(i);
+      zoomImage.alt = `Comic page ${i + 1}: ${titles[i]}`;
+      document.getElementById('zoom-title').textContent = label(i);
+      viewport.classList.remove('enlarged');
+      zoomSize.textContent = 'Zoom in';
+      if (!viewer.open) viewer.showModal();
+      viewport.scrollTo(0, 0);
+    }
+    function toggleZoom() {
+      const enlarged = viewport.classList.toggle('enlarged');
+      zoomSize.textContent = enlarged ? 'Fit page' : 'Zoom in';
+      viewport.scrollTo(0, 0);
+    }
+    prev.addEventListener('click', () => changePage(current - 1));
+    next.addEventListener('click', () => changePage(current + 1));
+    selector.addEventListener('change', () => changePage(Number(selector.value)));
+    fitButton.addEventListener('click', () => { fit = !fit; render(); });
+    modeButton.addEventListener('click', () => { all = !all; render(); window.scrollTo({ top: 0, behavior: 'instant' }); requestAnimationFrame(sizePage); });
+    document.getElementById('zoom').addEventListener('click', () => openZoom());
+    document.getElementById('close').addEventListener('click', () => viewer.close());
+    zoomSize.addEventListener('click', toggleZoom);
+    zoomImage.addEventListener('click', toggleZoom);
+    document.addEventListener('keydown', e => {
+      if (viewer.open || e.altKey || e.ctrlKey || e.metaKey || /SELECT|INPUT|TEXTAREA/.test(e.target.tagName)) return;
+      if (e.key === 'ArrowRight' && !all) { e.preventDefault(); changePage(current + 1); }
+      if (e.key === 'ArrowLeft' && !all) { e.preventDefault(); changePage(current - 1); }
+      if (e.key === 'Home' && !all) { e.preventDefault(); changePage(0); }
+      if (e.key === 'End' && !all) { e.preventDefault(); changePage(titles.length - 1); }
+    });
+    window.addEventListener('resize', sizePage);
+    const hashPage = /^#page-(\d{2})$/.exec(location.hash);
+    if (hashPage) current = Math.max(0, Math.min(titles.length - 1, Number(hashPage[1]) - 1));
+    all = location.hash === '#all';
+    render(false);
+  </script>
+</body>
+</html>

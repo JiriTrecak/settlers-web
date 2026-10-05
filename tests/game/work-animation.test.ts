@@ -6,7 +6,7 @@ it("exposes declared work poses only after arrival, and never on the harvest ret
   const job = {id: 999, type: "construct" as const, worker: w.id, target: b.id,
     source: null, item: null, amount: 0, phase: "work" as const, progress: 0,
     queue: null, claim: null, internal: false};
-  g.state.jobs.push(job); w.unit!.job = 999;
+  g.context.addJob(job); w.unit!.job = 999;
   const pose = () => {g.observation.update(); return g.view(0).entities.find(e => e.id === w.id)!.unit!.work;};
   expect(pose()).toMatchObject({animation: "build", x: b.x, y: b.y});
   w.unit!.route = [100];

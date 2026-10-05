@@ -1,7 +1,8 @@
 import type {MapStamp} from '../shared/map/utcmap';
 
 type Changes={removed:readonly MapStamp[];added:readonly MapStamp[];reordered:boolean};
-type Publication={token:symbol;previous?:symbol;changes?:Changes};
+type Composition={base:readonly MapStamp[];dynamic:readonly MapStamp[]};
+type Publication={token:symbol;previous?:symbol;changes?:Changes;composition?:Composition};
 const publications=new WeakMap<readonly MapStamp[],Publication>();
 /** Optional presentation-only change hints for immutable game scenery. The old
  * array is deliberately NOT retained: keeping the latest publication must not
@@ -10,8 +11,10 @@ export function sceneryChanges(before:readonly MapStamp[]|null|undefined,after:r
  const previous=before&&publications.get(before),next=publications.get(after);
  return previous&&next?.previous===previous.token?next.changes:undefined;
 }
-function publish(next:readonly MapStamp[],before?:readonly MapStamp[],changes?:Changes){
- publications.set(next,{token:Symbol(),previous:before?publications.get(before)?.token:undefined,changes});
+/** Immutable component lists, when the publisher can guarantee their identity. */
+export function sceneryParts(stamps:readonly MapStamp[]):Composition|undefined{return publications.get(stamps)?.composition;}
+function publish(next:readonly MapStamp[],before?:readonly MapStamp[],changes?:Changes,composition?:Composition){
+ publications.set(next,{token:Symbol(),previous:before?publications.get(before)?.token:undefined,changes,composition});
  return next;
 }
 
@@ -32,7 +35,7 @@ export class SceneryComposition {
    for(const s of dynamic)if(old.has(s.id)&&surviving[i++]?.id!==s.id)reordered=true;
    changes={removed,added,reordered};
   }
-  const next=publish([...base,...dynamic],this.value,changes);
+  const next=publish([...base,...dynamic],this.value,changes,{base,dynamic});
   this.base=base;this.dynamic=dynamic;this.value=next;return next;
  }
 }
@@ -42,20 +45,35 @@ export class SceneryComposition {
 export class SceneryFilter {
  private input?:readonly MapStamp[];
  private output:readonly MapStamp[]=[];
+ private compositionBase?:readonly MapStamp[];
+ private filteredBase:readonly MapStamp[]=[];
  constructor(private readonly accepts:(stamp:MapStamp)=>boolean){}
  select(stamps:readonly MapStamp[]):readonly MapStamp[]{
   if(stamps===this.input)return this.output;
   const changes=sceneryChanges(this.input,stamps);this.input=stamps;
-  if(changes&&!changes.reordered){
-   const removed=changes.removed.filter(this.accepts),added=changes.added.filter(this.accepts);
+  const composition=sceneryParts(stamps);
+  const filteredChanges=changes?{removed:changes.removed.filter(this.accepts),added:changes.added.filter(this.accepts),reordered:changes.reordered}:undefined;
+  if(filteredChanges&&!filteredChanges.reordered){
+   const {removed,added}=filteredChanges;
    if(!removed.length&&!added.length)return this.output;
    if(!added.length){
     const ids=new Set(removed.map(s=>s.id));
-    this.output=publish(this.output.filter(s=>!ids.has(s.id)),this.output,{removed,added,reordered:false});
+    const prior=sceneryParts(this.output);
+    if(composition&&prior&&this.compositionBase===composition.base){
+     const dynamic=prior.dynamic.filter(s=>!ids.has(s.id));
+     this.output=publish([...prior.base,...dynamic],this.output,filteredChanges,{base:prior.base,dynamic});
+    }else this.output=publish(this.output.filter(s=>!ids.has(s.id)),this.output,filteredChanges);
     return this.output;
    }
   }
-  const filteredChanges=changes?{removed:changes.removed.filter(this.accepts),added:changes.added.filter(this.accepts),reordered:changes.reordered}:undefined;
+  if(composition){
+   // Resource discovery/regrowth must not reclassify the static forest. The
+   // publisher guarantees immutable parts; untracked editor arrays still scan.
+   if(this.compositionBase!==composition.base){this.compositionBase=composition.base;this.filteredBase=composition.base.filter(this.accepts);}
+   const dynamic=composition.dynamic.filter(this.accepts);
+   this.output=publish([...this.filteredBase,...dynamic],this.output,filteredChanges,{base:this.filteredBase,dynamic});
+   return this.output;
+  }
   this.output=publish(stamps.filter(this.accepts),this.output,filteredChanges);return this.output;
  }
 }

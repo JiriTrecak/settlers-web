@@ -39,7 +39,7 @@ export class Revival {
  }
  tick(){
   const outcomes:{hero:number;record:HeroReturn;success:boolean}[]=[];
-  for(const hero of this.c.state.entities){
+  for(const hero of this.c.indexedUnits()){
    const record=hero.spellReturn;if(!record)continue;
    const ability=this.c.registry.abilityLibrary.abilities.find(a=>a.id===record.ability),op=ability&&allEffects(ability).find(e=>e.op==='revive'&&e.id===record.operation);
    const parameters=ability?.ranks[record.rank-1];

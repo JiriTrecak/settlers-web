@@ -4,7 +4,7 @@ import {spellAppearance,spellFormOpacity} from '../abilities/forms';
 import { colonySupply, type Supply } from "./supply";
 import {spellHidden,spellDetection,concealmentOpacity} from '../abilities/concealment';
 import {SectorIndex} from '../../shared/spatial/sectors';
-import {VisionMask} from './visionMask';
+import {VisionMask,type VisionSource} from './visionMask';
 import { workerPopulation } from "./population";
 import type {AbilityEvent} from "../abilities/runtime";
 import { isStunned } from "./effects";
@@ -15,7 +15,7 @@ import { z } from "zod";
 import type { Owner, Stock } from "../../content/schema";
 import { ownerSchema, ownerSlot, surfaceSchema } from "../../content/schema";
 import { GameContext } from "./context";
-import { alive, fellingStateSchema, type Entity, type Fact, type GameState, type Job, type UnitOrder } from "./state";
+import { alive, fellingStateSchema, type Entity, type Fact, type GameState, type UnitOrder } from "./state";
 import { resolvedStatsSchema, type entityStats } from "./stats";
 
 function copyOrder(order:UnitOrder):UnitOrder {
@@ -228,22 +228,22 @@ export class Observation {
   private readonly forestSlots=new Map<number,number>();
   private stationary:Entity[]=[];
   private structureRevision=-1;
-  private readonly jobs=new Map<number,Job>();
   private readonly gatherers=new Map<number,number>();
   private projectWork(){
-    this.jobs.clear();this.gatherers.clear();
+    this.gatherers.clear();
     const sources=new Map<number,number|null>();
-    for(const job of this.c.state.jobs){this.jobs.set(job.id,job);if(job.type==='harvest')sources.set(job.worker,job.source);}
+    for(const job of this.c.state.jobs)if(job.type==='harvest')sources.set(job.worker,job.source);
     for(const worker of this.c.liveUnits()){
       const source=sources.get(worker.id),order=worker.unit!.order,target=order?.type==='gather'?order.target:null;
       if(source!=null)this.gatherers.set(source,(this.gatherers.get(source)??0)+1);
       if(target!=null&&target!==source)this.gatherers.set(target,(this.gatherers.get(target)??0)+1);
     }
   }
-  private job(id:number|null|undefined){return id==null?undefined:this.jobs.get(id)??this.c.state.jobs.find(j=>j.id===id);}
+  private job(id:number|null|undefined){return this.c.job(id);}
   private readonly forestIds=new Set<number>();
   private readonly visibleStatics=new Map<Owner,Set<number>>();
   private readonly staticCoverage=new Map<Owner,Map<number,number>>();
+  private readonly staleStatics=new Map<Owner,Set<number>>();
   private readonly fogProjection = new WeakMap<Uint8Array,Pick<FogView,'cells'|'floors'>>();
   private readonly deckNodes: readonly FogDeckNode[];
   constructor(
@@ -252,6 +252,11 @@ export class Observation {
     private readonly available: (e: Entity, item: string) => number,
     private readonly hostility?: (owner: Owner, e: Entity) => boolean,
   ) {
+    this.projectActors=this.c.profile.wrap('Actor projection',this.projectActors.bind(this));
+    this.projectKnowledge=this.c.profile.wrap('Known scenery projection',this.projectKnowledge.bind(this));
+    this.projectColony=this.c.profile.wrap('Colony summaries',this.projectColony.bind(this));
+    this.orderEntities=this.c.profile.wrap('Entity ordering',this.orderEntities.bind(this));
+    this.sightFootprint=this.c.profile.wrap('Terrain sight footprint',this.sightFootprint.bind(this));
     this.deckNodes=this.c.spatial.layers?.nodes.slice(this.c.spatial.size**2).map(n=>({cell:n.cell,height:n.height}))??[];
     this.memories = owners.map((owner) => ({
       owner,
@@ -260,6 +265,11 @@ export class Observation {
       entities: new Map(),
       observedDeaths: [],
     }));
+  }
+  private sightFootprint(sensor:VisionSource){
+    if(!this.c.spatial.layers&&!sensor.ignoreTerrain)return this.c.spatial.tactical.visibleSpans(sensor,sensor.radius);
+    const nodes=this.c.spatial.visibleNodes(sensor,sensor.radius,sensor.ignoreTerrain);
+    return this.c.spatial.layers?[...nodes].sort((a,b)=>a-b):nodes;
   }
   private nativeSharesVision(owner:Owner,sensor:Entity):boolean {
     return sensor.owner===owner || (sensor.owner!=="none" && this.hostility?.(owner,sensor)===false);
@@ -273,7 +283,7 @@ export class Observation {
     const stamp=`${this.c.state.tick}:${this.c.observationRevision}`;
     if(stamp!==this.containmentSightStamp){
       this.containmentSight.clear();
-      for(const e of this.c.state.entities){
+      for(const e of this.c.indexedUnits()){
         const s=e.spellContainment;if(!s||!alive(e)||e.unit?.contained!==s.host||s.expires<=this.c.state.tick)continue;
         const host=this.c.get(s.host),a=this.c.registry.abilityLibrary.abilities.find(a=>a.id===s.ability);
         if(!host||!alive(host)||host.owner!==s.owner||host.unit?.contained||host.unit?.release||!a||!allEffects(a).some(op=>op.op==='contain'&&op.id===s.operation&&op.shareVision))continue;
@@ -323,7 +333,7 @@ export class Observation {
         this.c.spatial.range(sensor,e)<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(this.c.spatial.elevatedPoint(sensor),this.c.spatial.elevatedPoint(e)))return true;
       return false;
     }
-    const cells=this.c.spatial.footprint(e);
+    const cells=this.fogFootprint(e);
     for(const sensor of candidates)if(alive(sensor)&&this.sharesVision(owner,sensor)&&!sensor.unit?.contained&&!sensor.unit?.release&&
       cells.some(i=>i>=0&&((i%this.c.spatial.size-sensor.x)**2+(Math.floor(i/this.c.spatial.size)-sensor.y)**2)<=(this.c.def(sensor).vision??0)**2&&
         this.c.spatial.tactical.visible(this.c.spatial.elevatedPoint(sensor),this.c.spatial.point(i))))return true;
@@ -333,9 +343,9 @@ export class Observation {
     if (e.owner === owner) return true;
     if(!this.detects(owner,e))return false;
     const m = this.memories.find((p) => p.owner === owner);
-    if(this.c.spatial.layers)return !!m&&this.c.spatial.footprint(e).some(i=>i>=0&&m.cells[i]===2)&&this.visible(owner,e);
+    if(this.c.spatial.layers)return !!m&&this.fogFootprint(e).some(i=>i>=0&&m.cells[i]===2)&&this.visible(owner,e);
     return (
-      !!m && this.c.spatial.footprint(e).some((i) => i >= 0 && m.cells[i] === 2)
+      !!m && this.fogFootprint(e).some((i) => i >= 0 && m.cells[i] === 2)
     );
   }
   explored(owner: Owner, indices: readonly number[]) {
@@ -380,6 +390,7 @@ export class Observation {
     privateData: boolean,
     observer?: Owner,
   ): EntityView {
+    if(!e.resource||e.owner!=="none")return this.describeActor(e,privateData,observer);
     // Observer/reveal mode also includes every forest resource. Neutral foliage
     // has no commands; avoid running private unit/job projection for each tree.
     const foliagePrivate = !e.progression && !e.abilities && !e.equipment && !e.equipmentState &&
@@ -399,78 +410,53 @@ export class Observation {
   /** Keep the forest projection fast path small; actors have richer private state. */
   private describeActor(e:Entity,privateData:boolean,observer?:Owner):EntityView {
     const position=precise(e),definition=this.c.def(e),appearance=spellAppearance(e,this.c.registry);
-    const result: EntityView = {
-      id: e.id,
-      definition: e.definition,
-      owner: e.owner,
-      x: position.x,
-      y: position.y,
-      ...(e.surface?{surface:e.surface}:{}),
-      rotation: e.rotation,
-      ...(this.c.spatial.airborne(e)?{elevation:this.c.spatial.elevation(e)}:{}),
-      hp: e.hp,
-      ...(observer ? { hostile: this.hostility?.(observer, e) ?? false } : {}),
-      ...(definition.body ? { stats: this.c.stats(e) } : {}),
-      ...(privateData&&e.spellReturn?{spellReturn:structuredClone(e.spellReturn)}:{}),
-      ...(privateData && e.revival
-        ? { revival: structuredClone(e.revival) }
-        : {}),
-      ...(privateData && e.progression
-        ? { progression: { ...e.progression } }
-        : {}),
-      ...(e.spellStatuses?{spellStatuses:e.spellStatuses.map(({sourceContext:_sourceContext,...s})=>structuredClone(s))}:{}),
-      ...(e.summoned?{summoned:true,...(privateData?{summonOrigin:{source:e.summoned.source,ability:e.summoned.ability}}:{})}:{}),
-      ...(e.spellStatuses?{concealmentOpacity:concealmentOpacity(e,this.c.registry,this.c.state.tick)*spellFormOpacity(e,this.c.registry)}:{}),
-      ...(privateData && e.abilities ? {abilities:structuredClone(e.abilities),activeAbilities:this.c.state.spellInstances.filter(i=>i.source===e.id).map(i=>i.ability)} : {}),
-      ...(e.itemStatuses ? {itemStatuses: structuredClone(e.itemStatuses)} : {}),
-      ...(privateData && e.equipmentState ? {equipmentState: structuredClone(e.equipmentState)} : {}),
-      ...(privateData && e.equipment ? { equipment: [...e.equipment] } : {}),
-      ...(appearance ? { appearance: { ...appearance } } : {}),
-      ...(e.construction
-        ? { construction: { progress: e.construction.progress } }
-        : {}),
-      ...(privateData && e.upgrade ? {upgrade: {...e.upgrade}} : {}),
-      ...(privateData && e.research ? {research: structuredClone(e.research)} : {}),
-      ...(e.resource ? { resource: structuredClone(e.resource) } : {}),
-      ...(definition.gatheringCapacity
-        ? {
-            gathering: {
-              workers: this.gatherers.get(e.id)??0,
-              capacity: definition.gatheringCapacity!,
-            },
-          }
-        : {}),
-      ...(e.item ? { item: { ...e.item } } : {}),
-    };
-    if (e.unit)
-      result.unit = {
-        ...(e.unit.flight?{flight:{height:e.unit.flight.height}}:{}),
-        moving: e.unit.lastMovedTick === this.c.state.tick,
-        strolling: !!e.unit.idle?.walking,
-        charging: e.unit.charge?.target != null && e.unit.charge.expires > this.c.state.tick,
-        ...(e.abilities?.pending && e.abilities.pending.startTick<=this.c.state.tick
-          ? {
-              casting: {
-                ability: e.abilities.pending.ability,
-                startTick: e.abilities.pending.startTick,
-                resolveTick: e.abilities.pending.releaseTick,
-                finishTick: e.abilities.pending.finishTick,
-                ...(e.abilities.pending.channel?{channel:{endTick:e.abilities.pending.channel.endTick}}:{}),
-              },
-            }
-          : {}),
-        contained: !!(e.unit.contained || e.unit.release),
-        ...(e.unit.garrison?{garrison:{...e.unit.garrison}}:{}),
-        cargo: e.unit.cargo ? { ...e.unit.cargo } : null,
-        target: privateData ? e.unit.target : null,
-        commandedTarget:
-          privateData && e.unit.order?.type === "attack"
-            ? e.unit.order.target
-            : null,
-        cooldown: e.unit.cooldown,
-        ...(e.unit.attack ? {attack: {...e.unit.attack,target:privateData || (observer && this.c.get(e.unit.attack.target) && this.visible(observer,this.c.get(e.unit.attack.target)!)) ? e.unit.attack.target : null}} : {}),
-
+    const result:EntityView={id:e.id,definition:e.definition,owner:e.owner,x:position.x,y:position.y,rotation:e.rotation,hp:e.hp};
+    if(e.surface)result.surface=e.surface;
+    if(this.c.spatial.airborne(e))result.elevation=this.c.spatial.elevation(e);
+    if(observer)result.hostile=this.hostility?.(observer,e)??false;
+    if(definition.body)result.stats=this.c.stats(e);
+    if(privateData&&e.spellReturn)result.spellReturn=structuredClone(e.spellReturn);
+    if(privateData&&e.revival)result.revival=structuredClone(e.revival);
+    if(privateData&&e.progression){
+      result.progression={...e.progression};
+      if(e.progression.bonuses)result.progression.bonuses={...e.progression.bonuses};
+    }
+    if(e.spellStatuses){
+      result.spellStatuses=e.spellStatuses.map(({sourceContext:_sourceContext,...status})=>structuredClone(status));
+      result.concealmentOpacity=concealmentOpacity(e,this.c.registry,this.c.state.tick)*spellFormOpacity(e,this.c.registry);
+    }
+    if(e.summoned){result.summoned=true;if(privateData)result.summonOrigin={source:e.summoned.source,ability:e.summoned.ability};}
+    if(privateData&&e.abilities){result.abilities=structuredClone(e.abilities);result.activeAbilities=this.c.state.spellInstances.filter(i=>i.source===e.id).map(i=>i.ability);}
+    if(e.itemStatuses)result.itemStatuses=structuredClone(e.itemStatuses);
+    if(privateData&&e.equipmentState)result.equipmentState=structuredClone(e.equipmentState);
+    if(privateData&&e.equipment)result.equipment=[...e.equipment];
+    if(appearance)result.appearance={...appearance};
+    if(e.construction)result.construction={progress:e.construction.progress};
+    if(privateData&&e.upgrade)result.upgrade={...e.upgrade};
+    if(privateData&&e.research)result.research=structuredClone(e.research);
+    if(e.resource)result.resource=structuredClone(e.resource);
+    if(definition.gatheringCapacity)result.gathering={workers:this.gatherers.get(e.id)??0,capacity:definition.gatheringCapacity};
+    if(e.item)result.item={...e.item};
+    if(e.unit){
+      const u=e.unit,unit:NonNullable<EntityView['unit']>={
+        moving:u.lastMovedTick===this.c.state.tick,strolling:!!u.idle?.walking,
+        charging:u.charge?.target!=null&&u.charge.expires>this.c.state.tick,
+        contained:!!(u.contained||u.release),cargo:u.cargo?{...u.cargo}:null,
+        target:privateData?u.target:null,commandedTarget:privateData&&u.order?.type==='attack'?u.order.target:null,cooldown:u.cooldown,
       };
+      if(u.flight)unit.flight={height:u.flight.height};
+      const pending=e.abilities?.pending;
+      if(pending&&pending.startTick<=this.c.state.tick){
+        unit.casting={ability:pending.ability,startTick:pending.startTick,resolveTick:pending.releaseTick,finishTick:pending.finishTick};
+        if(pending.channel)unit.casting.channel={endTick:pending.channel.endTick};
+      }
+      if(u.garrison)unit.garrison={...u.garrison};
+      if(u.attack){
+        const target=privateData?undefined:this.c.get(u.attack.target);
+        unit.attack={...u.attack,target:privateData||observer&&target&&this.visible(observer,target)?u.attack.target:null};
+      }
+      result.unit=unit;
+    }
     if (
       e.unit &&
       result.unit &&
@@ -554,36 +540,76 @@ export class Observation {
     }
     return result;
   }
+  // Membership is weak and cells are private/read-only to consumers. Unit motion,
+  // placement edits, forms with a new identity, floors and restored entities all
+  // select fresh footprints; unchanged buildings need no repeated array creation.
+  private readonly footprints=new WeakMap<object,{definition:string;x:number;y:number;rotation:number;surface?:string;cells:number[]}>();
   private fogFootprint(e:Pick<Entity,"definition"|"x"|"y"|"rotation"|"surface">):number[]{
-    return this.c.spatial.footprint(e);
+    const old=this.footprints.get(e);
+    if(old&&old.definition===e.definition&&old.x===e.x&&old.y===e.y&&old.rotation===e.rotation&&old.surface===e.surface)return old.cells;
+    const cells=this.c.spatial.footprint(e);
+    this.footprints.set(e,{definition:e.definition,x:e.x,y:e.y,rotation:e.rotation,surface:e.surface,cells});return cells;
+  }
+  private classifyEntity(e:Entity,stationary:Entity[]):void {
+    if(alive(e)&&!e.unit&&(e.resource||this.c.def(e).kind==="building"))stationary.push(e);
+    const resource=e.resource&&!e.progression&&!e.abilities&&!e.equipment&&!e.equipmentState&&
+      !e.production&&!e.revival&&!e.upgrade&&!e.research&&Object.keys(e.inventory).length===0?this.cachedResource(e):undefined;
+    if(resource){this.forestSlots.set(e.id,this.forest.length);this.forest.push(this.privateForestView(resource));this.forestIds.add(e.id);}
+    else this.actors.push(e);
   }
   private projectEntities(live=this.c.state.entities):Entity[] {
     const stationary:Entity[]=[];
     this.actors=[];this.forest=[];this.forestIds.clear();this.forestSlots.clear();
-    for(const e of live){
-      if(alive(e)&&!e.unit&&(e.resource||this.c.def(e).kind==="building"))stationary.push(e);
-      const resource=e.resource&&!e.progression&&!e.abilities&&!e.equipment&&!e.equipmentState&&
-        !e.production&&!e.revival&&!e.upgrade&&!e.research&&Object.keys(e.inventory).length===0?this.cachedResource(e):undefined;
-      if(resource){this.forestSlots.set(e.id,this.forest.length);this.forest.push(this.privateForestView(resource));this.forestIds.add(e.id);}
-      else this.actors.push(e);
-    }
+    for(const e of live)this.classifyEntity(e,stationary);
     return stationary;
   }
-  /** Only use receipts when they explain every revision since the last update.
-   * Unknown invalidations (forms, ownership, editor edits, reindex) keep the full
-   * path. Check every receipt before changing anything, including add-then-remove. */
-  private updateActorMembership():boolean {
+  /** Receipts must explain every revision. Unknown edits/forms and restoration
+   * retain full classification; creation/removal touches only affected records. */
+  private updateEntityMembership():readonly {type:'add'|'remove';entity:Entity}[]|null {
     const changes=this.c.observationEntityChanges;
-    if(this.structureRevision<0||!changes.length||this.c.observationRevision-this.structureRevision!==changes.length)return false;
-    for(const {type,entity:e} of changes){
-      if(type==='add'&&(e.resource||!e.unit&&this.c.def(e).kind==='building'))return false;
-      if(type==='remove'&&(this.forestIds.has(e.id)||this.staticRecords.has(e.id)))return false;
-    }
+    if(this.structureRevision<0||!changes.length||this.c.observationRevision-this.structureRevision!==changes.length)return null;
     const removed=new Set(changes.filter(c=>c.type==='remove').map(c=>c.entity.id));
-    if(removed.size)this.actors=this.actors.filter(e=>!removed.has(e.id));
-    for(const {type,entity} of changes)if(type==='add'&&!removed.has(entity.id))this.actors.push(entity);
+    if(removed.size){
+      this.actors=this.actors.filter(e=>!removed.has(e.id));
+      if([...removed].some(id=>this.staticRecords.has(id)))this.stationary=this.stationary.filter(e=>!removed.has(e.id));
+      if([...removed].some(id=>this.forestIds.has(id))){
+        this.forest=this.forest.filter(e=>!removed.has(e.id));this.forestSlots.clear();
+        for(let i=0;i<this.forest.length;i++)this.forestSlots.set(this.forest[i]!.id,i);
+      }
+      for(const id of removed){this.forestIds.delete(id);this.resourceViews.delete(id);}
+    }
+    for(const {type,entity} of changes)if(type==='add'&&!removed.has(entity.id))this.classifyEntity(entity,this.stationary);
     this.structureRevision=this.c.observationRevision;
-    return true;
+    // The caller consumes/clears the journal before refreshing static coverage.
+    return [...changes];
+  }
+  /** Edit only the former/new footprint. Overlap order matches full classification. */
+  private updateStaticMembership(changes:readonly {entity:Entity}[],changed:Set<number>):void {
+    const cells=this.staticCells!;
+    for(const {entity} of changes){
+      if(changed.has(entity.id))continue;
+      const id=entity.id,old=this.staticRecords.get(id),current=this.c.get(id);
+      const next=current&&alive(current)&&!current.unit&&(current.resource||this.c.def(current).kind==='building')?current:undefined;
+      if(!old&&!next)continue;
+      changed.add(id);
+      if(old){
+        for(const cell of this.fogFootprint(old))if(cell>=0){
+          const overlap=this.staticOverlaps.get(cell);
+          if(overlap){
+            const remaining=overlap.filter(key=>key!==id);cells[cell]=remaining[0]??0;
+            if(remaining.length>1)this.staticOverlaps.set(cell,remaining);else this.staticOverlaps.delete(cell);
+          }else if(cells[cell]===id)cells[cell]=0;
+        }
+        this.staticRecords.delete(id);
+      }
+      if(next){
+        this.staticRecords.set(id,{definition:next.definition,x:next.x,y:next.y,rotation:next.rotation,surface:next.surface});
+        for(const cell of this.fogFootprint(next))if(cell>=0){
+          if(cells[cell]){const ids=this.staticOverlaps.get(cell)??[cells[cell]];ids.push(id);this.staticOverlaps.set(cell,ids);}
+          else cells[cell]=id;
+        }
+      }
+    }
   }
   /** Explicit external updates rescan state; fixed ticks consume simulation change receipts. */
   update(incremental=false) {
@@ -597,7 +623,8 @@ export class Observation {
       this.deathCues.shift();
     const changedResources=new Set([...this.c.changedResources].map(e=>e.id));
     let rebuild=!incremental||this.structureRevision!==this.c.observationRevision;
-    if(rebuild&&incremental&&this.c.profile.measure('Actor membership receipts',()=>this.updateActorMembership()))rebuild=false;
+    const receipts=rebuild&&incremental?this.c.profile.measure('Entity membership receipts',()=>this.updateEntityMembership()):null;
+    if(receipts)rebuild=false;
     if(rebuild){
       this.stationary=this.c.profile.measure('Entity classification',()=>this.projectEntities());this.structureRevision=this.c.observationRevision;
       for(const id of this.resourceViews.keys())if(!this.c.get(id))this.resourceViews.delete(id);
@@ -608,39 +635,51 @@ export class Observation {
     this.c.changedResources.clear();this.c.observationEntityChanges.length=0;this.projectWork();
     const initializeStatic=!this.staticCells;
     const stationary=this.stationary,staticCells=this.staticCells??=new Int32Array(this.c.spatial.layers?.nodes.length??this.c.spatial.size**2);
-    const staticChanged=rebuild&&(initializeStatic || stationary.length !== this.staticRecords.size || stationary.some(e => {
+    let staticChanged=rebuild&&(initializeStatic || stationary.length !== this.staticRecords.size || stationary.some(e => {
       const old=this.staticRecords.get(e.id);
       return !old || old.x!==e.x || old.y!==e.y || old.rotation!==e.rotation || old.definition!==e.definition || old.surface!==e.surface;
     }));
+    const changedStaticIds=new Set<number>();
     if(staticChanged) {
-      staticCells.fill(0); this.staticOverlaps.clear(); this.staticRecords.clear();
+      const previous=this.staticRecords;this.staticRecords=new Map();
+      staticCells.fill(0); this.staticOverlaps.clear();
       for (const e of stationary) {
+        const old=previous.get(e.id);
+        if(!old||old.definition!==e.definition||old.x!==e.x||old.y!==e.y||old.rotation!==e.rotation||old.surface!==e.surface)changedStaticIds.add(e.id);
         this.staticRecords.set(e.id,{definition:e.definition,x:e.x,y:e.y,rotation:e.rotation,surface:e.surface});
         for(const cell of this.fogFootprint(e))if(cell>=0){
           if(staticCells[cell]){const ids=this.staticOverlaps.get(cell)??[staticCells[cell]];ids.push(e.id);this.staticOverlaps.set(cell,ids);}
           else staticCells[cell]=e.id;
         }
       }
+      for(const id of previous.keys())if(!this.staticRecords.has(id))changedStaticIds.add(id);
     }
+    if(receipts){this.updateStaticMembership(receipts,changedStaticIds);staticChanged=changedStaticIds.size>0;}
     this.timings['Observation · static index']=performance.now()-started;
     const overlaps=this.staticOverlaps;
+    // Resolve each sensor once for this observation pass. Shared vision only
+    // filters these live records per observer; it does not reclassify the world.
+    const sensorStarted=performance.now();
+    const visionSensors=this.c.profile.measure('Vision sensors',()=>this.c.liveSensors()
+      .filter(e=>!e.unit?.contained&&!e.unit?.release)
+      .map(e=>({entity:e,source:{id:e.id,x:e.x,y:e.y,surface:e.surface,
+        elevation:this.c.spatial.elevation(e)+(e.unit?.garrison?.height??0),radius:this.c.def(e).vision??0}})));
+    maskMs+=performance.now()-sensorStarted;
     for (const m of this.memories) {
       const maskStarted=performance.now();
       m.observedDeaths = m.observedDeaths.filter(
         (d) => this.c.state.tick - d.tick <= 400,
       );
-      const sensors = this.c.profile.measure('Vision sensors',()=>this.c.liveSensors().filter(
-          (e) => this.sharesVision(m.owner,e) && !e.unit?.contained && !e.unit?.release,
-        ));
+      const sensors=visionSensors.filter(s=>this.sharesVision(m.owner,s.entity));
       let mask=this.masks.get(m.owner);
       if(!mask){mask=new VisionMask(m.cells);this.masks.set(m.owner,mask);}
-      const visionChanged=this.c.profile.measure('Sight masks',()=>mask!.update([...sensors.map(e=>({id:e.id,x:e.x,y:e.y,surface:e.surface,elevation:this.c.spatial.elevation(e)+(e.unit?.garrison?.height??0),radius:this.c.def(e).vision??0})),...this.spellSensors(m.owner).map(v=>({id:-v.id,...v.point,radius:v.radius,ignoreTerrain:v.ignoreTerrain}))],sensor=>{const nodes=this.c.spatial.visibleNodes(sensor,sensor.radius,sensor.ignoreTerrain);return this.c.spatial.layers?[...nodes].sort((a,b)=>a-b):nodes;}));
+      const visionChanged=this.c.profile.measure('Sight masks',()=>mask!.update([...sensors.map(s=>s.source),...this.spellSensors(m.owner).map(v=>({id:-v.id,...v.point,radius:v.radius,ignoreTerrain:v.ignoreTerrain}))],sensor=>this.sightFootprint(sensor)));
       m.cells=mask.cells;m.visibleCells=mask.visible;
       maskMs+=performance.now()-maskStarted;
       const knowledgeStarted=performance.now();
       let observedStatic=this.visibleStatics.get(m.owner),coverage=this.staticCoverage.get(m.owner);
       const refresh=new Set(changedResources);
-      if(!observedStatic||!coverage||staticChanged){
+      if(!observedStatic||!coverage||(staticChanged&&!receipts)){
         observedStatic=new Set<number>();coverage=new Map<number,number>();
         for(const cell of m.visibleCells){
           const ids=overlaps.get(cell),id=staticCells[cell];
@@ -653,23 +692,51 @@ export class Observation {
         for(const cell of mask.changedCells){
           const ids=overlaps.get(cell),id=staticCells[cell],delta=m.cells[cell]===2?1:-1;
           for(const key of ids??(id?[id]:[])){
+            // Edited footprints are reconciled below against the new mask. Their
+            // old coverage cannot be adjusted using only the new cell index.
+            if(changedStaticIds.has(key))continue;
             const count=(coverage.get(key)??0)+delta;
             if(count>0){coverage.set(key,count);if(!observedStatic.has(key)){observedStatic.add(key);refresh.add(key);}}
             else{coverage.delete(key);observedStatic.delete(key);}
           }
         }
       }
+      if(receipts)for(const id of changedStaticIds){
+        const record=this.staticRecords.get(id);
+        let count=0;
+        if(record)for(const cell of this.fogFootprint(record))if(cell>=0&&m.cells[cell]===2)count++;
+        if(count){coverage.set(id,count);observedStatic.add(id);refresh.add(id);}
+        else{coverage.delete(id);observedStatic.delete(id);}
+      }
+      let stale=this.staleStatics.get(m.owner);
+      // Remembered footprints become stale only when that scenery changes.
+      // Moving a scout never needs to inspect the whole remembered forest.
+      const inspect=stale?changedStaticIds:m.entities.keys();
+      if(!stale){stale=new Set();this.staleStatics.set(m.owner,stale);}
+      for(const id of inspect){
+        const e=m.entities.get(id),current=this.staticRecords.get(id);
+        if(e&&(!current||current.definition!==e.definition||current.x!==e.x||current.y!==e.y||
+          current.rotation!==e.rotation||current.surface!==e.surface))stale.add(id);
+        else stale.delete(id);
+      }
       if(visionChanged||staticChanged)
-        for(const [id,e] of m.entities)
-          if(!observedStatic.has(id)&&this.fogFootprint(e).some(i=>i>=0&&m.cells[i]===2)&&
-            (!this.c.spatial.layers||this.spellVisible(m.owner,e as Entity)||sensors.some(sensor=>(sensor.x-e.x)**2+(sensor.y-e.y)**2<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(this.c.spatial.elevatedPoint(sensor),e))))m.entities.delete(id);
+        for(const id of stale){
+          if(observedStatic.has(id))continue;
+          const e=m.entities.get(id)!;
+          if(this.fogFootprint(e).some(i=>i>=0&&m.cells[i]===2)&&
+            (!this.c.spatial.layers||this.spellVisible(m.owner,e as Entity)||sensors.some(({entity,source})=>(entity.x-e.x)**2+(entity.y-e.y)**2<=source.radius**2&&this.c.spatial.visible(this.c.spatial.elevatedPoint(entity),e)))){
+            m.entities.delete(id);stale.delete(id);
+          }
+        }
       // Actors/buildings can change every tick. Forest resources only change on
       // harvest/regrowth, structural edits, or newly revealed coverage.
       if(rebuild||this.c.spatial.layers)for(const id of observedStatic)refresh.add(id);
       for(const e of this.actors)if(!e.unit&&observedStatic.has(e.id))refresh.add(e.id);
       for(const id of refresh)if(observedStatic.has(id)){
         const e=this.c.get(id)!;
-        if(!this.c.spatial.layers||this.visible(m.owner,e))m.entities.set(id,this.forestIds.has(id)?this.resourceViews.get(id)!:this.describe(e,false));
+        if(!this.c.spatial.layers||this.visible(m.owner,e)){
+          m.entities.set(id,this.forestIds.has(id)?this.resourceViews.get(id)!:this.describe(e,false));stale.delete(id);
+        }
       }
       knowledgeMs+=performance.now()-knowledgeStarted;
     }
@@ -688,29 +755,15 @@ export class Observation {
       known = new Map<number, EntityView>();
     if (owner !== undefined && !m) throw new Error("Unknown observation owner");
     const visible = new Map<number, EntityView>();
+    const visibleForest=owner&&!this.c.spatial.layers?this.visibleStatics.get(owner):undefined;
     const full: EntityView[] = owner ? [] : [...this.forest];
-    const actors=this.actors.filter(alive);
-    for (const e of actors) {
-      if (!owner) full.push(this.describe(e, true));
-      else if (e.owner === owner || this.previouslyVisible(owner, e))
-        visible.set(e.id, this.describe(e, e.owner === owner, owner));
-    }
-    if (m)
-      for (const [id, e] of m.entities) {
-        let observed=visible.get(id);
-        if(!observed&&this.forestIds.has(id)&&this.previouslyVisible(owner!,this.c.get(id)!))observed=this.resourceOwnerView(this.resourceViews.get(id)!,owner);
-        if(!observed){
-          observed=this.rememberedViews.get(e);
-          if(!observed){observed={...structuredClone(e),remembered:true};this.rememberedViews.set(e,observed);}
-        }
-        known.set(id,observed);
-      }
-    for (const [id, e] of visible) known.set(id, e);
+    const actors=this.projectActors(owner,visible,full);
+    this.projectKnowledge(m,owner,visible,known,visibleForest);
     const result: SettlementView = {
       corpses:new SpellCorpses(this.c).views().filter(c=>!owner||this.currentlyVisible(owner,[Math.round(c.y)*this.c.spatial.size+Math.round(c.x)])).map(c=>({...c,relation:!owner?undefined:(this.hostility?.(owner,{id:c.id,owner:c.owner,...(c.camp?{unit:{camp:c.camp}}:{})} as Entity)?'enemy':c.owner==='none'?'neutral':'ally')})),
       research: structuredClone(owner ? {[owner]: this.c.state.research[owner] ?? []} : this.c.state.research),
       observedDeaths: m ? m.observedDeaths.map((d) => ({ ...d })) : [],
-      fallenHeroes: this.c.state.entities
+      fallenHeroes: this.c.indexedUnits()
         .filter((e) => e.fallen && (!owner || e.owner === owner))
         .map((e) => this.describe(e, true, owner)),
       missiles: this.missileRecords(owner).map(s=>structuredClone(s)),
@@ -718,20 +771,9 @@ export class Observation {
       deaths: this.deathCues
         .filter((cue) => !owner || cue.viewers.includes(owner))
         .map((cue) => cue.entity),
-      ...(owner
-        ? {
-            supply: colonySupply(this.c.populationCandidates(), owner, this.c.registry),
-            population: workerPopulation(this.c.populationCandidates(), owner, this.c.registry),
-            goods: summarizeGoods(
-              actors,
-              owner,
-              this.c.registry,
-              this.available,
-            ),
-          }
-        : {}),
+      ...this.projectColony(owner,actors),
       revision: this.c.state.tick,
-      entities: (owner ? [...known.values()] : full).sort((a, b) => a.id - b.id),
+      entities: this.orderEntities(owner ? [...known.values()] : full),
       ...(m
         ? {
             fog: {
@@ -752,6 +794,43 @@ export class Observation {
     };
     this.cache.set(owner, result);
     return result;
+  }
+  private projectActors(owner:Owner|undefined,visible:Map<number,EntityView>,full:EntityView[]){
+    const actors=this.actors.filter(alive);
+    for (const e of actors) {
+      if (!owner) full.push(this.describe(e, true));
+      else if (e.owner === owner || this.previouslyVisible(owner, e))
+        visible.set(e.id, this.describe(e, e.owner === owner, owner));
+    }
+    return actors;
+  }
+  private projectKnowledge(m:Memory|undefined,owner:Owner|undefined,visible:Map<number,EntityView>,known:Map<number,EntityView>,visibleForest:Set<number>|undefined){
+    if (m)
+      for (const [id, e] of m.entities) {
+        let observed=visible.get(id);
+        if(!observed&&this.forestIds.has(id)){
+          const entity=this.c.get(id)!;
+          // Reuse the sight mask's static coverage, while still applying live
+          // concealment/detection. Layered floors retain their full sight query.
+          if(visibleForest?visibleForest.has(id)&&this.detects(owner!,entity):this.previouslyVisible(owner!,entity))
+            observed=this.resourceOwnerView(this.resourceViews.get(id)!,owner);
+        }
+        if(!observed){
+          observed=this.rememberedViews.get(e);
+          if(!observed){observed={...structuredClone(e),remembered:true};this.rememberedViews.set(e,observed);}
+        }
+        known.set(id,observed);
+      }
+    for (const [id, e] of visible) known.set(id, e);
+  }
+  private orderEntities(entities:EntityView[]){return entities.sort((a,b)=>a.id-b.id);}
+  private projectColony(owner:Owner|undefined,actors:Entity[]){
+    if(!owner)return {};
+    return {
+      supply:colonySupply(this.c.populationCandidates(),owner,this.c.registry),
+      population:workerPopulation(this.c.populationCandidates(),owner,this.c.registry),
+      goods:summarizeGoods(actors,owner,this.c.registry,this.available),
+    };
   }
   private projectFog(nodes:Uint8Array):Pick<FogView,'cells'|'floors'>{
     if(!this.deckNodes.length)return {cells:nodes};
@@ -805,7 +884,7 @@ export class Observation {
   }
   restore(raw: unknown) {
     const rows = this.validateSnapshot(raw);
-    this.masks.clear();this.visibleStatics.clear();this.staticCoverage.clear();this.structureRevision=-1;
+    this.masks.clear();this.visibleStatics.clear();this.staticCoverage.clear();this.staleStatics.clear();this.structureRevision=-1;
     this.staticRecords.clear();this.staticCells=undefined;this.staticOverlaps.clear();this.sightSectors.clear();this.sightStamp="";this.containmentSightStamp="";this.containmentSight.clear();
     this.resourceViews.clear();
     this.projectEntities();this.projectWork();

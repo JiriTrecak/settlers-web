@@ -51,7 +51,7 @@ export function createGameAbilities(game:Game){
  const host:AbilityHost={
   height:p=>c.spatial.height({...p,x:Math.max(0,Math.min(c.spatial.size-1,p.x)),y:Math.max(0,Math.min(c.spatial.size-1,p.y))}),
   weaponOrders:()=>c.profile.measure('Weapon cast orders',()=>weapons.tick()),weaponCastReason:(s,t,a)=>weapons.reason(s,t,a),orderWeaponCast:(...args)=>weapons.order(...args),
-  heroReturns:()=>c.state.entities.filter(e=>e.fallen&&e.spellReturn).map(e=>({id:e.id,owner:e.owner,x:e.x,y:e.y,ability:e.spellReturn!.ability,cast:e.spellReturn!.cast,started:e.spellReturn!.started,due:e.spellReturn!.due})),
+  heroReturns:()=>c.indexedUnits().filter(e=>e.fallen&&e.spellReturn).map(e=>({id:e.id,owner:e.owner,x:e.x,y:e.y,ability:e.spellReturn!.ability,cast:e.spellReturn!.cast,started:e.spellReturn!.started,due:e.spellReturn!.due})),
   corpses:caster=>new SpellCorpses(c).views().filter(corpse=>host.visiblePoint(caster.owner,corpse,caster)).map(corpse=>({...corpse,relation:host.relation(caster,{...caster,id:corpse.id,owner:corpse.owner,camp:corpse.camp})})),
   summon:(caster,spell,rank,cast,effect,point)=>{
    const summons=new SpellSummons(game),source={id:caster.id,owner:caster.owner as Owner,rotation:c.get(caster.id)?.rotation??0,camp:caster.camp};
@@ -70,9 +70,10 @@ export function createGameAbilities(game:Game){
   endInstance:cast=>{for(const e of c.state.entities){if(!e.spellStatuses)continue;const before=e.spellStatuses.length;e.spellStatuses=e.spellStatuses?.filter(s=>s.cast!==cast||spellStatusDefinition(s,c.registry)?.lifetime!=='instance');if(!e.spellStatuses?.length)delete e.spellStatuses;if(before!==(e.spellStatuses?.length??0))c.clampPools(e);}},instances:()=>c.state.spellInstances,reactions:()=>c.profile.measure('Reactions',()=>reactions.resolve()),death:id=>{const e=c.get(id);if(e)reactions.death(e);},deliveries:()=>c.state.spellDeliveries,lifecycle:()=>c.profile.measure('Status lifecycle',()=>statuses.tick()),effect:(...args)=>statuses.apply(...args),hasStatus:(...args)=>statuses.has(...args),
   ambientCasters:()=>c.activeUnits().filter(e=>e.owner==='none'&&e.abilities).map(e=>e.id).sort((a,b)=>a-b),targets:()=>c.liveBodies().map(e=>e.id),
   visibleTargets:caster=>c.liveBodies().filter(e=>visibleEntity(caster.owner,e,caster)).map(e=>e.id),
-  tick:()=>c.state.tick,nextCast:()=>c.state.nextCast++,casters:()=>c.profile.measure('Caster enumeration',()=>c.state.entities.filter(e=>e.abilities).map(e=>e.id)),get,
+  tick:()=>c.state.tick,nextCast:()=>c.state.nextCast++,casters:()=>c.profile.measure('Caster enumeration',()=>c.indexedUnits().filter(e=>e.abilities).map(e=>e.id)),get,
   caster(id){const e=c.get(id);if(!e?.abilities)return;const policy=c.def(e).behaviors.abilities!,stats=c.stats(e);return {actor:get(id,stats)!,state:e.abilities,bindings:policy.bindings,maxMana:stats.maxMana,regenPerSecond:stats.manaRegenPerSecond,cooldownReductionPermille:stats.cooldownReductionPermille};},
-  definition:id=>c.registry.abilityLibrary.abilities.find(a=>a.id===id),
+  casterBindings(id){const e=c.get(id);if(!e?.abilities)return;return {state:e.abilities,bindings:c.def(e).behaviors.abilities!.bindings};},
+  definition:id=>c.registry.findAbility(id),
   relation(a,b){const ea=({id:a.id,owner:a.owner,...(a.camp?{unit:{camp:a.camp}}:{})} as Entity),eb=c.get(b.id)??({id:b.id,owner:b.owner,...(b.camp?{unit:{camp:b.camp}}:{})} as Entity);if(a.id===b.id||game.combat.allied(ea,eb)||(ea.owner==='none'&&eb.owner==='none'&&ea.unit?.camp&&ea.unit.camp===eb.unit?.camp))return 'ally';return game.combat.opponents(ea,eb)?'enemy':'neutral';},
   visible(owner,target,caster){
    const entity=c.get(target.id);if(!entity)return false;

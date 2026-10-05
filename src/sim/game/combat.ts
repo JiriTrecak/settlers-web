@@ -50,6 +50,8 @@ export class Combat {
     this.closestTarget=c.profile.wrap('Target acquisition',this.closestTarget.bind(this));
     this.moveOrder=c.profile.wrap('Move orders',this.moveOrder.bind(this));
     this.searchLastSeen=c.profile.wrap('Pursuit memory',this.searchLastSeen.bind(this));
+    this.perceives=c.profile.wrap('Combat visibility',this.perceives.bind(this));
+    this.terrainClear=c.profile.wrap('Weapon terrain clearance',this.terrainClear.bind(this));
   }
   allied(a:Entity,b:Entity) {return a.owner!=="none" && b.owner!=="none" && this.teams.get(a.owner)===this.teams.get(b.owner);}
   hostile(a: Entity, b: Entity): boolean {
@@ -95,7 +97,7 @@ export class Combat {
     const c = this.c;
     this.shells.expire();
     const approaches=new Map<string, readonly Point[]>();
-    const targets=new TargetIndex(c.liveBodies(), c.registry);
+    const targets=c.profile.measure('Target index',()=>new TargetIndex(c.liveBodies(), c.registry));
     for (const e of c.activeUnits()) {
       if(only&&!only.has(e.id))continue;
       c.reconcileWeapon(e);
@@ -241,9 +243,12 @@ export class Combat {
   private closestTarget(actor:Entity,targets:TargetIndex,range:number){
     let best: Entity | undefined, bestDistance = range ** 2;
     for (const target of targets.near(precise(actor), range)) {
+      // Nearby allies dominate marching formations. Allegiance can reject them
+      // before footprint distance, form/weapon policies or any visibility work.
+      if (!this.hostile(actor,target)) continue;
       const distance = this.c.spatial.range(actor, target);
       if (distance > bestDistance || (best && distance === bestDistance && target.id >= best.id)) continue;
-      if (!this.weaponEligible(actor,target) || !this.hostile(actor,target) || !this.perceives(actor,target)) continue;
+      if (!this.weaponEligible(actor,target) || !this.perceives(actor,target)) continue;
       best = target; bestDistance = distance;
     }
     return best;
@@ -284,7 +289,7 @@ export class Combat {
       u.retryAt = this.c.state.tick + 20;
     }
   }
-  private weaponEligible(a:Entity,b:Entity){return weaponTargets(this.c.def(a).behaviors.combat,this.c.def(b))&&!isEthereal(a,this.c.registry)&&weaponCanTarget(b,this.c.registry,this.c.def(a).behaviors.combat?.damageType??"normal");}
+  private weaponEligible(a:Entity,b:Entity){const weapon=this.c.def(a).behaviors.combat;return weaponTargets(weapon,this.c.def(b))&&!isEthereal(a,this.c.registry)&&weaponCanTarget(b,this.c.registry,weapon?.damageType??"normal");}
   private beginAttack(a: Entity, b: Entity) {
     if(!this.weaponEligible(a,b)||!this.terrainClear(a,b)||!facing(a,precise(b)))return;
     const u = a.unit!, cycleTicks=this.c.stats(a).cooldownTicks, policy=attackTiming(this.c.def(a).behaviors.combat!,cycleTicks);

@@ -124,3 +124,26 @@ it('keeps self-spell visuals and saves at the hero’s precise position between 
  for(let n=0;n<25;n++){g.tick();restored.tick();expect(restored.checksum()).toBe(g.checksum());}
  expect(g.abilities.observedEvents().some(v=>v.ability===spell&&v.event==='released'&&v.point.x===center.x)).toBe(true);
 });
+
+it('keeps nested searches and returned paths independent of reusable scratch storage',()=>{
+ const from={x:113,y:79},to={x:2800,y:0};
+ // Cross x=1000 only above a short wall, forcing a searched escape.
+ const clear=(a:{x:number;y:number},b:{x:number;y:number})=>{
+  if((a.x<1000)===(b.x<1000))return true;
+  return a.y+(b.y-a.y)*(1000-a.x)/(b.x-a.x)>600;
+ };
+ const expected=localPath(from,to,clear);expect(expected).not.toBeNull();
+ const saved=structuredClone(expected);
+ let probes=0;
+ const nested=localPath(from,to,(a,b)=>{
+  // Recursion during the frontier search, after its direct probe.
+  if(++probes===3)expect(localPath(from,to,clear)).toEqual(saved);
+  return clear(a,b);
+ });
+ expect(nested).toEqual(saved);expect(probes).toBeGreaterThan(3);
+ probes=0;
+ expect(()=>localPath(from,to,()=>{if(++probes===3)throw Error('clearance failed');return false;})).toThrow('clearance failed');
+ for(let n=0;n<20;n++)localPath({x:3000+n,y:1000},{x:0,y:0},clear);
+ expect(expected).toEqual(saved);expect(nested).toEqual(saved);
+ expect(localPath(from,to,clear)).toEqual(saved);
+});

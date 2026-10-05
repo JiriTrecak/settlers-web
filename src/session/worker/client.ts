@@ -50,7 +50,10 @@ export class SimulationClient {
      const start=performance.now();this.latest=this.decoder.decode(message.packet);this.receivedAt=start;
      if(message.packet.reset){this.resetVersion++;const ready=this.resetWaiters.filter(w=>w.after<this.resetVersion);this.resetWaiters=this.resetWaiters.filter(w=>w.after>=this.resetVersion);for(const w of ready)w.resolve();}
      this.hooks.sample('Worker snapshot decode',performance.now()-start);this.hooks.sample('Worker snapshot delivery',performance.timeOrigin+start-message.packet.sentAt);
-     this.hooks.frame(this.latest);this.port.postMessage({type:'ack',sequence:message.packet.sequence});break;
+     this.hooks.frame(this.latest);this.port.postMessage({type:'ack',sequence:message.packet.sequence});
+     // Inclusive JS receive cost: decode + frame hooks + acknowledgement. This
+     // does not measure native deserialization before the message callback.
+     this.hooks.sample('Worker snapshot receive (CPU)',performance.now()-start);break;
     }
     case 'network':this.channel?.send(message.message);break;
     case 'chat':this.hooks.chat(message.message);break;

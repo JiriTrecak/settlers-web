@@ -1,6 +1,22 @@
 import {lengthCeil,type FixedPoint} from './motion';
+import {NavigationQueue} from './navigationQueue';
 
 const SPACING=250, RADIUS=16, WIDTH=RADIUS*2+1, MAX_VISITS=256;
+// Bounded scratch storage avoids allocating Maps/Sets/frontiers for every
+// obstructed unit. Borrowing permits a clearance callback to search recursively.
+class LocalScratch {
+ cost=new Int32Array(WIDTH*WIDTH);
+ previous=new Int32Array(WIDTH*WIDTH);
+ seen=new Uint32Array(WIDTH*WIDTH);
+ closed=new Uint32Array(WIDTH*WIDTH);
+ open=new NavigationQueue();
+ epoch=0;
+ reset(){
+  if(this.epoch===0xffffffff){this.seen.fill(0);this.closed.fill(0);this.epoch=0;}
+  this.epoch++;this.open.length=0;
+ }
+}
+const pool:LocalScratch[]=[];
 const offsets=[[-1,0],[0,-1],[1,0],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]] as const;
 
 /** Bounded local escape using actual swept clearance, not occupied cells.
@@ -16,34 +32,41 @@ export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:Fi
  // Retain the exact start as a special node; never snap the actual unit.
  const originX=Math.round(from.x/SPACING)*SPACING,originY=Math.round(from.y/SPACING)*SPACING;
  const position=(id:number)=>id===start?{...from}:{x:originX+(id%WIDTH-RADIUS)*SPACING,y:originY+(Math.floor(id/WIDTH)-RADIUS)*SPACING,...(from.surface?{surface:from.surface}:{})};
- const cost=new Map<number,number>([[start,0]]),previous=new Map<number,number>();
- const open=[{id:start,g:0,h:lengthCeil(to.x-from.x,to.y-from.y)}],closed=new Set<number>();
- for(let visits=0;open.length&&visits<MAX_VISITS;){
-  let best=0;
-  for(let i=1;i<open.length;i++)if(open[i].g+open[i].h<open[best].g+open[best].h||
-   (open[i].g+open[i].h===open[best].g+open[best].h&&(open[i].h<open[best].h||open[i].h===open[best].h&&open[i].id<open[best].id)))best=i;
-  const current=open.splice(best,1)[0];
-  if(closed.has(current.id)||cost.get(current.id)!==current.g)continue;
-  closed.add(current.id);visits++;
-  const p=position(current.id);
-  if(current.id!==start&&clear(p,to)){
-   const path:FixedPoint[]=[{...to}];
-   for(let at=current.id;at!==start;at=previous.get(at)!)path.push(position(at));
-   path.reverse();
-   // Straighten only this escape path, never the parent route's yield steps.
-   const result:FixedPoint[]=[];let anchor=from;
-   for(let i=0;i<path.length;){let far=i;while(far+1<path.length&&clear(anchor,path[far+1]))far++;
-    result.push(path[far]);anchor=path[far];i=far+1;}
-   return result;
+ const scratch=pool.pop()??new LocalScratch();scratch.reset();
+ const {cost,previous,seen,closed,open,epoch}=scratch;
+ try {
+  seen[start]=epoch;cost[start]=0;
+  open.push(start,0,lengthCeil(to.x-from.x,to.y-from.y));
+  for(let visits=0;open.length&&visits<MAX_VISITS;){
+   const current=open.pop();
+   if(closed[current.id]===epoch||cost[current.id]!==current.g)continue;
+   closed[current.id]=epoch;visits++;
+   const p=position(current.id);
+   if(current.id!==start&&clear(p,to)){
+    const path:FixedPoint[]=[{...to}];
+    for(let at=current.id;at!==start;at=previous[at]!)path.push(position(at));
+    path.reverse();
+    // Straighten only this escape path, never the parent route's yield steps.
+    const result:FixedPoint[]=[];let anchor=from;
+    for(let i=0;i<path.length;){let far=i;while(far+1<path.length&&clear(anchor,path[far+1]))far++;
+     result.push(path[far]);anchor=path[far];i=far+1;}
+    return result;
+   }
+   for(const [dx,dy] of offsets){
+    const x=current.id%WIDTH+dx,y=Math.floor(current.id/WIDTH)+dy;
+    if(x<0||y<0||x>=WIDTH||y>=WIDTH)continue;
+    const id=y*WIDTH+x;
+    if(closed[id]===epoch)continue;
+    const qx=id===start?from.x:originX+(x-RADIUS)*SPACING;
+    const qy=id===start?from.y:originY+(y-RADIUS)*SPACING;
+    const g=current.g+lengthCeil(qx-p.x,qy-p.y);
+    if(seen[id]===epoch&&g>=cost[id]!)continue;
+    const q=position(id);
+    if(!clear(p,q))continue;
+    seen[id]=epoch;cost[id]=g;previous[id]=current.id;
+    open.push(id,g,lengthCeil(to.x-q.x,to.y-q.y));
+   }
   }
-  for(const [dx,dy] of offsets){
-   const x=current.id%WIDTH+dx,y=Math.floor(current.id/WIDTH)+dy;
-   if(x<0||y<0||x>=WIDTH||y>=WIDTH)continue;
-   const id=y*WIDTH+x,q=position(id),g=current.g+lengthCeil(q.x-p.x,q.y-p.y);
-   if(closed.has(id)||g>=(cost.get(id)??Infinity)||!clear(p,q))continue;
-   cost.set(id,g);previous.set(id,current.id);
-   open.push({id,g,h:lengthCeil(to.x-q.x,to.y-q.y)});
-  }
- }
- return null;
+  return null;
+ } finally {if(pool.length<4)pool.push(scratch);}
 }

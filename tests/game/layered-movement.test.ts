@@ -23,6 +23,20 @@ it('moves under an occupied deck without collision or height snapping',()=>{
  expect(c.spatial.unitSegmentClear(fixed({x:39,y:40}),fixed({x:41,y:40}),lower.id)).toBe(true);
  move(c);expect(precise(lower)).toEqual({x:50,y:40});expect(upper.surface).toBe('arch');
 });
+it('keeps local collision snapshots separated by bridge deck height',()=>{
+ const c=setup(),lower=c.create(placed('lower','unit.ants.warrior',39,40));
+ c.create({...placed('upper','unit.ants.warrior',40,40),position:{x:40,y:40,surface:'arch'}});
+ c.spatial.rebuild();
+ const probes=[
+  [fixed({x:39,y:40}),fixed({x:41,y:40})],
+  [fixed({x:39,y:40,surface:'arch'}),fixed({x:41,y:40,surface:'arch'})],
+ ];
+ const expected=probes.map(([a,b])=>c.spatial.unitSegmentClear(a,b,lower.id));
+ expect(expected).toEqual([true,false]);
+ c.spatial.beginUnitMovement();
+ expect(c.spatial.withLocalUnitClearance(fixed(lower),4250,lower.id,clear=>probes.map(([a,b])=>clear(a,b)))).toEqual(expected);
+ c.spatial.endUnitMovement();
+});
 it('walks through an entrance onto the arch, can be interrupted there, and walks down again',()=>{
  const c=setup(),e=c.create(placed('walker','unit.ants.warrior',40,26));c.spatial.rebuild();
  expect(c.spatial.route(e,{x:40,y:40,surface:'arch'},false)).toBe(true);

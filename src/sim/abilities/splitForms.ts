@@ -19,7 +19,7 @@ export class SpellSplitForms {
   return result;
  }
  reason(parent:Entity,op:Split,rank:number){
-  if(this.c.state.entities.some(e=>e.spellContainment?.host===parent.id))return 'Release contained units before entering a linked form';
+  if(this.c.indexedUnits().some(e=>e.spellContainment?.host===parent.id))return 'Release contained units before entering a linked form';
   if(!parent.unit||!alive(parent)||parent.spellSplit||parent.summoned?.splitOperation||parent.unit.contained||parent.unit.garrison||parent.unit.release)return 'Unit cannot enter a linked form';
   const population=colonySupply(this.c.populationCandidates(),parent.owner,this.c.registry);
   if(population.units+population.queuedUnits+op.members.length>population.unitLimit)return 'Unit limit reached';
@@ -64,5 +64,5 @@ export class SpellSplitForms {
   if(e.spellSplit){const s=e.spellSplit;this.cleanup(e,s,e.id);return;}
   if(e.summoned?.splitOperation){const parent=this.c.get(e.summoned.source);if(parent?.spellSplit?.cast===e.summoned.cast)this.reconcile(parent,e.id);}
  }
- tick(){for(const parent of [...this.c.state.entities].sort((a,b)=>a.id-b.id))if(parent.spellSplit)this.reconcile(parent);}
+ tick(){for(const parent of [...this.c.indexedUnits()].sort((a,b)=>a.id-b.id))if(parent.spellSplit)this.reconcile(parent);}
 }

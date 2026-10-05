@@ -3400,15 +3400,15 @@
       "blocker": {
         "shape": "box",
         "size": [
-          7,
-          7
+          15,
+          15
         ],
         "offset": [
           0,
           0
         ]
       },
-      "vegetationClearance": 3.5,
+      "vegetationClearance": 7.5,
       "groundContact": {
         "mode": "pivot"
       }
@@ -3416,6 +3416,111 @@
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.resources.amber-deposit/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.resources.amber-deposit-empty",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          15,
+          15
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 7.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-deposit-empty/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.resources.amber-deposit-one-third",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          15,
+          15
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 7.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-deposit-one-third/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.resources.amber-deposit-two-thirds",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          15,
+          15
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 7.5,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-deposit-two-thirds/geometry.glb"
     ],
     "scenery": []
   },
@@ -3432,6 +3537,18 @@
       "forward": "+Z"
     },
     "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          15,
+          15
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 7.5,
       "groundContact": {
         "mode": "pivot"
       }

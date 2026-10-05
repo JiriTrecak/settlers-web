@@ -7,7 +7,8 @@ import {Game} from '../../src/sim/game/game';
 import {parseUtcMap} from '../../src/shared/map/utcmap';
 import {playableMapError} from '../../src/shared/map/playable';
 import {projectScene} from '../../src/shared/authoring/project';
-import {precise} from '../../src/sim/game/motion';
+import {fixed,precise} from '../../src/sim/game/motion';
+import {farthestClearWaypoint} from '../../src/sim/game/routeSmoothing';
 const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/heartroot-glade.utcmap','utf8')))!;
 const S=map.size;
 /** The map's symmetry: player k+1's share is player k's turned 90° about the centre. */
@@ -21,9 +22,14 @@ function near(x:number,y:number,r=6){
  }
  expect(result).toBeGreaterThanOrEqual(0);return result;
 }
-const length=(path:number[])=>path.reduce((sum,n,i)=>{
- if(!i)return 0;const a=game.spatial.point(path[i-1]!),b=game.spatial.point(n);return sum+Math.hypot(b.x-a.x,b.y-a.y);
-},0);
+const length=(path:number[],start:number)=>{
+ const s=game.spatial;let anchor=s.point(start),sum=0;
+ for(let i=0;i<path.length;){
+  const j=farthestClearWaypoint(i,path.length-1,n=>s.clearSegment(fixed(anchor),fixed(s.point(path[n]!))));
+  const end=s.point(path[j]!);sum+=Math.hypot(end.x-anchor.x,end.y-anchor.y);anchor=end;i=j+1;
+ }
+ return sum;
+};
 const starts=()=>map.playerStarts.map(b=>{
  const toward={x:S/2-b.x,y:S/2-b.z},l=Math.hypot(toward.x,toward.y);
  return near(b.x+toward.x/l*14,b.z+toward.y/l*14);
@@ -56,7 +62,7 @@ describe('Heartroot Glade',()=>{
   }
  });
  it('keeps neighbour and cross distances equal for every player',()=>{
-  const s=starts(),path=(a:number,b:number)=>length(game.spatial.findPath(s[a]!,s[b]!)!);
+  const s=starts(),path=(a:number,b:number)=>length(game.spatial.findPath(s[a]!,s[b]!)!,s[a]!);
   const neighbours=[0,1,2,3].map(k=>path(k,(k+1)%4)),cross=[path(0,2),path(1,3)];
   for(const d of neighbours)expect(Math.abs(d/neighbours[0]!-1)).toBeLessThan(.03);
   expect(Math.abs(cross[1]!/cross[0]!-1)).toBeLessThan(.03);
@@ -101,7 +107,19 @@ describe('Heartroot Glade',()=>{
  },120_000);
  it('lets armies march base to base without pulling a camp',()=>{
   const s=starts();
-  const routes=[game.spatial.findPath(s[0]!,s[1]!)!,game.spatial.findPath(s[0]!,s[2]!)!].map(r=>r.map(n=>game.spatial.point(n)));
+  const routes=[s[1]!,s[2]!].map(goal=>{
+   const spatial=game.spatial,path=spatial.findPath(s[0]!,goal)!,out=[spatial.point(s[0]!)];
+   // Test the route actually followed after smoothing, not unused raster cells.
+   // Sample segments as well as waypoints so a shortcut cannot hide a camp pull.
+   let anchor=out[0]!;
+   for(let i=0;i<path.length;){
+    const j=farthestClearWaypoint(i,path.length-1,n=>spatial.clearSegment(fixed(anchor),fixed(spatial.point(path[n]!))));
+    const end=spatial.point(path[j]!),steps=Math.ceil(Math.hypot(end.x-anchor.x,end.y-anchor.y)*4);
+    for(let n=1;n<=steps;n++)out.push({x:anchor.x+(end.x-anchor.x)*n/steps,y:anchor.y+(end.y-anchor.y)*n/steps});
+    anchor=end;i=j+1;
+   }
+   return out;
+  });
   // Every rotation of the neighbour and cross routes is an equally likely march.
   const all=routes.flatMap(r=>[0,1,2,3].flatMap(k=>r.map(p=>{let q={x:p.x,y:p.y};for(let i=0;i<k;i++)q=rot(q);return q;})));
   for(const camp of map.camps)for(const id of camp.members){

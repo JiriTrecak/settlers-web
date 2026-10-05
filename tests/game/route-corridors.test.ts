@@ -60,7 +60,8 @@ it('does not reuse terrain-only corridors for traffic avoidance, cost budgets or
 
 it('moves a group around terrain without overlap and replays identically after a cold restore',()=>{
  const placements=Array.from({length:8},(_,i)=>placed(`army-${i}`,'unit.ants.warrior',40+i%2*3,74+Math.floor(i/2)*3));
- const terrain=(g:ReturnType<typeof game>)=>{for(let y=62;y<=95;y++)g.spatial.terrain[y*g.spatial.size+75]=0;};
+ // Direct fixture terrain edits must invalidate the mesh prepared at load.
+ const terrain=(g:ReturnType<typeof game>)=>{for(let y=62;y<=95;y++)g.spatial.terrain[y*g.spatial.size+75]=0;g.spatial.rebuild();};
  const g=game(placements),replica=game(placements);terrain(g);terrain(replica);
  const army=g.entities.filter(e=>e.placement?.startsWith('army-')),ids=army.map(e=>e.id);
  for(const world of [g,replica])expect(world.command('player.1',{type:'move',actors:ids,destination:{x:130,y:82}}).accepted).toBe(true);

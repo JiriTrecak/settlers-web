@@ -430,165 +430,168 @@ import a427 from "../../../assets/library/asset.models.environment.woodland-trai
 import a428 from "../../../assets/library/asset.models.environment.woodland-woodpile/albedo.png?url";
 import a429 from "../../../assets/library/asset.models.environment.woodland-woodpile/albedo_2.png?url";
 import a430 from "../../../assets/library/asset.models.environment.woodland-woodpile/geometry.glb?url";
-import a431 from "../../../assets/library/asset.models.resources.amber-deposit/albedo.png?url";
-import a432 from "../../../assets/library/asset.models.resources.amber-deposit/geometry.glb?url";
-import a433 from "../../../assets/library/asset.models.resources.amber-deposit/image.png?url";
-import a434 from "../../../assets/library/asset.models.resources.amber-deposit/normal.png?url";
-import a435 from "../../../assets/library/asset.models.resources.amber-deposit/roughness.png?url";
-import a436 from "../../../assets/library/asset.models.resources.corrupted-root/geometry.glb?url";
-import a437 from "../../../assets/library/asset.models.resources.corrupted-root/image.png?url";
-import a438 from "../../../assets/library/asset.models.units.ants-archer/albedo.png?url";
-import a439 from "../../../assets/library/asset.models.units.ants-archer/geometry.glb?url";
-import a440 from "../../../assets/library/asset.models.units.ants-archer/image.png?url";
-import a441 from "../../../assets/library/asset.models.units.ants-archer/team_mask.png?url";
-import a442 from "../../../assets/library/asset.models.units.ants-bombardier/albedo.png?url";
-import a443 from "../../../assets/library/asset.models.units.ants-bombardier/geometry.glb?url";
-import a444 from "../../../assets/library/asset.models.units.ants-bombardier/image.png?url";
-import a445 from "../../../assets/library/asset.models.units.ants-bombardier/team_mask.png?url";
-import a446 from "../../../assets/library/asset.models.units.ants-warrior/geometry.glb?url";
-import a447 from "../../../assets/library/asset.models.units.ants-warrior/image.png?url";
-import a448 from "../../../assets/library/asset.models.units.ants-worker/albedo.png?url";
-import a449 from "../../../assets/library/asset.models.units.ants-worker/geometry.glb?url";
-import a450 from "../../../assets/library/asset.models.units.ants-worker/geometry_2.glb?url";
-import a451 from "../../../assets/library/asset.models.units.ants-worker/geometry_3.glb?url";
-import a452 from "../../../assets/library/asset.models.units.ants-worker/geometry_4.glb?url";
-import a453 from "../../../assets/library/asset.models.units.ants-worker/image.png?url";
-import a454 from "../../../assets/library/asset.models.units.ants-worker/team_mask.png?url";
-import a455 from "../../../assets/library/asset.models.units.neutral-barkguard/geometry.glb?url";
-import a456 from "../../../assets/library/asset.models.units.neutral-barkguard/image.png?url";
-import a457 from "../../../assets/library/asset.models.units.neutral-bloom-witch/geometry.glb?url";
-import a458 from "../../../assets/library/asset.models.units.neutral-bloom-witch/image.png?url";
-import a459 from "../../../assets/library/asset.models.units.neutral-briar-hulk/geometry.glb?url";
-import a460 from "../../../assets/library/asset.models.units.neutral-briar-hulk/image.png?url";
-import a461 from "../../../assets/library/asset.models.units.neutral-capling/geometry.glb?url";
-import a462 from "../../../assets/library/asset.models.units.neutral-capling/image.png?url";
-import a463 from "../../../assets/library/asset.models.units.neutral-corrupted-rootbeast/geometry.glb?url";
-import a464 from "../../../assets/library/asset.models.units.neutral-corrupted-rootbeast/image.png?url";
-import a465 from "../../../assets/library/asset.models.units.neutral-dew-sprite/geometry.glb?url";
-import a466 from "../../../assets/library/asset.models.units.neutral-dew-sprite/image.png?url";
-import a467 from "../../../assets/library/asset.models.units.neutral-hollow-stag/geometry.glb?url";
-import a468 from "../../../assets/library/asset.models.units.neutral-hollow-stag/image.png?url";
-import a469 from "../../../assets/library/asset.models.units.neutral-hornet-guard/geometry.glb?url";
-import a470 from "../../../assets/library/asset.models.units.neutral-hornet-guard/image.png?url";
-import a471 from "../../../assets/library/asset.models.units.neutral-needle-wasp/geometry.glb?url";
-import a472 from "../../../assets/library/asset.models.units.neutral-needle-wasp/image.png?url";
-import a473 from "../../../assets/library/asset.models.units.neutral-nest-mother/geometry.glb?url";
-import a474 from "../../../assets/library/asset.models.units.neutral-nest-mother/image.png?url";
-import a475 from "../../../assets/library/asset.models.units.neutral-old-root/geometry.glb?url";
-import a476 from "../../../assets/library/asset.models.units.neutral-old-root/image.png?url";
-import a477 from "../../../assets/library/asset.models.units.neutral-puddle-wisp/geometry.glb?url";
-import a478 from "../../../assets/library/asset.models.units.neutral-puddle-wisp/image.png?url";
-import a479 from "../../../assets/library/asset.models.units.neutral-puffcap/geometry.glb?url";
-import a480 from "../../../assets/library/asset.models.units.neutral-puffcap/image.png?url";
-import a481 from "../../../assets/library/asset.models.units.neutral-root-seer/geometry.glb?url";
-import a482 from "../../../assets/library/asset.models.units.neutral-root-seer/image.png?url";
-import a483 from "../../../assets/library/asset.models.units.neutral-rootling/geometry.glb?url";
-import a484 from "../../../assets/library/asset.models.units.neutral-rootling/image.png?url";
-import a485 from "../../../assets/library/asset.models.units.neutral-rotwood-ancient/geometry.glb?url";
-import a486 from "../../../assets/library/asset.models.units.neutral-rotwood-ancient/image.png?url";
-import a487 from "../../../assets/library/asset.models.units.neutral-seedcaster/geometry.glb?url";
-import a488 from "../../../assets/library/asset.models.units.neutral-seedcaster/image.png?url";
-import a489 from "../../../assets/library/asset.models.units.neutral-spitter/geometry.glb?url";
-import a490 from "../../../assets/library/asset.models.units.neutral-spitter/image.png?url";
-import a491 from "../../../assets/library/asset.models.units.neutral-tadpole-spirit/geometry.glb?url";
-import a492 from "../../../assets/library/asset.models.units.neutral-tadpole-spirit/image.png?url";
-import a493 from "../../../assets/library/asset.models.units.neutral-thorn-slinger/geometry.glb?url";
-import a494 from "../../../assets/library/asset.models.units.neutral-thorn-slinger/image.png?url";
-import a495 from "../../../assets/library/asset.models.units.neutral-tree-frog/geometry.glb?url";
-import a496 from "../../../assets/library/asset.models.units.neutral-tree-frog/image.png?url";
-import a497 from "../../../assets/library/asset.models.units.neutral-twigcaster/geometry.glb?url";
-import a498 from "../../../assets/library/asset.models.units.neutral-twigcaster/image.png?url";
-import a499 from "../../../assets/library/asset.models.units.neutral-violet-sporeling/geometry.glb?url";
-import a500 from "../../../assets/library/asset.models.units.neutral-violet-sporeling/image.png?url";
-import a501 from "../../../assets/library/asset.models.units.neutral-webling/geometry.glb?url";
-import a502 from "../../../assets/library/asset.models.units.neutral-webling/image.png?url";
-import a503 from "../../../assets/library/asset.models.units.neutral-willow-wisp/geometry.glb?url";
-import a504 from "../../../assets/library/asset.models.units.neutral-willow-wisp/image.png?url";
-import a505 from "../../../assets/library/asset.models.units.neutral-young-toad/geometry.glb?url";
-import a506 from "../../../assets/library/asset.models.units.neutral-young-toad/image.png?url";
-import a507 from "../../../assets/library/asset.placeholder.missing-model/albedo.png?url";
-import a508 from "../../../assets/library/asset.placeholder.missing-model/geometry.glb?url";
-import a509 from "../../../assets/library/asset.terrain.autumn-leaf-litter/albedo.png?url";
-import a510 from "../../../assets/library/asset.terrain.autumn-leaf-litter/data.bin?url";
-import a511 from "../../../assets/library/asset.terrain.autumn-leaf-normal/data.bin?url";
-import a512 from "../../../assets/library/asset.terrain.pebble-normal/data.bin?url";
-import a513 from "../../../assets/library/asset.terrain.pebble-trail/albedo.png?url";
-import a514 from "../../../assets/library/asset.terrain.pebble-trail/data.bin?url";
-import a515 from "../../../assets/library/asset.terrain.winter-dirt-normal/data.bin?url";
-import a516 from "../../../assets/library/asset.terrain.winter-dirt/albedo.png?url";
-import a517 from "../../../assets/library/asset.terrain.winter-dirt/data.bin?url";
-import a518 from "../../../assets/library/asset.terrain.winter-grass-normal/data.bin?url";
-import a519 from "../../../assets/library/asset.terrain.winter-grass/albedo.png?url";
-import a520 from "../../../assets/library/asset.terrain.winter-grass/data.bin?url";
-import a521 from "../../../assets/library/asset.terrain.winter-rock-normal/data.bin?url";
-import a522 from "../../../assets/library/asset.terrain.winter-rock/albedo.png?url";
-import a523 from "../../../assets/library/asset.terrain.winter-rock/data.bin?url";
-import a524 from "../../../assets/library/asset.terrain.winter-soil-normal/data.bin?url";
-import a525 from "../../../assets/library/asset.terrain.winter-soil/albedo.png?url";
-import a526 from "../../../assets/library/asset.terrain.winter-soil/data.bin?url";
-import a527 from "../../../assets/library/asset.terrain.woodland-dirt-normal/data.bin?url";
-import a528 from "../../../assets/library/asset.terrain.woodland-dirt/albedo.png?url";
-import a529 from "../../../assets/library/asset.terrain.woodland-dirt/data.bin?url";
-import a530 from "../../../assets/library/asset.terrain.woodland-grass-normal/data.bin?url";
-import a531 from "../../../assets/library/asset.terrain.woodland-grass/albedo.png?url";
-import a532 from "../../../assets/library/asset.terrain.woodland-grass/data.bin?url";
-import a533 from "../../../assets/library/asset.terrain.woodland-riverbed-normal/data.bin?url";
-import a534 from "../../../assets/library/asset.terrain.woodland-riverbed/albedo.png?url";
-import a535 from "../../../assets/library/asset.terrain.woodland-riverbed/data.bin?url";
-import a536 from "../../../assets/library/asset.terrain.woodland-rock-displacement/data.bin?url";
-import a537 from "../../../assets/library/asset.terrain.woodland-rock-normal/data.bin?url";
-import a538 from "../../../assets/library/asset.terrain.woodland-rock/albedo.png?url";
-import a539 from "../../../assets/library/asset.terrain.woodland-rock/data.bin?url";
-import a540 from "../../../assets/library/asset.terrain.woodland-soil-normal/data.bin?url";
-import a541 from "../../../assets/library/asset.terrain.woodland-soil/albedo.png?url";
-import a542 from "../../../assets/library/asset.terrain.woodland-soil/data.bin?url";
-import a543 from "../../../assets/library/asset.texture.winter-macro/albedo.png?url";
-import a544 from "../../../assets/library/asset.texture.woodland-brdf/data.bin?url";
-import a545 from "../../../assets/library/asset.texture.woodland-brdf/data_2.json?url";
-import a546 from "../../../assets/library/asset.texture.woodland-caustics/albedo.png?url";
-import a547 from "../../../assets/library/asset.texture.woodland-daytime-grades/data.json?url";
-import a548 from "../../../assets/library/asset.texture.woodland-macro/albedo.png?url";
-import a549 from "../../../assets/library/asset.texture.woodland-reflection/data.bin?url";
-import a550 from "../../../assets/library/asset.texture.woodland-reflection/data_2.json?url";
-import a551 from "../../../assets/library/asset.texture.woodland-terrain-ar/albedo.png?url";
-import a552 from "../../../assets/library/asset.texture.woodland-terrain-nh/albedo.png?url";
-import a553 from "../../../assets/library/asset.texture.woodland-waves/albedo.png?url";
-import a554 from "../../../assets/library/asset.textures.forest-giants-bark/albedo.png?url";
-import a555 from "../../../assets/library/asset.textures.forest-giants-mushrooms/albedo.png?url";
-import a556 from "../../../assets/library/image.item-heart-of-the-forest/image.png?url";
-import a557 from "../../../assets/library/image.woodland-bar-rim/image.png?url";
-import a558 from "../../../assets/library/image.woodland-connected-hud/image.png?url";
-import a559 from "../../../assets/library/image.woodland-health-fill/image.png?url";
-import a560 from "../../../assets/library/image.woodland-mana-fill/image.png?url";
-import a561 from "../../../assets/library/image.woodland-satchel/image.png?url";
-import a562 from "../../../assets/library/image.woodland-selection-rim/image.png?url";
-import a563 from "../../../assets/library/image.woodland-square-rim/image.png?url";
-import a564 from "../../../assets/library/recipe.foliage.frozen-bank/definition.json?url";
-import a565 from "../../../assets/library/recipe.foliage.mushroom-patches/definition.json?url";
-import a566 from "../../../assets/library/recipe.foliage.riverbank/definition.json?url";
-import a567 from "../../../assets/library/recipe.forest.autumn/definition.json?url";
-import a568 from "../../../assets/library/recipe.forest.conifer-edge/definition.json?url";
-import a569 from "../../../assets/library/recipe.forest.diverse/definition.json?url";
-import a570 from "../../../assets/library/recipe.forest.frozen/definition.json?url";
-import a571 from "../../../assets/library/recipe.forest.leafy/definition.json?url";
-import a572 from "../../../assets/library/recipe.grass.autumn/definition.json?url";
-import a573 from "../../../assets/library/recipe.grass.meadow/definition.json?url";
-import a574 from "../../../assets/library/recipe.grass.winter/definition.json?url";
-import a575 from "../../../assets/library/recipe.meadow.woodland-edge/definition.json?url";
-import a576 from "../../../assets/library/recipe.path.grass/definition.json?url";
-import a577 from "../../../assets/library/recipe.path.pebbles/definition.json?url";
-import a578 from "../../../assets/library/recipe.path.soil/definition.json?url";
-import a579 from "../../../assets/library/recipe.river.gentle/definition.json?url";
-import a580 from "../../../assets/library/recipe.river.glacial.water/definition.json?url";
-import a581 from "../../../assets/library/recipe.river.glacial/definition.json?url";
-import a582 from "../../../assets/library/recipe.river.meltwater.water/definition.json?url";
-import a583 from "../../../assets/library/recipe.river.meltwater/definition.json?url";
-import a584 from "../../../assets/library/recipe.river.swift/definition.json?url";
-import a585 from "../../../assets/library/recipe.terrain.bank/definition.json?url";
-import a586 from "../../../assets/library/recipe.terrain.hill/definition.json?url";
-import a587 from "../../../assets/library/recipe.terrain.mountain/definition.json?url";
-import a588 from "../../../assets/library/water.clear-forest/definition.json?url";
-import a589 from "../../../assets/library/water.muddy/definition.json?url";
+import a431 from "../../../assets/library/asset.models.resources.amber-deposit-empty/geometry.glb?url";
+import a432 from "../../../assets/library/asset.models.resources.amber-deposit-one-third/geometry.glb?url";
+import a433 from "../../../assets/library/asset.models.resources.amber-deposit-two-thirds/geometry.glb?url";
+import a434 from "../../../assets/library/asset.models.resources.amber-deposit/albedo.png?url";
+import a435 from "../../../assets/library/asset.models.resources.amber-deposit/geometry.glb?url";
+import a436 from "../../../assets/library/asset.models.resources.amber-deposit/image.png?url";
+import a437 from "../../../assets/library/asset.models.resources.amber-deposit/normal.png?url";
+import a438 from "../../../assets/library/asset.models.resources.amber-deposit/roughness.png?url";
+import a439 from "../../../assets/library/asset.models.resources.corrupted-root/geometry.glb?url";
+import a440 from "../../../assets/library/asset.models.resources.corrupted-root/image.png?url";
+import a441 from "../../../assets/library/asset.models.units.ants-archer/albedo.png?url";
+import a442 from "../../../assets/library/asset.models.units.ants-archer/geometry.glb?url";
+import a443 from "../../../assets/library/asset.models.units.ants-archer/image.png?url";
+import a444 from "../../../assets/library/asset.models.units.ants-archer/team_mask.png?url";
+import a445 from "../../../assets/library/asset.models.units.ants-bombardier/albedo.png?url";
+import a446 from "../../../assets/library/asset.models.units.ants-bombardier/geometry.glb?url";
+import a447 from "../../../assets/library/asset.models.units.ants-bombardier/image.png?url";
+import a448 from "../../../assets/library/asset.models.units.ants-bombardier/team_mask.png?url";
+import a449 from "../../../assets/library/asset.models.units.ants-warrior/geometry.glb?url";
+import a450 from "../../../assets/library/asset.models.units.ants-warrior/image.png?url";
+import a451 from "../../../assets/library/asset.models.units.ants-worker/albedo.png?url";
+import a452 from "../../../assets/library/asset.models.units.ants-worker/geometry.glb?url";
+import a453 from "../../../assets/library/asset.models.units.ants-worker/geometry_2.glb?url";
+import a454 from "../../../assets/library/asset.models.units.ants-worker/geometry_3.glb?url";
+import a455 from "../../../assets/library/asset.models.units.ants-worker/geometry_4.glb?url";
+import a456 from "../../../assets/library/asset.models.units.ants-worker/image.png?url";
+import a457 from "../../../assets/library/asset.models.units.ants-worker/team_mask.png?url";
+import a458 from "../../../assets/library/asset.models.units.neutral-barkguard/geometry.glb?url";
+import a459 from "../../../assets/library/asset.models.units.neutral-barkguard/image.png?url";
+import a460 from "../../../assets/library/asset.models.units.neutral-bloom-witch/geometry.glb?url";
+import a461 from "../../../assets/library/asset.models.units.neutral-bloom-witch/image.png?url";
+import a462 from "../../../assets/library/asset.models.units.neutral-briar-hulk/geometry.glb?url";
+import a463 from "../../../assets/library/asset.models.units.neutral-briar-hulk/image.png?url";
+import a464 from "../../../assets/library/asset.models.units.neutral-capling/geometry.glb?url";
+import a465 from "../../../assets/library/asset.models.units.neutral-capling/image.png?url";
+import a466 from "../../../assets/library/asset.models.units.neutral-corrupted-rootbeast/geometry.glb?url";
+import a467 from "../../../assets/library/asset.models.units.neutral-corrupted-rootbeast/image.png?url";
+import a468 from "../../../assets/library/asset.models.units.neutral-dew-sprite/geometry.glb?url";
+import a469 from "../../../assets/library/asset.models.units.neutral-dew-sprite/image.png?url";
+import a470 from "../../../assets/library/asset.models.units.neutral-hollow-stag/geometry.glb?url";
+import a471 from "../../../assets/library/asset.models.units.neutral-hollow-stag/image.png?url";
+import a472 from "../../../assets/library/asset.models.units.neutral-hornet-guard/geometry.glb?url";
+import a473 from "../../../assets/library/asset.models.units.neutral-hornet-guard/image.png?url";
+import a474 from "../../../assets/library/asset.models.units.neutral-needle-wasp/geometry.glb?url";
+import a475 from "../../../assets/library/asset.models.units.neutral-needle-wasp/image.png?url";
+import a476 from "../../../assets/library/asset.models.units.neutral-nest-mother/geometry.glb?url";
+import a477 from "../../../assets/library/asset.models.units.neutral-nest-mother/image.png?url";
+import a478 from "../../../assets/library/asset.models.units.neutral-old-root/geometry.glb?url";
+import a479 from "../../../assets/library/asset.models.units.neutral-old-root/image.png?url";
+import a480 from "../../../assets/library/asset.models.units.neutral-puddle-wisp/geometry.glb?url";
+import a481 from "../../../assets/library/asset.models.units.neutral-puddle-wisp/image.png?url";
+import a482 from "../../../assets/library/asset.models.units.neutral-puffcap/geometry.glb?url";
+import a483 from "../../../assets/library/asset.models.units.neutral-puffcap/image.png?url";
+import a484 from "../../../assets/library/asset.models.units.neutral-root-seer/geometry.glb?url";
+import a485 from "../../../assets/library/asset.models.units.neutral-root-seer/image.png?url";
+import a486 from "../../../assets/library/asset.models.units.neutral-rootling/geometry.glb?url";
+import a487 from "../../../assets/library/asset.models.units.neutral-rootling/image.png?url";
+import a488 from "../../../assets/library/asset.models.units.neutral-rotwood-ancient/geometry.glb?url";
+import a489 from "../../../assets/library/asset.models.units.neutral-rotwood-ancient/image.png?url";
+import a490 from "../../../assets/library/asset.models.units.neutral-seedcaster/geometry.glb?url";
+import a491 from "../../../assets/library/asset.models.units.neutral-seedcaster/image.png?url";
+import a492 from "../../../assets/library/asset.models.units.neutral-spitter/geometry.glb?url";
+import a493 from "../../../assets/library/asset.models.units.neutral-spitter/image.png?url";
+import a494 from "../../../assets/library/asset.models.units.neutral-tadpole-spirit/geometry.glb?url";
+import a495 from "../../../assets/library/asset.models.units.neutral-tadpole-spirit/image.png?url";
+import a496 from "../../../assets/library/asset.models.units.neutral-thorn-slinger/geometry.glb?url";
+import a497 from "../../../assets/library/asset.models.units.neutral-thorn-slinger/image.png?url";
+import a498 from "../../../assets/library/asset.models.units.neutral-tree-frog/geometry.glb?url";
+import a499 from "../../../assets/library/asset.models.units.neutral-tree-frog/image.png?url";
+import a500 from "../../../assets/library/asset.models.units.neutral-twigcaster/geometry.glb?url";
+import a501 from "../../../assets/library/asset.models.units.neutral-twigcaster/image.png?url";
+import a502 from "../../../assets/library/asset.models.units.neutral-violet-sporeling/geometry.glb?url";
+import a503 from "../../../assets/library/asset.models.units.neutral-violet-sporeling/image.png?url";
+import a504 from "../../../assets/library/asset.models.units.neutral-webling/geometry.glb?url";
+import a505 from "../../../assets/library/asset.models.units.neutral-webling/image.png?url";
+import a506 from "../../../assets/library/asset.models.units.neutral-willow-wisp/geometry.glb?url";
+import a507 from "../../../assets/library/asset.models.units.neutral-willow-wisp/image.png?url";
+import a508 from "../../../assets/library/asset.models.units.neutral-young-toad/geometry.glb?url";
+import a509 from "../../../assets/library/asset.models.units.neutral-young-toad/image.png?url";
+import a510 from "../../../assets/library/asset.placeholder.missing-model/albedo.png?url";
+import a511 from "../../../assets/library/asset.placeholder.missing-model/geometry.glb?url";
+import a512 from "../../../assets/library/asset.terrain.autumn-leaf-litter/albedo.png?url";
+import a513 from "../../../assets/library/asset.terrain.autumn-leaf-litter/data.bin?url";
+import a514 from "../../../assets/library/asset.terrain.autumn-leaf-normal/data.bin?url";
+import a515 from "../../../assets/library/asset.terrain.pebble-normal/data.bin?url";
+import a516 from "../../../assets/library/asset.terrain.pebble-trail/albedo.png?url";
+import a517 from "../../../assets/library/asset.terrain.pebble-trail/data.bin?url";
+import a518 from "../../../assets/library/asset.terrain.winter-dirt-normal/data.bin?url";
+import a519 from "../../../assets/library/asset.terrain.winter-dirt/albedo.png?url";
+import a520 from "../../../assets/library/asset.terrain.winter-dirt/data.bin?url";
+import a521 from "../../../assets/library/asset.terrain.winter-grass-normal/data.bin?url";
+import a522 from "../../../assets/library/asset.terrain.winter-grass/albedo.png?url";
+import a523 from "../../../assets/library/asset.terrain.winter-grass/data.bin?url";
+import a524 from "../../../assets/library/asset.terrain.winter-rock-normal/data.bin?url";
+import a525 from "../../../assets/library/asset.terrain.winter-rock/albedo.png?url";
+import a526 from "../../../assets/library/asset.terrain.winter-rock/data.bin?url";
+import a527 from "../../../assets/library/asset.terrain.winter-soil-normal/data.bin?url";
+import a528 from "../../../assets/library/asset.terrain.winter-soil/albedo.png?url";
+import a529 from "../../../assets/library/asset.terrain.winter-soil/data.bin?url";
+import a530 from "../../../assets/library/asset.terrain.woodland-dirt-normal/data.bin?url";
+import a531 from "../../../assets/library/asset.terrain.woodland-dirt/albedo.png?url";
+import a532 from "../../../assets/library/asset.terrain.woodland-dirt/data.bin?url";
+import a533 from "../../../assets/library/asset.terrain.woodland-grass-normal/data.bin?url";
+import a534 from "../../../assets/library/asset.terrain.woodland-grass/albedo.png?url";
+import a535 from "../../../assets/library/asset.terrain.woodland-grass/data.bin?url";
+import a536 from "../../../assets/library/asset.terrain.woodland-riverbed-normal/data.bin?url";
+import a537 from "../../../assets/library/asset.terrain.woodland-riverbed/albedo.png?url";
+import a538 from "../../../assets/library/asset.terrain.woodland-riverbed/data.bin?url";
+import a539 from "../../../assets/library/asset.terrain.woodland-rock-displacement/data.bin?url";
+import a540 from "../../../assets/library/asset.terrain.woodland-rock-normal/data.bin?url";
+import a541 from "../../../assets/library/asset.terrain.woodland-rock/albedo.png?url";
+import a542 from "../../../assets/library/asset.terrain.woodland-rock/data.bin?url";
+import a543 from "../../../assets/library/asset.terrain.woodland-soil-normal/data.bin?url";
+import a544 from "../../../assets/library/asset.terrain.woodland-soil/albedo.png?url";
+import a545 from "../../../assets/library/asset.terrain.woodland-soil/data.bin?url";
+import a546 from "../../../assets/library/asset.texture.winter-macro/albedo.png?url";
+import a547 from "../../../assets/library/asset.texture.woodland-brdf/data.bin?url";
+import a548 from "../../../assets/library/asset.texture.woodland-brdf/data_2.json?url";
+import a549 from "../../../assets/library/asset.texture.woodland-caustics/albedo.png?url";
+import a550 from "../../../assets/library/asset.texture.woodland-daytime-grades/data.json?url";
+import a551 from "../../../assets/library/asset.texture.woodland-macro/albedo.png?url";
+import a552 from "../../../assets/library/asset.texture.woodland-reflection/data.bin?url";
+import a553 from "../../../assets/library/asset.texture.woodland-reflection/data_2.json?url";
+import a554 from "../../../assets/library/asset.texture.woodland-terrain-ar/albedo.png?url";
+import a555 from "../../../assets/library/asset.texture.woodland-terrain-nh/albedo.png?url";
+import a556 from "../../../assets/library/asset.texture.woodland-waves/albedo.png?url";
+import a557 from "../../../assets/library/asset.textures.forest-giants-bark/albedo.png?url";
+import a558 from "../../../assets/library/asset.textures.forest-giants-mushrooms/albedo.png?url";
+import a559 from "../../../assets/library/image.item-heart-of-the-forest/image.png?url";
+import a560 from "../../../assets/library/image.woodland-bar-rim/image.png?url";
+import a561 from "../../../assets/library/image.woodland-connected-hud/image.png?url";
+import a562 from "../../../assets/library/image.woodland-health-fill/image.png?url";
+import a563 from "../../../assets/library/image.woodland-mana-fill/image.png?url";
+import a564 from "../../../assets/library/image.woodland-satchel/image.png?url";
+import a565 from "../../../assets/library/image.woodland-selection-rim/image.png?url";
+import a566 from "../../../assets/library/image.woodland-square-rim/image.png?url";
+import a567 from "../../../assets/library/recipe.foliage.frozen-bank/definition.json?url";
+import a568 from "../../../assets/library/recipe.foliage.mushroom-patches/definition.json?url";
+import a569 from "../../../assets/library/recipe.foliage.riverbank/definition.json?url";
+import a570 from "../../../assets/library/recipe.forest.autumn/definition.json?url";
+import a571 from "../../../assets/library/recipe.forest.conifer-edge/definition.json?url";
+import a572 from "../../../assets/library/recipe.forest.diverse/definition.json?url";
+import a573 from "../../../assets/library/recipe.forest.frozen/definition.json?url";
+import a574 from "../../../assets/library/recipe.forest.leafy/definition.json?url";
+import a575 from "../../../assets/library/recipe.grass.autumn/definition.json?url";
+import a576 from "../../../assets/library/recipe.grass.meadow/definition.json?url";
+import a577 from "../../../assets/library/recipe.grass.winter/definition.json?url";
+import a578 from "../../../assets/library/recipe.meadow.woodland-edge/definition.json?url";
+import a579 from "../../../assets/library/recipe.path.grass/definition.json?url";
+import a580 from "../../../assets/library/recipe.path.pebbles/definition.json?url";
+import a581 from "../../../assets/library/recipe.path.soil/definition.json?url";
+import a582 from "../../../assets/library/recipe.river.gentle/definition.json?url";
+import a583 from "../../../assets/library/recipe.river.glacial.water/definition.json?url";
+import a584 from "../../../assets/library/recipe.river.glacial/definition.json?url";
+import a585 from "../../../assets/library/recipe.river.meltwater.water/definition.json?url";
+import a586 from "../../../assets/library/recipe.river.meltwater/definition.json?url";
+import a587 from "../../../assets/library/recipe.river.swift/definition.json?url";
+import a588 from "../../../assets/library/recipe.terrain.bank/definition.json?url";
+import a589 from "../../../assets/library/recipe.terrain.hill/definition.json?url";
+import a590 from "../../../assets/library/recipe.terrain.mountain/definition.json?url";
+import a591 from "../../../assets/library/water.clear-forest/definition.json?url";
+import a592 from "../../../assets/library/water.muddy/definition.json?url";
 export const assetUrls:Readonly<Record<string,string>> = {
 "assets/library/asset.assistant-trials.frost-relay-icon/image.png":a0,
 "assets/library/asset.assistant-trials.verdant-ward-icon/image.png":a1,
@@ -1021,163 +1024,166 @@ export const assetUrls:Readonly<Record<string,string>> = {
 "assets/library/asset.models.environment.woodland-woodpile/albedo.png":a428,
 "assets/library/asset.models.environment.woodland-woodpile/albedo_2.png":a429,
 "assets/library/asset.models.environment.woodland-woodpile/geometry.glb":a430,
-"assets/library/asset.models.resources.amber-deposit/albedo.png":a431,
-"assets/library/asset.models.resources.amber-deposit/geometry.glb":a432,
-"assets/library/asset.models.resources.amber-deposit/image.png":a433,
-"assets/library/asset.models.resources.amber-deposit/normal.png":a434,
-"assets/library/asset.models.resources.amber-deposit/roughness.png":a435,
-"assets/library/asset.models.resources.corrupted-root/geometry.glb":a436,
-"assets/library/asset.models.resources.corrupted-root/image.png":a437,
-"assets/library/asset.models.units.ants-archer/albedo.png":a438,
-"assets/library/asset.models.units.ants-archer/geometry.glb":a439,
-"assets/library/asset.models.units.ants-archer/image.png":a440,
-"assets/library/asset.models.units.ants-archer/team_mask.png":a441,
-"assets/library/asset.models.units.ants-bombardier/albedo.png":a442,
-"assets/library/asset.models.units.ants-bombardier/geometry.glb":a443,
-"assets/library/asset.models.units.ants-bombardier/image.png":a444,
-"assets/library/asset.models.units.ants-bombardier/team_mask.png":a445,
-"assets/library/asset.models.units.ants-warrior/geometry.glb":a446,
-"assets/library/asset.models.units.ants-warrior/image.png":a447,
-"assets/library/asset.models.units.ants-worker/albedo.png":a448,
-"assets/library/asset.models.units.ants-worker/geometry.glb":a449,
-"assets/library/asset.models.units.ants-worker/geometry_2.glb":a450,
-"assets/library/asset.models.units.ants-worker/geometry_3.glb":a451,
-"assets/library/asset.models.units.ants-worker/geometry_4.glb":a452,
-"assets/library/asset.models.units.ants-worker/image.png":a453,
-"assets/library/asset.models.units.ants-worker/team_mask.png":a454,
-"assets/library/asset.models.units.neutral-barkguard/geometry.glb":a455,
-"assets/library/asset.models.units.neutral-barkguard/image.png":a456,
-"assets/library/asset.models.units.neutral-bloom-witch/geometry.glb":a457,
-"assets/library/asset.models.units.neutral-bloom-witch/image.png":a458,
-"assets/library/asset.models.units.neutral-briar-hulk/geometry.glb":a459,
-"assets/library/asset.models.units.neutral-briar-hulk/image.png":a460,
-"assets/library/asset.models.units.neutral-capling/geometry.glb":a461,
-"assets/library/asset.models.units.neutral-capling/image.png":a462,
-"assets/library/asset.models.units.neutral-corrupted-rootbeast/geometry.glb":a463,
-"assets/library/asset.models.units.neutral-corrupted-rootbeast/image.png":a464,
-"assets/library/asset.models.units.neutral-dew-sprite/geometry.glb":a465,
-"assets/library/asset.models.units.neutral-dew-sprite/image.png":a466,
-"assets/library/asset.models.units.neutral-hollow-stag/geometry.glb":a467,
-"assets/library/asset.models.units.neutral-hollow-stag/image.png":a468,
-"assets/library/asset.models.units.neutral-hornet-guard/geometry.glb":a469,
-"assets/library/asset.models.units.neutral-hornet-guard/image.png":a470,
-"assets/library/asset.models.units.neutral-needle-wasp/geometry.glb":a471,
-"assets/library/asset.models.units.neutral-needle-wasp/image.png":a472,
-"assets/library/asset.models.units.neutral-nest-mother/geometry.glb":a473,
-"assets/library/asset.models.units.neutral-nest-mother/image.png":a474,
-"assets/library/asset.models.units.neutral-old-root/geometry.glb":a475,
-"assets/library/asset.models.units.neutral-old-root/image.png":a476,
-"assets/library/asset.models.units.neutral-puddle-wisp/geometry.glb":a477,
-"assets/library/asset.models.units.neutral-puddle-wisp/image.png":a478,
-"assets/library/asset.models.units.neutral-puffcap/geometry.glb":a479,
-"assets/library/asset.models.units.neutral-puffcap/image.png":a480,
-"assets/library/asset.models.units.neutral-root-seer/geometry.glb":a481,
-"assets/library/asset.models.units.neutral-root-seer/image.png":a482,
-"assets/library/asset.models.units.neutral-rootling/geometry.glb":a483,
-"assets/library/asset.models.units.neutral-rootling/image.png":a484,
-"assets/library/asset.models.units.neutral-rotwood-ancient/geometry.glb":a485,
-"assets/library/asset.models.units.neutral-rotwood-ancient/image.png":a486,
-"assets/library/asset.models.units.neutral-seedcaster/geometry.glb":a487,
-"assets/library/asset.models.units.neutral-seedcaster/image.png":a488,
-"assets/library/asset.models.units.neutral-spitter/geometry.glb":a489,
-"assets/library/asset.models.units.neutral-spitter/image.png":a490,
-"assets/library/asset.models.units.neutral-tadpole-spirit/geometry.glb":a491,
-"assets/library/asset.models.units.neutral-tadpole-spirit/image.png":a492,
-"assets/library/asset.models.units.neutral-thorn-slinger/geometry.glb":a493,
-"assets/library/asset.models.units.neutral-thorn-slinger/image.png":a494,
-"assets/library/asset.models.units.neutral-tree-frog/geometry.glb":a495,
-"assets/library/asset.models.units.neutral-tree-frog/image.png":a496,
-"assets/library/asset.models.units.neutral-twigcaster/geometry.glb":a497,
-"assets/library/asset.models.units.neutral-twigcaster/image.png":a498,
-"assets/library/asset.models.units.neutral-violet-sporeling/geometry.glb":a499,
-"assets/library/asset.models.units.neutral-violet-sporeling/image.png":a500,
-"assets/library/asset.models.units.neutral-webling/geometry.glb":a501,
-"assets/library/asset.models.units.neutral-webling/image.png":a502,
-"assets/library/asset.models.units.neutral-willow-wisp/geometry.glb":a503,
-"assets/library/asset.models.units.neutral-willow-wisp/image.png":a504,
-"assets/library/asset.models.units.neutral-young-toad/geometry.glb":a505,
-"assets/library/asset.models.units.neutral-young-toad/image.png":a506,
-"assets/library/asset.placeholder.missing-model/albedo.png":a507,
-"assets/library/asset.placeholder.missing-model/geometry.glb":a508,
-"assets/library/asset.terrain.autumn-leaf-litter/albedo.png":a509,
-"assets/library/asset.terrain.autumn-leaf-litter/data.bin":a510,
-"assets/library/asset.terrain.autumn-leaf-normal/data.bin":a511,
-"assets/library/asset.terrain.pebble-normal/data.bin":a512,
-"assets/library/asset.terrain.pebble-trail/albedo.png":a513,
-"assets/library/asset.terrain.pebble-trail/data.bin":a514,
-"assets/library/asset.terrain.winter-dirt-normal/data.bin":a515,
-"assets/library/asset.terrain.winter-dirt/albedo.png":a516,
-"assets/library/asset.terrain.winter-dirt/data.bin":a517,
-"assets/library/asset.terrain.winter-grass-normal/data.bin":a518,
-"assets/library/asset.terrain.winter-grass/albedo.png":a519,
-"assets/library/asset.terrain.winter-grass/data.bin":a520,
-"assets/library/asset.terrain.winter-rock-normal/data.bin":a521,
-"assets/library/asset.terrain.winter-rock/albedo.png":a522,
-"assets/library/asset.terrain.winter-rock/data.bin":a523,
-"assets/library/asset.terrain.winter-soil-normal/data.bin":a524,
-"assets/library/asset.terrain.winter-soil/albedo.png":a525,
-"assets/library/asset.terrain.winter-soil/data.bin":a526,
-"assets/library/asset.terrain.woodland-dirt-normal/data.bin":a527,
-"assets/library/asset.terrain.woodland-dirt/albedo.png":a528,
-"assets/library/asset.terrain.woodland-dirt/data.bin":a529,
-"assets/library/asset.terrain.woodland-grass-normal/data.bin":a530,
-"assets/library/asset.terrain.woodland-grass/albedo.png":a531,
-"assets/library/asset.terrain.woodland-grass/data.bin":a532,
-"assets/library/asset.terrain.woodland-riverbed-normal/data.bin":a533,
-"assets/library/asset.terrain.woodland-riverbed/albedo.png":a534,
-"assets/library/asset.terrain.woodland-riverbed/data.bin":a535,
-"assets/library/asset.terrain.woodland-rock-displacement/data.bin":a536,
-"assets/library/asset.terrain.woodland-rock-normal/data.bin":a537,
-"assets/library/asset.terrain.woodland-rock/albedo.png":a538,
-"assets/library/asset.terrain.woodland-rock/data.bin":a539,
-"assets/library/asset.terrain.woodland-soil-normal/data.bin":a540,
-"assets/library/asset.terrain.woodland-soil/albedo.png":a541,
-"assets/library/asset.terrain.woodland-soil/data.bin":a542,
-"assets/library/asset.texture.winter-macro/albedo.png":a543,
-"assets/library/asset.texture.woodland-brdf/data.bin":a544,
-"assets/library/asset.texture.woodland-brdf/data_2.json":a545,
-"assets/library/asset.texture.woodland-caustics/albedo.png":a546,
-"assets/library/asset.texture.woodland-daytime-grades/data.json":a547,
-"assets/library/asset.texture.woodland-macro/albedo.png":a548,
-"assets/library/asset.texture.woodland-reflection/data.bin":a549,
-"assets/library/asset.texture.woodland-reflection/data_2.json":a550,
-"assets/library/asset.texture.woodland-terrain-ar/albedo.png":a551,
-"assets/library/asset.texture.woodland-terrain-nh/albedo.png":a552,
-"assets/library/asset.texture.woodland-waves/albedo.png":a553,
-"assets/library/asset.textures.forest-giants-bark/albedo.png":a554,
-"assets/library/asset.textures.forest-giants-mushrooms/albedo.png":a555,
-"assets/library/image.item-heart-of-the-forest/image.png":a556,
-"assets/library/image.woodland-bar-rim/image.png":a557,
-"assets/library/image.woodland-connected-hud/image.png":a558,
-"assets/library/image.woodland-health-fill/image.png":a559,
-"assets/library/image.woodland-mana-fill/image.png":a560,
-"assets/library/image.woodland-satchel/image.png":a561,
-"assets/library/image.woodland-selection-rim/image.png":a562,
-"assets/library/image.woodland-square-rim/image.png":a563,
-"assets/library/recipe.foliage.frozen-bank/definition.json":a564,
-"assets/library/recipe.foliage.mushroom-patches/definition.json":a565,
-"assets/library/recipe.foliage.riverbank/definition.json":a566,
-"assets/library/recipe.forest.autumn/definition.json":a567,
-"assets/library/recipe.forest.conifer-edge/definition.json":a568,
-"assets/library/recipe.forest.diverse/definition.json":a569,
-"assets/library/recipe.forest.frozen/definition.json":a570,
-"assets/library/recipe.forest.leafy/definition.json":a571,
-"assets/library/recipe.grass.autumn/definition.json":a572,
-"assets/library/recipe.grass.meadow/definition.json":a573,
-"assets/library/recipe.grass.winter/definition.json":a574,
-"assets/library/recipe.meadow.woodland-edge/definition.json":a575,
-"assets/library/recipe.path.grass/definition.json":a576,
-"assets/library/recipe.path.pebbles/definition.json":a577,
-"assets/library/recipe.path.soil/definition.json":a578,
-"assets/library/recipe.river.gentle/definition.json":a579,
-"assets/library/recipe.river.glacial.water/definition.json":a580,
-"assets/library/recipe.river.glacial/definition.json":a581,
-"assets/library/recipe.river.meltwater.water/definition.json":a582,
-"assets/library/recipe.river.meltwater/definition.json":a583,
-"assets/library/recipe.river.swift/definition.json":a584,
-"assets/library/recipe.terrain.bank/definition.json":a585,
-"assets/library/recipe.terrain.hill/definition.json":a586,
-"assets/library/recipe.terrain.mountain/definition.json":a587,
-"assets/library/water.clear-forest/definition.json":a588,
-"assets/library/water.muddy/definition.json":a589,
+"assets/library/asset.models.resources.amber-deposit-empty/geometry.glb":a431,
+"assets/library/asset.models.resources.amber-deposit-one-third/geometry.glb":a432,
+"assets/library/asset.models.resources.amber-deposit-two-thirds/geometry.glb":a433,
+"assets/library/asset.models.resources.amber-deposit/albedo.png":a434,
+"assets/library/asset.models.resources.amber-deposit/geometry.glb":a435,
+"assets/library/asset.models.resources.amber-deposit/image.png":a436,
+"assets/library/asset.models.resources.amber-deposit/normal.png":a437,
+"assets/library/asset.models.resources.amber-deposit/roughness.png":a438,
+"assets/library/asset.models.resources.corrupted-root/geometry.glb":a439,
+"assets/library/asset.models.resources.corrupted-root/image.png":a440,
+"assets/library/asset.models.units.ants-archer/albedo.png":a441,
+"assets/library/asset.models.units.ants-archer/geometry.glb":a442,
+"assets/library/asset.models.units.ants-archer/image.png":a443,
+"assets/library/asset.models.units.ants-archer/team_mask.png":a444,
+"assets/library/asset.models.units.ants-bombardier/albedo.png":a445,
+"assets/library/asset.models.units.ants-bombardier/geometry.glb":a446,
+"assets/library/asset.models.units.ants-bombardier/image.png":a447,
+"assets/library/asset.models.units.ants-bombardier/team_mask.png":a448,
+"assets/library/asset.models.units.ants-warrior/geometry.glb":a449,
+"assets/library/asset.models.units.ants-warrior/image.png":a450,
+"assets/library/asset.models.units.ants-worker/albedo.png":a451,
+"assets/library/asset.models.units.ants-worker/geometry.glb":a452,
+"assets/library/asset.models.units.ants-worker/geometry_2.glb":a453,
+"assets/library/asset.models.units.ants-worker/geometry_3.glb":a454,
+"assets/library/asset.models.units.ants-worker/geometry_4.glb":a455,
+"assets/library/asset.models.units.ants-worker/image.png":a456,
+"assets/library/asset.models.units.ants-worker/team_mask.png":a457,
+"assets/library/asset.models.units.neutral-barkguard/geometry.glb":a458,
+"assets/library/asset.models.units.neutral-barkguard/image.png":a459,
+"assets/library/asset.models.units.neutral-bloom-witch/geometry.glb":a460,
+"assets/library/asset.models.units.neutral-bloom-witch/image.png":a461,
+"assets/library/asset.models.units.neutral-briar-hulk/geometry.glb":a462,
+"assets/library/asset.models.units.neutral-briar-hulk/image.png":a463,
+"assets/library/asset.models.units.neutral-capling/geometry.glb":a464,
+"assets/library/asset.models.units.neutral-capling/image.png":a465,
+"assets/library/asset.models.units.neutral-corrupted-rootbeast/geometry.glb":a466,
+"assets/library/asset.models.units.neutral-corrupted-rootbeast/image.png":a467,
+"assets/library/asset.models.units.neutral-dew-sprite/geometry.glb":a468,
+"assets/library/asset.models.units.neutral-dew-sprite/image.png":a469,
+"assets/library/asset.models.units.neutral-hollow-stag/geometry.glb":a470,
+"assets/library/asset.models.units.neutral-hollow-stag/image.png":a471,
+"assets/library/asset.models.units.neutral-hornet-guard/geometry.glb":a472,
+"assets/library/asset.models.units.neutral-hornet-guard/image.png":a473,
+"assets/library/asset.models.units.neutral-needle-wasp/geometry.glb":a474,
+"assets/library/asset.models.units.neutral-needle-wasp/image.png":a475,
+"assets/library/asset.models.units.neutral-nest-mother/geometry.glb":a476,
+"assets/library/asset.models.units.neutral-nest-mother/image.png":a477,
+"assets/library/asset.models.units.neutral-old-root/geometry.glb":a478,
+"assets/library/asset.models.units.neutral-old-root/image.png":a479,
+"assets/library/asset.models.units.neutral-puddle-wisp/geometry.glb":a480,
+"assets/library/asset.models.units.neutral-puddle-wisp/image.png":a481,
+"assets/library/asset.models.units.neutral-puffcap/geometry.glb":a482,
+"assets/library/asset.models.units.neutral-puffcap/image.png":a483,
+"assets/library/asset.models.units.neutral-root-seer/geometry.glb":a484,
+"assets/library/asset.models.units.neutral-root-seer/image.png":a485,
+"assets/library/asset.models.units.neutral-rootling/geometry.glb":a486,
+"assets/library/asset.models.units.neutral-rootling/image.png":a487,
+"assets/library/asset.models.units.neutral-rotwood-ancient/geometry.glb":a488,
+"assets/library/asset.models.units.neutral-rotwood-ancient/image.png":a489,
+"assets/library/asset.models.units.neutral-seedcaster/geometry.glb":a490,
+"assets/library/asset.models.units.neutral-seedcaster/image.png":a491,
+"assets/library/asset.models.units.neutral-spitter/geometry.glb":a492,
+"assets/library/asset.models.units.neutral-spitter/image.png":a493,
+"assets/library/asset.models.units.neutral-tadpole-spirit/geometry.glb":a494,
+"assets/library/asset.models.units.neutral-tadpole-spirit/image.png":a495,
+"assets/library/asset.models.units.neutral-thorn-slinger/geometry.glb":a496,
+"assets/library/asset.models.units.neutral-thorn-slinger/image.png":a497,
+"assets/library/asset.models.units.neutral-tree-frog/geometry.glb":a498,
+"assets/library/asset.models.units.neutral-tree-frog/image.png":a499,
+"assets/library/asset.models.units.neutral-twigcaster/geometry.glb":a500,
+"assets/library/asset.models.units.neutral-twigcaster/image.png":a501,
+"assets/library/asset.models.units.neutral-violet-sporeling/geometry.glb":a502,
+"assets/library/asset.models.units.neutral-violet-sporeling/image.png":a503,
+"assets/library/asset.models.units.neutral-webling/geometry.glb":a504,
+"assets/library/asset.models.units.neutral-webling/image.png":a505,
+"assets/library/asset.models.units.neutral-willow-wisp/geometry.glb":a506,
+"assets/library/asset.models.units.neutral-willow-wisp/image.png":a507,
+"assets/library/asset.models.units.neutral-young-toad/geometry.glb":a508,
+"assets/library/asset.models.units.neutral-young-toad/image.png":a509,
+"assets/library/asset.placeholder.missing-model/albedo.png":a510,
+"assets/library/asset.placeholder.missing-model/geometry.glb":a511,
+"assets/library/asset.terrain.autumn-leaf-litter/albedo.png":a512,
+"assets/library/asset.terrain.autumn-leaf-litter/data.bin":a513,
+"assets/library/asset.terrain.autumn-leaf-normal/data.bin":a514,
+"assets/library/asset.terrain.pebble-normal/data.bin":a515,
+"assets/library/asset.terrain.pebble-trail/albedo.png":a516,
+"assets/library/asset.terrain.pebble-trail/data.bin":a517,
+"assets/library/asset.terrain.winter-dirt-normal/data.bin":a518,
+"assets/library/asset.terrain.winter-dirt/albedo.png":a519,
+"assets/library/asset.terrain.winter-dirt/data.bin":a520,
+"assets/library/asset.terrain.winter-grass-normal/data.bin":a521,
+"assets/library/asset.terrain.winter-grass/albedo.png":a522,
+"assets/library/asset.terrain.winter-grass/data.bin":a523,
+"assets/library/asset.terrain.winter-rock-normal/data.bin":a524,
+"assets/library/asset.terrain.winter-rock/albedo.png":a525,
+"assets/library/asset.terrain.winter-rock/data.bin":a526,
+"assets/library/asset.terrain.winter-soil-normal/data.bin":a527,
+"assets/library/asset.terrain.winter-soil/albedo.png":a528,
+"assets/library/asset.terrain.winter-soil/data.bin":a529,
+"assets/library/asset.terrain.woodland-dirt-normal/data.bin":a530,
+"assets/library/asset.terrain.woodland-dirt/albedo.png":a531,
+"assets/library/asset.terrain.woodland-dirt/data.bin":a532,
+"assets/library/asset.terrain.woodland-grass-normal/data.bin":a533,
+"assets/library/asset.terrain.woodland-grass/albedo.png":a534,
+"assets/library/asset.terrain.woodland-grass/data.bin":a535,
+"assets/library/asset.terrain.woodland-riverbed-normal/data.bin":a536,
+"assets/library/asset.terrain.woodland-riverbed/albedo.png":a537,
+"assets/library/asset.terrain.woodland-riverbed/data.bin":a538,
+"assets/library/asset.terrain.woodland-rock-displacement/data.bin":a539,
+"assets/library/asset.terrain.woodland-rock-normal/data.bin":a540,
+"assets/library/asset.terrain.woodland-rock/albedo.png":a541,
+"assets/library/asset.terrain.woodland-rock/data.bin":a542,
+"assets/library/asset.terrain.woodland-soil-normal/data.bin":a543,
+"assets/library/asset.terrain.woodland-soil/albedo.png":a544,
+"assets/library/asset.terrain.woodland-soil/data.bin":a545,
+"assets/library/asset.texture.winter-macro/albedo.png":a546,
+"assets/library/asset.texture.woodland-brdf/data.bin":a547,
+"assets/library/asset.texture.woodland-brdf/data_2.json":a548,
+"assets/library/asset.texture.woodland-caustics/albedo.png":a549,
+"assets/library/asset.texture.woodland-daytime-grades/data.json":a550,
+"assets/library/asset.texture.woodland-macro/albedo.png":a551,
+"assets/library/asset.texture.woodland-reflection/data.bin":a552,
+"assets/library/asset.texture.woodland-reflection/data_2.json":a553,
+"assets/library/asset.texture.woodland-terrain-ar/albedo.png":a554,
+"assets/library/asset.texture.woodland-terrain-nh/albedo.png":a555,
+"assets/library/asset.texture.woodland-waves/albedo.png":a556,
+"assets/library/asset.textures.forest-giants-bark/albedo.png":a557,
+"assets/library/asset.textures.forest-giants-mushrooms/albedo.png":a558,
+"assets/library/image.item-heart-of-the-forest/image.png":a559,
+"assets/library/image.woodland-bar-rim/image.png":a560,
+"assets/library/image.woodland-connected-hud/image.png":a561,
+"assets/library/image.woodland-health-fill/image.png":a562,
+"assets/library/image.woodland-mana-fill/image.png":a563,
+"assets/library/image.woodland-satchel/image.png":a564,
+"assets/library/image.woodland-selection-rim/image.png":a565,
+"assets/library/image.woodland-square-rim/image.png":a566,
+"assets/library/recipe.foliage.frozen-bank/definition.json":a567,
+"assets/library/recipe.foliage.mushroom-patches/definition.json":a568,
+"assets/library/recipe.foliage.riverbank/definition.json":a569,
+"assets/library/recipe.forest.autumn/definition.json":a570,
+"assets/library/recipe.forest.conifer-edge/definition.json":a571,
+"assets/library/recipe.forest.diverse/definition.json":a572,
+"assets/library/recipe.forest.frozen/definition.json":a573,
+"assets/library/recipe.forest.leafy/definition.json":a574,
+"assets/library/recipe.grass.autumn/definition.json":a575,
+"assets/library/recipe.grass.meadow/definition.json":a576,
+"assets/library/recipe.grass.winter/definition.json":a577,
+"assets/library/recipe.meadow.woodland-edge/definition.json":a578,
+"assets/library/recipe.path.grass/definition.json":a579,
+"assets/library/recipe.path.pebbles/definition.json":a580,
+"assets/library/recipe.path.soil/definition.json":a581,
+"assets/library/recipe.river.gentle/definition.json":a582,
+"assets/library/recipe.river.glacial.water/definition.json":a583,
+"assets/library/recipe.river.glacial/definition.json":a584,
+"assets/library/recipe.river.meltwater.water/definition.json":a585,
+"assets/library/recipe.river.meltwater/definition.json":a586,
+"assets/library/recipe.river.swift/definition.json":a587,
+"assets/library/recipe.terrain.bank/definition.json":a588,
+"assets/library/recipe.terrain.hill/definition.json":a589,
+"assets/library/recipe.terrain.mountain/definition.json":a590,
+"assets/library/water.clear-forest/definition.json":a591,
+"assets/library/water.muddy/definition.json":a592,
 };

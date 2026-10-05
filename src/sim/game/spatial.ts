@@ -1,4 +1,6 @@
 import {SimulationProfiler} from '../profiling';
+import {GroundNavigation} from './groundNavigation';
+import {LocalTerrainSweeps} from './localTerrainSweeps';
 import {formDefinition} from '../abilities/forms';
 import {farthestClearWaypoint} from './routeSmoothing';
 import {adjacentSweep} from './adjacentSweep';
@@ -17,6 +19,7 @@ import {applySceneryBlockers} from '../../shared/map/sceneryCollision';
 import {resourceCollisionCells} from '../../shared/map/resourceClearance';
 import {
   clearSweep,
+  appendRayCells,
   clearRay,
   fixed,
   precise,
@@ -25,7 +28,7 @@ import {
 import type { ContentRegistry } from "../../content/registry";
 import { sampleHeight, decodeHeight, HEIGHT_ORIGIN, WADING_DEPTH_CM } from "../../shared/map/height";
 import type { UtcMap } from "../../shared/map/utcmap";
-import { Navigation } from "./navigation";
+import { Navigation,canTraverse } from "./navigation";
 import { alive, type Entity, type Point } from "./state";
 
 export const cell = (p: Point, size = 256) => p.y * size + p.x;
@@ -39,18 +42,29 @@ let spatialRevisions = 0;
 type Body = {radius:number;height:number;formationSpacing:number;locomotion?:'ground'|'air'};
 type Actor = Pick<Entity,'definition'> & Partial<Pick<Entity,'spellStatuses'|'unit'>>|Body;
 type OccupancyInput = {id:number;definition:string;x:number;y:number;rotation:number;surface?:string;scale:number;building:boolean;resource:boolean};
+/** Separating motion may escape an existing overlap; moving into it may not. */
+function bodyBlocksSegment(from:FixedPoint,dx:number,dy:number,square:number,x:number,y:number,separationSquared:number):boolean {
+  const sx=x-from.x,sy=y-from.y;
+  if(square&&sx*sx+sy*sy<separationSquared&&sx*dx+sy*dy<=0)return false;
+  const t=square?Math.max(0,Math.min(1,(sx*dx+sy*dy)/square)):0;
+  return (x-from.x-t*dx)**2+(y-from.y-t*dy)**2<separationSquared;
+}
 export class Spatial {
   airborne(actor?:Actor){return !!actor&&('definition' in actor?locomotion(formDefinition(this.registry.get(actor.definition),actor,this.registry))==='air':actor.locomotion==='air');}
   sameLocomotion(a?:Actor,b?:Actor){return this.airborne(a)===this.airborne(b);}
   /** Air units clear every physical floor; this height never changes horizontal navigation cells. */
   airFloor(p:Point){const x=Math.max(0,Math.min(this.size-1,Math.round(p.x))),y=Math.max(0,Math.min(this.size-1,Math.round(p.y))),i=y*this.size+x;
    return Math.max(this.heights[i]!/100,this.waterHeights[i]!/100,...(this.layers?.at(x,y).map(n=>this.layers!.nodes[n]!.height/100)??[]));}
-  elevation(e:Pick<Entity,'definition'|'x'|'y'|'surface'> & Partial<Pick<Entity,'spellStatuses'|'unit'>>){return this.airborne(e)?this.airFloor(e)-this.height(e)+flightHeight(formDefinition(this.registry.get(e.definition),e,this.registry)):0;}
-  elevatedPoint(e:Entity){const p=precise(e),elevation=this.elevation({...e,...p})+(e.unit?.garrison?.height??0);return elevation?{...p,elevation}:p;}
+  elevation(e:Pick<Entity,'definition'|'x'|'y'|'surface'> & Partial<Pick<Entity,'spellStatuses'|'unit'>>,point:Point=e){return this.airborne(e)?this.airFloor(point)-this.height(point)+flightHeight(formDefinition(this.registry.get(e.definition),e,this.registry)):0;}
+  elevatedPoint(e:Entity){const p=precise(e),elevation=this.elevation(e,p)+(e.unit?.garrison?.height??0);return elevation?{...p,elevation}:p;}
   private airNavigation:Navigation|undefined;
 
   dimensions(actor?:Actor):Body {return actor&&'definition' in actor ? this.registry.get(actor.definition).dimensions??unitDimensions(this.registry.rules.unitScale) : actor??unitDimensions(this.registry.rules.unitScale);}
   private readonly bodyNavigations=new Map<string,Navigation>();
+  private groundWalkable:Uint8Array|undefined;
+  private readonly groundNavigations=new Map<number,GroundNavigation>();
+  private readonly meshSteps=new Map<number,(a:number,b:number)=>boolean>();
+  private readonly localTerrainSweeps=new Map<number,LocalTerrainSweeps>();
   private readonly maxUnitRadius:number;
   private navigationFor(actor?:Actor){
     const d=this.dimensions(actor),key=`${d.radius}/${d.height}`;
@@ -65,8 +79,14 @@ export class Spatial {
     return navigation;
   }
   private unitIndex:UnitIndex|null=null;
+  private reusableUnitIndex:UnitIndex|undefined;
   /** Scoped to one synchronous planning or movement pass; other queries use live entities. */
-  beginUnitMovement(){this.unitIndex=new UnitIndex(this.units(),this.size,this.ignoresUnits);}
+  beginUnitMovement(){
+    const units=this.units();
+    if(this.reusableUnitIndex)this.reusableUnitIndex.refresh(units);
+    else this.reusableUnitIndex=new UnitIndex(units,this.size,this.ignoresUnits);
+    this.unitIndex=this.reusableUnitIndex;
+  }
   updateUnitMovement(e:Entity){this.unitIndex?.update(e);}
   endUnitMovement(){this.unitIndex=null;}
 
@@ -84,7 +104,9 @@ export class Spatial {
   readonly resources: Int32Array;
   readonly navigation: Navigation;
   readonly sectors: SectorNavigation;
-  readonly routing={searches:0,expanded:0,coarseExpanded:0,fallbacks:0,sharedCorridors:0};
+  readonly routing={searches:0,expanded:0,coarseExpanded:0,fallbacks:0,sharedCorridors:0,trafficBudgetHits:0,trafficBiasedSearches:0,
+    meshSearches:0,meshExpanded:0,meshAccepted:0,meshFallbacks:0,meshRebuiltTiles:0,
+    meshNoCorridor:0,meshSnapRejected:0,meshRasterRejected:0,meshBudgetRejected:0};
   readonly tactical: TacticalTerrain;
   private blockedCells=new Set<number>();
   private occupancyInputs:OccupancyInput[]=[];
@@ -177,6 +199,39 @@ export class Spatial {
     if(!this.validNode(start)||!this.validNode(goal))return null;
     if(!this.unitWalkable(this.point(goal),actor))return null;
     if(this.airborne(actor)){if(start>=this.size*this.size||goal>=this.size*this.size)return null;this.airNavigation??=new Navigation(this.size,()=>true,()=>true,true,this.profile);return this.airNavigation.path(start,goal,blocked,maxCost);}
+    // Bridge portals retain their specialized solver.
+    // Long terrain routes use the mesh; all accepted grid steps still obey the
+    // very same footprint/corner rules as movement and the reference solver.
+    if(!this.layers&&!blocked?.size&&Math.round(this.dimensions(actor).radius*1000)===this.unitRadius&&this.unitRadius<=16000&&Math.max(Math.abs(start%this.size-goal%this.size),Math.abs(Math.floor(start/this.size)-Math.floor(goal/this.size)))>=16){
+      const path=this.profile.measure('Ground mesh route',()=>this.meshPath(start,goal,blocked,maxCost,actor));
+      if(path)return path;
+    }
+    return this.findGridPath(start,goal,blocked,maxCost,actor);
+  }
+  /** Crossing orders from the same controller retain exact route selection.
+   * Other controllers also matter locally; their distant orders must not disable
+   * convoy routing on the opposite side of the map. Bodies remain blockers in
+   * either case. This gate changes search priority, never collision clearance. */
+  private opposingTraffic(e:Entity,destination:Point):boolean {
+    const from=precise(e),dx=destination.x-from.x,dy=destination.y-from.y;
+    const minX=Math.min(from.x,destination.x)-8,maxX=Math.max(from.x,destination.x)+8;
+    const minY=Math.min(from.y,destination.y)-8,maxY=Math.max(from.y,destination.y)+8;
+    for(const other of this.units()){
+      const u=other.unit;
+      if(other.id===e.id||!u?.route.length||u.goal===null||!alive(other)||u.contained||u.release||this.ignoresUnits(other)||!this.sameLocomotion(e,other))continue;
+      const p=precise(other);
+      if(other.owner!==e.owner&&Math.max(Math.abs(p.x-from.x),Math.abs(p.y-from.y))>16)continue;
+      const q=this.point(u.goal);
+      if(dx*(q.x-p.x)+dy*(q.y-p.y)>=0)continue;
+      if(maxX<Math.min(p.x,q.x)||minX>Math.max(p.x,q.x)||maxY<Math.min(p.y,q.y)||minY>Math.max(p.y,q.y))continue;
+      return true;
+    }
+    return false;
+  }
+  /** Reference/fallback solver, also retained for comparative benchmarks. */
+  findGridPath(start:number,goal:number,blocked?:ReadonlySet<number>,maxCost=Infinity,actor?:Actor):number[]|null {
+    if(!this.validNode(start)||!this.validNode(goal)||!this.unitWalkable(this.point(goal),actor))return null;
+    if(this.airborne(actor)){if(start>=this.size*this.size||goal>=this.size*this.size)return null;this.airNavigation??=new Navigation(this.size,()=>true,()=>true,true,this.profile);return this.airNavigation.path(start,goal,blocked,maxCost);}
     const navigation=this.navigationFor(actor);
     if(!this.layers){
       const dx=Math.abs(start%this.size-goal%this.size),dy=Math.abs(Math.floor(start/this.size)-Math.floor(goal/this.size));
@@ -184,13 +239,24 @@ export class Spatial {
       this.routing.coarseExpanded+=corridor?this.sectors.diagnostics.expandedRegions:0;
       if(corridor===null)return null;
       this.routing.searches++;
-      const route=navigation.path(start,goal,blocked,maxCost,corridor);
+      // Long retries may accept a slightly longer route for a smaller frontier.
+      // A dense convoy can use that bias too, but crossing streams keep exact
+      // search so changing route choices does not disrupt their yielding.
+      let nearbyTraffic=0;
+      if(blocked?.size)for(const cell of blocked){
+        if(Math.abs(cell%this.size-start%this.size)<=8&&Math.abs(Math.floor(cell/this.size)-Math.floor(start/this.size))<=8&&++nearbyTraffic>3)break;
+      }
+      const convoy=Math.max(dx,dy)>=64&&nearbyTraffic>3&&!!actor&&'id' in actor&&'owner' in actor&&!this.opposingTraffic(actor as Entity,this.point(goal));
+      const heuristicPermille=blocked?.size&&Math.max(dx,dy)>=64&&(nearbyTraffic<=3||convoy)?1200:1000;
+      if(heuristicPermille>1000)this.routing.trafficBiasedSearches++;
+      const route=navigation.path(start,goal,blocked,maxCost,corridor,heuristicPermille);
       this.routing.expanded+=navigation.lastExpanded;
       if(route!==null||!corridor)return route;
       // Temporary traffic may block every portal on the preferred corridor.
       // Preserve reachability with a full search instead of reporting failure.
       this.routing.fallbacks++;this.routing.searches++;
-      const fallback=navigation.path(start,goal,blocked,maxCost);
+      if(heuristicPermille>1000)this.routing.trafficBiasedSearches++;
+      const fallback=navigation.path(start,goal,blocked,maxCost,undefined,heuristicPermille);
       this.routing.expanded+=navigation.lastExpanded;return fallback;
     }
     const from=this.point(start),to=this.point(goal),corridor=Math.max(Math.abs(from.x-to.x),Math.abs(from.y-to.y))>=32?this.sectors.corridor(start,goal):undefined;
@@ -205,6 +271,52 @@ export class Spatial {
     this.routing.fallbacks++;this.routing.searches++;
     const fallback=this.layers.path(from,to,blockedNode,maxCost,fits);this.routing.expanded+=this.layers.lastExpanded;
     return fallback?.map(n=>n.id)??null;
+  }
+  private groundNavigation(radius:number){
+    let navigation=this.groundNavigations.get(radius);
+    if(!navigation){
+      this.groundWalkable??=Uint8Array.from(this.terrain,(_,i)=>+this.walkable(i));
+      navigation=new GroundNavigation({size:this.size,radius,walkable:this.groundWalkable,heights:this.heights},this.profile);
+      this.groundNavigations.set(radius,navigation);this.routing.meshRebuiltTiles+=navigation.diagnostics.rebuiltTiles;
+    }
+    return navigation;
+  }
+  private meshPath(start:number,goal:number,blocked:ReadonlySet<number>|undefined,maxCost:number,actor?:Actor):number[]|null {
+    const body=this.dimensions(actor),mesh=this.groundNavigation(this.unitRadius/1000),before=mesh.diagnostics.rebuiltTiles;
+    this.profile.measure('Mesh tile updates',()=>mesh.prepare());this.routing.meshRebuiltTiles+=mesh.diagnostics.rebuiltTiles-before;
+    const a=this.point(start),b=this.point(goal);
+    const result=this.profile.measure('Mesh corridor search',()=>mesh.query.computePath({x:a.x,z:a.y},{x:b.x,z:b.y}));
+    this.routing.meshSearches++;this.routing.meshExpanded+=mesh.query.lastExpanded;
+    const fallback=()=>{this.routing.meshFallbacks++;return null;};
+    if(!result.success){this.routing.meshNoCorridor++;return fallback();}
+    return this.profile.measure('Mesh route validation',()=>{
+      let step=this.meshSteps.get(body.radius);
+      if(!step){
+        const terrainStep=(a:number,b:number)=>this.walkable(b)&&Math.abs(this.heights[a]!-this.heights[b]!)<=MAX_GROUND_STEP_CM;
+        step=body.radius<.5?terrainStep:adjacentSweep(this.size,Math.round(body.radius*1000),terrainStep);this.meshSteps.set(body.radius,step);
+      }
+      const traverse=(a:number,b:number)=>!blocked?.has(b)&&step!(a,b),path:number[]=[];
+      let previous=fixed(this.point(start));
+      for(const p of result.path.slice(1)){
+        const next={x:Math.round(p.x*1000),y:Math.round(p.z*1000)};
+        if(!this.clearSegment(previous,next,blocked,actor)){this.routing.meshSnapRejected++;return fallback();}
+        // Keep the public dense-cell path contract used by terrain analysis and
+        // legacy callers. Smoothing below reduces it to a few movement waypoints.
+        if(!appendRayCells(previous,next,traverse,this.size,path)){this.routing.meshRasterRejected++;return fallback();}
+        previous=next;
+      }
+      // DDA may visit the two cardinal steps of an otherwise legal diagonal.
+      // Collapse those pairs so dense-path length/budgets retain grid semantics.
+      const compact:number[]=[];
+      for(const cell of path){
+        while(compact.length&&canTraverse(this.size,compact.length>1?compact[compact.length-2]!:start,cell,traverse))compact.pop();
+        compact.push(cell);
+      }
+      let cost=0,cell=start;
+      for(const next of compact){cost+=next%this.size!==cell%this.size&&Math.floor(next/this.size)!==Math.floor(cell/this.size)?1414:1000;cell=next;}
+      if(cost>maxCost){this.routing.meshBudgetRejected++;return fallback();}
+      this.routing.meshAccepted++;return compact;
+    });
   }
   visible(a:Point & {elevation?:number},b:Point & {elevation?:number}){return (this.layers??this.tactical).visible(a,b);}
   private readonly layerViews=new Map<string,readonly number[]>();
@@ -348,6 +460,15 @@ export class Spatial {
     grid[cell]=id;
   }
   rebuild() {
+    // Explicit full rebuilds include terrain edits and restore. Ordinary entity
+    // additions/removals use invalidateOccupancy and never enter this branch.
+    const preparedRadii=[...this.groundNavigations.keys()];
+    for(const mesh of this.groundNavigations.values())mesh.destroy();
+    this.groundNavigations.clear();this.groundWalkable=undefined;
+    this.navigation.invalidate();
+    this.localTerrainSweeps.clear();
+    for(const navigation of this.bodyNavigations.values())navigation.invalidate();
+    this.sectors.invalidate();
     const previous=this.blockedCells,next=new Set<number>();
     const inputs:OccupancyInput[]=[];
     this.occupiedOverlaps.clear();this.resourceOverlaps.clear();
@@ -379,8 +500,13 @@ export class Spatial {
     for(const cell of previous)if(!next.has(cell))changed.push(cell);
     this.invalidateOccupancy(changed);
     this.sectors.prepare();
+    // Prepare the common body while loading, not on its first army order.
+    if(!this.layers&&this.unitRadius<=16000)for(const radius of preparedRadii.length?preparedRadii:[this.unitRadius/1000])this.groundNavigation(radius);
   }
   private invalidateOccupancy(changed:readonly number[]){
+    for(const cache of this.localTerrainSweeps.values())cache.invalidate(changed);
+    if(this.groundWalkable)for(const cell of changed)if(cell<this.groundWalkable.length)this.groundWalkable[cell]=+this.walkable(cell);
+    for(const mesh of this.groundNavigations.values())mesh.invalidate(changed);
     this.navigation.invalidate(changed, 1 + Math.floor((this.unitRadius + 500) / 1000));
     for(const navigation of this.bodyNavigations.values())navigation.invalidate(changed,1+Math.floor((this.maxUnitRadius+500)/1000));
     this.sectors.invalidate(changed);
@@ -458,6 +584,28 @@ export class Spatial {
     if(this.probes?.entity===entity)this.probes.blocked=blocked;
     return blocked;
   }
+  private readonly trafficBudgets=new WeakMap<Entity,{revision:number;x:number;y:number;surface?:string;goal:number;radius:number;height:number;limit:number|null}>();
+  /** A stationary traffic retry can reuse its terrain-only detour limit. Moving
+   * bodies are deliberately excluded: the actual traffic path is searched anew.
+   * Position/profile/terrain changes invalidate it; cold restore computes the
+   * same number. Keep one scalar record per actor, never a full-world field. */
+  private trafficTerrainBudget(e:Entity,destination:Point,from:FixedPoint,goal:number):number|null {
+    const body=this.dimensions(e),cacheable=!this.layers&&!this.airborne(e),old=cacheable?this.trafficBudgets.get(e):undefined;
+    if(old&&old.revision===this.revision&&old.x===from.x&&old.y===from.y&&old.surface===from.surface&&old.goal===goal&&old.radius===body.radius&&old.height===body.height){
+      this.routing.trafficBudgetHits++;return old.limit;
+    }
+    // Do not derive this from an already diverted route: successive retries
+    // could otherwise ratchet the permitted detour around a distant wall end.
+    const path=this.clearSegment(from,fixed(destination),undefined,e)?[goal]:this.findPath(this.cell(e),goal,undefined,undefined,e);
+    let limit:number|null=null;
+    if(path!==null){
+      let length=0,anchor=from;
+      for(const i of path){const p=fixed(this.point(i));length+=Math.hypot(p.x-anchor.x,p.y-anchor.y);anchor=p;}
+      limit=Math.ceil(length*1.25/1000+4)*1000;
+    }
+    if(cacheable)this.trafficBudgets.set(e,{revision:this.revision,x:from.x,y:from.y,surface:from.surface,goal,radius:body.radius,height:body.height,limit});
+    return limit;
+  }
   route(e: Entity, destination: Point, avoidUnits = e.unit?.order?.type !== "move" && e.unit?.order?.type !== "attack", maxCost = Infinity): boolean {
     if (
       !e.unit ||
@@ -472,13 +620,9 @@ export class Spatial {
     const goal=this.cell(destination),blocked=this.routeBlockers(e,avoidUnits);
     const from = e.unit.position ?? fixed(e);
     if(avoidUnits&&Number.isFinite(maxCost)){
-      // Recompute the terrain-only budget so successive traffic retries cannot
-      // ratchet the allowed detour farther and farther away from the corridor.
-      const terrainPath=this.clearSegment(from,fixed(destination), undefined, e)?[goal]:this.findPath(this.cell(e),goal, undefined, undefined, e);
-      if(terrainPath===null)return false;
-      let length=0,anchor=from;
-      for(const i of terrainPath){const p=fixed(this.point(i));length+=Math.hypot(p.x-anchor.x,p.y-anchor.y);anchor=p;}
-      maxCost=Math.min(maxCost,Math.ceil(length*1.25/1000+4)*1000);
+      const limit=this.trafficTerrainBudget(e,destination,from,goal);
+      if(limit===null)return false;
+      maxCost=Math.min(maxCost,limit);
     }
     const direct = this.clearSegment(from, fixed(destination), blocked, e);
     if(!direct&&!this.airborne(e)&&!this.layers&&this.probes?.entity===e&&avoidUnits){
@@ -544,6 +688,28 @@ export class Spatial {
     e.unit.goal = goal;
     return true;
   }
+  /** Local search terrain edges may repeat across actors and retries. Only
+   * immutable terrain clearance is reused; live reservations are tested first. */
+  clearLocalSegment(from:FixedPoint,to:FixedPoint,blocked:ReadonlySet<number>,actor:Actor):boolean {
+    if(this.layers||this.airborne(actor))return this.clearSegment(from,to,blocked,actor);
+    if(!clearRay(from,to,(_a,b)=>!blocked.has(b),this.size))return false;
+    const radius=Math.round(this.dimensions(actor).radius*1000);
+    let cache=this.localTerrainSweeps.get(radius);
+    if(!cache){
+      if(this.localTerrainSweeps.size===4)this.localTerrainSweeps.delete(this.localTerrainSweeps.keys().next().value!);
+      cache=new LocalTerrainSweeps(this.size,radius,(a,b)=>this.walkable(b)&&Math.abs(this.heights[a]!-this.heights[b]!)<=MAX_GROUND_STEP_CM);
+      this.localTerrainSweeps.set(radius,cache);
+    }
+    return cache.clear(from,to);
+  }
+  /** Movement distinguishes a broken terrain route from temporary traffic.
+   * Once the footprint sweep passed, ordinary terrain needs only the live
+   * reservation ray. Layer portals retain their full surface-aware check. */
+  movementSegmentBlocker(from:FixedPoint,to:FixedPoint,blocked:ReadonlySet<number>|undefined,actor:Actor):'terrain'|'reservation'|null {
+    if(!this.clearSegment(from,to,undefined,actor))return 'terrain';
+    if(blocked&&!(this.layers?this.clearSegment(from,to,blocked,actor):clearRay(from,to,(_a,b)=>!blocked.has(b),this.size)))return 'reservation';
+    return null;
+  }
   clearSegment(
     from: FixedPoint,
     to: FixedPoint,
@@ -586,15 +752,19 @@ export class Spatial {
     }
     const terrainStep = (a: number, b: number) =>
       this.walkable(b) && Math.abs(this.heights[a] - this.heights[b]) <= MAX_GROUND_STEP_CM;
+    // Traffic often blocks the very first cells of a long shortcut. Reject
+    // that center-line reservation before sweeping the entire body corridor.
+    // Both predicates are still required; reservations do not replace terrain
+    // or corner clearance, and an unreserved route keeps its single sweep.
     return (
-      clearSweep(from, to, terrainStep, this.size, radius) &&
       (!blocked ||
         clearRay(
           from,
           to,
           (a, b) => terrainStep(a, b) && !blocked.has(b),
           this.size,
-        ))
+        )) &&
+      clearSweep(from, to, terrainStep, this.size, radius)
     );
   }
   /** Change layer only when the fixed-point mover actually crosses its portal cell. */
@@ -636,26 +806,41 @@ export class Spatial {
         p.y > Math.max(from.y, to.y) + diameter
       )
         continue;
-      // Bodies that already interpenetrate (spawn, release, a ghost worker turning solid)
-      // may always move apart. Only motion toward the other centre is blocked; otherwise
-      // both would be frozen forever because every segment starts inside the separation.
-      const sx = p.x - from.x, sy = p.y - from.y;
-      if (square && sx * sx + sy * sy < separation ** 2 && sx * dx + sy * dy <= 0) continue;
-      const t = square
-        ? Math.max(
-            0,
-            Math.min(1, ((p.x - from.x) * dx + (p.y - from.y) * dy) / square),
-          )
-        : 0;
-      if (
-        (p.x - from.x - t * dx) ** 2 + (p.y - from.y - t * dy) ** 2 <
-        separation ** 2
-      ) {
+      if (bodyBlocksSegment(from,dx,dy,square,p.x,p.y,separation**2)) {
         if (!blockers) return false;
         blockers.push(unit.id);
       }
     }
     return (blockers?.length ?? 0) === initialCount;
+  }
+  /** Snapshot only the nearby bodies for one synchronous local search. The
+   * callback must not mutate actors. No snapshot survives a movement decision.
+   * Bounds are a fixed-point square; outside probes retain the live query. */
+  withLocalUnitClearance<T>(origin:FixedPoint,extent:number,except:number,query:(clear:(from:FixedPoint,to:FixedPoint)=>boolean)=>T):T {
+    const mover=this.unitIndex?.entities.get(except)??this.units().find(e=>e.id===except);
+    if(mover&&this.ignoresUnits(mover))return query(()=>true);
+    const body=this.dimensions(mover),radius=Math.round(body.radius*1000),diameter=radius+this.maxUnitRadius;
+    const minX=origin.x-extent,maxX=origin.x+extent,minY=origin.y-extent,maxY=origin.y+extent;
+    const candidates=this.unitIndex?.within(minX-diameter,minY-diameter,maxX+diameter,maxY+diameter)??this.units();
+    const airborne=this.airborne(mover),bodies:{x:number;y:number;separation:number;floor:number;height:number}[]=[];
+    for(const unit of candidates){
+      if(unit.id===except||!unit.unit||!alive(unit)||unit.unit.contained||unit.unit.release||this.ignoresUnits(unit)||this.airborne(unit)!==airborne)continue;
+      const p=unit.unit.position??fixed(unit);
+      if(p.x<minX-diameter||p.x>maxX+diameter||p.y<minY-diameter||p.y>maxY+diameter)continue;
+      const other=this.dimensions(unit);
+      bodies.push({x:p.x,y:p.y,separation:(radius+Math.round(other.radius*1000))**2,floor:this.layers?this.height(precise(unit)):0,height:other.height});
+    }
+    return query((from,to)=>{
+      if(from.x<minX||from.x>maxX||from.y<minY||from.y>maxY||to.x<minX||to.x>maxX||to.y<minY||to.y>maxY)return this.unitSegmentClear(from,to,except);
+      const dx=to.x-from.x,dy=to.y-from.y,square=dx*dx+dy*dy;
+      const floor=this.layers?this.height({x:from.x/1000,y:from.y/1000,surface:from.surface}):0;
+      for(const b of bodies){
+        if(this.layers&&(floor>=b.floor+b.height||b.floor>=floor+body.height))continue;
+        if(b.x<Math.min(from.x,to.x)-diameter||b.x>Math.max(from.x,to.x)+diameter||b.y<Math.min(from.y,to.y)-diameter||b.y>Math.max(from.y,to.y)+diameter)continue;
+        if(bodyBlocksSegment(from,dx,dy,square,b.x,b.y,b.separation))return false;
+      }
+      return true;
+    });
   }
   range(a: Entity, b: Entity) { return this.pointRange(precise(a), b); }
   pointRange(pa: Point, b: Entity) {

@@ -17,7 +17,7 @@ export function trafficEscape(c:GameContext,e:Entity,parent:Entity,occupied:Read
  }
  candidates.sort((a,b)=>(a.x*1000-from.x)**2+(a.y*1000-from.y)**2-((b.x*1000-from.x)**2+(b.y*1000-from.y)**2)||a.y-b.y||a.x-b.x);
  for(const target of candidates.slice(0,6)){
-  const points=localPath(from,fixed(target),(a,b)=>c.spatial.clearSegment(a,b,occupied, e)&&c.spatial.unitSegmentClear(a,b,e.id));
+  const points=localPath(from,fixed(target),(a,b)=>c.spatial.unitSegmentClear(a,b,e.id)&&c.spatial.clearLocalSegment(a,b,occupied, e));
   if(points)return {waypoint:c.spatial.cell(target),points};
  }
  return null;

@@ -14,7 +14,7 @@ import {LOCAL_SAVE_FORMAT_VERSION,localSaveSchema,type LocalSave} from '../../sh
 import {restoreSavedWorld} from '../session/restoreSavedWorld';
 import {captureCompany} from '../../sim/scenario/company';
 import type {ChatMessage} from '../../shared/chat/chat';
-import {navigationPaths,walkabilityCells,type NavigationDebug} from '../../sim/game/navigationDebug';
+import {navigationPaths,walkabilityCells,navigationMeshSnapshot,type NavigationDebug} from '../../sim/game/navigationDebug';
 
 export type RuntimeOptions={map:UtcMap;match:MatchConfig;player:number|null;remote:boolean;content?:{source:ContentSource;fingerprint:string}};
 export type RuntimeHooks={chat?:(message:ChatMessage)=>void;applied?:(action:Action,tick:number)=>void;learned?:()=>void};
@@ -40,8 +40,22 @@ export class SimulationRuntime {
  private observer:ReturnType<typeof observerStats>|undefined;
  readonly timings:Record<string,number>={};
  profiling=false;
+ profilingDetails=true;
  private profileSamples:[string,number][]=[];
  private droppedSamples=0;
+ configureProfiling(enabled:boolean,details=true){
+  if(this.profiling===enabled&&this.profilingDetails===details)return;
+  this.profiling=enabled;this.profilingDetails=details;
+  this.profileSamples=[];this.droppedSamples=0;
+  this.world.settlement.context.profile.enabled=enabled&&details;
+ }
+ /** Transport samples are delivered with the next snapshot, without sending an
+  * extra message or putting the measured postMessage call inside its own data. */
+ recordTransportSample(ms:number){
+  if(!this.profiling)return;
+  if(this.profileSamples.length<4096)this.profileSamples.push(['Worker · snapshot postMessage CPU',ms]);
+  else this.droppedSamples++;
+ }
  constructor(readonly options:RuntimeOptions,private readonly remoteChannel?:Channel,private readonly hooks:RuntimeHooks={}){
   this.match=options.match;this.me=options.player??options.match.slots[0]!.player;
   this.visionPlayer=this.me;this.reveal=options.player===null || (!options.remote && !!options.map.sandbox);
@@ -86,7 +100,7 @@ export class SimulationRuntime {
    for(const [id,peer] of this.locksteps)if(id!==this.me)peer.take(next);
    this.acc-=step;
    const begin=performance.now();this.timings.lockstep=begin-tickStarted;
-   this.world.settlement.context.profile.enabled=this.profiling;this.world.tick();this.timings.simulation=performance.now()-begin;
+   this.world.settlement.context.profile.enabled=this.profiling&&this.profilingDetails;this.world.tick();this.timings.simulation=performance.now()-begin;
 
    for(const slot of commit.slots)if(slot.player===this.me)for(const action of slot.actions)this.hooks.applied?.(action,next);
    for(const receipt of this.world.commandReceipts)if(receipt.player===this.me&&receipt.action.type==='learnAbility')this.hooks.learned?.();
@@ -106,7 +120,7 @@ export class SimulationRuntime {
     const samples:[string,number][]=[['Worker · simulation',this.timings.simulation],
      ['Worker · tick total',this.timings.tickTotal],['Worker · lockstep',this.timings.lockstep],['Worker · checksum',this.timings.checksum],
      ...Object.entries(this.world.settlement.timings).map(([name,ms]):[string,number]=>[`Sim · ${name}`,ms]),
-     ...this.world.settlement.context.profile.snapshot().flatMap(row=>[[`Detail inclusive · ${row.path}`,row.inclusiveMs],[`Detail self · ${row.path}`,row.selfMs]] as [string,number][]),
+     ...(this.profilingDetails?this.world.settlement.context.profile.snapshot().flatMap(row=>[[`Detail inclusive · ${row.path}`,row.inclusiveMs],[`Detail self · ${row.path}`,row.selfMs]] as [string,number][]):[]),
      ...Object.entries(this.world.aiTimings).map(([name,ms]):[string,number]=>[`AI decision · ${name}`,ms])];
     const room=Math.max(0,4096-this.profileSamples.length);this.profileSamples.push(...samples.slice(0,room));this.droppedSamples+=Math.max(0,samples.length-room);
    }
@@ -133,9 +147,11 @@ export class SimulationRuntime {
  status(){return {tick:this.world.clock.tickIndex,checksum:this.world.checksum(),settlement:this.world.view(this.me).settlement,desynced:this.desynced};}
  /** Debug overlay snapshot. Network players see only their own routes; local play follows the
   * presented perspective (everything when revealed or observing). */
- navigation(input:{grid:boolean;paths:boolean;revision:number}):NavigationDebug{
+ navigation(input:{grid:boolean;paths:boolean;revision:number;mesh?:boolean;meshRevision?:number}):NavigationDebug{
   const game=this.world.settlement,s=game.spatial,out:NavigationDebug={revision:s.revision,size:s.size};
   if(input.grid&&input.revision!==s.revision)out.cells=walkabilityCells(game);
+  // The candidate exposes full static collision; keep it a local-match debug tool.
+  if(input.mesh&&!this.options.remote&&input.meshRevision!==s.revision)out.mesh=navigationMeshSnapshot(game);
   if(input.paths){
    const own=this.options.remote?slotOwner(this.me):null,viewer=this.options.remote||this.reveal?null:slotOwner(this.visionPlayer);
    out.paths=navigationPaths(game,viewer,own);

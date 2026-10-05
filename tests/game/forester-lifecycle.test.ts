@@ -24,7 +24,7 @@ it('plants an exhausted site, restores its visual and blocker, and resumes harve
 it('does not materialize a mature tree under a unit, then restores it after the unit leaves',()=>{
  const g=game([{...placed('tree','resource.forest.tree',205,215,{amount:0}),owner:'none'}]);
  const tree=g.entities.find(e=>e.placement==='tree')!,guard=g.context.create(placed('guard','unit.ants.warrior',205,215));
- guard.readyTick=0;tree.resource!.growingUntil=g.state.tick+1;
+ guard.readyTick=0;g.context.setRegrowth(tree,g.state.tick+1);
  run(g,10);expect(tree.resource!.amount).toBe(0);expect(tree.resource!.growingUntil).not.toBeNull();
  expect(g.command('player.1',{type:'move',actors:[guard.id],destination:{x:210,y:215}}).accepted).toBe(true);
  run(g,150);expect(guard.x).toBe(210);expect(tree.resource!.amount).toBe(g.registry.get(tree.definition).yield);

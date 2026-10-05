@@ -28,7 +28,7 @@ import { FogOfWar } from "../visibility/fogOfWar";
 import { forestEnvironment } from "../sky/forestEnvironment";
 import { SettlementLayer } from "../settlement/settlementLayer";
 import { NavigationOverlay } from "../debug/navigationOverlay";
-import type { NavigationPath } from "../../sim/game/navigationDebug";
+import type { NavigationPath, NavigationMeshSnapshot } from "../../sim/game/navigationDebug";
 import {
   environmentLight,
 } from "../../shared/environment/presets";
@@ -254,7 +254,7 @@ export class Renderer {
     this.relation = relation;
   }
   /** Debug navigation overlay. `null` tears it down; `cells` is only sent when the grid changed. */
-  gameNavigation(state: {grid:boolean;size:number;cells?:Uint8Array;paths?:readonly NavigationPath[]} | null) {
+  gameNavigation(state: {grid:boolean;size:number;cells?:Uint8Array;paths?:readonly NavigationPath[];mesh?:boolean;meshInput?:NavigationMeshSnapshot} | null) {
     if (!state) {
       this.navigation?.dispose();
       this.navigation = null;
@@ -264,6 +264,7 @@ export class Renderer {
     if (!state.grid) this.navigation.setGrid(state.size, null);
     else if (state.cells) this.navigation.setGrid(state.size, state.cells);
     this.navigation.setPaths(state.paths ?? null, (owner) => this.relation?.(owner) ?? "neutral");
+    this.navigation.setMesh(!!state.mesh,state.meshInput);
   }  gameReady() {
     return this.settlement?.ready ?? Promise.resolve();
   }

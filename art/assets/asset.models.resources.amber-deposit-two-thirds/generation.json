@@ -1,0 +1,9 @@
+{
+  "method": "Tripo H3.1 Best Quality, UltraMesh, PBR 4K",
+  "tripoTask": "5ad762d3-8ef0-4803-bb9e-161bc3477e8b",
+  "triangleCount": 8696,
+  "runtimeTextureSize": 1024,
+  "reference": "reference.png",
+  "recipe": "scripts/assets/build-resource-deposit.py",
+  "description": "Four amber stages are separate textured geometry; the renderer selects by remaining yield."
+}

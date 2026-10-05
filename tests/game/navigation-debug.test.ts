@@ -3,7 +3,7 @@
 import {expect,it} from 'vitest';
 import {Game} from '../../src/sim/game/game';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
-import {NAV_CELL,navigationPaths,walkabilityCells} from '../../src/sim/game/navigationDebug';
+import {NAV_CELL,navigationPaths,walkabilityCells,navigationMeshSnapshot} from '../../src/sim/game/navigationDebug';
 import {placed} from './helpers';
 
 it('classifies tree discs as resource cells and draws a moving unit route to its goal',()=>{
@@ -15,6 +15,15 @@ it('classifies tree discs as resource cells and draws a moving unit route to its
  expect(cells.length).toBe(s.size*s.size);
  expect(cells[s.cell({x:101,y:101})]).toBe(NAV_CELL.resource);
  expect(cells[s.cell({x:100,y:90})]).toBe(NAV_CELL.walkable);
+ const mesh=navigationMeshSnapshot(g);
+ expect(mesh.walkable[s.cell({x:101,y:101})]).toBe(0);
+ expect(mesh.walkable[s.cell({x:100,y:90})]).toBe(1);
+ expect(mesh.radius).toBe(s.unitRadius/1000);
+ expect(mesh.revision).toBe(s.revision);
+ expect(mesh.heights).not.toBe(s.heights);
+ // Transfer to the debug worker must never detach authoritative collision.
+ structuredClone(mesh,{transfer:[mesh.walkable.buffer,mesh.heights.buffer]});
+ expect(s.heights.byteLength).toBeGreaterThan(0);
  expect(navigationPaths(g,null,null)).toEqual([]);
  const revision=s.revision;
  expect(g.command('player.1',{type:'move',actors:[walker.id],destination:{x:100,y:106}}).accepted).toBe(true);

@@ -9,9 +9,9 @@ it('keeps the enlarged main hall outside the amber service lane before spawning'
  const map={...emptyUtcMap(),entities:[] as Placement[]},start=map.playerStarts[0]!;
  const hall=content.get(content.rules.startingSetup.fort),amber=content.get('building.neutral.amber-mine');
  const minimum=resourceCenterSeparation(hall.footprint!,amber.footprint!,amber.constructionClearance!);
- expect(minimum).toEqual({x:14,y:14});
+ expect(minimum).toEqual({x:18,y:18});
  map.entities.push({id:'amber',definition:amber.id,owner:'none',rotation:0,position:{x:start.x+minimum.x-1,y:start.z}});
- expect(startingResourceClearanceError(map,content)).toContain('14 cells');
+ expect(startingResourceClearanceError(map,content)).toContain('18 cells');
  map.entities[0]!.position.x++;
  expect(startingResourceClearanceError(map,content)).toBeNull();
  // This is the exact last cell of the hall: construction uses the same boundary.

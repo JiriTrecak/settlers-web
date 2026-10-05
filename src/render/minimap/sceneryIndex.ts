@@ -1,4 +1,4 @@
-import {sceneryChanges,SceneryFilter} from '../../presentation/sceneryChanges';
+import {sceneryChanges,sceneryParts,SceneryFilter} from '../../presentation/sceneryChanges';
 import type {MapStamp} from '../../shared/map/utcmap';
 import {sceneryKind} from './terrainStyle';
 
@@ -18,11 +18,34 @@ export class MinimapSceneryIndex {
  private source:SceneryItem[]=[];
  private sorted:SceneryItem[]=[];
  private byId=new Map<string,SceneryItem>();
+ private parts?:{base:MinimapSceneryIndex;dynamic:MinimapSceneryIndex};
+ private partitioned=false;
  get items():readonly SceneryItem[]{return this.sorted;}
  update(input:readonly MapStamp[]):boolean{
   const stamps=this.filter.select(input);
   if(stamps===this.previous)return false;
-  const changes=sceneryChanges(this.previous,stamps);this.previous=stamps;
+  let changes=sceneryChanges(this.previous,stamps);this.previous=stamps;
+  const composition=sceneryParts(stamps);
+  if(composition){
+   this.parts??={base:new MinimapSceneryIndex(),dynamic:new MinimapSceneryIndex()};
+   const baseChanged=this.parts.base.update(composition.base),dynamicChanged=this.parts.dynamic.update(composition.dynamic);
+   const wasPartitioned=this.partitioned;this.partitioned=true;
+   if(!wasPartitioned){this.source=[];this.byId.clear();}
+   if(wasPartitioned&&!baseChanged&&!dynamicChanged)return false;
+   const base=this.parts.base.items,dynamic=this.parts.dynamic.items;
+   const sorted:SceneryItem[]=[];let i=0,j=0;
+   // Both lists are already sorted. Static scenery precedes resources in the
+   // composition, so choose it first for equal-Y painter ties as well.
+   while(i<base.length&&j<dynamic.length)sorted.push(base[i]!.stamp.y<=dynamic[j]!.stamp.y?base[i++]!:dynamic[j++]!);
+   while(i<base.length)sorted.push(base[i++]!);
+   while(j<dynamic.length)sorted.push(dynamic[j++]!);
+   return this.replaceSorted(sorted);
+  }
+  const rebuild=this.partitioned;
+  if(rebuild){
+   // Mutable authoring lists cannot use the immutable component indexes.
+   this.partitioned=false;this.parts=undefined;this.source=[];this.byId.clear();changes=undefined;
+  }
   if(changes&&!changes.reordered&&!changes.added.length){
    const removed=new Set(changes.removed.filter(s=>this.byId.has(s.id)).map(s=>s.id));
    if(!removed.size)return false;
@@ -31,7 +54,7 @@ export class MinimapSceneryIndex {
    this.sorted=this.sorted.filter(item=>!removed.has(item.stamp.id));
    return true;
   }
-  const source:SceneryItem[]=[];let changed=false;
+  const source:SceneryItem[]=[];let changed=rebuild;
   for(const stamp of stamps){
    const kind=this.kind(stamp.asset);
    if(kind===null)continue;
@@ -52,6 +75,9 @@ export class MinimapSceneryIndex {
   // Authored edits may move a record to the end of the document. Only the
   // resulting painter order matters: reordering different Y values changes
   // nothing, while overlapping equal-Y ties must still invalidate the raster.
+  return this.replaceSorted(sorted);
+ }
+ private replaceSorted(sorted:SceneryItem[]):boolean{
   if(sorted.length===this.sorted.length&&sorted.every((item,i)=>item.kind===this.sorted[i]!.kind&&sameAppearance(item.stamp,this.sorted[i]!.stamp)))return false;
   this.sorted=sorted;return true;
  }

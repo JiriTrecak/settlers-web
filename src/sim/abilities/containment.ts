@@ -7,7 +7,7 @@ type Contain=Extract<Effect,{op:'contain'}>;
 export class SpellContainments {
  constructor(private readonly game:Game){}
  private get c(){return this.game.context;}
- occupants(host:number){return this.c.state.entities.filter(e=>e.spellContainment?.host===host).sort((a,b)=>a.id-b.id);}
+ occupants(host:number){return this.c.indexedUnits().filter(e=>e.spellContainment?.host===host).sort((a,b)=>a.id-b.id);}
  reason(host:Entity|undefined,victim:Entity|undefined,capacity:number):string|null{
   if(!host?.unit||!alive(host)||host.unit.contained||host.unit.garrison||host.unit.release)return 'Carrier is unavailable';
   if(!victim?.unit||!alive(victim)||host.id===victim.id||this.c.def(victim).hero||victim.summoned?.splitOperation||victim.unit.contained||victim.unit.garrison||victim.unit.release)return 'Choose an available non-hero unit';
@@ -36,7 +36,7 @@ export class SpellContainments {
  }
  releaseHosted(host:number){let count=0;for(const e of this.occupants(host)){this.release(e,e.spellContainment!);count++;}return count;}
  tick(){
-  for(const victim of [...this.c.state.entities].sort((a,b)=>a.id-b.id)){
+  for(const victim of [...this.c.indexedUnits()].sort((a,b)=>a.id-b.id)){
    const record=victim.spellContainment;if(!record)continue;
    const host=this.c.get(record.host),a=this.c.registry.abilityLibrary.abilities.find(a=>a.id===record.ability),op=a&&allEffects(a).find((o):o is Contain=>o.op==='contain'&&o.id===record.operation);
    if(!host||!alive(host)||host.owner!==record.owner||host.unit?.contained||host.unit?.release||!op||!a||record.expires<=this.c.state.tick){this.release(victim,record);continue;}

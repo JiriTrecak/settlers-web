@@ -5,7 +5,7 @@ type TraceEvent={name:string;cat:string;ph:'X'|'C';pid:number;tid:number;ts:numb
 const MAX_TRACE_EVENTS=64000;
 const FRAME_BUDGET_MS=1000/120;
 export type ScopeMeasurement={name:string;totalMs:number;maxMs:number;count:number};
-type PerformanceReport={series:Record<string,number[]>;frameBudget:{targetMs:number;samples:number;overBudget:number;overBudgetPercent:number;refreshMs:number;missed:number;missedPercent:number};census?:DrawCensus;shaderLinks?:Array<{atMs:number;name:string;key:string}>;note:string;values:Record<string,string|number>;timings:Record<string,ReturnType<TimingWindow['stats']>>;capturedMs?:number;spikes:Array<{atMs:number;frameMs:number;scopes:Record<string,number>}>;comparison?:Record<string,{baselineMean:number|undefined;currentMean:number;changePercent:number|null}>};
+type PerformanceReport={sampling:{simulationDetails:boolean;quiet:boolean;trace:boolean};series:Record<string,number[]>;frameBudget:{targetMs:number;samples:number;overBudget:number;overBudgetPercent:number;refreshMs:number;missed:number;missedPercent:number};census?:DrawCensus;shaderLinks?:Array<{atMs:number;name:string;key:string}>;note:string;values:Record<string,string|number>;timings:Record<string,ReturnType<TimingWindow['stats']>>;capturedMs?:number;spikes:Array<{atMs:number;frameMs:number;scopes:Record<string,number>}>;comparison?:Record<string,{baselineMean:number|undefined;currentMean:number;changePercent:number|null}>};
 export type MatchDebugControls = {
   reveal: boolean;
   speed: number;
@@ -23,12 +23,15 @@ export type MatchDebugControls = {
   /** Navigation overlay toggles; only polled while the profiler panel is enabled. */
   paths: boolean;
   walkability: boolean;
+  navmesh: boolean;
   onPaths(value: boolean): void;
   onWalkability(value: boolean): void;
+  onNavmesh(value: boolean): void;
 };
 /** Opt-in profiler. CPU scopes overlap; GPU samples arrive asynchronously. */
 export class PerformanceDebug {
   enabled = false;
+  detailedSimulation = true;
   private synchronousCaptures=new Set<Map<string,ScopeMeasurement>>();
   get capturingSync(){return this.synchronousCaptures.size>0;}
   /** Capture one synchronous operation without enabling the rolling frame profiler.
@@ -49,12 +52,14 @@ export class PerformanceDebug {
         this.matchControls = null;
         this.controls?.remove();
         this.controls = null;
+        this.navigationStatus = null;
       }
     };
   }
   private renderControls() {
     this.controls?.remove();
     this.controls = null;
+    this.navigationStatus = null;
     const spec = this.matchControls;
     if (!this.panel || !spec) return;
     const box = document.createElement("section");
@@ -122,11 +127,25 @@ export class PerformanceDebug {
       spec.onWalkability(v);
     });
     const hint = document.createElement("small");
+    const meshStatus=this.navigationStatus=document.createElement("small");
+    meshStatus.textContent="Ground routing mesh; bridge decks use the surface solver.";
+    meshStatus.style.cssText="color:#75cddb;line-height:1.4;overflow-wrap:anywhere";
+    meshStatus.hidden=!spec.navmesh;
+    const navmesh = toggle(" Show ground navmesh (cyan)", spec.navmesh, (v) => {
+      spec.navmesh = v;
+      meshStatus.hidden=!v;
+      spec.onNavmesh(v);
+    });
+    navmesh.querySelector("input")!.disabled = spec.remote;
+    navmesh.title = "Local debug view of the ground routing mesh for the default unit size. Bridge decks and other body sizes are not shown. Paths show actual movement, including local grid fallbacks.";
     hint.textContent = spec.remote
       ? "Network matches use synchronized speed and player vision."
       : "AI vision is unchanged. Uncheck Reveal map to use the selected perspective.";
     hint.style.cssText = "max-width:340px;color:#9ab0ab;line-height:1.4";
-    box.append(reveal, speed, vision, paths, walkability, hint);
+    const details=toggle(' Detailed simulation timings',this.detailedSimulation,value=>{this.detailedSimulation=value;});
+    details.querySelector('input')!.dataset.simulationDetails='';
+    details.title='Adds hierarchical instrumentation. Disable for budget measurements.';
+    box.append(reveal, speed, vision, paths, walkability, navmesh, meshStatus, details, hint);
     this.text?.before(box);
     this.visibility();
   }
@@ -134,6 +153,7 @@ export class PerformanceDebug {
   private rows = new Map<string, TimingWindow>();
   private recording:Map<string,TimingWindow>|null=null;
   private captureStart=0;private captureEnd=0;
+  private captureOptions={quiet:false,trace:true,simulationDetails:true};
   private captureResult:PerformanceReport|null=null;
   get completedCapture(){return this.captureResult;}
   /** Set by the Draw census button; the display consumes it on its next frame. */
@@ -158,7 +178,7 @@ export class PerformanceDebug {
     const a=document.createElement('a');a.href=url;a.download='under-the-canopy-performance-trace.json';a.hidden=true;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
   }
   setBaseline(){this.baseline=this.captureResult??this.report();}
-  capture(){if(this.traceButton)this.traceButton.disabled=true;this.traceEvents=[];this.traceDropped=0;this.traceReady=false;this.recording=new Map();this.captureStart=performance.now();this.captureEnd=this.captureStart+10000;this.spikes=[];this.captureResult=null;}
+  capture(options:{quiet?:boolean;trace?:boolean}={}){this.captureOptions={quiet:options.quiet??false,trace:options.trace??true,simulationDetails:this.detailedSimulation};if(this.traceButton)this.traceButton.disabled=true;this.traceEvents=[];this.traceDropped=0;this.traceReady=false;this.recording=new Map();this.captureStart=performance.now();this.captureEnd=this.captureStart+10000;this.spikes=[];this.captureResult=null;this.visibility();}
   private snapshot(rows:Map<string,TimingWindow>){return Object.fromEntries([...rows].map(([k,v])=>[k,v.stats()]));}
   private drawGraph(){
     const g=this.graph?.getContext('2d');if(!g||!this.graph)return;
@@ -178,6 +198,7 @@ export class PerformanceDebug {
     return ()=>{if(this.presentationToggle!==toggle)return;this.presentationToggle=undefined;if(this.panel)this.panel.hidden=hidden;};
   }
   private text: HTMLPreElement | null = null;
+  private navigationStatus:HTMLElement|null=null;
   private counts: Record<string, number> = {};
   resetTimings(){this.rows.clear();this.latest={};this.lastFrame=0;}
   resetCounts() {
@@ -215,7 +236,7 @@ export class PerformanceDebug {
     this.panel = root;
     root.className = "performance-debug";
     root.style.cssText =
-      "position:fixed;right:12px;top:48px;z-index:10000;color:#dce8e9;font:12px/1.5 monospace;pointer-events:auto";
+      "position:fixed;right:12px;top:48px;max-width:calc(100vw - 24px);max-height:calc(100vh - 60px);overflow:auto;z-index:10000;color:#dce8e9;font:12px/1.5 monospace;pointer-events:auto";
     const toggle = document.createElement("button");
     toggle.className = "performance-debug-toggle";
     toggle.textContent = "Debug";
@@ -239,7 +260,7 @@ export class PerformanceDebug {
     };
     this.text = document.createElement("pre");
     this.text.style.cssText =
-      "background:#10191aee;border:1px solid #53676b;padding:12px;margin:5px 0;max-height:70vh;overflow:auto;min-width:350px;white-space:pre";
+      "background:#10191aee;border:1px solid #53676b;padding:12px;margin:5px 0;max-height:35vh;overflow:auto;min-width:0;white-space:pre;box-sizing:border-box;width:100%";
     const capture=this.captureButton=document.createElement('button');capture.textContent='Capture 10 seconds';capture.style.cssText=toggle.style.cssText;capture.onclick=()=>{if(!this.enabled)this.toggle();this.capture();};
     const baseline=document.createElement('button');baseline.textContent='Set baseline';baseline.style.cssText=toggle.style.cssText;baseline.onclick=()=>{this.setBaseline();baseline.textContent='Baseline saved';};
     this.graph=document.createElement('canvas');this.graph.width=360;this.graph.height=70;this.graph.setAttribute('aria-label','Last 120 frame intervals; lines at 8, 17 and 33 milliseconds');this.graph.style.cssText='display:block;width:360px;height:70px;margin-top:5px';
@@ -282,6 +303,10 @@ export class PerformanceDebug {
     this.visibility();
   }
   private visibility() {
+    const details=this.panel?.querySelector<HTMLInputElement>('input[data-simulation-details]');
+    if(details)details.checked=this.detailedSimulation;
+    if(this.panel)this.panel.style.visibility=this.recording&&this.captureOptions.quiet?'hidden':'';
+    if(this.panel)this.panel.style.width=this.enabled?'min(440px, calc(100vw - 24px))':'auto';
     if (this.controls)
       this.controls.style.display = this.enabled ? "grid" : "none";
     if (this.text) this.text.hidden = !this.enabled;
@@ -296,19 +321,20 @@ export class PerformanceDebug {
     const now=performance.now(),ms=now-start;
     for(const capture of this.synchronousCaptures){const scope=capture.get(name)??{name,totalMs:0,maxMs:0,count:0};scope.totalMs+=ms;scope.maxMs=Math.max(scope.maxMs,ms);scope.count++;capture.set(name,scope);}
     this.sample(name,ms);
-    if(this.recording){const from=Math.max(start,this.captureStart);this.trace({name,cat:'CPU',ph:'X',pid:1,tid:1,ts:(from-this.captureStart)*1000,dur:Math.max(0,now-from)*1000});}
+    if(this.recording&&this.captureOptions.trace){const from=Math.max(start,this.captureStart);this.trace({name,cat:'CPU',ph:'X',pid:1,tid:1,ts:(from-this.captureStart)*1000,dur:Math.max(0,now-from)*1000});}
   }
   sample(name: string, ms: number) {
     if (!this.enabled) return;
     if(!Number.isFinite(ms)||ms<0)return;
     let a=this.rows.get(name);if(!a){a=new TimingWindow();this.rows.set(name,a);}a.add(ms);this.latest[name]=ms;
-    if(this.recording&&(name.startsWith('GPU ')||name.startsWith('Sim · ')||name.startsWith('AI decision · ')||name==='Frame interval'))
+    if(this.recording&&this.captureOptions.trace&&(name.startsWith('GPU ')||name.startsWith('Sim · ')||name.startsWith('AI decision · ')||name==='Frame interval'))
       this.trace({name,cat:name.startsWith('GPU ')?'GPU result':'Sampled timing',ph:'C',pid:1,tid:2,ts:(performance.now()-this.captureStart)*1000,args:{milliseconds:ms}});
     if(this.recording){let r=this.recording.get(name);if(!r){r=new TimingWindow(4096);this.recording.set(name,r);}r.add(ms);}
   }
 
   value(name: string, value: string | number) {
     if (this.enabled) this.values[name] = value;
+    if(name==='Navigation mesh'&&this.navigationStatus)this.navigationStatus.textContent=String(value);
   }
   /** Programs linked after warm-up. Each one is a main-thread stall (tens of ms), so these are
    * recorded even with the panel closed; the renderer reports only newly created programs. */
@@ -325,6 +351,7 @@ export class PerformanceDebug {
     // real hitches are counted against the median interval (the display's refresh period).
     const refreshMs=[...frames].sort((a,b)=>a-b)[frames.length>>1]??FRAME_BUDGET_MS,missed=frames.filter(ms=>ms>refreshMs*1.5).length;
     return {
+      sampling:this.recording?{...this.captureOptions}:{simulationDetails:this.detailedSimulation,quiet:false,trace:false},
       series:Object.fromEntries(['Frame interval','App frame total (CPU)','GPU frame'].map(name=>[name,(this.recording??this.rows).get(name)?.values().slice(-120)??[]])),
       frameBudget:{targetMs:FRAME_BUDGET_MS,samples:frames.length,overBudget,overBudgetPercent:frames.length?100*overBudget/frames.length:0,refreshMs,missed,missedPercent:frames.length?100*missed/frames.length:0},
       census:this.census??undefined,
@@ -344,10 +371,11 @@ export class PerformanceDebug {
       const ms=now-this.lastFrame;this.sample('Frame interval',ms);
       if(this.recording&&ms>FRAME_BUDGET_MS){this.spikes.push({atMs:now-this.captureStart,frameMs:ms,scopes:{...this.latest}});this.spikes.sort((a,b)=>b.frameMs-a.frameMs);if(this.spikes.length>40)this.spikes.length=40;}
     }
-    if(this.recording&&now>=this.captureEnd){this.captureResult=this.report();this.recording=null;this.traceReady=true;}
+    if(this.recording&&now>=this.captureEnd){this.captureResult=this.report();this.recording=null;this.traceReady=this.captureOptions.trace;this.visibility();}
+    this.lastFrame = now;
+    if(this.recording&&this.captureOptions.quiet)return;
     if(this.traceButton){this.traceButton.disabled=!this.traceReady;this.traceButton.title=this.traceReady?`${this.traceEvents.length} events · ${this.traceDropped} dropped`:'Record a capture first';}
     if(this.captureButton)this.captureButton.textContent=this.recording?`Capturing… ${Math.max(0,(this.captureEnd-now)/1000).toFixed(1)}s`:this.captureResult?'Capture complete · repeat':'Capture 10 seconds';
-    this.lastFrame = now;
     if (now - this.last < 500 || !this.text || this.presentationToggle) return;
     this.last = now;
     this.drawGraph();

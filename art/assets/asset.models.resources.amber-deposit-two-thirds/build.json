@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "category": "resources",
+  "slug": "amber-deposit-two-thirds",
+  "entry": "model.py",
+  "files": {
+    "model.glb": {
+      "asset": "asset.models.resources.amber-deposit-two-thirds",
+      "role": "geometry",
+      "index": 1
+    },
+    "source.blend": {
+      "asset": "asset.models.resources.amber-deposit-two-thirds",
+      "role": "source",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.resources.amber-deposit-two-thirds",
+      "role": "preview",
+      "index": 1
+    },
+    "reference.png": {
+      "asset": "asset.models.resources.amber-deposit-two-thirds",
+      "role": "reference",
+      "index": 1
+    },
+    "source.glb": {
+      "asset": "asset.models.resources.amber-deposit-two-thirds",
+      "role": "source",
+      "index": 2
+    },
+    "model.py": {
+      "asset": "asset.models.resources.amber-deposit-two-thirds",
+      "role": "recipe",
+      "index": 1
+    }
+  }
+}

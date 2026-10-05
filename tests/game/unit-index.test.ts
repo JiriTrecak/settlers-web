@@ -5,6 +5,47 @@ import {UnitIndex} from '../../src/sim/game/unitIndex';
 import {separateOverlaps} from '../../src/sim/game/separation';
 
 describe('movement broad phase',()=>{
+ it('reuses local body snapshots only within a synchronous search, preserving every sweep result',()=>{
+  const g=game(Array.from({length:30},(_,i)=>placed('probe'+i,'unit.ants.warrior',100+i%6,100+Math.floor(i/6))));
+  const units=g.entities.filter(e=>e.placement?.startsWith('probe')),mover=units[0];
+  units.forEach((e,i)=>e.unit!.position={x:e.x*1000+(i%3-1)*400,y:e.y*1000+(i%5-2)*200});
+  const origin=fixed(mover);
+  const probes=Array.from({length:300},(_,i)=>({
+   from:{x:origin.x+(i%17-8)*250,y:origin.y+(i%11-5)*250},
+   to:{x:origin.x+(i%19-9)*250,y:origin.y+(i%23-11)*250},
+  }));
+  probes.push({from:origin,to:{x:origin.x+12000,y:origin.y+4000}}); // outside snapshot bounds
+  for(let round=0;round<3;round++){
+   const expected=probes.map(p=>g.spatial.unitSegmentClear(p.from,p.to,mover.id));
+   g.spatial.beginUnitMovement();
+   expect(g.spatial.withLocalUnitClearance(origin,4250,mover.id,clear=>probes.map(p=>clear(p.from,p.to)))).toEqual(expected);
+   g.spatial.endUnitMovement();
+   units[1].unit!.contained=round===0?mover.id:null;
+   units[2].hp=round===0?0:20;
+   units[3].x+=1;units[3].unit!.position=fixed(units[3]);
+  }
+ });
+ it('refreshes moved, removed, restored and newly solid bodies plus yield reservations',()=>{
+  const g=game([placed('a','unit.ants.warrior',100,100),placed('b','unit.ants.warrior',101,100)]);
+  let units=g.entities.filter(e=>e.placement==='a'||e.placement==='b');
+  const index=new UnitIndex(units,256,e=>!!e.unit?.job);
+  const verify=()=>{
+   index.refresh(units);const fresh=new UnitIndex(units,256,e=>!!e.unit?.job);
+   const ids=(items:Iterable<unknown>)=>Array.from(items,(e:any)=>e.id).sort((a,b)=>a-b);
+   for(const x of [100,101,110,111]){
+    expect(ids(index.inCell(x,100))).toEqual(ids(fresh.inCell(x,100)));
+    expect(ids(index.reservedInCell(x,100))).toEqual(ids(fresh.reservedInCell(x,100)));
+   }
+   expect(index.entities).toEqual(fresh.entities);
+  };
+  const a=units[0],b=units[1];
+  a.x=110;a.unit!.detour={goal:100*256+111,waypoint:100*256+111,points:[fixed({x:111,y:100})],yielding:{leader:b.id,until:120}};verify();
+  a.unit!.contained=b.id;verify();a.unit!.contained=null;verify();
+  a.hp=0;verify();a.hp=10;verify();
+  units=[structuredClone(a),structuredClone(b)];verify();
+  expect(Array.from(index.inCell(110,100))[0]).toBe(units[0]);
+  units=units.slice(1);verify();units=[];verify();
+ });
  it('matches full collision scans across bucket boundaries and sequential movement',()=>{
   const g=game(Array.from({length:40},(_,i)=>placed('u'+i,'unit.ants.warrior',100+i%8,100+Math.floor(i/8))));
   const units=g.entities.filter(e=>e.placement?.startsWith('u'));
@@ -39,7 +80,7 @@ describe('movement broad phase',()=>{
    g.command('player.1',{type:'move',actors:ids,destination:{x:side?99:115,y:102}});
   }
   for(let i=0;i<180;i++){
-   a.tick();b.tick();expect(a.checksum()).toBe(b.checksum());
+   a.tick();b.tick();expect(a.checksum('full')).toBe(b.checksum('full'));
    if(i===90)a.restore(a.snapshot());
   }
  });

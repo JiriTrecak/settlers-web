@@ -928,14 +928,35 @@
     "name": "Amber Deposit",
     "kind": "building",
     "scale": 1,
-    "clearance": 3.5
+    "clearance": 7.5
+  },
+  {
+    "id": "asset.models.resources.amber-deposit-empty",
+    "name": "Amber Deposit — Exhausted",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 7.5
+  },
+  {
+    "id": "asset.models.resources.amber-deposit-one-third",
+    "name": "Amber Deposit — One Third Mined",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 7.5
+  },
+  {
+    "id": "asset.models.resources.amber-deposit-two-thirds",
+    "name": "Amber Deposit — Two Thirds Mined",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 7.5
   },
   {
     "id": "asset.models.resources.corrupted-root",
     "name": "Corrupted Root Deposit",
     "kind": "prop",
     "scale": 1,
-    "clearance": 0
+    "clearance": 7.5
   },
   {
     "id": "asset.models.units.ants-archer",

@@ -5,12 +5,23 @@ import type { Owner } from "../../content/schema";
 import type { Game } from "./game";
 import { alive } from "./state";
 import { precise } from "./motion";
+import type { GroundMeshInput } from "../../shared/navigation/groundMesh";
 
 /** Ground-cell categories, in the order the overlay colours them. */
 export const NAV_CELL = { walkable: 0, water: 1, terrain: 2, building: 3, resource: 4, deck: 5 } as const;
 /** One route: owner, then flat [x, height, y] triples from the unit through detour points to the goal. */
 export type NavigationPath = { id: number; owner: Owner; points: number[] };
-export type NavigationDebug = { revision: number; size: number; cells?: Uint8Array; paths?: NavigationPath[] };
+export type NavigationMeshSnapshot = GroundMeshInput & { revision:number; decks:number };
+export type NavigationDebug = { revision: number; size: number; cells?: Uint8Array; paths?: NavigationPath[]; mesh?:NavigationMeshSnapshot };
+
+/** Copies collision inputs once per revision, never the authoritative typed arrays.
+ * Moving units are deliberately absent: this describes global ground routing. */
+export function navigationMeshSnapshot(game:Game):NavigationMeshSnapshot {
+  const s=game.spatial,n=s.size*s.size,walkable=new Uint8Array(n);
+  let decks=0;
+  for(let i=0;i<n;i++){walkable[i]=s.walkable(i)?1:0;if(s.decks[i])decks++;}
+  return {size:s.size,walkable,heights:s.heights.slice(0,n),radius:s.unitRadius/1000,revision:s.revision,decks};
+}
 
 /** Classifies every ground cell by what blocks it; decks mark ground spanned by a walkable bridge. */
 export function walkabilityCells(game: Game): Uint8Array {

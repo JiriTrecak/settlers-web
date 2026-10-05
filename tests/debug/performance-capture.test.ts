@@ -62,3 +62,20 @@ it('exports bounded independent graph series through the same report as timing s
  report.series['Frame interval'].fill(0);
  expect(debug.report().series['Frame interval'].at(-1)).toBe(399);
 });
+
+it('keeps budget statistics while suppressing traces and records the measurement mode',()=>{
+ const debug=new PerformanceDebug();debug.enabled=true;debug.detailedSimulation=false;
+ let now=100;const clock=vi.spyOn(performance,'now').mockImplementation(()=>now);
+ try{
+  debug.capture({quiet:true,trace:false});
+  const start=debug.start();now+=2;debug.end('HUD controls',start);debug.sample('GPU frame',3);
+  expect(debug.traceReport().traceEvents).toEqual([]);
+  expect(debug.report().timings['HUD controls'].mean).toBe(2);
+  expect(debug.report().sampling).toEqual({simulationDetails:false,quiet:true,trace:false});
+  now=10101;debug.frame(now);
+  expect(debug.completedCapture?.sampling).toEqual({simulationDetails:false,quiet:true,trace:false});
+  debug.detailedSimulation=true;debug.capture();debug.sample('GPU frame',3);
+  expect(debug.traceReport().traceEvents).toHaveLength(1);
+  expect(debug.report().sampling).toEqual({simulationDetails:true,quiet:false,trace:true});
+ }finally{clock.mockRestore();}
+});

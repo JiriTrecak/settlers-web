@@ -2,7 +2,8 @@ export const SECTOR_SIZE=16;
 export type Bounds={minX:number;minY:number;maxX:number;maxY:number};
 type Entry<T>={value:T;bounds:Bounds;loX:number;loY:number;hiX:number;hiY:number};
 /** Spatial broad phase. Large footprints occupy every intersected sector;
- * callers retain precise range, ownership and line-of-sight checks. */
+ * callers retain precise range, ownership and line-of-sight checks. Entries must
+ * not be mutated while a query iterator is being consumed. */
 export class SectorIndex<T> {
  private readonly buckets=new Map<string,Set<number>>();
  private readonly entries=new Map<number,Entry<T>>();
@@ -29,13 +30,16 @@ export class SectorIndex<T> {
  ids(){return this.entries.keys();}
  *query(bounds:Bounds):Iterable<T>{
   this.visits.sectors=0;this.visits.candidates=0;
-  const seen=new Set<number>();
-  for(let y=Math.floor(bounds.minY/this.width);y<=Math.floor(bounds.maxY/this.width);y++)
-   for(let x=Math.floor(bounds.minX/this.width);x<=Math.floor(bounds.maxX/this.width);x++){
+  const loX=Math.floor(bounds.minX/this.width),loY=Math.floor(bounds.minY/this.width),hiX=Math.floor(bounds.maxX/this.width),hiY=Math.floor(bounds.maxY/this.width);
+  for(let y=loY;y<=hiY;y++)
+   for(let x=loX;x<=hiX;x++){
     this.visits.sectors++;
     for(const id of this.buckets.get(this.key(x,y))??[]){
-     if(seen.has(id))continue;seen.add(id);this.visits.candidates++;
      const entry=this.entries.get(id)!,b=entry.bounds;
+     // The first common bucket owns this candidate. This preserves traversal
+     // order without allocating a visited set for every sight/resource query.
+     if(x!==Math.max(loX,entry.loX)||y!==Math.max(loY,entry.loY))continue;
+     this.visits.candidates++;
      if(b.maxX<bounds.minX||b.minX>bounds.maxX||b.maxY<bounds.minY||b.minY>bounds.maxY)continue;
      yield entry.value;
     }

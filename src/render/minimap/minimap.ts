@@ -20,6 +20,7 @@ import type { SkyState } from "../sky/sky";
  */
 import { MAP_SIZE, type HeightField, type MapStamp } from "../../shared";
 import type { Camera } from "../camera/camera";
+import {decodedByteChanges,decodedByteCursor,type DecodedByteCursor} from '../../shared/snapshots/decodedBytes';
 
 const PX = 384;
 const VIEW = "#f2eee0";
@@ -63,22 +64,38 @@ export class Minimap {
   private fogState: SettlementView | null = null;
   private fogRevision = -1;
   private fogOwner: number | undefined;
+  private fogPixels?: ImageData;
+  private fogCursor?: DecodedByteCursor;
+  private fogCells?: Uint8Array;
   private readonly fogCanvas = document.createElement("canvas");
   setFog(state: SettlementView) {
     if(this.fogState?.revision !== state.revision) this.dirty = true;
     this.fogState = state;
-    if (this.fogRevision !== state.fog?.revision || this.fogOwner !== state.fog?.owner) {
+    if (this.fogRevision !== (state.fog?.revision??-1) || this.fogOwner !== state.fog?.owner || this.fogCells!==state.fog?.cells) {
       this.fogOwner = state.fog?.owner;
       this.fogRevision = state.fog?.revision ?? -1;
       this.dirty = true;
-      const size=Math.sqrt(state.fog?.cells.length??0)||this.spec.size||MAP_SIZE;
-      this.fogCanvas.width = this.fogCanvas.height = size;
-      const ctx = this.fogCanvas.getContext("2d")!,
-        data = ctx.createImageData(size, size);
-      for (let i = 0; i < size*size; i++)
-        data.data[i * 4 + 3] =
-          state.fog?.cells[i] === 2 ? 0 : state.fog?.cells[i] === 1 ? 166 : 255;
-      ctx.putImageData(data, 0, 0);
+      const cells=state.fog?.cells;
+      this.fogCells=cells;
+      if(!cells){this.fogCursor=undefined;return;}
+      const size=Math.sqrt(cells.length),ctx=this.fogCanvas.getContext("2d")!;
+      if(!this.fogPixels||this.fogPixels.width!==size){
+        this.fogCanvas.width=this.fogCanvas.height=size;
+        this.fogPixels=ctx.createImageData(size,size);this.fogCursor=undefined;
+      }
+      const data=this.fogPixels,receipts=decodedByteChanges(this.fogCursor,cells);
+      let minX=size,minY=size,maxX=-1,maxY=-1;
+      const update=(i:number)=>{
+        const alpha=cells[i]===2?0:cells[i]===1?166:255;
+        if(data.data[i*4+3]===alpha)return;
+        data.data[i*4+3]=alpha;
+        const x=i%size,y=Math.floor(i/size);
+        minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);
+      };
+      if(receipts){for(const packed of receipts)for(const value of packed)update(Math.floor(value/4));}
+      else for(let i=0;i<cells.length;i++)update(i);
+      this.fogCursor=decodedByteCursor(cells);
+      if(maxX>=0)ctx.putImageData(data,0,0,minX,minY,maxX-minX+1,maxY-minY+1);
     }
   }
   private readonly terrainCanvas = document.createElement("canvas");

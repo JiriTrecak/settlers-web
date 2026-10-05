@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "id": "asset.models.resources.amber-deposit-empty",
+  "name": "Amber Deposit — Exhausted",
+  "kind": "prop",
+  "revision": 33,
+  "status": "published",
+  "tags": [
+    "original",
+    "neutral",
+    "woodland",
+    "resource",
+    "authored"
+  ],
+  "resources": [
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "99ca56df6282b25c76a2117efce43d6e9bd234b739bd5657f1863183445d8bed",
+      "bytes": 906
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "1ebe6a4d76138f20bc85c18f6207c8b20d157c918a2c397c50fa5b5ef7260d23",
+      "bytes": 336
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "d3b4a239cae490e27e79f9660f5fbe7b402b33ea7d5b4ca4effc72dafb1525ac",
+      "bytes": 3577472
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "2af522989f96095b289de95a950c0cd2ffa98f2db3ddd50e6c967b4bb46be955",
+      "bytes": 695937
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "8fd196761f96cce9f1efd2fb6072d18f1f1ce599093bccec72aaac5f72bbbdcf",
+      "bytes": 6177
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "358e2d6e7eacd6814e4074244663a201b65089696282678fb573c9e4c0dfcf2b",
+      "bytes": 2138520
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "c98cdb382fef49f0cac4fbff101d95e602a1b12ea196eed3fc8f9c539b06d7bb",
+      "bytes": 4108081
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "png",
+      "sha256": "add10b35a6059965f467f3da746f1fed88e130afd89a865f262880d565b2e42f",
+      "bytes": 3192302
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.resource.amber-seam-empty",
+        "scale": 2,
+        "healthHeight": 1.1,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.resources.amber-deposit-empty"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "blocker": {
+      "shape": "box",
+      "size": [
+        15,
+        15
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 7.5,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}
