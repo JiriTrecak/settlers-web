@@ -32,7 +32,7 @@ it('keeps canopy preview off by default and out of saved maps and undo history',
  const changed=vi.fn(),editor=new WorldEditor({} as HTMLCanvasElement,{host:{} as HTMLElement,onChange:changed});
  editor.replace(emptyUtcMap());changed.mockClear();
  const map=editor.map,serialized=JSON.stringify(map),history=editor.layers;
- const renderer={setCanopyPreview:vi.fn(),present:vi.fn()};
+ const renderer={setCanopyPreview:vi.fn(),present:vi.fn(),sceneryConstruction:vi.fn()};
  (editor as any).renderer=renderer;
  const control=new EditorControl(editor,{} as any,vi.fn());
  expect(control.dispatch('preview',{})).toEqual({canopy:false});

@@ -168,13 +168,15 @@ describe("economy delivery receipts", () => {
     const g = new Game({ ...map, entities }, slots, content, 159),
       income = new ObserverIncome();
     const totals = new Map<string, number>();
+    let interruptedWorker: number | undefined;
     let interrupted = false,
       sawUnbankedHarvest = false,
       sawReroutedDelivery = false;
     for (let i = 1; i <= 1600; i++) {
-      const reroutes = new Set(
-        g.state.jobs.filter((j) => j.type === "deliver").map((j) => j.worker),
-      );
+      // A delivery may be assigned and completed within this tick when the
+      // carrier already touches its drop-off. Observe cargo/receipt, not whether
+      // the transient job survives until the next tick boundary.
+      const reroutedCargo=interruptedWorker===undefined?null:g.context.get(interruptedWorker)?.unit?.cargo;
       g.tick();
       for (const r of g.economy.deliveries) {
         expect(r.tick).toBe(i);
@@ -182,7 +184,9 @@ describe("economy delivery receipts", () => {
           r.owner + "/" + r.item,
           (totals.get(r.owner + "/" + r.item) ?? 0) + r.amount,
         );
-        if (reroutes.size) sawReroutedDelivery = true;
+        if (reroutedCargo && !g.context.get(interruptedWorker!)?.unit?.cargo &&
+            r.owner==='player.1' && r.item===reroutedCargo.item && r.amount===reroutedCargo.amount)
+          sawReroutedDelivery = true;
       }
       income.record(i, g.economy.deliveries);
       if (g.entities.some((e) => e.unit?.cargo) && totals.size === 0)
@@ -192,6 +196,7 @@ describe("economy delivery receipts", () => {
         const job=g.state.jobs.find(j=>j.id===w.unit!.job)!;
         g.economy.abandon(job);
         interrupted = true;
+        interruptedWorker = w.id;
       }
     }
     expect(interrupted).toBe(true);

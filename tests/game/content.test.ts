@@ -1,4 +1,4 @@
-import type {Rules} from '../../src/content/schema';
+import {authoredDefinitionSchema, type Rules} from '../../src/content/schema';
 import { describe, it, expect } from "vitest";
 import { ContentRegistry, fingerprint } from "../../src/content/registry";
 import { content } from "../../src/content/builtin";
@@ -24,6 +24,15 @@ import {
 import { game, placed, worker, run, source } from "./helpers";
 
 describe("content and presentation contracts", () => {
+  it('rejects a placement-near radius smaller than the resource service lane',()=>{
+    const draft=source(),definitions=draft.definitions.map(d=>authoredDefinitionSchema.parse(d));
+    draft.definitions=definitions;
+    const works=definitions.find(d=>d.id==='building.ants.rootworks')!;
+    works.placementNear!.radius=12;
+    expect(()=>new ContentRegistry(draft)).toThrow(/placement-near radius.*resource access/);
+    works.placementNear!.radius=20;
+    expect(()=>new ContentRegistry(draft)).not.toThrow();
+  });
   it("rejects unknown fields, references, conflicting sets and unsupported producer inputs", () => {
     const a = source();
     (a.definitions[0] as any).behaviors.pathfinding = { algorithm: "astar" };

@@ -91,7 +91,67 @@ it('does not chase a witnessed death or hold up its next queued order',()=>{
  g.command('player.1',{type:'move',actors:[a.id],destination:{x:95,y:100},append:true});
  const dead=g.combat.resolve([{source:a.id,target:b.id,damage:10000,damageType:'hero'}]);
  expect(dead).toContain(b);expect(a.unit!.pursuit).toBeUndefined();
+ expect(a.unit!.target).toBeNull();expect(a.unit!.route).toEqual([]);expect(a.unit!.goal).toBeNull();
+ g.context.remove(b);
  g.tick();g.tick();expect(a.unit!.order?.type).toBe('move');
+});
+
+it.each([[true,'weapon'],[false,'weapon'],[true,'spell'],[false,'spell']] as const)('ends automatic pursuit on witnessed death (memory=%s, %s) before removal',(memory,kind)=>{
+ const {g,a,b}=hiddenPursuit(),u=a.unit!;
+ u.order=null;
+ if(!memory)delete u.pursuit;
+ const position=structuredClone(u.position);
+ u.charge={target:b.id,readyTick:500,expires:100};
+ const hit={source:a.id,target:b.id,damage:10000,damageType:'hero'};
+ const dead=kind==='spell'?g.combat.abilityHit(hit).dead:g.combat.resolve([hit]);
+ expect(dead).toContain(b);
+ expect(u).toMatchObject({target:null,goal:null,route:[],segment:null,charge:{target:null,readyTick:500}});
+ expect(u.pursuit).toBeUndefined();expect(u.attack).toBeUndefined();expect(u.detour).toBeUndefined();
+ expect(u.position).toEqual(position);
+ g.context.remove(b);
+ const routes=vi.spyOn(g.spatial,'route');run(g,60);
+ expect(routes.mock.calls.filter(([actor])=>actor.id===a.id)).toHaveLength(0);
+});
+
+it.each(['segment','detour'])('repairs an orphaned combat %s from a checkpoint instead of retrying forever',mode=>{
+ const {g,a,b}=hiddenPursuit(),u=a.unit!;
+ u.order=null;delete u.pursuit;g.context.remove(b);
+ const waypoint=g.spatial.cell({x:108,y:100});
+ u.route=[waypoint];u.goal=waypoint;u.retryAt=g.state.tick+100;
+ u.segment={from:{x:100000,y:100000},to:waypoint,length:8000,progress:125};
+ u.position={x:100125,y:100000};
+ if(mode==='detour'){u.segment=null;u.detour={goal:waypoint,waypoint,points:[{x:101000,y:100000},{x:108000,y:100000}]};}
+ const twin=hiddenPursuit().g;twin.restore(g.snapshot());
+ const position={...u.position},routes=vi.spyOn(g.spatial,'route');
+ g.combat.plan();twin.combat.plan();
+ expect(u).toMatchObject({target:null,goal:null,route:[],segment:null,position});
+ expect(u.detour).toBeUndefined();
+ for(let i=0;i<120;i++){g.tick();twin.tick();}
+ expect(routes.mock.calls.filter(([actor])=>actor.id===a.id)).toHaveLength(0);
+ expect(twin.snapshot()).toEqual(g.snapshot());
+});
+
+it('witnessed death preserves a replacement move route even with a stale combat reference',()=>{
+ const {g,a,b}=hiddenPursuit();
+ g.command('player.1',{type:'move',actors:[a.id],destination:{x:90,y:100}});g.combat.plan();
+ const u=a.unit!,route=[...u.route],goal=u.goal;
+ u.target=b.id; // A death notification must not take ownership of a newer order.
+ g.combat.resolve([{source:a.id,target:b.id,damage:10000,damageType:'hero'}]);
+ expect(u.target).toBeNull();expect(u.order?.type).toBe('move');
+ expect(u.route).toEqual(route);expect(u.goal).toBe(goal);
+});
+
+it('replacing a combat order releases its local detour, segment and active charge',()=>{
+ const {g,a,b}=hiddenPursuit(),u=a.unit!;
+ u.position={x:100125,y:100000};
+ const position={...u.position},waypoint=g.spatial.cell({x:108,y:100});
+ u.route=[waypoint];u.goal=waypoint;
+ u.segment={from:{x:100000,y:100000},to:waypoint,length:8000,progress:125};
+ u.detour={goal:u.goal!,waypoint,points:[{x:101000,y:100000},{x:108000,y:100000}]};
+ u.charge={target:b.id,readyTick:500,expires:100};
+ g.command('player.1',{type:'move',actors:[a.id],destination:{x:90,y:100}});
+ expect(u).toMatchObject({target:null,route:[],goal:null,segment:null,charge:{target:null,readyTick:500},position});
+ expect(u.pursuit).toBeUndefined();expect(u.detour).toBeUndefined();expect(u.attack).toBeUndefined();
 });
 
 it('resumes the original attack-move destination after an unsuccessful search',()=>{

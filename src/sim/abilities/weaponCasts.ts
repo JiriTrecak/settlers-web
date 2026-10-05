@@ -1,3 +1,4 @@
+import {finishCombat} from '../game/combatIntent';
 import {weaponTargets} from '../game/locomotion';
 import {value,type AbilityDefinition} from '../../content/abilities/schema';
 import {enhanceWeapon,type AttackGrant} from './combatModifiers';
@@ -28,7 +29,7 @@ export class SpellWeaponCasts {
   const target=e.abilities?.weaponOrder?.target;
   this.game.abilities.cancel(e.id,reason);
   // Do not erase a replacement order installed by another system.
-  const u=e.unit;if(u?.order?.type==='attack'&&u.order.target===target){delete u.attack;u.order=null;u.target=null;u.route=[];u.goal=null;delete u.pursuit;}
+  const u=e.unit;if(u?.order?.type==='attack'&&u.order.target===target){finishCombat(u,this.c.state.tick);}
  }
  tick(){
   for(const e of this.c.indexedUnits()){

@@ -52,6 +52,7 @@ export class World {
   readonly settlement: Game;
   readonly size: number;
   readonly slots: readonly Slot[];
+  private readonly slotsHash: number;
   private rng: Rng;
   readonly aiTimings: Record<string, number> = {};
   private readonly brains = new Map<number, PlayerAI>();
@@ -76,6 +77,9 @@ export class World {
       )
     )
       throw new Error("Match slots must match the authored player starts");
+    // Participants and teams are fixed for the match. Hash once so the cheap
+    // desync signal distinguishes configurations without serializing per beat.
+    this.slotsHash = parseInt(fingerprint(this.slots), 16);
     this.settlement = new Game(opts.map, this.slots, opts.registry, opts.seed, opts.company);
     this.rng = seedRng(opts.seed);
     if (this.slots.some((s) => s.kind === "ai")) {
@@ -268,10 +272,10 @@ export class World {
     if(mode==='signal'){
       // These are already-maintained values, not freshly constructed snapshots.
       // Commands/AI internals are observed indirectly through gameplay outcomes.
-      mix(this.slots.length);mix(this.brains.size);mix(this.pending.length);
+      mix(this.slotsHash);mix(this.brains.size);mix(this.pending.length);
       return h>>>0;
     }
-    mix(parseInt(fingerprint(this.slots), 16));
+    mix(this.slotsHash);
     mix(profile.measure('Pending commands hash',()=>parseInt(fingerprint(this.pending),16)));
     mix(profile.measure('AI state hash',()=>parseInt(
         fingerprint(

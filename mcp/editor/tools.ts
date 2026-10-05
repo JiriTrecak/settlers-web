@@ -191,7 +191,10 @@ export function editorTools(hub: EditorHub) {
     game_checkpoint: createTool({
       id:'game_checkpoint',
       description:'Save or restore an exact local diagnostic match checkpoint through the normal save validation. Saves include pending lockstep commands. Remote multiplayer matches cannot be saved or restored by this tool. Save returns a checkpoint; load requires that checkpoint and the original map, content and player configuration.',
-      inputSchema:z.discriminatedUnion('action',[z.object({action:z.literal('save')}).strict(),z.object({action:z.literal('load'),save:z.unknown()}).strict()]),
+      // MCP requires an object at the schema root. A root discriminated union
+      // makes tools/list invalid and prevents clients discovering ANY tool.
+      inputSchema:z.object({action:z.enum(['save','load']),save:z.unknown().optional()}).strict()
+        .refine(v=>v.action==='load'?v.save!==undefined:v.save===undefined,{message:'load requires save; save accepts no payload'}),
       execute:async(input)=>input.action==='save'?call('gameSave'):call('gameLoad',{save:input.save}),
     }),
     game_command: createTool({

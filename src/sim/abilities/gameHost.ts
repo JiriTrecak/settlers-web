@@ -1,3 +1,4 @@
+import {discardNavigation,releaseCombat} from '../game/combatIntent';
 import {locomotion} from '../game/locomotion';
 import {SpellWeaponCasts} from './weaponCasts';
 import {SpellSplitForms} from './splitForms';
@@ -87,7 +88,7 @@ export function createGameAbilities(game:Game){
   },
   viewers:()=>game.slots.map(s=>`player.${s.player+1}`),
   turnTicks(caster,target){const e=c.get(caster)!,point=typeof target==='number'?precise(c.get(target)!):target;return Math.ceil(Math.abs(turnDifference(e.rotation,heading(e,point)))/((c.def(e).behaviors.movement?.turnRate??720)*TICK_MS/1000));},
-  begin(id){const e=c.get(id)!;revealForAction(e,c.registry,c.state.tick,'cast');c.clampPools(e);if(e.unit){e.unit.order=null;e.unit.target=null;e.unit.route=[];e.unit.goal=null;e.unit.idle=null;e.unit.orderQueue=[];delete e.unit.attack;delete e.unit.detour;}},
+  begin(id){const e=c.get(id)!;revealForAction(e,c.registry,c.state.tick,'cast');c.clampPools(e);if(e.unit){releaseCombat(e.unit);discardNavigation(e.unit);e.unit.order=null;e.unit.idle=null;e.unit.orderQueue=[];}},
   heal(_caster,target,amount){const e=c.get(target);if(!e||!alive(e)||e.hp===null)return 0;const before=e.hp;e.hp=Math.min(c.stats(e).maxHp,e.hp+amount);return e.hp-before;},
   damage(caster,target,amount,type,owner){const result=game.combat.abilityHit({source:caster,target,damage:amount,damageType:type,owner:owner as Owner});for(const e of result.dead)game.onCombatDeath(e);return result.damage;},
  };

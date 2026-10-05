@@ -29,10 +29,11 @@ describe('hall gathering economy',()=>{
  });
  it('reserves a multi-cell mine footprint and prevents surrounding buildings from sealing its access',()=>{
   const g=setup(),mine=g.entities.find(e=>e.placement==='mine.1')!;
-  expect(g.spatial.footprint(mine)).toHaveLength(49);
+  const footprint=content.get(mine.definition).footprint!;
+  expect(g.spatial.footprint(mine)).toHaveLength(footprint.width*footprint.depth);
   expect(g.spatial.footprint(mine).every(i=>g.spatial.resources[i]===mine.id)).toBe(true);
   const worker=g.entities.find(e=>e.owner==='player.1'&&content.get(e.definition).behaviors.work)!;
-  expect(g.canBuild('player.1','building.ants.house',{x:mine.x+7,y:mine.y},worker.id)).toMatch(/Leave access/);
+  expect(g.canBuild('player.1','building.ants.house',{x:mine.x+Math.floor(footprint.width/2)+Math.floor(content.get('building.ants.house').footprint!.width/2)+1,y:mine.y},worker.id)).toMatch(/Leave access/);
  });
  it('restores an in-flight harvest to the identical future without duplicating deposits',()=>{
   const g=setup();for(let tick=0;tick<800&&!g.entities.some(e=>e.unit?.cargo);tick++)g.tick();

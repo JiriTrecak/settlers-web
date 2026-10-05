@@ -21,6 +21,7 @@
     "wiki:build": "node --import tsx scripts/wiki/generate.ts build",
     "wiki:preview": "node --import tsx scripts/wiki/generate.ts preview",
     "wiki:check": "tsc --project scripts/wiki/tsconfig.json",
+    "releases:infra": "node scripts/releases-infrastructure.mjs",
     "build:desktop": "node scripts/desktop.mjs build --bundles app",
     "bench:match": "node scripts/bench/run-match-budget.mjs",
     "bench:sim": "node --import tsx scripts/bench/simulation.ts",

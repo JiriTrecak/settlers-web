@@ -1,6 +1,7 @@
 import {abilityLibrarySchema,emptyAbilityLibrary,allEffects,type AbilityLibrary,type AbilityDefinition,type StatusEffect} from './abilities/schema.ts';
 import { z } from "zod";
 import {scaleUnitDefinition} from './unitScale.ts';
+import {resourceCenterSeparation} from '../shared/map/resourceClearance';
 import {
   actionsSchema,
   assetSchema,
@@ -426,6 +427,17 @@ export class ContentRegistry {
         fail("construction clearance requires resource yield");
       if (d.placementNear && (d.kind !== "building" || d.creation?.method !== "construct" || !this.get(d.placementNear.source).yield))
         fail("placement-near requires a constructable building and a finite resource source");
+      if (d.placementNear && d.footprint) {
+        const source=this.get(d.placementNear.source),a=d.footprint,b=source.footprint??{width:1,depth:1};
+        // Rotation can put either building's shorter side toward the other.
+        // Reject impossible content at publication, not after a player/AI has
+        // exhausted every placement candidate during a match.
+        const minimum=Math.min(...[0,90].flatMap(rotation=>{
+          const separation=resourceCenterSeparation(a,b,source.constructionClearance??0,rotation);
+          return [separation.x,separation.y];
+        }));
+        if(d.placementNear.radius<minimum)fail(`placement-near radius must allow resource access (at least ${minimum})`);
+      }
       if (d.behaviors.storage?.dropoff && d.kind !== "building")
         fail("drop-off requires building");
       if ((d.kind === "unit") !== (d.supplyCost !== undefined))

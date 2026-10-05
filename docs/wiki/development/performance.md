@@ -3525,3 +3525,73 @@ worker transport and mode switching, exact fog copy/change counters, unchanged
 terrain visibility, and local search failure reasons. Instrumented and ordinary
 battle runs retain the same full audit. Next priority: stale intention cleanup
 and repeated blocked recovery; then the scope of live sensor/index refreshes.
+
+### 32. Combat intention lifecycle repair
+
+The hornet retry loop was an orphaned movement plan, not an expensive legitimate
+search. Witnessed-death cleanup deleted pursuit memory but retained the target,
+route and goal. After removal, the invalid-target guard skipped an undefined
+lookup. Collision recovery then retried that abandoned goal every six ticks.
+
+`src/sim/game/combatIntent.ts` centralizes three distinct transitions: release
+engagement state, suspend an approach while retaining orders, and complete an
+attack. Navigation disposal clears the route, goal, segment and local detour,
+never the precise physical position. Cleanup respects navigation owned by work,
+plain move/follow orders and camp return. Charge cooldowns remain spent; reissuing
+attack on the same target preserves an active charge. Queued orders and the
+original attack-move/patrol destination survive engagement completion.
+
+Weapon and spell deaths share observer-aware completion. Hidden removals retain
+last-seen search and do not reveal death. Missing targets without memory are
+repaired during ordinary planning, including old checkpoints. Entering camp
+return discards the chase immediately. Spell casting and weapon-cast cancellation
+use the same cleanup instead of leaving old pursuit/segments behind. This adds
+no world rebuild, search-throttling concession or new serialized state.
+
+Frozen Heartroot evidence (`52de6e71`, content `8393df8a`, ticks 6000–10800):
+
+- Hornet #77: **800 route calls → 0**; final target/goal null and route empty.
+- Whole-run route calls: 4,139 → 3,472; repeated unchanged requests: 1,256 → 508.
+- Measured local-search expansion: **277,559 → 8,713 nodes** (96.9% fewer);
+  visit-limit failures: 1,068 → 6. Combat trajectories change with the correction,
+  so aggregate counts are workload evidence, not an isolated algorithm speedup.
+- Final detailed trace: `/tmp/intent-fixed-final-trace.json`, full audit
+  `843116604`. Ordinary run `/tmp/intent-fixed-budget.json` has the same audit:
+  **2.554 ms mean / 4.909 ms p99** accounted CPU. The 3 ms goal is still unmet;
+  actual browser transport/input/HUD remain outside this headless measurement.
+- Four-peer continuation: `/tmp/intent-fixed-four-peer.json`, 13 full-state
+  checkpoints agree, final snapshots identical, final full audit `2809486683`.
+  Includes the synthetic 32-beat stall; not a real-network performance result.
+
+177 final targeted tests and TypeScript pass. Coverage includes automatic and
+explicit pursuit, both kill paths, orphaned segment/detour checkpoint repair,
+unseen removals, queued orders, charge continuity, camp leash, spell interruption
+and category lockstep. The broader 1,351-test run exposed eight failures also
+reproduced against the pre-fix combat/economy code (map/deposit dimensions, Root
+economy and delivery statistics). Its additional charge regression was fixed
+and verified in the final targeted run. Those eight baseline failures were then
+repaired before further optimization:
+
+- Enlarged 15×15 deposits made Rootworks' 12-cell placement radius impossible.
+  Its radius is now 20; content validation rejects radii that cannot preserve
+  resource access, using the same footprint calculation as construction.
+- Oakfall's two mirrored camp units no longer overlap amber. Threewater has
+  seven local forest-mask clearings around deposits, and its southern amber
+  deposit is three cells clear of the starting warriors. Map connectivity,
+  both Rootworks sites and buildable base cores still pass their checks.
+- Economy tests derive footprints and separation from definitions. The receipt
+  test now observes completed cargo delivery rather than requiring a temporary
+  delivery job to survive a tick. No assertions were skipped or removed.
+
+Full-suite follow-up also repaired a stale renderer mock, regenerated published
+map preview metadata, and restored team-configuration identity to the cheap
+checksum. Participant configuration is hashed once at match construction; each
+signal mixes that cached integer without serializing it. MCP checkpoint tooling
+now publishes an object-root input schema, fixing tool discovery while retaining
+save/load payload validation.
+
+Final verification: **427 test files pass, 2,307 tests pass**. The existing
+sanctuary-model test remains conditionally skipped while that asset is a
+placeholder. TypeScript, map-preview freshness and whitespace checks pass. All
+six published maps validate as playable. The network tests ran with loopback
+ports available; no test was disabled to accommodate sandbox restrictions.

@@ -148,7 +148,7 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 54,
-        "y": 228
+        "y": 231
       },
       "rotation": 90,
       "owner": "none"
@@ -1659,6 +1659,16 @@
                   "z": 57.18100128369705
                 }
               ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 14,
+              "points": [
+                {
+                  "x": 61,
+                  "z": 16
+                }
+              ]
             }
           ]
         }
@@ -1731,6 +1741,16 @@
                 {
                   "x": 204.98220640569394,
                   "z": 5.258023106546855
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 14,
+              "points": [
+                {
+                  "x": 61,
+                  "z": 16
                 }
               ]
             }
@@ -1917,6 +1937,16 @@
                   "z": 93.65853658536585
                 }
               ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 14,
+              "points": [
+                {
+                  "x": 26,
+                  "z": 88
+                }
+              ]
             }
           ]
         }
@@ -2001,6 +2031,16 @@
                 {
                   "x": 27.027283511269275,
                   "z": 256
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 14,
+              "points": [
+                {
+                  "x": 26,
+                  "z": 88
                 }
               ]
             }
@@ -2233,6 +2273,26 @@
                   "z": 194
                 }
               ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 14,
+              "points": [
+                {
+                  "x": 135,
+                  "z": 190
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 14,
+              "points": [
+                {
+                  "x": 118,
+                  "z": 193
+                }
+              ]
             }
           ]
         }
@@ -2309,6 +2369,16 @@
                 {
                   "x": 171.88137603795965,
                   "z": 253.69961489088575
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 14,
+              "points": [
+                {
+                  "x": 54,
+                  "z": 231
                 }
               ]
             }
@@ -5924,7 +5994,7 @@
         "asset": "asset.models.environment.woodland-reed-tuft",
         "x": 75.67333297799402,
         "z": 117.00496445046771,
-        "elevation": -0.000003927866315718479,
+        "elevation": -3.927866315718479e-06,
         "yaw": 3.2,
         "scale": 1.08,
         "heightMode": "absolute",

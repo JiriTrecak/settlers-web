@@ -101,9 +101,12 @@ describe("combat, knowledge and deterministic navigation", () => {
     neutral.y = 130;
     neutral.unit!.position = null;
     neutral.unit!.segment = null;
-    neutral.unit!.route = [];
-    neutral.unit!.goal = null;
-    neutral.unit!.target = null;
+    // The old combat plan leads farther away. Camp return must replace it now,
+    // rather than walk it to completion or wait for its retry deadline.
+    neutral.unit!.route = [g.spatial.cell({x:160,y:130})];
+    neutral.unit!.goal = neutral.unit!.route[0];
+    neutral.unit!.target = soldier.id;
+    neutral.unit!.retryAt = g.state.tick+100;
     // End the pursuit with the enemy out of the return corridor.
     g.command("player.1", {type: "stop", actors: [soldier.id]});
     soldier.x = 240; soldier.y = 145;
@@ -112,6 +115,7 @@ describe("combat, knowledge and deterministic navigation", () => {
     // Teleports must reindex, or the stale cells body-block the return corridor.
     g.spatial.updateUnitMovement(neutral); g.spatial.updateUnitMovement(soldier);
     g.tick();
+    expect(g.spatial.point(neutral.unit!.goal!).x).toBeGreaterThan(170);
     for (let i = 0; i < 240 && neutral.unit!.returning; i++) g.tick();
     expect(neutral.unit!.returning).toBe(false);
     expect(

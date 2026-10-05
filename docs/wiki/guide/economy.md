@@ -30,7 +30,7 @@ allows **five assigned harvesters**, shared across players. Workers carry
 **10 Root per trip** and use the same unit pass-through rules as Amber miners.
 Terrain and buildings still block them.
 
-Build a Tier 1 [Rootworks](/buildings/building-ants-rootworks) within 12 cells of
+Build a Tier 1 [Rootworks](/buildings/building-ants-rootworks) within 20 cells of
 a deposit. It is the **only Root drop-off**: a Mound or Bombardier Workshop cannot
 receive a worker's Root cargo. Once delivered, Root enters the colony's shared
 spendable account. Protect both the deposit and its delivery route.

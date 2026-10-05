@@ -1,3 +1,4 @@
+import {resourceCenterSeparation} from '../../src/shared/map/resourceClearance';
 import {expect,it} from 'vitest';
 import {commandCard} from '../../src/presentation/commands';
 import {game,placed,worker} from './helpers';
@@ -17,7 +18,9 @@ it('constructs the Root economy, upgrades, trains both T2 units independently of
   const b=g.entities.find(e=>e.definition===definition)!;until(g,()=>!b.construction);return b;
  };
  expect(g.command(owner,{type:'upgrade',actor:mound.id}).accepted).toBe(false);
- const works=build('building.ants.rootworks',235,217);
+ const deposit=g.registry.get('building.neutral.corrupted-root'),worksDefinition=g.registry.get('building.ants.rootworks');
+ const separation=resourceCenterSeparation(worksDefinition.footprint!,deposit.footprint!,deposit.constructionClearance!);
+ const works=build(worksDefinition.id,235,229-separation.y);
  const root=g.entities.find(e=>e.placement==='root')!;
  expect(g.command(owner,{type:'gather',actors:[w.id],target:root.id}).accepted).toBe(true);
  until(g,()=>(mound.inventory['item.root']??0)>=240,22000);

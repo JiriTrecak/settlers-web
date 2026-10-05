@@ -16,6 +16,18 @@ function setup(name:string,settings:Record<string,unknown>={}){
  return {...f,spell,cast,c:()=>game.context.get(caster)!,t:()=>game.context.get(target)!};
 }
 const advance=(game:ReturnType<typeof setup>['game'],ticks:number)=>{for(let i=0;i<ticks;i++)game.tick();};
+it('casting replaces combat pursuit and its movement plan without moving the caster',()=>{
+ const f=setup('storm-bolt',{combat:true}),u=f.c().unit!;
+ const goal=f.game.spatial.cell(f.t());
+ u.target=f.target;u.pursuit={target:f.target,position:{x:f.t().x,y:f.t().y},seenTick:f.game.state.tick};
+ u.order={type:'attack',target:f.target,force:false};u.route=[goal];u.goal=goal;
+ u.position={x:f.c().x*1000+125,y:f.c().y*1000};
+ u.segment={from:{x:f.c().x*1000,y:f.c().y*1000},to:goal,length:6000,progress:125};
+ const position={...u.position};
+ expect(f.cast().accepted).toBe(true);
+ expect(u).toMatchObject({order:null,target:null,route:[],goal:null,segment:null,position});
+ expect(u.pursuit).toBeUndefined();expect(u.attack).toBeUndefined();expect(u.detour).toBeUndefined();
+});
 it('Storm Bolt only damages on projectile impact and interrupts with an expiring stun',()=>{
  const f=setup('storm-bolt');expect(f.cast().accepted).toBe(true);advance(f.game,11);
  expect(f.t().hp).toBe(500);expect(f.game.state.spellDeliveries).toHaveLength(1);

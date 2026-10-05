@@ -23,9 +23,13 @@ export class UnitOrders {
       return true;
     }
     if(u.garrison && order.type!=='hold' && order.type!=='attack')leaveGarrison(this.c,e);
+    // Reaffirming the current target keeps an already-spent charge in progress.
+    // Every other replacement cancels it immediately through interrupt().
+    const chargeTarget=order.type==='attack'&&u.charge?.target===order.target?order.target:null;
     this.economy.interrupt(e, order.type === "move" ? order.destination : undefined);
     u.order = order;
     u.target = order.type === "attack" && !u.cargo ? order.target : null;
+    if(chargeTarget!==null&&u.target===chargeTarget&&u.charge)u.charge.target=chargeTarget;
     if (order.type !== "move") u.pendingMove = null;
     u.retryAt = this.c.state.tick;
     return true;

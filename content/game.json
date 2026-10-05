@@ -2454,7 +2454,7 @@
       },
       "placementNear": {
         "source": "building.neutral.corrupted-root",
-        "radius": 12
+        "radius": 20
       },
       "category": "category.build",
       "level": 1

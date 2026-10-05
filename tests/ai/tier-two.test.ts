@@ -42,7 +42,7 @@ it('places a Rootworks near an observed safe deposit, but not beside visible ene
   const actions:Action[]=[];economy(new Frame(view,'player.1',g.registry,geo,0),newAIState(geo.map.fingerprint,1),a=>{actions.push(a);return true});return actions;
  };
  const action=choose()[0];expect(action).toMatchObject({type:'build',definition:'building.ants.rootworks'});
- if(action.type==='build')expect(Math.hypot(action.position.x-240,action.position.y-175)).toBeLessThanOrEqual(12);
+ if(action.type==='build')expect(Math.hypot(action.position.x-240,action.position.y-175)).toBeLessThanOrEqual(g.registry.get('building.ants.rootworks').placementNear!.radius);
  expect(choose(true).some(a=>a.type==='build'&&a.definition==='building.ants.rootworks')).toBe(false);
 });
 it('preserves upgrade savings instead of spending every Amber delivery on recruits',()=>{

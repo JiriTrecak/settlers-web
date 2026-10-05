@@ -1,3 +1,4 @@
+import {discardNavigation, releaseCombat} from './combatIntent';
 import { colonySupply, supplyAdmission, supplyStart } from "./supply";
 import { isStunned } from "./effects";
 import { atPoint, precise } from "./motion";
@@ -929,8 +930,7 @@ export class Economy {
     const u = w.unit;
     if (!u || u.contained || u.release) return false;
     u.orderQueue = [];
-    delete u.attack;
-    delete u.pursuit;
+    releaseCombat(u);
     delete u.detour;
     delete u.lastMovedTick;
     u.idle = null;
@@ -952,9 +952,7 @@ export class Economy {
     u.order = destination
       ? { type: "move", destination, attackMove: false }
       : null;
-    u.route = [];
-    u.goal = null;
-    u.target = null;
+    discardNavigation(u);
     u.pendingMove = null;
     return true;
   }
