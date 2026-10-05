@@ -3,7 +3,7 @@
   "id": "asset.custom.invisibility-command-icon",
   "name": "Invisibility — Quiet Leaf Veil",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "6f9f178ce351fa8f0f1d3eaf53dcebb356cfeb0f6d91059c904b1b9abf3f3c72",
-      "bytes": 577763
+      "sha256": "b2bb9b118fe7bf3a086d8752d7097b7c7f7897982a0ee36b52e2a5280beb8ed2",
+      "bytes": 41593
     },
     {
       "role": "source",

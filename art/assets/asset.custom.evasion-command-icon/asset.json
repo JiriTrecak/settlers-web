@@ -3,7 +3,7 @@
   "id": "asset.custom.evasion-command-icon",
   "name": "Evasion — command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "7a1590ad542e8c021ae4f41aa0826fdb5383646cedc26bef13a8b1cadbaa2b43",
-      "bytes": 610158
+      "sha256": "c491072eac5e4b4a82da1a4ab93a40f9699b8b39c1b1862fe1dfdaf75938defb",
+      "bytes": 44022
     },
     {
       "role": "source",

@@ -3,7 +3,7 @@
   "id": "asset.custom.dismiss-summon-command",
   "name": "Dismiss Summon command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "5c90a2a09899a1528863b876240a7143e0deb3952e3d8964896f99b64c65e21d",
-      "bytes": 676991
+      "sha256": "f0c1cf5a1f13ae89661d50fed97e37c2193e82ea3922a91339d74e484fa9ed8e",
+      "bytes": 46117
     },
     {
       "role": "source",

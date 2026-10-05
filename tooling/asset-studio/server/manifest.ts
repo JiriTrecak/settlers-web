@@ -1,8 +1,8 @@
 /** Compile authored records into the only runtime listing and explicit Vite URL imports. */
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
-import {recordSchema,type AssetRecord,type Manifest,type RuntimeRecord} from '../shared/schema';
-import {filesIn,json,hash,saveJson,atomic,within} from './storage';
+import {recordSchema,type AssetRecord,type Manifest,type RuntimeRecord} from '../shared/schema.ts';
+import {filesIn,json,hash,saveJson,atomic,within} from './storage.ts';
 export async function records(root:string):Promise<AssetRecord[]>{const out:AssetRecord[]=[];for(const f of await filesIn(path.join(root,'art/records')))if(f.endsWith('/asset.json')){const raw=await json<unknown>(f);out.push(recordSchema.parse(raw));}return out;}
 export function compile(all:AssetRecord[]):Manifest{
  const ids=new Set<string>(),bindings=new Set<string>(),scenery=new Set<string>(),paths=new Map<string,string>();

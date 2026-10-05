@@ -87,7 +87,7 @@ Rotation/scale/opacity loops with easing are for ring/glow/billboard/light/mesh.
 
 Textures are `{asset,role:"image",index:1}` published resource references; command icons are asset IDs. Texture colour multiplies tint: avoid accidental double tint. Transparent sprites need real alpha and edge padding, no checkerboard/ground/UI/text. Opaque painted backgrounds are appropriate for command icons, not projected glyphs.
 
-`studio_image` generates an original image using the configured OpenAI account/model, retains its source, imports a 512px runtime PNG into Asset Studio and publishes it. Provide a unique ID/name, kind icon/texture, detailed prompt and transparent flag. Inspect returned image before using its authoritative texture reference. Never overwrite or regenerate existing images unnecessarily. Diagnose errors before paid retries. Credentials live in Settings; never request, print or include them in chat, content or metadata.
+`studio_image` generates an original image using the configured OpenAI account/model, retains its source, imports a 128px command icon or 512px effect texture into Asset Studio and publishes it. Provide a unique ID/name, kind icon/texture, detailed prompt and transparent flag. Inspect returned image before using its authoritative texture reference. Never overwrite or regenerate existing images unnecessarily. Diagnose errors before paid retries. Credentials live in Settings; never request, print or include them in chat, content or metadata.
 
 ## Preview and acceptance
 

@@ -3,7 +3,7 @@
   "id": "asset.custom.soul-harvest-command",
   "name": "Soul Harvest — Woodland Command",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "f81c09e32b052641cc64419b9d6bd248fbbbb05183bfbeb8fa3867eb9aaf56f0",
-      "bytes": 605648
+      "sha256": "cd89458c8edfc95ba8df5e39efab19860ae50621f6196a94066c915af9aa0823",
+      "bytes": 43762
     },
     {
       "role": "source",

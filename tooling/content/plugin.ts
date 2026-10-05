@@ -1,5 +1,6 @@
-import {readContentSource} from './source';
-import {validateFiles} from '../asset-studio/server/manifest';
+import {readContentSource} from './source.ts';
+import {validateFiles} from '../asset-studio/server/manifest.ts';
+import {validateCommandIcon} from './icon.ts';
 import type { Plugin } from "vite";
 import { readFile, writeFile, rename, readdir, stat } from "node:fs/promises";
 import { resolve, relative, isAbsolute } from "node:path";
@@ -7,7 +8,7 @@ import {
   ContentRegistry,
   fingerprint,
   type ContentSource,
-} from "../../src/content/registry";
+} from "../../src/content/registry.ts";
 
 const readSource=(file:string)=>readContentSource(resolve(file,'../..'));
 async function validateModels(root: string, registry: ContentRegistry) {
@@ -23,11 +24,7 @@ async function validateModels(root: string, registry: ContentRegistry) {
       if (path.startsWith("..") || isAbsolute(path) || !file.endsWith(".png"))
         throw new Error(`${asset.id}: icon must be a project PNG`);
       const bytes = await readFile(file);
-      if (bytes.length < 24 || bytes.toString("hex", 0, 8) !== "89504e470d0a1a0a")
-        throw new Error(`${asset.id}: invalid PNG image`);
-      const width = bytes.readUInt32BE(16), height = bytes.readUInt32BE(20);
-      if (width !== height || width < 1 || width > 128)
-        throw new Error(`${asset.id}: icons must be square and at most 128px`);
+      validateCommandIcon(asset.id, file, bytes);
     }
     for (const model of [asset.file, asset.harvestAnimation].filter((p): p is string => !!p)) {
       const file = resolve(root, model),

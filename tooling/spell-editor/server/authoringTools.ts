@@ -1,5 +1,6 @@
 import {z} from 'zod';
 import sharp from 'sharp';
+import {COMMAND_ICON_SIZE} from '../../content/icon';
 import {AuthoringStore} from '../../asset-studio/server/authoring/store';
 import {assetDefinitionSchema,type AssetDefinition} from '../../../src/shared/authoring/asset';
 import {assetCommandSchema} from '../../../src/shared/authoring/commands';
@@ -40,13 +41,14 @@ export class AuthoringToolkit {
  private async generateAsset(input:z.infer<typeof authoringTools.studio_image.inputSchema>,signal?:AbortSignal){
   const store=new AuthoringStore(this.service.root);
   try{await store.get(input.id);throw Error('Asset ID already exists. Choose a new ID.');}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
-  const definition=assetDefinitionSchema.parse({version:1,id:input.id,name:input.name,kind:input.kind,revision:1,status:'draft',tags:['spell-effects','generated'],resources:[],usesGeometry:false,provenance:{method:'generated',licenseNote:'Original artwork generated with OpenAI GPT Image 2.5.'},bindings:{render:[{id:input.id,image:{asset:input.id,role:'image',index:1}}],scenery:[]}});
+  const definition=assetDefinitionSchema.parse({version:1,id:input.id,name:input.name,kind:input.kind,revision:1,status:'draft',tags:['spell-effects','generated'],resources:[],usesGeometry:false,provenance:{method:'generated',licenseNote:'Original artwork generated with OpenAI GPT Image 2.5.'},bindings:{render:input.kind==='icon'?[{id:input.id,image:{asset:input.id,role:'image',index:1}}]:[],scenery:[]}});
   const settings=await this.credentials.settings();
   const response=await this.fetcher('https://api.openai.com/v1/images/generations',{method:'POST',headers:{Authorization:'Bearer '+await this.credentials.key(),'Content-Type':'application/json'},body:JSON.stringify({model:settings.imageModel,prompt:input.prompt,background:input.transparent?'transparent':'opaque',output_format:'png',size:'1024x1024',quality:'high',n:1}),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(240000)]):AbortSignal.timeout(240000)});
   if(!response.ok)throw Error(`Image generation failed (${response.status}). Check your OpenAI account and model access in Settings.`);
   const data=await response.json() as {data?:{b64_json?:string}[]};const encoded=data.data?.[0]?.b64_json;if(!encoded)throw Error('OpenAI returned no image. No asset was created.');
   const original=Buffer.from(encoded,'base64');if(original.length>30*1024*1024)throw Error('Generated image exceeds the import limit.');
-  const image=await sharp(original,{limitInputPixels:16777216}).resize(512,512,{fit:'inside'}).png().toBuffer();
+  const size=input.kind==='icon'?COMMAND_ICON_SIZE:512;
+  const image=await sharp(original,{limitInputPixels:16777216}).resize(size,size,{fit:'contain',background:{r:0,g:0,b:0,alpha:0}}).png().toBuffer();
   const meta=await sharp(image).metadata();if(input.transparent&&!meta.hasAlpha)throw Error('The generated image has no alpha channel. Retry with a transparent-background prompt.');
   if(meta.hasAlpha){
    const alpha=(await sharp(image).stats()).channels.at(-1)!;

@@ -3,7 +3,7 @@
   "id": "asset.custom.ashstep-icon",
   "name": "Ashstep — command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "513167accb1699af942518f9098267bb4a1b27fdbd0eaef6f33ce7e368727fbb",
-      "bytes": 632120
+      "sha256": "d8faf3f280bc8ededb4675dbee7af604be5933d41eb95ed28fcb3d016bc1f302",
+      "bytes": 42771
     },
     {
       "role": "source",

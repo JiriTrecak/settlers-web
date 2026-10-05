@@ -3,7 +3,7 @@
   "id": "asset.custom.sleep-floating-crescent",
   "name": "Sleep — floating lavender crescent",
   "kind": "texture",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -45,16 +45,7 @@
   },
   "materials": [],
   "bindings": {
-    "render": [
-      {
-        "id": "asset.custom.sleep-floating-crescent",
-        "image": {
-          "role": "image",
-          "index": 1,
-          "asset": "asset.custom.sleep-floating-crescent"
-        }
-      }
-    ],
+    "render": [],
     "scenery": []
   },
   "capabilities": {},

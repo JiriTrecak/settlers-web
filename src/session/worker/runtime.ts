@@ -43,10 +43,11 @@ export class SimulationRuntime {
  profilingDetails=true;
  private profileSamples:[string,number][]=[];
  private droppedSamples=0;
+ private readonly workCounters=new Map<string,number>();
  configureProfiling(enabled:boolean,details=true){
   if(this.profiling===enabled&&this.profilingDetails===details)return;
   this.profiling=enabled;this.profilingDetails=details;
-  this.profileSamples=[];this.droppedSamples=0;
+  this.profileSamples=[];this.droppedSamples=0;this.workCounters.clear();
   this.world.settlement.context.profile.enabled=enabled&&details;
  }
  /** Transport samples are delivered with the next snapshot, without sending an
@@ -117,6 +118,8 @@ export class SimulationRuntime {
    }
    this.timings.tickTotal=performance.now()-tickStarted;
    if(this.profiling){
+    if(this.profilingDetails)for(const row of this.world.settlement.context.profile.workSnapshot())
+     this.workCounters.set(row.path,(this.workCounters.get(row.path)??0)+row.value);
     const samples:[string,number][]=[['Worker · simulation',this.timings.simulation],
      ['Worker · tick total',this.timings.tickTotal],['Worker · lockstep',this.timings.lockstep],['Worker · checksum',this.timings.checksum],
      ...Object.entries(this.world.settlement.timings).map(([name,ms]):[string,number]=>[`Sim · ${name}`,ms]),
@@ -139,8 +142,9 @@ export class SimulationRuntime {
   if(this.options.player===null&&this.world.clock.tickIndex-this.observerTick>=40){this.observerTick=this.world.clock.tickIndex;this.observer=observerStats(this.world.settlement.state,this.match.slots,this.world.settlement.registry,this.income);}
   this.timings.projection=performance.now()-begin;
   const profileSamples=this.profileSamples;this.profileSamples=[];
+  const workCounters=[...this.workCounters];this.workCounters.clear();
   return {visual,selection,targets,observer:this.observer,tick:this.world.clock.tickIndex,desynced:this.desynced,
-   timings:{...this.timings},profileSamples,droppedSamples:this.droppedSamples,routing:{...this.world.settlement.spatial.routing}};
+   timings:{...this.timings},profileSamples,...(workCounters.length?{workCounters}:{}),droppedSamples:this.droppedSamples,routing:{...this.world.settlement.spatial.routing}};
  }
  canBuild(definition:string,position:{x:number;y:number},actor?:number,rotation=0){return this.world.settlement.canBuild(slotOwner(this.me),definition,position,actor,rotation);}
  company(){return captureCompany(this.world.settlement);}
@@ -176,7 +180,7 @@ export class SimulationRuntime {
   const restored=restoreSavedWorld(save,this.options.map,this.world.settlement.registry);
   this.destroy();this.locksteps.clear();this.match=structuredClone(save.match);this.bindLocal();this.room!.resume(save.pipeline);
   for(const client of save.clients)this.locksteps.get(client.player)!.restore(save.pipeline.commits,client.sentThrough,client.outbox);
-  this.world=restored;this.acc=0;this.presentation=new PresentationView();this.income.reset(restored.clock.tickIndex);this.observerTick=-Infinity;this.observer=undefined;this.greeted.clear();this.profileSamples=[];this.droppedSamples=0;
+  this.world=restored;this.acc=0;this.presentation=new PresentationView();this.income.reset(restored.clock.tickIndex);this.observerTick=-Infinity;this.observer=undefined;this.greeted.clear();this.profileSamples=[];this.droppedSamples=0;this.workCounters.clear();
  }
  destroy(){for(const ch of this.channels)ch.destroy();this.channels.length=0;}
 }

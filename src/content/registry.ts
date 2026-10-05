@@ -1,6 +1,6 @@
-import {abilityLibrarySchema,emptyAbilityLibrary,allEffects,type AbilityLibrary,type AbilityDefinition,type StatusEffect} from './abilities/schema';
+import {abilityLibrarySchema,emptyAbilityLibrary,allEffects,type AbilityLibrary,type AbilityDefinition,type StatusEffect} from './abilities/schema.ts';
 import { z } from "zod";
-import {scaleUnitDefinition} from './unitScale';
+import {scaleUnitDefinition} from './unitScale.ts';
 import {
   actionsSchema,
   assetSchema,
@@ -12,7 +12,7 @@ import {
   type Definition,
   type Asset,
   type Rules,
-} from "./schema";
+} from "./schema.ts";
 
 export type ContentSource = {
   definitions: unknown[];

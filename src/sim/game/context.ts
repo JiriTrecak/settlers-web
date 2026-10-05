@@ -113,6 +113,9 @@ export class GameContext {
     this.spatial.refreshAfterRemoval=this.profile.wrap('Static occupancy removal',this.spatial.refreshAfterRemoval.bind(this.spatial));
     this.spatial.appendOccupancy=this.profile.wrap('Static occupancy addition',this.spatial.appendOccupancy.bind(this.spatial));
     this.spatial.sectors.prepare=this.profile.wrap('Sector preparation',this.spatial.sectors.prepare.bind(this.spatial.sectors));
+    this.spatial.movementSegmentBlocker=this.profile.wrap('Movement obstruction classification',this.spatial.movementSegmentBlocker.bind(this.spatial));
+    this.spatial.updateUnitMovement=this.profile.wrap('Moving-body membership update',this.spatial.updateUnitMovement.bind(this.spatial));
+    this.reconcileWeapon=this.profile.wrap('Weapon reconciliation',this.reconcileWeapon.bind(this));
     this.spatial.clearSegment=this.profile.wrap('Terrain and reservation sweep',this.spatial.clearSegment.bind(this.spatial));
     this.spatial.clearLocalSegment=this.profile.wrap('Local terrain and reservation sweep',this.spatial.clearLocalSegment.bind(this.spatial));
     this.spatial.unitSegmentClear=this.profile.wrap('Moving-body sweep',this.spatial.unitSegmentClear.bind(this.spatial));
@@ -333,8 +336,9 @@ export class GameContext {
   private moveUnits(castFacingOnly=false,active?:ReadonlySet<number>) {
     const units = this.activeUnits();
     let requests:ReturnType<typeof trafficRequests>|undefined;
-    const occupiedByMode = [false,true].map(air=>new Set(units.filter(e=>this.spatial.airborne(e)===air).filter(e => !this.spatial.ignoresUnits(e)).flatMap(e => e.unit!.detour?.yielding ? [this.spatial.cell(e),e.unit!.detour.waypoint] : [this.spatial.cell(e)])));
+    const occupiedByMode = this.profile.measure('Movement reservation sets',()=>[false,true].map(air=>new Set(units.filter(e=>this.spatial.airborne(e)===air).filter(e => !this.spatial.ignoresUnits(e)).flatMap(e => e.unit!.detour?.yielding ? [this.spatial.cell(e),e.unit!.detour.waypoint] : [this.spatial.cell(e)]))));
     for (const e of this.liveUnits()) {
+      this.profile.count('Movement units visited');
       const u = e.unit;
       if (!u) continue;
       const occupied=occupiedByMode[Number(this.spatial.airborne(e))]!;
@@ -369,7 +373,8 @@ export class GameContext {
       const speed = u.idle?.walking
         ? (movement?.walkSpeed ?? movement?.speed)
         : movement?.speed;
-      if (u.garrison || !speed || !u.route.length || (itemFlag(e, this.registry, "rooted") && !controlImmune(e,this.registry,'root'))) continue;
+      if (u.garrison || !speed || !u.route.length || (itemFlag(e, this.registry, "rooted") && !controlImmune(e,this.registry,'root'))) {this.profile.count('Movement skipped without usable route');continue;}
+      this.profile.count('Moving units');
       const ignoresUnits = this.spatial.ignoresUnits(e);
       if (!ignoresUnits) {occupied.delete(this.spatial.cell(e));if(u.detour?.yielding)occupied.delete(u.detour.waypoint);}
       try {
@@ -428,7 +433,9 @@ export class GameContext {
                 };
           this.spatial.adoptSurface(current,proposed,goal);
           const obstruction=this.spatial.movementSegmentBlocker(current,proposed,ignoresUnits?undefined:occupied,e);
+          this.profile.count('Movement segments attempted');
           if (obstruction==='terrain') {
+            this.profile.count('Terrain blocked segments');
             u.route = [];
             u.segment = null;
             u.retryAt = this.state.tick + 6;
@@ -438,7 +445,9 @@ export class GameContext {
             obstruction==='reservation' ||
             !this.spatial.unitSegmentClear(current, proposed, e.id)
           ) {
+            this.profile.count(obstruction==='reservation'?'Reservation blocked segments':'Body blocked segments');
             if (this.state.tick >= u.retryAt && u.goal !== null) {
+              this.profile.count('Blocked recovery attempts');
               const request=(requests??=this.profile.measure('Traffic request discovery',()=>trafficRequests(this,units))).get(e.id);
               if(request&&this.beginTrafficYield(e,request,occupied))break;
               const desired = this.spatial.point(u.goal);
@@ -486,6 +495,7 @@ export class GameContext {
             }
             break;
           }
+          this.profile.count('Movement segments accepted');
           if(proposed.x!==current.x||proposed.y!==current.y)u.lastMovedTick=this.state.tick;
           segment.progress = progress;
           u.position = proposed;
@@ -508,6 +518,7 @@ export class GameContext {
   }
   private beginTrafficYield(e:Entity, request:{leader:Entity;parent:Entity}, occupied:ReadonlySet<number>) {
     const u=e.unit!,plan=trafficEscape(this,e,request.parent,occupied);
+    this.profile.count(plan?'Yield plans found':'Yield searches failed');
     if(!plan||u.goal===null)return false;
     u.route.unshift(plan.waypoint);u.segment=null;
     u.detour={goal:u.goal,waypoint:plan.waypoint,points:plan.points,yielding:{leader:request.leader.id,until:this.state.tick+120}};
@@ -523,7 +534,7 @@ export class GameContext {
     // Active traffic keeps its existing negotiation. This extension is for
     // escaping parked bodies, not for overtaking a moving stream.
     if (!nearbyDestination && units.some(b=>b.id!==e.id && b.unit!.route.length &&
-      Math.hypot(b.x-e.x,b.y-e.y)<=4)) return false;
+      Math.hypot(b.x-e.x,b.y-e.y)<=4)){this.profile.count('Local rejected moving traffic');return false;}
     // A parked ally can occupy an intermediate waypoint after this route was
     // planned. Rejoining that point would reproduce the same blockage forever.
     const rejoin=nearbyDestination?0:u.route.findIndex(i=>{
@@ -550,13 +561,14 @@ export class GameContext {
       .sort((a,b)=>(a.x-projected.x)**2+(a.y-projected.y)**2-((b.x-projected.x)**2+(b.y-projected.y)**2)||a.y-b.y||a.x-b.x)
       .find(usable);
     const target=candidates.find(usable) ?? (distance>4?fallback():undefined);
-    if (!target) return false;
+    if (!target){this.profile.count('Local no usable anchor');return false;}
     const end=fixed(target);
     const points=this.spatial.withLocalUnitClearance(current,4250,e.id,unitClear=>{
       const clear=this.profile.wrap('Local body sweep',unitClear);
-      return localPath(current,end,(a,b)=>b.x>=0&&b.y>=0&&b.x<=edge&&b.y<=edge&&
-        clear(a,b)&&this.spatial.clearLocalSegment(a,b,reservations,e));
+      return this.profile.measure('Local grid expansion',()=>localPath(current,end,(a,b)=>b.x>=0&&b.y>=0&&b.x<=edge&&b.y<=edge&&
+        clear(a,b)&&this.spatial.clearLocalSegment(a,b,reservations,e),this.profile));
     });
+    this.profile.count(points?'Local detours found':'Local searches failed');
     if (!points) return false;
     const waypoint=this.spatial.cell(target);
     if (nearbyDestination) {u.goal=waypoint;u.route=[waypoint];}

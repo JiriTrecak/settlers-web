@@ -3,7 +3,7 @@
   "id": "asset.custom.searing-arrows-command",
   "name": "Searing Arrows command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "b20d939d70870fe3bb1a987a1f626a4030970b646f0e9e6cc730765ea7a0297b",
-      "bytes": 507292
+      "sha256": "b3c85fbf284854d4e761945822d7cdb981ead71ecefc04292a3396383727e6df",
+      "bytes": 35872
     },
     {
       "role": "source",

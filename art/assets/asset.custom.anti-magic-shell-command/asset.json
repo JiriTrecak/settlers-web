@@ -3,7 +3,7 @@
   "id": "asset.custom.anti-magic-shell-command",
   "name": "Anti-magic Shell — Spell-Damage Protection",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "4b208ac73928e05b21c52bf0210d3028f6c2b480926ce2284f446b0cae2f3436",
-      "bytes": 574748
+      "sha256": "abdda738e35df3f257384339f7fa2df482fefd379e816b69e911f82ceadef587",
+      "bytes": 39406
     },
     {
       "role": "source",

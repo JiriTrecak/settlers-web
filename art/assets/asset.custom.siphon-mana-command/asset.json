@@ -3,7 +3,7 @@
   "id": "asset.custom.siphon-mana-command",
   "name": "Siphon Mana — original command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "0186a2f44f69661738d6337f4d0eadcc5ca2330f893c463f62913fb8b30c4bf1",
-      "bytes": 567505
+      "sha256": "08361a53c232ca5966daf3f3d64681346e519df2df73f10270e63aa725b0386f",
+      "bytes": 41739
     },
     {
       "role": "source",

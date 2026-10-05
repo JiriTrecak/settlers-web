@@ -3,7 +3,7 @@
   "id": "asset.custom.cleaving-attack-command-icon",
   "name": "Cleaving Attack — command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "a4fa30840c06fc9cc50107126d0b64906c245d32ef47a8f8917dadb99f7a60f6",
-      "bytes": 550546
+      "sha256": "62c83557d200f4b6b0f9ddc6a2cfa5e5dcf4ff66d20d45114d30b766ff55c263",
+      "bytes": 39962
     },
     {
       "role": "source",

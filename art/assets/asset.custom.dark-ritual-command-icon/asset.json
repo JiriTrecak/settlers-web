@@ -3,7 +3,7 @@
   "id": "asset.custom.dark-ritual-command-icon",
   "name": "Dark Ritual — Mana Offering Command Icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "6d49304c7573feafa70df8673fb2367af38d78c66f05ae7fa3f6ed46a1b88acb",
-      "bytes": 636845
+      "sha256": "985dfd83f29d2d989819513be520339de0357366713a23b6471931afc36c05f5",
+      "bytes": 42525
     },
     {
       "role": "source",

@@ -3,7 +3,7 @@
   "id": "asset.custom.metamorphosis-command-icon",
   "name": "Metamorphosis — command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "5d0ae9d6c08199f8628b9c76960fc0dcc9639db35849dd3968b18f797cb2bf17",
-      "bytes": 468261
+      "sha256": "6028fa1f443896a73be8ada59efc34753c094039717ae7d943bae1fe5d098724",
+      "bytes": 32704
     },
     {
       "role": "source",

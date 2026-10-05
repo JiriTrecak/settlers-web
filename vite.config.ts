@@ -1,5 +1,5 @@
-import {fengariBrowser} from "./tooling/scripting/fengariBrowser";
-import { contentAuthoring } from "./tooling/content/plugin";
+import {fengariBrowser} from "./tooling/scripting/fengariBrowser.ts";
+import { contentAuthoring } from "./tooling/content/plugin.ts";
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";

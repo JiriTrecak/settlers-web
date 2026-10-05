@@ -9,14 +9,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.assistant-trials.frost-relay-icon/image.png",
-          "sha256": "a0295a21bfef7b79627ac1fedd901a0c1c4779c68468550a56baf3d9f1f9285f",
-          "bytes": 680023
+          "sha256": "5680a4f1c4173dbae9eab546cfeab69c28c9a5a810adbcae92f49f52196aa539",
+          "bytes": 45431
         }
       ],
       "render": [
@@ -35,14 +35,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.assistant-trials.verdant-ward-icon/image.png",
-          "sha256": "cc05c5585f633fabf2f3a492b520e6ccf2ea28ff2dc7acd8081f014238523dcb",
-          "bytes": 672116
+          "sha256": "e38ef2974dc74cd32b9f53cea19983aef85481dfb26c5d816a0184654ca45142",
+          "bytes": 45670
         }
       ],
       "render": [
@@ -61,7 +61,7 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "texture",
       "outputs": [
         {
@@ -71,12 +71,7 @@
           "bytes": 197383
         }
       ],
-      "render": [
-        {
-          "id": "asset.assistant-trials.verdant-ward-leaf",
-          "image": "assets/library/asset.assistant-trials.verdant-ward-leaf/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -153,14 +148,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.absorption-shield-command/image.png",
-          "sha256": "df5a8db07f0fcf5606899fe33333fca354ebe7d4c1767f8690affbc399e56a06",
-          "bytes": 669473
+          "sha256": "c866b6c9d77888dbe0a7fd35098f6a4e8e03f82545ab2272e533e2102efad3d2",
+          "bytes": 45419
         }
       ],
       "render": [
@@ -179,14 +174,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.animate-dead-command/image.png",
-          "sha256": "135fe6d9263f76e86ea8869ab0292d1ad8e405de52be17e53e2d402e71259ca8",
-          "bytes": 642534
+          "sha256": "070d468fb716627d7af6aacfefd1cfbffd74227600a59e9b89a44a12e9f70efb",
+          "bytes": 44777
         }
       ],
       "render": [
@@ -205,14 +200,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.anti-magic-shell-command/image.png",
-          "sha256": "4b208ac73928e05b21c52bf0210d3028f6c2b480926ce2284f446b0cae2f3436",
-          "bytes": 574748
+          "sha256": "abdda738e35df3f257384339f7fa2df482fefd379e816b69e911f82ceadef587",
+          "bytes": 39406
         }
       ],
       "render": [
@@ -231,14 +226,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.armor-hex-command-icon/image.png",
-          "sha256": "eed201e718c0d2e62001516a8f909abf320c1173335ae8d3bf93d788c4e057b0",
-          "bytes": 631419
+          "sha256": "059dc82f6f65f7abaaf04bb2a067cb4be1839551499badc0f5487ab0013b9cd9",
+          "bytes": 44421
         }
       ],
       "render": [
@@ -257,14 +252,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.ashstep-ant-icon/image.png",
-          "sha256": "c8fda636efc8f911b0186b54b62e23c33b71c7eb4d94a38001941d01031c27fd",
-          "bytes": 592922
+          "sha256": "8f5a5e8bfec68ac4f8395e34d7cb97f8d413122783e419080a5b93c0921f25da",
+          "bytes": 42328
         }
       ],
       "render": [
@@ -283,14 +278,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.ashstep-icon/image.png",
-          "sha256": "513167accb1699af942518f9098267bb4a1b27fdbd0eaef6f33ce7e368727fbb",
-          "bytes": 632120
+          "sha256": "d8faf3f280bc8ededb4675dbee7af604be5933d41eb95ed28fcb3d016bc1f302",
+          "bytes": 42771
         }
       ],
       "render": [
@@ -309,14 +304,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.avatar-command-icon/image.png",
-          "sha256": "cc4cd788459797ab95f6ebd55e4ca107b421178dddcc746b6af1b66b35fe7165",
-          "bytes": 692161
+          "sha256": "84e7d68770de9210d5e377a0795a58a1c05e4005c08ab9835ec1ba6d1a68cd9c",
+          "bytes": 46624
         }
       ],
       "render": [
@@ -335,14 +330,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.banish-command/image.png",
-          "sha256": "e28aaedf508017029c371785175efda19b8b6e900eb5e3fe97bd2604f69f9825",
-          "bytes": 646579
+          "sha256": "b43eebc5a9e719421337da3f0b7ce6accbad2f2adef5b10af273f91926d94910",
+          "bytes": 43766
         }
       ],
       "render": [
@@ -361,14 +356,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.bash-command-icon/image.png",
-          "sha256": "af94c3b25c7b25536c4fbfd56f4abefec35b817497ac1bfc148c905da5b9bb1f",
-          "bytes": 537424
+          "sha256": "ba44bc8d9c9566167cf18a7e6519b8b44aaf3f38c6931987b3d1edb5a9a2ada7",
+          "bytes": 39592
         }
       ],
       "render": [
@@ -387,14 +382,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.battle-rhythm-command-icon/image.png",
-          "sha256": "839b1f7fec453808676ce84ddfd9017502d96a551bdc2d870e1fef0fec02f7a0",
-          "bytes": 547443
+          "sha256": "09a015b786fa017cd8e715798f4eee37af680c3ba7ffed42746beb9c2cb44e3e",
+          "bytes": 39967
         }
       ],
       "render": [
@@ -413,14 +408,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.black-arrow-command/image.png",
-          "sha256": "cc76bb6cce5f00140d2adb9c56ccbb108dee7847892d85f4321914f5ccf33e2a",
-          "bytes": 626504
+          "sha256": "33cb4fb0c67ac140fe6b944033d561bb2258957eda85a1aaa25ac671d4e2b4b2",
+          "bytes": 43375
         }
       ],
       "render": [
@@ -439,14 +434,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.blink-command-icon/image.png",
-          "sha256": "b1a1ee583e91d83735c388939d02e1917cbfe6bbf3ec113168731282b8db76e9",
-          "bytes": 639389
+          "sha256": "c5c62a19b303bcbbd62d22a759a924c9f5ee8460f9905f6c05f2e1aec10df237",
+          "bytes": 42950
         }
       ],
       "render": [
@@ -465,14 +460,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.carrion-spirits-command/image.png",
-          "sha256": "4829166fc1723fb625aa543215e5fe5b59b476c6f30aea198986d60560c3005a",
-          "bytes": 588827
+          "sha256": "80a2a5bf35a9a9107508e3a155470365bee3b6acecf103e392b6f68150787f25",
+          "bytes": 40470
         }
       ],
       "render": [
@@ -491,14 +486,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.charm-command-icon/image.png",
-          "sha256": "ced6e30e9ead46660b85b4b1ccd1be2bd1e7cc1157d0d32e13bc085e35d3be47",
-          "bytes": 663843
+          "sha256": "34468312ea5c66c25d79ebcb2469ebb3c8af63ff6f79f235009aea10b70274ee",
+          "bytes": 43682
         }
       ],
       "render": [
@@ -517,14 +512,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.cleaving-attack-command-icon/image.png",
-          "sha256": "a4fa30840c06fc9cc50107126d0b64906c245d32ef47a8f8917dadb99f7a60f6",
-          "bytes": 550546
+          "sha256": "62c83557d200f4b6b0f9ddc6a2cfa5e5dcf4ff66d20d45114d30b766ff55c263",
+          "bytes": 39962
         }
       ],
       "render": [
@@ -543,14 +538,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.critical-strike-command-icon/image.png",
-          "sha256": "2cad88077349e6b2b704b8ac665a99d21c598b013be6737b247992218b49e975",
-          "bytes": 591618
+          "sha256": "c04505396a22605e8ddecec512ef5392106d867d1cffd90086d93a750b4c9f6c",
+          "bytes": 40716
         }
       ],
       "render": [
@@ -569,14 +564,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.dark-ritual-command-icon/image.png",
-          "sha256": "6d49304c7573feafa70df8673fb2367af38d78c66f05ae7fa3f6ed46a1b88acb",
-          "bytes": 636845
+          "sha256": "985dfd83f29d2d989819513be520339de0357366713a23b6471931afc36c05f5",
+          "bytes": 42525
         }
       ],
       "render": [
@@ -595,14 +590,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.death-and-decay-command/image.png",
-          "sha256": "39f4b4ee1cbf425cf4dcb727e340af09671c3201bd955100a28370b87338497c",
-          "bytes": 548480
+          "sha256": "9b8aa382e32e485eda88fd1cb3eb1b57cc2d7c99c526076466db3b718e75f825",
+          "bytes": 36320
         }
       ],
       "render": [
@@ -621,14 +616,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.death-burst-command/image.png",
-          "sha256": "d767f2fe6f3f6e21f0824bd1d42ebd1f7348b801556f71326a62391eb6a4c6bd",
-          "bytes": 583153
+          "sha256": "da0f5f0e2315f3bba5a5d7bfd5a801dcb9cb0f10786adc192ac38b3ef558beb8",
+          "bytes": 41398
         }
       ],
       "render": [
@@ -647,14 +642,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.death-coil-command/image.png",
-          "sha256": "c13cd360f2e32e36fd14d5040fd0dc1c2694148fce7968cf3a403f7e4eff8ab5",
-          "bytes": 528900
+          "sha256": "eb8d8cbeeaa86bee52e48d4d954caee3631624cc04affbc51e8b21981064ea12",
+          "bytes": 38540
         }
       ],
       "render": [
@@ -673,14 +668,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.death-pact-command-icon/image.png",
-          "sha256": "812d998098309668e5b70ffe54ef3a996470b2c491d1c869ed7982bbadc17be3",
-          "bytes": 672161
+          "sha256": "eadd6157db42d4f7b6304ada1076478b2b8a5c9f16d58f3feb39febe67506bbc",
+          "bytes": 44139
         }
       ],
       "render": [
@@ -699,14 +694,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.devour-command-icon/image.png",
-          "sha256": "a5434829e66c1d200e3fa51fc8bcdb3e871e5c52734e355aeef163cc5d91e231",
-          "bytes": 622656
+          "sha256": "636c0540e9c2ce86daf486ed75decce48823b27c3994c862454819f4401b775f",
+          "bytes": 42336
         }
       ],
       "render": [
@@ -725,14 +720,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.dismiss-summon-command/image.png",
-          "sha256": "5c90a2a09899a1528863b876240a7143e0deb3952e3d8964896f99b64c65e21d",
-          "bytes": 676991
+          "sha256": "f0c1cf5a1f13ae89661d50fed97e37c2193e82ea3922a91339d74e484fa9ed8e",
+          "bytes": 46117
         }
       ],
       "render": [
@@ -751,14 +746,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.doom-command/image.png",
-          "sha256": "86c909b60f95fc9abefb769e2369322c3e8932c25f31379e1c993b2801de5ba7",
-          "bytes": 531805
+          "sha256": "292ff2ded47db613ec7f470446abc205d98ffb741eb4514472774c0ab72ae17d",
+          "bytes": 38181
         }
       ],
       "render": [
@@ -777,14 +772,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.ember-garden-icon/image.png",
-          "sha256": "302e677b150ef426e1609dcc71dddecb739250288ecefa14c3e5109e5af5ed90",
-          "bytes": 618101
+          "sha256": "06fc082c88808e0e1ca4fc26a27d8c4f1fcc8db625d6f96b6372328268a78753",
+          "bytes": 42056
         }
       ],
       "render": [
@@ -803,14 +798,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.evasion-command-icon/image.png",
-          "sha256": "7a1590ad542e8c021ae4f41aa0826fdb5383646cedc26bef13a8b1cadbaa2b43",
-          "bytes": 610158
+          "sha256": "c491072eac5e4b4a82da1a4ab93a40f9699b8b39c1b1862fe1dfdaf75938defb",
+          "bytes": 44022
         }
       ],
       "render": [
@@ -829,14 +824,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.far-sight-command-icon/image.png",
-          "sha256": "3c9111454769f6865444eb5736716fb812d277c4922f6be2f3fdee6211aa29f8",
-          "bytes": 555988
+          "sha256": "7d5eb5ea0a65c77bcd942a40df34ec60becd684a640f8d27cd52fd59503e0060",
+          "bytes": 40076
         }
       ],
       "render": [
@@ -855,14 +850,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.flame-strike-command/image.png",
-          "sha256": "b0b67aa9f9f0c180ecf503c824b0a71cb35dc9b9f55202e1c2040b96524f5166",
-          "bytes": 542521
+          "sha256": "460c55a3354c3b3c6b9f65f1f20bf437e490b784ff4a1af045f05507f12da1ad",
+          "bytes": 37040
         }
       ],
       "render": [
@@ -881,14 +876,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.flight-form-command/image.png",
-          "sha256": "171592658360743ad85b0f41780a2e17f5769cb9a60ff49c0833289b761490bf",
-          "bytes": 689802
+          "sha256": "3f5c336366f79e32e3f7c5855ca42988efa59174f7c4eaa7405d23680897d075",
+          "bytes": 47822
         }
       ],
       "render": [
@@ -907,14 +902,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.frost-armor-command/image.png",
-          "sha256": "ef7042511b70843e885f82967e17dc35f5cbad4b1ef6037b7c3b62ee1aa26616",
-          "bytes": 645758
+          "sha256": "acd8594723d17b44ea9f62dd80c027ae808639b260dcb8393fc489dbeb4e3ff1",
+          "bytes": 44103
         }
       ],
       "render": [
@@ -933,14 +928,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.frost-arrows-command/image.png",
-          "sha256": "3032431733f66b506d15c818e374c9e72f3547adfef71fea876a4d89499eff9b",
-          "bytes": 641805
+          "sha256": "e268c7cbf11e9305dfda871a974c01be712a8244e69c23f353ddcb70169f3769",
+          "bytes": 43617
         }
       ],
       "render": [
@@ -959,14 +954,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.frost-nova-command-icon/image.png",
-          "sha256": "c538da0642cb3f250a069d3146dadd0ed80b2e1da7b0cfb1b57d57d2edd3370f",
-          "bytes": 678693
+          "sha256": "916ea15064add74627a1f9041e025dfc03d54cdf3d49b67525523edfa62d7b35",
+          "bytes": 46817
         }
       ],
       "render": [
@@ -985,14 +980,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.grove-nursery-command-icon/image.png",
-          "sha256": "5c5b460b18f14519e318109261d176c2b23d5d5497b63a0ae0f71419e0285d92",
-          "bytes": 604842
+          "sha256": "a660e9277e4ee1543dcbf49c00fc58066029962c671fa830ad337d55fd788b7c",
+          "bytes": 41028
         }
       ],
       "render": [
@@ -1011,14 +1006,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.healing-wave-command/image.png",
-          "sha256": "c3c7e41bf4bf37063342cb85d4564c3273447e491629e3cb59c7fb1daf6e21e4",
-          "bytes": 542947
+          "sha256": "419e9a669e3782dbf9e0ff31b054c82e1cd46368a250bde4a9380a3a674d2f04",
+          "bytes": 39053
         }
       ],
       "render": [
@@ -1037,14 +1032,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.hex-command-icon/image.png",
-          "sha256": "07e4aaa9eb2258ffa0c71a87a2d120b2d058438b8c534d7418d1b4d456d0abd9",
-          "bytes": 584242
+          "sha256": "fed9c036f83da825e49173749297b17fd9c5acc305a247a952b2f1cca42a5005",
+          "bytes": 42957
         }
       ],
       "render": [
@@ -1063,14 +1058,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.holy-light-command/image.png",
-          "sha256": "b5e1cf0c8c96d1520117d1dbb393132d72b4555da705159b54e4e075e55a5acb",
-          "bytes": 556732
+          "sha256": "633c9027449efc26da1cf3100048812dea681bbb490dc3bbb9c18474d0da6ef5",
+          "bytes": 41480
         }
       ],
       "render": [
@@ -1089,14 +1084,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.howl-of-terror-command-icon/image.png",
-          "sha256": "c86920d02c06c21166cb2d5c7cad7291ac76eba399aed61f7615559bf4482d37",
-          "bytes": 510711
+          "sha256": "c9cf4bec687ea3d57588cb3f44047949edf1421fa9d57b5325cd1d2a6f95a1bc",
+          "bytes": 38188
         }
       ],
       "render": [
@@ -1115,14 +1110,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.immolation-command/image.png",
-          "sha256": "1e1a41b489a73907f983384381468957f5306e1b5a6c9b911fc3af8c39dcf71d",
-          "bytes": 591370
+          "sha256": "90f9da42f8b23e69c4077648c3102e58b66f15ac26f872968c640f475b22bdf9",
+          "bytes": 41188
         }
       ],
       "render": [
@@ -1141,14 +1136,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.inferno-command-icon/image.png",
-          "sha256": "3140dfc25c9389dc701ee4c406f82a50ea688a17cd6a0e64e1d062d3a73dcf5a",
-          "bytes": 649987
+          "sha256": "3f1c35fb4fad1cff911d8b6a12df8317e2bec1e8d62466055d647b2fdc9a1621",
+          "bytes": 43361
         }
       ],
       "render": [
@@ -1167,7 +1162,7 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "texture",
       "outputs": [
         {
@@ -1177,12 +1172,7 @@
           "bytes": 225765
         }
       ],
-      "render": [
-        {
-          "id": "asset.custom.inferno-fire-atlas",
-          "image": "assets/library/asset.custom.inferno-fire-atlas/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -1193,14 +1183,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.invisibility-command-icon/image.png",
-          "sha256": "6f9f178ce351fa8f0f1d3eaf53dcebb356cfeb0f6d91059c904b1b9abf3f3c72",
-          "bytes": 577763
+          "sha256": "b2bb9b118fe7bf3a086d8752d7097b7c7f7897982a0ee36b52e2a5280beb8ed2",
+          "bytes": 41593
         }
       ],
       "render": [
@@ -1219,14 +1209,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.life-drain-command/image.png",
-          "sha256": "871759863ac12495f71a03fc4666678a76ca0c81d3e8b1801efda788ddb3f998",
-          "bytes": 504532
+          "sha256": "8a041fb120a87fd07cf41c2dce5293d9875c5f9ad3f31b4c933bbdd6590c56dc",
+          "bytes": 35296
         }
       ],
       "render": [
@@ -1245,14 +1235,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.lightning-shield-command/image.png",
-          "sha256": "25ba863440934b58c75e4cf31c6e58ca269f584aa7fd0ea8fadb9e55c0bc97a3",
-          "bytes": 625211
+          "sha256": "b96199296ff58ef7f277e848e30871c5bbf29865aebf5900d912703723662538",
+          "bytes": 43713
         }
       ],
       "render": [
@@ -1271,14 +1261,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.mana-burn-command/image.png",
-          "sha256": "86b333a02f2af1a55026bfec0e4f7430494f1c74647973926f22c39f4b676ed2",
-          "bytes": 560446
+          "sha256": "e5fe177cf44a3ef9ade40e0c10f208b0832349021a303fef95f6fb5ce3641887",
+          "bytes": 40818
         }
       ],
       "render": [
@@ -1297,14 +1287,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.mana-shield-command/image.png",
-          "sha256": "77e00d02a9fee6be3ed47c86fe453666d9669aac218148ffb7c4ec82aa1b7688",
-          "bytes": 649893
+          "sha256": "cb6d7acbf48f0d27b2fe5c0b6f4fc3f07e70088ef46070310585245cfb44a77a",
+          "bytes": 44669
         }
       ],
       "render": [
@@ -1323,14 +1313,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.mass-teleport-command-icon/image.png",
-          "sha256": "f1bb7c0dd97f2f2ed1e0e20d26aa85e0e232b020b735510db9e69b5473ebdd82",
-          "bytes": 702648
+          "sha256": "b586014702cac37d34402490cdad32eaa48d0dbe3862543abae7145d6dff68bc",
+          "bytes": 45876
         }
       ],
       "render": [
@@ -1349,14 +1339,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.metamorphosis-command-icon/image.png",
-          "sha256": "5d0ae9d6c08199f8628b9c76960fc0dcc9639db35849dd3968b18f797cb2bf17",
-          "bytes": 468261
+          "sha256": "6028fa1f443896a73be8ada59efc34753c094039717ae7d943bae1fe5d098724",
+          "bytes": 32704
         }
       ],
       "render": [
@@ -1375,7 +1365,7 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "texture",
       "outputs": [
         {
@@ -1385,12 +1375,7 @@
           "bytes": 356093
         }
       ],
-      "render": [
-        {
-          "id": "asset.custom.moonpetal-ward-symbol",
-          "image": "assets/library/asset.custom.moonpetal-ward-symbol/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -1401,14 +1386,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.raise-dead-command/image.png",
-          "sha256": "c534fdfd8327e78c4cf604be8140934318336a201d1193c4b619a11570b5bd4b",
-          "bytes": 615461
+          "sha256": "8f20948f4691590321f936b49fdd06829e42b1c9187160bb3e9014bdd79f9d7f",
+          "bytes": 43419
         }
       ],
       "render": [
@@ -1427,14 +1412,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.rallying-spark-icon/image.png",
-          "sha256": "54ba3befb9d643feab2985ae7cf0e8f60cdf47b9cfd6ffd7df3e868a0dbb7e2f",
-          "bytes": 572290
+          "sha256": "664a9b44185fb2df6ab5b691db4e22b46ffac702c64a7adba19089cff2ed164c",
+          "bytes": 40382
         }
       ],
       "render": [
@@ -1453,14 +1438,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.reincarnation-command/image.png",
-          "sha256": "6a227f34d4d8389c824af550e65749e02fd19a09e7a4580c31f926a1c720c3bd",
-          "bytes": 614479
+          "sha256": "ae2519841dd880c5dedc90203b7a38d5051073167e2287185a432e52056b6dc0",
+          "bytes": 42787
         }
       ],
       "render": [
@@ -1479,14 +1464,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.resurrection-command/image.png",
-          "sha256": "ec034055c70ec9380fa13401257a26d6a7f87e09a8580706f64b9a6e467781fa",
-          "bytes": 666116
+          "sha256": "320c8e8bf819be9d07a0b5ce7ce314f892e02a5b4668c42fd2609371db15c9b9",
+          "bytes": 46224
         }
       ],
       "render": [
@@ -1505,14 +1490,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.roar-command-icon/image.png",
-          "sha256": "c16beceb75e1cfeb1e2b5b568aa8274526060c10d82be85510b5c46ea86612cb",
-          "bytes": 627278
+          "sha256": "86790abc4a333b5382aff379b8f5c5b9ab65cfeab2f3cf117dc427fa8c0c317a",
+          "bytes": 43525
         }
       ],
       "render": [
@@ -1531,14 +1516,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.searing-arrows-command/image.png",
-          "sha256": "b20d939d70870fe3bb1a987a1f626a4030970b646f0e9e6cc730765ea7a0297b",
-          "bytes": 507292
+          "sha256": "b3c85fbf284854d4e761945822d7cdb981ead71ecefc04292a3396383727e6df",
+          "bytes": 35872
         }
       ],
       "render": [
@@ -1557,14 +1542,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.silence-command-icon/image.png",
-          "sha256": "cdd5b1dda7e0fbf55cec7a0b67b21939315e906645bc872dc8f226e8ff839532",
-          "bytes": 549930
+          "sha256": "8e99b588d80da21a105e5db1bf7dc1d5ad4d9fa4bd8a017a4080e7c86f8ed5ea",
+          "bytes": 40170
         }
       ],
       "render": [
@@ -1583,14 +1568,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.siphon-mana-command/image.png",
-          "sha256": "0186a2f44f69661738d6337f4d0eadcc5ca2330f893c463f62913fb8b30c4bf1",
-          "bytes": 567505
+          "sha256": "08361a53c232ca5966daf3f3d64681346e519df2df73f10270e63aa725b0386f",
+          "bytes": 41739
         }
       ],
       "render": [
@@ -1609,14 +1594,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.sleep-command-icon/image.png",
-          "sha256": "a83c4840a3512a776bcd76e68b3e86b7184d6dc904ab494023a2b6f702f7b9fc",
-          "bytes": 479935
+          "sha256": "704ce5142d43fa9073b5a52866322bc98ac3a1fa98971a7cf42144ca5633ef4c",
+          "bytes": 36846
         }
       ],
       "render": [
@@ -1635,7 +1620,7 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "texture",
       "outputs": [
         {
@@ -1645,12 +1630,7 @@
           "bytes": 201070
         }
       ],
-      "render": [
-        {
-          "id": "asset.custom.sleep-floating-crescent",
-          "image": "assets/library/asset.custom.sleep-floating-crescent/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -1661,14 +1641,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.soul-harvest-command/image.png",
-          "sha256": "f81c09e32b052641cc64419b9d6bd248fbbbb05183bfbeb8fa3867eb9aaf56f0",
-          "bytes": 605648
+          "sha256": "cd89458c8edfc95ba8df5e39efab19860ae50621f6196a94066c915af9aa0823",
+          "bytes": 43762
         }
       ],
       "render": [
@@ -1687,14 +1667,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.spell-ward-command/image.png",
-          "sha256": "dfd73329b9e2c47d75267e5621d3523b4808290f882eb914e6166c12423b2aff",
-          "bytes": 666979
+          "sha256": "dcc3836aa85b5fa119d6af1469e5426375f5810c3f84cce8226093aa6489bd97",
+          "bytes": 45171
         }
       ],
       "render": [
@@ -1713,14 +1693,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.spirit-companion-command/image.png",
-          "sha256": "3ea3801efe974e7de50faeac94f3f37a96b5ab668e06e72e2d7b849db51d6dbb",
-          "bytes": 624302
+          "sha256": "611f22822778bd52e731563471f0d4eead474c5616a6d90a2c132a0a13b53716",
+          "bytes": 42244
         }
       ],
       "render": [
@@ -1739,14 +1719,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.spirit-swarm-command-icon/image.png",
-          "sha256": "365483e789c7802778bfb06c25147ecc4eb34a178623ef0892caf6ecbc06bf4a",
-          "bytes": 671147
+          "sha256": "19fd89cb04c639864b20fc95f22e30fb4d397e24e5a745855799433e8a11dd11",
+          "bytes": 44431
         }
       ],
       "render": [
@@ -1765,14 +1745,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.spirit-trinity-command-icon/image.png",
-          "sha256": "f9b65041c182e61de635feb60ca1b0840071daec0482f32784e9d2009f4cb92b",
-          "bytes": 676900
+          "sha256": "947dd292b51012c6785132a035a9449710c6a4b2fcbbb3c7394b3447308f8b39",
+          "bytes": 44805
         }
       ],
       "render": [
@@ -1791,14 +1771,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.tranquility-command/image.png",
-          "sha256": "dbcc065232c54d0939ae57e524f530cd49c50c4760bd17410fa34dec128c02c8",
-          "bytes": 701789
+          "sha256": "6296e7c4a10f2b1d73b84c08546f3a62bb66cb15d0e014ffd7a29176291e4818",
+          "bytes": 47284
         }
       ],
       "render": [
@@ -1817,14 +1797,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.true-sight-command-icon/image.png",
-          "sha256": "2d2615471ceecc73283e5b7f29a5c1f926f7c91743d8dee43d3c8460dcfa8431",
-          "bytes": 599375
+          "sha256": "68e7ecf1537f6aa6c92efda1c58e578498ebfa2290b84634b6f15e93c794e029",
+          "bytes": 40293
         }
       ],
       "render": [
@@ -1843,14 +1823,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.unstoppable-command/image.png",
-          "sha256": "73f9939c5f198cc685fffd9e0d8ce4ea811c432b505bdece04deabc8f604b23a",
-          "bytes": 662605
+          "sha256": "e2c446365097c03fe6c9bc725a48d6e3ee9eac42931477c68171357e548e1738",
+          "bytes": 45665
         }
       ],
       "render": [
@@ -1869,14 +1849,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.war-stomp-command-icon/image.png",
-          "sha256": "3f429f7523a63a957b492d8270de80aa29762ab868bf0b8c9bb9712b6a8b4dc4",
-          "bytes": 598916
+          "sha256": "19e80c5568fd9f3f5597666cccac14155fc62e737670712e84b52c6eb6c94830",
+          "bytes": 43172
         }
       ],
       "render": [
@@ -1895,14 +1875,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.web-command-icon/image.png",
-          "sha256": "04ef0db8f14bc164bcacc0f148506c6e8b8c933259227a55ac8952dc74eca074",
-          "bytes": 587055
+          "sha256": "0d0fb3169209b4759d6ae914c88cd021f1df6cc76cce4a3bd2174b511464d15d",
+          "bytes": 40598
         }
       ],
       "render": [
@@ -1921,14 +1901,14 @@
         "spell-effects",
         "generated"
       ],
-      "revision": 5,
+      "revision": 6,
       "profile": "icon",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.custom.wind-walk-command-icon/image.png",
-          "sha256": "49ceadc2fe07bdef38a4c87dca0caf3cd07e963449838d4f5edefb3ade970093",
-          "bytes": 513222
+          "sha256": "844af0f6641bd84431ca3e85b4673abfa1c4a9d87a5787eb664ba42345fb8a8f",
+          "bytes": 36781
         }
       ],
       "render": [

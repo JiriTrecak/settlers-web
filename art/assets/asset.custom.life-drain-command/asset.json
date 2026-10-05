@@ -3,7 +3,7 @@
   "id": "asset.custom.life-drain-command",
   "name": "Life Drain — original command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "871759863ac12495f71a03fc4666678a76ca0c81d3e8b1801efda788ddb3f998",
-      "bytes": 504532
+      "sha256": "8a041fb120a87fd07cf41c2dce5293d9875c5f9ad3f31b4c933bbdd6590c56dc",
+      "bytes": 35296
     },
     {
       "role": "source",

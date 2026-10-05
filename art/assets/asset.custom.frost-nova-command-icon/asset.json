@@ -3,7 +3,7 @@
   "id": "asset.custom.frost-nova-command-icon",
   "name": "Frost Nova — ice bloom",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "c538da0642cb3f250a069d3146dadd0ed80b2e1da7b0cfb1b57d57d2edd3370f",
-      "bytes": 678693
+      "sha256": "916ea15064add74627a1f9041e025dfc03d54cdf3d49b67525523edfa62d7b35",
+      "bytes": 46817
     },
     {
       "role": "source",

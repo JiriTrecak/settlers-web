@@ -3,7 +3,7 @@
   "id": "asset.custom.roar-command-icon",
   "name": "Roar — command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "c16beceb75e1cfeb1e2b5b568aa8274526060c10d82be85510b5c46ea86612cb",
-      "bytes": 627278
+      "sha256": "86790abc4a333b5382aff379b8f5c5b9ab65cfeab2f3cf117dc427fa8c0c317a",
+      "bytes": 43525
     },
     {
       "role": "source",

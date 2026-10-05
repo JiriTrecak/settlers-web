@@ -3,7 +3,7 @@
   "id": "asset.custom.armor-hex-command-icon",
   "name": "Armor Hex — weakened chitin",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "eed201e718c0d2e62001516a8f909abf320c1173335ae8d3bf93d788c4e057b0",
-      "bytes": 631419
+      "sha256": "059dc82f6f65f7abaaf04bb2a067cb4be1839551499badc0f5487ab0013b9cd9",
+      "bytes": 44421
     },
     {
       "role": "source",

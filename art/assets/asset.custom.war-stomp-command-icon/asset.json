@@ -3,7 +3,7 @@
   "id": "asset.custom.war-stomp-command-icon",
   "name": "War Stomp — earth impact",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "3f429f7523a63a957b492d8270de80aa29762ab868bf0b8c9bb9712b6a8b4dc4",
-      "bytes": 598916
+      "sha256": "19e80c5568fd9f3f5597666cccac14155fc62e737670712e84b52c6eb6c94830",
+      "bytes": 43172
     },
     {
       "role": "source",

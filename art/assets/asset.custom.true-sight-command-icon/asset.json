@@ -3,7 +3,7 @@
   "id": "asset.custom.true-sight-command-icon",
   "name": "True Sight — Amber Detector Eye",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "2d2615471ceecc73283e5b7f29a5c1f926f7c91743d8dee43d3c8460dcfa8431",
-      "bytes": 599375
+      "sha256": "68e7ecf1537f6aa6c92efda1c58e578498ebfa2290b84634b6f15e93c794e029",
+      "bytes": 40293
     },
     {
       "role": "source",

@@ -3,7 +3,7 @@
   "id": "asset.custom.battle-rhythm-command-icon",
   "name": "Battle Rhythm — command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "839b1f7fec453808676ce84ddfd9017502d96a551bdc2d870e1fef0fec02f7a0",
-      "bytes": 547443
+      "sha256": "09a015b786fa017cd8e715798f4eee37af680c3ba7ffed42746beb9c2cb44e3e",
+      "bytes": 39967
     },
     {
       "role": "source",

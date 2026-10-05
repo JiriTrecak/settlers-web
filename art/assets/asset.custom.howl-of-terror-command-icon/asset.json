@@ -3,7 +3,7 @@
   "id": "asset.custom.howl-of-terror-command-icon",
   "name": "Howl of Terror — weakened offense",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "c86920d02c06c21166cb2d5c7cad7291ac76eba399aed61f7615559bf4482d37",
-      "bytes": 510711
+      "sha256": "c9cf4bec687ea3d57588cb3f44047949edf1421fa9d57b5325cd1d2a6f95a1bc",
+      "bytes": 38188
     },
     {
       "role": "source",

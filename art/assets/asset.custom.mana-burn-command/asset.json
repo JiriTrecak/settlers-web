@@ -3,7 +3,7 @@
   "id": "asset.custom.mana-burn-command",
   "name": "Mana Burn — original command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "86b333a02f2af1a55026bfec0e4f7430494f1c74647973926f22c39f4b676ed2",
-      "bytes": 560446
+      "sha256": "e5fe177cf44a3ef9ade40e0c10f208b0832349021a303fef95f6fb5ce3641887",
+      "bytes": 40818
     },
     {
       "role": "source",

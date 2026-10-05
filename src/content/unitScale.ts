@@ -1,4 +1,4 @@
-import type {Definition} from './schema';
+import type {Definition} from './schema.ts';
 
 /** All distances are world units. Tune rules.unitScale in content/game.json.
  * Keep source stats and exported meshes at their authored scale; resolve once

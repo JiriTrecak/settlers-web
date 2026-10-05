@@ -1,6 +1,6 @@
-import {unitNatureSchema,locomotionSchema} from './abilities/conditions';
-import {abilityCasterSchema} from './abilities/schema';
-import { itemEffectSchema } from "./items";
+import {unitNatureSchema,locomotionSchema} from './abilities/conditions.ts';
+import {abilityCasterSchema} from './abilities/schema.ts';
+import { itemEffectSchema } from "./items.ts";
 import { z } from "zod";
 
 export const idSchema = z.string().regex(/^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/);

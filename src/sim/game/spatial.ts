@@ -161,7 +161,7 @@ export class Spatial {
     }
     const capacity=this.layers?.nodes.length ?? this.size*this.size;
     this.occupied=new Int32Array(capacity);this.resources=new Int32Array(capacity);
-    this.tactical=new TacticalTerrain(this.size,this.heights);
+    this.tactical=new TacticalTerrain(this.size,this.heights);this.tactical.diagnostics=this.profile;
     this.sectors = new SectorNavigation(this.size,i=>this.walkable(i),(a,b)=>this.walkable(b)&&Math.abs(this.heights[a]!-this.heights[b]!)<=MAX_GROUND_STEP_CM,
       this.layers?{count:this.layers.nodes.length,cell:id=>this.layers!.nodes[id]!.cell,
         neighbors:id=>this.layers!.neighbors(id,n=>!!this.occupied[n.id]||!!this.resources[n.id])}:undefined);
@@ -617,7 +617,9 @@ export class Spatial {
       return false;
     if (e.unit.idle) e.unit.idle.walking = false;
     if(this.cell(destination)<0||this.cell(e)<0)return false;
-    const goal=this.cell(destination),blocked=this.routeBlockers(e,avoidUnits);
+    this.profile.count(avoidUnits?'Routes avoiding units':'Terrain only routes');
+    const goal=this.cell(destination),blocked=this.profile.measure('Route blocker collection',()=>this.routeBlockers(e,avoidUnits));
+    this.profile.count('Route blocker cells',blocked.size);
     const from = e.unit.position ?? fixed(e);
     if(avoidUnits&&Number.isFinite(maxCost)){
       const limit=this.trafficTerrainBudget(e,destination,from,goal);
@@ -625,6 +627,7 @@ export class Spatial {
       maxCost=Math.min(maxCost,limit);
     }
     const direct = this.clearSegment(from, fixed(destination), blocked, e);
+    this.profile.count(direct?'Direct routes':'Non-direct routes');
     if(!direct&&!this.airborne(e)&&!this.layers&&this.probes?.entity===e&&avoidUnits){
       if(this.probes.pocket===undefined)this.probes.pocket=this.navigationFor(e).reachablePocket(this.cell(e),blocked);
       if(this.probes.pocket&&!this.probes.pocket.has(goal))return false;
@@ -653,7 +656,8 @@ export class Spatial {
     const path = shared ?? (direct
       ? [goal]
       : this.findPath(this.cell(e), goal, blocked, maxCost, e));
-    if (path === null) return false;
+    if (path === null){this.profile.count('Route searches failed');return false;}
+    this.profile.count('Raw route waypoints',path.length);
     const waypoints: number[] = shared ?? [];
     let anchor = from;
     for (let i = 0; !shared && i < path.length;) {

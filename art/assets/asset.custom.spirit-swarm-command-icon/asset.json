@@ -3,7 +3,7 @@
   "id": "asset.custom.spirit-swarm-command-icon",
   "name": "Spirit Swarm · Command Icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "365483e789c7802778bfb06c25147ecc4eb34a178623ef0892caf6ecbc06bf4a",
-      "bytes": 671147
+      "sha256": "19fd89cb04c639864b20fc95f22e30fb4d397e24e5a745855799433e8a11dd11",
+      "bytes": 44431
     },
     {
       "role": "source",

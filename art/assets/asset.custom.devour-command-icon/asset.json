@@ -3,7 +3,7 @@
   "id": "asset.custom.devour-command-icon",
   "name": "Devour — Swallow Command Icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "a5434829e66c1d200e3fa51fc8bcdb3e871e5c52734e355aeef163cc5d91e231",
-      "bytes": 622656
+      "sha256": "636c0540e9c2ce86daf486ed75decce48823b27c3994c862454819f4401b775f",
+      "bytes": 42336
     },
     {
       "role": "source",

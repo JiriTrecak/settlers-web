@@ -3,7 +3,7 @@
   "id": "asset.custom.wind-walk-command-icon",
   "name": "Wind Walk — Swift Concealed Ant",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "49ceadc2fe07bdef38a4c87dca0caf3cd07e963449838d4f5edefb3ade970093",
-      "bytes": 513222
+      "sha256": "844af0f6641bd84431ca3e85b4673abfa1c4a9d87a5787eb664ba42345fb8a8f",
+      "bytes": 36781
     },
     {
       "role": "source",

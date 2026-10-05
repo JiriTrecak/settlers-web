@@ -3,7 +3,7 @@
   "id": "asset.custom.sleep-command-icon",
   "name": "Sleep — dreaming ant",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "a83c4840a3512a776bcd76e68b3e86b7184d6dc904ab494023a2b6f702f7b9fc",
-      "bytes": 479935
+      "sha256": "704ce5142d43fa9073b5a52866322bc98ac3a1fa98971a7cf42144ca5633ef4c",
+      "bytes": 36846
     },
     {
       "role": "source",

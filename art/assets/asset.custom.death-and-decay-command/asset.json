@@ -3,7 +3,7 @@
   "id": "asset.custom.death-and-decay-command",
   "name": "Death and Decay — original command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "39f4b4ee1cbf425cf4dcb727e340af09671c3201bd955100a28370b87338497c",
-      "bytes": 548480
+      "sha256": "9b8aa382e32e485eda88fd1cb3eb1b57cc2d7c99c526076466db3b718e75f825",
+      "bytes": 36320
     },
     {
       "role": "source",

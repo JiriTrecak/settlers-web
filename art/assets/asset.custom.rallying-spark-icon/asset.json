@@ -3,7 +3,7 @@
   "id": "asset.custom.rallying-spark-icon",
   "name": "Rallying Spark",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "54ba3befb9d643feab2985ae7cf0e8f60cdf47b9cfd6ffd7df3e868a0dbb7e2f",
-      "bytes": 572290
+      "sha256": "664a9b44185fb2df6ab5b691db4e22b46ffac702c64a7adba19089cff2ed164c",
+      "bytes": 40382
     },
     {
       "role": "source",

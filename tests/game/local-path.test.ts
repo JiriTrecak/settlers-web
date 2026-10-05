@@ -147,3 +147,15 @@ it('keeps nested searches and returned paths independent of reusable scratch sto
  expect(expected).toEqual(saved);expect(nested).toEqual(saved);
  expect(localPath(from,to,clear)).toEqual(saved);
 });
+
+it('reports local search work and failure reasons without changing the result',async()=>{
+ const {SimulationProfiler}=await import('../../src/sim/profiling');const p=new SimulationProfiler();p.enabled=true;
+ const a={x:100000,y:100000},b={x:103000,y:100000};
+ expect(localPath(a,b,()=>false,p)).toBeNull();
+ expect(p.workSnapshot()).toContainEqual({path:'Local exhausted frontier failures',value:1});
+ expect(p.workSnapshot()).toContainEqual({path:'Local nodes expanded',value:1});
+ p.reset();const clear=(x:typeof a,y:typeof a)=>(x.x<101000)===(y.x<101000);
+ expect(localPath(a,b,clear,p)).toEqual(localPath(a,b,clear));
+ expect(p.workSnapshot()).toContainEqual({path:'Local visit limit failures',value:1});
+ expect(p.workSnapshot()).toContainEqual({path:'Local nodes expanded',value:256});
+});

@@ -44,3 +44,32 @@ it('merges compressed and dense footprints exactly through overlap, holes, jumps
  }
  mask.update([],()=>[]);expect([...mask.visible]).toEqual([]);
 });
+
+it('attributes reuse, change causes, footprint work and full-buffer copies exactly',async()=>{
+ const {SimulationProfiler}=await import('../../src/sim/profiling');
+ const p=new SimulationProfiler();p.enabled=true;
+ const mask=new VisionMask(new Uint8Array(16),p),footprint=(s:VisionSource)=>[s.x,s.x+1,s.x+2];
+ const a={id:1,x:2,y:0,radius:1};
+ mask.update([a],footprint);
+ const count=(suffix:string)=>p.workSnapshot().filter(x=>x.path.endsWith(suffix)).reduce((n,x)=>n+x.value,0);
+ expect(count('Sensors added')).toBe(1);expect(count('Bytes copied')).toBe(16);expect(count('Changed fog cells')).toBe(3);
+ p.reset();mask.update([a],footprint);
+ expect(count('Sensors unchanged')).toBe(1);expect(count('Bytes copied')).toBe(0);
+ p.reset();mask.update([{...a,x:3}],footprint);
+ expect(count('Changed position')).toBe(1);expect(count('Coverage cells added')).toBe(1);expect(count('Coverage cells removed')).toBe(1);
+ expect(count('Touched cells')).toBe(2);expect(count('Changed fog cells')).toBe(2);expect(count('Bytes copied')).toBe(16);
+ p.reset();mask.update([],footprint);expect(count('Sensors removed')).toBe(1);expect(count('Coverage cells removed')).toBe(3);
+});
+
+it('terrain work diagnostics preserve sight and identify cold versus cached footprints',async()=>{
+ const {SimulationProfiler}=await import('../../src/sim/profiling');
+ const p=new SimulationProfiler();p.enabled=true;
+ const size=32,heights=Int16Array.from({length:size*size},(_,i)=>i%size===16?380:0);
+ const measured=new TacticalTerrain(size,heights),plain=new TacticalTerrain(size,heights);measured.diagnostics=p;
+ const origin={x:13,y:16};expect(measured.visibleSpans(origin,8)).toEqual(plain.visibleSpans(origin,8));
+ expect(p.workSnapshot().find(x=>x.path==='Footprint cache misses')?.value).toBe(1);
+ expect(p.workSnapshot().find(x=>x.path==='Terrain rays')!.value).toBeGreaterThan(0);
+ p.reset();measured.visibleSpans(origin,8);
+ expect(p.workSnapshot().find(x=>x.path==='Footprint cache hits')?.value).toBe(1);
+ expect(p.workSnapshot().find(x=>x.path==='Terrain rays')?.value).toBe(0);
+});

@@ -3,7 +3,7 @@
   "id": "asset.custom.far-sight-command-icon",
   "name": "Far Sight — Remote Leaf Window",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "3c9111454769f6865444eb5736716fb812d277c4922f6be2f3fdee6211aa29f8",
-      "bytes": 555988
+      "sha256": "7d5eb5ea0a65c77bcd942a40df34ec60becd684a640f8d27cd52fd59503e0060",
+      "bytes": 40076
     },
     {
       "role": "source",

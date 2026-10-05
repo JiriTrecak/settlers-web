@@ -3425,3 +3425,103 @@ snapshot equality and audit `1665532744`
 **2.851 ms mean / 5.461 ms p99** (`/tmp/local-mesh-final-budget.json`). Orders and
 navigation remain the largest stage at 1.059 ms mean / 2.928 ms p99; sight masks
 are 0.283 / 0.820 ms. Those stage percentiles are not additive.
+
+### 30. Attribute allocation/GC spikes before retaining more index machinery
+
+The new `bench:match -- --allocation-profile /tmp/profile.json --gc-report …`
+uses Inspector allocation sampling (including collected objects) after warm-up
+and records GC overlap with the same measured tick intervals. No forced GC or
+simulation scheduling changes are involved. Its profiled times are not budget
+acceptance, and estimated allocation volume includes benchmark bookkeeping.
+
+The diagnostic `/tmp/active-allocation-diagnostic.json` captured 249 GC events,
+236 ms of total pauses, and 1.87 ms mean GC overlap within its slowest 1% of
+ticks. That is evidence that allocations contribute to the tail, not that all
+remaining latency is GC. Sampled allocations led to two exact retained changes:
+
+- Status lifecycle formerly copied all 4,464 entity references every tick.
+  `entitySnapshot()` retains immutable membership until create/remove/reindex.
+  Entity fields stay live; a status attached to a later existing entity during
+  the pass is still seen. A newly created entity remains outside the already
+  captured pass, and removing an entity cannot shift that pass's cursor.
+- Observation repeatedly created identical building/unit footprint arrays.
+  Its private weak cache now retains cells until definition, position, rotation,
+  floor or entity identity changes. Ownership, detection, sight and fog tests
+  still run live. Restored entities cannot pick up another object's cached cells.
+
+Both traces finish with audit `1392099972`. Estimated allocation volume falls
+from 15,417 to 14,470 MiB (about 6.1%) in matched sampling runs
+(`/tmp/active-non-render-allocations.json`,
+`/tmp/visibility-non-render-allocations.json`). This is a sampling estimate, not
+an exact byte counter. The second trace has fewer GC events (235) but more
+pause time (280 ms); it does **not** establish a reduction in GC pause duration.
+The unprofiled prototype is 2.875 ms mean / 5.527 ms p99
+(`/tmp/visibility-allocation-active.json`), so there is no established whole-match
+latency improvement over the preceding 2.851 / 5.461 result yet.
+
+Not retained: a persistent target lookup using the existing `SectorIndex` was
+slower in a fixed 297-body/40-query comparison (46.275 versus 45.138 ms per
+500-pass batch). Compact numeric sector keys improve that micro-case but the
+full battle did not demonstrate a consistent gain. Production target lookup
+and shared sector key behavior remain unchanged. Scratch prototypes remain
+outside source code; the new allocation evidence takes priority over adding
+index machinery for small, uncertain wins.
+
+### 31. Guided navigation and visibility breakdown (diagnosis, not optimization)
+
+User requested larger structural targets instead of marginal local wins. Added
+bounded, opt-in work counters and finer scopes, with no changes to decisions,
+search limits, update frequency or visibility rules. The worker/debug/MCP path
+keeps counts separate from timing samples. The benchmark retains same-tick work,
+GC overlap by disjoint coarse stage, and per-actor repeated route demand.
+
+The frozen active Heartroot fixture still ends with full audit `1392099972`.
+The final detailed run is `/tmp/deep-navigation-fog-final.json`; a separate V8
+sample is `/tmp/deep-navigation-fog.cpuprofile`. Instrumented means are diagnostic
+and materially inflated: 4.532 ms mean / 7.469 ms p99. With instrumentation off,
+`/tmp/deep-breakdown-disabled-budget.json` is 2.738 / 5.324 ms. This is not a claimed
+optimization win; host/run variance is significant and no gameplay algorithm was
+optimized in this pass. Browser transport/HUD remain outside these totals.
+
+Concrete work over 4,600 measured ticks (120-second replay, excluding warm-up):
+
+- Movement visits 256.7 units/tick; 55.7 have usable movement, about 49.5 segments
+  advance and 2.14 encounter reservations or bodies. Most visits are not movement.
+- Local detours expand 277,559 nodes. 1,068 searches hit the full 256-node limit;
+  one exhausts its frontier, 110 find a searched route, and some succeed directly.
+  These are small repeated failed searches, not one gigantic global search.
+- Across the entire 4,800-tick trace, route requests total 4,139; 1,256 immediately
+  repeat that actor's prior precise start, destination and static revision.
+  Neutral hornet #77 issues 800 requests, 698 repeated, without advancing.
+- The saved hornet already targets absent entity #4412 at tick 6000. Its target,
+  goal and route persist through tick 10800. Combat's invalidation guard requires
+  a truthy resolved target; the missing-target/no-pursuit branch can retain obsolete
+  navigation. Movement retries every six ticks. This is a lifecycle defect to fix
+  before optimizing those searches, while preserving deliberate last-seen pursuit
+  under fog. Other actors' repeated requests are not automatically the same bug.
+- Live sight indexing processes roughly 490 sensors/tick in combat planning and
+  combat resolution, from almost two pass-wide refreshes. These costs belong to
+  combat scopes, so the standalone Observation timer is not all sight work.
+- Fog considers 1,092 sensor/observer pairs, retains 114.7 contributions and reuses
+  106.9 of them per tick. About 7.82 change position. There are 3.99 terrain
+  footprint cache misses and 3.84 hits per tick; most misses use clear shelf spans.
+- Nontrivial footprints test 2,072 rays/tick; conservative coarse bounds clear
+  1,616. Fine groups skip 2,925 of 3,372 groups; 3,257 bilinear samples remain.
+- Coverage differences touch 639 cells/tick, only 77.4 change fog state. Immutable
+  publication copies 427,124 bytes/tick (417 KiB, approximately 16.3 MiB/s at 40 Hz).
+  Direct copy time is only 0.019 ms/tick in this diagnostic; potential GC pressure
+  is a different question and must not be assumed to dominate.
+
+Observation's instrumented 0.477 ms mean consists of about 0.136 terrain
+footprints, 0.118 sensor preparation/owner selection, 0.071 scenery knowledge,
+0.048 contribution comparison, 0.028 span merging, 0.038 fog transitions including
+copies, and the remaining publication/index/bookkeeping. Combat and movement
+retain substantial self time; the independent V8 sample confirms reservation
+construction, body-index queries, target queries and live sight indexing alongside
+normal loop/state work. A flow field would not eliminate these categories.
+
+60 focused tests and TypeScript pass. New tests cover count reset/disabled paths,
+worker transport and mode switching, exact fog copy/change counters, unchanged
+terrain visibility, and local search failure reasons. Instrumented and ordinary
+battle runs retain the same full audit. Next priority: stale intention cleanup
+and repeated blocked recovery; then the scope of live sensor/index refreshes.

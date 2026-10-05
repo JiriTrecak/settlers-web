@@ -3,7 +3,7 @@
   "id": "asset.custom.mass-teleport-command-icon",
   "name": "Mass Teleport — Root Circle Caravan",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "f1bb7c0dd97f2f2ed1e0e20d26aa85e0e232b020b735510db9e69b5473ebdd82",
-      "bytes": 702648
+      "sha256": "b586014702cac37d34402490cdad32eaa48d0dbe3862543abae7145d6dff68bc",
+      "bytes": 45876
     },
     {
       "role": "source",

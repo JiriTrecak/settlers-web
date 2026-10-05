@@ -3,7 +3,7 @@
   "id": "asset.custom.death-pact-command-icon",
   "name": "Death Pact — Life Offering Command Icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "812d998098309668e5b70ffe54ef3a996470b2c491d1c869ed7982bbadc17be3",
-      "bytes": 672161
+      "sha256": "eadd6157db42d4f7b6304ada1076478b2b8a5c9f16d58f3feb39febe67506bbc",
+      "bytes": 44139
     },
     {
       "role": "source",

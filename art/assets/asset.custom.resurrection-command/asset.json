@@ -3,7 +3,7 @@
   "id": "asset.custom.resurrection-command",
   "name": "Resurrection — Woodland Command",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "ec034055c70ec9380fa13401257a26d6a7f87e09a8580706f64b9a6e467781fa",
-      "bytes": 666116
+      "sha256": "320c8e8bf819be9d07a0b5ce7ce314f892e02a5b4668c42fd2609371db15c9b9",
+      "bytes": 46224
     },
     {
       "role": "source",

@@ -3,7 +3,7 @@
   "id": "asset.custom.doom-command",
   "name": "Doom — Woodland Command",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "86c909b60f95fc9abefb769e2369322c3e8932c25f31379e1c993b2801de5ba7",
-      "bytes": 531805
+      "sha256": "292ff2ded47db613ec7f470446abc205d98ffb741eb4514472774c0ab72ae17d",
+      "bytes": 38181
     },
     {
       "role": "source",

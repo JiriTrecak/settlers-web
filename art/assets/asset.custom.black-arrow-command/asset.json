@@ -3,7 +3,7 @@
   "id": "asset.custom.black-arrow-command",
   "name": "Black Arrow — Woodland Command",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "cc76bb6cce5f00140d2adb9c56ccbb108dee7847892d85f4321914f5ccf33e2a",
-      "bytes": 626504
+      "sha256": "33cb4fb0c67ac140fe6b944033d561bb2258957eda85a1aaa25ac671d4e2b4b2",
+      "bytes": 43375
     },
     {
       "role": "source",

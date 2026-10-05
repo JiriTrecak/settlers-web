@@ -3,7 +3,7 @@
   "id": "asset.custom.avatar-command-icon",
   "name": "Avatar — command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "cc4cd788459797ab95f6ebd55e4ca107b421178dddcc746b6af1b66b35fe7165",
-      "bytes": 692161
+      "sha256": "84e7d68770de9210d5e377a0795a58a1c05e4005c08ab9835ec1ba6d1a68cd9c",
+      "bytes": 46624
     },
     {
       "role": "source",

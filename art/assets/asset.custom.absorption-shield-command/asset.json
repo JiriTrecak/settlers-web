@@ -3,7 +3,7 @@
   "id": "asset.custom.absorption-shield-command",
   "name": "Absorption Shield — Finite Amber Damage Pool",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "df5a8db07f0fcf5606899fe33333fca354ebe7d4c1767f8690affbc399e56a06",
-      "bytes": 669473
+      "sha256": "c866b6c9d77888dbe0a7fd35098f6a4e8e03f82545ab2272e533e2102efad3d2",
+      "bytes": 45419
     },
     {
       "role": "source",

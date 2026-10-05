@@ -74,3 +74,29 @@ it('samples core budgets without hierarchy overhead or stale detailed frames whe
   expect(measured.world.snapshot()).toEqual(plain.world.snapshot());
  }finally{measured.destroy();plain.destroy();}
 });
+
+it('keeps work counts separate from time, scoped, bounded and detached from snapshots',()=>{
+ let reads=0;const p=new SimulationProfiler(()=>++reads);
+ p.count('Cells',12);expect(p.workSnapshot()).toEqual([]);expect(reads).toBe(0);
+ p.enabled=true;
+ p.measure('Fog',()=>{p.count('Cells',12);p.count('Cells',3);p.measure('Ray',()=>p.count('Samples',8));});
+ const before=p.workSnapshot();
+ expect(before).toEqual([{path:'Fog / Cells',value:15},{path:'Fog / Ray / Samples',value:8}]);
+ p.reset();expect(before[0].value).toBe(15);expect(p.workSnapshot().every(row=>row.value===0)).toBe(true);
+ p.enabled=false;p.count('Cells');expect(p.workSnapshot().every(row=>row.value===0)).toBe(true);
+ p.enabled=true;for(let i=0;i<2200;i++)p.count(`bounded-test-${i}`);
+ expect(p.workSnapshot()).toHaveLength(2048);
+});
+
+it('transports diagnostic work counts without mixing units with timing samples',()=>{
+ const runtime=new SimulationRuntime({map:emptyUtcMap(),match:localMatch({mapId:'test',mapRevision:'test',seed:123,slotCount:2,me:0}),player:0,remote:false});
+ try{
+  runtime.configureProfiling(true,true);runtime.advance(25,1);
+  const frame=runtime.project();
+  expect(frame.workCounters?.some(([name,n])=>name.endsWith('Sensors examined')&&n>0)).toBe(true);
+  expect(frame.profileSamples.some(([name])=>name.includes('Sensors examined'))).toBe(false);
+  expect(runtime.project().workCounters).toBeUndefined();
+  runtime.advance(25,1);runtime.configureProfiling(true,false);
+  expect(runtime.project().workCounters).toBeUndefined();
+ }finally{runtime.destroy();}
+});

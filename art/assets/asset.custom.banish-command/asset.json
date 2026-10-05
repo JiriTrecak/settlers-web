@@ -3,7 +3,7 @@
   "id": "asset.custom.banish-command",
   "name": "Banish command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "e28aaedf508017029c371785175efda19b8b6e900eb5e3fe97bd2604f69f9825",
-      "bytes": 646579
+      "sha256": "b43eebc5a9e719421337da3f0b7ce6accbad2f2adef5b10af273f91926d94910",
+      "bytes": 43766
     },
     {
       "role": "source",

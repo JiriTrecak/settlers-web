@@ -3,7 +3,7 @@
   "id": "asset.custom.frost-armor-command",
   "name": "Frost Armor — Iced Chitin and Melee Chill",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "ef7042511b70843e885f82967e17dc35f5cbad4b1ef6037b7c3b62ee1aa26616",
-      "bytes": 645758
+      "sha256": "acd8594723d17b44ea9f62dd80c027ae808639b260dcb8393fc489dbeb4e3ff1",
+      "bytes": 44103
     },
     {
       "role": "source",

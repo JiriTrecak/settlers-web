@@ -1,7 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
-import type {ContentSource} from '../../src/content/registry';
-import {readAbilityLibrary} from './abilities';
+import type {ContentSource} from '../../src/content/registry.ts';
+import {readAbilityLibrary} from './abilities.ts';
 /** Read current publication at operation time; Node's JSON module cache is not an authoring catalogue. */
 export async function readContentSource(root:string,fallback?:ContentSource):Promise<ContentSource>{
  let raw:ContentSource;

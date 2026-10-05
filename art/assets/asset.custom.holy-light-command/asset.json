@@ -3,7 +3,7 @@
   "id": "asset.custom.holy-light-command",
   "name": "Holy Light — original command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "b5e1cf0c8c96d1520117d1dbb393132d72b4555da705159b54e4e075e55a5acb",
-      "bytes": 556732
+      "sha256": "633c9027449efc26da1cf3100048812dea681bbb490dc3bbb9c18474d0da6ef5",
+      "bytes": 41480
     },
     {
       "role": "source",

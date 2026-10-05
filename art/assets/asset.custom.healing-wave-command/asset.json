@@ -3,7 +3,7 @@
   "id": "asset.custom.healing-wave-command",
   "name": "Healing Wave — Allied Restorative Chain",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "c3c7e41bf4bf37063342cb85d4564c3273447e491629e3cb59c7fb1daf6e21e4",
-      "bytes": 542947
+      "sha256": "419e9a669e3782dbf9e0ff31b054c82e1cd46368a250bde4a9380a3a674d2f04",
+      "bytes": 39053
     },
     {
       "role": "source",

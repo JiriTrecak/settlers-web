@@ -3,7 +3,7 @@
   "id": "asset.assistant-trials.verdant-ward-icon",
   "name": "Verdant Ward command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "cc05c5585f633fabf2f3a492b520e6ccf2ea28ff2dc7acd8081f014238523dcb",
-      "bytes": 672116
+      "sha256": "e38ef2974dc74cd32b9f53cea19983aef85481dfb26c5d816a0184654ca45142",
+      "bytes": 45670
     },
     {
       "role": "source",

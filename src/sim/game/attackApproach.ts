@@ -3,7 +3,7 @@ import type { GameContext } from './context';
 import type { Entity, Point } from './state';
 
 /** Choose a firing/striking position, not an occupied target center. */
-export function routeToAttack(c: GameContext, actor: Entity, target: Entity, geometry?: Map<string, readonly Point[]>): boolean {
+function planApproach(c: GameContext, actor: Entity, target: Entity, geometry?: Map<string, readonly Point[]>): boolean {
   const combat=c.def(actor).behaviors.combat!,range=combat.range;
   const origin = precise(actor), center = precise(target);
   const footprint = c.def(target).footprint;
@@ -17,7 +17,9 @@ export function routeToAttack(c: GameContext, actor: Entity, target: Entity, geo
   // within it. Body occupancy and friendly reservations remain actor-specific.
   const key = `${target.id}:${actor.definition}:${c.spatial.airborne(actor)}:${c.spatial.dimensions(actor).radius}:${range}:${!!(combat.projectile || combat.shell)}`;
   let positions = geometry?.get(key);
+  c.profile.count(positions?'Approach geometry hits':'Approach geometry misses');
   if (!positions) {
+    c.profile.measure('Approach geometry',()=>{
     const points: Point[] = [];
     for (let y = Math.max(0, Math.ceil(center.y - halfY - range)); y <= Math.min(c.spatial.size - 1, Math.floor(center.y + halfY + range)); y++) {
       for (let x = Math.max(0, Math.ceil(center.x - halfX - range)); x <= Math.min(c.spatial.size - 1, Math.floor(center.x + halfX + range)); x++) {
@@ -31,19 +33,27 @@ export function routeToAttack(c: GameContext, actor: Entity, target: Entity, geo
       }
     }
     positions = points; geometry?.set(key, positions);
+    });
   }
-  const candidates = positions.map(point => ({point, score: Math.hypot(point.x - origin.x, point.y - origin.y) + (reservations.has(c.spatial.cell(point)) ? 4 : 0)}));
+  c.profile.count('Approach candidate positions',positions!.length);
+  const candidates = c.profile.measure('Approach ranking',()=>positions!.map(point => ({point, score: Math.hypot(point.x - origin.x, point.y - origin.y) + (reservations.has(c.spatial.cell(point)) ? 4 : 0)})));
   candidates.sort((a, b) => a.score - b.score || a.point.y - b.point.y || a.point.x - b.point.x);
   const detours: Point[] = [];
   // Prefer a clear approach on this side of terrain before searching detours.
   for (const candidate of candidates) {
+    c.profile.count('Approach candidates tested');
     if (!c.spatial.free(candidate.point, actor.id, actor)) continue;
     if (c.spatial.clearSegment(fixed(origin), fixed(candidate.point), undefined, actor) && c.spatial.route(actor, candidate.point, false)) return true;
     if (detours.length < 8) detours.push(candidate.point);
   }
   // Bound alternate destination searches. A later retry reconsiders moving bodies.
   for (const point of detours) {
+    c.profile.count('Alternate approach routes');
     if (c.spatial.route(actor, point, false)) return true;
   }
   return false;
+}
+
+export function routeToAttack(c:GameContext,actor:Entity,target:Entity,geometry?:Map<string,readonly Point[]>):boolean {
+  return c.profile.measure('Attack approach',()=>{const result=planApproach(c,actor,target,geometry);c.profile.count(result?'Approach succeeded':'Approach failed');return result;});
 }

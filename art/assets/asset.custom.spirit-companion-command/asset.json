@@ -3,7 +3,7 @@
   "id": "asset.custom.spirit-companion-command",
   "name": "Spirit Companion command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "3ea3801efe974e7de50faeac94f3f37a96b5ab668e06e72e2d7b849db51d6dbb",
-      "bytes": 624302
+      "sha256": "611f22822778bd52e731563471f0d4eead474c5616a6d90a2c132a0a13b53716",
+      "bytes": 42244
     },
     {
       "role": "source",

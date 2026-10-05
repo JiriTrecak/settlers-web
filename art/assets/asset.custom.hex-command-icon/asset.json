@@ -3,7 +3,7 @@
   "id": "asset.custom.hex-command-icon",
   "name": "Hex — tree frog transformation",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "07e4aaa9eb2258ffa0c71a87a2d120b2d058438b8c534d7418d1b4d456d0abd9",
-      "bytes": 584242
+      "sha256": "fed9c036f83da825e49173749297b17fd9c5acc305a247a952b2f1cca42a5005",
+      "bytes": 42957
     },
     {
       "role": "source",

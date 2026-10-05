@@ -29,7 +29,7 @@
     "sourceHash": "7efa0444",
     "image": "the-amber-watch.webp",
     "custom": false,
-    "generationHash": "ea9fbccc2dcc50984109f42bea7dc06a61d9a5e2385f2e4ec55e4123aba9e133"
+    "generationHash": "7fbe2e40feb7fbaa5a927456e51e8abb25d282beb16dbaa83c4d3783a816337b"
   },
   "crown-marsh-forest": {
     "name": "Crown Marsh · Forest",
@@ -70,7 +70,7 @@
     "sourceHash": "76ad8383",
     "image": "crown-marsh-forest.webp",
     "custom": false,
-    "generationHash": "ae63fc6702659ddb114b5e2dfe255588b7fe91915327238aaf1962dc4978c848"
+    "generationHash": "7c943428a6cffe8101b53405ff5e1cf54e3c200529539c550c9ab58301d059fb"
   },
   "crown-marsh-frost": {
     "name": "Crown Marsh · Frost",
@@ -111,7 +111,7 @@
     "sourceHash": "c0ff6773",
     "image": "crown-marsh-frost.webp",
     "custom": false,
-    "generationHash": "a25c47fbe4dcbb4497c76ab36369aac70f662d7857e8070a539b7f7bc138e17d"
+    "generationHash": "3335b5fbe7a9ca105d3b6475f93575a8c1333cb013ce30f020eb08c84778931c"
   },
   "heartroot-glade": {
     "name": "Heartroot Glade",
@@ -153,7 +153,7 @@
     "sourceHash": "8bf73f6e",
     "image": "heartroot-glade.webp",
     "custom": false,
-    "generationHash": "cb4bcf44a011e2651ec19f02a2f67bff9f8b3a92440464d896de4d186c86326c"
+    "generationHash": "7fbd52b41301efe228b6fd3bf87164f1ef2884861fd75feeabb2c2d23dd679d6"
   },
   "oakfall-hollow": {
     "name": "Oakfall Hollow",
@@ -177,11 +177,12 @@
     ],
     "camps": 8,
     "sandbox": false,
-    "playable": true,
+    "playable": false,
     "sourceHash": "298c52fc",
+    "error": "camp.mine-a.1: overlaps amber.1a",
     "image": "oakfall-hollow.webp",
     "custom": false,
-    "generationHash": "8ca777d85fc5b8597512b5fece9154dce5e675d29d522da674578474f9eca272"
+    "generationHash": "ea4bd88113144cb38f867f184157372080ba60e6288a31bb08707100171732e7"
   },
   "threewater-forest": {
     "name": "Threewater Forest",
@@ -205,10 +206,11 @@
     ],
     "camps": 0,
     "sandbox": false,
-    "playable": true,
+    "playable": false,
     "sourceHash": "8b98fa83",
+    "error": "mine.4: overlaps generated.forest.south-middle.e51fb809.interior.59.76",
     "image": "threewater-forest.webp",
     "custom": false,
-    "generationHash": "829c4f3cb2e64cbd60cc4008c488ec1fd44b27f5244a7a9fb67c283d9a5ed790"
+    "generationHash": "6c3194411977feb2482b3957e450528c1f67f1cede8a48031b605fc8b5ba258d"
   }
 }

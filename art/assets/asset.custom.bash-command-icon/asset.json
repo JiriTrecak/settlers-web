@@ -3,7 +3,7 @@
   "id": "asset.custom.bash-command-icon",
   "name": "Bash — command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "af94c3b25c7b25536c4fbfd56f4abefec35b817497ac1bfc148c905da5b9bb1f",
-      "bytes": 537424
+      "sha256": "ba44bc8d9c9566167cf18a7e6519b8b44aaf3f38c6931987b3d1edb5a9a2ada7",
+      "bytes": 39592
     },
     {
       "role": "source",

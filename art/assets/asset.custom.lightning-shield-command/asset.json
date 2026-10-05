@@ -3,7 +3,7 @@
   "id": "asset.custom.lightning-shield-command",
   "name": "Lightning Shield — Outward Electrical Damage",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "25ba863440934b58c75e4cf31c6e58ca269f584aa7fd0ea8fadb9e55c0bc97a3",
-      "bytes": 625211
+      "sha256": "b96199296ff58ef7f277e848e30871c5bbf29865aebf5900d912703723662538",
+      "bytes": 43713
     },
     {
       "role": "source",

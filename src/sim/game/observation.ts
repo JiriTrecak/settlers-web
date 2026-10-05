@@ -256,6 +256,9 @@ export class Observation {
     this.projectKnowledge=this.c.profile.wrap('Known scenery projection',this.projectKnowledge.bind(this));
     this.projectColony=this.c.profile.wrap('Colony summaries',this.projectColony.bind(this));
     this.orderEntities=this.c.profile.wrap('Entity ordering',this.orderEntities.bind(this));
+    this.visible=this.c.profile.wrap('Live visibility query',this.visible.bind(this));
+    this.detects=this.c.profile.wrap('Stealth detection',this.detects.bind(this));
+    this.nearbySensors=this.c.profile.wrap('Nearby sensor index',this.nearbySensors.bind(this));
     this.sightFootprint=this.c.profile.wrap('Terrain sight footprint',this.sightFootprint.bind(this));
     this.deckNodes=this.c.spatial.layers?.nodes.slice(this.c.spatial.size**2).map(n=>({cell:n.cell,height:n.height}))??[];
     this.memories = owners.map((owner) => ({
@@ -312,8 +315,10 @@ export class Observation {
   private nearbySensors(e:Entity):Iterable<Entity> {
     const stamp=`${this.c.state.tick}:${this.c.observationRevision}:${this.c.motionRevision}`;
     if(stamp!==this.sightStamp){
+      this.c.profile.count('Sensor index rebuilds');
       const ids=new Set<number>();
-      for(const sensor of this.c.liveSensors()){
+      const liveSensors=this.c.liveSensors();this.c.profile.count('Sensors indexed',liveSensors.length);
+      for(const sensor of liveSensors){
         const p=precise(sensor),radius=(this.c.def(sensor).vision??0)+1;
         this.sightSectors.set(sensor.id,sensor,{minX:p.x-radius,minY:p.y-radius,maxX:p.x+radius,maxY:p.y+radius});ids.add(sensor.id);
       }
@@ -541,7 +546,7 @@ export class Observation {
     return result;
   }
   // Membership is weak and cells are private/read-only to consumers. Unit motion,
-  // placement edits, forms with a new identity, floors and restored entities all
+  // placement edits, definition changes, floors and restored entities all
   // select fresh footprints; unchanged buildings need no repeated array creation.
   private readonly footprints=new WeakMap<object,{definition:string;x:number;y:number;rotation:number;surface?:string;cells:number[]}>();
   private fogFootprint(e:Pick<Entity,"definition"|"x"|"y"|"rotation"|"surface">):number[]{
@@ -626,6 +631,7 @@ export class Observation {
     const receipts=rebuild&&incremental?this.c.profile.measure('Entity membership receipts',()=>this.updateEntityMembership()):null;
     if(receipts)rebuild=false;
     if(rebuild){
+      this.c.profile.count('Full entity classifications');this.c.profile.count('Entities classified',this.c.state.entities.length);
       this.stationary=this.c.profile.measure('Entity classification',()=>this.projectEntities());this.structureRevision=this.c.observationRevision;
       for(const id of this.resourceViews.keys())if(!this.c.get(id))this.resourceViews.delete(id);
     }else for(const e of this.c.changedResources){
@@ -654,7 +660,7 @@ export class Observation {
       }
       for(const id of previous.keys())if(!this.staticRecords.has(id))changedStaticIds.add(id);
     }
-    if(receipts){this.updateStaticMembership(receipts,changedStaticIds);staticChanged=changedStaticIds.size>0;}
+    if(receipts){this.c.profile.count('Membership receipts',receipts.length);this.updateStaticMembership(receipts,changedStaticIds);staticChanged=changedStaticIds.size>0;}
     this.timings['Observation · static index']=performance.now()-started;
     const overlaps=this.staticOverlaps;
     // Resolve each sensor once for this observation pass. Shared vision only
@@ -670,17 +676,22 @@ export class Observation {
       m.observedDeaths = m.observedDeaths.filter(
         (d) => this.c.state.tick - d.tick <= 400,
       );
-      const sensors=visionSensors.filter(s=>this.sharesVision(m.owner,s.entity));
+      const sensors=this.c.profile.measure('Observer sensor selection',()=>{
+        this.c.profile.count('Observer passes');this.c.profile.count('Sensor eligibility checks',visionSensors.length);
+        return visionSensors.filter(s=>this.sharesVision(m.owner,s.entity));
+      });
       let mask=this.masks.get(m.owner);
-      if(!mask){mask=new VisionMask(m.cells);this.masks.set(m.owner,mask);}
+      if(!mask){mask=new VisionMask(m.cells,this.c.profile);this.masks.set(m.owner,mask);}
       const visionChanged=this.c.profile.measure('Sight masks',()=>mask!.update([...sensors.map(s=>s.source),...this.spellSensors(m.owner).map(v=>({id:-v.id,...v.point,radius:v.radius,ignoreTerrain:v.ignoreTerrain}))],sensor=>this.sightFootprint(sensor)));
       m.cells=mask.cells;m.visibleCells=mask.visible;
       maskMs+=performance.now()-maskStarted;
       const knowledgeStarted=performance.now();
+      this.c.profile.measure('Scenery knowledge',()=>{
       let observedStatic=this.visibleStatics.get(m.owner),coverage=this.staticCoverage.get(m.owner);
       const refresh=new Set(changedResources);
       if(!observedStatic||!coverage||(staticChanged&&!receipts)){
         observedStatic=new Set<number>();coverage=new Map<number,number>();
+        this.c.profile.count('Full coverage rebuilds');this.c.profile.count('Coverage cells scanned',m.visibleCells.size);
         for(const cell of m.visibleCells){
           const ids=overlaps.get(cell),id=staticCells[cell];
           if(ids)for(const id of ids)coverage.set(id,(coverage.get(id)??0)+1);
@@ -689,6 +700,7 @@ export class Observation {
         for(const id of coverage.keys()){observedStatic.add(id);refresh.add(id);}
         this.visibleStatics.set(m.owner,observedStatic);this.staticCoverage.set(m.owner,coverage);
       }else if(visionChanged){
+        this.c.profile.count('Incremental coverage updates');this.c.profile.count('Coverage cells scanned',mask.changedCells.length);
         for(const cell of mask.changedCells){
           const ids=overlaps.get(cell),id=staticCells[cell],delta=m.cells[cell]===2?1:-1;
           for(const key of ids??(id?[id]:[])){
@@ -738,6 +750,9 @@ export class Observation {
           m.entities.set(id,this.forestIds.has(id)?this.resourceViews.get(id)!:this.describe(e,false));stale.delete(id);
         }
       }
+      this.c.profile.count('Static records refreshed',refresh.size);
+      this.c.profile.count('Changed static records',changedStaticIds.size);
+      });
       knowledgeMs+=performance.now()-knowledgeStarted;
     }
     this.timings['Observation · sight masks']=maskMs;

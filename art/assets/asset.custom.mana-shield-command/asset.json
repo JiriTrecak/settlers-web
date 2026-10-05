@@ -3,7 +3,7 @@
   "id": "asset.custom.mana-shield-command",
   "name": "Mana Shield — Mana-Fed Protection",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "77e00d02a9fee6be3ed47c86fe453666d9669aac218148ffb7c4ec82aa1b7688",
-      "bytes": 649893
+      "sha256": "cb6d7acbf48f0d27b2fe5c0b6f4fc3f07e70088ef46070310585245cfb44a77a",
+      "bytes": 44669
     },
     {
       "role": "source",

@@ -1,8 +1,8 @@
 /** Shared authoring contracts. The UI and local service validate the same requests. */
 import {z} from 'zod';
-import {imageProfiles} from './profiles';
-import {assetSchema} from '../../../src/content/schema';
-import {parseCatalogue, type CatalogEntry} from '../../../src/shared/asset/catalog';
+import {imageProfiles} from './profiles.ts';
+import {assetSchema} from '../../../src/content/schema.ts';
+import {parseCatalogue, type CatalogEntry} from '../../../src/shared/asset/catalog.ts';
 export const safePath=z.string().regex(/^[a-zA-Z0-9_./-]+$/).refine(p=>!p.startsWith('/')&&!p.split('/').includes('..'));
 export const outputSchema=z.object({role:z.string(),path:safePath,sha256:z.string().length(64),bytes:z.number().nonnegative(),width:z.number().optional(),height:z.number().optional(),triangles:z.number().optional(),primitives:z.number().optional()}).strict();
 const scenerySchema=z.custom<CatalogEntry>(v=>!!parseCatalogue({v:1,name:'validation',assets:[v]}));

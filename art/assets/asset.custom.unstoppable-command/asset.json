@@ -3,7 +3,7 @@
   "id": "asset.custom.unstoppable-command",
   "name": "Unstoppable command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "73f9939c5f198cc685fffd9e0d8ce4ea811c432b505bdece04deabc8f604b23a",
-      "bytes": 662605
+      "sha256": "e2c446365097c03fe6c9bc725a48d6e3ee9eac42931477c68171357e548e1738",
+      "bytes": 45665
     },
     {
       "role": "source",

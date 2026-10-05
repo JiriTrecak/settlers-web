@@ -3,7 +3,7 @@
   "id": "asset.custom.death-coil-command",
   "name": "Death Coil — original command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "c13cd360f2e32e36fd14d5040fd0dc1c2694148fce7968cf3a403f7e4eff8ab5",
-      "bytes": 528900
+      "sha256": "eb8d8cbeeaa86bee52e48d4d954caee3631624cc04affbc51e8b21981064ea12",
+      "bytes": 38540
     },
     {
       "role": "source",

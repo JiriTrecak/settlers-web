@@ -3,7 +3,7 @@
   "id": "asset.custom.flight-form-command",
   "name": "Flight Form command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "171592658360743ad85b0f41780a2e17f5769cb9a60ff49c0833289b761490bf",
-      "bytes": 689802
+      "sha256": "3f5c336366f79e32e3f7c5855ca42988efa59174f7c4eaa7405d23680897d075",
+      "bytes": 47822
     },
     {
       "role": "source",

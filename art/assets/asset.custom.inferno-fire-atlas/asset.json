@@ -3,7 +3,7 @@
   "id": "asset.custom.inferno-fire-atlas",
   "name": "Inferno — Golden Fire Impact Atlas",
   "kind": "texture",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -45,16 +45,7 @@
   },
   "materials": [],
   "bindings": {
-    "render": [
-      {
-        "id": "asset.custom.inferno-fire-atlas",
-        "image": {
-          "role": "image",
-          "index": 1,
-          "asset": "asset.custom.inferno-fire-atlas"
-        }
-      }
-    ],
+    "render": [],
     "scenery": []
   },
   "capabilities": {},

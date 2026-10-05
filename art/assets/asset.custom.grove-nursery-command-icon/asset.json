@@ -3,7 +3,7 @@
   "id": "asset.custom.grove-nursery-command-icon",
   "name": "Grove Nursery · Command Icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "5c5b460b18f14519e318109261d176c2b23d5d5497b63a0ae0f71419e0285d92",
-      "bytes": 604842
+      "sha256": "a660e9277e4ee1543dcbf49c00fc58066029962c671fa830ad337d55fd788b7c",
+      "bytes": 41028
     },
     {
       "role": "source",

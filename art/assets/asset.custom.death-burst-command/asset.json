@@ -3,7 +3,7 @@
   "id": "asset.custom.death-burst-command",
   "name": "Death Burst — Woodland Command",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "d767f2fe6f3f6e21f0824bd1d42ebd1f7348b801556f71326a62391eb6a4c6bd",
-      "bytes": 583153
+      "sha256": "da0f5f0e2315f3bba5a5d7bfd5a801dcb9cb0f10786adc192ac38b3ef558beb8",
+      "bytes": 41398
     },
     {
       "role": "source",

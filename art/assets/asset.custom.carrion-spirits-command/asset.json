@@ -3,7 +3,7 @@
   "id": "asset.custom.carrion-spirits-command",
   "name": "Carrion Spirits command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "4829166fc1723fb625aa543215e5fe5b59b476c6f30aea198986d60560c3005a",
-      "bytes": 588827
+      "sha256": "80a2a5bf35a9a9107508e3a155470365bee3b6acecf103e392b6f68150787f25",
+      "bytes": 40470
     },
     {
       "role": "source",

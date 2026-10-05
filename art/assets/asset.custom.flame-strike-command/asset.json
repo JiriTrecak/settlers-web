@@ -3,7 +3,7 @@
   "id": "asset.custom.flame-strike-command",
   "name": "Flame Strike — original command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "b0b67aa9f9f0c180ecf503c824b0a71cb35dc9b9f55202e1c2040b96524f5166",
-      "bytes": 542521
+      "sha256": "460c55a3354c3b3c6b9f65f1f20bf437e490b784ff4a1af045f05507f12da1ad",
+      "bytes": 37040
     },
     {
       "role": "source",

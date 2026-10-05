@@ -3,7 +3,7 @@
   "id": "asset.custom.ember-garden-icon",
   "name": "Ember Garden Icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "302e677b150ef426e1609dcc71dddecb739250288ecefa14c3e5109e5af5ed90",
-      "bytes": 618101
+      "sha256": "06fc082c88808e0e1ca4fc26a27d8c4f1fcc8db625d6f96b6372328268a78753",
+      "bytes": 42056
     },
     {
       "role": "source",

@@ -3,7 +3,7 @@
   "id": "asset.custom.frost-arrows-command",
   "name": "Frost Arrows command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "3032431733f66b506d15c818e374c9e72f3547adfef71fea876a4d89499eff9b",
-      "bytes": 641805
+      "sha256": "e268c7cbf11e9305dfda871a974c01be712a8244e69c23f353ddcb70169f3769",
+      "bytes": 43617
     },
     {
       "role": "source",

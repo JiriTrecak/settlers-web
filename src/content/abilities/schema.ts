@@ -1,8 +1,8 @@
-import {locomotionSchema,targetFilterSchema,abilityConditionSchema,matchesAbilityCondition,type ConditionContext} from './conditions';
-export {targetFilterSchema} from './conditions';
-import {effectBindingSchema} from '../effects/schema';
+import {locomotionSchema,targetFilterSchema,abilityConditionSchema,matchesAbilityCondition,type ConditionContext} from './conditions.ts';
+export {targetFilterSchema} from './conditions.ts';
+import {effectBindingSchema} from '../effects/schema.ts';
 import {z} from 'zod';
-import {itemModifiersSchema} from '../items';
+import {itemModifiersSchema} from '../items.ts';
 
 export const ABILITY_ABI = 'abilities-1';
 export const abilityId = z.string().regex(/^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$/).max(160);
@@ -310,7 +310,7 @@ export const abilityCasterSchema=z.object({
  bindings:z.array(abilityBindingSchema).min(1).max(12).refine(a=>new Set(a.map(b=>b.id)).size===a.length,'Binding IDs must be unique'),
 }).strict();
 export type AbilityBinding=z.infer<typeof abilityBindingSchema>;
-export {cueMotionSchema} from '../effects/schema';
+export {cueMotionSchema} from '../effects/schema.ts';
 export const presentationSchema=z.object({schemaVersion:z.literal(1),id:abilityId,icon:abilityId.optional(),animations:z.object({prepare:z.string().min(1).max(80),release:z.string().min(1).max(80),recover:z.string().min(1).max(80),fallback:z.string().min(1).max(80),channel:z.string().min(1).max(80).optional()}).strict(),effects:z.array(effectBindingSchema).max(32).refine(b=>new Set(b.map(x=>x.id)).size===b.length,'Binding IDs must be unique')}).strict();
 export type AbilityPresentation=z.infer<typeof presentationSchema>;
 export const abilityLibrarySchema=z.object({schemaVersion:z.literal(1),abilities:z.array(abilitySchema).max(10000),presentations:z.array(presentationSchema).max(10000)}).strict().superRefine((library,ctx)=>{

@@ -1,4 +1,5 @@
 import {readEffectLibrary} from '../../../content/effects';
+import {validateCommandIcon} from '../../../content/icon';
 import {presentationResources,layerResources} from '../../../../src/content/abilities/resources';
 import {readAbilityLibrary} from '../../../content/abilities';
 import {inspectGeometry,validateCompleteModel,type ModelQuality} from './modelQuality';
@@ -41,6 +42,7 @@ export type PublicationPlan={assets:AssetDefinition[];manifest:Manifest;writes:W
 export async function planPublication(root:string,assets:AssetDefinition[],changed:ReadonlySet<string>,staged:ReadonlyMap<string,Buffer>=new Map()):Promise<PublicationPlan>{
  const sorted=[...assets].sort((a,b)=>a.id.localeCompare(b.id));validateDependencies(sorted);
  const manifest=compile(compilePackageRecords(sorted)),writes:Write[]=[];
+ const icons=new Map(manifest.records.flatMap(a=>a.render.flatMap(b=>b.image?[[b.image,b.id] as const]:[])));
  let content:Omit<ContentSource,'assets'>|undefined;
  try{content=await json(await within(root,'content/game.json'));}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
  if(content)new ContentRegistry({...content,abilityLibrary:await readAbilityLibrary(root),assets:manifest.records.flatMap(a=>a.render)});
@@ -69,6 +71,7 @@ export async function planPublication(root:string,assets:AssetDefinition[],chang
   for(const resource of runtimeResources(asset)){
    const target=publishedResource(asset,resource),source=changed.has(asset.id)?assetFolder(asset.id)+'/'+resourceFilename(resource):target;
    const bytes=staged.get(source)??await readFile(await within(root,source));if(bytes.length!==resource.bytes||hash(bytes)!==resource.sha256)throw Error('Damaged publication resource: '+source);
+   const icon=icons.get(target);if(icon)validateCommandIcon(icon,target,bytes);
    if(resource.role==='geometry')quality.push(await inspectGeometry(bytes,asset,resource.index===1));
    if(changed.has(asset.id))await add(target,bytes);
   }

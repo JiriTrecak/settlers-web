@@ -127,6 +127,7 @@ export class Session {
     // checksum ticks. Sampling them again per published frame biases averages.
     for(const [name,ms] of Object.entries(frame.timings))if(!['simulation','tickTotal','lockstep','checksum'].includes(name))perf.sample(`Worker · ${name}`,ms);
     if(perf.enabled){
+      for(const [name,count] of frame.workCounters??[])perf.value(`Work since previous snapshot · ${name}`,count);
       perf.value('Navigation searches (match)',frame.routing.searches);
       perf.value('Navigation shared corridors (match)',frame.routing.sharedCorridors);
       perf.value('Traffic terrain budget reuse (match)',frame.routing.trafficBudgetHits);

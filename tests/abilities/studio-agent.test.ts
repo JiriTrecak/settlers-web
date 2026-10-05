@@ -3,6 +3,8 @@ import {mkdtemp,rm,mkdir,writeFile,readFile} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
+import {validateCommandIcon} from '../../tooling/content/icon';
+import {validateFiles} from '../../tooling/asset-studio/server/manifest';
 import {Credentials,type CredentialEntry} from '../../tooling/spell-editor/server/credentials';
 import {CanvasBridge} from '../../tooling/spell-editor/server/canvasBridge';
 import {AuthoringToolkit,authoringSchema} from '../../tooling/spell-editor/server/authoringTools';
@@ -53,7 +55,8 @@ describe('embedded authoring agent',()=>{
    expect(authoringSchema('commands')).toContain('effects.preview.seek');expect(authoringSchema('effects.save')).toHaveProperty('properties.document');
   }finally{await rm(root,{recursive:true,force:true});}
  });
- it('imports generated alpha images through the canonical asset pipeline, retains source and refuses overwrite before billing',async()=>{
+ it.each(['icon','texture'] as const)('imports generated %s images through the canonical pipeline with game-compatible dimensions and bindings',async(kind)=>{
+  const size=kind==='icon'?128:512;
   const root=await mkdtemp(path.join(os.tmpdir(),'studio-image-'));try{
    await mkdir(path.join(root,'assets/authoring'),{recursive:true});await writeFile(path.join(root,'assets/authoring/published.json'),JSON.stringify({version:1,assets:[]}));
    const mark=await sharp({create:{width:512,height:512,channels:4,background:{r:200,g:100,b:20,alpha:1}}}).png().toBuffer();
@@ -61,15 +64,20 @@ describe('embedded authoring agent',()=>{
    const fetcher=vi.fn(async(_url:string|URL|Request,_init?:RequestInit)=>new Response(JSON.stringify({data:[{b64_json:png.toString('base64')}]}),{status:200}));
    const credentials=new Credentials(root,memoryEntry());await credentials.save({apiKey:'test-api-key-12345'});
    const toolkit=new AuthoringToolkit(new SpellEditorService(root),credentials,new CanvasBridge(),fetcher);
-   const input={id:'asset.test.aura',name:'Aura',kind:'texture',prompt:'Transparent original magic glyph',transparent:true};
+   const input={id:'asset.test.aura',name:'Aura',kind,prompt:'Transparent original magic glyph',transparent:true};
    const pending=toolkit.execute('studio_image',input);
    await expect(toolkit.execute('studio_image',input)).rejects.toThrow('already being generated');
-   const result=await pending as any;expect(result.published).toBe(true);expect(result.width).toBe(512);expect(result.transparent).toBe(true);
+   const result=await pending as any;expect(result.published).toBe(true);expect(result.width).toBe(size);expect(result.transparent).toBe(true);
    expect(JSON.parse(fetcher.mock.calls[0][1]!.body as string)).toMatchObject({model:'gpt-image-2.5-sunburst',background:'transparent',output_format:'png'});
    const definition=JSON.parse(await readFile(path.join(root,'art/assets/asset.test.aura/asset.json'),'utf8'));expect(definition.resources.map((r:any)=>r.role).sort()).toEqual(['generation','image','source']);
+   expect(definition.bindings.render).toHaveLength(kind==='icon'?1:0);
+   expect(await readFile(path.join(root,'art/assets/asset.test.aura/source.png'))).toEqual(png);
+   const manifest=JSON.parse(await readFile(path.join(root,'assets/manifest.json'),'utf8'));
+   await validateFiles(root,manifest);
+   for(const record of manifest.records)for(const binding of record.render)if(binding.image)validateCommandIcon(binding.id,binding.image,await readFile(path.join(root,binding.image)));
    await expect(toolkit.execute('studio_image',input)).rejects.toThrow('already exists');expect(fetcher).toHaveBeenCalledTimes(1);
    const inspected=await toolkit.execute('studio_asset_image',{asset:input.id}) as any;
-   expect(inspected).toMatchObject({asset:input.id,width:512,height:512,published:true});
+   expect(inspected).toMatchObject({asset:input.id,width:size,height:size,published:true});
    expect(inspected.sha256).toBe(definition.resources.find((r:any)=>r.role==='image').sha256);
    const inspectedPixels=await sharp(Buffer.from(inspected.image.split(',')[1],'base64')).stats();expect(inspectedPixels.channels.at(-1)!.min).toBe(0);expect(inspectedPixels.channels.at(-1)!.max).toBe(255);
    await expect(toolkit.execute('studio_asset_image',{asset:'../../private/key'})).rejects.toThrow();

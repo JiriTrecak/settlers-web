@@ -3,7 +3,7 @@
   "id": "asset.custom.moonpetal-ward-symbol",
   "name": "Moonpetal Ward — Ground Symbol",
   "kind": "texture",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -45,16 +45,7 @@
   },
   "materials": [],
   "bindings": {
-    "render": [
-      {
-        "id": "asset.custom.moonpetal-ward-symbol",
-        "image": {
-          "role": "image",
-          "index": 1,
-          "asset": "asset.custom.moonpetal-ward-symbol"
-        }
-      }
-    ],
+    "render": [],
     "scenery": []
   },
   "capabilities": {},

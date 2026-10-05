@@ -119,6 +119,22 @@ counter-call overhead, and excludes work on other threads. Neither its CPU
 percentile nor wall-minus-thread time establishes browser budget acceptance or
 identifies why CPU throughput changed.
 
+`--allocation-profile /tmp/match-allocations.json` records sampled allocations
+including already-collected objects, after the 200-tick warm-up. It covers the
+runtime/codecs and benchmark bookkeeping; estimates are diagnostic, not exact
+allocator-byte counts or budget measurements. `--gc-report` records GC pauses
+and overlaps them with the actual timed intervals of the slowest 1% of ticks.
+These pause times are already inside total time—never add them again. Neither
+option forces GC or changes simulation decisions. Use an ordinary unprofiled
+run afterward for timing, and actual browser transport/HUD for full acceptance.
+
+Mutation-capable status passes use `GameContext.entitySnapshot()` for stable
+membership with live entity fields. Membership copies survive unchanged ticks;
+create/remove/reindex invalidate them. Direct bulk edits must reindex, as with
+other context indexes. Observation privately caches footprint cell arrays by
+entity identity, definition, position, rotation and floor. These are derived
+caches, absent from saves; they never cache sight eligibility or visibility.
+
 With `--details`, that benchmark also keeps complete profiles for the slowest 1%
 of measured ticks (`slowTicks`) and their mean self/inclusive contributions
 (`tailProfile`). These describe the *same* slow frames, not a sum of independently
@@ -248,3 +264,32 @@ p95 5.40 ms; GPU mean 5.32 ms, p95 6.50 ms. Source report:
 tmp/ant-colony/profile-uncapped.json. Actual display presentation depends on
 refresh rate/resolution and needs verification in the user's game window.
 The benchmark is not a guarantee for every map, camera or future army size.
+
+Deep navigation/sight diagnosis uses the same opt-in hierarchy plus bounded
+`SimulationProfiler.count` work records. Counts never contain entity IDs and are
+not milliseconds. The worker sends `workCounters` separately from timing samples;
+`game_performance` reports them in `values` as `Work since previous snapshot · …`.
+These are totals over ticks since the prior published snapshot, not rates. They
+clear on profiling mode changes and restore. Disabled counters read no clock and
+never affect simulation decisions. Benchmark `work` includes total, per-tick mean,
+maximum and active ticks; `slowTicks[].work` belongs to the same retained tick.
+
+Sight scopes distinguish sensor eligibility/indexing, unchanged contributions,
+changed-position/radius/height causes, footprint cache hits/misses/evictions,
+terrain candidates/rays/coarse bounds/fine sample groups, coverage span differences,
+actual fog transitions, immutable buffer copies, publication and scenery memory.
+A cache miss is not necessarily a ray march: clear shelves use row spans.
+Navigation distinguishes reservation creation, obstruction classification, physical
+body checks, local grid expansion, exhausted versus capped local searches, traffic
+recovery, target candidates/visibility, attack positions and global route search.
+Repeated route tracing adds a bounded per-actor census; identical actor/destination/
+static revision does not imply identical moving blockers or safe route reuse.
+
+With both `--details --gc-report`, timestamped disjoint coarse stages expose
+`gc.stages` and `gc.slowTicks[].stages`: elapsed time and overlapping GC pause time.
+These timestamps identify where GC paused execution, not who allocated the garbage.
+Other stages may account for remaining overlap. GC time is already included in
+elapsed time; do not add it again. Fine timing scopes, counters, tracing and their
+worker payloads materially perturb the diagnostic run. Compare only an ordinary
+unprofiled run to the budget, and do not treat diagnostic category percentages as
+an exact decomposition of unprofiled p99.

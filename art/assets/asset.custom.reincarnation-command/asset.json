@@ -3,7 +3,7 @@
   "id": "asset.custom.reincarnation-command",
   "name": "Reincarnation — Woodland Command",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "6a227f34d4d8389c824af550e65749e02fd19a09e7a4580c31f926a1c720c3bd",
-      "bytes": 614479
+      "sha256": "ae2519841dd880c5dedc90203b7a38d5051073167e2287185a432e52056b6dc0",
+      "bytes": 42787
     },
     {
       "role": "source",

@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import {triangleGlb} from './glb-fixture';
 import {afterEach,describe,it,expect} from 'vitest';
 import {mkdtemp,readFile,rm} from 'node:fs/promises';
@@ -12,6 +13,18 @@ const recipe=(id='hill')=>assetDefinitionSchema.parse({version:1,id,name:id,kind
 async function fixture(assets:AssetDefinition[]=[recipe()]){const root=await mkdtemp(path.join(os.tmpdir(),'asset-publish-'));roots.push(root);for(const asset of assets)await saveJson(path.join(root,assetFolder(asset.id),'asset.json'),asset);await commitFiles(root,(await planPublication(root,assets,new Set(assets.map(a=>a.id)))).writes);return {root,store:new AuthoringStore(root)};}
 afterEach(async()=>{await Promise.all(roots.splice(0).map(root=>rm(root,{recursive:true,force:true})));});
 describe('canonical runtime publication',()=>{
+ it.each([[512,512],[128,64]])('rejects a %sx%s runtime icon before changing publication',async(width,height)=>{
+  const {root,store}=await fixture([]);
+  const definition=assetDefinitionSchema.parse({version:1,id:'asset.test.icon',name:'Test icon',kind:'icon',revision:1,status:'draft',resources:[],usesGeometry:false,provenance:{method:'authored'},bindings:{render:[{id:'asset.test.icon',image:{asset:'asset.test.icon',role:'image',index:1}}],scenery:[]}});
+  await store.dispatch({op:'asset.create',definition});
+  const png=await sharp({create:{width,height,channels:4,background:'#ff00ff'}}).png().toBuffer();
+  const draft=await store.dispatch({op:'asset.upload',id:definition.id,expectedRevision:1,role:'image',index:1,format:'png',base64:png.toString('base64')}) as AssetDefinition;
+  const before=await readFile(path.join(root,RELEASE_PATH));
+  await expect(store.dispatch({op:'asset.publish',id:draft.id,expectedRevision:draft.revision})).rejects.toThrow('icons must be square and at most 128px');
+  expect(await readFile(path.join(root,RELEASE_PATH))).toEqual(before);
+  expect((await store.get(draft.id)).status).toBe('draft');
+ });
+
  it('publishes pure recipes as metadata and produces an identical no-op rebuild',async()=>{
   const {root}=await fixture();expect(JSON.parse(await readFile(path.join(root,'assets/manifest.json'),'utf8')).records[0].outputs[0].path).toBe('assets/library/hill/definition.json');
   const released=(await readPublished(root))!;expect((await planPublication(root,released,new Set())).writes).toEqual([]);

@@ -80,7 +80,8 @@ export class Combat {
     if(a.owner==='none')return this.c.spatial.visible(this.c.spatial.elevatedPoint(a),this.c.spatial.elevatedPoint(b))&&distance2(precise(a),precise(b))<=
       (this.camps.find(c=>c.id===a.unit?.camp)?.aggroRange??this.c.def(a).behaviors.combat!.aggroRange)**2;
     const key=`${a.owner}:${b.id}`,cached=this.planningSight?.get(key);
-    if(cached!==undefined)return cached;
+    if(cached!==undefined){this.c.profile.count('Planning visibility cache hits');return cached;}
+    this.c.profile.count('Planning visibility evaluations');
     const visible=this.vision.visible(a.owner,b);this.planningSight?.set(key,visible);return visible;
   }
   private terrainClear(a:Entity,b:Entity){
@@ -99,6 +100,7 @@ export class Combat {
     const approaches=new Map<string, readonly Point[]>();
     const targets=c.profile.measure('Target index',()=>new TargetIndex(c.liveBodies(), c.registry));
     for (const e of c.activeUnits()) {
+      c.profile.count('Planning units visited');
       if(only&&!only.has(e.id))continue;
       c.reconcileWeapon(e);
       const u = e.unit!,
@@ -225,6 +227,7 @@ export class Combat {
         if (u.retryAt <= c.state.tick) {
           const staleGoal = !!u.route.length && u.goal !== null && (c.spatial.pointRange(c.spatial.point(u.goal),target) > combat.range ** 2 || !c.spatial.attackClear({...c.spatial.point(u.goal),elevation:c.spatial.elevation({...e,...c.spatial.point(u.goal)})},target,!!(combat.projectile||combat.shell)));
           if (!u.route.length || staleGoal) {
+            c.profile.count(staleGoal?'Attack approach stale goal':'Attack approach no route');
             routeToAttack(c,e,target,approaches);
             u.retryAt = c.state.tick + 6;
           }
@@ -242,15 +245,20 @@ export class Combat {
   }
   private closestTarget(actor:Entity,targets:TargetIndex,range:number){
     let best: Entity | undefined, bestDistance = range ** 2;
+    let candidates=0,allied=0,eligible=0;
     for (const target of targets.near(precise(actor), range)) {
+      candidates++;
       // Nearby allies dominate marching formations. Allegiance can reject them
       // before footprint distance, form/weapon policies or any visibility work.
-      if (!this.hostile(actor,target)) continue;
+      if (!this.hostile(actor,target)){allied++;continue;}
       const distance = this.c.spatial.range(actor, target);
       if (distance > bestDistance || (best && distance === bestDistance && target.id >= best.id)) continue;
+      eligible++;
       if (!this.weaponEligible(actor,target) || !this.perceives(actor,target)) continue;
       best = target; bestDistance = distance;
     }
+    this.c.profile.count('Target candidates',candidates);this.c.profile.count('Candidates rejected by allegiance',allied);
+    this.c.profile.count('Candidates requiring weapon or sight check',eligible);
     return best;
   }
   private rememberTarget(actor:Entity,target:Entity){

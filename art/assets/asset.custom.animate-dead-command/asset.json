@@ -3,7 +3,7 @@
   "id": "asset.custom.animate-dead-command",
   "name": "Animate Dead — Woodland Command",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "135fe6d9263f76e86ea8869ab0292d1ad8e405de52be17e53e2d402e71259ca8",
-      "bytes": 642534
+      "sha256": "070d468fb716627d7af6aacfefd1cfbffd74227600a59e9b89a44a12e9f70efb",
+      "bytes": 44777
     },
     {
       "role": "source",

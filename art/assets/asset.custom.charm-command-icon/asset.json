@@ -3,7 +3,7 @@
   "id": "asset.custom.charm-command-icon",
   "name": "Charm — Allegiance Command Icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "ced6e30e9ead46660b85b4b1ccd1be2bd1e7cc1157d0d32e13bc085e35d3be47",
-      "bytes": 663843
+      "sha256": "34468312ea5c66c25d79ebcb2469ebb3c8af63ff6f79f235009aea10b70274ee",
+      "bytes": 43682
     },
     {
       "role": "source",

@@ -3,7 +3,7 @@
   "id": "asset.custom.spell-ward-command",
   "name": "Spell Ward — Hostile Spell Rejection",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "dfd73329b9e2c47d75267e5621d3523b4808290f882eb914e6166c12423b2aff",
-      "bytes": 666979
+      "sha256": "dcc3836aa85b5fa119d6af1469e5426375f5810c3f84cce8226093aa6489bd97",
+      "bytes": 45171
     },
     {
       "role": "source",

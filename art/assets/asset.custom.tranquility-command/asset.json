@@ -3,7 +3,7 @@
   "id": "asset.custom.tranquility-command",
   "name": "Tranquility — Restorative Grove Pulses",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "dbcc065232c54d0939ae57e524f530cd49c50c4760bd17410fa34dec128c02c8",
-      "bytes": 701789
+      "sha256": "6296e7c4a10f2b1d73b84c08546f3a62bb66cb15d0e014ffd7a29176291e4818",
+      "bytes": 47284
     },
     {
       "role": "source",

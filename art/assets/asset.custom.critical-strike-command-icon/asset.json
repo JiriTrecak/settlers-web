@@ -3,7 +3,7 @@
   "id": "asset.custom.critical-strike-command-icon",
   "name": "Critical Strike — command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "2cad88077349e6b2b704b8ac665a99d21c598b013be6737b247992218b49e975",
-      "bytes": 591618
+      "sha256": "c04505396a22605e8ddecec512ef5392106d867d1cffd90086d93a750b4c9f6c",
+      "bytes": 40716
     },
     {
       "role": "source",

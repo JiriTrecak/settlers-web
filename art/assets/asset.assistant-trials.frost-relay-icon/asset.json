@@ -3,7 +3,7 @@
   "id": "asset.assistant-trials.frost-relay-icon",
   "name": "Frost Relay command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "a0295a21bfef7b79627ac1fedd901a0c1c4779c68468550a56baf3d9f1f9285f",
-      "bytes": 680023
+      "sha256": "5680a4f1c4173dbae9eab546cfeab69c28c9a5a810adbcae92f49f52196aa539",
+      "bytes": 45431
     },
     {
       "role": "source",

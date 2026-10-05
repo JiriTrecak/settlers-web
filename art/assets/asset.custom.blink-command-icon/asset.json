@@ -3,7 +3,7 @@
   "id": "asset.custom.blink-command-icon",
   "name": "Blink — Single Ant Fold",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "b1a1ee583e91d83735c388939d02e1917cbfe6bbf3ec113168731282b8db76e9",
-      "bytes": 639389
+      "sha256": "c5c62a19b303bcbbd62d22a759a924c9f5ee8460f9905f6c05f2e1aec10df237",
+      "bytes": 42950
     },
     {
       "role": "source",

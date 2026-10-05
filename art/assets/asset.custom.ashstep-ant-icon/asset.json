@@ -3,7 +3,7 @@
   "id": "asset.custom.ashstep-ant-icon",
   "name": "Ashstep — forest ant command icon",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "c8fda636efc8f911b0186b54b62e23c33b71c7eb4d94a38001941d01031c27fd",
-      "bytes": 592922
+      "sha256": "8f5a5e8bfec68ac4f8395e34d7cb97f8d413122783e419080a5b93c0921f25da",
+      "bytes": 42328
     },
     {
       "role": "source",

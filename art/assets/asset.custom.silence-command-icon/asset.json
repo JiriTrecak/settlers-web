@@ -3,7 +3,7 @@
   "id": "asset.custom.silence-command-icon",
   "name": "Silence — sealed casting",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "cdd5b1dda7e0fbf55cec7a0b67b21939315e906645bc872dc8f226e8ff839532",
-      "bytes": 549930
+      "sha256": "8e99b588d80da21a105e5db1bf7dc1d5ad4d9fa4bd8a017a4080e7c86f8ed5ea",
+      "bytes": 40170
     },
     {
       "role": "source",

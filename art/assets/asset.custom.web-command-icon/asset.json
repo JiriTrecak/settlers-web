@@ -3,7 +3,7 @@
   "id": "asset.custom.web-command-icon",
   "name": "Web — silk grounding",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "04ef0db8f14bc164bcacc0f148506c6e8b8c933259227a55ac8952dc74eca074",
-      "bytes": 587055
+      "sha256": "0d0fb3169209b4759d6ae914c88cd021f1df6cc76cce4a3bd2174b511464d15d",
+      "bytes": 40598
     },
     {
       "role": "source",

@@ -1,3 +1,4 @@
+import type {SimulationProfiler} from '../profiling';
 import {lengthCeil,type FixedPoint} from './motion';
 import {NavigationQueue} from './navigationQueue';
 
@@ -23,9 +24,9 @@ const offsets=[[-1,0],[0,-1],[1,0],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]] as const;
  * The caller supplies terrain, moving reservations and stationary body checks.
  * This is local navigation only: it cannot replace the map-wide corridor.
  */
-export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:FixedPoint)=>boolean):FixedPoint[]|null {
- if(Math.hypot(to.x-from.x,to.y-from.y)>4000)return null;
- if(clear(from,to))return [{...to}];
+export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:FixedPoint)=>boolean,profile?:SimulationProfiler):FixedPoint[]|null {
+ if(Math.hypot(to.x-from.x,to.y-from.y)>4000){profile?.count('Local distance rejected');return null;}
+ if(clear(from,to)){profile?.count('Local direct successes');return [{...to}];}
  const start=RADIUS*WIDTH+RADIUS;
  // Anchor the grid to the world, not the interrupted sub-cell position. A
  // translated grid can miss the only clear center between enlarged bodies.
@@ -34,10 +35,11 @@ export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:Fi
  const position=(id:number)=>id===start?{...from}:{x:originX+(id%WIDTH-RADIUS)*SPACING,y:originY+(Math.floor(id/WIDTH)-RADIUS)*SPACING,...(from.surface?{surface:from.surface}:{})};
  const scratch=pool.pop()??new LocalScratch();scratch.reset();
  const {cost,previous,seen,closed,open,epoch}=scratch;
+ let visits=0;
  try {
   seen[start]=epoch;cost[start]=0;
   open.push(start,0,lengthCeil(to.x-from.x,to.y-from.y));
-  for(let visits=0;open.length&&visits<MAX_VISITS;){
+  for(;open.length&&visits<MAX_VISITS;){
    const current=open.pop();
    if(closed[current.id]===epoch||cost[current.id]!==current.g)continue;
    closed[current.id]=epoch;visits++;
@@ -50,7 +52,7 @@ export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:Fi
     const result:FixedPoint[]=[];let anchor=from;
     for(let i=0;i<path.length;){let far=i;while(far+1<path.length&&clear(anchor,path[far+1]))far++;
      result.push(path[far]);anchor=path[far];i=far+1;}
-    return result;
+    profile?.count('Local searched successes');return result;
    }
    for(const [dx,dy] of offsets){
     const x=current.id%WIDTH+dx,y=Math.floor(current.id/WIDTH)+dy;
@@ -67,6 +69,7 @@ export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:Fi
     open.push(id,g,lengthCeil(to.x-q.x,to.y-q.y));
    }
   }
+  profile?.count(visits>=MAX_VISITS?'Local visit limit failures':'Local exhausted frontier failures');
   return null;
- } finally {if(pool.length<4)pool.push(scratch);}
+ } finally {profile?.count('Local nodes expanded',visits);if(pool.length<4)pool.push(scratch);}
 }

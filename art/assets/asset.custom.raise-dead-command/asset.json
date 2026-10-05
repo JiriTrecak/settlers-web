@@ -3,7 +3,7 @@
   "id": "asset.custom.raise-dead-command",
   "name": "Raise Dead — Woodland Command",
   "kind": "icon",
-  "revision": 5,
+  "revision": 6,
   "status": "published",
   "tags": [
     "spell-effects",
@@ -21,8 +21,8 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "c534fdfd8327e78c4cf604be8140934318336a201d1193c4b619a11570b5bd4b",
-      "bytes": 615461
+      "sha256": "8f20948f4691590321f936b49fdd06829e42b1c9187160bb3e9014bdd79f9d7f",
+      "bytes": 43419
     },
     {
       "role": "source",
