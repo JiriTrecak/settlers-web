@@ -1,8 +1,9 @@
 import './sourceAssetFetch';
 import {afterEach,expect,it,vi} from 'vitest';
-import {AnimationClip,Group,Scene} from 'three';
+import {AnimationClip,Group,Scene,SpriteMaterial} from 'three';
+import {MineLabels} from '../../src/render/settlement/mineLabels';
 import {ContentRegistry} from '../../src/content/registry';
-import type {Rules} from '../../src/content/schema';
+import type {AuthoredDefinition} from '../../src/content/schema';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {SettlementLayer} from '../../src/render/settlement/settlementLayer';
 import {HeightField} from '../../src/shared/map/height';
@@ -28,15 +29,16 @@ it('updates cached model decorations without recursive name searches and refresh
  layer.destroy(scene);
 });
 
-it.each([1,1.7,2])('renders unit bodies and indicators at the shared rules scale %s without scaling buildings or world positions',async(scale)=>{
+it.each([1,1.7,2])('renders unit bodies and indicators at the definition model scale %s independently of building presentation scales and world positions',async(scale)=>{
+ vi.spyOn(MineLabels.prototype,'material').mockReturnValue(new SpriteMaterial());
  vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async()=>{
   const scene=new Group();scene.userData.characterProfile={variants:{warrior:{states:{idle:'idle'}},base:{states:{idle:'idle'}}},attackEvents:{}};
   return {scene,animations:[new AnimationClip('idle',1,[])]} as any;
  });
- const raw=source();(raw.rules as Rules).unitScale=scale;
+ const raw=source();(raw.definitions as AuthoredDefinition[]).filter(d=>d.kind==='unit').forEach(d=>d.modelScale=scale);
  const registry=new ContentRegistry(raw),scene=new Scene(),layer=new SettlementLayer(scene,registry);await layer.ready;
- const definitions=['unit.ants.warrior','unit.ants.settler','building.ants.house'];
- const g=game(definitions.map((d,i)=>placed('size.'+i,d,205+i*5,210)),draft=>{(draft.rules as Rules).unitScale=scale;}),view=g.view();
+ const definitions=['unit.ants.warrior','unit.ants.settler','building.ants.house','building.neutral.amber-mine'];
+ const g=game(definitions.map((d,i)=>({...placed('size.'+i,d,205+i*5,210),owner:d==='building.neutral.amber-mine'?'none' as const:'player.1' as const})),draft=>{(draft.definitions as AuthoredDefinition[]).filter(d=>d.kind==='unit').forEach(d=>d.modelScale=scale);}),view=g.view();
  const state={...view,entities:view.entities.filter(e=>definitions.includes(e.definition))},field=new HeightField();
  layer.update(state,field,0);await layer.ready;layer.update(state,field,0);
  const roots=state.entities.map(e=>scene.getObjectByName('game-entities')!.children.find(o=>o.userData.entityId===e.id)!);
@@ -44,11 +46,12 @@ it.each([1,1.7,2])('renders unit bodies and indicators at the shared rules scale
  state.entities.forEach((e,i)=>{
   const root=scene.getObjectByName('game-entities')!.children.find(o=>o.userData.entityId===e.id)!;
   expect(root).toBe(roots[i]);
-  const asset=registry.asset(registry.get(e.definition).asset),unit=!!e.unit,multiplier=unit?scale:1;
+  const asset=registry.asset(registry.get(e.definition).asset),unit=!!e.unit,multiplier=registry.get(e.definition).modelScale??1;
   const body=root.getObjectByName('Body')!;
   expect(body.scale.x).toBeCloseTo((asset.scale??1)*multiplier);
   expect(body.scale.y).toBeCloseTo(body.scale.x);expect(body.scale.z).toBeCloseTo(body.scale.x);
   expect(root.getObjectByName('Health')!.position.y).toBeCloseTo(registry.get(e.definition).dimensions?.height??(asset.healthHeight??2.5)*multiplier);
+  if(e.gathering)expect(root.getObjectByName('Mine occupancy')!.position.y).toBeCloseTo((asset.healthHeight??3)*multiplier+.55);
   expect(root.position.x).toBe(e.x);expect(root.position.z).toBe(e.y);expect(root.scale.x).toBe(1);
   if(unit){
    expect(root.getObjectByName('Cargo')!.position.y).toBeCloseTo(1.04*scale);

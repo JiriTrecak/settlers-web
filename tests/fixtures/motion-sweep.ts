@@ -1,7 +1,6 @@
 // Previous allocation-based sweep retained as an equivalence oracle.
 import {canTraverse} from '../../src/sim/game/navigation';
 import type {FixedPoint} from '../../src/sim/game/motion';
-import {unitDimensions} from '../../src/content/unitScale';
 /** Integer supercover DDA: every crossed cell and exact corner is checked. */
 export function clearRay(from: FixedPoint, to: FixedPoint, step: (a: number, b: number) => boolean,size=256): boolean {
   const dx = to.x - from.x, dy = to.y - from.y;
@@ -23,7 +22,7 @@ export function clearRay(from: FixedPoint, to: FixedPoint, step: (a: number, b: 
 }
 
 /** Sweep a conservative square footprint around the center line. */
-export function clearSweep(from: FixedPoint, to: FixedPoint, step: (a: number, b: number) => boolean,size=256,radius=unitDimensions(1).radius*1000): boolean {
+export function clearSweep(from: FixedPoint, to: FixedPoint, step: (a: number, b: number) => boolean,size:number,radius:number): boolean {
   const offsets = [[0, 0], [-radius, -radius], [radius, -radius], [-radius, radius], [radius, radius]];
   // Wider bodies must not straddle an obstacle between their center/corners.
   // Sample the interior as well, with strictly sub-cell gaps between rays.

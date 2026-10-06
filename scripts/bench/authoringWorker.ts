@@ -47,7 +47,7 @@ if(!isMainThread){
  void main().catch(error=>{console.error(error);process.exitCode=1;});
 }
 async function main(){
- const path=process.argv[2]??'assets/maps/skirmish/heartroot-glade.utcmap';
+ const path=process.argv[2]??'assets/maps/skirmish/amberwake-basin.utcmap';
  const initial=parseUtcMap(JSON.parse(readFileSync(path,'utf8')));if(!initial)throw Error('Invalid map');
  const worker=new Worker(new URL('./authoring-worker.cjs',import.meta.url)),samples:unknown[]=[];
  const wait=(ms:number)=>new Promise(resolve=>setTimeout(resolve,ms));

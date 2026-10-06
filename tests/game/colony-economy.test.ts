@@ -12,7 +12,7 @@ const neutral = (id: string, definition: string, x: number, y: number) => ({
 const mine = () => neutral("mine", "building.neutral.amber-mine", 220, 205);
 
 describe("direct gathering", () => {
-  it("makes mines neutral selectable buildings with ten persistent gathering places", () => {
+  it("makes mines neutral selectable buildings with an uncapped persistent gather assignment", () => {
     const g = game([
       mine(),
       ...Array.from({ length: 7 }, (_, i) =>
@@ -31,16 +31,16 @@ describe("direct gathering", () => {
       actors: workers.map((w) => w.id),
       target: m.id,
     });
-    expect(accepted.actors).toHaveLength(10);
+    expect(accepted.actors).toHaveLength(workers.length);
     g.observation.update();
     expect(g.view(0).entities.find((e) => e.id === m.id)!.gathering).toEqual({
-      workers: 10,
-      capacity: 10,
+      workers: workers.length,
+      recommendedWorkers: 2,
     });
     run(g, 650);
     expect(
       g.view(0).entities.find((e) => e.id === m.id)!.gathering!.workers,
-    ).toBe(10);
+    ).toBe(workers.length);
     // Returning a load does not free a place. Explicitly ending an assignment does.
     const assigned = workers.find((w) => w.unit!.order?.type === "gather")!;
     g.command("player.1", { type: "stop", actors: [assigned.id] });
@@ -51,7 +51,7 @@ describe("direct gathering", () => {
     )
       g.tick();
     expect(assigned.unit!.cargo).toBeNull();
-    const spare = workers.find((w) => !accepted.actors.includes(w.id))!;
+    const spare = assigned;
     expect(
       g.command("player.1", {
         type: "gather",
@@ -60,7 +60,7 @@ describe("direct gathering", () => {
       }).accepted,
     ).toBe(true);
   });
-  it("reserves the new mine while a retargeted worker finishes its previous load", () => {
+  it("counts a carrying worker at its current source until it completes the trip", () => {
     const g = game([
       mine(),
       neutral("next", "building.neutral.amber-mine", 205, 210),
@@ -89,12 +89,12 @@ describe("direct gathering", () => {
       actors: workers.map((w) => w.id),
       target: next.id,
     });
-    expect(changed.actors).toHaveLength(10);
+    expect(changed.actors).toHaveLength(workers.length);
     expect(changed.actors).toContain(carrier.id);
     g.observation.update();
     expect(
       g.view(0).entities.find((e) => e.id === next.id)!.gathering!.workers,
-    ).toBe(10);
+    ).toBe(workers.length - 1);
     expect(
       g.view(0).entities.find((e) => e.id === first.id)!.gathering!.workers,
     ).toBe(1);
@@ -103,19 +103,19 @@ describe("direct gathering", () => {
     const g = game([placed("pioneer", "unit.ants.settler", 128, 128)]),
       w = g.entities.find((e) => e.placement === "pioneer")!;
     expect(
-      g.canBuild("player.1", "building.ants.house", { x: 132, y: 129 }, w.id),
+      g.canBuild("player.1", "building.ants.house", { x: 135.5, y: 127.5 }, w.id),
     ).toBeNull();
     expect(
       g.command("player.1", {
         type: "build",
         actors: [w.id],
         definition: "building.ants.house",
-        position: { x: 132, y: 129 },
+        position: { x: 135.5, y: 127.5 },
       }).accepted,
     ).toBe(true);
     expect(g.view(0)).not.toHaveProperty("territory");
     expect(
-      g.canBuild("player.1", "building.ants.house", { x: 140, y: 140 }, w.id),
+      g.canBuild("player.1", "building.ants.house", { x: 163.5, y: 163.5 }, w.id),
     ).toMatch(/Explore/);
   });
   it("removes retired chains, forbids currency ground objects, and keeps hero loot", () => {
@@ -148,10 +148,11 @@ describe("direct gathering", () => {
       position: { x: 205, y: 210 },
     });
     const b = g.entities.at(-1)!;
-    // There is no hall to receive the refund. It must not become a loose pile.
+    // A refund belongs to the player even without a surviving drop-off.
     g.economy.remove(g.context.get(g.state.objectives["player.1"])!);
     g.economy.remove(b, true);
     expect(g.entities.some((e) => e.item)).toBe(false);
-    expect(g.state.accounting.lost["item.wood"]).toBe(g.registry.rules.startingSetup.inventory["item.wood"]);
+    expect(g.state.accounting.lost["item.wood"] ?? 0).toBe(0);
+    expect(g.state.wallets["player.1"]["item.wood"]).toBe(g.registry.rules.startingSetup.inventory["item.wood"]);
   });
 });

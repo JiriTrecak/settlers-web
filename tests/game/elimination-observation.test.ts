@@ -8,7 +8,7 @@ import {source} from './helpers';
 it('keeps four-player elimination, subsequent knowledge and restored play identical to a full refresh',()=>{
  const draft=source();(draft.rules as Rules).startingSetup.gathering=[];
  const registry=new ContentRegistry(draft),map={...emptyUtcMap(),playerStarts:[1,2,3,4].map(player=>({
-  player,x:player%2?40:210,z:player<3?40:210,setup:'setup.ants',mainFort:`start.player.${player}/main-fort`,
+  player,x:player%2?37.5:217.5,z:player<3?37.5:217.5,setup:'setup.ants',mainFort:`start.player.${player}/main-fort`,
  }))};
  const slots=[0,1,2,3].map(player=>({player,kind:'human' as const,team:player}));
  const game=new Game(map,slots,registry),reference=new Game(map,slots,registry);

@@ -30,7 +30,6 @@ import {
   joinRoom,
   leaveRoom,
   matchUrl,
-  startRoom,
   WebSocketChannel,
 } from "../../net";
 import { type MatchConfig, type RoomView, type ServerMsg } from "../../shared";
@@ -291,20 +290,16 @@ export class GameApp {
     const channel = new WebSocketChannel(matchUrl(room.id, token));
     const wait = new RoomWaitScreen(room, {
       host,
+      player,
+      onHero: hero => channel.send({type:'selectHero',hero}),
       mapName: getMap(room.mapId).name,
       onBack: () => {
         channel.destroy();
         void leaveRoom(room.id, token);
         this.showMultiplayer();
       },
-      onStart: () => {
-        void startRoom(room.id, token).catch((err) => {
-          channel.destroy();
-          this.showMultiplayer(
-            err instanceof Error ? err.message : "Start failed",
-          );
-        });
-      },
+      // The ordered channel keeps the host's last selection ahead of Start.
+      onStart: () => channel.send({type:'startMatch'}),
     });
     this.screens?.show(wait);
     void (async () => {

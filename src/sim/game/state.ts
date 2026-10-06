@@ -9,6 +9,7 @@ import {
   ownerSchema,
   idSchema,
   pointSchema,
+  placementPointSchema,
   surfaceSchema,
 } from "../../content/schema";
 
@@ -51,8 +52,8 @@ export const entitySchema = z
     placement: z.string().nullable(),
     definition: idSchema,
     owner: ownerSchema,
-    x: z.number().int().min(0).max(511),
-    y: z.number().int().min(0).max(511),
+    x: z.number().multipleOf(.5).min(0).max(2047),
+    y: z.number().multipleOf(.5).min(0).max(2047),
     surface: surfaceSchema.optional(),
     rotation: z.number().finite(),
     hp: natural.nullable(),
@@ -71,7 +72,7 @@ export const entitySchema = z
     revival: z
       .object({
         queue: z.array(
-          z.object({ hero: positive, progress: natural }).strict(),
+          z.object({ id: positive, hero: positive, level: positive.max(100), progress: natural }).strict(),
         ),
       })
       .strict()
@@ -136,7 +137,7 @@ export const entitySchema = z
         flight:z.object({height:z.number().min(1).max(30),source:z.object({ability:idSchema,status:z.string().min(1).max(48),cast:positive,rank:z.number().int().min(1).max(10),started:natural}).strict().optional()}).strict().optional(),
         release: point.nullable(),
         target: positive.nullable(),
-        pursuit: z.object({target:positive,position:point,seenTick:natural}).strict().optional(),
+        pursuit: z.object({target:positive,position:placementPointSchema,seenTick:natural}).strict().optional(),
         cooldown: natural,
         attack: z.object({profile:idSchema.optional(),target: positive, cycleTicks: positive, started: natural, impact: natural, ends: natural, released: z.boolean()}).strict().optional(),
         charge: z.object({profile:idSchema.optional(),readyTick: natural, expires: natural, target: positive.nullable()}).strict().optional(),
@@ -193,7 +194,8 @@ export const jobSchema = z
     source: positive.nullable(),
     item: idSchema.nullable(),
     amount: natural,
-    phase: z.enum(["walk", "work", "fall", "return"]),
+    phase: z.enum(["walk", "wait", "work", "fall", "return"]),
+    arrivedTick: natural.optional(),
     progress: natural,
     queue: positive.nullable(),
   })
@@ -248,6 +250,7 @@ export const stateSchema = z
     nextQueue: positive,
     nextFact: positive,
     entities: z.array(entitySchema),
+    wallets: z.record(ownerSchema, stockSchema),
     accounting: z
       .object({
         produced: stockSchema,
@@ -296,6 +299,7 @@ export const emptyState = (): GameState => ({
   nextQueue: 1,
   nextFact: 1,
   entities: [],
+  wallets: {},
   accounting: { produced: {}, consumed: {}, lost: {} },
   jobs: [],
   facts: [],

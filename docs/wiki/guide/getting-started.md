@@ -19,7 +19,7 @@ Those assignments need suitable nearby sources and a reachable hall. Your first 
 ## A useful opening
 
 1. Inspect the nearby Amber Deposit and keep workers gathering.
-2. Build a **Mound**: the starting colony uses all 12 supply, and a completed Mound adds 6.
+2. Plan a **Mound** before reaching the initial 15 supply; you start at 10/15 and a completed Mound adds 8.
 3. Train additional Workers at the **Main Hall**; each costs resources and 1 supply.
 4. Build a **Barracks**, then train Warriors or Archers. Each uses 1 supply and its resource price, without consuming a worker.
 5. Lead the Marshal and army to an easier camp, with the hero close enough to earn experience and collect rewards.
@@ -27,9 +27,9 @@ Those assignments need suitable nearby sources and a reachable hall. Your first 
 
 ## Winning and losing
 
-The current match objective is the starting **Main Hall**. Destroy an opponent's objective Main Hall to defeat that colony. Losing every soldier is not itself defeat; losing the objective Main Hall is. The defeated colony loses its remaining actors. In a free-for-all, the other players continue until only one colony survives; team matches end when one team remains. Simultaneous final objective losses can produce no winner.
+A standard skirmish colony is defeated when it has no living buildings left. Unfinished foundations count. Losing the Main Hall alone does not defeat you: a surviving Mound or foundation gives workers time to rebuild. Earned money remains in your wallet.
 
-The present implementation ends the match when an objective loss is detected. Larger free-for-all elimination rules are not established just because the editor supports more starting slots.
+A defeated colony loses its remaining actors. Free-for-all matches continue until one colony remains; team matches continue until one team remains. Simultaneous elimination of the last colonies can produce a draw. Campaign scenarios may define their own objectives.
 
 ## Where to go next
 
@@ -37,3 +37,17 @@ The present implementation ends the match when an objective loss is detected. La
 - [Commands and camera controls](/guide/controls)
 - [Combat and armor](/guide/combat)
 - [Heroes, abilities and inventory](/guide/heroes)
+
+## Expand your hero roster
+
+Choose your free starting hero before the match. A completed Tier 2 Hall permits
+**two distinct heroes**; Tier 3 permits **three**. Extra Halls do not add slots.
+Additional heroes are trained at the Sanctuary for **425 amber and 100 wood over
+55 seconds**, using **4 supply** each. Recruitment and revival share its queue.
+Fallen heroes retain their roster slots, items and experience: revive them instead
+of buying replacements. The current catalogue offers only the Marshal; more hero
+choices can be added through unit definitions and the Sanctuary's production list.
+
+Tier 3 costs **600 amber and 250 wood over 100 seconds**. Upgraded Halls continue
+to satisfy lower-tier requirements. Losing a Hall restricts new recruitment but
+does not cancel heroes already paid for.

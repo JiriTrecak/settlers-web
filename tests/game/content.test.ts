@@ -54,6 +54,7 @@ describe("content and presentation contracts", () => {
     const u = d.definitions.find(
       (d: any) => d.id === "unit.ants.settler",
     ) as any;
+    delete u.behaviors.movement; // Explicit per-unit overrides intentionally resolve defaults.
     u.behaviorSets.push("behavior-set.conflict");
     expect(() => new ContentRegistry(d)).toThrow(/conflicting/);
   });
@@ -108,6 +109,8 @@ describe("content and presentation contracts", () => {
     const g = game([
         placed("b", "building.ants.barracks"),
         placed("mill", "building.ants.sanctuary", 230, 210),
+        placed("army.a", "unit.ants.warrior", 196, 236),
+        placed("army.b", "unit.ants.warrior", 200, 236),
       ]),
       view = g.view("player.1"),
       ids = areaSelection(view.entities, "player.1", g.registry);
@@ -118,10 +121,10 @@ describe("content and presentation contracts", () => {
     const b = g.entities.find((e) => e.placement === "b")!,
       mill = g.entities.find((e) => e.placement === "mill")!;
     expect(
-      commandCard(view, [mill.id, b.id], "player.1", g.registry).some(
-        (b) => b.type === "produce",
-      ),
-    ).toBe(false);
+      commandCard(view, [mill.id, b.id], "player.1", g.registry)
+        .filter(c => c.type === "produce")
+        .every(c => c.actors[0] === mill.id && c.targetDefinition === 'unit.ants.marshal'),
+    ).toBe(true);
     expect(
       commandCard(view, [b.id, mill.id], "player.1", g.registry)
         .filter((c) => c.type === "produce")
@@ -133,7 +136,7 @@ describe("content and presentation contracts", () => {
     ).toEqual(["move", "attack", "stop", "hold", "patrol", "follow"]);
   });
   it("S15 removing control removes orders from both UI and authoritative ingress", () => {
-    const g = game([], (s) => {
+    const g = game([placed("uncontrolled", "unit.ants.warrior", 196, 236)], (s) => {
         const u = s.definitions.find(
           (d: any) => d.id === "unit.ants.warrior",
         ) as any;
@@ -203,7 +206,7 @@ describe("content and presentation contracts", () => {
       ).overrides[`produce:${outputs[12]}`] = { hotkey: "Z" };
     });
     const b = g.entities.find((e) => e.placement === "b")!;
-    g.context.get(g.state.objectives["player.1"])!.inventory["item.amber"] = 10000;
+    g.state.wallets["player.1"]["item.amber"] = 10000;
     for (
       let i = 0;
       i < g.registry.get(b.definition).behaviors.production!.queueCapacity!;

@@ -2,7 +2,7 @@ import {heading} from '../../src/sim/game/facing';
 import {describe,it,expect} from 'vitest';
 import {game,placed} from './helpers';
 const setup=()=>{
- const g=game([placed('attacker','unit.ants.warrior',200,210),{...placed('target','unit.ants.warrior',201,210),owner:'player.2'}]);
+ const g=game([placed('attacker','unit.ants.warrior',200,210),{...placed('target','unit.ants.warrior',203,210),owner:'player.2'}]);
  const a=g.entities.find(e=>e.placement==='attacker')!,b=g.entities.find(e=>e.placement==='target')!;
  a.rotation=heading(a,b);
  g.command('player.1',{type:'attack',actors:[a.id],target:b.id});
@@ -19,12 +19,14 @@ describe('authoritative attack timing',()=>{
  });
  it('lands a committed strike when the target steps slightly outside the acquisition range',()=>{
   const {g,a,b,policy}=setup(),hp=b.hp!;g.combat.resolve();
-  b.unit!.position={x:Math.round((a.x+policy.range+.2)*1000),y:a.y*1000};
+  const bodies=g.spatial.dimensions(a).radius+g.spatial.dimensions(b).radius;
+  b.unit!.position={x:Math.round((a.x+bodies+policy.range+.2)*1000),y:a.y*1000};
   g.state.tick=policy.attack.windupTicks;g.combat.resolve();expect(b.hp).toBeLessThan(hp);
  });
  it('does not stretch a melee hit to a target that genuinely escaped',()=>{
   const {g,a,b,policy}=setup(),hp=b.hp!;g.combat.resolve();
-  b.unit!.position={x:Math.round((a.x+policy.range+policy.attack.rangeBuffer+.1)*1000),y:a.y*1000};
+  const bodies=g.spatial.dimensions(a).radius+g.spatial.dimensions(b).radius;
+  b.unit!.position={x:Math.round((a.x+bodies+policy.range+policy.attack.rangeBuffer+.1)*1000),y:a.y*1000};
   g.state.tick=policy.attack.windupTicks;g.combat.resolve();expect(b.hp).toBe(hp);
  });
  it('an explicit move cancels windup without resetting cooldown',()=>{
@@ -41,7 +43,7 @@ describe('authoritative attack timing',()=>{
 });
 
 it('captures faster attack phases and preserves the committed contact after the bonus is removed',()=>{
- const g=game([placed('hero','unit.ants.marshal',100,100),{...placed('victim','unit.ants.warrior',101,100),owner:'player.2'}]);
+ const g=game([placed('hero','unit.ants.marshal',100,100),{...placed('victim','unit.ants.warrior',104,100),owner:'player.2'}]);
  const a=g.entities.find(e=>e.placement==='hero')!, b=g.entities.find(e=>e.placement==='victim')!;
  a.equipment![0]='item.stormwing-spurs';a.rotation=heading(a,b);
  const base=g.registry.get(a.definition).behaviors.combat!,cycle=g.context.stats(a).cooldownTicks;

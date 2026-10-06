@@ -20,7 +20,7 @@ export function prerequisiteReason(
   const complete = new Set(entities.filter(e =>
     e.owner === owner && !e.remembered && !e.construction &&
     (e.hp === null || e.hp > 0),
-  ).map(e => e.definition));
+  ).flatMap(e => registry.fulfilledPrerequisites(e.definition)));
   const missing = definition.requires.filter(id => !complete.has(id));
   return missing.length ? `Requires ${missing.map(id => registry.get(id).name).join(", ")}` : undefined;
 }

@@ -1,3 +1,4 @@
+import {idSchema} from '../../content/schema';
 import {campaignCompanySchema} from '../scenario/company';
 import { z } from "zod";
 import { actionSchema } from "../types/types";
@@ -21,6 +22,7 @@ const savedMatch = z.object({
     kind: z.enum(["human", "ai"]),
     name: z.string().optional(),
     team: natural.optional(),
+    hero: idSchema.optional(),
   }).strict()).min(1).max(8),
 }).strict().refine(match => new Set(match.slots.map(slot => slot.player)).size === match.slots.length, "Duplicate player slots");
 export const localSaveSchema = z

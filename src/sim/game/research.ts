@@ -1,7 +1,7 @@
 import { prerequisiteReason } from "../../content/prerequisites";
 import type { GameContext } from "./context";
 import type { Economy } from "./economy";
-import { add, type Entity } from "./state";
+import type { Entity } from "./state";
 
 /** Colony-wide purchases; buildings own only unfinished paid tasks. */
 export class Research {
@@ -18,16 +18,14 @@ export class Research {
     if (reason) return reason;
     const payment = this.economy.reserveCost(building.owner, Object.fromEntries(recipe.items.map(p => [p.item, p.amount])));
     if (!payment) return "Insufficient resources";
-    for (const p of payment) add(p.source.inventory, p.item, -p.amount);
+    this.economy.pay(payment);
     building.research.queue.push({id, progress: 0});
     return null;
   }
   cancel(building: Entity, id: string): string | null {
     const queue = building.research?.queue, index = queue?.findIndex(q => q.id === id) ?? -1;
     if (!queue || index < 0) return "Research is not queued here";
-    const account = this.c.get(this.c.state.objectives[building.owner]);
-    if (!account || account.hp === 0) return "No living colony account";
-    for (const p of this.c.registry.rules.research[id].items) add(account.inventory, p.item, p.amount);
+    this.economy.refundCost(building, Object.fromEntries(this.c.registry.rules.research[id].items.map(p => [p.item, p.amount])));
     queue.splice(index, 1);
     return null;
   }

@@ -4,7 +4,7 @@ import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import {placementOccupancyError} from '../../src/content/map';
 import {content} from '../../src/content/builtin';
 import {placed} from '../game/helpers';
-function fixture(script:string){return {...emptyUtcMap(),entities:[placed('hero','unit.ants.marshal',60,60),{...placed('cottage','building.briar.cottage',65,60),owner:'none' as const}],mission:{campaign:'test',title:'Destruction',order:1,regions:[],script}};}
+function fixture(script:string){return {...emptyUtcMap(),entities:[placed('hero','unit.ants.marshal',55,60),{...placed('cottage','building.briar.cottage',65,60),owner:'none' as const}],mission:{campaign:'test',title:'Destruction',order:1,regions:[],script}};}
 it('queues scripted damage through ordinary destruction and saves the queued impact deterministically',()=>{
  const m=fixture(`function on_start() mission.damage('cottage',10000) end`),a=new Game(m,[{player:0,kind:'human'}]);a.tick();
  expect(a.entities.some(e=>e.placement==='cottage')).toBe(true);expect(a.state.mission?.pendingDamage).toHaveLength(1);

@@ -8,8 +8,8 @@ import {
 /** Shared tiny labels: one texture per observed occupancy, never one canvas per frame. */
 export class MineLabels {
   private readonly cache = new Map<string, SpriteMaterial>();
-  material(workers: number, capacity: number) {
-    const key = `${workers}/${capacity}`;
+  material(workers: number, recommendedWorkers: number) {
+    const key = `${workers}/${recommendedWorkers}`;
     const existing = this.cache.get(key);
     if (existing) return existing;
     const canvas = document.createElement("canvas");
@@ -20,14 +20,14 @@ export class MineLabels {
     ctx.beginPath();
     ctx.roundRect(3, 3, 250, 58, 8);
     ctx.fill();
-    ctx.strokeStyle = workers >= capacity ? "#daa856" : "#8d9991";
+    ctx.strokeStyle = workers >= recommendedWorkers ? "#daa856" : "#8d9991";
     ctx.lineWidth = 2;
     ctx.stroke();
     ctx.font = "600 26px system-ui";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#f2dfb1";
-    ctx.fillText(`Workers ${key}`, 128, 32);
+    ctx.fillText(`Workers ${workers}`, 128, 32);
     const texture = new CanvasTexture(canvas);
     texture.colorSpace = SRGBColorSpace;
     texture.minFilter = LinearFilter;

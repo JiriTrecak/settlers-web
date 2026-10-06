@@ -126,14 +126,14 @@ export function buildCatalog(source: ContentSource) {
       stats.push(["Experience on defeat", d.experienceYield]);
     if (d.yield) stats.push(["Resource yield", d.yield]);
     if (d.felling) stats.push(
-      ["Chopping health", d.felling.maxHp],
+      ["Standing reserve health", d.felling.maxHp],
       ["Fall duration", seconds(d.felling.fallTicks)],
       ["Sinking duration", seconds(d.felling.decayTicks)],
     );
-    if (d.gatheringCapacity)
+    if (d.harvesting)
       stats.push([
-        "Gathering capacity",
-        `${d.gatheringCapacity} workers (shared)`,
+        "Recommended workers",
+        `${d.harvesting.recommendedWorkers} workers; ${d.harvesting.activeWorkers} actively extracting`,
       ]);
     if (d.constructionClearance)
       stats.push([
@@ -166,11 +166,11 @@ export function buildCatalog(source: ContentSource) {
     } else if (d.id === registry.rules.startingSetup.fort || d.hero) {
       body +=
         "## How to obtain\n\nIncluded in the starting colony. It is not currently offered as a new purchase in the worker command card.\n\n";
-    } else if (d.kind === "unit" || d.gatheringCapacity)
+    } else if (d.kind === "unit" || d.harvesting)
       body +=
         "## Where to find it\n\nPlaced by the map author. See the [map atlas](/maps/) for locations and camp compositions.\n\n";
     if (d.requires?.length)
-      body += `## Prerequisites\n\nRequires completed owned ${d.requires.map(link).join(", ")}. Losing a prerequisite locks new purchases; paid tasks continue.\n\n`;
+      body += `## Prerequisites\n\nRequires completed owned ${d.requires.map(link).join(", ")}. Upgraded descendants also satisfy these requirements. Losing a prerequisite locks new purchases; paid tasks continue.\n\n`;
     if (d.upgrade) {
       const u = d.upgrade;
       body += `## Building upgrade\n\nUpgrades in place to ${link(u.target)}. Cost: ${u.items.map(p => `${p.amount} ${link(p.item)}`).join(", ")}. Time: ${seconds(u.workTicks)}. Unit training pauses. Cancellation refunds the full price; destruction loses the paid upgrade. Identity, stored resources and existing damage are preserved.\n\n`;
@@ -191,13 +191,17 @@ export function buildCatalog(source: ContentSource) {
       if (p.queueCapacity)
         body += `**Queue capacity:** ${p.queueCapacity}.\n\n`;
     }
+    if (d.heroCapacity) body += `**Hero roster capacity:** ${d.heroCapacity}. Only the highest completed Hall counts; extra Halls do not add slots. Living, fallen and training heroes reserve distinct entries.\n\n`;
+    if (d.hero) body += `**Hero roster:** recruitment requires a free Hall roster slot and a different hero from those already owned, fallen or queued. Each hero uses ${d.supplyCost} supply. The selected starting hero is free.\n\n`;
     if (d.supplyProvided) body += `**Supply provided:** ${d.supplyProvided} when completed.\n\n`;
     if (b.storage)
-      body += `## Storage\n\nAccepts ${b.storage.accepts.map(link).join(", ")}; total capacity **${b.storage.capacity.toLocaleString("en-US")}**.${b.storage.dropoff ? " Workers deposit their loads here, making those resources available to spend." : " Production costs are reserved from the colony’s hall stores."}\n\n`;
+      body += `## Storage\n\nAccepts ${b.storage.accepts.map(link).join(", ")}; total capacity **${b.storage.capacity.toLocaleString("en-US")}**.${b.storage.dropoff ? " Workers deposit their loads here, making those resources available to spend." : " Production costs are paid from the player wallet."}\n\n`;
     if (b.work)
-      body += `## Worker tasks\n\nGather ${b.work.harvests?.map(link).join(" and ") || "no declared currencies"}. Right-click a source to assign work; use Stop to release a worker for recruitment.\n\n### Can construct\n\n${bulletLinks(b.work.builds)}\n\n`;
-    if (b.revival)
-      body += `## Hero revival\n\nRevives fallen owned heroes in **${seconds(b.revival.workTicks)}**, with a queue capacity of **${b.revival.queueCapacity}**. Revival is currently free. Items, experience and learned abilities persist through death. The same hero returns with full health and mana; a blocked exit delays completion. This building does not currently sell additional heroes.\n\n`;
+      body += `## Worker tasks\n\nGather ${b.work.harvests?.map(link).join(" and ") || "no declared currencies"}. Right-click a source to assign work; use Stop to release a worker for another task.\n\n### Can construct\n\n${bulletLinks(b.work.builds)}\n\n`;
+    if (b.revival) {
+      const price=(items: typeof b.revival.items) => items.map(p=>`${p.amount} ${link(p.item)}`).join(' + ') || 'no resources';
+      body += `## Hero revival\n\nLevel one costs **${price(b.revival.items)}** and takes **${seconds(b.revival.workTicks)}**. Each additional level adds **${price(b.revival.itemsPerLevel)}** and **${seconds(b.revival.workTicksPerLevel)}**. Queue capacity: **${b.revival.queueCapacity}**. Admission pays the price; cancellation refunds it fully, while destruction loses the paid cost. Items, experience and learned abilities persist. The same hero returns with full health and mana; a blocked exit delays deployment. ${b.production ? "Recruitment and revival share one ordered queue and work lane." : ""}\n\n`;
+    }
     if (b.progression) {
       const p = b.progression;
       body += `## Levels\n\nNearby enemy defeats share experience between eligible heroes within **${p.experienceRadius} cells**. These are base stats, before equipment or temporary effects. Leveling adds increases in maximum health and mana to their current pools; it preserves existing damage and spent mana.\n${table(
@@ -244,9 +248,9 @@ ${b.abilities.bindings.map(b=>{const a=registry.abilityLibrary.abilities.find(a=
       const dropoffs = defs.filter(x => x.behaviors.storage?.dropoff && x.behaviors.storage.accepts.includes(d.id));
       body += `## Gathering and spending\n\nWorkers gather this currency directly from ${d.creation?.method === "harvest" ? link(d.creation.source) : "its declared resource source"} and carry it to a completed owned drop-off: ${dropoffs.map(x => link(x.id)).join(", ")}. It enters the spendable colony bank on delivery. Currency never appears as a loose ground item.\n\n### Used by\n\n${bulletLinks(defs.filter((x) => x.creation?.items.some((c) => c.item === d.id) || x.upgrade?.items.some(c => c.item === d.id)).map((x) => x.id))}\n\n`;
     }
-    if (d.gatheringCapacity)
+    if (d.harvesting)
       body +=
-        "Assignments count for the entire gather-and-return trip, including approach and cargo delivery. Right-click with workers to assign them. The mine belongs to no player and cannot be captured; occupancy is shared. Its label shows current assigned workers / capacity. Buildings must leave its declared access clearance.\n\n";
+        "Assignments count for the entire gather-and-return trip, including approach and cargo delivery. Right-click with workers to assign them. The mine belongs to no player and cannot be captured; occupancy is shared. Its label shows assigned workers; the recommendation is not an assignment limit. Extra miners wait in arrival order. Buildings must leave its declared access clearance.\n\n";
     if (d.kind === "building" && !b.combat)
       body +=
         "## Role\n\nHas **no automatic attack** in the current definitions.\n\n";
@@ -328,6 +332,7 @@ ${b.abilities.bindings.map(b=>{const a=registry.abilityLibrary.abilities.find(a=
       ...Object.entries(setup.inventory).map(([id, n]) => [link(id), n]),
     ],
   );
+  if(setup.hero)fragments.opening += `\nChoose one starting hero before the match: ${setup.hero.choices.map(link).join(', ')}. Default: ${link(setup.hero.default)}. The hero uses four supply and has no starting purchase cost.\n`;
   fragments.assignments =
     (setup.gathering ?? [])
       .map((g) => `${g.workers} workers begin gathering ${link(g.item)}`)

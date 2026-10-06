@@ -134,7 +134,8 @@ export class EditorControl {
     },
     setSpawnPoint: (p) => {
       const o = obj(p);
-      this.editor.setSpawnPoint(Number(o.player), Number(o.x), Number(o.z));
+      if (!this.editor.setSpawnPoint(Number(o.player), Number(o.x), Number(o.z), o.rotation === undefined ? undefined : Number(o.rotation)))
+        throw new Error(this.editor.spawnMessage);
       return {
         starts: this.editor.map.playerStarts,
         message: this.editor.spawnMessage,

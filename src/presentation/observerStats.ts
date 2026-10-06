@@ -1,3 +1,4 @@
+import {hasColonyBuildings} from '../sim/game/colony';
 import { colonySupply, type Supply } from "../sim/game/supply";
 import { workerPopulation } from "../sim/game/population";
 import type { ContentRegistry } from "../content/registry";
@@ -108,10 +109,11 @@ export function observerStats(
       name: slot.name ?? `Player ${slot.player + 1}`,
       controller: slot.kind === "ai" ? "AI" : "Human",
       defeated:
-        (!!state.objectives[slotOwner(slot.player)] && !state.entities.some(e=>e.id===state.objectives[slotOwner(slot.player)] && (e.hp===null||e.hp>0))),
+        state.mission ? !!state.outcome?.defeated.includes(slotOwner(slot.player)) :
+          !!state.objectives[slotOwner(slot.player)] && !hasColonyBuildings(state.entities, slotOwner(slot.player), registry),
       resources: observerResources(registry).map((r) => ({
         item: r.item,
-        stored: 0,
+        stored: state.wallets[slotOwner(slot.player)]?.[r.item] ?? 0,
         perMinute: income.perMinute(slotOwner(slot.player), r.item),
       })),
       units: 0,
@@ -142,7 +144,7 @@ export function observerStats(
     }
     if (living && !entity.construction && definition.behaviors.storage?.dropoff)
       for (const resource of row.resources)
-        resource.stored += entity.inventory[resource.item] ?? 0;
+        if (!registry.get(resource.item).currency) resource.stored += entity.inventory[resource.item] ?? 0;
     if (definition.hero && entity.unit && (living || entity.fallen))
       row.heroes.push({
         id: entity.id,

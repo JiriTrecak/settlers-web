@@ -1,7 +1,8 @@
 import {describe,it,expect} from 'vitest';
 import {readFileSync} from 'node:fs';
 import {applySceneryBlockers} from '../../src/shared/map/sceneryCollision';
-import {parseUtcMap} from '../../src/shared/map/utcmap';
+import {createBiomeMap} from '../../src/shared/map/newMap';
+import {authoredObjectSchema,proceduralLayerSchema} from '../../src/shared/authoring/layers';
 import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {biomeById} from '../../src/content/biomes';
 import {assetDefinitionSchema} from '../../src/shared/authoring/asset';
@@ -29,11 +30,12 @@ describe('original forest-scale landmarks',()=>{
   expect(land[24*size+24]).toBe(0);expect(land[24*size+34]).toBe(1);
   expect(land[75*size+65]).toBe(0);expect(land[65*size+71]).toBe(1);
  });
- it('offers a paintable mushroom recipe and compiles the Threewater showcase without missing assets',()=>{
+ it('compiles giant landmarks and a live mushroom brush without missing assets',()=>{
   expect(biomeById('vibrant-forest').foliage.some(r=>r.id==='recipe.foliage.mushroom-patches')).toBe(true);
   const catalogue=read('assets/authoring/catalogue.json') as LandscapeAsset[];
-  const map=parseUtcMap(read('assets/maps/skirmish/threewater-forest.utcmap'))!;
-  expect(map.authoring!.objects.filter(o=>o.id.startsWith('forest-scale.'))).toHaveLength(10);
+  const map=createBiomeMap('Landmark authoring fixture',256,'vibrant-forest');
+  map.authoring!.objects=names.map((slug,i)=>authoredObjectSchema.parse({id:'landmark.'+i,asset:'asset.models.environment.'+slug,x:30+i*25,z:70,scale:1,yaw:0}));
+  map.authoring!.layers=[proceduralLayerSchema.parse({id:'mushrooms',name:'Mushroom brush',recipe:'recipe.foliage.mushroom-patches',seed:19027,shape:{type:'mask',strokes:[{operation:'add',radius:12,points:[{x:110,z:140}]}]}})];
   const scene=compileMapScene(map,catalogue);expect(scene.generated!.issues).toEqual([]);
   expect(scene.stamps.some(s=>s.asset==='woodland-mushrooms-button')).toBe(true);
   expect(scene.stamps.some(s=>s.asset==='woodland-canopy-elder')).toBe(true);

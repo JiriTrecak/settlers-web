@@ -64,8 +64,8 @@ export class EditorScreen extends GameScreen {
   ) {
     super("screen");
     this.enableHudToggle();
-    const initial = hooks.map ?? getMap("threewater-forest").map;
-    const mapId = hooks.mapId ?? (hooks.map ? 'new' : 'threewater-forest');
+    const initial = hooks.map ?? getMap("amberwake-basin").map;
+    const mapId = hooks.mapId ?? (hooks.map ? 'new' : 'amberwake-basin');
     this.draft = new EditorDraft(sessionStorage,mapId,initial);
     const restored = this.draft.restore([
       'utc-editor-threewater-draft:'+mapId,

@@ -1,3 +1,5 @@
+import {colonyHome} from '../../sim/game/colony';
+import {snapPlacement} from '../../shared/spatial/placement';
 import {SceneryComposition} from '../../presentation/sceneryChanges';
 import {matchContentIdentity} from '../../content/identity';
 import {SIMULATION_BUILD} from '../../shared/simulationBuild';
@@ -96,9 +98,11 @@ export class Session {
   /** Debug navigation overlay: panel toggles, the grid revision the renderer holds, and a
    * single in-flight worker request. With both toggles off (or the profiler closed) the
    * worker is never asked and the renderer owns no overlay. */
-  private navDebug={paths:false,walkability:false,navmesh:false,revision:-1,meshRevision:-1,epoch:0,pending:false,next:0,shown:false};
+  private navDebug={worldGrid:false,paths:false,walkability:false,navmesh:false,revision:-1,meshRevision:-1,epoch:0,pending:false,next:0,shown:false};
   private pollNavigation(){
     const d=this.navDebug,worker=this.worker,renderer=this.renderer;
+    const gridMode=perf.enabled&&d.worldGrid?'full':'none';
+    if(renderer&&renderer.gridMode!==gridMode)renderer.setGridMode(gridMode);
     if(!perf.enabled||!(d.paths||d.walkability||d.navmesh)){
       if(d.shown){renderer?.gameNavigation(null);d.shown=false;d.revision=d.meshRevision=-1;}
       return;
@@ -230,7 +234,8 @@ export class Session {
       this.renderer?.gamePreview(null);
       return;
     }
-    const x=Math.round(hit.x),z=Math.round(hit.z),rotation=this.economyHud?.placementRotation??0;
+    const rotation=this.economyHud?.placementRotation??0;
+    const {x,y:z}=snapPlacement(content.get(kind),{x:hit.x,y:hit.z},rotation);
     const query={definition:kind,position:{x,y:z},actor:this.economyHud?.buildingActor,rotation};
     const key=JSON.stringify(query);
     this.placementLatest={key,query};
@@ -399,7 +404,7 @@ export class Session {
       },
       home: () => {
         const game = this.worker?.latest?.selection.settlement,
-          home = game?.entities.find(e=>e.id===game.objectives[slotOwner(this.me)]);
+          home = game && colonyHome(game.entities, slotOwner(this.me), content, game.objectives[slotOwner(this.me)]);
         if (home) renderer.camera.lookAt(home.x, home.y);
       },
     });
@@ -492,6 +497,8 @@ export class Session {
         if (distance !== undefined) renderer.camera.distance = distance;
       },
       paths: this.navDebug.paths,
+      worldGrid: this.navDebug.worldGrid,
+      onWorldGrid: (value) => { this.navDebug.worldGrid = value; },
       walkability: this.navDebug.walkability,
       navmesh: this.navDebug.navmesh,
       onNavmesh: (value) => {
@@ -741,6 +748,7 @@ export class Session {
       position = { x, y: z, ...("surface" in hit && typeof hit.surface==="string"?{surface:hit.surface}:{}) },
       binding = hud.targeting;
     if (hud.mode) {
+      const position=snapPlacement(content.get(hud.mode),{x:hit.x,y:hit.z},hud.placementRotation);
       const key=JSON.stringify({definition:hud.mode,position,actor:hud.buildingActor,rotation:hud.placementRotation});
       const error=this.placementResult?.key===key?this.placementResult.error:null;
       if(error){hud.showError(error);hud.placement(error);return;}
@@ -867,6 +875,10 @@ export class Session {
       }
     }
     if (target) {
+      if (right && target.owner === owner && target.construction && !target.remembered) {
+        const workers = selected.filter(e => content.get(e.definition).behaviors.work?.builds.includes(target.definition));
+        if (workers.length) { this.send({type: 'construct', actors: workers.map(e => e.id), target: target.id, ...(shift ? {append: true} : {})}); return; }
+      }
       if(right&&target.owner===owner&&!target.remembered&&content.get(target.definition).garrison){
         const actors=selected.filter(e=>content.get(target.definition).garrison!.accepts.includes(e.definition));
         if(actors.length){this.send({type:'garrison',actors:actors.map(e=>e.id),target:target.id,...(shift?{append:true}:{})});return;}

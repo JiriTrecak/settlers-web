@@ -6,7 +6,7 @@ it('places a building without re-rasterizing distant resources and preserves the
  const fast=make(),reference=make();
  vi.spyOn(reference.spatial,'appendOccupancy').mockImplementation(()=>reference.spatial.rebuild());
  const rebuild=vi.spyOn(fast.spatial,'rebuild'),collision=vi.spyOn(fast.spatial,'collision');
- for(const g of [fast,reference])expect(g.command('player.1',{type:'build',actors:[worker(g).id],definition:'building.ants.house',position:{x:205,y:210}}).accepted).toBe(true);
+ for(const g of [fast,reference])expect(g.command('player.1',{type:'build',actors:[worker(g).id],definition:'building.ants.house',position:placed('site','building.ants.house',205,210).position}).accepted).toBe(true);
  expect(rebuild).not.toHaveBeenCalled();
  expect(collision.mock.calls.some(([e])=>'placement' in e&&e.placement==='distant-tree')).toBe(false);
  expect(fast.spatial.occupied).toEqual(reference.spatial.occupied);
@@ -58,7 +58,7 @@ it('depletes a harvested tree without rebuilding the forest and matches the forc
   expect(g.command(w.owner,{type:'gather',actors:[w.id],target:tree.id}).accepted).toBe(true);
  }
  const rebuild=vi.spyOn(fast.spatial,'rebuild');
- for(let i=0;i<900;i++){fast.tick();reference.tick();}
+ for(let i=0;i<2400;i++){fast.tick();reference.tick();}
  expect(fast.entities.find(e=>e.placement==='harvest')!.resource!.amount).toBe(0);
  expect(rebuild).not.toHaveBeenCalled();expect(fast.snapshot()).toEqual(reference.snapshot());
  expect(fast.spatial.resources).toEqual(reference.spatial.resources);
@@ -66,7 +66,7 @@ it('depletes a harvested tree without rebuilding the forest and matches the forc
 
 it('finishes construction without rebuilding an already occupied footprint',()=>{
  const fast=game(),reference=game();
- for(const g of [fast,reference])expect(g.command('player.1',{type:'build',actors:[worker(g).id],definition:'building.ants.house',position:{x:205,y:210}}).accepted).toBe(true);
+ for(const g of [fast,reference])expect(g.command('player.1',{type:'build',actors:[worker(g).id],definition:'building.ants.house',position:placed('site','building.ants.house',205,210).position}).accepted).toBe(true);
  const building=fast.entities.at(-1)!;
  vi.spyOn(reference.spatial,'refreshAfterRemoval').mockImplementation(()=>reference.spatial.rebuild());
  const rebuild=vi.spyOn(fast.spatial,'rebuild');
@@ -169,4 +169,37 @@ it('matches forced rebuilds through resource geometry, depletion, overlap order 
   expect(fast.spatial.findPath(fast.spatial.cell({x:100,y:110}),fast.spatial.cell({x:120,y:110})))
    .toEqual(reference.spatial.findPath(reference.spatial.cell({x:100,y:110}),reference.spatial.cell({x:120,y:110})));
  }
+});
+
+it('keeps upgraded Hall signatures current so the next tree depletion does not rebuild every navigation mesh',()=>{
+ const make=()=>game([{...placed('tree','resource.forest.tree',110,110),owner:'none'}],draft=>{
+  for(const d of draft.definitions as any[])if(d.upgrade)d.upgrade={...d.upgrade,items:[],workTicks:1};
+ });
+ const fast=make(),reference=make(),rebuild=vi.spyOn(fast.spatial,'rebuild');
+ vi.spyOn(reference.spatial,'refreshOccupancyDefinition').mockImplementation(()=>reference.spatial.rebuild());
+ vi.spyOn(reference.spatial,'refreshAfterRemoval').mockImplementation(()=>reference.spatial.rebuild());
+ for(const tier of ['building.ants.great-mound','building.ants.elder-hall']){
+  for(const g of [fast,reference]){
+   const hall=g.context.get(g.state.objectives['player.1'])!;
+   expect(g.command(hall.owner,{type:'upgrade',actor:hall.id}).accepted).toBe(true);g.tick();
+   expect(hall.definition).toBe(tier);
+  }
+  expect(rebuild).not.toHaveBeenCalled();
+ }
+ for(const g of [fast,reference]){
+  const tree=g.entities.find(e=>e.placement==='tree')!;tree.resource!.amount=0;g.spatial.refreshAfterRemoval(tree.id);
+ }
+ expect(rebuild).not.toHaveBeenCalled();
+ expect(fast.spatial.occupied).toEqual(reference.spatial.occupied);
+ expect(fast.spatial.resources).toEqual(reference.spatial.resources);
+ for(let i=0;i<100;i++){fast.tick();reference.tick();}
+ expect(fast.snapshot()).toEqual(reference.snapshot());
+});
+
+it('still rebuilds occupancy when a definition transform changes the physical footprint',()=>{
+ const g=game(),hall=g.context.get(g.state.objectives['player.1'])!,old=g.spatial.footprint(hall),rebuild=vi.spyOn(g.spatial,'rebuild');
+ hall.definition='building.ants.house';g.spatial.refreshOccupancyDefinition(hall);
+ expect(rebuild).toHaveBeenCalledTimes(1);
+ const next=new Set(g.spatial.footprint(hall));
+ expect(old.filter(cell=>!next.has(cell)).every(cell=>g.spatial.occupied[cell]!==hall.id)).toBe(true);
 });

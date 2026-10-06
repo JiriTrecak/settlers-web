@@ -1,3 +1,4 @@
+import {BUILDING_CELL_SIZE} from '../../shared/spatial/footprint';
 import { GameScreen } from '../screen/screen';
 import { authoredMaps, playableMaps, overviewOf, type MapEntry } from '../../shared/map/library';
 import {hasPlayableSlots} from '../../shared/map/overview';
@@ -13,7 +14,7 @@ export class MapPicker extends GameScreen {
    const b=document.createElement('button');b.type='button';
    const name=document.createElement('strong');name.textContent=map.name;
    const summary=overviewOf(map);
-   const info=document.createElement('span');info.textContent=`${summary.size} × ${summary.size} · ${hasPlayableSlots(summary)?`${map.players} players`:'Landscape study'} · ${map.source==='local'?'Saved locally':'Project map'}`;
+   const info=document.createElement('span');info.textContent=`${summary.size / BUILDING_CELL_SIZE} × ${summary.size / BUILDING_CELL_SIZE} C · ${hasPlayableSlots(summary)?`${map.players} players`:'Landscape study'} · ${map.source==='local'?'Saved locally':'Project map'}`;
    b.append(name,info);b.onclick=()=>hooks.onChoose(map);list.append(b);
   }
   if(!maps.length){const p=document.createElement('p');p.textContent='Create a map with Player 1 and Player 2 starts in the editor to begin.';list.append(p);}

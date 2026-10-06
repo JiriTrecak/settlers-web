@@ -68,3 +68,17 @@ it('keeps cold and warm replicas identical through orders, obstacle edits and re
  expect(live.snapshot()).toEqual(replica.snapshot());
  expect(live.spatial.routing.meshAccepted).toBeGreaterThan(0);
 });
+
+it('retains the optimized mesh and warm cache for each declared body radius',()=>{
+ const g=game(),s=g.spatial,start=s.cell({x:60,y:90}),goal=s.cell({x:140,y:90});
+ for(const radius of [1.5,2,2.5]){
+  const body={radius,height:4.8,formationSpacing:radius*2+.25},before=s.routing.meshAccepted;
+  const path=s.findPath(start,goal,undefined,Infinity,body)!;
+  expect(path.at(-1)).toBe(goal);expect(s.routing.meshAccepted).toBe(before+1);
+  let previous=start;
+  for(const id of path){expect(s.clearSegment(fixed(s.point(previous)),fixed(s.point(id)),undefined,body)).toBe(true);previous=id;}
+  const tiles=s.routing.meshRebuiltTiles;
+  expect(s.findPath(start,goal,undefined,Infinity,body)).toEqual(path);
+  expect(s.routing.meshRebuiltTiles).toBe(tiles);
+ }
+});

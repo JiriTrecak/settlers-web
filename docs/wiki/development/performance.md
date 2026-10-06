@@ -1,5 +1,13 @@
 # Performance and match loading
 
+> Earlier measurements below used retired Heartroot/Threewater maps and remain
+> historical records. For current runs, use `--map amberwake-basin` (or
+> `amberwake-frost`). The lockstep harness is now
+> `scripts/bench/multiplayer-match.ts`; it creates one replica per player slot.
+> `node scripts/bench/run-match-budget.mjs --multiplayer --map amberwake-basin`
+> runs the current two-player benchmark; four-player maps still support four peers.
+
+
 A smooth RTS needs predictable frame times as well as a high average frame rate.
 A half-second work-assignment search is visible even when the surrounding frames
 are fast. Measure simulation, presentation, and the GPU separately, and keep

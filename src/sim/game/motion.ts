@@ -1,8 +1,6 @@
 import type { Entity, Point } from './state';
-import {unitDimensions} from '../../content/unitScale';
 
 export const POSITION_SCALE = 1000;
-const BASE_UNIT_RADIUS = unitDimensions(1).radius * POSITION_SCALE;
 export type FixedPoint = {x: number; y: number; surface?:string};
 export const fixed = (p: Point): FixedPoint => ({x: p.x * POSITION_SCALE, y: p.y * POSITION_SCALE, ...(p.surface?{surface:p.surface}:{})});
 export const motionCell = (p: FixedPoint,size=256) => Math.floor((p.y + 500) / 1000) * size + Math.floor((p.x + 500) / 1000);
@@ -83,7 +81,7 @@ function sweepPattern(radius:number):readonly (readonly number[])[]{
   sweepPatterns.set(radius,unique);return unique;
 }
 /** Sweep a conservative square footprint around the center line. */
-export function clearSweep(from: FixedPoint, to: FixedPoint, step: (a: number, b: number) => boolean,size=256,radius=BASE_UNIT_RADIUS): boolean {
+export function clearSweep(from: FixedPoint, to: FixedPoint, step: (a: number, b: number) => boolean,size:number,radius:number): boolean {
   for (const [x, y] of sweepPattern(radius)) {
     if (!clearRayCoordinates(from.x+x,from.y+y,to.x+x,to.y+y,step,size)) return false;
   }

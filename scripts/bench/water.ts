@@ -5,7 +5,7 @@ import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {landscapeAssets} from '../../src/shared/authoring/project';
 import {parseUtcMap} from '../../src/shared/map/utcmap';
 import {waterSurface} from '../../src/render/water/waterSurface';
-const paths=process.argv.slice(2);if(!paths.length)paths.push('assets/maps/skirmish/heartroot-glade.utcmap');
+const paths=process.argv.slice(2);if(!paths.length)paths.push('assets/maps/skirmish/amberwake-basin.utcmap');
 const reports=[];
 for(const path of paths){
  const map=parseUtcMap(JSON.parse(readFileSync(path,'utf8')));if(!map)throw Error(`Invalid map ${path}`);

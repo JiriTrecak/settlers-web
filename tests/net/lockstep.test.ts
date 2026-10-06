@@ -23,8 +23,8 @@ function kit(seed: number, slotCount: number): World {
       ...blank,
       playerStarts: config.slots.map((s, i) => ({
         player: s.player + 1,
-        x: i === 0 ? 218 : 38,
-        z: i === 1 ? 38 : 218,
+        x: i === 0 ? 217.5 : 37.5,
+        z: i === 1 ? 37.5 : 217.5,
         setup: "setup.ants",
         mainFort: `start.player.${s.player + 1}/main-fort`,
       })),

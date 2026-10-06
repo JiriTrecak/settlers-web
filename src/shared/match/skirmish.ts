@@ -1,3 +1,5 @@
+import gameSource from '../../../content/game.json' with {type:'json'};
+import {chosenHero,type HeroChoice} from '../../content/startingHero';
 import type { PlayerStart } from "../map/utcmap";
 import {
   CHECKSUM_EVERY,
@@ -38,6 +40,7 @@ export function createSkirmishMatch(
   name = "",
   seed = 1,
   sandbox = false,
+  heroes:HeroChoice|undefined = gameSource.rules.startingSetup.hero,
 ): { match: MatchConfig; player: number | null } {
   const ids = starts.map((s) => s.player - 1),
     humans = setup.slots.filter((s) => s.kind === "human");
@@ -70,8 +73,9 @@ export function createSkirmishMatch(
       delay: 1,
       checksumEvery: CHECKSUM_EVERY,
       tickMs: TICK_MS,
-      slots: setup.slots.map((s) => ({
+      slots: setup.slots.map(({hero,...s}) => ({
         ...s,
+        ...(!sandbox&&heroes?{hero:chosenHero(heroes,hero)}:{}),
         name:
           s.kind === "human"
             ? name.trim() || "You"

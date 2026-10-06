@@ -7,7 +7,7 @@ import {landscapeAssets} from '../../src/shared/authoring/project';
 import {MinimapSceneryIndex} from '../../src/render/minimap/sceneryIndex';
 import {sceneryKind} from '../../src/render/minimap/terrainStyle';
 
-const path=process.argv[2]??'assets/maps/skirmish/heartroot-glade.utcmap';
+const path=process.argv[2]??'assets/maps/skirmish/amberwake-basin.utcmap';
 const map=parseUtcMap(JSON.parse(readFileSync(path,'utf8')));if(!map?.authoring)throw Error('Expected an authored map');
 const compiled=compileMapScene(map,landscapeAssets),assets=new Map(landscapeAssets.map(a=>[a.id,a]));
 const stamps:MapStamp[]=[...map.stamps,...[...map.authoring.objects,...compiled.generated!.objects].filter(o=>o.visible).map(o=>({id:o.id,asset:assets.get(o.asset)!.scenery!,x:o.x,y:o.z,scale:o.scale}))];

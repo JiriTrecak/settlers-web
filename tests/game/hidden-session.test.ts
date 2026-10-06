@@ -6,7 +6,7 @@ it('does no presentation work while hidden and resumes using the latest worker s
  const doc={hidden:true};vi.stubGlobal('document',doc);
  const visual={tick:10,size:256,settlement:{entities:[],objectives:{}}},request=vi.fn().mockResolvedValue(undefined);
  const worker={latest:{visual,selection:visual},receivedAt:0,request};
- const renderer={draw:vi.fn(),unitCamera:vi.fn(),gameSelect:vi.fn(),gameHover:vi.fn(),pickGameHover:vi.fn(),camera:{distance:40,cinematic:vi.fn()}},input={tick:vi.fn()},mini={paint:vi.fn(),setFog:vi.fn()},onHud=vi.fn();
+ const renderer={gridMode:"none",setGridMode:vi.fn(),draw:vi.fn(),unitCamera:vi.fn(),gameSelect:vi.fn(),gameHover:vi.fn(),pickGameHover:vi.fn(),camera:{distance:40,cinematic:vi.fn()}},input={tick:vi.fn()},mini={paint:vi.fn(),setFog:vi.fn()},onHud=vi.fn();
  const session=Object.assign(Object.create(Session.prototype),{started:true,canvas:{style:{}},worker,workerProfiling:perf.enabled,workerProfilingDetails:perf.detailedSimulation,renderer,input,mini,config:{hooks:{onHud}},me:0,fpsFrames:0,fpsMs:0,stamps:[],updateResourceStamps:vi.fn(),navDebug:{paths:false,walkability:false,revision:-1,pending:false,next:0,shown:false}});
  session.tick(50,50);expect(input.tick).not.toHaveBeenCalled();expect(renderer.draw).not.toHaveBeenCalled();expect(mini.paint).not.toHaveBeenCalled();expect(renderer.unitCamera).not.toHaveBeenCalled();
  // Authoritative time advances independently; no main-thread tick/confirm calls.
@@ -16,4 +16,18 @@ it('does no presentation work while hidden and resumes using the latest worker s
 it('does not start or pump the worker from render frames while assets load',()=>{
  const worker={request:vi.fn()},session=Object.assign(Object.create(Session.prototype),{started:false,worker,renderer:{}});
  session.tick(5000,5000);expect(worker.request).not.toHaveBeenCalled();
+});
+
+it('draws the coordinate grid without requesting simulation debug data, and tears it down when Debug closes',()=>{
+ const before=perf.enabled,request=vi.fn();
+ const renderer={gridMode:'none',setGridMode:vi.fn((mode:string)=>{renderer.gridMode=mode;})};
+ const session=Object.assign(Object.create(Session.prototype),{renderer,worker:{request},navDebug:{worldGrid:true,paths:false,walkability:false,navmesh:false,shown:false}});
+ try{
+  perf.enabled=true;session.pollNavigation();session.pollNavigation();
+  expect(renderer.setGridMode).toHaveBeenCalledExactlyOnceWith('full');
+  expect(request).not.toHaveBeenCalled();
+  perf.enabled=false;session.pollNavigation();
+  expect(renderer.setGridMode).toHaveBeenLastCalledWith('none');
+  expect(request).not.toHaveBeenCalled();
+ }finally{perf.enabled=before;}
 });

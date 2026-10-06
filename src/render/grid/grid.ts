@@ -1,7 +1,8 @@
+import {BUILDING_CELL_SIZE, GRID_ORIGIN} from '../../shared/spatial/footprint';
 /**
  * Grid lines to the blue halo. Fringe past that is void + grid (orientation only).
  * Dirt plate is HeightMesh. Lights live on `Sky`. Tiles = 16-cell lines. Full =
- * every cell + white eights. Ribbons drape when `heightAt` is passed.
+ * every navigation cell + stronger building-cell boundaries. Ribbons drape when `heightAt` is passed.
  */
 import {
   BufferAttribute,
@@ -12,7 +13,7 @@ import {
   type Object3D,
   type Scene,
 } from "three";
-import { MAP_BLOCK, MAP_FRINGE, MAP_HALO, MAP_TILE, type GridMode } from "../../shared";
+import { MAP_BLOCK, MAP_FRINGE, MAP_HALO, type GridMode } from "../../shared";
 
 const FINE = 0x8a8a8a;
 const MAJOR = 0xffffff;
@@ -38,11 +39,22 @@ export function putGrid(
   const visHi = size + MAP_HALO;
   const lo = visLo - MAP_FRINGE;
   const hi = visHi + MAP_FRINGE;
-  while (lines.children.length) lines.remove(lines.children[0]!);
+  clearGrid(lines);
   if (mode === "none") return;
   const { solid, fine } = buildGrid(size, lo, hi, visLo, visHi, mode, heightAt);
   lines.add(solid);
   if (fine) lines.add(fine);
+}
+
+/** Grid geometry is owned here; repeated debug toggles must release its GPU buffers. */
+export function clearGrid(lines: Object3D): void {
+  for (const child of [...lines.children]) {
+    if (child instanceof Mesh) {
+      child.geometry.dispose();
+      for (const material of Array.isArray(child.material) ? child.material : [child.material]) material.dispose();
+    }
+    lines.remove(child);
+  }
 }
 
 function buildGrid(
@@ -58,13 +70,14 @@ function buildGrid(
   const hair = buffers();
   const tiles = mode === "tiles";
   const lift = heightAt ?? (() => 0);
-  for (let i = lo; i <= hi; i++) {
-    const block = i % MAP_BLOCK === 0;
+  for (let index = lo; index <= hi; index++) {
+    const i = index + GRID_ORIGIN;
+    const block = index % MAP_BLOCK === 0;
     if (tiles && !block) continue;
     if (block) {
       run(solid, i, lo, i, hi, BLOCK_W, 0.035, MAJOR, lift);
       run(solid, lo, i, hi, i, BLOCK_W, 0.035, MAJOR, lift);
-    } else if (i % MAP_TILE === 0) {
+    } else if (index % BUILDING_CELL_SIZE === 0) {
       run(solid, i, lo, i, hi, MAJOR_W, 0.035, MAJOR, lift);
       run(solid, lo, i, hi, i, MAJOR_W, 0.035, MAJOR, lift);
     } else {
@@ -72,7 +85,7 @@ function buildGrid(
       run(hair, lo, i, hi, i, FINE_W, 0.02, FINE, lift);
     }
   }
-  ring(solid, 0, size, EDGE_W, 0.05, PLAY, lift);
+  ring(solid, GRID_ORIGIN, size + GRID_ORIGIN, EDGE_W, 0.05, PLAY, lift);
   ring(solid, visLo, visHi, EDGE_W, 0.055, VIS, lift);
   return { solid: mesh(solid, 1), fine: hair.idx.length ? mesh(hair, 0.5) : null };
 }

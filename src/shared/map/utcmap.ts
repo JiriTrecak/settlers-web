@@ -46,8 +46,9 @@ export type MapStamp = {
 const startSchema = z
   .object({
     player: z.number().int().min(1).max(8),
-    x: z.number().int().min(0).max(2047),
-    z: z.number().int().min(0).max(2047),
+    x: z.number().multipleOf(.5).min(0).max(2047),
+    z: z.number().multipleOf(.5).min(0).max(2047),
+    rotation: z.union([z.literal(0),z.literal(90),z.literal(180),z.literal(270)]).optional(),
     setup: z.string(),
     mainFort: z.string(),
   })
@@ -85,8 +86,8 @@ export function emptyUtcMap(size: MapSize = 256): UtcMap {
     waterLevel: -1,
     playerStarts: [1, 2].map((player) => ({
       player,
-      x: player === 1 ? size - 38 : 38,
-      z: player === 1 ? size - 38 : 38,
+      x: player === 1 ? size - 38.5 : 37.5,
+      z: player === 1 ? size - 38.5 : 37.5,
       setup: "setup.ants",
       mainFort: `start.player.${player}/main-fort`,
     })),

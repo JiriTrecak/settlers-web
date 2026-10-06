@@ -1,3 +1,6 @@
+import {workplaceHead, workplaceQueueSize} from '../../content/workplaceQueue';
+import {revivalTerms} from '../../content/revival';
+import type {Economy} from './economy';
 import {allEffects,value,type AbilityDefinition,type Effect} from '../../content/abilities/schema';
 import type {HeroReturn} from '../abilities/state';
 import { colonySupply, supplyAdmission, supplyStart } from "./supply";
@@ -5,7 +8,7 @@ import type {GameContext} from './context';
 import type {Entity} from './state';
 /** Fallen heroes retain identity and progression in authoritative state, outside the live battlefield. */
 export class Revival {
- constructor(private readonly c:GameContext){}
+ constructor(private readonly c:GameContext,private readonly economy:Economy){}
  retain(hero:Entity){
   hero.hp=0;hero.fallen=true;hero.unit=this.c.freshUnit();hero.inventory={};delete hero.stunnedUntil;delete hero.itemStatuses;delete hero.itemHits;
   if(hero.abilities){hero.abilities.pending=null;delete hero.abilities.weaponOrder;}
@@ -17,14 +20,20 @@ export class Revival {
   if(!hero?.fallen||hero.owner!==building.owner)return 'Choose one of your fallen heroes';
   if(hero.spellReturn)return 'Hero is already returning through an ability';
   if(this.c.state.entities.some(e=>e.revival?.queue.some(q=>q.hero===id)))return 'Hero is already being revived';
-  if(building.revival.queue.length>=policy.queueCapacity)return 'Revival queue is full';
+  if(workplaceQueueSize(building)>=policy.queueCapacity)return 'Revival queue is full';
   const reason=supplyAdmission(colonySupply(this.c.populationCandidates(),building.owner,this.c.registry),this.c.def(hero).supplyCost!);
   if(reason)return reason;
-  building.revival.queue.push({hero:id,progress:0});return null;
+  const level=this.c.stats(hero).level,terms=revivalTerms(policy,level),bill=Object.fromEntries(terms.items.map(p=>[p.item,p.amount]));
+  const payment=this.economy.reserveCost(building.owner,bill);if(!payment)return 'Insufficient resources';
+  this.economy.pay(payment);
+  building.revival.queue.push({id:this.c.state.nextQueue++,hero:id,level,progress:0});return null;
  }
  cancel(building:Entity,id:number):string|null {
   const queue=building.revival?.queue,index=queue?.findIndex(q=>q.hero===id)??-1;
-  if(!queue||index<0)return 'Hero is not queued here';queue.splice(index,1);return null;
+  if(!queue||index<0)return 'Hero is not queued here';
+  const terms=revivalTerms(this.c.def(building).behaviors.revival!,queue[index].level);
+  this.economy.refundCost(building,Object.fromEntries(terms.items.map(p=>[p.item,p.amount])));
+  queue.splice(index,1);return null;
  }
  /** Schedule only the retained holder; identities and learned state are never cloned. */
  schedule(id:number,owner:Entity['owner'],ability:AbilityDefinition,rank:number,cast:number,op:Extract<Effect,{op:'revive'}>){
@@ -53,13 +62,15 @@ export class Revival {
   }
   for(const building of this.c.liveBuildings()){
    const queue=building.revival?.queue,entry=queue?.[0],policy=this.c.def(building).behaviors.revival;
-   if(!entry||!policy||building.construction||!this.c.ready(building))continue;
-   const hero=this.c.get(entry.hero);if(!hero?.fallen){queue!.shift();continue;}
+   if(!entry||!policy||building.construction||building.upgrade||building.production?.paused||workplaceHead(building)!=='revival'||!this.c.ready(building))continue;
+   const hero=this.c.get(entry.hero);if(!hero?.fallen||hero.owner!==building.owner){this.cancel(building,entry.hero);continue;}
+   const terms=revivalTerms(policy,entry.level);
    if(entry.progress===0 && supplyStart(colonySupply(this.c.populationCandidates(),building.owner,this.c.registry),this.c.def(hero).supplyCost!))continue;
+   entry.progress=Math.min(terms.workTicks,entry.progress+1);if(entry.progress<terms.workTicks)continue;
    if(this.c.liveUnits().filter(e=>e.owner===building.owner).length>=this.c.registry.rules.maxUnits)continue;
-   entry.progress=Math.min(policy.workTicks,entry.progress+1);if(entry.progress<policy.workTicks)continue;
-   const location=this.c.spatial.nearest(this.c.spatial.entrance(building),12,hero.id);if(!location)continue;
+   const location=this.c.spatial.nearest(this.c.spatial.entrance(building),12,hero.id,hero);if(!location)continue;
    this.returnAt(hero,location);
+   for(const p of terms.items)this.c.event(building.owner,"Hero revival completed","consumed",p.item,p.amount);
    queue!.shift();this.c.event(hero.owner,`${this.c.def(hero).name} has returned`);
   }
   return outcomes;

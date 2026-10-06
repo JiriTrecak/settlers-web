@@ -67,3 +67,16 @@ it('authors additional player starts with complete setup metadata through MCP',(
  expect(editor.map.playerStarts[3]).toMatchObject({setup:'setup.ants',mainFort:'start.player.4/main-fort'});
  expect(parseUtcMap(JSON.parse(stringifyUtcMap(editor.map)))).not.toBeNull();
 });
+
+it('rotates and moves starts through the shared editor command, and rejects invalid placement atomically',()=>{
+ const {editor,control}=fixture();
+ control.dispatch('setSpawnPoint',{player:1,x:82,z:82,rotation:180});
+ expect(editor.map.playerStarts[0]).toMatchObject({x:81.5,z:81.5,rotation:180});
+ control.dispatch('setSpawnPoint',{player:1,x:86,z:86});
+ expect(editor.map.playerStarts[0]).toMatchObject({x:85.5,z:85.5,rotation:180});
+ const before=stringifyUtcMap(editor.map);
+ expect(()=>control.dispatch('setSpawnPoint',{player:1,x:86,z:86,rotation:30})).toThrow(/90-degree/);
+ expect(()=>control.dispatch('setSpawnPoint',{player:1,x:1,z:1})).toThrow();
+ expect(stringifyUtcMap(editor.map)).toBe(before);
+ expect(parseUtcMap(JSON.parse(before))!.playerStarts[0].rotation).toBe(180);
+});

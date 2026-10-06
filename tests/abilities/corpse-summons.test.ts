@@ -52,7 +52,7 @@ it('restores pending casts and expiration in lockstep after the source dies',()=
 });
 it('point autocast considers visible corpses only when combat gives the summons utility',()=>{
  const f=fixture({}, {}, {autocast:{intervalTicks:1,enabledByDefault:true}});step(f,5);expect(summons(f)).toEqual([]);
- f.game.context.create({id:'threat',definition:'unit.ants.warrior',owner:'player.2',position:{x:132,y:120},rotation:270});f.game.observation.update();step(f,20);expect(summons(f)).toHaveLength(2);expect(f.game.state.corpses).toEqual([]);
+ const threat=f.game.context.create({id:'threat',definition:'unit.ants.warrior',owner:'player.2',position:{x:132,y:120},rotation:270});f.game.command('player.2',{type:'hold',actors:[threat.id]});f.game.observation.update();step(f,20);expect(summons(f)).toHaveLength(2);expect(f.game.state.corpses).toEqual([]);
 });
 it('rejects excessive ranked products and ambiguous live-recipient queries',()=>{
  for(const patch of [{amount:0},{amount:5,corpses:{...operation.corpses!,maxTargets:2}},{corpses:{...operation.corpses!,maxTargets:0}},{corpses:{...operation.corpses!,radius:33}},{target:'target'},{corpses:{...operation.corpses!,maxTargets:{rankParameter:'unknown'}}}])expect(()=>definition(patch as Partial<typeof operation>)).toThrow();

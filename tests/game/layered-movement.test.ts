@@ -1,4 +1,5 @@
 import '../fixtures/walkableCatalogue';
+import {Economy} from '../../src/sim/game/economy';
 import {Revival} from '../../src/sim/game/revival';
 import {Inventory} from '../../src/sim/game/inventory';
 import {it,expect} from 'vitest';
@@ -8,14 +9,17 @@ import {fixed,precise} from '../../src/sim/game/motion';
 import {ContentRegistry} from '../../src/content/registry';
 import {builtinSource} from '../../src/content/builtin';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
-import {placed,slots,run} from './helpers';
+import {placed,slots,run,compactBodySource} from './helpers';
 import {Game} from '../../src/sim/game/game';
 import {heading} from '../../src/sim/game/facing';
 import {World} from '../../src/sim/world/world';
 import {PresentationView} from '../../src/session/session/presentationView';
 import {emptyMissionState} from '../../src/shared/scenario/schema';
-const map=()=>({...emptyUtcMap(),playerStarts:emptyUtcMap().playerStarts.map((s,i)=>({...s,x:200,z:i?80:200})),stamps:[{id:'arch',asset:'leafbound-twig-bridge',x:40,y:40}]});
-const setup=()=>new GameContext(emptyState(),new ContentRegistry(builtinSource),map());
+const map=()=>({...emptyUtcMap(),playerStarts:emptyUtcMap().playerStarts.map((s,i)=>({...s,x:201.5,z:i?81.5:201.5})),stamps:[{id:'arch',asset:'leafbound-twig-bridge',x:40,y:40}]});
+// This fixed arch isolates stacked-floor behavior using a 2-unit-tall body.
+// Shipped-body clearance and rejection have separate unit-bodies coverage.
+const registry=()=>{const source=structuredClone(builtinSource);compactBodySource(source);return new ContentRegistry(source);};
+const setup=()=>new GameContext(emptyState(),registry(),map());
 function move(c:GameContext,n=1600){for(let i=0;i<n;i++){c.state.tick++;c.move();}}
 it('keeps indexed reservations on their walk surface, including distant yield pockets',()=>{
  const c=setup(),lower=c.create(placed('lower','unit.ants.warrior',40,40));
@@ -63,8 +67,8 @@ it('walks through an entrance onto the arch, can be interrupted there, and walks
 });
 it('reaches the top from directly underneath by walking around to an end',()=>{
  // This low arch has 3.2 units of headroom: use the original 2-unit body here.
- // Enlarged-body rejection is covered separately in unit-scale.test.ts.
- const source=structuredClone(builtinSource);(source.rules as {unitScale:number}).unitScale=1;
+ // Enlarged-body rejection is covered separately in unit-bodies.test.ts.
+ const source=structuredClone(builtinSource);compactBodySource(source);
  const c=new GameContext(emptyState(),new ContentRegistry(source),map()),e=c.create(placed('walker','unit.ants.warrior',40,40));c.spatial.rebuild();
  expect(c.spatial.route(e,{x:40,y:40,surface:'arch'},false)).toBe(true);
  expect(e.unit!.route.length).toBeGreaterThan(2);
@@ -72,11 +76,11 @@ it('reaches the top from directly underneath by walking around to an end',()=>{
 });
 
 it('keeps queued surface destinations and a mid-climb save deterministic',()=>{
- const m={...map(),entities:[placed('walker','unit.ants.warrior',40,26)]},g=new Game(m,slots),e=g.entities.find(e=>e.placement==='walker')!;
+ const m={...map(),entities:[placed('walker','unit.ants.warrior',40,26)]},g=new Game(m,slots,registry()),e=g.entities.find(e=>e.placement==='walker')!;
  expect(g.command('player.1',{type:'move',actors:[e.id],destination:{x:40,y:40,surface:'arch'}}).accepted).toBe(true);
  expect(g.command('player.1',{type:'move',actors:[e.id],destination:{x:50,y:40},append:true}).accepted).toBe(true);
  run(g,110);expect(e.surface).toBe('arch');
- const saved=g.snapshot(),copy=new Game(m,slots);copy.restore(saved);expect(copy.snapshot()).toEqual(saved);
+ const saved=g.snapshot(),copy=new Game(m,slots,registry());copy.restore(saved);expect(copy.snapshot()).toEqual(saved);
  run(g,600);run(copy,600);expect(copy.snapshot()).toEqual(g.snapshot());
  expect(precise(g.entities.find(u=>u.id===e.id)!)).toEqual({x:50,y:40});
  const invalid=structuredClone(saved);invalid.state.entities.find(u=>u.id===e.id)!.surface='missing';
@@ -84,7 +88,7 @@ it('keeps queued surface destinations and a mid-climb save deterministic',()=>{
 });
 it('allows archers to see and shoot down, without revealing the upper deck to units below',()=>{
  const m={...map(),entities:[{...placed('archer','unit.ants.archer',43,40),position:{x:43,y:40,surface:'arch'}},{...placed('enemy','unit.ants.warrior',49,40),owner:'player.2' as const}]};
- const g=new Game(m,slots),a=g.entities.find(e=>e.placement==='archer')!,b=g.entities.find(e=>e.placement==='enemy')!,hp=b.hp!;
+ const g=new Game(m,slots,registry()),a=g.entities.find(e=>e.placement==='archer')!,b=g.entities.find(e=>e.placement==='enemy')!,hp=b.hp!;
  a.rotation=heading(a,b);
  expect(g.observation.visible('player.1',b)).toBe(true);expect(g.observation.visible('player.2',a)).toBe(false);
  expect(g.view('player.2').entities.some(e=>e.id===a.id)).toBe(false);
@@ -97,7 +101,7 @@ it('allows archers to see and shoot down, without revealing the upper deck to un
 
 it('keeps neutral camp sight on the correct floor, then acquires troops at its own height',()=>{
  const m={...map(),entities:[{...placed('upper','unit.ants.warrior',43,40),position:{x:43,y:40,surface:'arch'}},{...placed('sentry','unit.neutral.spitter',49,40),owner:'none' as const}],camps:[{id:'sentries',members:['sentry'],home:{x:49,y:40},aggroRange:10,leash:15,aggression:'players' as const}]};
- const g=new Game(m,slots),upper=g.entities.find(e=>e.placement==='upper')!,sentry=g.entities.find(e=>e.placement==='sentry')!;
+ const g=new Game(m,slots,registry()),upper=g.entities.find(e=>e.placement==='upper')!,sentry=g.entities.find(e=>e.placement==='sentry')!;
  expect(g.command('player.1',{type:'hold',actors:[upper.id]}).accepted).toBe(true);
  run(g,32);expect(sentry.unit!.target).toBeNull();expect(sentry.unit!.route).toHaveLength(0);
  // The same horizontal distance becomes visible after walking down to ground.
@@ -114,7 +118,7 @@ it('sweeps body width beside an obstacle even on a map with elevated surfaces',(
 
 it('keeps lower-floor memories when only the bridge above is visible',()=>{
  const m={...map(),entities:[placed('scout','unit.ants.archer',35,40),{...placed('tree','resource.forest.tree',40,40),owner:'none' as const}]};
- const g=new Game(m,slots),a=g.entities.find(e=>e.placement==='scout')!,tree=g.entities.find(e=>e.placement==='tree')!;
+ const g=new Game(m,slots,registry()),a=g.entities.find(e=>e.placement==='scout')!,tree=g.entities.find(e=>e.placement==='tree')!;
  g.observation.update();expect(g.view('player.1').entities.some(e=>e.id===tree.id)).toBe(true);
  a.x=40;a.y=40;a.surface='arch';a.unit!.position=fixed(a);g.observation.update();
  g.context.remove(tree);g.observation.update();
@@ -125,14 +129,14 @@ it('keeps lower-floor memories when only the bridge above is visible',()=>{
 });
 
 it('saves explored fog per floor while projecting a union for the minimap',()=>{
- const m={...map(),entities:[placed('scout','unit.ants.archer',35,40)]},g=new Game(m,slots),scout=g.entities.find(e=>e.placement==='scout')!;
+ const m={...map(),entities:[placed('scout','unit.ants.archer',35,40)]},g=new Game(m,slots,registry()),scout=g.entities.find(e=>e.placement==='scout')!;
  g.observation.update();const below=g.view('player.1').fog!,cell=40*256+40,deck=g.spatial.cell({x:40,y:40,surface:'arch'});
  expect(below.cells[cell]).toBe(2);expect(below.floors!.cells[cell]).toBe(2);expect(below.floors!.cells[deck]).toBe(0);
  scout.x=40;scout.y=40;scout.surface='arch';scout.unit!.position=fixed(scout);g.observation.update();
  const above=g.view('player.1').fog!;
  expect(above.cells[cell]).toBe(2);expect(above.floors!.cells[cell]).toBe(1);expect(above.floors!.cells[deck]).toBe(2);
  expect(below.floors!.cells[deck]).toBe(0); // Existing presentations stay immutable.
- const copy=new Game(m,slots);copy.restore(g.snapshot());expect(copy.checksum()).toBe(g.checksum());expect(copy.view('player.1').fog!.floors!.cells).toEqual(above.floors!.cells);
+ const copy=new Game(m,slots,registry());copy.restore(g.snapshot());expect(copy.checksum()).toBe(g.checksum());expect(copy.view('player.1').fog!.floors!.cells).toEqual(above.floors!.cells);
  const invalid=structuredClone(g.snapshot());invalid.knowledge[0]!.cells.length=256*256;expect(()=>copy.restore(invalid)).toThrow(/dimensions/);
 });
 
@@ -165,10 +169,10 @@ it('keeps loot on its deck and cannot pick it up through the floor',()=>{
 
 it('revives a hero killed on a bridge onto the sanctuary landing',()=>{
  const c=setup(),hero=c.create({...placed('hero','unit.ants.marshal',40,40),position:{x:40,y:40,surface:'arch'}}),
- shrine=c.create(placed('shrine','building.ants.sanctuary',65,65)),revival=new Revival(c);
+ shrine=c.create(placed('shrine','building.ants.sanctuary',65,65)),revival=new Revival(c,new Economy(c));
  c.remove(hero);revival.retain(hero);c.state.tick=10;c.spatial.rebuild();
  c.create(placed('supply','building.ants.house',80,80));
- expect(revival.enqueue(shrine,hero.id)).toBeNull();
+ c.state.wallets[hero.owner]={'item.amber':200};expect(revival.enqueue(shrine,hero.id)).toBeNull();
  shrine.revival!.queue[0].progress=c.def(shrine).behaviors.revival!.workTicks;
  revival.tick();expect(hero.fallen).toBeUndefined();expect(hero.surface).toBeUndefined();
  expect(c.spatial.validPoint(hero)).toBe(true);expect(c.spatial.height(hero)).toBe(0);

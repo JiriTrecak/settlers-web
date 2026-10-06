@@ -1,4 +1,6 @@
 import {expect,it} from 'vitest';
+import {source} from '../game/helpers';
+import type {AuthoredDefinition} from '../../src/content/schema';
 import {abilitySchema,type AbilityDefinition} from '../../src/content/abilities/schema';
 import {coreAbilities} from '../../src/content/abilities/core';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
@@ -7,9 +9,9 @@ import {abilityAimScore} from '../../src/sim/abilities/ai';
 import {SpellEditorService} from '../../tooling/spell-editor/server/service';
 import type {PreviewState} from '../../tooling/spell-editor/shared/view';
 const base=coreAbilities.abilities.find(a=>a.id==='ability.core.spirit-swarm')!,p=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
-function fixture(delivery:Record<string,unknown>={},settings:Record<string,unknown>={},extra:Partial<AbilityDefinition>={}){
+function fixture(delivery:Record<string,unknown>={},settings:Record<string,unknown>={},extra:Partial<AbilityDefinition>={},baseSource=source()){
  const a=abilitySchema.parse({...base,cast:{...base.cast,prepareTicks:0,recoverTicks:0,cost:{...base.cast.cost,amount:0}},delivery:{...base.delivery,count:1,speed:8,launchIntervalTicks:0,maxHitsPerTrip:1,returnPermille:1000,...delivery},...extra});
- const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',targetCount:1,targetHealth:500,distance:8,mana:1000,...settings}));
+ const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',targetCount:1,targetHealth:500,distance:8,mana:1000,...settings}),false,baseSource);
  return {...f,a,c:()=>f.game.context.get(f.caster)!,t:()=>f.game.context.get(f.target)!};
 }
 type Fixture=ReturnType<typeof fixture>;
@@ -88,7 +90,9 @@ it('prevents admission beyond the world delivery budget without partial groups o
  f.c().abilities!.cooldowns={};const mana=f.c().abilities!.mana;expect(f.game.abilities.cast(f.caster,'preview',f.caster)).toBe('Too many active spell deliveries');expect(f.c().abilities!.mana).toBe(mana);expect(f.game.state.spellDeliveries).toHaveLength(512);f.game.restore(f.game.snapshot());
 });
 it('forgets unseen targets instead of following their hidden positions',()=>{
- const f=fixture({speed:1,radius:32});cast(f);tick(f,5);expect(f.game.state.spellDeliveries[0].target).toBe(f.target);
+ // Keep the hidden target inside the seeker radius, but outside real sight.
+ const draft=source();for(const d of draft.definitions as AuthoredDefinition[])if(d.kind==='unit')d.vision=24;
+ const f=fixture({speed:1,radius:32},{},{},draft);cast(f);tick(f,5);expect(f.game.state.spellDeliveries[0].target).toBe(f.target);
  f.t().x=f.c().x+31;f.t().y=f.c().y;tick(f,5);expect(f.game.state.spellDeliveries[0].target).toBe(0);expect(f.t().hp).toBe(500);
 });
 it('cannot bite through a newly applied spell immunity',async()=>{

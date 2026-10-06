@@ -396,3 +396,6 @@
 .map-atlas > img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .map-atlas > svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .skirmish-map .map-atlas text { display: none; }
+.skirmish-player-controls { display: grid; gap: 6px; justify-items: stretch; }
+.skirmish-player-controls select { width: 130px; max-width: 130px; }
+.skirmish-player .skirmish-hero-select { max-width: 140px; padding: 7px 22px 7px 8px; }

@@ -1,3 +1,7 @@
+import {startingUnits,startingUnitPosition} from './startingHero';
+import type {Slot} from '../shared/match/match';
+import {placementGeometryError} from '../shared/spatial/placement';
+import {footprintCellBounds,navigationBodyOverlapsBounds} from '../shared/spatial/footprint';
 import {resourceCenterSeparation} from '../shared/map/resourceClearance';
 import {missionSchema} from "../shared/scenario/schema";
 import {projectScene} from '../shared/authoring/project';
@@ -17,7 +21,7 @@ function placementFloors(map:UtcMap){
 }
 
 /** Expansion is pure author data → explicit placements, never a separate simulation constructor. */
-export function expandMap(map: UtcMap, registry: ContentRegistry): Placement[] {
+export function expandMap(map: UtcMap, registry: ContentRegistry, slots: readonly Slot[] = []): Placement[] {
   const result = [...map.entities,...(projectScene(map)?.resources??[])];
   for (const s of map.mission || map.sandbox ? [] : map.playerStarts) {
     const setup = registry.rules.startingSetup;
@@ -30,18 +34,18 @@ export function expandMap(map: UtcMap, registry: ContentRegistry): Placement[] {
         id: `${prefix}/main-fort`,
         definition: setup.fort,
         position: { x: s.x, y: s.z },
-        rotation: 0,
+        rotation: s.rotation ?? 0,
         owner,
         initialState: { construction: "complete", inventory: setup.inventory },
       }),
     );
-    setup.units.forEach((u, i) =>
+    startingUnits(setup,slots.find(slot=>slot.player===s.player-1)?.hero).forEach((u, i) =>
       result.push(
         placementSchema.parse({
           id: `${prefix}/unit-${String(i + 1).padStart(3, "0")}`,
           definition: u.definition,
-          position: { x: s.x + u.offset.x, y: s.z + u.offset.y },
-          rotation: 0,
+          position: startingUnitPosition(s,u.offset),
+          rotation: s.rotation ?? 0,
           owner,
         }),
       ),
@@ -52,6 +56,7 @@ export function expandMap(map: UtcMap, registry: ContentRegistry): Placement[] {
 export function validatePlacements(
   map: UtcMap,
   registry: ContentRegistry,
+  slots: readonly Slot[] = [],
 ): void {
   if(map.mission) {
     missionSchema.parse(map.mission);
@@ -60,22 +65,29 @@ export function validatePlacements(
       if(!p||p.activation||p.owner!=='player.1'||registry.get(p.definition).kind!=='unit')throw new Error(`Invalid campaign company slot: ${tag}`);
     }
   }
-  const all = expandMap(map, registry),
+  const all = expandMap(map, registry, slots),
     ids = new Set<string>();
   const floor=all.some(p=>p.position.surface)?placementFloors(map):undefined;
   for (const raw of all) {
     const p = placementSchema.parse(raw),
       d = registry.get(p.definition),
       state = p.initialState;
+    const geometryError = placementGeometryError(d, p.position, p.rotation);
+    if (geometryError) throw new Error(`${p.id}: ${geometryError}`);
     if (p.activation && !map.mission) throw new Error(`${p.id}: scripted spawns require a mission map`);
     if (d.currency)
       throw new Error(`${p.id}: currencies cannot be placed on the ground`);
-    if (d.gatheringCapacity && p.owner !== "none")
+    if (d.harvesting && p.owner !== "none")
       throw new Error(`${p.id}: mines must be neutral`);
     if (ids.has(p.id)) throw new Error(`Duplicate placement ${p.id}`);
     ids.add(p.id);
     if (p.position.x >= map.size || p.position.y >= map.size)
       throw new Error(`${p.id}: outside map bounds`);
+    if (d.kind === 'building') {
+      const bounds = footprintCellBounds(p.position,d.footprint,p.rotation);
+      if (bounds.minX < 0 || bounds.minY < 0 || bounds.maxX >= map.size || bounds.maxY >= map.size)
+        throw new Error(`${p.id}: building footprint is outside map bounds`);
+    }
     if(p.position.surface){
       if(floor!(p.position)===undefined)throw new Error(`${p.id}: unknown or out-of-bounds walk surface`);
       if(d.kind==='building'||d.kind==='resource')throw new Error(`${p.id}: buildings and harvestable resources currently require ground`);
@@ -188,36 +200,57 @@ export function placementOccupancyError(
 ): string | null {
   const occupied = new Map<number, {id:string;height:number}[]>();
   const placements=expandMap(map,registry),floor=placements.some(p=>p.position.surface)?placementFloors(map):undefined;
+  type UnitBody={id:string;x:number;y:number;radius:number;height:number;floor:number;air:boolean};
+  const units:UnitBody[]=[],unitCells=new Map<number,UnitBody[]>();
+  let maxRadius=0;
   for (const p of placements) {
     const d = registry.get(p.definition);
-    if (
-      d.kind === "item" ||
-      (d.kind === "resource" && p.initialState?.amount === 0)
-    )
+    if (d.kind === "item" || (d.kind === "resource" && p.initialState?.amount === 0)) continue;
+    if(d.kind==='unit'){
+      const {radius,height}=d.dimensions!,{x,y}=p.position;
+      if(x-radius<-.5||y-radius<-.5||x+radius>map.size-.5||y+radius>map.size-.5)
+        return `${p.id}: body is outside the playable map`;
+      // Deferred units may emerge from an occupied cage, but still need valid bounds.
+      if(p.activation==='script')continue;
+      const body={id:p.id,x,y,radius,height,floor:floor?.(p.position)??0,air:d.behaviors.movement?.locomotion==='air'};
+      units.push(body);maxRadius=Math.max(maxRadius,radius);
+      const cell=Math.round(y)*map.size+Math.round(x),column=unitCells.get(cell)??[];
+      column.push(body);unitCells.set(cell,column);
       continue;
-    const swap = Math.round(p.rotation / 90) % 2 !== 0,
-      w = d.footprint ? (swap ? d.footprint.depth : d.footprint.width) : 1,
-      h = d.footprint ? (swap ? d.footprint.width : d.footprint.depth) : 1;
-    for (
-      let y = p.position.y - Math.floor(h / 2);
-      y <= p.position.y + Math.floor(h / 2);
-      y++
-    )
-      for (
-        let x = p.position.x - Math.floor(w / 2);
-        x <= p.position.x + Math.floor(w / 2);
-        x++
-      ) {
-        if (x < 0 || x >= map.size || y < 0 || y >= map.size)
-          return `${p.id}: footprint is outside the playable map`;
-        // Deferred spawns can deliberately replace destroyed scenery or emerge from a cage.
-        // Validate their bounds, but only simultaneous starting entities occupy this grid.
-        if(p.activation==="script")continue;
-        const cell = y * map.size + x, height=floor?.({...p.position,x,y})??0;
-        const column=occupied.get(cell)??[],other=column.find(e=>Math.abs(e.height-height)<2);
-        if (other) return `${p.id}: overlaps ${other.id}`;
-        column.push({id:p.id,height});occupied.set(cell,column);
-      }
+    }
+    const bounds = footprintCellBounds(p.position, d.footprint, p.rotation);
+    for (let y = bounds.minY; y <= bounds.maxY; y++) for (let x = bounds.minX; x <= bounds.maxX; x++) {
+      if (x < 0 || x >= map.size || y < 0 || y >= map.size)
+        return `${p.id}: footprint is outside the playable map`;
+      // Deferred scenery may deliberately replace a destroyed object.
+      if(p.activation==="script")continue;
+      const cell=y*map.size+x,height=floor?.({...p.position,x,y})??0;
+      const column=occupied.get(cell)??[],other=column.find(e=>Math.abs(e.height-height)<2);
+      if(other)return `${p.id}: overlaps ${other.id}`;
+      column.push({id:p.id,height});occupied.set(cell,column);
+    }
+  }
+  for(const unit of units){
+    // Static terrain uses the conservative square navigation footprint. Unit
+    // separation uses circles, just like runtime body sweeps. Keep these distinct.
+    if(!unit.air)for(let y=Math.max(0,Math.floor(unit.y-unit.radius+.5));y<=Math.min(map.size-1,Math.floor(unit.y+unit.radius+.5));y++)
+      for(let x=Math.max(0,Math.floor(unit.x-unit.radius+.5));x<=Math.min(map.size-1,Math.floor(unit.x+unit.radius+.5));x++)
+        for(const other of occupied.get(y*map.size+x)??[]){
+          if(Math.abs(other.height-unit.floor)>=2)continue;
+          if(navigationBodyOverlapsBounds(unit,unit.radius,{minX:x-.5,minY:y-.5,maxX:x+.5,maxY:y+.5}))
+            return `${unit.id}: body overlaps ${other.id}`;
+        }
+    const reach=unit.radius+maxRadius;
+    for(let y=Math.max(0,Math.floor(unit.y-reach));y<=Math.min(map.size-1,Math.ceil(unit.y+reach));y++)
+      for(let x=Math.max(0,Math.floor(unit.x-reach));x<=Math.min(map.size-1,Math.ceil(unit.x+reach));x++)
+        for(const other of unitCells.get(y*map.size+x)??[]){
+          if(other.id>=unit.id||other.air!==unit.air)continue;
+          if(floor&&(unit.floor>=other.floor+other.height||other.floor>=unit.floor+unit.height))continue;
+          // Fixed-point rounding agrees with runtime even for fractional radii.
+          const dx=Math.round(unit.x*1000)-Math.round(other.x*1000),dy=Math.round(unit.y*1000)-Math.round(other.y*1000);
+          const separation=Math.round(unit.radius*1000)+Math.round(other.radius*1000);
+          if(dx*dx+dy*dy<separation*separation)return `${unit.id}: overlaps ${other.id}`;
+        }
   }
   return null;
 }
@@ -230,7 +263,7 @@ export function startingResourceClearanceError(map:UtcMap,registry:ContentRegist
  for(const s of map.playerStarts)for(const resource of resources){
   const definition=registry.get(resource.definition),clearance=definition.constructionClearance;
   if(clearance===undefined||resource.activation==='script'||(resource.initialState?.amount??definition.yield??0)<=0)continue;
-  const minimum=resourceCenterSeparation(hall.footprint!,definition.footprint??{width:1,depth:1},clearance,0,resource.rotation);
+  const minimum=resourceCenterSeparation(hall.footprint!,definition.footprint??{width:1,depth:1},clearance,s.rotation??0,resource.rotation);
   if(Math.abs(s.x-resource.position.x)<minimum.x&&Math.abs(s.z-resource.position.y)<minimum.y)
    return `Player ${s.player}: ${hall.name} is too close to ${definition.name}; leave at least ${minimum.x} cells horizontally or ${minimum.y} cells vertically between centers.`;
  }

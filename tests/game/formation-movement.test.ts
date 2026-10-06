@@ -4,7 +4,7 @@ import {precise,fixed} from '../../src/sim/game/motion';
 import {content} from '../../src/content/builtin';
 
 it.each([{x:6,y:0},{x:0,y:6},{x:6,y:6},{x:-6,y:0}])('moves a compact 12-unit army without reorganizing it on clear ground: %j',offset=>{
- const spacing=Math.ceil(content.rules.unitScale);
+ const spacing=Math.ceil(content.get('unit.ants.warrior').dimensions!.formationSpacing);
  offset={x:offset.x*spacing,y:offset.y*spacing};
  const placements=Array.from({length:12},(_,i)=>{const p=placed(`army-${i}`,'unit.ants.warrior',100+i%4*spacing,100+Math.floor(i/4)*spacing);p.rotation=90;return p;});
  const g=game(placements),army=g.entities.filter(e=>e.placement?.startsWith('army-'));

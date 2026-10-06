@@ -1,3 +1,6 @@
+import {heroAdmission, heroRoster} from '../content/heroRoster';
+import {workplaceQueueSize} from '../content/workplaceQueue';
+import {revivalTerms} from '../content/revival';
 import {value} from '../content/abilities/schema';
 import { supplyAdmission } from "../sim/game/supply";
 import {cameraModeName,nextCameraMode,type UnitCameraMode} from '../shared/camera/modes';
@@ -149,26 +152,23 @@ export function queueCard(
         cancel: !readOnly && !view.outcome ? {type: "cancelResearch" as const, actor: focus.id, research: q.id} : null};
     });
   }
-  if(focus?.revival&&(readOnly || focus.owner===owner)&&!focus.remembered){
-    return focus.revival.queue.flatMap(q=>{const hero=view.fallenHeroes?.find(h=>h.id===q.hero);return hero?[{id:q.hero,icon:registry.get(hero.definition).icon,progress:q.progress/registry.get(focus.definition).behaviors.revival!.workTicks,name:`Revive ${registry.get(hero.definition).name}`,costs:[] as CostView[],cancel:!readOnly && !view.outcome?{type:"cancelRevival" as const,actor:focus.id,hero:q.hero}:null}]:[];});
-  }
-  if (!focus?.production || focus.remembered || (!readOnly && focus.owner !== owner))
-    return [];
-  const controllable =
-    !readOnly && registry.get(focus.definition).behaviors.playerControl && !view.outcome;
-  return focus.production.queue.map((q) => {
-    const d = registry.get(q.definition);
-    return {
-      id: q.id,
-      name: d.name,
-      icon: d.icon,
-      progress: null,
-      costs: costs(registry, d.id),
-      cancel: controllable
-        ? { type: "cancel" as const, actor: focus.id, queue: q.id }
-        : null,
-    };
+  if (!focus || focus.remembered || (!readOnly && focus.owner !== owner)) return [];
+  const controllable = !readOnly && registry.get(focus.definition).behaviors.playerControl && !view.outcome;
+  const training = (focus.production?.queue ?? []).map(q => {
+    const d = registry.get(q.definition), active = focus.production!.active;
+    return {id:q.id, name:d.name, icon:d.icon,
+      progress: active?.queue === q.id ? active.progress / d.creation!.workTicks : null,
+      costs:costs(registry,d.id),
+      cancel:controllable ? {type:'cancel' as const, actor:focus.id, queue:q.id} : null};
   });
+  const returning = (focus.revival?.queue ?? []).flatMap(q => {
+    const hero=view.fallenHeroes?.find(h=>h.id===q.hero); if(!hero)return [];
+    const definition=registry.get(hero.definition),terms=revivalTerms(registry.get(focus.definition).behaviors.revival!,q.level);
+    return [{id:q.id,icon:definition.icon,progress:q.progress/terms.workTicks,name:`Revive ${definition.name}`,
+      costs:terms.items.map(p=>({kind:'item' as const,name:registry.get(p.item).name,icon:registry.get(p.item).icon,amount:p.amount})),
+      cancel:controllable ? {type:'cancelRevival' as const,actor:focus.id,hero:q.hero}:null}];
+  });
+  return [...training, ...returning].sort((a,b)=>a.id-b.id);
 }
 export function costs(registry: ContentRegistry, id: string): CostView[] {
   const d = registry.get(id),
@@ -234,7 +234,8 @@ export function commandCard(
       target = targetDefinition ? registry.get(targetDefinition) : null,
       override = registry.actions.overrides[id];
     if (override?.hidden) return;
-    const reason = target ? prerequisiteReason(target, owner, view.entities, registry) : undefined;
+    const reason = target ? prerequisiteReason(target, owner, view.entities, registry) ??
+      (type === 'produce' ? heroAdmission(target, heroRoster([...view.entities, ...(view.fallenHeroes ?? [])], owner, registry)) : undefined) : undefined;
     result.push({
       id,
       type,
@@ -260,6 +261,7 @@ export function commandCard(
       policy = d.behaviors.production;
     if (focus.construction) {
       add("cancel", [focus], undefined, { type: "cancel", actor: focus.id });
+      result.at(-1)!.description = `Cancel construction and recover ${registry.rules.constructionRefundPermille / 10}% of the paid resources, rounded down per resource.`;
       return result;
     }
     if(d.garrison&&view.entities.some(e=>e.unit?.garrison?.building===focus.id))
@@ -299,8 +301,14 @@ export function commandCard(
     if(d.behaviors.revival&&focus.revival){
       for(const hero of view.fallenHeroes??[]){
         const definition=registry.get(hero.definition),queued=view.entities.some(b=>b.revival?.queue.some(q=>q.hero===hero.id));
-        const reason=hero.spellReturn?'Hero is returning through an ability':queued?'Hero is already being revived':focus.revival.queue.length>=d.behaviors.revival.queueCapacity?'Revival queue is full':view.supply?supplyAdmission(view.supply,definition.supplyCost!)??undefined:undefined;
-        result.push({id:`revive:${hero.id}`,type:'revive',name:`Revive ${definition.name}`,description:`Return this level ${hero.stats?.level??1} hero with their items and learned abilities. ${d.behaviors.revival.workTicks*TICK_MS/1000}s.`,icon:definition.icon,costs:[{name:'Supply',icon:registry.rules.supplyIcon,amount:definition.supplyCost!,kind:'supply'}],priority:100,actors:[focus.id],enabled:!view.outcome&&!reason,reason,immediate:{type:'revive',actor:focus.id,hero:hero.id}});
+        const terms=revivalTerms(d.behaviors.revival,hero.stats?.level??1);
+        const supplyReason=view.supply?supplyAdmission(view.supply,definition.supplyCost!):null;
+        const priceReason=terms.items.some(p=>(view.goods?.find(g=>g.item===p.item)?.available??0)<p.amount)?'Insufficient resources':undefined;
+        const reason=hero.spellReturn?'Hero is returning through an ability':queued?'Hero is already being revived':workplaceQueueSize(focus)>=d.behaviors.revival.queueCapacity?'Revival queue is full':
+          supplyReason ?? priceReason;
+        result.push({id:`revive:${hero.id}`,type:'revive',name:`Revive ${definition.name}`,description:`Return this level ${hero.stats?.level??1} hero with their items and learned abilities. ${terms.workTicks*TICK_MS/1000}s. Cancellation refunds the full price.`,icon:definition.icon,
+          costs:[...terms.items.map(p=>({kind:'item' as const,name:registry.get(p.item).name,icon:registry.get(p.item).icon,amount:p.amount})),{name:'Supply',icon:registry.rules.supplyIcon,amount:definition.supplyCost!,kind:'supply'}],
+          priority:100,actors:[focus.id],enabled:!view.outcome&&!reason,reason,immediate:{type:'revive',actor:focus.id,hero:hero.id}});
       }
     }
     if (p && policy) {
@@ -313,7 +321,7 @@ export function commandCard(
             definition: output,
           });
           if (result.length === before || result.at(-1)!.reason) continue;
-          if (p.queue.length >= policy.queueCapacity!) {
+          if (workplaceQueueSize(focus) >= policy.queueCapacity!) {
             const b = result.at(-1)!;
             b.enabled = false;
             b.reason = "Queue full";

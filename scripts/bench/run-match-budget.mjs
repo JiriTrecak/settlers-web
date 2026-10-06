@@ -7,9 +7,11 @@ import {spawnSync} from 'node:child_process';
 import {build} from 'vite';
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
-const args=process.argv.slice(2),peerIndex=args.indexOf('--four-peer');
-const entry=peerIndex<0?'match-budget':'four-peer-match';
+const args=process.argv.slice(2),legacyPeers=args.includes('--four-peer');
+const peerIndex=args.indexOf(legacyPeers?'--four-peer':'--multiplayer');
+const entry=peerIndex<0?'match-budget':'multiplayer-match';
 if(peerIndex>=0)args.splice(peerIndex,1);
+if(legacyPeers)args.push('--peers','4');
 const configIndex=args.indexOf('--vite-config');
 let configFile=false;
 if(configIndex!==-1){

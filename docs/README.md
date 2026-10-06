@@ -18,6 +18,10 @@ These pages describe the maintained game and tools. Gameplay values come from `c
 - [Weather](expansion/weather.md), [atmosphere](expansion/volumetric-atmosphere.md), [graphics settings](expansion/graphics-settings.md)
 - [Spell effects](expansion/spell-effects.md), [unit cameras](expansion/unit-camera-modes.md), [team colors](declarations/team-color.md)
 
+## Implementation contracts
+
+- [Competitive gameplay foundation](expansion/competitive-foundation.md): agreed spatial, economy, hero, editor and map migration targets.
+
 ## Proposed changes
 
 - [Queensguard campaign draft](../art/campaign/queensguard-take-3/storyboard.md): proposed twelve-mission Ant story and comic beats, building on the agreed [campaign cornerstones](wiki/factions/story.md).

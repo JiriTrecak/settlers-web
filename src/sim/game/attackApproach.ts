@@ -4,7 +4,10 @@ import type { Entity, Point } from './state';
 
 /** Choose a firing/striking position, not an occupied target center. */
 function planApproach(c: GameContext, actor: Entity, target: Entity, geometry?: Map<string, readonly Point[]>): boolean {
-  const combat=c.def(actor).behaviors.combat!,range=combat.range;
+  const combat=c.def(actor).behaviors.combat!;
+  // The search rectangle encloses body-edge weapon reach. Terrain/body tests
+  // below still reject occupied centers and illegal approach positions.
+  const range=combat.range+c.spatial.dimensions(actor).radius+(target.unit?c.spatial.dimensions(target).radius:0);
   const origin = precise(actor), center = precise(target);
   const footprint = c.def(target).footprint;
   const rotated = Math.round(target.rotation / 90) % 2 !== 0;
@@ -43,7 +46,9 @@ function planApproach(c: GameContext, actor: Entity, target: Entity, geometry?: 
   for (const candidate of candidates) {
     c.profile.count('Approach candidates tested');
     if (!c.spatial.free(candidate.point, actor.id, actor)) continue;
-    if (c.spatial.clearSegment(fixed(origin), fixed(candidate.point), undefined, actor) && c.spatial.route(actor, candidate.point, false)) return true;
+    if (c.spatial.clearSegment(fixed(origin), fixed(candidate.point), undefined, actor) &&
+        c.spatial.unitSegmentClear(fixed(origin), fixed(candidate.point), actor.id) &&
+        c.spatial.route(actor, candidate.point, false)) return true;
     if (detours.length < 8) detours.push(candidate.point);
   }
   // Bound alternate destination searches. A later retry reconsiders moving bodies.

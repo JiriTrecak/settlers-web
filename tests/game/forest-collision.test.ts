@@ -7,8 +7,8 @@ import {precise} from '../../src/sim/game/motion';
 import {placed} from './helpers';
 
 it('routes around a row of trees spaced wider than forest spacing instead of between trunks',()=>{
- const base=emptyUtcMap(),row=Array.from({length:7},(_,i)=>placed(`tree.${i}`,'resource.forest.tree',92+i*4,100));
- const map={...base,playerStarts:base.playerStarts.map((s,i)=>({...s,x:200,z:i?60:200})),entities:[...row,placed('walker','unit.ants.warrior',104,94)]};
+ const base=emptyUtcMap(),row=Array.from({length:7},(_,i)=>({...placed(`tree.${i}`,'resource.forest.tree',92+i*4,100),owner:'none' as const}));
+ const map={...base,playerStarts:base.playerStarts.map((s,i)=>({...s,x:201.5,z:i?61.5:201.5})),entities:[...row,placed('walker','unit.ants.warrior',104,94)]};
  const g=new Game(map,[{player:0,kind:'human'},{player:1,kind:'human'}]);
  const walker=g.entities.find(e=>e.placement==='walker')!,trees=g.entities.filter(e=>e.resource);
  for(let x=92;x<=116;x++)expect(g.spatial.walkable(g.spatial.cell({x,y:100})),`gap at ${x}`).toBe(false);

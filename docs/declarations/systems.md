@@ -16,13 +16,13 @@ New/completed output becomes eligible on the following tick. Performance timesta
 
 ## Economy and work
 
-See [the colony economy contract](../game/economy.md) for current values and player-facing rules. A currency exists in a hall store, reserved project inventory or a worker's cargo. Ground equipment is a separate selectable hero-item entity. Currency definitions cannot be placed or dropped as ground entities. Claims reserve quantities/capacity and are not additional goods.
+See [the colony economy contract](../game/economy.md) for current values and player-facing rules. Currency exists in a player wallet, paid project/task escrow or a worker's cargo. Completed authored drop-offs transfer starting currency to the wallet exactly once; building destruction cannot remove earned money. Ground equipment is a separate selectable hero-item entity. Currency definitions cannot be placed or dropped as ground entities. Claims reserve quantities/capacity and are not additional goods.
 
 Construction reserves its full bill before creating a site. The build command carries all eligible selected worker IDs in selection order. Choose the first worker without an existing construction order/job; if everyone is building, redirect the first. A saved `construct` order reserves that worker and the site even while their previous cargo is returning home or a route is temporarily blocked. Explicit assignments run before automatic recovery of unclaimed sites. Construction HP growth adds only newly supported health, preserving damage already taken. Repair costs time only.
 
-Each recruitment queue entry reserves its complete declared bill from hall stores when enqueued. Reject unaffordable requests atomically. Bills remain in the producer's reserved inventory until completion or cancellation; advancing the queue never charges again. Cancelling any slot refunds exactly that entry's bill, preserving other entries' funding and stable IDs. Snapshot validation checks inventory coverage of all queue bills. Refunds return to an accepting owned hall; cancellation of a demolished project records unreturnable inventory as lost.
+Each recruitment queue entry reserves its complete declared bill from the player wallet when enqueued. Reject unaffordable requests atomically. Bills remain in the producer's reserved inventory until completion or cancellation; advancing the queue never charges again. Cancelling any slot refunds exactly that entry's bill, preserving other entries' funding and stable IDs. Snapshot validation checks inventory coverage of all queue bills. Currency refunds return to the player wallet without requiring a Hall. Destroyed project escrow is recorded as lost. Physical non-currency inputs retain storage-based delivery and refunds.
 
-Harvesting takes finite yield from a source, reserves destination capacity and returns cargo to the hall. `work.harvests` supplies worker recipes. A mine is a neutral building with yield and `gatheringCapacity`; direct harvest assignments reserve a slot for the whole carry/return cycle. Timber can continue at a nearby matching tree; a finite-capacity mine does not silently redirect to another. Foresters use the native plant verb. A carrier first finishes a legal handoff before pending movement; if no store can accept the load it retains cargo and retries.
+Harvesting takes finite yield from a source and returns cargo to an owned drop-off. `work.harvests` supplies worker recipes. Sources declare `harvesting: {activeWorkers, recommendedWorkers, searchRadius}`. Only active miners advance extraction; arrivals wait deterministically on serialized jobs. Recommendations never cap assignments. Matching nearby nodes are balanced within the search radius. A carrier first finishes a legal handoff before pending movement; if no store can accept the load it retains cargo and retries. The native plant verb remains available to custom content; ranked trees omit it.
 
 Training creates a new unit without consuming a worker. Every queued entry reserves its output's `supplyCost`; supply is rechecked against living units and active training immediately before starting. Once started, capacity loss does not pause training or block deployment. Blocked exits keep the funded entry. Cancellation/destruction releases its reservation. Death records cargo/inventory losses explicitly.
 
@@ -100,6 +100,39 @@ Spells collect targets before applying a declared area budget, then feed damage 
 
 ## Tree felling and harvest animation
 
-Tree declarations use `felling: { maxHp, fallTicks, decayTicks }`. Timber recipes declare an `impactTick` within their `workTicks` swing cycle. The native economy removes exactly one chopping HP at each contact; only the final hit consumes the source and assigns one load to the worker. A `fall` job phase holds departure until the declared fall duration ends. Source amounts and hall deposits remain authoritative; the renderer never grants goods. Whole-tree reservations prevent duplicate loads. Stopping preserves source HP; regrowth resets HP and animation timestamps.
+Tree declarations use `felling: { maxHp, fallTicks, decayTicks }` and finite `yield`. Harvest recipes distinguish productive `workTicks` per load from optional `animationTicks` per swing and its `impactTick`. Extraction removes one load at a time; displayed felling health follows the remaining reserve. Only depletion starts the fall, and a `fall` job holds the last carrier until it ends. `treeWorkRate` research multiplies productive wood work without changing reserves. Stopping loses unfinished load progress, not already extracted stock. Generic regrowth restores the reserve and animation state only after full body clearance is available.
 
 `resource.felling` stores HP, last-contact tick, final-hit tick and fall direction in snapshots. Observation deep-copies it so remembered trees cannot leak later unseen damage. Observed work cycles synchronize the worker's axe with those contacts. `asset.harvestAnimation` names the separate animated GLB, while ordinary standing scenery remains instanced. `HarvestTrees` creates proxies only for damaged/falling trees, and `TreePlayer` samples hit → fall → decay from game time at 1×. No shrinking, callback-driven resource changes or per-tree army skeletons. Damaged standing proxies remain targetable; completed decay releases the proxy.
+
+## Starting hero choice
+
+The standard colony setup declares fixed `units` and an optional
+`hero: {default, choices, offset}`. A hero choice must reference a controllable hero
+with four supply. Local and remote match slots freeze the selected ID in `hero`;
+`startingUnits` resolves the same catalogue default for tools without an explicit
+selection. Map expansion does not alter campaign or sandbox entities. Body-aware
+start-envelope validation includes all offered choices. Hero choice is setup data,
+not a command that can replace a hero during play.
+
+## Hero recruitment and Hall tiers
+
+Buildings declare `heroCapacity`; the highest completed owned value is the colony
+limit (Hall 1, Great Acorn Hall 2, Elder Hall 3). Capacities do not add. Admission
+counts distinct living and fallen heroes plus paid production queues. Temporary
+summons do not consume roster entries. A fallen hero must be revived; neither a
+second trainer nor a new Hall permits buying that hero again. Cancelling or losing
+an unborn recruit releases its reservation. Losing a Hall locks new admissions
+without cancelling paid training. Supply remains a separate admission/start gate.
+
+Hero definitions use ordinary `creation.method: train`, and trainers list them in
+`production.outputs`. The Sanctuary shares one FIFO work lane and capacity between
+recruitment and revival. Both queue types allocate IDs from `nextQueue`. Pause and
+building upgrades suspend this lane; cancellation preserves the remaining order.
+Snapshots validate unique IDs, order, active head, capacity, and duplicate hero
+recruitment; the lockstep fingerprint includes revival queue IDs. No roster counter
+is serialized. Command cards and AI use the same `heroRoster`/`heroAdmission` rules.
+
+Upgrade ancestry is compiled once in `ContentRegistry`. A completed descendant
+satisfies its ancestors' `requires` entries for units, buildings and research. Cycles
+are rejected. An in-progress upgrade provides only the current building's capacity
+and requirements until completion; paid work does not recheck technology ownership.

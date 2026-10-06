@@ -1,9 +1,10 @@
 import {expect,it} from 'vitest';
-import {game,worker} from './helpers';
+import {game,worker,placed} from './helpers';
 it('cached vision agrees with full rebuilding through movement, construction and restore',()=>{
- const a=game(),b=game();
+ const make=()=>game([placed('scout','unit.ants.warrior',210,200)]);
+ const a=make(),b=make();
  for(const g of [a,b]){
-  g.command('player.1',{type:'build',actors: [worker(g).id],definition:'building.ants.barracks',position:{x:205,y:210}});
+  expect(g.command('player.1',{type:'build',actors: [worker(g).id],definition:'building.ants.barracks',position:placed('site','building.ants.barracks',193.5,209.5).position}).accepted).toBe(true);
   const warrior=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.warrior')!;
   expect(g.command('player.1',{type:'move',actors:[warrior.id],destination:{x:190,y:230}}).accepted).toBe(true);
  }

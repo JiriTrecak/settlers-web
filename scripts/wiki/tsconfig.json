@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": { "noUnusedLocals": true, "noUnusedParameters": true },
-  "include": ["./*.ts"],
+  "include": ["./*.ts", "../../src/shared/scenario/fengari.d.ts"],
   "exclude": []
 }

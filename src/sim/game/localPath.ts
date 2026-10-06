@@ -2,7 +2,7 @@ import type {SimulationProfiler} from '../profiling';
 import {lengthCeil,type FixedPoint} from './motion';
 import {NavigationQueue} from './navigationQueue';
 
-const SPACING=250, RADIUS=16, WIDTH=RADIUS*2+1, MAX_VISITS=256;
+const RADIUS=16, WIDTH=RADIUS*2+1, MAX_VISITS=256;
 // Bounded scratch storage avoids allocating Maps/Sets/frontiers for every
 // obstructed unit. Borrowing permits a clearance callback to search recursively.
 class LocalScratch {
@@ -22,17 +22,18 @@ const offsets=[[-1,0],[0,-1],[1,0],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]] as const;
 
 /** Bounded local escape using actual swept clearance, not occupied cells.
  * The caller supplies terrain, moving reservations and stationary body checks.
- * This is local navigation only: it cannot replace the map-wide corridor.
+ * Spacing sets the physical extent for the caller’s body size; scratch storage
+ * and the visit cap stay constant. This cannot replace the map-wide corridor.
  */
-export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:FixedPoint)=>boolean,profile?:SimulationProfiler):FixedPoint[]|null {
- if(Math.hypot(to.x-from.x,to.y-from.y)>4000){profile?.count('Local distance rejected');return null;}
+export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:FixedPoint)=>boolean,profile?:SimulationProfiler,spacing=250):FixedPoint[]|null {
+ if(Math.hypot(to.x-from.x,to.y-from.y)>RADIUS*spacing){profile?.count('Local distance rejected');return null;}
  if(clear(from,to)){profile?.count('Local direct successes');return [{...to}];}
  const start=RADIUS*WIDTH+RADIUS;
  // Anchor the grid to the world, not the interrupted sub-cell position. A
  // translated grid can miss the only clear center between enlarged bodies.
  // Retain the exact start as a special node; never snap the actual unit.
- const originX=Math.round(from.x/SPACING)*SPACING,originY=Math.round(from.y/SPACING)*SPACING;
- const position=(id:number)=>id===start?{...from}:{x:originX+(id%WIDTH-RADIUS)*SPACING,y:originY+(Math.floor(id/WIDTH)-RADIUS)*SPACING,...(from.surface?{surface:from.surface}:{})};
+ const originX=Math.round(from.x/spacing)*spacing,originY=Math.round(from.y/spacing)*spacing;
+ const position=(id:number)=>id===start?{...from}:{x:originX+(id%WIDTH-RADIUS)*spacing,y:originY+(Math.floor(id/WIDTH)-RADIUS)*spacing,...(from.surface?{surface:from.surface}:{})};
  const scratch=pool.pop()??new LocalScratch();scratch.reset();
  const {cost,previous,seen,closed,open,epoch}=scratch;
  let visits=0;
@@ -59,8 +60,8 @@ export function localPath(from:FixedPoint,to:FixedPoint,clear:(a:FixedPoint,b:Fi
     if(x<0||y<0||x>=WIDTH||y>=WIDTH)continue;
     const id=y*WIDTH+x;
     if(closed[id]===epoch)continue;
-    const qx=id===start?from.x:originX+(x-RADIUS)*SPACING;
-    const qy=id===start?from.y:originY+(y-RADIUS)*SPACING;
+    const qx=id===start?from.x:originX+(x-RADIUS)*spacing;
+    const qy=id===start?from.y:originY+(y-RADIUS)*spacing;
     const g=current.g+lengthCeil(qx-p.x,qy-p.y);
     if(seen[id]===epoch&&g>=cost[id]!)continue;
     const q=position(id);

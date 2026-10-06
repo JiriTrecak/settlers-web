@@ -4,7 +4,7 @@ import {World} from '../../src/sim/world/world';
 import {parseUtcMap} from '../../src/shared/map/utcmap';
 import {Navigation,canTraverse} from '../../src/sim/game/navigation';
 import {fixed} from '../../src/sim/game/motion';
-const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/heartroot-glade.utcmap','utf8')))!;
+const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/amberwake-basin.utcmap','utf8')))!;
 const world=new World({map,slots:map.playerStarts.map((_,i)=>({player:i,kind:'ai',team:i})),seed:731942}),spatial=world.settlement.spatial;
 if(spatial.layers)throw Error('This benchmark covers ground navigation');
 const pairs=[[92732,89149],[237228,234154],[237226,234153],[238253,233642],[191038,196164],[191036,196676],[196676,183350]];

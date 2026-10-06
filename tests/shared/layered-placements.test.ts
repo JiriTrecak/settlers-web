@@ -7,7 +7,7 @@ import type {Placement} from '../../src/content/schema';
 const unit=(id:string,surface?:string):Placement=>({id,definition:'unit.ants.warrior',position:{x:32,y:32,...(surface?{surface}:{})},owner:'player.1',rotation:0});
 const base=emptyUtcMap();
 // Default starts expand into main forts; keep them clear of the crossing under test.
-const map=()=>({...base,playerStarts:base.playerStarts.map((s,i)=>({...s,x:200,z:i?80:200})),stamps:[{id:'root',asset:'leafbound-twig-bridge',x:31.5,y:31.5}],entities:[unit('lower'),unit('upper','root')]});
+const map=()=>({...base,playerStarts:base.playerStarts.map((s,i)=>({...s,x:201.5,z:i?81.5:201.5})),stamps:[{id:'root',asset:'leafbound-twig-bridge',x:31.5,y:31.5}],entities:[unit('lower'),unit('upper','root')]});
 it('authors units above and below the same crossing while rejecting overlap on one floor',()=>{
  const m=map();expect(()=>validatePlacements(m,content)).not.toThrow();expect(placementOccupancyError(m,content)).toBeNull();
  m.entities.push(unit('second-upper','root'));expect(placementOccupancyError(m,content)).toBe('upper: overlaps second-upper');

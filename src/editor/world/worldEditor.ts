@@ -1,3 +1,4 @@
+import {snapPlacement} from '../../shared/spatial/placement';
 import type {InspectionShot} from '../../shared/camera/inspectionShot';
 import {biomeById} from '../../content/biomes';
 import {environmentConditions,type EnvironmentConditions} from '../../shared/environment/conditions';
@@ -315,6 +316,7 @@ export class WorldEditor {
     return this.compiledScene;
   }
   spawnPlayer = 1;
+  spawnRotation: 0 | 90 | 180 | 270 = 0;
   entityDefinition = content.definitions.find((d) => d.kind === "unit")!.id;
   entityOwner: Owner = "player.1";
   selectedEntity: string | null = null;
@@ -508,6 +510,7 @@ export class WorldEditor {
 
   setTool(tool: EditorTool | null): void {
     this.tool = tool;
+    if (tool === 'entity' || tool === 'spawn') this.setGridMode('full');
     if (tool !== "select") this.select.clear();
     if (tool !== "select" && tool !== "entity") this.selectedEntity = null;
     if (tool === "brush" || tool === "clean" || tool === "sculpt")
@@ -549,7 +552,7 @@ export class WorldEditor {
     if (p) {
       this.putEntity({
         ...p,
-        rotation: stepYaw(p.rotation * Math.PI / 180,delta) * 180 / Math.PI,
+        rotation: content.get(p.definition).kind === 'building' ? p.rotation + Math.sign(delta) * 90 : stepYaw(p.rotation * Math.PI / 180,delta) * 180 / Math.PI,
       });
       return;
     }
@@ -1601,7 +1604,7 @@ export class WorldEditor {
     const hit=this.renderer?.pickGround(clientX,clientY);if(!hit)return;
     if(this.entityDragging){
       const p=this.selectedPlacement();if(!p)return;
-      const x=Math.round(hit.x+this.entityOffset.x),y=Math.round(hit.z+this.entityOffset.y);
+      const {x,y}=snapPlacement(content.get(p.definition),{x:hit.x+this.entityOffset.x,y:hit.z+this.entityOffset.y},p.rotation);
       if(x<0||y<0||x>=this.map.size||y>=this.map.size)return;
       const previous=this.pendingEntity??p;if(previous.position.x===x&&previous.position.y===y)return;
       this.pendingEntity={...p,position:{...p.position,x,y}};
@@ -1660,9 +1663,12 @@ export class WorldEditor {
     this.hooks.onSelect?.();
   }
 
-  setSpawnPoint(player: number, x: number, z: number): void {
+  setSpawnPoint(player: number, x: number, z: number, rotation: number = this.map.playerStarts.find(s=>s.player===player)?.rotation ?? 0): boolean {
     if (!Number.isInteger(player) || player < 1 || player > 8)
       throw new Error("Choose Player 1 through Player 8");
+    if (![0,90,180,270].includes(rotation)) throw new Error("Starts rotate in 90-degree steps");
+    const facing = rotation as 0 | 90 | 180 | 270;
+    const snapped = snapPlacement(content.get(content.rules.startingSetup.fort), {x,y:z}, facing);
     const map = {
       ...this.map,
       playerStarts: [
@@ -1672,8 +1678,9 @@ export class WorldEditor {
           mainFort: `start.player.${player}/main-fort`,
           ...this.map.playerStarts.find((s) => s.player === player),
           player,
-          x: Math.round(x),
-          z: Math.round(z),
+          rotation: facing,
+          x: snapped.x,
+          z: snapped.y,
         },
       ].sort((a, b) => a.player - b.player),
     };
@@ -1682,12 +1689,14 @@ export class WorldEditor {
     if (error) {
       this.spawnMessage = error;
       this.hooks.onChange?.();
-      return;
+      return false;
     }
     this.commitEntities(map);
+    this.spawnRotation = facing;
     this.spawnMessage = `Player ${player} placed. Click again to move it.`;
     this.paint();
     this.hooks.onChange?.();
+    return true;
   }
 
   private click(clientX: number, clientY: number): void {
@@ -1711,7 +1720,7 @@ export class WorldEditor {
         this.putEntity({
           id: crypto.randomUUID(),
           definition: this.entityDefinition,
-          position: { x: Math.round(hit.x), y: Math.round(hit.z) },
+          position: snapPlacement(content.get(this.entityDefinition), {x:hit.x,y:hit.z},Math.round(this.stampYaw*2/Math.PI)*90),
           rotation: Math.round((this.stampYaw * 180) / Math.PI),
           owner: this.entityOwner,
         });
@@ -1725,7 +1734,7 @@ export class WorldEditor {
 
     if (this.tool === "spawn") {
       const hit = this.renderer?.pickGround(clientX, clientY);
-      if (hit) this.setSpawnPoint(this.spawnPlayer, hit.x, hit.z);
+      if (hit) this.setSpawnPoint(this.spawnPlayer, hit.x, hit.z, this.spawnRotation);
       return;
     }
     if (this.tool === "terrain" && this.terrainCurve) {

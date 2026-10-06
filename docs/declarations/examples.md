@@ -87,7 +87,7 @@ A hall declares `"supplyProvided": 12` and this production capability:
 
 The worker declares `supplyCost: 1` and a `train` creation recipe with its own price and training time. Capacity and training are independent capabilities. See [the supply contract](../game/economy.md#supply-and-training); no identity checks or separate worker population tokens are needed.
 
-A neutral mine instead declares `kind: "building"`, owner `none` on the map, `yield`, `gatheringCapacity`, body, footprint and entrance. The currency's harvest recipe refers to that source, and a worker's `work.harvests` exposes it. Set a map instance's `initialState.amount` to override remaining yield. A tree is a yielding resource rather than a neutral building.
+A neutral mine instead declares `kind: "building"`, owner `none` on the map, `yield`, `harvesting: {activeWorkers: 1, recommendedWorkers: 2, searchRadius: 24}`, body, footprint and entrance. The currency's harvest recipe refers to that source, and a worker's `work.harvests` exposes it. Set a map instance's `initialState.amount` to override remaining yield. A tree is a yielding resource rather than a neutral building.
 
 To introduce a new process, follow [Adding a native behavior](systems.md#adding-a-native-behavior). JSON cannot supply executable conditions, change pathfinding algorithms or call arbitrary engine functions.
 

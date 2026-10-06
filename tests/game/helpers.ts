@@ -1,8 +1,9 @@
-import { builtinSource } from "../../src/content/builtin";
+import {snapPlacement} from '../../src/shared/spatial/placement';
+import { builtinSource, content } from "../../src/content/builtin";
 import { ContentRegistry } from "../../src/content/registry";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { Game } from "../../src/sim/game/game";
-import type { Placement, Rules } from "../../src/content/schema";
+import type { Placement, Rules, AuthoredDefinition } from "../../src/content/schema";
 export const slots = [
   { player: 0, kind: "human" as const },
   { player: 1, kind: "human" as const },
@@ -22,9 +23,19 @@ export function game(
     new ContentRegistry(src),
   );
 }
-/** Regression fixtures with hand-authored sub-cell gaps/timings at original size. */
-export function originalScaleGame(entities: Placement[] = [], edit?: (draft: ReturnType<typeof source>) => void) {
-  return game(entities, draft => { (draft.rules as Rules).unitScale=1; edit?.(draft); });
+/** Deliberately tiny bodies/speeds for sub-cell navigation algorithm fixtures.
+ * These are test content, independent of the shipped balance and model sizes. */
+export function compactBodySource(draft: ReturnType<typeof source>) {
+  for(const d of draft.definitions as AuthoredDefinition[])if(d.kind==='unit') {
+    d.dimensions={radius:.2,height:2,formationSpacing:1};
+    const resolved=content.get(d.id).behaviors;
+    d.behaviors??={};
+    if(resolved.movement)d.behaviors.movement={...resolved.movement,speed:4,...(resolved.movement.walkSpeed?{walkSpeed:2}:{})};
+    if(resolved.combat&&!resolved.combat.projectile&&!resolved.combat.shell)d.behaviors.combat={...resolved.combat,range:1.5,attack:{...resolved.combat.attack,rangeBuffer:.75}};
+  }
+}
+export function compactBodyGame(entities: Placement[] = [], edit?: (draft: ReturnType<typeof source>) => void) {
+  return game(entities, draft => { compactBodySource(draft); edit?.(draft); });
 }
 export function placed(
   id: string,
@@ -36,7 +47,8 @@ export function placed(
   return {
     id,
     definition,
-    position: { x, y },
+    // Custom fixture definitions supply their own legal coordinates.
+    position: content.find(definition) ? snapPlacement(content.get(definition), {x,y}) : {x,y},
     rotation: 0,
     owner: "player.1",
     ...(initialState ? { initialState } : {}),
@@ -57,6 +69,6 @@ export function physical(g: Game, item: string) {
       (e.inventory[item] ?? 0) +
       (e.item && e.definition === item ? e.item.quantity : 0) +
       (e.unit?.cargo?.item === item ? e.unit.cargo.amount : 0),
-    0,
+    Object.values(g.state.wallets).reduce((sum, wallet) => sum + (wallet[item] ?? 0), 0),
   );
 }

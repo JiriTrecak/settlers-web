@@ -18,8 +18,9 @@ export class TargetIndex {
     for(const bucket of this.occupied)bucket.length=0;
     this.occupied.length=0;
     for (const e of entities) {
-      const p=precise(e), f=this.registry.get(e.definition).footprint, rotated=Math.round(e.rotation/90)%2!==0;
-      const x=f?(rotated?f.depth:f.width)/2:0,y=f?(rotated?f.width:f.depth)/2:0;
+      const p=precise(e), d=this.registry.get(e.definition),f=d.footprint, rotated=Math.round(e.rotation/90)%2!==0;
+      const radius=e.unit?d.dimensions!.radius:0;
+      const x=f?(rotated?f.depth:f.width)/2:radius,y=f?(rotated?f.width:f.depth)/2:radius;
       for(let by=Math.floor((p.y-y)/this.width);by<=Math.floor((p.y+y)/this.width);by++)
         for(let bx=Math.floor((p.x-x)/this.width);bx<=Math.floor((p.x+x)/this.width);bx++){
           let row=this.rows.get(by);

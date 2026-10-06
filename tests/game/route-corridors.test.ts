@@ -58,13 +58,15 @@ it('does not reuse terrain-only corridors for traffic avoidance, cost budgets or
  });
 });
 
-it('moves a group around terrain without overlap and replays identically after a cold restore',()=>{
- const placements=Array.from({length:8},(_,i)=>placed(`army-${i}`,'unit.ants.warrior',40+i%2*3,74+Math.floor(i/2)*3));
+it.each([0,1,2,3])('moves a group around terrain without overlap and replays identically after a cold restore, rotation %i',rotation=>{
+ const turn=(x:number,y:number)=>{for(let n=0;n<rotation;n++)[x,y]=[255-y,x];return{x,y};};
+ const placements=Array.from({length:8},(_,i)=>{const p=turn(40+i%2*3,74+Math.floor(i/2)*3);return placed(`army-${i}`,'unit.ants.warrior',p.x,p.y);});
  // Direct fixture terrain edits must invalidate the mesh prepared at load.
- const terrain=(g:ReturnType<typeof game>)=>{for(let y=62;y<=95;y++)g.spatial.terrain[y*g.spatial.size+75]=0;g.spatial.rebuild();};
+ const terrain=(g:ReturnType<typeof game>)=>{for(let y=62;y<=95;y++)g.spatial.terrain[g.spatial.cell(turn(75,y))]=0;g.spatial.rebuild();};
  const g=game(placements),replica=game(placements);terrain(g);terrain(replica);
  const army=g.entities.filter(e=>e.placement?.startsWith('army-')),ids=army.map(e=>e.id);
- for(const world of [g,replica])expect(world.command('player.1',{type:'move',actors:ids,destination:{x:130,y:82}}).accepted).toBe(true);
+ const destination=turn(130,82);
+ for(const world of [g,replica])expect(world.command('player.1',{type:'move',actors:ids,destination}).accepted).toBe(true);
  const share=vi.spyOn(RouteCorridors.prototype,'find');let reused=false;
  for(let tick=0;tick<1000;tick++){
   if(tick===100){replica.restore(g.snapshot());terrain(replica);}
@@ -80,5 +82,5 @@ it('moves a group around terrain without overlap and replays identically after a
  }
  share.mockRestore();
  expect(reused).toBe(true);expect(army.every(e=>e.unit!.order===null)).toBe(true);
- for(const e of army)expect(e.x).toBeGreaterThan(120);
+ for(const e of army)expect(Math.hypot(e.x-destination.x,e.y-destination.y)).toBeLessThan(12);
 },20000);

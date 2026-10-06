@@ -1,4 +1,4 @@
-import raw from '../../../assets/maps/skirmish/heartroot-glade.utcmap?raw';
+import raw from '../../../assets/maps/skirmish/amberwake-basin.utcmap?raw';
 import {parseUtcMap} from '../../../src/shared/map/utcmap';
 import type {CompileReply} from '../../../src/shared/authoring/worker/protocol';
 import {AuthoringTransferDecoder,type Packet} from '../../../src/shared/authoring/worker/transfer';

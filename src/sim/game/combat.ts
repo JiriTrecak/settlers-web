@@ -80,7 +80,7 @@ export class Combat {
   private perceives(a: Entity, b: Entity) {
     if(!this.vision.detects(a.owner,b,a))return false;
     if(a.owner==='none')return this.c.spatial.visible(this.c.spatial.elevatedPoint(a),this.c.spatial.elevatedPoint(b))&&distance2(precise(a),precise(b))<=
-      (this.camps.find(c=>c.id===a.unit?.camp)?.aggroRange??this.c.def(a).behaviors.combat!.aggroRange)**2;
+      (this.camps.find(c=>c.id===a.unit?.camp)?.aggroRange??this.c.def(a).behaviors.combat?.aggroRange??this.c.def(a).vision??0)**2;
     const key=`${a.owner}:${b.id}`,cached=this.planningSight?.get(key);
     if(cached!==undefined){this.c.profile.count('Planning visibility cache hits');return cached;}
     this.c.profile.count('Planning visibility evaluations');
@@ -153,10 +153,10 @@ export class Combat {
       if(order?.type==='follow'){
         const leader=c.get(order.target);releaseCombat(u);
         if(!leader||!alive(leader)||leader.unit?.contained||(!order.escort&&(leader.owner!==e.owner||!this.perceives(e,leader)))){u.order=null;discardNavigation(u);continue;}
-        if(c.spatial.range(e,leader)<=4){discardNavigation(u);}else if(u.retryAt<=c.state.tick){const goal=c.spatial.nearest(leader,8,e.id);if(goal)c.spatial.route(e,goal);u.retryAt=c.state.tick+12;}
+        if(c.spatial.bodyRange(e,leader)<=4){discardNavigation(u);}else if(u.retryAt<=c.state.tick){const goal=c.spatial.nearest(leader,8,e.id);if(goal)c.spatial.route(e,goal);u.retryAt=c.state.tick+12;}
         continue;
       }
-      if(order?.type==='hold'||u.garrison){discardNavigation(u);if(u.target){const t=c.get(u.target);if(!t||!combat||c.spatial.range(e,t)>combat.range**2)finishCombat(u,c.state.tick);}}
+      if(order?.type==='hold'||u.garrison){discardNavigation(u);if(u.target){const t=c.get(u.target);if(!t||!combat||c.spatial.bodyRange(e,t)>combat.range**2)finishCombat(u,c.state.tick);}}
       let target = c.get(order?.type === "attack" ? order.target : u.target ?? (order?.type==='hold'||u.garrison?undefined:u.pursuit?.target));
       if(combat && order?.type!=='hold' && !u.garrison && u.pursuit && (!target || !this.perceives(e,target))){
         const replacement=order?.type==='attack'?undefined:this.closestTarget(e,targets,combat.aggroRange);
@@ -179,8 +179,8 @@ export class Combat {
       // Automatic pursuit must not pull a crowded front line past an enemy it
       // can already hit. Keep explicit focus and committed attacks unchanged.
       if (target && combat && order?.type !== "attack" && !u.attack &&
-          c.state.tick % 8 === e.id % 8 && c.spatial.range(e, target) > combat.range ** 2) {
-        const immediate = this.closestTarget(e, targets, combat.range);
+          c.state.tick % 8 === e.id % 8 && c.spatial.bodyRange(e, target) > combat.range ** 2) {
+        const immediate = this.closestTarget(e, targets, combat.range,true);
         if (immediate) {
           target = immediate;
           u.target = immediate.id;
@@ -201,14 +201,14 @@ export class Combat {
         (c.state.tick % 8 === e.id % 8 ||
           (order?.type === "move" && order.attackMove))
       ) {
-        target = this.closestTarget(e,targets,order?.type==='hold'||u.garrison?combat.range:combat.aggroRange);
+        target = this.closestTarget(e,targets,order?.type==='hold'||u.garrison?combat.range:combat.aggroRange,!!(order?.type==='hold'||u.garrison));
       }
       if (target && combat) {
         if(u.target===null&&u.pursuit){discardNavigation(u);u.retryAt=c.state.tick;}
         this.rememberTarget(e,target);
         u.target = target.id;
         maintainCharge(c, e);
-        if (c.spatial.range(e, target) <= combat.range ** 2 && this.terrainClear(e,target)) {
+        if (c.spatial.bodyRange(e, target) <= combat.range ** 2 && this.terrainClear(e,target)) {
           discardNavigation(u);
           if (!u.attack && !u.cooldown) this.beginAttack(e, target);
           continue;
@@ -217,7 +217,12 @@ export class Combat {
         // A goal ray cannot change the decision until this actor may replan.
         // With no route we already need a new approach, regardless of the ray.
         if (u.retryAt <= c.state.tick) {
-          const staleGoal = !!u.route.length && u.goal !== null && (c.spatial.pointRange(c.spatial.point(u.goal),target) > combat.range ** 2 || !c.spatial.attackClear({...c.spatial.point(u.goal),elevation:c.spatial.elevation({...e,...c.spatial.point(u.goal)})},target,!!(combat.projectile||combat.shell)));
+          // An inherited move goal may be within weapon reach but occupied by
+          // the victim or a front-line ally. Rechoose a usable attack position.
+          const goal = u.route.length && u.goal !== null ? c.spatial.point(u.goal) : null;
+          const staleGoal = !!goal && (!c.spatial.free(goal,e.id,e) ||
+            c.spatial.bodyRange(e,target,goal) > combat.range ** 2 ||
+            !c.spatial.attackClear({...goal,elevation:c.spatial.elevation({...e,...goal})},target,!!(combat.projectile||combat.shell)));
           if (!u.route.length || staleGoal) {
             c.profile.count(staleGoal?'Attack approach stale goal':'Attack approach no route');
             routeToAttack(c,e,target,approaches);
@@ -235,15 +240,15 @@ export class Combat {
       }
     }
   }
-  private closestTarget(actor:Entity,targets:TargetIndex,range:number){
+  private closestTarget(actor:Entity,targets:TargetIndex,range:number,weaponReach=false){
     let best: Entity | undefined, bestDistance = range ** 2;
     let candidates=0,allied=0,eligible=0;
-    for (const target of targets.near(precise(actor), range)) {
+    for (const target of targets.near(precise(actor), range+(weaponReach?this.c.spatial.dimensions(actor).radius:0))) {
       candidates++;
       // Nearby allies dominate marching formations. Allegiance can reject them
       // before footprint distance, form/weapon policies or any visibility work.
       if (!this.hostile(actor,target)){allied++;continue;}
-      const distance = this.c.spatial.range(actor, target);
+      const distance = weaponReach?this.c.spatial.bodyRange(actor,target):this.c.spatial.range(actor,target);
       if (distance > bestDistance || (best && distance === bestDistance && target.id >= best.id)) continue;
       eligible++;
       if (!this.weaponEligible(actor,target) || !this.perceives(actor,target)) continue;
@@ -264,7 +269,7 @@ export class Combat {
     const finish=()=>finishCombat(u,this.c.state.tick);
     if(atPoint(actor,memory.position)||(!u.route.length&&u.goal!==null&&atPoint(actor,this.c.spatial.point(u.goal)))){finish();return;}
     if(!u.route.length&&u.retryAt<=this.c.state.tick){
-      const goal=this.c.spatial.nearest(memory.position,2,actor.id);
+      const goal=this.c.spatial.nearest(memory.position,2,actor.id,undefined,undefined,unit=>this.perceives(actor,unit));
       if(!goal||!this.c.spatial.route(actor,goal,false)){finish();return;}
       u.retryAt=this.c.state.tick+6;
     }
@@ -280,7 +285,7 @@ export class Combat {
       return true;
     }
     if (!u.route.length && u.retryAt <= this.c.state.tick) {
-      const goal = this.c.spatial.nearest(destination, 8, e.id);
+      const goal = this.c.spatial.nearest(destination, 8, e.id,undefined,undefined,unit=>this.perceives(e,unit));
       if (goal && !this.c.spatial.route(e, goal) &&
           this.c.spatial.findPath(this.c.spatial.cell(e), this.c.spatial.cell(goal), undefined, undefined, e) === null) {
         u.order = null;
@@ -365,14 +370,14 @@ export class Combat {
         continue;
       }
       if (!u.attack) {
-        if (u.cooldown === 0 && this.c.spatial.range(a,b) <= combat.range ** 2) this.beginAttack(a,b);
+        if (u.cooldown === 0 && this.c.spatial.bodyRange(a,b) <= combat.range ** 2) this.beginAttack(a,b);
         continue;
       }
       const attack = u.attack;
       if (attack.target !== b.id) { delete u.attack; continue; }
       if (attack.released || this.c.state.tick < attack.impact) continue;
       attack.released = true;
-      if (!this.terrainClear(a,b) || this.c.spatial.range(a,b) > (combat.range + combat.attack.rangeBuffer) ** 2) continue;
+      if (!this.terrainClear(a,b) || this.c.spatial.bodyRange(a,b) > (combat.range + combat.attack.rangeBuffer) ** 2) continue;
       const profile=this.c.weaponDefinition(a),baseDamage=combat.shell?this.c.stats(a).damage:chargeDamage(this.c,a,b);
       const grant=combat.shell||this.onWeaponCastRelease?undefined:enhanceWeapon(a,b,this.c.registry,this.c.state.tick,!!combat.projectile);
       const enhancement=!combat.shell&&this.onWeaponCastRelease?this.onWeaponCastRelease(a,b,!!combat.projectile):grant?{...grant,cast:this.c.state.nextCast++,...(grant.status?{sourceContext:spellSource(this.c,a)}:{})}:undefined;

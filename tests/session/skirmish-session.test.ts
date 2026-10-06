@@ -125,12 +125,15 @@ describe("skirmish presentation and transport", () => {
     expect(session.send({type:"ping"})).toBe(true);
     channels.forEach(c=>c.destroy());session.channels.forEach((c:MemoryChannel)=>c.destroy());
   });
-  it("AI says gg once when its main objective is nearly destroyed", () => {
+  it("AI says gg once on elimination, never merely for a nearly destroyed Hall", () => {
     vi.stubGlobal("document", { hidden: true });
     const {session, world, channels,receive} = fixture(0);
     const hall = world.settlement.entities.find(e => e.id === world.settlement.state.objectives["player.2"])!;
     hall.hp = 1;
     session.advance(50); session.advance(50);
+    expect(receive).not.toHaveBeenCalled();
+    for(const e of [...world.settlement.entities])if(e.owner==='player.2'&&world.settlement.registry.get(e.definition).kind==='building')world.settlement.economy.remove(e);
+    session.advance(50);session.advance(50);
     expect(receive).toHaveBeenCalledTimes(1);
     expect(receive.mock.calls[0][0]).toMatchObject({player: 1, text: "gg"});
     channels.forEach(c => c.destroy());

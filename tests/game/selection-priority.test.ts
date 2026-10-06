@@ -1,12 +1,12 @@
 import {expect,it,vi} from 'vitest';
-import {game,worker} from './helpers';
+import {game,worker,placed} from './helpers';
 import {prioritizeSelection,cycleSelection} from '../../src/presentation/selection';
 import {areaSelection,commandCard} from '../../src/presentation/commands';
 import {SettlementHud} from '../../src/ui/settlement/settlementHud';
 import {ControlGroups} from '../../src/presentation/controlGroups';
 
 function fixture(){
- const g=game(),view=g.view('player.1');
+ const g=game([placed('warrior-a','unit.ants.warrior',210,200),placed('warrior-b','unit.ants.warrior',214,200)]),view=g.view('player.1');
  const hero=g.entities.find(e=>e.owner==='player.1'&&g.registry.get(e.definition).hero)!;
  const warriors=g.entities.filter(e=>e.owner==='player.1'&&e.definition==='unit.ants.warrior');
  const w=worker(g);

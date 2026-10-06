@@ -1,5 +1,6 @@
+import {startingUnits,startingUnitPosition} from '../../content/startingHero';
+import {placementGeometryError} from '../spatial/placement';
 import {footprintHalfExtents} from './resourceClearance';
-import {unitDimensions} from '../../content/unitScale';
 import {validateMissionLua} from "../scenario/lua";
 import {projectScene,landscapeAssets} from '../authoring/project';
 import {MAX_FOUNDATION_RELIEF_CM} from './tacticalTerrain';
@@ -42,30 +43,32 @@ export function playableMapError(
   if (!compiled&&map.height)
     field.load(decodeHeight(map.height,map.size) ?? [], map.waterLevel ?? 0);
   else if(!compiled)field.waterLevel = map.waterLevel ?? 0;
-  const setup=content.rules.startingSetup,half=footprintHalfExtents(content.get(setup.fort).footprint);
-  const radius=unitDimensions(content.rules.unitScale).radius;
-  const startEnvelope={
-   minX:Math.floor(Math.min(-half.x,...setup.units.map(u=>u.offset.x-radius))),
-   maxX:Math.ceil(Math.max(half.x,...setup.units.map(u=>u.offset.x+radius))),
-   minZ:Math.floor(Math.min(-half.y,...setup.units.map(u=>u.offset.y-radius))),
-   maxZ:Math.ceil(Math.max(half.y,...setup.units.map(u=>u.offset.y+radius))),
-  };
+  const setup=content.rules.startingSetup;
+  const radius=(id:string)=>content.get(id).dimensions!.radius;
+  const formation=setup.hero?setup.hero.choices.flatMap(hero=>startingUnits(setup,hero)):setup.units;
   for (const s of starts) {
+    const half=footprintHalfExtents(content.get(setup.fort).footprint,s.rotation??0);
+    const positions=formation.map(u=>({...startingUnitPosition(s,u.offset),radius:radius(u.definition)}));
+    const startEnvelope={
+     minX:Math.floor(Math.min(-half.x,...positions.map(p=>p.x-s.x-p.radius))),
+     maxX:Math.ceil(Math.max(half.x,...positions.map(p=>p.x-s.x+p.radius))),
+     minZ:Math.floor(Math.min(-half.y,...positions.map(p=>p.y-s.z-p.radius))),
+     maxZ:Math.ceil(Math.max(half.y,...positions.map(p=>p.y-s.z+p.radius))),
+    };
     if (
-      !Number.isInteger(s.x) ||
-      !Number.isInteger(s.z) ||
+      placementGeometryError(content.get(setup.fort), {x:s.x,y:s.z},s.rotation??0) !== null ||
       s.x < 8 ||
       s.z < 8 ||
       s.x > map.size - 9 ||
       s.z > map.size - 9
     )
-      return `Player ${s.player} needs an integer start at least 8 cells inside the map.`;
+      return `Player ${s.player} needs a building-grid-aligned start at least 8 navigation cells inside the map.`;
     if(s.x+startEnvelope.minX<0||s.x+startEnvelope.maxX>=map.size||s.z+startEnvelope.minZ<0||s.z+startEnvelope.maxZ>=map.size)
       return `Player ${s.player} needs room for the complete fort and worker formation.`;
     let dry=true,lo = Infinity,
       hi = -Infinity;
-    for (let z = s.z + startEnvelope.minZ; z <= s.z + startEnvelope.maxZ; z++)
-      for (let x = s.x + startEnvelope.minX; x <= s.x + startEnvelope.maxX; x++) {
+    for (let z = Math.floor(s.z + startEnvelope.minZ); z <= Math.ceil(s.z + startEnvelope.maxZ); z++)
+      for (let x = Math.floor(s.x + startEnvelope.minX); x <= Math.ceil(s.x + startEnvelope.maxX); x++) {
         const h = field.sample(x, z);
         if(h<=field.waterAt(x,z)+.1)dry=false;
         lo = Math.min(lo, h);

@@ -1,9 +1,10 @@
 import {describe,it,expect} from 'vitest';
+import {snapPlacement} from '../../src/shared/spatial/placement';
 import {Game} from '../../src/sim/game/game';
 import {content} from '../../src/content/builtin';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import {resourceStamps} from '../../src/presentation/scenery';
-import {placed,slots,run} from './helpers';
+import {game,placed,slots,run} from './helpers';
 function setup(){
  const map=emptyUtcMap();
  const entities=map.playerStarts.flatMap(s=>[
@@ -15,12 +16,12 @@ function setup(){
 describe('hall gathering economy',()=>{
  it('auto-starts declared worker groups, depletes trees and deposits both resources into each hall',()=>{
   const g=setup();
-  expect(g.entities.filter(e=>e.unit?.order?.type==='gather')).toHaveLength(10);
+  expect(g.entities.filter(e=>e.unit?.order?.type==='gather')).toHaveLength(12);
   run(g,2400);
   for(const id of Object.values(g.state.objectives)){
    const hall=g.context.get(id)!;
-   expect(hall.inventory['item.amber']).toBeGreaterThan(content.rules.startingSetup.inventory['item.amber']);
-   expect(hall.inventory['item.wood']).toBe(content.rules.startingSetup.inventory['item.wood']+8);
+   expect(g.state.wallets[hall.owner]['item.amber']).toBeGreaterThan(content.rules.startingSetup.inventory['item.amber']);
+   expect(g.state.wallets[hall.owner]['item.wood']).toBe(content.rules.startingSetup.inventory['item.wood']+8);
   }
   const trees=g.entities.filter(e=>e.definition==='resource.forest.tree');
   expect(trees.every(e=>e.resource!.amount===0)).toBe(true);
@@ -28,12 +29,12 @@ describe('hall gathering economy',()=>{
   expect('claims' in g.state).toBe(false);
  });
  it('reserves a multi-cell mine footprint and prevents surrounding buildings from sealing its access',()=>{
-  const g=setup(),mine=g.entities.find(e=>e.placement==='mine.1')!;
+  const g=game([{...placed('mine.1','building.neutral.amber-mine',128,128),owner:'none'},placed('pioneer','unit.ants.settler',120,128)]),mine=g.entities.find(e=>e.placement==='mine.1')!;
   const footprint=content.get(mine.definition).footprint!;
   expect(g.spatial.footprint(mine)).toHaveLength(footprint.width*footprint.depth);
   expect(g.spatial.footprint(mine).every(i=>g.spatial.resources[i]===mine.id)).toBe(true);
-  const worker=g.entities.find(e=>e.owner==='player.1'&&content.get(e.definition).behaviors.work)!;
-  expect(g.canBuild('player.1','building.ants.house',{x:mine.x+Math.floor(footprint.width/2)+Math.floor(content.get('building.ants.house').footprint!.width/2)+1,y:mine.y},worker.id)).toMatch(/Leave access/);
+  const worker=g.entities.find(e=>e.placement==='pioneer')!;
+  expect(g.canBuild('player.1','building.ants.house',snapPlacement(content.get('building.ants.house'),{x:mine.x+(footprint.width+content.get('building.ants.house').footprint!.width)/2,y:mine.y}),worker.id)).toMatch(/Leave access/);
  });
  it('restores an in-flight harvest to the identical future without duplicating deposits',()=>{
   const g=setup();for(let tick=0;tick<800&&!g.entities.some(e=>e.unit?.cargo);tick++)g.tick();
@@ -53,18 +54,18 @@ describe('ten-resource trips',()=>{
    const owned=g.entities.filter(e=>e.owner==='player.1'&&content.get(e.definition).behaviors.work);
    g.command('player.1',{type:'stop',actors:owned.map(e=>e.id)});
    const w=owned[0],source=g.entities.find(e=>e.placement==='source')!,hall=g.context.get(g.state.objectives['player.1'])!;
-   const before=hall.inventory[item];
+   const before=g.state.wallets[hall.owner][item];
    expect(g.command('player.1',{type:'gather',actors:[w.id],target:source.id}).accepted).toBe(true);
    for(let i=0;i<1600&&!w.unit!.cargo;i++)g.tick();
    expect(w.unit!.cargo).toEqual({item,amount:10});
-   expect(source.resource!.amount).toBe(definition==='resource.forest.tree'?0:90);expect(hall.inventory[item]).toBe(before);
+   expect(source.resource!.amount).toBe(definition==='resource.forest.tree'?0:90);expect(g.state.wallets[hall.owner][item]).toBe(before);
    const restored=new Game(g.map,slots,content);restored.restore(g.snapshot());
    let receipts=0;
-   for(let i=0;i<1600&&hall.inventory[item]===before;i++){
+   for(let i=0;i<1600&&g.state.wallets[hall.owner][item]===before;i++){
     g.tick();restored.tick();
     for(const r of g.economy.deliveries)if(r.owner===w.owner && r.item===item){expect(r.amount).toBe(10);receipts++;}
    }
-   expect(hall.inventory[item]).toBe(before+10);expect(receipts).toBe(1);
+   expect(g.state.wallets[hall.owner][item]).toBe(before+10);expect(receipts).toBe(1);
    expect(restored.snapshot()).toEqual(g.snapshot());
   });
  }

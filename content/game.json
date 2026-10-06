@@ -13,8 +13,8 @@
         "work": {
           "carryCapacity": 10,
           "builds": [
+            "building.ants.fort",
             "building.ants.barracks",
-            "building.ants.forester",
             "building.ants.house",
             "building.ants.tower",
             "building.ants.sanctuary",
@@ -197,6 +197,10 @@
       "build:building.ants.bombardier-workshop": {
         "category": "category.build-advanced",
         "priority": 100
+      },
+      "build:building.ants.fort": {
+        "category": "category.build",
+        "priority": 100
       }
     },
     "categories": {
@@ -242,7 +246,6 @@
   },
   "rules": {
     "id": "declarations-7",
-    "unitScale": 1.7,
     "maxUnits": 160,
     "maxBuildings": 160,
     "constructionHpPermille": 100,
@@ -289,57 +292,43 @@
         {
           "definition": "unit.ants.settler",
           "offset": {
-            "x": -3,
-            "y": 11
-          }
-        },
-        {
-          "definition": "unit.ants.settler",
-          "offset": {
-            "x": -1,
-            "y": 11
-          }
-        },
-        {
-          "definition": "unit.ants.settler",
-          "offset": {
-            "x": 1,
-            "y": 11
-          }
-        },
-        {
-          "definition": "unit.ants.settler",
-          "offset": {
-            "x": 3,
-            "y": 11
-          }
-        },
-        {
-          "definition": "unit.ants.settler",
-          "offset": {
-            "x": -3,
-            "y": 13
-          }
-        },
-        {
-          "definition": "unit.ants.warrior",
-          "offset": {
             "x": -4,
-            "y": 16
+            "y": 14
           }
         },
         {
-          "definition": "unit.ants.warrior",
-          "offset": {
-            "x": 4,
-            "y": 16
-          }
-        },
-        {
-          "definition": "unit.ants.marshal",
+          "definition": "unit.ants.settler",
           "offset": {
             "x": 0,
-            "y": 16
+            "y": 14
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": 4,
+            "y": 14
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": -4,
+            "y": 18
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": 0,
+            "y": 18
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": 4,
+            "y": 18
           }
         }
       ],
@@ -347,7 +336,7 @@
       "gathering": [
         {
           "item": "item.amber",
-          "workers": 3,
+          "workers": 4,
           "radius": 40
         },
         {
@@ -355,7 +344,17 @@
           "workers": 2,
           "radius": 40
         }
-      ]
+      ],
+      "hero": {
+        "default": "unit.ants.marshal",
+        "choices": [
+          "unit.ants.marshal"
+        ],
+        "offset": {
+          "x": 0,
+          "y": -16
+        }
+      }
     },
     "ai": {
       "revision": 2,
@@ -636,7 +635,7 @@
     "research": {
       "research.ants.serrated-tools": {
         "name": "Serrated Tools",
-        "description": "Workers fell a full tree in five axe contacts instead of ten. Each tree still supplies ten Wood.",
+        "description": "Workers extract wood twice as fast. Each tree still contains fifty Wood.",
         "icon": "icon.ants.settler",
         "priority": 100,
         "items": [
@@ -655,7 +654,7 @@
             "units": [
               "unit.ants.settler"
             ],
-            "treeHitDamage": 2
+            "treeWorkRate": 2
           }
         ]
       },
@@ -809,7 +808,8 @@
       }
     },
     "maxSupply": 100,
-    "supplyIcon": "icon.ants.house"
+    "supplyIcon": "icon.ants.house",
+    "constructionRefundPermille": 750
   },
   "definitions": [
     {
@@ -825,7 +825,7 @@
         "armor": 0,
         "armorType": "light"
       },
-      "vision": 13,
+      "vision": 28,
       "behaviorSets": [
         "behavior-set.worker"
       ],
@@ -836,6 +836,10 @@
             "item.amber",
             "item.root"
           ]
+        },
+        "movement": {
+          "speed": 12,
+          "walkSpeed": 6
         }
       },
       "creation": {
@@ -843,14 +847,20 @@
         "items": [
           {
             "item": "item.amber",
-            "amount": 75
+            "amount": 100
           }
         ],
-        "workTicks": 480
+        "workTicks": 600
       },
       "level": 1,
       "experienceYield": 15,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "unit.ants.warrior",
@@ -865,7 +875,7 @@
         "armor": 2,
         "armorType": "heavy"
       },
-      "vision": 22,
+      "vision": 32,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
@@ -873,14 +883,17 @@
         "combat": {
           "damage": 9,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 54,
-          "aggroRange": 10,
+          "aggroRange": 20,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
+        },
+        "movement": {
+          "speed": 12
         }
       },
       "creation": {
@@ -888,14 +901,20 @@
         "items": [
           {
             "item": "item.amber",
-            "amount": 95
+            "amount": 135
           }
         ],
-        "workTicks": 40
+        "workTicks": 800
       },
       "level": 1,
       "experienceYield": 25,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "unit.ants.archer",
@@ -910,7 +929,7 @@
         "armor": 0,
         "armorType": "light"
       },
-      "vision": 22,
+      "vision": 36,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
@@ -918,9 +937,9 @@
         "combat": {
           "damage": 15,
           "damageType": "piercing",
-          "range": 10,
+          "range": 20,
           "cooldownTicks": 60,
-          "aggroRange": 10,
+          "aggroRange": 24,
           "attack": {
             "windupTicks": 20,
             "recoveryTicks": 16,
@@ -929,6 +948,9 @@
           "projectile": {
             "speed": 32
           }
+        },
+        "movement": {
+          "speed": 12
         }
       },
       "creation": {
@@ -936,24 +958,30 @@
         "items": [
           {
             "item": "item.amber",
-            "amount": 145
+            "amount": 150
           },
           {
             "item": "item.wood",
             "amount": 20
           }
         ],
-        "workTicks": 40
+        "workTicks": 960
       },
       "level": 1,
       "experienceYield": 25,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "building.ants.fort",
       "kind": "building",
       "name": "Acorn Main Hall",
-      "description": "The colony main hall stores resources, trains workers and provides 12 supply.",
+      "description": "The colony main hall stores resources, trains workers and provides 15 supply.",
       "asset": "asset.ants.fort",
       "icon": "icon.ants.fort",
       "body": {
@@ -963,17 +991,26 @@
       },
       "vision": 42,
       "footprint": {
-        "width": 15,
-        "depth": 15
+        "width": 20,
+        "depth": 20
       },
       "entrance": {
-        "x": 0,
-        "y": 9
+        "x": 0.5,
+        "y": 10.5
       },
       "creation": {
         "method": "construct",
-        "items": [],
-        "workTicks": 1,
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 400
+          },
+          {
+            "item": "item.wood",
+            "amount": 150
+          }
+        ],
+        "workTicks": 3600,
         "workAnimation": "build"
       },
       "behaviorSets": [
@@ -1003,26 +1040,24 @@
         "items": [
           {
             "item": "item.amber",
-            "amount": 320
+            "amount": 450
           },
           {
             "item": "item.wood",
-            "amount": 180
-          },
-          {
-            "item": "item.root",
-            "amount": 100
+            "amount": 200
           }
         ],
-        "workTicks": 2400
+        "workTicks": 3200
       },
-      "supplyProvided": 12
+      "supplyProvided": 15,
+      "heroCapacity": 1,
+      "modelScale": 1.25
     },
     {
       "id": "building.ants.great-mound",
       "kind": "building",
       "name": "Great Acorn Hall",
-      "description": "The colony main hall stores resources, trains workers and provides 12 supply.",
+      "description": "The colony main hall stores resources, trains workers and provides 15 supply.",
       "asset": "asset.ants.great-mound",
       "icon": "icon.ants.great-mound",
       "body": {
@@ -1032,18 +1067,12 @@
       },
       "vision": 42,
       "footprint": {
-        "width": 15,
-        "depth": 15
+        "width": 20,
+        "depth": 20
       },
       "entrance": {
-        "x": 0,
-        "y": 9
-      },
-      "creation": {
-        "method": "construct",
-        "items": [],
-        "workTicks": 1,
-        "workAnimation": "build"
+        "x": 0.5,
+        "y": 10.5
       },
       "behaviorSets": [
         "behavior-set.player-building"
@@ -1067,13 +1096,76 @@
         }
       },
       "level": 2,
-      "supplyProvided": 12
+      "supplyProvided": 15,
+      "heroCapacity": 2,
+      "upgrade": {
+        "target": "building.ants.elder-hall",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 600
+          },
+          {
+            "item": "item.wood",
+            "amount": 250
+          }
+        ],
+        "workTicks": 4000
+      },
+      "modelScale": 1.25
+    },
+    {
+      "id": "building.ants.elder-hall",
+      "kind": "building",
+      "name": "Elder Hall",
+      "description": "Tier 3 Acorn Hall. Supports a roster of three distinct heroes.",
+      "asset": "asset.ants.great-mound",
+      "icon": "icon.ants.great-mound",
+      "body": {
+        "maxHp": 3000,
+        "armor": 6,
+        "armorType": "structure"
+      },
+      "vision": 42,
+      "footprint": {
+        "width": 20,
+        "depth": 20
+      },
+      "entrance": {
+        "x": 0.5,
+        "y": 10.5
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 100000,
+          "accepts": [
+            "item.wood",
+            "item.amber"
+          ],
+          "dropoff": true
+        },
+        "production": {
+          "mode": "queued",
+          "outputs": [
+            "unit.ants.settler"
+          ],
+          "workerSlots": 0,
+          "queueCapacity": 6
+        }
+      },
+      "level": 3,
+      "supplyProvided": 15,
+      "heroCapacity": 3,
+      "modelScale": 1.25
     },
     {
       "id": "building.ants.barracks",
       "kind": "building",
       "name": "Barracks",
-      "description": "Trains free workers into soldiers. Recruits enter the barracks and emerge armed; employed workers are never taken automatically.",
+      "description": "Trains Warriors and Archers independently of the workforce. Each recruit uses one supply.",
       "asset": "asset.ants.barracks",
       "icon": "icon.ants.barracks",
       "body": {
@@ -1083,26 +1175,26 @@
       },
       "vision": 14,
       "footprint": {
-        "width": 9,
-        "depth": 7
+        "width": 12,
+        "depth": 12
       },
       "entrance": {
-        "x": 0,
-        "y": 4
+        "x": 0.5,
+        "y": 6.5
       },
       "creation": {
         "method": "construct",
         "items": [
           {
             "item": "item.amber",
-            "amount": 160
+            "amount": 200
           },
           {
             "item": "item.wood",
             "amount": 60
           }
         ],
-        "workTicks": 240,
+        "workTicks": 2000,
         "workAnimation": "build"
       },
       "behaviorSets": [
@@ -1128,13 +1220,14 @@
         }
       },
       "category": "category.build-advanced",
-      "level": 1
+      "level": 1,
+      "modelScale": 1.25
     },
     {
       "id": "building.ants.forester",
       "kind": "building",
       "name": "Forester lodge",
-      "description": "Restores exhausted tree sites. Young trees need time to mature.",
+      "description": "Decorative forest lodge. Ranked forests do not regrow.",
       "asset": "asset.ants.forester",
       "icon": "icon.ants.forester",
       "body": {
@@ -1144,12 +1237,12 @@
       },
       "vision": 14,
       "footprint": {
-        "width": 7,
-        "depth": 7
+        "width": 12,
+        "depth": 12
       },
       "entrance": {
-        "x": 0,
-        "y": 4
+        "x": 0.5,
+        "y": 6.5
       },
       "creation": {
         "method": "construct",
@@ -1169,17 +1262,7 @@
       "behaviorSets": [
         "behavior-set.player-building"
       ],
-      "behaviors": {
-        "production": {
-          "mode": "automatic",
-          "outputs": [
-            "resource.forest.tree"
-          ],
-          "workerSlots": 1,
-          "workRadius": 28,
-          "jobName": "Forester"
-        }
-      },
+      "behaviors": {},
       "level": 1
     },
     {
@@ -1196,26 +1279,26 @@
       },
       "vision": 14,
       "footprint": {
-        "width": 7,
-        "depth": 7
+        "width": 8,
+        "depth": 8
       },
       "entrance": {
-        "x": 0,
-        "y": 4
+        "x": 0.5,
+        "y": 4.5
       },
       "creation": {
         "method": "construct",
         "items": [
           {
             "item": "item.amber",
-            "amount": 80
+            "amount": 100
           },
           {
             "item": "item.wood",
-            "amount": 20
+            "amount": 25
           }
         ],
-        "workTicks": 240,
+        "workTicks": 1000,
         "workAnimation": "build"
       },
       "behaviorSets": [
@@ -1223,13 +1306,14 @@
       ],
       "behaviors": {},
       "level": 1,
-      "supplyProvided": 6
+      "supplyProvided": 8,
+      "modelScale": 1.1
     },
     {
       "id": "building.ants.tower",
       "kind": "building",
       "name": "Watchtower",
-      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit’s own weapon and upgrades.",
+      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit\u2019s own weapon and upgrades.",
       "asset": "asset.ants.tower",
       "icon": "icon.ants.tower",
       "body": {
@@ -1239,26 +1323,26 @@
       },
       "vision": 25,
       "footprint": {
-        "width": 7,
-        "depth": 7
+        "width": 8,
+        "depth": 8
       },
       "entrance": {
-        "x": 0,
-        "y": 4
+        "x": 0.5,
+        "y": 4.5
       },
       "creation": {
         "method": "construct",
         "items": [
           {
             "item": "item.amber",
-            "amount": 30
+            "amount": 100
           },
           {
             "item": "item.wood",
-            "amount": 20
+            "amount": 50
           }
         ],
-        "workTicks": 320,
+        "workTicks": 1400,
         "workAnimation": "build"
       },
       "behaviorSets": [
@@ -1274,13 +1358,14 @@
         ],
         "height": 5.8,
         "lookoutRadius": 1.35
-      }
+      },
+      "modelScale": 1.25
     },
     {
       "id": "item.wood",
       "kind": "item",
       "name": "Wood",
-      "description": "Timber gathered by workers and carried to the Mound.",
+      "description": "Ten wood per load, carried to a colony drop-off.",
       "asset": "asset.item.wood",
       "icon": "icon.item.wood",
       "stackLimit": 16,
@@ -1288,11 +1373,12 @@
       "creation": {
         "method": "harvest",
         "items": [],
-        "workTicks": 40,
+        "workTicks": 320,
         "source": "resource.forest.tree",
         "workAnimation": "chop",
         "amount": 10,
-        "impactTick": 22
+        "impactTick": 22,
+        "animationTicks": 40
       },
       "currency": true,
       "displayOrder": 20
@@ -1309,7 +1395,7 @@
       "creation": {
         "method": "harvest",
         "items": [],
-        "workTicks": 100,
+        "workTicks": 80,
         "source": "building.neutral.amber-mine",
         "workAnimation": "chop",
         "amount": 10
@@ -1321,22 +1407,21 @@
       "id": "resource.forest.tree",
       "kind": "resource",
       "name": "Forest tree",
-      "description": "Ten axe hits fell a tree, yielding one 10-lumber load. Foresters restore exhausted sites.",
+      "description": "Fifty wood, collected in ten-wood loads. Falls when depleted.",
       "asset": "asset.resource.tree-primary",
       "icon": "icon.item.wood",
       "collisionRadius": 2,
-      "regrowthTicks": 1600,
       "behaviors": {},
-      "creation": {
-        "method": "plant",
-        "items": [],
-        "workTicks": 80
-      },
-      "yield": 10,
+      "yield": 50,
       "felling": {
-        "maxHp": 10,
+        "maxHp": 50,
         "fallTicks": 72,
         "decayTicks": 240
+      },
+      "harvesting": {
+        "activeWorkers": 1,
+        "recommendedWorkers": 1,
+        "searchRadius": 32
       }
     },
     {
@@ -1354,7 +1439,7 @@
         "armor": 2,
         "armorType": "hero"
       },
-      "vision": 28,
+      "vision": 36,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
@@ -1362,13 +1447,13 @@
         "combat": {
           "damage": 31,
           "damageType": "hero",
-          "range": 1.8,
+          "range": 0.6,
           "cooldownTicks": 73,
-          "aggroRange": 12,
+          "aggroRange": 20,
           "attack": {
             "windupTicks": 18,
             "recoveryTicks": 14,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         },
         "progression": {
@@ -1522,10 +1607,33 @@
               }
             }
           ]
+        },
+        "movement": {
+          "speed": 13
         }
       },
       "experienceYield": 150,
-      "supplyCost": 5
+      "supplyCost": 4,
+      "dimensions": {
+        "radius": 2,
+        "height": 5.6,
+        "formationSpacing": 4.25
+      },
+      "modelScale": 2.8,
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 425
+          },
+          {
+            "item": "item.wood",
+            "amount": 100
+          }
+        ],
+        "workTicks": 2200
+      }
     },
     {
       "id": "item.barkguard",
@@ -1640,28 +1748,33 @@
     {
       "id": "building.neutral.amber-mine",
       "kind": "building",
-      "name": "Amber Deposit",
-      "description": "Amber nodules rise from the forest soil. Workers carry the resin back to the Main Hall.",
+      "name": "Amber Node",
+      "description": "One miner extracts ten amber at a time; other workers queue. Four nodes form a standard amber site.",
       "asset": "asset.resource.amber-seam",
       "icon": "icon.neutral.amber-deposit",
       "footprint": {
-        "width": 15,
-        "depth": 15
+        "width": 4,
+        "depth": 4
       },
       "constructionClearance": 3,
       "behaviors": {},
-      "yield": 12000,
+      "yield": 4500,
       "entrance": {
-        "x": 0,
-        "y": 8
+        "x": 0.5,
+        "y": 2.5
       },
       "body": {
         "maxHp": 1500,
         "armor": 5,
         "armorType": "structure"
       },
-      "gatheringCapacity": 10,
-      "gatheringUnitCollision": false
+      "gatheringUnitCollision": false,
+      "harvesting": {
+        "activeWorkers": 1,
+        "recommendedWorkers": 2,
+        "searchRadius": 24
+      },
+      "modelScale": 0.28
     },
     {
       "id": "building.ants.sanctuary",
@@ -1677,12 +1790,12 @@
       },
       "vision": 14,
       "footprint": {
-        "width": 7,
-        "depth": 7
+        "width": 12,
+        "depth": 12
       },
       "entrance": {
-        "x": 0,
-        "y": 4
+        "x": 0.5,
+        "y": 6.5
       },
       "creation": {
         "method": "construct",
@@ -1693,10 +1806,10 @@
           },
           {
             "item": "item.wood",
-            "amount": 50
+            "amount": 60
           }
         ],
-        "workTicks": 220,
+        "workTicks": 1600,
         "workAnimation": "build"
       },
       "behaviorSets": [
@@ -1704,8 +1817,36 @@
       ],
       "behaviors": {
         "revival": {
-          "workTicks": 400,
+          "items": [
+            {
+              "item": "item.amber",
+              "amount": 200
+            }
+          ],
+          "itemsPerLevel": [
+            {
+              "item": "item.amber",
+              "amount": 50
+            }
+          ],
+          "workTicksPerLevel": 200,
+          "workTicks": 1200,
           "queueCapacity": 4
+        },
+        "production": {
+          "mode": "queued",
+          "outputs": [
+            "unit.ants.marshal"
+          ],
+          "queueCapacity": 4,
+          "workerSlots": 0
+        },
+        "storage": {
+          "capacity": 100000,
+          "accepts": [
+            "item.amber",
+            "item.wood"
+          ]
         }
       },
       "level": 1,
@@ -1715,7 +1856,7 @@
       "id": "item.trailkeeper-flask",
       "kind": "item",
       "itemTier": 1,
-      "name": "Trailkeeper’s Flask",
+      "name": "Trailkeeper\u2019s Flask",
       "description": "3 charges: restore 70 health and 25 mana. 10s cooldown between uses.",
       "asset": "asset.item.chest",
       "icon": "icon.item.trailkeeper-flask",
@@ -1799,7 +1940,7 @@
       "id": "item.scout-whistle",
       "kind": "item",
       "itemTier": 1,
-      "name": "Scout’s Whistle",
+      "name": "Scout\u2019s Whistle",
       "description": "2 charges: allied units within 6 tiles gain 15% movement speed for 8s. 25s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.scout-whistle",
@@ -1867,7 +2008,7 @@
       "id": "item.predator-talon",
       "kind": "item",
       "itemTier": 2,
-      "name": "Predator’s Talon",
+      "name": "Predator\u2019s Talon",
       "description": "+10 damage. Basic attacks restore 10% of damage dealt as health.",
       "asset": "asset.item.chest",
       "icon": "icon.item.predator-talon",
@@ -1914,7 +2055,7 @@
       "id": "item.broodkeeper-lantern",
       "kind": "item",
       "itemTier": 2,
-      "name": "Broodkeeper’s Lantern",
+      "name": "Broodkeeper\u2019s Lantern",
       "description": "Aura: allied living units within 6 tiles regenerate 2 health per second.",
       "asset": "asset.item.chest",
       "icon": "icon.item.broodkeeper-lantern",
@@ -1938,7 +2079,7 @@
       "id": "item.warcaller-standard",
       "kind": "item",
       "itemTier": 2,
-      "name": "Warcaller’s Standard",
+      "name": "Warcaller\u2019s Standard",
       "description": "Aura: allied units within 6 tiles gain 10% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.warcaller-standard",
@@ -2006,7 +2147,7 @@
       "id": "item.rootbinder-idol",
       "kind": "item",
       "itemTier": 2,
-      "name": "Rootbinder’s Idol",
+      "name": "Rootbinder\u2019s Idol",
       "description": "Activate: enemies within 4 tiles take 60 magic damage and are rooted for 2s (they can still attack). 35s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.rootbinder-idol",
@@ -2087,7 +2228,7 @@
       "id": "item.reaper-mandible",
       "kind": "item",
       "itemTier": 3,
-      "name": "Reaper’s Mandible",
+      "name": "Reaper\u2019s Mandible",
       "description": "+18 damage. Every fourth basic hit cleaves up to 4 enemies within 3 tiles of the target for 50% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.reaper-mandible",
@@ -2317,26 +2458,26 @@
       },
       "vision": 14,
       "footprint": {
-        "width": 9,
-        "depth": 9
+        "width": 12,
+        "depth": 12
       },
       "entrance": {
-        "x": 0,
-        "y": 5
+        "x": 0.5,
+        "y": 6.5
       },
       "creation": {
         "method": "construct",
         "items": [
           {
             "item": "item.amber",
-            "amount": 140
+            "amount": 150
           },
           {
             "item": "item.wood",
-            "amount": 70
+            "amount": 75
           }
         ],
-        "workTicks": 1200,
+        "workTicks": 1600,
         "workAnimation": "build"
       },
       "behaviorSets": [
@@ -2356,7 +2497,8 @@
         }
       },
       "category": "category.build",
-      "level": 1
+      "level": 1,
+      "modelScale": 1.25
     },
     {
       "id": "item.root",
@@ -2370,7 +2512,7 @@
       "creation": {
         "method": "harvest",
         "items": [],
-        "workTicks": 100,
+        "workTicks": 200,
         "source": "building.neutral.corrupted-root",
         "workAnimation": "chop",
         "amount": 10
@@ -2382,27 +2524,32 @@
       "id": "building.neutral.corrupted-root",
       "kind": "building",
       "name": "Corrupted Root",
-      "description": "A finite contested deposit. Up to five workers carry ten Root per trip to a nearby Rootworks.",
+      "description": "One miner extracts ten Root at a time; other workers queue. Deliver to a Rootworks.",
       "asset": "asset.resource.corrupted-root",
       "icon": "icon.item.root",
       "footprint": {
-        "width": 15,
-        "depth": 15
+        "width": 8,
+        "depth": 8
       },
       "constructionClearance": 3,
       "behaviors": {},
-      "yield": 3000,
+      "yield": 1500,
       "entrance": {
-        "x": 0,
-        "y": 8
+        "x": 0.5,
+        "y": 4.5
       },
       "body": {
         "maxHp": 1500,
         "armor": 5,
         "armorType": "structure"
       },
-      "gatheringCapacity": 5,
-      "gatheringUnitCollision": false
+      "gatheringUnitCollision": false,
+      "harvesting": {
+        "activeWorkers": 1,
+        "recommendedWorkers": 2,
+        "searchRadius": 0
+      },
+      "modelScale": 0.55
     },
     {
       "id": "building.ants.rootworks",
@@ -2418,26 +2565,26 @@
       },
       "vision": 14,
       "footprint": {
-        "width": 11,
-        "depth": 9
+        "width": 12,
+        "depth": 12
       },
       "entrance": {
-        "x": 1,
-        "y": 5
+        "x": 0.5,
+        "y": 6.5
       },
       "creation": {
         "method": "construct",
         "items": [
           {
             "item": "item.amber",
-            "amount": 140
+            "amount": 150
           },
           {
             "item": "item.wood",
-            "amount": 80
+            "amount": 75
           }
         ],
-        "workTicks": 1200,
+        "workTicks": 1600,
         "workAnimation": "build"
       },
       "behaviorSets": [
@@ -2457,13 +2604,14 @@
         "radius": 20
       },
       "category": "category.build",
-      "level": 1
+      "level": 1,
+      "modelScale": 1.1
     },
     {
       "id": "unit.ants.hunter",
       "kind": "unit",
       "name": "Hunter",
-      "description": "Spear infantry that charges enemy units from 3–7 cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
+      "description": "Spear infantry that charges enemy units from 3\u20138 building cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
       "asset": "asset.ants.hunter",
       "icon": "icon.ants.hunter",
       "selectionClass": "army",
@@ -2472,7 +2620,7 @@
         "armor": 2,
         "armorType": "light"
       },
-      "vision": 22,
+      "vision": 36,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
@@ -2480,12 +2628,12 @@
         "combat": {
           "damage": 24,
           "damageType": "melee",
-          "range": 1.8,
+          "range": 0.6,
           "cooldownTicks": 56,
-          "aggroRange": 10,
+          "aggroRange": 20,
           "charge": {
-            "minRange": 3,
-            "maxRange": 7,
+            "minRange": 12,
+            "maxRange": 32,
             "cooldownTicks": 320,
             "durationTicks": 100,
             "speedPermille": 2000,
@@ -2494,8 +2642,11 @@
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
+        },
+        "movement": {
+          "speed": 14
         }
       },
       "creation": {
@@ -2503,21 +2654,27 @@
         "items": [
           {
             "item": "item.amber",
-            "amount": 190
+            "amount": 200
           },
           {
             "item": "item.wood",
-            "amount": 45
+            "amount": 40
           }
         ],
-        "workTicks": 60
+        "workTicks": 1200
       },
       "requires": [
         "building.ants.great-mound"
       ],
       "level": 2,
       "experienceYield": 50,
-      "supplyCost": 2
+      "supplyCost": 2,
+      "dimensions": {
+        "radius": 2,
+        "height": 5.2,
+        "formationSpacing": 4.25
+      },
+      "modelScale": 2.6
     },
     {
       "id": "unit.ants.bombardier",
@@ -2532,21 +2689,21 @@
         "armor": 1,
         "armorType": "light"
       },
-      "vision": 22,
+      "vision": 40,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
       "behaviors": {
         "movement": {
-          "speed": 3,
+          "speed": 10,
           "turnRate": 720
         },
         "combat": {
           "damage": 42,
           "damageType": "siege",
-          "range": 10,
+          "range": 32,
           "cooldownTicks": 120,
-          "aggroRange": 12,
+          "aggroRange": 36,
           "shell": {
             "flightTicks": 40,
             "radius": 2,
@@ -2569,21 +2726,27 @@
           },
           {
             "item": "item.wood",
-            "amount": 80
+            "amount": 60
           },
           {
             "item": "item.root",
-            "amount": 40
+            "amount": 30
           }
         ],
-        "workTicks": 80
+        "workTicks": 1280
       },
       "requires": [
         "building.ants.great-mound"
       ],
       "level": 2,
       "experienceYield": 65,
-      "supplyCost": 3
+      "supplyCost": 3,
+      "dimensions": {
+        "radius": 2.5,
+        "height": 4.8,
+        "formationSpacing": 5.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "building.ants.bombardier-workshop",
@@ -2599,12 +2762,12 @@
       },
       "vision": 14,
       "footprint": {
-        "width": 11,
-        "depth": 9
+        "width": 12,
+        "depth": 12
       },
       "entrance": {
-        "x": 0,
-        "y": 5
+        "x": 0.5,
+        "y": 6.5
       },
       "creation": {
         "method": "construct",
@@ -2618,7 +2781,7 @@
             "amount": 120
           }
         ],
-        "workTicks": 1200,
+        "workTicks": 2000,
         "workAnimation": "build"
       },
       "behaviorSets": [
@@ -2646,7 +2809,8 @@
       "requires": [
         "building.ants.great-mound"
       ],
-      "level": 2
+      "level": 2,
+      "modelScale": 1.15
     },
     {
       "id": "unit.ants.civilian",
@@ -2661,17 +2825,23 @@
         "armor": 0,
         "armorType": "light"
       },
-      "vision": 13,
+      "vision": 28,
       "behaviorSets": [],
       "behaviors": {
         "movement": {
-          "speed": 4,
+          "speed": 12,
           "turnRate": 720
         }
       },
       "level": 1,
       "experienceYield": 15,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "unit.ants.youngling",
@@ -2686,17 +2856,23 @@
         "armor": 0,
         "armorType": "light"
       },
-      "vision": 13,
+      "vision": 28,
       "behaviorSets": [],
       "behaviors": {
         "movement": {
-          "speed": 4,
+          "speed": 12,
           "turnRate": 720
         }
       },
       "level": 1,
       "experienceYield": 15,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "unit.briar.scavenger",
@@ -2711,7 +2887,7 @@
         "armor": 1,
         "armorType": "heavy"
       },
-      "vision": 10,
+      "vision": 32,
       "behaviorSets": [
         "behavior-set.neutral"
       ],
@@ -2719,23 +2895,29 @@
         "combat": {
           "damage": 8,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 54,
-          "aggroRange": 10,
+          "aggroRange": 20,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         },
         "movement": {
-          "speed": 4,
+          "speed": 12,
           "turnRate": 720
         }
       },
       "level": 1,
       "experienceYield": 20,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "unit.briar.raider",
@@ -2750,7 +2932,7 @@
         "armor": 1,
         "armorType": "heavy"
       },
-      "vision": 10,
+      "vision": 32,
       "behaviorSets": [
         "behavior-set.neutral"
       ],
@@ -2758,23 +2940,29 @@
         "combat": {
           "damage": 12,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 54,
-          "aggroRange": 10,
+          "aggroRange": 20,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         },
         "movement": {
-          "speed": 4,
+          "speed": 12,
           "turnRate": 720
         }
       },
       "level": 1,
       "experienceYield": 20,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "unit.briar.cutthroat",
@@ -2789,7 +2977,7 @@
         "armor": 1,
         "armorType": "heavy"
       },
-      "vision": 10,
+      "vision": 32,
       "behaviorSets": [
         "behavior-set.neutral"
       ],
@@ -2797,23 +2985,29 @@
         "combat": {
           "damage": 10,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 54,
-          "aggroRange": 10,
+          "aggroRange": 20,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         },
         "movement": {
-          "speed": 4,
+          "speed": 12,
           "turnRate": 720
         }
       },
       "level": 1,
       "experienceYield": 20,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "unit.briar.chieftain",
@@ -2828,7 +3022,7 @@
         "armor": 3,
         "armorType": "heavy"
       },
-      "vision": 10,
+      "vision": 32,
       "behaviorSets": [
         "behavior-set.neutral"
       ],
@@ -2836,23 +3030,29 @@
         "combat": {
           "damage": 23,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 54,
-          "aggroRange": 10,
+          "aggroRange": 20,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         },
         "movement": {
-          "speed": 4,
+          "speed": 12,
           "turnRate": 720
         }
       },
       "level": 1,
       "experienceYield": 45,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "unit.briar.slinger",
@@ -2867,7 +3067,7 @@
         "armor": 0,
         "armorType": "light"
       },
-      "vision": 10,
+      "vision": 32,
       "behaviorSets": [
         "behavior-set.neutral"
       ],
@@ -2877,7 +3077,7 @@
           "damageType": "piercing",
           "range": 10,
           "cooldownTicks": 60,
-          "aggroRange": 10,
+          "aggroRange": 20,
           "attack": {
             "windupTicks": 20,
             "recoveryTicks": 16,
@@ -2888,13 +3088,19 @@
           }
         },
         "movement": {
-          "speed": 4,
+          "speed": 12,
           "turnRate": 720
         }
       },
       "level": 1,
       "experienceYield": 20,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "unit.briar.turncoat",
@@ -2909,7 +3115,7 @@
         "armor": 2,
         "armorType": "heavy"
       },
-      "vision": 22,
+      "vision": 32,
       "behaviorSets": [
         "behavior-set.ground-army"
       ],
@@ -2917,19 +3123,28 @@
         "combat": {
           "damage": 10,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 54,
-          "aggroRange": 10,
+          "aggroRange": 20,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
+        },
+        "movement": {
+          "speed": 12
         }
       },
       "level": 1,
       "experienceYield": 20,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
     },
     {
       "id": "building.briar.cottage",
@@ -2945,13 +3160,13 @@
       },
       "vision": 0,
       "footprint": {
-        "width": 5,
-        "depth": 5
+        "width": 12,
+        "depth": 12
       },
       "behaviors": {},
       "entrance": {
-        "x": 0,
-        "y": 4
+        "x": 0.5,
+        "y": 6.5
       }
     },
     {
@@ -2968,13 +3183,13 @@
       },
       "vision": 0,
       "footprint": {
-        "width": 3,
-        "depth": 3
+        "width": 8,
+        "depth": 8
       },
       "behaviors": {},
       "entrance": {
-        "x": 0,
-        "y": 3
+        "x": 0.5,
+        "y": 4.5
       }
     },
     {
@@ -2991,19 +3206,19 @@
       },
       "vision": 0,
       "footprint": {
-        "width": 1,
-        "depth": 1
+        "width": 4,
+        "depth": 4
       },
       "behaviors": {},
       "entrance": {
-        "x": 0,
-        "y": 1
+        "x": 0.5,
+        "y": 2.5
       }
     },
     {
       "id": "item.briar-ledger",
       "kind": "item",
-      "name": "Merchant’s Leaf Ledger",
+      "name": "Merchant\u2019s Leaf Ledger",
       "description": "Return this stolen ledger to Pell at the roadside cart.",
       "asset": "asset.briar.leaf-ledger",
       "icon": "icon.briar.leaf-ledger",
@@ -3098,7 +3313,7 @@
     {
       "id": "item.briar-rescue-ring",
       "kind": "item",
-      "name": "Caretaker’s Ring",
+      "name": "Caretaker\u2019s Ring",
       "description": "A gift for bringing the youngling home. +1 armor.",
       "asset": "asset.briar.family-ring",
       "icon": "icon.briar.family-ring",
@@ -3144,27 +3359,27 @@
       },
       "vision": 0,
       "footprint": {
-        "width": 5,
-        "depth": 5
+        "width": 12,
+        "depth": 12
       },
       "behaviors": {},
       "entrance": {
-        "x": 0,
-        "y": 4
+        "x": 0.5,
+        "y": 6.5
       }
     },
     {
       "id": "unit.neutral.thorn-slinger",
       "kind": "unit",
       "name": "Thorn Slinger",
-      "description": "Thornback Foragers · ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
+      "description": "Thornback Foragers \u00b7 ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
       "asset": "asset.neutral.thorn-slinger",
       "icon": "icon.neutral.thorn-slinger",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.29,
-        "height": 1.8,
-        "formationSpacing": 0.652
+        "radius": 0.493,
+        "height": 3.06,
+        "formationSpacing": 1.1084
       },
       "body": {
         "maxHp": 170,
@@ -3177,7 +3392,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 11,
@@ -3197,20 +3412,21 @@
       },
       "level": 1,
       "experienceYield": 25,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.dew-sprite",
       "kind": "unit",
       "name": "Dew Sprite",
-      "description": "Dewdrop Sprites · ranged forest creature. Fragile water spirits gathered around wet leaves.",
+      "description": "Dewdrop Sprites \u00b7 ranged forest creature. Fragile water spirits gathered around wet leaves.",
       "asset": "asset.neutral.dew-sprite",
       "icon": "icon.neutral.dew-sprite",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.29,
-        "height": 1.7,
-        "formationSpacing": 0.652
+        "radius": 0.493,
+        "height": 2.89,
+        "formationSpacing": 1.1084
       },
       "body": {
         "maxHp": 135,
@@ -3223,7 +3439,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 9,
@@ -3243,20 +3459,21 @@
       },
       "level": 1,
       "experienceYield": 25,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.puddle-wisp",
       "kind": "unit",
       "name": "Puddle Wisp",
-      "description": "Dewdrop Sprites · melee forest creature. Fragile water spirits gathered around wet leaves.",
+      "description": "Dewdrop Sprites \u00b7 melee forest creature. Fragile water spirits gathered around wet leaves.",
       "asset": "asset.neutral.puddle-wisp",
       "icon": "icon.neutral.puddle-wisp",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.29,
-        "height": 1.5,
-        "formationSpacing": 0.652
+        "radius": 0.493,
+        "height": 2.55,
+        "formationSpacing": 1.1084
       },
       "body": {
         "maxHp": 205,
@@ -3269,37 +3486,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 10,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 50,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 1,
       "experienceYield": 25,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.webling",
       "kind": "unit",
       "name": "Webling",
-      "description": "Hungry Weblings · melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "description": "Hungry Weblings \u00b7 melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
       "asset": "asset.neutral.webling",
       "icon": "icon.neutral.webling",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.333,
-        "height": 1,
-        "formationSpacing": 0.75
+        "radius": 0.5661,
+        "height": 1.7,
+        "formationSpacing": 1.275
       },
       "body": {
         "maxHp": 180,
@@ -3312,37 +3530,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 12,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 50,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 1,
       "experienceYield": 25,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.spitter",
       "kind": "unit",
       "name": "Spitter",
-      "description": "Hungry Weblings · ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "description": "Hungry Weblings \u00b7 ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
       "asset": "asset.neutral.spitter",
       "icon": "icon.neutral.spitter",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.333,
-        "height": 1.3,
-        "formationSpacing": 0.75
+        "radius": 0.5661,
+        "height": 2.21,
+        "formationSpacing": 1.275
       },
       "body": {
         "maxHp": 160,
@@ -3355,7 +3574,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 12,
@@ -3375,20 +3594,21 @@
       },
       "level": 1,
       "experienceYield": 25,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.capling",
       "kind": "unit",
       "name": "Capling",
-      "description": "Mushroom Circle · melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "description": "Mushroom Circle \u00b7 melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
       "asset": "asset.neutral.capling",
       "icon": "icon.neutral.capling",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.29,
-        "height": 1.8,
-        "formationSpacing": 0.652
+        "radius": 0.493,
+        "height": 3.06,
+        "formationSpacing": 1.1084
       },
       "body": {
         "maxHp": 220,
@@ -3401,37 +3621,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 13,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 50,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 1,
       "experienceYield": 25,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.puffcap",
       "kind": "unit",
       "name": "Puffcap",
-      "description": "Mushroom Circle · ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "description": "Mushroom Circle \u00b7 ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
       "asset": "asset.neutral.puffcap",
       "icon": "icon.neutral.puffcap",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.29,
-        "height": 1.8,
-        "formationSpacing": 0.652
+        "radius": 0.493,
+        "height": 3.06,
+        "formationSpacing": 1.1084
       },
       "body": {
         "maxHp": 155,
@@ -3444,7 +3665,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 11,
@@ -3464,20 +3685,21 @@
       },
       "level": 1,
       "experienceYield": 25,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.rootling",
       "kind": "unit",
       "name": "Rootling",
-      "description": "Rootbound Guardians · melee forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians \u00b7 melee forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.rootling",
       "icon": "icon.neutral.rootling",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 2.8,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 4.76,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 520,
@@ -3490,37 +3712,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 6
+          "speed": 10.2
         },
         "combat": {
           "damage": 22,
           "damageType": "melee",
-          "range": 2.2,
+          "range": 0.6,
           "cooldownTicks": 66,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 4,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.twigcaster",
       "kind": "unit",
       "name": "Twigcaster",
-      "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.twigcaster",
       "icon": "icon.neutral.twigcaster",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 2.4,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 4.08,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 330,
@@ -3533,7 +3756,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 18,
@@ -3553,20 +3776,21 @@
       },
       "level": 3,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.old-root",
       "kind": "unit",
       "name": "Old Root",
-      "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.old-root",
       "icon": "icon.neutral.old-root",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 3.2,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 5.44,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 800,
@@ -3579,7 +3803,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 6
+          "speed": 10.2
         },
         "combat": {
           "damage": 25,
@@ -3599,20 +3823,21 @@
       },
       "level": 4,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.hornet-guard",
       "kind": "unit",
       "name": "Hornet Guard",
-      "description": "Hornet Raiders · melee forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.hornet-guard",
       "icon": "icon.neutral.hornet-guard",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 2.3,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 3.91,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 450,
@@ -3625,37 +3850,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 8
+          "speed": 13.6
         },
         "combat": {
           "damage": 21,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 50,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 3,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.needle-wasp",
       "kind": "unit",
       "name": "Needle Wasp",
-      "description": "Hornet Raiders · ranged forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders \u00b7 ranged forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.needle-wasp",
       "icon": "icon.neutral.needle-wasp",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 2.2,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 3.74,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 310,
@@ -3668,7 +3894,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 8
+          "speed": 13.6
         },
         "combat": {
           "damage": 19,
@@ -3688,20 +3914,21 @@
       },
       "level": 3,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.nest-mother",
       "kind": "unit",
       "name": "Nest Mother",
-      "description": "Hornet Raiders · melee forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.nest-mother",
       "icon": "icon.neutral.nest-mother",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 2.8,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 4.76,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 780,
@@ -3714,37 +3941,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 8
+          "speed": 13.6
         },
         "combat": {
           "damage": 30,
           "damageType": "melee",
-          "range": 2.2,
+          "range": 0.6,
           "cooldownTicks": 66,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 4,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.young-toad",
       "kind": "unit",
       "name": "Young Toad",
-      "description": "Bog Toad Hunters · melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters \u00b7 melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.young-toad",
       "icon": "icon.neutral.young-toad",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.567,
-        "height": 2.5,
-        "formationSpacing": 1.276
+        "radius": 0.9639,
+        "height": 4.25,
+        "formationSpacing": 2.1692
       },
       "body": {
         "maxHp": 900,
@@ -3757,37 +3985,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 34,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 50,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 3,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.tree-frog",
       "kind": "unit",
       "name": "Tree Frog",
-      "description": "Bog Toad Hunters · ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.tree-frog",
       "icon": "icon.neutral.tree-frog",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.567,
-        "height": 1.6,
-        "formationSpacing": 1.276
+        "radius": 0.9639,
+        "height": 2.72,
+        "formationSpacing": 2.1692
       },
       "body": {
         "maxHp": 420,
@@ -3800,7 +4029,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 20,
@@ -3820,20 +4049,21 @@
       },
       "level": 3,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.tadpole-spirit",
       "kind": "unit",
       "name": "Tadpole Spirit",
-      "description": "Bog Toad Hunters · ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 1.3,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 2.21,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 280,
@@ -3846,7 +4076,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 15,
@@ -3866,20 +4096,21 @@
       },
       "level": 3,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.briar-hulk",
       "kind": "unit",
       "name": "Briar Hulk",
-      "description": "Briar Covenant · melee forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant \u00b7 melee forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.briar-hulk",
       "icon": "icon.neutral.briar-hulk",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 3.1,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 5.27,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 780,
@@ -3892,37 +4123,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 6
+          "speed": 10.2
         },
         "combat": {
           "damage": 30,
           "damageType": "melee",
-          "range": 2.2,
+          "range": 0.6,
           "cooldownTicks": 66,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 4,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.seedcaster",
       "kind": "unit",
       "name": "Seedcaster",
-      "description": "Briar Covenant · ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.seedcaster",
       "icon": "icon.neutral.seedcaster",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 2.5,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 4.25,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 410,
@@ -3935,7 +4167,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 22,
@@ -3955,20 +4187,21 @@
       },
       "level": 3,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.bloom-witch",
       "kind": "unit",
       "name": "Bloom Witch",
-      "description": "Briar Covenant · ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.bloom-witch",
       "icon": "icon.neutral.bloom-witch",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 2.6,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 4.42,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 550,
@@ -3981,7 +4214,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 23,
@@ -4001,20 +4234,21 @@
       },
       "level": 3,
       "experienceYield": 80,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.hollow-stag",
       "kind": "unit",
       "name": "Hollow Stag",
-      "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.hollow-stag",
       "icon": "icon.neutral.hollow-stag",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 1.331,
-        "height": 4,
-        "formationSpacing": 2.995
+        "radius": 2.2627,
+        "height": 6.8,
+        "formationSpacing": 5.0915
       },
       "body": {
         "maxHp": 2500,
@@ -4027,37 +4261,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 6
+          "speed": 10.2
         },
         "combat": {
           "damage": 65,
           "damageType": "melee",
-          "range": 2.2,
+          "range": 0.6,
           "cooldownTicks": 66,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 9,
       "experienceYield": 540,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.barkguard",
       "kind": "unit",
       "name": "Barkguard",
-      "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.barkguard",
       "icon": "icon.neutral.barkguard",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.918,
-        "height": 2.5,
-        "formationSpacing": 2.066
+        "radius": 1.5606,
+        "height": 4.25,
+        "formationSpacing": 3.5122
       },
       "body": {
         "maxHp": 650,
@@ -4070,37 +4305,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 28,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 50,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 6,
       "experienceYield": 180,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.willow-wisp",
       "kind": "unit",
       "name": "Willow Wisp",
-      "description": "The Hollow Stag · ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag \u00b7 ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.willow-wisp",
       "icon": "icon.neutral.willow-wisp",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.68,
-        "height": 2,
-        "formationSpacing": 1.53
+        "radius": 1.156,
+        "height": 3.4,
+        "formationSpacing": 2.601
       },
       "body": {
         "maxHp": 370,
@@ -4113,7 +4349,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 23,
@@ -4133,20 +4369,21 @@
       },
       "level": 6,
       "experienceYield": 180,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.rotwood-ancient",
       "kind": "unit",
       "name": "Rotwood Ancient",
-      "description": "The Rotwood Court · melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.rotwood-ancient",
       "icon": "icon.neutral.rotwood-ancient",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.986,
-        "height": 4.2,
-        "formationSpacing": 2.219
+        "radius": 1.6762,
+        "height": 7.14,
+        "formationSpacing": 3.7723
       },
       "body": {
         "maxHp": 2800,
@@ -4159,37 +4396,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 6
+          "speed": 10.2
         },
         "combat": {
           "damage": 70,
           "damageType": "melee",
-          "range": 2.2,
+          "range": 0.6,
           "cooldownTicks": 66,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 9,
       "experienceYield": 540,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.corrupted-rootbeast",
       "kind": "unit",
       "name": "Corrupted Rootbeast",
-      "description": "The Rotwood Court · melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.corrupted-rootbeast",
       "icon": "icon.neutral.corrupted-rootbeast",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.918,
-        "height": 3,
-        "formationSpacing": 2.066
+        "radius": 1.5606,
+        "height": 5.1,
+        "formationSpacing": 3.5122
       },
       "body": {
         "maxHp": 920,
@@ -4202,37 +4440,38 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 6
+          "speed": 10.2
         },
         "combat": {
           "damage": 35,
           "damageType": "melee",
-          "range": 2.2,
+          "range": 0.6,
           "cooldownTicks": 66,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 14,
             "recoveryTicks": 12,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 7,
       "experienceYield": 180,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.violet-sporeling",
       "kind": "unit",
       "name": "Violet Sporeling",
-      "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.violet-sporeling",
       "icon": "icon.neutral.violet-sporeling",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.68,
-        "height": 1.9,
-        "formationSpacing": 1.53
+        "radius": 1.156,
+        "height": 3.23,
+        "formationSpacing": 2.601
       },
       "body": {
         "maxHp": 360,
@@ -4245,7 +4484,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 7
+          "speed": 11.9
         },
         "combat": {
           "damage": 25,
@@ -4265,20 +4504,21 @@
       },
       "level": 6,
       "experienceYield": 180,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.neutral.root-seer",
       "kind": "unit",
       "name": "Root Seer",
-      "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.root-seer",
       "icon": "icon.neutral.root-seer",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.68,
-        "height": 2.8,
-        "formationSpacing": 1.53
+        "radius": 1.156,
+        "height": 4.76,
+        "formationSpacing": 2.601
       },
       "body": {
         "maxHp": 620,
@@ -4291,7 +4531,7 @@
       ],
       "behaviors": {
         "movement": {
-          "speed": 6
+          "speed": 10.2
         },
         "combat": {
           "damage": 31,
@@ -4330,7 +4570,8 @@
       },
       "level": 7,
       "experienceYield": 180,
-      "supplyCost": 1
+      "supplyCost": 1,
+      "modelScale": 1.7
     },
     {
       "id": "unit.spell.feral-spirit",
@@ -4341,9 +4582,9 @@
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 1.3,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 2.21,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 200,
@@ -4355,38 +4596,39 @@
       "behaviors": {
         "playerControl": {},
         "movement": {
-          "speed": 7,
+          "speed": 11.9,
           "turnRate": 720
         },
         "combat": {
           "damage": 14,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 48,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 3,
       "experienceYield": 20,
-      "supplyCost": 0
+      "supplyCost": 0,
+      "modelScale": 1.7
     },
     {
       "id": "unit.spell.shadow-spirit-lesser",
       "kind": "unit",
       "name": "Lesser Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 1.3,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 2.21,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 215,
@@ -4398,38 +4640,39 @@
       "behaviors": {
         "playerControl": {},
         "movement": {
-          "speed": 7,
+          "speed": 11.9,
           "turnRate": 720
         },
         "combat": {
           "damage": 10,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 80,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 2,
       "experienceYield": 20,
-      "supplyCost": 0
+      "supplyCost": 0,
+      "modelScale": 1.7
     },
     {
       "id": "unit.spell.shadow-spirit-standard",
       "kind": "unit",
       "name": "Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 1.3,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 2.21,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 290,
@@ -4441,38 +4684,39 @@
       "behaviors": {
         "playerControl": {},
         "movement": {
-          "speed": 7,
+          "speed": 11.9,
           "turnRate": 720
         },
         "combat": {
           "damage": 16,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 80,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 3,
       "experienceYield": 30,
-      "supplyCost": 0
+      "supplyCost": 0,
+      "modelScale": 1.7
     },
     {
       "id": "unit.spell.shadow-spirit-greater",
       "kind": "unit",
       "name": "Greater Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 1.3,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 2.21,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 405,
@@ -4484,25 +4728,26 @@
       "behaviors": {
         "playerControl": {},
         "movement": {
-          "speed": 7,
+          "speed": 11.9,
           "turnRate": 720
         },
         "combat": {
           "damage": 18,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 80,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         }
       },
       "level": 4,
       "experienceYield": 40,
-      "supplyCost": 0
+      "supplyCost": 0,
+      "modelScale": 1.7
     },
     {
       "id": "unit.spell.grove-nursery",
@@ -4513,9 +4758,9 @@
       "icon": "icon.ants.house",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 1.1,
-        "height": 2.6,
-        "formationSpacing": 2.5
+        "radius": 1.87,
+        "height": 4.42,
+        "formationSpacing": 4.25
       },
       "body": {
         "maxHp": 500,
@@ -4529,7 +4774,8 @@
       },
       "level": 1,
       "experienceYield": 30,
-      "supplyCost": 0
+      "supplyCost": 0,
+      "modelScale": 1.7
     },
     {
       "id": "unit.spell.trinity-earth",
@@ -4540,9 +4786,9 @@
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 1.3,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 2.21,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 650,
@@ -4554,19 +4800,19 @@
       "behaviors": {
         "playerControl": {},
         "movement": {
-          "speed": 5,
+          "speed": 8.5,
           "turnRate": 720
         },
         "combat": {
           "damage": 25,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 80,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         },
         "abilities": {
@@ -4592,7 +4838,8 @@
       },
       "level": 3,
       "experienceYield": 0,
-      "supplyCost": 0
+      "supplyCost": 0,
+      "modelScale": 1.7
     },
     {
       "id": "unit.spell.trinity-storm",
@@ -4603,9 +4850,9 @@
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 1.3,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 2.21,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 420,
@@ -4617,19 +4864,19 @@
       "behaviors": {
         "playerControl": {},
         "movement": {
-          "speed": 8,
+          "speed": 13.6,
           "turnRate": 720
         },
         "combat": {
           "damage": 17,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 80,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         },
         "abilities": {
@@ -4655,7 +4902,8 @@
       },
       "level": 3,
       "experienceYield": 0,
-      "supplyCost": 0
+      "supplyCost": 0,
+      "modelScale": 1.7
     },
     {
       "id": "unit.spell.trinity-fire",
@@ -4666,9 +4914,9 @@
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
       "dimensions": {
-        "radius": 0.42,
-        "height": 1.3,
-        "formationSpacing": 0.945
+        "radius": 0.714,
+        "height": 2.21,
+        "formationSpacing": 1.6065
       },
       "body": {
         "maxHp": 340,
@@ -4680,19 +4928,19 @@
       "behaviors": {
         "playerControl": {},
         "movement": {
-          "speed": 10,
+          "speed": 17,
           "turnRate": 720
         },
         "combat": {
           "damage": 23,
           "damageType": "melee",
-          "range": 1.5,
+          "range": 0.6,
           "cooldownTicks": 80,
           "aggroRange": 10,
           "attack": {
             "windupTicks": 12,
             "recoveryTicks": 10,
-            "rangeBuffer": 0.75
+            "rangeBuffer": 0.6
           }
         },
         "abilities": {
@@ -4718,7 +4966,8 @@
       },
       "level": 3,
       "experienceYield": 0,
-      "supplyCost": 0
+      "supplyCost": 0,
+      "modelScale": 1.7
     }
   ]
 }

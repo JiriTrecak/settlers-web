@@ -16,7 +16,7 @@ import type {Entity} from '../../src/sim/game/state';
 import {stageHumanArmy} from './match-workload';
 import {benchmarkContent} from './content-fixture';
 const args=process.argv.slice(2),option=(name:string,fallback:string)=>{const i=args.indexOf(name);return i<0?fallback:args[i+1]??fallback;};
-const mapId=option('--map','heartroot-glade'),ticks=Number(option('--ticks','6000'));
+const mapId=option('--map','amberwake-basin'),ticks=Number(option('--ticks','6000'));
 const paceMs=Number(option('--pace-ms','0'));
 if(!Number.isFinite(paceMs)||paceMs<0||paceMs>1000)throw Error('--pace-ms must be between 0 and 1000');
 const map=parseUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${mapId}.utcmap`,'utf8')));

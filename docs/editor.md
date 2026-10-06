@@ -1,10 +1,10 @@
 # Map authoring
 
-Open the game's Editor, or `/?screen=editor&map=threewater-forest`. The top strip names, creates, saves, loads and exports maps. New maps choose a name, dimensions, biome and weather. The biome establishes the base ground and the available river, forest, foliage and landform presets; it is not a separate season switch.
+Open the game's Editor, or `/?screen=editor&map=amberwake-basin`. The top strip names, creates, saves, loads and exports maps. New maps choose a name, dimensions, biome and weather. The biome establishes the base ground and the available river, forest, foliage and landform presets; it is not a separate season switch.
 
 ## Layout and tools
 
-The left panel is a searchable hierarchy with All/Layers/Objects filters. Selecting a generated object selects its owning layer. Select a layer or authored object and choose **Go to selection** in the inspector to move the camera there; search for landmark names such as “Spring Hollow”, “Watchpost” or “ferry” in Threewater. Independent scenery and gameplay entities have their own groups. Group expansion and list scrolling persist while changing selection.
+The left panel is a searchable hierarchy with All/Layers/Objects filters. Selecting a generated object selects its owning layer. Select a layer or authored object and choose **Go to selection** in the inspector to move the camera there; use the hierarchy to locate forests, shore objects and camps. Independent scenery and gameplay entities have their own groups. Group expansion and list scrolling persist while changing selection.
 
 The bottom icon strip contains Select, Place, Terrain, Foliage, Water and Spawn, plus layer undo/redo, Environment and MCP. Place switches between single units/buildings and scenery/landmarks. The right inspector holds contextual settings; authored scenery exposes position, elevation, rotation and scale. Top down, Game and Free camera presets sit above the viewport.
 
@@ -20,15 +20,24 @@ Maps retain masks, splines, seeds, recipe IDs and sparse per-layer overrides. Re
 
 ## Forest-scale scenery
 
-Vibrant Forest and Amberleaf Forest offer **Woodland mushroom patches** in Foliage: paint an additive/subtractive mask and adjust density as with other ground cover. Place **Ancient canopy oak**, **Spreading canopy oak**, **Great broken trunk**, **Great fallen hollow log**, and the two **Giant umbrella** mushrooms individually. These are sparse landmarks; their normal scale already dwarfs harvestable pines. Only assets with `capabilities.canopy` (the two canopy oaks and the ancient canopy tree) dissolve around observed units behind them. Buildings, ordinary trees, mushrooms and rocks stay solid so they still hide units. Everything casts full shadows. Collision covers trunks/stems, not overhangs; the fallen log is a solid obstacle. Threewater includes a small showcase near the southwest player start.
+Vibrant Forest and Amberleaf Forest offer **Woodland mushroom patches** in Foliage: paint an additive/subtractive mask and adjust density as with other ground cover. Place **Ancient canopy oak**, **Spreading canopy oak**, **Great broken trunk**, **Great fallen hollow log**, and the two **Giant umbrella** mushrooms individually. These are sparse landmarks; their normal scale already dwarfs harvestable pines. Only assets with `capabilities.canopy` (the two canopy oaks and the ancient canopy tree) dissolve around observed units behind them. Buildings, ordinary trees, mushrooms and rocks stay solid so they still hide units. Everything casts full shadows. Collision covers trunks/stems, not overhangs; the fallen log is a solid obstacle.
 
 The editable source and geometry live in each canonical asset package. `scripts/assets/build-forest-giants.py` rebuilds the models in background Blender; `scripts/assets/publish-forest-giants.ts` publishes them. Painted bark and mushroom albedos, including their ImageGen prompts, are in `art/assets/asset.textures.forest-giants-*`. Temporary renders stay outside the repository.
 
-## Threewater scenery
+## Competitive maps
 
-Threewater has two protected building glades, three crossings and five local landmarks: the stranded leaf ferry, raised watchpost, spilled trader cargo, Spring Hollow and Southwater landing. Supply tracks skirt the enormous fallen logs; shoreline shelves and driftwood are partially submerged. Forests, landforms, water and foliage remain editable layers. The six waterfront models share the original bark and stone palette and include packed editable Blender sources.
+Amberwake Basin and Amberwake Frost are paired 128 × 128 C, two-player playtest
+maps. Read [the map-design contract](game/map-design.md) before authoring starts,
+resource sites and construction shelves. Gameplay placement snaps to the shared
+building grid; **Grid** displays it in the editor. Organic scenery remains free.
 
-Rebuild the map with `node --import tsx scripts/maps/create-threewater-forest.ts`; its scenery composition lives in `scripts/maps/threewater-scenery.ts`. Rebuild the waterfront kit with background Blender and `scripts/assets/build-waterfront.py`, then publish with `node --import tsx scripts/assets/publish-waterfront.ts`. Run `npx vitest run tests/game/threewater-map.test.ts` to check starting construction space, access to every amber deposit and actual settler movement across each bridge. Gameplay models currently using missing-model placeholders remain a separate art task.
+Author through the live editor MCP and export into `assets/maps/skirmish`; do not
+regenerate maps with separate scripts. Keep terrain, forests, water and ground
+cover as editable layers. The frost edition uses winter visuals while retaining
+identical resource bodies, terrain and collision. Run
+`npx vitest run tests/game/amberwake-map.test.ts tests/game/amberwake-biomes.test.ts tests/game/tier-two-maps.test.ts`
+for the current route, economy, construction and seasonal-parity checks. Map
+composition, opening combat balance and the new showcase are still in progress.
 
 ## Save and verify
 
@@ -42,4 +51,4 @@ Object dragging updates only the selected model’s instance transforms. The doc
 
 Generation uses exact indexed spline queries, broad river/path bounds and cached vertex wetness. Moving scenery refreshes vegetation coverage but preserves unchanged terrain geometry and water meshes. Debug includes `Editor drag preview` and `Editor drag commit` scopes; commit timings include synchronous regeneration and renderer updates.
 
-Run `npm run bench:authoring` for repeated Threewater CPU compilation timings and a generated-output checksum. Pass another `.utcmap` path after `--` to benchmark it. Benchmarks and profiles belong in temporary storage, not the repository. Full procedural commits still run synchronously; drag previews do not.
+Run `npm run bench:authoring` for repeated Amberwake CPU compilation timings and a generated-output checksum. Pass another `.utcmap` path after `--` to benchmark it. Benchmarks and profiles belong in temporary storage, not the repository. Full procedural commits still run synchronously; drag previews do not.

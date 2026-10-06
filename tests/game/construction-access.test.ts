@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {game,placed,run,worker} from './helpers';
+import {compactBodyGame as game,placed,run,worker} from './helpers';
 it('uses a reachable service point when the nearest free doorway point is surrounded',()=>{
  const g=game([placed('site','building.ants.barracks',205,210)]),b=g.entities.find(e=>e.placement==='site')!,w=worker(g);
  const door=g.context.spatial.entrance(b);

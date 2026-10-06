@@ -2,7 +2,7 @@
 
 ## Player contract
 
-An ordinary move, attack, gather, pickup, build, Hold, Patrol or Follow command replaces that actor's intentions. **Shift appends** instead. Stop clears the active intention and the pending queue. Each unit has one active order and at most **16 pending orders**; group commands append independently for every eligible selected unit. Full queues reject further appends without charging for construction.
+An ordinary move, attack, gather, pickup, build, resume construction, Hold, Patrol or Follow command replaces that actor's intentions. **Shift appends** instead. Stop clears the active intention and the pending queue. Each unit has one active order and at most **16 pending orders**; group commands append independently for every eligible selected unit. Full queues reject further appends without charging for construction.
 
 The focused friendly unit's pending orders appear as numbered icons in the selection panel. Hover shows the order and target. These are read-only; use a normal command or Stop to replace the sequence. Shift-selection remains selection, and right-click while choosing a target still cancels targeting.
 
@@ -13,16 +13,16 @@ The focused friendly unit's pending orders appear as numbered icons in the selec
 - **Attack-move:** handle threats encountered on the way, then arrive.
 - **Attack target:** target dies, disappears, becomes invalid or leaves vision. It does not chase hidden coordinates.
 - **Gather:** repeats normally when there is no pending order. With an order waiting, finish one load and deliver it to a hall, then advance. An exhausted source with no remaining work also advances.
-- **Construct:** finish the chosen building. Shift placement creates and funds the site immediately, then reserves it for the chosen worker. Other automatic builders cannot take a reserved queued site. A removed/completed site is skipped. Activating the queued order never pays again.
+- **Construct:** finish the chosen building. Shift placement creates and funds the site immediately, then reserves it for the chosen worker. Only explicitly assigned builders work on a site, with one productive builder at a time. A removed/completed site is skipped. Activating the queued order never pays again.
 - **Pickup:** finish pickup; skip if the item disappears or inventory eligibility changes.
 
-Target validity and capabilities are checked again when a queued order becomes active. Invalid pending targets are skipped in the same tick. A statically unreachable move ends with a notice. Cargo is delivered before changing tasks, including after Stop. Removing a queued build order does not demolish its already-paid construction site; cancel that site separately for the normal refund. Unassigned unfinished sites retain the existing automatic construction recovery.
+Target validity and capabilities are checked again when a queued order becomes active. Invalid pending targets are skipped in the same tick. A statically unreachable move ends with a notice. Cargo is delivered before changing tasks, including after Stop. A queued or immediate construction order can proceed while retaining cargo if no compatible completed drop-off survives; this permits rebuilding the drop-off. Removing a queued build order does not demolish its already-paid construction site; cancel that site separately for the normal refund. Unassigned unfinished sites pause. Right-click one with a compatible worker to resume; resuming does not pay again.
 
 Initial scope is these native spatial/work orders. Spell casts, item use, recruitment and production controls keep their existing immediate behavior; they are not Shift-queued unit orders. Building recruitment has its own funded production queue.
 
 ## Architecture
 
-- `Action.append` is an optional validated transport field for move/attack/gather/pickup/build. Lockstep packets remain commands issued at a tick; they are not the unit's future itinerary.
+- `Action.append` is an optional validated transport field for move/attack/gather/pickup/build/construct. Lockstep packets remain commands issued at a tick; they are not the unit's future itinerary.
 - `UnitOrder` and `unit.orderQueue` are authoritative, typed simulation state. The queue stores persistent entity IDs or map coordinates, never a precomputed path or UI callback.
 - `UnitOrders` owns append/replace/advance; Game validates activation; Economy, Combat and Inventory own task completion. Navigation remains a native system.
 - Only the owner's observation exposes `control.orderQueue`. Presentation resolves labels/art from content and observed targets. A queued worker is unavailable for automatic employment and idle wandering.

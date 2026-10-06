@@ -1,3 +1,5 @@
+import {clearLayeredSweep} from './layeredSweep';
+import {footprintCellBounds} from '../../shared/spatial/footprint';
 import {SimulationProfiler} from '../profiling';
 import {GroundNavigation} from './groundNavigation';
 import {LocalTerrainSweeps} from './localTerrainSweeps';
@@ -13,7 +15,6 @@ import {SectorNavigation} from './sectorNavigation';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
 import {TacticalTerrain,MAX_GROUND_STEP_CM} from '../../shared/map/tacticalTerrain';
 import {UnitIndex} from "./unitIndex";
-import {unitDimensions} from '../../content/unitScale';
 import {bridgeSurfaces,applyBridgeSurfaces} from '../../shared/map/bridgeSurface';
 import {applySceneryBlockers} from '../../shared/map/sceneryCollision';
 import {resourceCollisionCells} from '../../shared/map/resourceClearance';
@@ -23,6 +24,7 @@ import {
   clearRay,
   fixed,
   precise,
+  lengthCeil,
   type FixedPoint,
 } from "./motion";
 import type { ContentRegistry } from "../../content/registry";
@@ -31,7 +33,7 @@ import type { UtcMap } from "../../shared/map/utcmap";
 import { Navigation,canTraverse } from "./navigation";
 import { alive, type Entity, type Point } from "./state";
 
-export const cell = (p: Point, size = 256) => p.y * size + p.x;
+export const cell = (p: Point, size = 256) => Math.round(p.y) * size + Math.round(p.x);
 export const point = (i: number, size = 256): Point => ({
   x: i % size,
   y: Math.floor(i / size),
@@ -61,7 +63,7 @@ export class Spatial {
   elevatedPoint(e:Entity){const p=precise(e),elevation=this.elevation(e,p)+(e.unit?.garrison?.height??0);return elevation?{...p,elevation}:p;}
   private airNavigation:Navigation|undefined;
 
-  dimensions(actor?:Actor):Body {return actor&&'definition' in actor ? this.registry.get(actor.definition).dimensions??unitDimensions(this.registry.rules.unitScale) : actor??unitDimensions(this.registry.rules.unitScale);}
+  dimensions(actor?:Actor):Body {return actor&&'definition' in actor ? this.registry.get(actor.definition).dimensions??this.registry.navigationBody : actor??this.registry.navigationBody;}
   private readonly bodyNavigations=new Map<string,Navigation>();
   private groundWalkable:Uint8Array|undefined;
   private readonly groundNavigations=new Map<number,GroundNavigation>();
@@ -159,7 +161,7 @@ export class Spatial {
     readonly profile=new SimulationProfiler(),
   ) {
     this.size = map.size;
-    const dimensions = unitDimensions(registry.rules.unitScale);
+    const dimensions = registry.navigationBody;
     this.unitRadius = Math.round(dimensions.radius * 1000);
     this.unitHeight = dimensions.height;
     this.maxUnitRadius=Math.round(Math.max(dimensions.radius,...registry.definitions.filter(d=>d.kind==='unit').map(d=>d.dimensions!.radius))*1000);
@@ -185,7 +187,7 @@ export class Spatial {
     const surfaces=bridgeSurfaces(map.stamps,(x,z)=>source?.sample(x,z)??(h?sampleHeight(h,x,z,this.size):0));
     if(surfaces.length){
       applySceneryBlockers(map,this.terrain);
-      this.layers=new WalkSurfaces(this.size,this.heights,this.terrain,surfaces,Math.round(Math.min(this.unitHeight,...registry.definitions.filter(d=>d.kind==='unit').map(d=>d.dimensions!.height))*100));
+      this.layers=new WalkSurfaces(this.size,this.heights,this.terrain,surfaces,Math.round(this.unitHeight*100));
       this.decks=new Uint8Array(this.size*this.size);
       for(const node of this.layers.nodes)if(node.surface)this.decks[node.cell]=1;
     }else{
@@ -218,7 +220,7 @@ export class Spatial {
     return ranged?terrain.shotClear(origin,end):terrain.meleeClear(origin,end);
   }
   cell(p: Point) {
-    return this.layers ? this.layers.node(p) ?? -1 : cell(p, this.size);
+    return this.layers ? this.layers.node({...p,x:Math.round(p.x),y:Math.round(p.y)}) ?? -1 : cell(p, this.size);
   }
   point(i: number) {
     const p=this.layers?.nodes[i];
@@ -235,9 +237,13 @@ export class Spatial {
     // Bridge portals retain their specialized solver.
     // Long terrain routes use the mesh; all accepted grid steps still obey the
     // very same footprint/corner rules as movement and the reference solver.
-    if(!this.layers&&!blocked?.size&&Math.round(this.dimensions(actor).radius*1000)===this.unitRadius&&this.unitRadius<=16000&&Math.max(Math.abs(start%this.size-goal%this.size),Math.abs(Math.floor(start/this.size)-Math.floor(goal/this.size)))>=16){
+    if(!this.layers&&!blocked?.size&&this.dimensions(actor).radius<=16&&Math.max(Math.abs(start%this.size-goal%this.size),Math.abs(Math.floor(start/this.size)-Math.floor(goal/this.size)))>=16){
       const path=this.profile.measure('Ground mesh route',()=>this.meshPath(start,goal,blocked,maxCost,actor));
       if(path)return path;
+      // A failed coarse route often means a base pocket enclosed by buildings.
+      // Spend a bounded extra reverse probe before flooding the map. The grid
+      // fallback still decides reachability, including mesh-missed passages.
+      return this.findGridPath(start,goal,blocked,maxCost,actor,512);
     }
     return this.findGridPath(start,goal,blocked,maxCost,actor);
   }
@@ -262,7 +268,7 @@ export class Spatial {
     return false;
   }
   /** Reference/fallback solver, also retained for comparative benchmarks. */
-  findGridPath(start:number,goal:number,blocked?:ReadonlySet<number>,maxCost=Infinity,actor?:Actor):number[]|null {
+  findGridPath(start:number,goal:number,blocked?:ReadonlySet<number>,maxCost=Infinity,actor?:Actor,destinationProbeLimit=128):number[]|null {
     if(!this.validNode(start)||!this.validNode(goal)||!this.unitWalkable(this.point(goal),actor))return null;
     if(this.airborne(actor)){if(start>=this.size*this.size||goal>=this.size*this.size)return null;this.airNavigation??=new Navigation(this.size,()=>true,()=>true,true,this.profile);return this.airNavigation.path(start,goal,blocked,maxCost);}
     const navigation=this.navigationFor(actor);
@@ -282,14 +288,14 @@ export class Spatial {
       const convoy=Math.max(dx,dy)>=64&&nearbyTraffic>3&&!!actor&&'id' in actor&&'owner' in actor&&!this.opposingTraffic(actor as Entity,this.point(goal));
       const heuristicPermille=blocked?.size&&Math.max(dx,dy)>=64&&(nearbyTraffic<=3||convoy)?1200:1000;
       if(heuristicPermille>1000)this.routing.trafficBiasedSearches++;
-      const route=navigation.path(start,goal,blocked,maxCost,corridor,heuristicPermille);
+      const route=navigation.path(start,goal,blocked,maxCost,corridor,heuristicPermille,destinationProbeLimit);
       this.routing.expanded+=navigation.lastExpanded;
       if(route!==null||!corridor)return route;
       // Temporary traffic may block every portal on the preferred corridor.
       // Preserve reachability with a full search instead of reporting failure.
       this.routing.fallbacks++;this.routing.searches++;
       if(heuristicPermille>1000)this.routing.trafficBiasedSearches++;
-      const fallback=navigation.path(start,goal,blocked,maxCost,undefined,heuristicPermille);
+      const fallback=navigation.path(start,goal,blocked,maxCost,undefined,heuristicPermille,destinationProbeLimit);
       this.routing.expanded+=navigation.lastExpanded;return fallback;
     }
     const from=this.point(start),to=this.point(goal),corridor=Math.max(Math.abs(from.x-to.x),Math.abs(from.y-to.y))>=32?this.sectors.corridor(start,goal):undefined;
@@ -315,7 +321,7 @@ export class Spatial {
     return navigation;
   }
   private meshPath(start:number,goal:number,blocked:ReadonlySet<number>|undefined,maxCost:number,actor?:Actor):number[]|null {
-    const body=this.dimensions(actor),mesh=this.groundNavigation(this.unitRadius/1000),before=mesh.diagnostics.rebuiltTiles;
+    const body=this.dimensions(actor),mesh=this.groundNavigation(body.radius),before=mesh.diagnostics.rebuiltTiles;
     this.profile.measure('Mesh tile updates',()=>mesh.prepare());this.routing.meshRebuiltTiles+=mesh.diagnostics.rebuiltTiles-before;
     const a=this.point(start),b=this.point(goal);
     const result=this.profile.measure('Mesh corridor search',()=>mesh.query.computePath({x:a.x,z:a.y},{x:b.x,z:b.y}));
@@ -369,22 +375,12 @@ export class Spatial {
   height(p:Point){return this.layers?.height(p)??this.heights[Math.round(p.y)*this.size+Math.round(p.x)]!/100;}
   pointsAt(x:number,y:number):Point[]{return this.layers?this.layers.at(x,y).map(i=>this.point(i)):[{x,y}];}
   footprint(e: Pick<Entity, "definition" | "x" | "y" | "rotation" | "surface">): number[] {
-    const d = this.registry.get(e.definition),
-      f = d.footprint;
-    if (!f) return [this.cell(e)];
-    const swap = Math.round(e.rotation / 90) % 2 !== 0,
-      w = swap ? f.depth : f.width,
-      h = swap ? f.width : f.depth,
-      result: number[] = [];
-    for (let y = e.y - Math.floor(h / 2); y <= e.y + Math.floor(h / 2); y++)
-      for (let x = e.x - Math.floor(w / 2); x <= e.x + Math.floor(w / 2); x++)
-        result.push(
-          x < 0 || x >= this.size || y < 0 || y >= this.size
-            ? -1
-            : y * this.size + x,
-        );
+    const b = footprintCellBounds(e, this.registry.get(e.definition).footprint, e.rotation), result: number[] = [];
+    for (let y = b.minY; y <= b.maxY; y++) for (let x = b.minX; x <= b.maxX; x++)
+      result.push(x < 0 || x >= this.size || y < 0 || y >= this.size ? -1 : y * this.size + x);
     return result;
   }
+
   /** Ground cells a standing resource blocks for movement. Placement, fog and picking keep
    * using `footprint`; only walking and harvest approach see the wider disc. */
   collision(e: Pick<Entity, "definition" | "x" | "y" | "rotation" | "appearance">): number[] {
@@ -396,11 +392,8 @@ export class Spatial {
   /** Cells exactly `ring` cells outside a footprint rectangle (Chebyshev), in row-major order.
    * Ring 1 is every cell touching the building, corners included. */
   perimeter(e: Pick<Entity, "definition" | "x" | "y" | "rotation">, ring = 1): Point[] {
-    const f = this.registry.get(e.definition).footprint,
-      swap = Math.round(e.rotation / 90) % 2 !== 0,
-      hw = f ? Math.floor((swap ? f.depth : f.width) / 2) : 0,
-      hh = f ? Math.floor((swap ? f.width : f.depth) / 2) : 0;
-    const x0 = e.x - hw - ring, x1 = e.x + hw + ring, y0 = e.y - hh - ring, y1 = e.y + hh + ring, out: Point[] = [];
+    const b = footprintCellBounds(e, this.registry.get(e.definition).footprint, e.rotation);
+    const x0 = b.minX - ring, x1 = b.maxX + ring, y0 = b.minY - ring, y1 = b.maxY + ring, out: Point[] = [];
     for (let y = y0; y <= y1; y++)
       for (let x = x0; x <= x1; x += y === y0 || y === y1 ? 1 : x1 - x0)
         if (x >= 0 && y >= 0 && x < this.size && y < this.size) out.push({ x, y });
@@ -424,6 +417,19 @@ export class Spatial {
     const x = [offset.x, offset.y, -offset.x, -offset.y][r],
       y = [offset.y, -offset.x, -offset.y, offset.x][r];
     return { x: e.x + x, y: e.y + y };
+  }
+  /** In-place upgrades can change a definition without changing collision. Keep
+   * the occupancy signature current so a later tree removal stays incremental.
+   * Verify the actual raster; other transforms still require a full rebuild. */
+  refreshOccupancyDefinition(e: Entity) {
+    const old=this.occupancyInputs.find(input=>input.id===e.id);
+    const building=this.registry.get(e.definition).kind==='building',resource=!!e.resource&&e.resource.amount>0;
+    if(!old||!alive(e)||old.x!==e.x||old.y!==e.y||old.rotation!==e.rotation||old.surface!==e.surface||
+      old.scale!==(e.appearance?.scale??1)||old.building!==building||old.resource!==resource){this.rebuild();return;}
+    const same=(a:readonly number[],b:readonly number[])=>a.length===b.length&&a.every((cell,i)=>cell===b[i]);
+    if((building&&!same(this.footprint(old),this.footprint(e)))||
+      (resource&&!same(this.collision({...old,appearance:{scale:old.scale}}),this.collision(e)))){this.rebuild();return;}
+    old.definition=e.definition;
   }
   /** Removal of a moving actor usually leaves every static blocker unchanged.
    * Compare the complete ordered input, including other actors killed in the
@@ -558,7 +564,7 @@ export class Spatial {
     const position = fixed(p);
     return this.clearSegment(position, position,undefined,actor);
   }
-  free(p: Point, except?: number,actor?:Actor) {
+  free(p: Point, except?: number,actor?:Actor,knownUnit?:(e:Entity)=>boolean) {
     const mover = except == null ? undefined : this.unitIndex?.entities.get(except) ?? this.units().find(e => e.id === except);
     return (
       p.x >= 0 &&
@@ -566,7 +572,7 @@ export class Spatial {
       p.y >= 0 &&
       p.y < this.size &&
       this.unitWalkable(p,actor??mover) &&
-      this.unitSegmentClear(fixed(p), fixed(p), except ?? -1,undefined,actor) &&
+      this.unitSegmentClear(fixed(p), fixed(p), except ?? -1,undefined,actor,knownUnit) &&
       (!!mover && this.ignoresUnits(mover) || !Array.from(this.unitIndex ? [...this.unitIndex.inCell(p.x,p.y),...this.unitIndex.reservedInCell(p.x,p.y)] : this.units()).some(
         (e) =>
           e.unit &&
@@ -578,17 +584,20 @@ export class Spatial {
           e.id !== except &&
           (e.surface === p.surface || !!this.layers&&Math.abs(this.height(precise(e))-this.height(p))<Math.max(this.dimensions(e).height,this.dimensions(actor??mover).height)) &&
           ((e.x === p.x && e.y === p.y) ||
-            (!!e.unit.detour?.yielding && e.unit.detour.waypoint===this.cell(p))),
+            (!!e.unit.detour?.yielding && e.unit.detour.waypoint===this.cell(p))) &&
+          (!knownUnit || knownUnit(e)),
       ))
     );
   }
-  nearest(origin: Point, max = 12, except?: number,actor?:Actor,accept?:(p:Point)=>boolean): Point | null {
+  /** Planning may restrict occupants to observed units. Actual motion always
+   * uses the unfiltered physical sweeps, including invisible bodies. */
+  nearest(origin: Point, max = 12, except?: number,actor?:Actor,accept?:(p:Point)=>boolean,knownUnit?:(e:Entity)=>boolean): Point | null {
     for (let r = 0; r <= max; r++)
       for (let dy = -r; dy <= r; dy++)
         for (let dx = -r; dx <= r; dx++)
           if (Math.abs(dx) + Math.abs(dy) === r) {
             const p = { x: origin.x + dx, y: origin.y + dy, ...(origin.surface?{surface:origin.surface}:{}) };
-            if (this.free(p, except,actor)&&(!accept||accept(p))) return p;
+            if (this.free(p, except,actor,knownUnit)&&(!accept||accept(p))) return p;
           }
     return null;
   }
@@ -618,6 +627,25 @@ export class Spatial {
     return blocked;
   }
   private readonly trafficBudgets=new WeakMap<Entity,{revision:number;x:number;y:number;surface?:string;goal:number;radius:number;height:number;limit:number|null}>();
+  /** A safe sub-cell position may round to a center inside the body's obstacle
+   * halo. Join a checked neighboring center instead of asking the grid solver
+   * to escape an invalid origin. This does not move or snap the actor. */
+  private routeOrigin(e:Entity,from:FixedPoint,blocked?:ReadonlySet<number>):number|null {
+    const center=this.cell(e);
+    if(this.clearSegment(from,fixed(this.point(center)),blocked,e))return center;
+    const candidates:{cell:number;point:FixedPoint;distance:number}[]=[];
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+      if(!dx&&!dy)continue;
+      const p={x:e.x+dx,y:e.y+dy,...(e.surface?{surface:e.surface}:{})};
+      if(!this.validPoint(p))continue;
+      const point=fixed(p);
+      candidates.push({cell:this.cell(p),point,distance:lengthCeil(point.x-from.x,point.y-from.y)});
+    }
+    candidates.sort((a,b)=>a.distance-b.distance||a.cell-b.cell);
+    for(const candidate of candidates)
+      if(this.clearSegment(from,candidate.point,blocked,e))return candidate.cell;
+    return null;
+  }
   /** A stationary traffic retry can reuse its terrain-only detour limit. Moving
    * bodies are deliberately excluded: the actual traffic path is searched anew.
    * Position/profile/terrain changes invalidate it; cold restore computes the
@@ -629,7 +657,10 @@ export class Spatial {
     }
     // Do not derive this from an already diverted route: successive retries
     // could otherwise ratchet the permitted detour around a distant wall end.
-    const path=this.clearSegment(from,fixed(destination),undefined,e)?[goal]:this.findPath(this.cell(e),goal,undefined,undefined,e);
+    const direct=this.clearSegment(from,fixed(destination),undefined,e);
+    const origin=direct?this.cell(e):this.routeOrigin(e,from);
+    const searched=origin===null?null:direct?[goal]:this.findPath(origin,goal,undefined,undefined,e);
+    const path=searched===null?null:origin!==this.cell(e)?[origin!,...searched]:searched;
     let limit:number|null=null;
     if(path!==null){
       let length=0,anchor=from;
@@ -661,24 +692,11 @@ export class Spatial {
     }
     const direct = this.clearSegment(from, fixed(destination), blocked, e);
     this.profile.count(direct?'Direct routes':'Non-direct routes');
+    const origin=direct?this.cell(e):this.routeOrigin(e,from,blocked);
+    if(origin===null)return false;
     if(!direct&&!this.airborne(e)&&!this.layers&&this.probes?.entity===e&&avoidUnits){
-      if(this.probes.pocket===undefined)this.probes.pocket=this.navigationFor(e).reachablePocket(this.cell(e),blocked);
+      if(this.probes.pocket===undefined)this.probes.pocket=this.navigationFor(e).reachablePocket(origin,blocked);
       if(this.probes.pocket&&!this.probes.pocket.has(goal))return false;
-    }
-    // Every A* route starts at one of the eight neighboring cell centers.
-    // If an interrupted sub-cell position cannot join any of those (or its own
-    // center), all resulting routes would be rejected by the smoothing loop.
-    // Prove that once up front instead of searching hundreds of tree targets.
-    if (!direct && !this.clearSegment(from, fixed(e), blocked, e)) {
-      let exit = false;
-      for (let dy = -1; dy <= 1 && !exit; dy++)
-        for (let dx = -1; dx <= 1 && !exit; dx++) {
-          if (!dx && !dy) continue;
-          const x = e.x + dx, y = e.y + dy;
-          if (x >= 0 && y >= 0 && x < this.size && y < this.size &&
-              this.clearSegment(from, fixed({x,y,...(e.surface?{surface:e.surface}:{})}), blocked, e)) exit = true;
-        }
-      if (!exit) return false;
     }
     const body=this.dimensions(e),corridorKey=this.corridors&&!direct&&!avoidUnits&&maxCost===Infinity&&
       !this.layers&&!this.airborne(e)&&e.unit.order?.type==='move'
@@ -686,10 +704,12 @@ export class Spatial {
     const shared=corridorKey===undefined?null:this.corridors!.find(corridorKey,from,fixed(destination),goal,
       i=>fixed(this.point(i)),(a,b)=>this.clearSegment(a,b,undefined,e));
     if(shared)this.routing.sharedCorridors++;
-    const path = shared ?? (direct
+    const join=origin===this.cell(e)?0:lengthCeil(fixed(this.point(origin)).x-from.x,fixed(this.point(origin)).y-from.y);
+    const searched = shared ?? (direct
       ? [goal]
-      : this.findPath(this.cell(e), goal, blocked, maxCost, e));
-    if (path === null){this.profile.count('Route searches failed');return false;}
+      : join>maxCost?null:this.findPath(origin, goal, blocked, maxCost-join, e));
+    if (searched === null){this.profile.count('Route searches failed');return false;}
+    const path=shared||origin===this.cell(e)?searched:[origin,...searched];
     this.profile.count('Raw route waypoints',path.length);
     const waypoints: number[] = shared ?? [];
     let anchor = from;
@@ -756,36 +776,7 @@ export class Spatial {
     const dimensions=this.dimensions(actor),radius=Math.round(dimensions.radius*1000);
     if(this.airborne(actor))return !from.surface&&!to.surface&&clearSweep(from,to,()=>true,this.size,radius)&&(!blocked||clearRay(from,to,(_a,b)=>!blocked.has(b),this.size));
     if(this.layers){
-      const graph=this.layers;
-      const layerPoint=(p:FixedPoint)=>({x:Math.floor((p.x+500)/1000),y:Math.floor((p.y+500)/1000),...(p.surface?{surface:p.surface}:{})});
-      const start=graph.node(layerPoint(from)),goal=graph.node(layerPoint(to));
-      if(start===undefined||goal===undefined)return false;
-      const blockedNode=(n:import('../../shared/map/walkSurfaces').SurfaceNode)=>!this.walkable(n.id)||!graph.walkable(n.id,Math.round(dimensions.height*100))||!!blocked?.has(n.id);
-      const node=(cell:number,surface:string|undefined)=>graph.node({x:cell%this.size,y:Math.floor(cell/this.size),surface});
-      const step=(a:number,b:number)=>{
-        const na=node(a,from.surface),nb=node(b,from.surface);if(na===undefined||nb===undefined)return false;
-        return graph.step(na,nb,blockedNode);
-      };
-      if(from.surface!==to.surface){
-        // Never smooth past a portal. The crossing is a single cardinal edge.
-        if(!graph.step(start,goal,blockedNode))return false;
-      }else if(!clearRay(from,to,step,this.size))return false;
-      // Sweep the same physical footprint used on ordinary terrain. At a
-      // portal its leading/trailing corners can already touch the other floor
-      // before the center changes surface. Only an adjacent legal portal edge
-      // permits that fallback; side rails and unrelated overlapping floors do not.
-      const candidates=(cell:number)=>{
-        const result:number[]=[];
-        for(const id of [node(cell,from.surface),node(cell,to.surface)])
-          if(id!==undefined&&this.walkable(id)&&graph.walkable(id,Math.round(dimensions.height*100))&&!result.includes(id))result.push(id);
-        if(!result.length){
-          for(const id of graph.at(cell%this.size,Math.floor(cell/this.size)))
-            if((graph.step(start,id)||graph.step(goal,id))&&this.walkable(id))result.push(id);
-        }
-        return result;
-      };
-      return clearSweep(from,to,(a,b)=>candidates(a).some(na=>candidates(b).some(nb=>graph.step(na,nb,blockedNode))),this.size,radius);
-
+      return clearLayeredSweep(this.layers,from,to,dimensions.height,radius,id=>this.walkable(id),blocked);
     }
     const terrainStep = (a: number, b: number) =>
       this.walkable(b) && Math.abs(this.heights[a] - this.heights[b]) <= MAX_GROUND_STEP_CM;
@@ -814,7 +805,7 @@ export class Spatial {
   }
   /** Optional diagnostics collect every physical blocker without changing the
    * ordinary movement query's allocation-free, first-collision fast path. */
-  unitSegmentClear(from: FixedPoint, to: FixedPoint, except: number, blockers?: number[],actor?:Actor): boolean {
+  unitSegmentClear(from: FixedPoint, to: FixedPoint, except: number, blockers?: number[],actor?:Actor,knownUnit?:(e:Entity)=>boolean): boolean {
     const initialCount=blockers?.length ?? 0;
     const mover = this.unitIndex?.entities.get(except) ?? this.units().find(e => e.id === except);
     if (mover && this.ignoresUnits(mover)) return true;
@@ -844,6 +835,7 @@ export class Spatial {
       )
         continue;
       if (bodyBlocksSegment(from,dx,dy,square,p.x,p.y,separation**2)) {
+        if(knownUnit&&!knownUnit(unit))continue;
         if (!blockers) return false;
         blockers.push(unit.id);
       }
@@ -880,6 +872,12 @@ export class Spatial {
     });
   }
   range(a: Entity, b: Entity) { return this.pointRange(precise(a), b); }
+  /** Weapon ranges are free space between collision bodies, in world units.
+   * Spell ranges, sight and harvesting retain their own point-distance rules. */
+  bodyRange(a:Entity,b:Entity,from:Point=precise(a)) {
+    const gap=Math.max(0,Math.sqrt(this.pointRange(from,b))-this.dimensions(a).radius-(b.unit?this.dimensions(b).radius:0));
+    return gap*gap;
+  }
   pointRange(pa: Point, b: Entity) {
     const f = this.registry.get(b.definition).footprint;
     const pb = precise(b);

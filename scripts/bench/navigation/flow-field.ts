@@ -16,8 +16,8 @@ import {SECTOR_SIZE} from '../../../src/shared/spatial/sectors';
 import {MAX_GROUND_STEP_CM} from '../../../src/shared/map/tacticalTerrain';
 
 const args=process.argv.slice(2),option=(name:string,fallback:string)=>{const i=args.indexOf(name);return i<0?fallback:args[i+1]??fallback;};
-const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/heartroot-glade.utcmap','utf8')))!;
-const runtime=new SimulationRuntime({map,match:localMatch({mapId:'heartroot-glade',mapRevision:fingerprint(map),seed:731942,slotCount:4,me:0}),player:0,remote:false});
+const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/amberwake-basin.utcmap','utf8')))!;
+const runtime=new SimulationRuntime({map,match:localMatch({mapId:'amberwake-basin',mapRevision:fingerprint(map),seed:731942,slotCount:map.playerStarts.length,me:0}),player:0,remote:false});
 const checkpoint=option('--checkpoint','');if(checkpoint)runtime.restoreLocal(JSON.parse(readFileSync(checkpoint,'utf8')));
 const s=runtime.world.settlement.spatial,actor=runtime.world.settlement.context.liveUnits().find(e=>e.definition==='unit.ants.warrior')!;
 if(s.layers||s.dimensions(actor).radius>=.5)throw Error('Probe requires the small-body ground-only profile');

@@ -1,5 +1,6 @@
+import {revivalTerms} from '../../content/revival';
 import type { ContentRegistry } from "../../content/registry";
-import type { Owner } from "../../content/schema";
+import type { Owner, Stock } from "../../content/schema";
 import type { Entity } from "./state";
 export type GoodsSummary = {
   item: string;
@@ -14,6 +15,7 @@ export function summarizeGoods(
   owner: Owner,
   registry: ContentRegistry,
   available: (e: Entity, item: string) => number,
+  wallet: Stock = {},
 ): GoodsSummary[] {
   const owned = entities.filter((e) => e.owner === owner);
   const currencies = new Set(
@@ -25,13 +27,21 @@ export function summarizeGoods(
     .filter((d) => d.kind === "item" && currencies.has(d.id))
     .sort((a, b) => (a.displayOrder ?? 1000) - (b.displayOrder ?? 1000))
     .map((item) => {
-      const stored = owned.reduce((n, e) => n + (e.inventory[item.id] ?? 0), 0),
+      const funds = wallet[item.id] ?? 0,
+        stored = owned.reduce((n, e) => {
+          const tasks = [
+            ...(e.upgrade ? registry.get(e.definition).upgrade!.items : []),
+            ...(e.research?.queue.flatMap(q => registry.rules.research[q.id].items) ?? []),
+            ...(e.revival?.queue.flatMap(q=>revivalTerms(registry.get(e.definition).behaviors.revival!,q.level).items) ?? []),
+          ];
+          return n + (e.inventory[item.id] ?? 0) + tasks.reduce((sum, p) => sum + (p.item === item.id ? p.amount : 0), 0);
+        }, funds),
         inTransit = owned.reduce(
           (n, e) =>
             n + (e.unit?.cargo?.item === item.id ? e.unit.cargo.amount : 0),
           0,
         ),
-        free = owned.reduce((n, e) => n + available(e, item.id), 0);
+        free = owned.reduce((n, e) => n + available(e, item.id), funds);
       return {
         item: item.id,
         stored,

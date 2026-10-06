@@ -25,6 +25,8 @@ export class Navigation {
   private epoch = 0;
   private blockedNodes:Uint32Array|undefined;
   lastExpanded=0;
+  /** Exact closed reverse region from the latest query, for candidate reuse. */
+  lastDestinationPocket:ReadonlySet<number>|null=null;
   private readonly edges: Uint8Array;
   private readonly knownEdges: Uint8Array;
   private readonly queue=new MonotonicNavigationQueue();
@@ -91,8 +93,8 @@ export class Navigation {
     }
     return seen;
   }
-  path(start: number, goal: number, blocked?: ReadonlySet<number>, maxCost = Infinity, corridor?:Uint8Array,heuristicPermille=1000): number[] | null {
-    this.lastExpanded=0;
+  path(start: number, goal: number, blocked?: ReadonlySet<number>, maxCost = Infinity, corridor?:Uint8Array,heuristicPermille=1000,destinationProbeLimit=128): number[] | null {
+    this.lastExpanded=0;this.lastDestinationPocket=null;
     const sectorWidth=Math.ceil(this.size/SECTOR_SIZE);
     if (!Number.isInteger(start) || !Number.isInteger(goal) || start < 0 || goal < 0 || start >= this.size ** 2 || goal >= this.size ** 2) return null;
     if (start === goal) return [];
@@ -127,14 +129,14 @@ export class Navigation {
       if (x < 0 || y < 0 || x >= this.size || y >= this.size) return false;
       const from = y * this.size + x;
       return (from === start || obstacles?.[from]!==epoch) && traverse(from, goal, -dx, -dy);
-    })) return null;
+    })) {this.lastDestinationPocket=new Set([goal]);return null;}
     // Small goal-side pockets are common in crowded bases. A bounded reverse
     // reachability check proves failure cheaply; larger regions fall through
     // to the unchanged forward A* and retain its deterministic route choice.
     const reachable=this.profile.measure('Destination reachability',()=>{
     const reverse = [goal], reverseSeen = new Set<number>(reverse);
     let connected = false, cursor = 0;
-    for (; cursor < reverse.length && reverse.length < 128; cursor++) {
+    for (; cursor < reverse.length && reverse.length < destinationProbeLimit; cursor++) {
       const to = reverse[cursor]!, x = to % this.size, y = Math.floor(to / this.size);
       for (const [dx, dy] of DIRECTIONS) {
         const nx = x + dx, ny = y + dy;
@@ -147,6 +149,7 @@ export class Navigation {
       }
       if (connected) break;
     }
+    if(!connected&&cursor>=reverse.length)this.lastDestinationPocket=reverseSeen;
     return connected || cursor < reverse.length;
     });
     if(!reachable)return null;

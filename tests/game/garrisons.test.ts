@@ -1,6 +1,6 @@
 import {expect,it} from 'vitest';
 import {game,placed,run} from './helpers';
-import {precise} from '../../src/sim/game/motion';
+import {fixed,precise} from '../../src/sim/game/motion';
 import {commandCard} from '../../src/presentation/commands';
 
 const owner='player.1' as const;
@@ -47,4 +47,21 @@ it('cancelling approach frees the reservation and queued entry activates after M
  g.command(owner,{type:'move',actors:[a.id],destination:{x:181,y:186}});
  expect(g.command(owner,{type:'garrison',actors:[a.id],target:t.id,append:true}).accepted).toBe(true);
  run(g,240);expect(a.unit!.garrison?.building).toBe(t.id);
+});
+
+it.each([0,1,2,3])('uses a body-clear doorway approach after tower rotation %i',rotation=>{
+ const turn=(x:number,y:number)=>{for(let n=0;n<rotation;n++)[x,y]=[255-y,x];return{x,y};};
+ const base=[placed('tower','building.ants.tower',180,180),placed('archer','unit.ants.archer',180,195)]
+  .map(p=>({...p,position:turn(p.position.x,p.position.y),rotation:(360-rotation*90)%360}));
+ const g=game(base),copy=game(base),tower=g.entities.find(e=>e.placement==='tower')!,archer=g.entities.find(e=>e.placement==='archer')!;
+ expect(g.spatial.unitWalkable(g.spatial.entrance(tower),archer)).toBe(false);
+ expect(g.command(owner,{type:'garrison',actors:[archer.id],target:tower.id}).accepted).toBe(true);
+ let restored=false;
+ for(let tick=0;tick<180;tick++){
+  const before=fixed(precise(archer));g.tick();
+  if(!archer.unit!.garrison)expect(g.spatial.clearSegment(before,fixed(precise(archer)),undefined,archer)).toBe(true);
+  if(restored){copy.tick();expect(copy.checksum('full')).toBe(g.checksum('full'));}
+  else if(archer.unit!.route.length){copy.restore(JSON.parse(JSON.stringify(g.snapshot())));restored=true;}
+ }
+ expect(restored).toBe(true);expect(archer.unit!.garrison?.building).toBe(tower.id);
 });

@@ -93,7 +93,7 @@ it('published Battle Rhythm grants ranked haste on every third release and refre
  const first=f.c.spellStatuses![0].cast;release(f);release(f);release(f);flush(f);expect(f.c.spellStatuses).toHaveLength(1);expect(f.c.spellStatuses![0].cast).toBeGreaterThan(first);expect(f.c.spellStatuses![0].expires).toBe(160);f.game.restore(f.game.snapshot());
 });
 it('requires explicit building opt-in and captures only observers of the release',()=>{
- for(const includeBuildings of [false,true]){const f=fixture({}, {includeBuildings}),building=f.game.context.create({id:'fort',definition:'building.ants.great-mound',owner:'player.2',position:{x:140,y:140},rotation:0});
+ for(const includeBuildings of [false,true]){const f=fixture({}, {includeBuildings}),building=f.game.context.create({id:'fort',definition:'building.ants.great-mound',owner:'player.2',position:{x:141.5,y:141.5},rotation:0});
  new SpellReactions(f.game).weaponRelease(f.c,building,'siege');expect(f.game.state.spellLifecycleReactions).toHaveLength(includeBuildings?1:0);}
  const f=fixture();vi.spyOn(f.game.observation,'visible').mockReturnValue(false);release(f);expect(f.game.state.spellLifecycleReactions[0].viewers).toEqual([]);flush(f);expect(f.game.abilities.observedEvents('player.1').some(e=>e.event==='weaponRelease')).toBe(false);
 });

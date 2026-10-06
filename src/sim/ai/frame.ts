@@ -1,9 +1,15 @@
+import {clearLayeredSweep} from '../game/layeredSweep';
+import {fixed} from '../game/motion';
+import {adjacentSweep} from '../game/adjacentSweep';
+import {ObservedNavigation,type ObservedMover} from './observedNavigation';
+import {placementGeometryError} from '../../shared/spatial/placement';
+import {locomotion} from '../game/locomotion';
+import {footprintCells, footprintBounds, footprintCellBounds, navigationBodyOverlapsBounds} from '../../shared/spatial/footprint';
 import {formDefinition} from '../abilities/forms';
 import {SimulationProfiler} from '../profiling';
 import {PlacementSearch} from './placementSearch';
 import {resourceBlocksCell,resourceCollisionCells} from '../../shared/map/resourceClearance';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
-import {unitDimensions} from '../../content/unitScale';
 import {MAX_GROUND_STEP_CM,MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
 import {prerequisiteReason} from "../../content/prerequisites";
 import { armorMultiplier, resolveDamage } from "../game/damage";
@@ -30,16 +36,9 @@ export function entrance(d: Definition, p: Point, r = 0): Point {
   };
 }
 export function footprint(d: Definition, p: Point, r = 0): Point[] {
-  const f = d.footprint ?? { width: 1, depth: 1 },
-    swap = Math.round(r / 90) % 2 !== 0,
-    w = swap ? f.depth : f.width,
-    h = swap ? f.width : f.depth,
-    out: Point[] = [];
-  for (let y = p.y - Math.floor(h / 2); y <= p.y + Math.floor(h / 2); y++)
-    for (let x = p.x - Math.floor(w / 2); x <= p.x + Math.floor(w / 2); x++)
-      out.push({ x, y });
-  return out;
+  return footprintCells(p, d.footprint, r);
 }
+
 /** Explicit AI input boundary. Enemy private data and presentation-only death cues are excluded. */
 export function playerObservation(
   view: SettlementView,
@@ -92,7 +91,7 @@ export class Geography {
     const { size, land, heights } = map;
     this.regions = new Int32Array(size * size);
     if(map.surfaces.length){
-      this.layers=new WalkSurfaces(size,Int16Array.from(heights),Uint8Array.from(land),map.surfaces,Math.round(unitDimensions(map.unitScale??1).height*100));
+      this.layers=new WalkSurfaces(size,Int16Array.from(heights),Uint8Array.from(land),map.surfaces,Math.round((map.minimumUnitHeight??0)*100));
       return;
     }
     let region = 0;
@@ -156,6 +155,12 @@ export class ObservedBlockers {
   private readonly counts=new Map<number,number>();
   private cells=new Set<number>();
   readonly work={checked:0,rebuilt:0,removed:0};
+  private navigation:{geo:Geography;routes:ObservedNavigation}|undefined;
+  routes(frame:Frame){
+    const blocked=frame.blocked;
+    if(this.navigation?.geo!==frame.geo)this.navigation={geo:frame.geo,routes:new ObservedNavigation(frame.geo.map,frame.geo.layers,frame.profile)};
+    this.navigation.routes.update(blocked);return this.navigation.routes;
+  }
   update(frame:Frame):ReadonlySet<number>{
     const seen=new Set<number>();let changed=false;
     this.work.checked=0;this.work.rebuilt=0;this.work.removed=0;
@@ -167,7 +172,7 @@ export class ObservedBlockers {
       const d=frame.def(e),building=d.kind==='building';
       if(!building&&!(e.resource&&e.resource.amount>0))continue;
       seen.add(e.id);this.work.checked++;
-      const x=Math.round(e.x),y=Math.round(e.y),width=d.footprint?.width??1,depth=d.footprint?.depth??1,radius=d.collisionRadius,scale=e.appearance?.scale??1;
+      const x=e.x,y=e.y,width=d.footprint?.width??1,depth=d.footprint?.depth??1,radius=d.collisionRadius,scale=e.appearance?.scale??1;
       const old=this.records.get(e.id);
       if(old&&old.x===x&&old.y===y&&old.rotation===e.rotation&&old.building===building&&old.width===width&&old.depth===depth&&old.radius===radius&&old.scale===scale)continue;
       if(old)remove(old);else ownCells();
@@ -234,7 +239,9 @@ export class Frame {
     this.stores = this.buildings.filter(
       (e) => !e.construction && this.def(e).behaviors.storage?.dropoff,
     );
-    const homeStore = this.stores.find(s => this.def(s).supplyProvided) ?? this.stores[0];
+    // A surviving non-dropoff building still supplies a reachable entrance.
+    // Using its center after Hall loss strands placement probes inside a blocker.
+    const homeStore = this.stores.find(s => this.def(s).supplyProvided) ?? this.stores[0] ?? this.buildings[0];
     this.home = homeStore
       ? entrance(
           this.def(homeStore),
@@ -322,9 +329,30 @@ export class Frame {
     this.profile.count('Resource distance evaluations',eligible);
     return best;
   }
-  nearestSafe(p: Point) {
+  private rosterCache:readonly Definition[]|undefined;
+  private unitRoster(){
+    if(this.rosterCache)return this.rosterCache;
+    const ids=new Set(this.own.map(e=>e.definition)),queue=[...ids];
+    for(let i=0;i<queue.length;i++){
+      const d=this.registry.get(queue[i]!);
+      for(const id of [...d.behaviors.work?.builds??[],...d.behaviors.production?.outputs??[],...d.upgrade?[d.upgrade.target]:[]])
+        if(!ids.has(id)){ids.add(id);queue.push(id);}
+    }
+    return this.rosterCache=queue.map(id=>this.registry.get(id)).filter(d=>d.kind==='unit'&&d.dimensions);
+  }
+  private baseBody(){
+    const bodies=this.unitRoster().filter(d=>locomotion(d)==='ground').map(d=>d.dimensions!);
+    return {radius:Math.max(this.registry.navigationBody.radius,...bodies.map(d=>d.radius)),height:Math.max(this.registry.navigationBody.height,...bodies.map(d=>d.height))};
+  }
+  prepareNavigation(){
+    this.blockers.routes(this).prepare(this.unitRoster().map(d=>({x:0,y:0,...d.dimensions!,air:locomotion(d)==='air'})));
+  }
+  nearestSafe(p: Point,actors:readonly EntityView[]=[]) {
+    const movers:ObservedMover[]=actors.map(actor=>{const d=this.def(actor),body=d.dimensions??this.registry.navigationBody;
+      return {...actor,radius:body.radius,height:body.height,air:locomotion(d)==='air'};});
+    const routes=movers.length?this.blockers.routes(this):undefined;
     const base = integerPoint(p);
-    for (let r = 0; r <= 8; r++)
+    for (let r = 0; r <= (routes?24:8); r++)
       for (let y = base.y - r; y <= base.y + r; y++)
         for (let x = base.x - r; x <= base.x + r; x++) {
           if (r && Math.abs(x - base.x) !== r && Math.abs(y - base.y) !== r)
@@ -332,17 +360,18 @@ export class Frame {
           const q = { x, y, ...(base.surface?{surface:base.surface}:{}) };
           if (
             this.geo.inside(q) &&
-            this.geo.connected(this.home, q) &&
-            !this.blocked.has(this.geo.index(q))
+            (!routes?this.geo.connected(this.home,q):movers.every(m=>m.air||this.geo.connected(m,q))) &&
+            (!routes ? !this.blocked.has(this.geo.index(q)) : movers.every(m=>routes.fits(q,m))&&movers.every(m=>routes.reachable(m,q)))
           )
             return q;
         }
-    return this.home;
+    // No verified destination is better than ordering a retreat into a pocket.
+    return actors.length?integerPoint(actors[0]!):this.home;
   }
   /** Local placement view: no authoritative canBuild query, including resource buffers and entrances. */
   placeable(d: Definition, p: Point, r: number) {
     this.profile.count('Candidates checked');
-    if (!this.available(d) || p.surface) return false;
+    if (!this.available(d) || p.surface || placementGeometryError(d,p,r)) return false;
     if (d.placementNear && !this.resources.some(e => !e.remembered && e.definition === d.placementNear!.source && distance(e,p) <= d.placementNear!.radius)) return false;
     const cells = footprint(d, p, r),
       heights = this.geo.map.heights;
@@ -359,31 +388,22 @@ export class Frame {
       return false;
     const hs = cells.map((q) => heights[this.geo.index(q)]!);
     if (Math.max(...hs) - Math.min(...hs) > MAX_FOUNDATION_RELIEF_CM) return false;
-    if (
-      this.own.some(
-        (e) =>
-          e.unit && !e.unit.contained && cells.some((q) => distance(q, e) < 1),
-      )
-    )
-      return false;
+    const bounds = footprintBounds(p, d.footprint, r);
+    if (this.view.entities.some(e => e.unit && !e.unit.contained && !e.remembered &&
+      locomotion(this.def(e)) === 'ground' &&
+      navigationBodyOverlapsBounds(e, this.def(e).dimensions!.radius, bounds))) return false;
     for (const res of this.resources) {
       const definition=this.def(res),clearance=definition.constructionClearance;
       if(clearance!==undefined&&cells.some(q=>resourceBlocksCell(q,res,definition.footprint,clearance,res.rotation)))return false;
     }
-    // Leave a two-cell service lane around every existing building, especially its door.
-    for (const b of this.buildings) {
-      const bf = this.def(b),
-        door = entrance(bf, integerPoint(b), b.rotation);
-      if (cells.some((q) => distance(q, door) < 4)) return false;
-      const occupied = footprint(bf, integerPoint(b), b.rotation);
-      if (
-        cells.some((q) =>
-          occupied.some(
-            (a) => Math.max(Math.abs(q.x - a.x), Math.abs(q.y - a.y)) <= 2,
-          ),
-        )
-      )
-        return false;
+    // Preserve a lane for the largest trainable ground body, including units
+    // unlocked by future upgrades. Compare rectangles rather than every pair
+    // of occupied cells for every candidate.
+    const body=this.baseBody(),lane=Math.ceil(body.radius*2),candidate=footprintCellBounds(p,d.footprint,r);
+    for(const b of this.buildings){
+      const bf=this.def(b),occupied=footprintCellBounds(b,bf.footprint,b.rotation);
+      if(candidate.minX<=occupied.maxX+lane&&candidate.maxX>=occupied.minX-lane&&
+         candidate.minY<=occupied.maxY+lane&&candidate.maxY>=occupied.minY-lane)return false;
     }
     const door = entrance(d, p, r);
     if (
@@ -397,7 +417,27 @@ export class Frame {
     return this.doorReachable(cells,approach,door,!!d.placementNear);
   }
   private doorReachable(cells:Point[],approach:Point,door:Point,outpost:boolean){
-    // Bounded flood verifies a usable doorway without reading hidden blockers.
-    return this.geo.placementSearch.reachable(this.geo.map,this.blocked,new Set(cells.map(q=>this.geo.index(q))),approach,door,outpost?24:44,this.profile);
+    const map=this.geo.map,body=this.baseBody(),proposed=new Set(cells.map(q=>this.geo.index(q)));
+    const baseStep=(a:number,b:number)=>!!map.land[b]&&!this.blocked.has(b)&&Math.abs(map.heights[a]!-map.heights[b]!)<=MAX_GROUND_STEP_CM;
+    const sweep=(extra:ReadonlySet<number>)=>this.geo.layers?
+      (a:number,b:number)=>clearLayeredSweep(this.geo.layers!,fixed({x:a%map.size,y:Math.floor(a/map.size)}),fixed({x:b%map.size,y:Math.floor(b/map.size)}),body.height,Math.round(body.radius*1000),id=>this.geo.layers!.walkable(id)&&!this.blocked.has(id)&&!extra.has(id)):
+      adjacentSweep(map.size,Math.round(body.radius*1000),(a,b)=>baseStep(a,b)&&!extra.has(b));
+    const current=sweep(new Set()),after=sweep(proposed);
+    const nearby=(p:Point,radius:number)=>{
+      const points:Point[]=[];const center=integerPoint(p);
+      for(let y=-radius;y<=radius;y++)for(let x=-radius;x<=radius;x++){
+        const q={x:center.x+x,y:center.y+y};if(this.geo.inside(q))points.push(q);
+      }
+      return points.sort((a,b)=>distance(a,p)-distance(b,p)||a.y-b.y||a.x-b.x);
+    };
+    // The rendered entrance sits just outside the footprint. A body must stand
+    // farther out; neither the old doorway cell nor the Hall center is a legal
+    // origin for this test.
+    const origin=nearby(approach,8).find(p=>current(this.geo.index(p),this.geo.index(p)));
+    if(!origin||!after(this.geo.index(origin),this.geo.index(origin)))return false;
+    const goals=new Set(nearby(door,Math.ceil(body.radius)+2).filter(p=>after(this.geo.index(p),this.geo.index(p))).map(p=>this.geo.index(p)));
+    if(!goals.size)return false;
+    return this.geo.placementSearch.reachable(map,this.blocked,proposed,origin,door,outpost?32:60,this.profile,{step:after,goals});
+
   }
 }

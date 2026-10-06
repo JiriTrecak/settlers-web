@@ -33,7 +33,7 @@ All decisions use stable ordering and integer path costs. No command queue delay
 
 ```sh
 node --import tsx scripts/bench/sector-scaling.ts --output /tmp/sector-scaling.json
-npm run bench:sim -- --map threewater-forest --ticks 12000 --output /tmp/sector-match.json
+npm run bench:sim -- --map amberwake-basin --ticks 12000 --output /tmp/sector-match.json
 ```
 
 Debug profiling reports cumulative navigation searches, fine cells expanded, coarse regions expanded and corridor fallbacks.

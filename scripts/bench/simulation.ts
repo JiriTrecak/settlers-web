@@ -7,7 +7,7 @@ import {Session} from 'node:inspector';
 import {PerformanceObserver} from 'node:perf_hooks';
 const args=process.argv.slice(2);
 const option=(name:string,fallback:string)=>{const i=args.indexOf(name);return i<0?fallback:args[i+1]??fallback;};
-const mapId=option('--map','threewater-forest'),ticks=Number(option('--ticks','12000'));
+const mapId=option('--map','amberwake-basin'),ticks=Number(option('--ticks','12000'));
 // Optional headless real-time cadence: permits event-loop/GC idle work between
 // ticks. This still measures no rendering, browser scheduling or network latency.
 const paceMs=Number(option('--pace-ms','0'));

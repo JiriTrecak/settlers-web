@@ -73,7 +73,7 @@ import {
 import type { ViewSnapshot } from "../../sim/world/world";
 import { Camera } from "../camera/camera";
 import { Display } from "../display/display";
-import { addSunAndGrid, putGrid } from "../grid/grid";
+import { addSunAndGrid, putGrid, clearGrid } from "../grid/grid";
 import { HeightMesh } from "../height/heightMesh";
 import { BrushLayer } from "../brush/brushLayer";
 import { PropField,type PropModelOptions } from "../prop/propField";
@@ -593,7 +593,8 @@ export class Renderer {
     this.gridMode = mode;
     this.gridOn = mode !== "none";
     this.lines.visible = this.gridOn;
-    if (!this.gridOn || !this.size) return;
+    if (!this.gridOn) { clearGrid(this.lines); return; }
+    if (!this.size) return;
     this.refreshGrid();
   }
 
@@ -1010,6 +1011,7 @@ export class Renderer {
     this.navigation?.dispose();
     this.navigation = null;
     this.fog?.dispose();
+    clearGrid(this.lines);
 
 
     this.decals.destroy(this.scene);

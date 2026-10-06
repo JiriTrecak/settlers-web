@@ -56,7 +56,7 @@ it.each([5,25,75,150])('executes movement promptly and identically with a pipeli
   const delay=connectionDelay([oneWay*2,oneWay*2]);
   const {peers,deliver}=fixture(()=>oneWay,delay);
   const time=vi.spyOn(performance,'now').mockReturnValue(0);
-  const actors=peers.map(p=>p.world.settlement.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.warrior')!);
+  const actors=peers.map(p=>p.world.settlement.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.marshal')!);
   const rotations=actors.map(e=>e.rotation),responded=[0,0];
   for(let ms=0;ms<=2500;ms+=5){
     time.mockReturnValue(ms);deliver(ms);

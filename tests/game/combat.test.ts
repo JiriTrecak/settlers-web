@@ -39,8 +39,8 @@ describe("combat, knowledge and deterministic navigation", () => {
           ...map,
           playerStarts: map.playerStarts.map((s, i) => ({
             ...s,
-            x: i ? 156 : 100,
-            z: 128,
+            x: i ? 157.5 : 101.5,
+            z: 129.5,
           })),
           entities: [placed("scout", "unit.ants.warrior", 151, 140)],
         },

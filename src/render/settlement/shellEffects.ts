@@ -1,3 +1,4 @@
+import {content} from '../../content/builtin';
 import {AdditiveBlending,Color,DoubleSide,DynamicDrawUsage,Group,InstancedBufferAttribute,InstancedMesh,Matrix4,MeshBasicMaterial,MeshStandardMaterial,Quaternion,RingGeometry,SphereGeometry,Vector3} from 'three';
 import type {Shell} from '../../sim/game/shellState';
 import type {HeightField} from '../../shared/map/height';
@@ -17,7 +18,7 @@ export class ShellEffects {
  private readonly color=new Color();
  private readonly origins=new Map<number,{launched:number;position:Vector3}>();
  // Reserved up front (with ring colours) so warm-up links both programs before the first shell.
- constructor(parent:Group){parent.add(this.root);this.reserve(1);this.balls!.count=0;this.rings!.count=0;}
+ constructor(parent:Group,private readonly registry=content){parent.add(this.root);this.reserve(1);this.balls!.count=0;this.rings!.count=0;}
  private reserve(count:number){
   if(this.capacity>=count)return;
   let capacity=Math.max(16,this.capacity);while(capacity<count)capacity*=2;
@@ -26,7 +27,7 @@ export class ShellEffects {
   this.rings.instanceColor=new InstancedBufferAttribute(new Float32Array(capacity*3),3);
   for(const mesh of [this.balls,this.rings]){mesh.instanceMatrix.setUsage(DynamicDrawUsage);mesh.frustumCulled=false;this.root.add(mesh);}
  }
- update(shells:readonly Shell[],field:HeightField,tick:number,launchPosition?:(shell:Shell)=>Vector3|undefined,unitScale=1){
+ update(shells:readonly Shell[],field:HeightField,tick:number,launchPosition?:(shell:Shell)=>Vector3|undefined){
   const live=new Set(shells.map(s=>s.id));
   for(const id of this.origins.keys())if(!live.has(id))this.origins.delete(id);
   this.reserve(shells.length);if(!this.balls||!this.rings)return;this.balls.count=0;this.rings.count=0;
@@ -43,7 +44,7 @@ export class ShellEffects {
     const t=Math.max(0,(tick-shell.launched)/(shell.impact-shell.launched)),dx=shell.target.x-origin.x,dy=shell.target.y-origin.z;
     const start=origin.y,end=field.walkSample(shell.target.x,shell.target.y,shell.target.surface)+.1;
     const arc=Math.max(2,Math.hypot(dx,dy)*.3);
-    this.position.set(origin.x+dx*t,start+(end-start)*t+4*arc*t*(1-t),origin.z+dy*t);this.scale.setScalar(unitScale);
+    this.position.set(origin.x+dx*t,start+(end-start)*t+4*arc*t*(1-t),origin.z+dy*t);this.scale.setScalar(this.registry.get(shell.definition).modelScale??1);
     this.balls.setMatrixAt(this.balls.count++,this.matrix.compose(this.position,this.rotation,this.scale));
    }else{
     const t=(tick-shell.impact)/20;if(t>=1)continue;

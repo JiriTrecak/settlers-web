@@ -43,6 +43,10 @@ export class PlayerAI {
   ) {
     this.state = newAIState(geography.map.fingerprint, seed);
   }
+  /** Build derived route profiles while loading, from the ordinary observation. */
+  prepareNavigation(input:SettlementView){
+    new Frame(playerObservation(input,this.owner),this.owner,this.registry,this.geography,0,this.blockers,this.profile).prepareNavigation();
+  }
   due(tick: number) {
     return tick % this.registry.rules.ai.decisionTicks === this.phase;
   }
@@ -544,7 +548,7 @@ export class PlayerAI {
           {
             type: "move",
             actors: [scout.id],
-            destination: f.nearestSafe(threatened ? f.home : target),
+            destination: f.nearestSafe(threatened ? f.home : target,[scout]),
           },
           threatened
             ? "Preserve the scout after contact"
@@ -595,7 +599,7 @@ export class PlayerAI {
           {
             type: "move",
             actors: responders.map((e) => e.id),
-            destination: f.nearestSafe(target),
+            destination: f.nearestSafe(target,responders),
             attackMove: true,
           },
           severe
@@ -645,7 +649,7 @@ export class PlayerAI {
         {
           type: "move",
           actors: joining.map((e) => e.id),
-          destination: f.nearestSafe(leader),
+          destination: f.nearestSafe(leader,joining),
           attackMove: true,
         },
         "Send reinforcements to the active army",
@@ -654,7 +658,7 @@ export class PlayerAI {
       x: squad.reduce((n, e) => n + e.x, 0) / squad.length,
       y: squad.reduce((n, e) => n + e.y, 0) / squad.length,
     };
-    const destination = f.nearestSafe(m.point);
+    const destination = f.nearestSafe(m.point,squad);
     if (distance(center, m.progressPoint) > 3) {
       m.progressPoint = integerPoint(center);
       m.progressTick = f.tick;
@@ -688,7 +692,7 @@ export class PlayerAI {
           {
             type: "move",
             actors: rest.map((e) => e.id),
-            destination: f.nearestSafe(f.home),
+            destination: f.nearestSafe(f.home,rest),
             attackMove: true,
           },
           "Gather reinforcements at home while the scout travels",
@@ -706,7 +710,7 @@ export class PlayerAI {
         {
           type: "move",
           actors: squad.map((e) => e.id),
-          destination: f.nearestSafe(f.home),
+          destination: f.nearestSafe(f.home,squad),
         },
         "Withdraw from a visibly unfavorable fight",
       );
@@ -728,7 +732,7 @@ export class PlayerAI {
         {
           type: "move",
           actors: squad.map((e) => e.id),
-          destination: f.nearestSafe(center),
+          destination: f.nearestSafe(center,squad),
           attackMove: true,
         },
         "Assemble the army before entering the next fight",
@@ -778,7 +782,7 @@ export class PlayerAI {
         {
           type: "move",
           actors: guards.map((e) => e.id),
-          destination: f.nearestSafe(f.home),
+          destination: f.nearestSafe(f.home,guards),
           attackMove: true,
         },
         "Keep a small guard near the workers",

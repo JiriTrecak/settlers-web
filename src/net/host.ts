@@ -1,3 +1,5 @@
+import gameSource from '../../content/game.json' with {type:'json'};
+import {chosenHero,type HeroChoice} from '../content/startingHero';
 import { chatText } from "../shared/chat/chat";
 import {ConnectionLatency,connectionDelay} from './latency';
 import { validAction } from "../shared/types/types";
@@ -27,6 +29,7 @@ type Member = {
   name: string;
   role: "player" | "spectator";
   player?: number;
+  hero?: string;
   send: ((msg: ServerMsg) => void) | null;
   latency: ConnectionLatency;
 };
@@ -50,7 +53,7 @@ export class HostedMatch {
   private lastSave: unknown = null;
   private chatTimes = new Map<string, number>();
 
-  constructor(draft: CreateRoom, id: string = crypto.randomUUID(), private readonly now=()=>performance.now()) {
+  constructor(draft: CreateRoom, id: string = crypto.randomUUID(), private readonly now=()=>performance.now(), private readonly heroes:HeroChoice|undefined=gameSource.rules.startingSetup.hero) {
     this.id = id;
     this.name = draft.name;
     this.mapId = draft.mapId;
@@ -72,7 +75,7 @@ export class HostedMatch {
     for (let i = 0; i < this.slotCount; i++) {
       const m = [...this.members.values()].find((x) => x.player === i);
       const rtt=m?.latency.roundTrip(this.now());
-      seats.push({ player: i, name: m?.name ?? null, ...(rtt!=null?{roundTripMs:rtt}:{}) });
+      seats.push({ player: i, name: m?.name ?? null, ...(m&&this.heroes?{hero:m.hero??this.heroes.default}:{}), ...(rtt!=null?{roundTripMs:rtt}:{}) });
     }
     return {
       id: this.id,
@@ -81,6 +84,7 @@ export class HostedMatch {
       mapId: this.mapId,
       host: this.members.get(this.hostToken)?.name ?? "",
       slots: seats,
+      ...(this.heroes?{heroes:{default:this.heroes.default,choices:[...this.heroes.choices]}}:{}),
       spectators: [...this.members.values()].filter(
         (m) => m.role === "spectator",
       ).length,
@@ -166,6 +170,7 @@ export class HostedMatch {
       player: m.player!,
       kind: "human" as const,
       name: m.name,
+      ...(this.heroes?{hero:chosenHero(this.heroes,m.hero)}:{}),
     }));
     const config: MatchConfig = {
       v: 1,
@@ -294,6 +299,18 @@ export class HostedMatch {
   ingest(auth: string, msg: ClientMsg): void {
     const m = this.members.get(auth);
     if (!m) return;
+    if(msg.type==='startMatch') {
+      const result=this.start(auth);
+      if('error' in result)m.send?.({type:'error',code:'START_REJECTED',message:result.error});
+      return;
+    }
+    if(msg.type==='selectHero') {
+      if(this.state!=='waiting'||m.role!=='player')return;
+      if(typeof msg.hero!=='string'||!this.heroes?.choices.includes(msg.hero)){
+        m.send?.({type:'error',code:'INVALID_HERO',message:'Choose an available starting hero.'});return;
+      }
+      m.hero=msg.hero;this.fanout({type:'room',room:this.view()});return;
+    }
     if(msg.type==='latencyReply'){
       if(m.send&&typeof msg.id==='string'&&m.latency.reply(msg.id,this.now())){
         this.probeMember(m);
@@ -446,6 +463,7 @@ export class HostedMatch {
 export class MatchHost {
   private readonly rooms = new Map<string, HostedMatch>();
   private nextId = 1;
+  constructor(private readonly heroes:HeroChoice|undefined=gameSource.rules.startingSetup.hero) {}
   pulse(){for(const room of this.rooms.values())room.pulse();}
 
   create(draft: CreateRoom): {
@@ -453,7 +471,7 @@ export class MatchHost {
     room: RoomView;
     you: ClientIdentity;
   } {
-    const match = new HostedMatch(draft, String(this.nextId++));
+    const match = new HostedMatch(draft, String(this.nextId++),undefined,this.heroes);
     this.rooms.set(match.id, match);
     const you = match.you(match.hostToken)!;
     return { token: match.hostToken, room: match.view(), you };

@@ -5,7 +5,7 @@ import { commandCard } from "../../src/presentation/commands";
 
 const workers = (g: Game) => g.entities.filter(e => e.owner === "player.1" && g.registry.get(e.definition).behaviors.work);
 function build(g: Game, actors: number[], x: number, y: number) {
-  const result = g.command("player.1", {type: "build", actors, definition: "building.ants.house", position: {x, y}});
+  const result = g.command("player.1", {type: "build", actors, definition: "building.ants.house", position: placed('site','building.ants.house',x,y).position});
   expect(result.accepted, result.reason).toBe(true);
   return {building: g.entities.at(-1)!, builder: result.actors[0]};
 }

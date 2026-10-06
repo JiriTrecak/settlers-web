@@ -8,7 +8,7 @@ import type { Rules } from "../../src/content/schema";
 
 function setup() {
   const data=source();
-  (data.rules as Rules).startingSetup.units = (data.rules as Rules).startingSetup.units.filter(u=>u.definition!=="unit.ants.marshal");
+  delete (data.rules as Rules).startingSetup.hero;
   const warrior=structuredClone(data.definitions.find(d=>(d as {id:string}).id==="unit.ants.warrior")) as Record<string,unknown>;
   data.definitions.push({...warrior,id:"unit.ants.test-hero",hero:true,level:1,
     body:{maxHp:100,armor:0,armorType:"heavy"},
@@ -51,8 +51,8 @@ describe("hero leveling",()=>{
 });
 
 describe("fixed-point movement",()=>{
-  it("keeps snapshots restorable for units whose scaled speed is fractional",()=>{
-    // Webling speed 7 × unitScale 1.7 = 11.9 → 297.5 raw budget per tick before flooring.
+  it("keeps snapshots restorable for units whose authored speed is fractional",()=>{
+    // Authored Webling speed 11.9 → 297.5 raw budget per tick before flooring.
     const map={...emptyUtcMap(),entities:[{...placed("creep","unit.neutral.webling",100,100),owner:"none" as const}],
       camps:[{id:"den",members:["creep"],home:{x:100,y:100},aggroRange:5,leash:10,aggression:"players" as const}]};
     const g=new Game(map,slots,new ContentRegistry(source())),creep=g.entities.find(e=>e.placement==="creep")!;

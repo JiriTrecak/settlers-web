@@ -27,8 +27,8 @@ describe("skirmish setup", () => {
     );
     expect(player).toBe(1);
     expect(match.slots).toEqual([
-      { player: 0, kind: "ai", name: "Computer 1" },
-      { player: 1, kind: "human", name: "Alice" },
+      { player: 0, kind: "ai", name: "Computer 1", hero:"unit.ants.marshal" },
+      { player: 1, kind: "human", name: "Alice", hero:"unit.ants.marshal" },
     ]);
     const world = new World({ map, slots: match.slots, seed: 1 });
     const hall = world.settlement.entities.find(

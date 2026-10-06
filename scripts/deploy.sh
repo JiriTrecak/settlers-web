@@ -15,7 +15,7 @@ RSYNC_SSH="ssh -i '$EC2_KEY' -o StrictHostKeyChecking=accept-new"
 
 chmod 400 "$EC2_KEY" 2>/dev/null || true
 
-"${SSH[@]}" "$REMOTE" "mkdir -p '$REMOTE_DIR/server' '$REMOTE_DIR/src' '$REMOTE_DIR/scripts'"
+"${SSH[@]}" "$REMOTE" "mkdir -p '$REMOTE_DIR/server' '$REMOTE_DIR/src' '$REMOTE_DIR/scripts' '$REMOTE_DIR/content'"
 
 rsync -az --delete -e "$RSYNC_SSH" \
   "$PROJECT_ROOT/server/" "$REMOTE:$REMOTE_DIR/server/"
@@ -28,6 +28,9 @@ rsync -az --delete -e "$RSYNC_SSH" \
 
 rsync -az --delete -e "$RSYNC_SSH" \
   "$PROJECT_ROOT/src/content/" "$REMOTE:$REMOTE_DIR/src/content/"
+
+rsync -az -e "$RSYNC_SSH" \
+  "$PROJECT_ROOT/content/game.json" "$REMOTE:$REMOTE_DIR/content/game.json"
 
 rsync -az -e "$RSYNC_SSH" \
   "$PROJECT_ROOT/scripts/settlers-matchhost.service" \

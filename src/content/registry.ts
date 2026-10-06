@@ -1,6 +1,7 @@
+import {BUILDING_CELL_SIZE} from '../shared/spatial/footprint.ts';
 import {abilityLibrarySchema,emptyAbilityLibrary,allEffects,type AbilityLibrary,type AbilityDefinition,type StatusEffect} from './abilities/schema.ts';
 import { z } from "zod";
-import {scaleUnitDefinition} from './unitScale.ts';
+import {minimumGroundBody} from './unitBody.ts';
 import {resourceCenterSeparation} from '../shared/map/resourceClearance';
 import {
   actionsSchema,
@@ -60,6 +61,8 @@ export class ContentRegistry {
   readonly rules: Rules;
   readonly actions: z.infer<typeof actionsSchema>;
   readonly fingerprint: string;
+  readonly navigationBody: ReturnType<typeof minimumGroundBody>;
+  private readonly prerequisitesByBuilding: Readonly<Record<string, readonly string[]>>;
   private readonly byId: Readonly<Record<string, Definition>>;
   private readonly byAsset: Readonly<Record<string, Asset>>;
   private readonly byAbility: Readonly<Record<string, AbilityDefinition>>;
@@ -158,10 +161,13 @@ export class ContentRegistry {
             disabledBehaviors: _disabled,
             ...fields
           } = raw;
-          return scaleUnitDefinition(definitionSchema.parse({ ...fields, behaviors: merged }), this.rules.unitScale,this.byAsset[fields.asset]?.dimensions);
+          const definition=definitionSchema.parse({ ...fields, behaviors: merged });
+          if(definition.kind==='unit'&&!definition.dimensions)throw new Error(`${definition.id}: units require explicit dimensions`);
+          return definition;
         })
         .sort(ordinal),
     );
+    this.navigationBody=freeze(minimumGroundBody(this.definitions));
     this.abilityLibrary = freeze(abilityLibrarySchema.parse(source.abilityLibrary ?? emptyAbilityLibrary()));
     this.byAbility = Object.fromEntries(this.abilityLibrary.abilities.map(a=>[a.id,a]));
     const statuses: Record<string, Record<string, StatusEffect>> = Object.create(null);
@@ -176,6 +182,20 @@ export class ContentRegistry {
     this.byStatus = Object.freeze(statuses);
     this.byId = Object.fromEntries(this.definitions.map((d) => [d.id, d]));
     this.validate();
+    // Compile once. An upgraded building continues to fulfill every ancestor's
+    // technology requirement; no graph traversal occurs in command/AI checks.
+    const fulfills: Record<string, string[]> = Object.create(null);
+    for (const origin of this.definitions.filter(d => d.kind === 'building')) {
+      const visited = new Set<string>();
+      let current: Definition | undefined = origin;
+      while (current) {
+        if (visited.has(current.id)) throw new Error(`Building upgrade cycle at ${current.id}`);
+        visited.add(current.id);
+        (fulfills[current.id] ??= []).push(origin.id);
+        current = current.upgrade ? this.get(current.upgrade.target) : undefined;
+      }
+    }
+    this.prerequisitesByBuilding = freeze(fulfills);
     for(const presentation of this.abilityLibrary.presentations)if(presentation.icon&&!this.asset(presentation.icon).image)throw Error(`Spell icon must reference an image: ${presentation.icon}`);
     this.fingerprint = fingerprint({
       definitions: this.definitions,
@@ -193,6 +213,9 @@ export class ContentRegistry {
     const d = this.byId[id];
     if (!d) throw new Error(`Unknown definition: ${id}`);
     return d;
+  }
+  fulfilledPrerequisites(id: string): readonly string[] {
+    return this.prerequisitesByBuilding[id] ?? [];
   }
   find(id: string): Definition | undefined {
     return this.byId[id];
@@ -228,7 +251,7 @@ export class ContentRegistry {
           const target = expect(unit, "unit");
           if ((effect.splashRadius !== undefined || effect.splashSlowPermille !== undefined) && !target.behaviors.combat?.shell) throw new Error(`${id}: splash research requires shell combat`);
           if (effect.chargeCooldownPermille && !target.behaviors.combat?.charge) throw new Error(`${id}: charge research requires charge combat`);
-          if (effect.treeHitDamage && !target.behaviors.work) throw new Error(`${id}: tree research requires worker`);
+          if (effect.treeWorkRate && !target.behaviors.work) throw new Error(`${id}: tree research requires worker`);
         }
       }
     }
@@ -324,9 +347,9 @@ export class ContentRegistry {
       if (
         d.kind === "building" &&
         d.footprint &&
-        (!(d.footprint.width % 2) || !(d.footprint.depth % 2))
+        (d.footprint.width % BUILDING_CELL_SIZE !== 0 || d.footprint.depth % BUILDING_CELL_SIZE !== 0)
       )
-        fail("footprint dimensions must be odd cell counts");
+        fail("building footprint dimensions must be whole building cells (multiples of 4 navigation cells)");
       if (d.behaviors.combat?.projectile && d.behaviors.combat.shell) fail("weapon cannot launch both a missile and an area shell");
       if (d.behaviors.combat && d.kind !== "unit")
         fail("combat currently requires a unit");
@@ -334,6 +357,7 @@ export class ContentRegistry {
         fail("resource model needs sceneryAsset");
       if (d.felling && (d.kind !== "resource" || !d.yield || !this.asset(d.asset).harvestAnimation))
         fail("felling requires a resource yield and animated scenery asset");
+      if (d.heroCapacity && d.kind !== "building") fail("hero capacity requires a building");
       if (d.kind !== "unit" && d.hero) fail("hero flag requires a unit");
       if (d.behaviors.abilities) {
         if(d.kind !== 'unit') fail('abilities require a unit');
@@ -352,6 +376,13 @@ export class ContentRegistry {
             if(intent==='reinforce'&&(ability!.targeting.kind!=='unit'||!ops.some(e=>e.op==='teleport'&&e.query)))fail('Reinforcement AI requires a unit-anchored group displacement');
           }
 
+        }
+      }
+      if(d.behaviors.revival) {
+        if(d.kind!=='building')fail('revival requires a building');
+        for(const bill of [d.behaviors.revival.items,d.behaviors.revival.itemsPerLevel]) {
+          if(new Set(bill.map(p=>p.item)).size!==bill.length)fail('duplicate revival price item');
+          for(const p of bill)if(!expect(p.item,'item').currency)fail('revival prices require currencies');
         }
       }
       if (d.behaviors.inventory && (!d.hero || !d.behaviors.movement))
@@ -384,6 +415,10 @@ export class ContentRegistry {
       }
       if (d.kind === "building" && (!d.footprint || !d.entrance))
         fail("footprint/entrance required");
+      if (d.kind === 'building' && d.footprint && d.entrance &&
+          (!Number.isInteger(d.footprint.width / 2 - .5 + d.entrance.x) ||
+           !Number.isInteger(d.footprint.depth / 2 - .5 + d.entrance.y)))
+        fail('entrance must land on a navigation cell center');
       if (
         d.footprint &&
         d.entrance &&
@@ -395,8 +430,8 @@ export class ContentRegistry {
       if (d.kind === "resource" && !d.yield) fail("yield required");
       if (d.yield && !["resource", "building"].includes(d.kind))
         fail("yield requires a resource or mine building");
-      if (d.gatheringCapacity && (!d.yield || d.kind !== "building"))
-        fail("gathering capacity requires a mine building");
+      if (d.harvesting && (!d.yield || !["building", "resource"].includes(d.kind)))
+        fail("harvesting requires a resource reserve");
       if (d.currency && (d.kind !== "item" || d.itemEffect))
         fail("currency must be a non-equipment item");
       if (d.behaviors.work && (!d.behaviors.movement || d.kind !== "unit"))
@@ -419,9 +454,8 @@ export class ContentRegistry {
         if (expect(id, "item").creation?.method !== "harvest")
           fail(`worker harvest ${id} requires a harvest recipe`);
         const recipe = this.get(id).creation!;
-        if (recipe.method === "harvest" && this.get(recipe.source).felling &&
-            d.behaviors.work!.carryCapacity < this.get(recipe.source).yield!)
-          fail("worker must be able to carry a complete felled resource");
+        if (recipe.method === "harvest" && d.behaviors.work!.carryCapacity < recipe.amount)
+          fail("worker must be able to carry one harvest load");
       }
       if (d.constructionClearance !== undefined && !d.yield)
         fail("construction clearance requires resource yield");
@@ -460,10 +494,11 @@ export class ContentRegistry {
         if (c.method === "harvest") {
           const source = this.get(c.source);
           if (!!source.felling !== (c.impactTick !== undefined) ||
-              (c.impactTick !== undefined && c.impactTick >= c.workTicks))
+              (c.impactTick !== undefined && c.impactTick >= (c.animationTicks ?? c.workTicks)))
             fail("felling harvest requires an impact tick inside the work cycle");
-          if (source.felling && c.amount !== source.yield)
-            fail("a felled resource must yield one complete load");
+          if (!source.harvesting) fail("harvest source requires an extraction policy");
+          if (c.animationTicks !== undefined && !c.workAnimation)
+            fail("harvest animation timing requires a work animation");
         }
         if (c.method === "plant" && (d.kind !== "resource" || !d.regrowthTicks))
           fail("plant needs resource and regrowthTicks");
@@ -471,6 +506,8 @@ export class ContentRegistry {
       const p = d.behaviors.production;
       if (!p) continue;
       if (d.kind !== "building") fail("production requires building");
+      if (d.behaviors.revival && (p.mode !== "queued" || p.queueCapacity !== d.behaviors.revival.queueCapacity))
+        fail("recruitment and revival share one queued workplace and capacity");
       if (p.mode === "automatic" && p.outputs.length !== 1)
         fail("automatic production has one output");
       if (p.mode === "queued" && !p.queueCapacity)
@@ -568,6 +605,16 @@ export class ContentRegistry {
     )
       throw new Error("Starting inventory exceeds fort capacity");
     for (const u of setup.units) expect(u.definition, "unit");
+    if(setup.hero) {
+      if(new Set(setup.hero.choices).size!==setup.hero.choices.length || !setup.hero.choices.includes(setup.hero.default))
+        throw new Error('Starting hero choices must be unique and include the default');
+      for(const id of setup.hero.choices) {
+        const hero=expect(id,'unit');
+        if(!hero.hero || !hero.behaviors.playerControl || hero.supplyCost!==4)
+          throw new Error(`${id}: starting heroes must be controllable heroes using four supply`);
+      }
+      if(setup.units.some(u=>this.get(u.definition).hero))throw new Error('Starting heroes belong in the hero choice, not fixed units');
+    }
     for (const task of setup.gathering ?? [])
       if (expect(task.item, "item").creation?.method !== "harvest")
         throw new Error("Starting gather requires harvest recipe");

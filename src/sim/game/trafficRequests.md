@@ -8,8 +8,9 @@ adjusted for occupancy only within seven cells (the four-cell recovery radius
 plus the existing three-cell endpoint search). A physically blocked terrain
 step still discards the stale route and lets the order planner reconnect it.
 
-The local search is a quarter-cell grid bounded to four cells around the mover
-and 256 visited nodes. Moving units and enemies retain cell reservations;
+The local search retains a 256-visit cap and fixed scratch-grid size. Its probe
+spacing scales with the actor body, so calibrated larger units have useful
+physical detour space; the minimum spacing is a quarter navigation cell. Moving units and enemies retain cell reservations;
 stationary allies retain physical collision. Terrain and body clearance are
 checked again on every movement step. Recovery keeps the existing six-tick retry
 cadence. This is not a flow field; shared group routing can be added independently
@@ -35,6 +36,18 @@ request discovery in the simulation profiler, including debug/MCP captures.
 At a terrain constriction, the usual yielder may be the wrong actor: it can be inside the gate while its lower-ID counterpart is outside with room to step aside. If neither immediate lateral direction is terrain-clear for a preferred yielder, and none of the preferred yielders has a checked escape path, negotiation tries another stalled member of the same cycle. The shared read-only `trafficEscape` planner verifies feasibility; movement checks it again when executing the request. This reversal is deliberately limited to terrain constrictions. Applying it to all crowded open space regressed a wider-passage benchmark.
 
 At the pocket, the unit waits until the leader clears the vicinity, becomes unavailable, stops, or the 120-tick deadline expires. The deadline starts when the maneuver begins. The unit then reconnects to its original destination. Replacement orders cancel recovery immediately through the normal order interruption path. Terrain, finite turning, actual body clearance, ownership and collision exemptions remain authoritative.
+
+Idle allies use the same bounded escape planner when ordinary local recovery
+fails and the requester has been stationary for 40 ticks (or since becoming ready
+if it has never moved). Only actual body blockers in the next body-relative
+stretch of the route are considered, in stable ID order. A candidate must have
+no orders, queued intentions, work, combat target, cast, garrison or movement
+restriction. Hold Position never yields. The escape pocket must clear the
+requester's approach by both units' radii; stepping into the same corridor again
+is not useful. The idle ally reserves its pocket, moves with ordinary collision
+checks, waits under the existing 120-tick policy, then returns to idle. It does
+not return to the blocking position. This does not alter moving-cycle priorities
+or perform a map-wide traffic search.
 
 Save validation rejects self-leaders and deadlines beyond the maximum waiting interval. Missing or dead leaders are valid and release the wait. Tests cover all four rotations, collision clearance, reservation release, stop/death/timeout, interruption, and save/replay equivalence.
 

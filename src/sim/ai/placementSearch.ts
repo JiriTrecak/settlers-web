@@ -9,7 +9,7 @@ export class PlacementSearch {
  private xs=new Int32Array(0);
  private ys=new Int32Array(0);
  private generation=0;
- reachable(map:{size:number;land:readonly number[];heights:readonly number[]},blocked:ReadonlySet<number>,proposed:ReadonlySet<number>,origin:Point,door:Point,radius:number,profile?:SimulationProfiler):boolean {
+ reachable(map:{size:number;land:readonly number[];heights:readonly number[]},blocked:ReadonlySet<number>,proposed:ReadonlySet<number>,origin:Point,door:Point,radius:number,profile?:SimulationProfiler,body?:{step:(from:number,to:number)=>boolean;goals:ReadonlySet<number>}):boolean {
   const minX=Math.floor(origin.x-radius),minY=Math.floor(origin.y-radius),radiusSquared=radius*radius;
   const width=Math.ceil(origin.x+radius)-minX+1,height=Math.ceil(origin.y+radius)-minY+1,capacity=width*height;
   if(this.seen.length<capacity){this.seen=new Uint32Array(capacity);this.xs=new Int32Array(capacity+1);this.ys=new Int32Array(capacity+1);}
@@ -19,13 +19,13 @@ export class PlacementSearch {
   try{
    for(let head=0;head<tail&&head<4096;head++){
     const x=this.xs[head]!,y=this.ys[head]!;expanded++;
-    if((x-door.x)**2+(y-door.y)**2<1)return true;
+    if(body?body.goals.has(y*map.size+x):(x-door.x)**2+(y-door.y)**2<1)return true;
     const from=y*map.size+x;
     for(const [dx,dy] of directions){
      const nx=x+dx,ny=y+dy,index=ny*map.size+nx,local=(ny-minY)*width+nx-minX;
      if(nx<0||ny<0||nx>=map.size||ny>=map.size||(nx-origin.x)**2+(ny-origin.y)**2>radiusSquared||
        this.seen[local]===this.generation||proposed.has(index)||blocked.has(index)||!map.land[index]||
-       Math.abs(map.heights[index]!-map.heights[from]!)>MAX_GROUND_STEP_CM)continue;
+       Math.abs(map.heights[index]!-map.heights[from]!)>MAX_GROUND_STEP_CM||body&&!body.step(from,index))continue;
      this.seen[local]=this.generation;this.xs[tail]=nx;this.ys[tail++]=ny;
     }
    }

@@ -30,24 +30,15 @@ export function workerPopulation(
   }
   return { workers, available };
 }
-/** Current trips and queued gather assignments reserve slots, including a retarget while carrying. */
-export function gathererCount(
-  state: GameState,
-  resource: number,
-  except?: number,
-  units: readonly Entity[] = state.entities,
-) {
-  const sources = new Map(
-    state.jobs
-      .filter((j) => j.type === "harvest")
-      .map((j) => [j.worker, j.source]),
-  );
-  return units.filter(
-    (e) =>
-      e.id !== except &&
-      alive(e) &&
-      e.unit &&
-      (sources.get(e.id) === resource ||
-        (e.unit.order?.type === "gather" && e.unit.order.target === resource)),
-  ).length;
+/** A committed trip owns the assignment until delivery; pending orders never
+ * double-count a carrier at both its old and its next source. */
+export function gatherAssignments(state: GameState, units: readonly Entity[]): Map<number, number> {
+  const sources = new Map(state.jobs.filter(j => j.type === "harvest").map(j => [j.worker, j.source!]));
+  const assignments = new Map<number, number>();
+  for (const worker of units) {
+    if (!alive(worker) || !worker.unit) continue;
+    const order = worker.unit.order, source = sources.get(worker.id) ?? (order?.type === "gather" ? order.target : undefined);
+    if (source !== undefined) assignments.set(worker.id, source);
+  }
+  return assignments;
 }

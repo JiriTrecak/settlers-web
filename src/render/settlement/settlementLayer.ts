@@ -1,3 +1,4 @@
+import {footprintCellBounds} from '../../shared/spatial/footprint';
 import {resolveEffectSocket} from '../abilities/effectSocket';
 import {attackPhase} from '../characters/attackPhase';
 import type {AntState} from '../characters/character-player';
@@ -170,8 +171,8 @@ export class SettlementLayer {
     }
   >();
   private readonly targetPosition = new Vector3();
-  private readonly shells = new ShellEffects(this.root);
-  private readonly projectiles = new ProjectileEffects(this.root);
+  private readonly shells:ShellEffects;
+  private readonly projectiles:ProjectileEffects;
   private dead = false;
   private readonly circles = new SelectionCircles(this.root);
   private readonly rallies = new RallyMarkers(this.root);
@@ -218,6 +219,7 @@ export class SettlementLayer {
   private readonly modelLoader=new GLTFLoader();
   get ready():Promise<void>{return Promise.all([this.harvestTrees.ready,...this.bindingLoads.values()]).then(()=>{});}
   constructor(scene: Scene, private readonly registry:ContentRegistry=content) {
+    this.shells=new ShellEffects(this.root,registry);this.projectiles=new ProjectileEffects(this.root,registry);
     this.root.name = "game-entities";
     this.root.add(this.ghost, this.entranceGhost, this.gridLines);
     this.gridLines.visible = this.entranceGhost.visible = this.ghost.visible = false;
@@ -422,7 +424,7 @@ export class SettlementLayer {
   private make(e: EntityView) {
     const d = this.registry.get(e.definition),
       assetId = e.appearance?.asset ?? resourceDepositVisual(e.definition,e.resource?.amount,d.yield,d.asset);
-    const visualScale = d.kind === "unit" ? this.registry.rules.unitScale : 1;
+    const visualScale = d.modelScale ?? 1;
     const modelScale = (this.registry.asset(assetId).scale ?? 1) * (e.appearance?.scale ?? 1) * visualScale;
     let o = this.entities.get(e.id);
     if (o && (o.userData.asset !== assetId || o.userData.modelScale !== modelScale)) {
@@ -517,10 +519,10 @@ export class SettlementLayer {
     let mine: Sprite | undefined;
     if (e.gathering) {
       mine = new Sprite(
-        this.mineLabels.material(e.gathering.workers, e.gathering.capacity),
+        this.mineLabels.material(e.gathering.workers, e.gathering.recommendedWorkers),
       );
       mine.name = "Mine occupancy";
-      mine.position.set(0, (asset.healthHeight ?? 3) + 0.55, 0);
+      mine.position.set(0, (asset.healthHeight ?? 3) * visualScale + 0.55, 0);
       mine.scale.set(4.4, 1.1, 1);
       mine.renderOrder = 22;
       mine.raycast = () => {};
@@ -607,7 +609,7 @@ export class SettlementLayer {
         parts.mine.visible = !e.remembered;
         parts.mine.material = this.mineLabels.material(
           e.gathering.workers,
-          e.gathering.capacity,
+          e.gathering.recommendedWorkers,
         );
       }
       const target = this.targetPosition.set(e.x, field.walkSample(e.x,e.y,e.surface)+(e.elevation??0)+(e.unit?.garrison?.height??0), e.y);
@@ -744,10 +746,9 @@ export class SettlementLayer {
           to = {...to, x: to.x + dx / len * 1.3, z: to.z + dz / len * 1.3};
         }
         // Spawns exit on the side facing the flag (sim `deployment`), so the route starts at that edge.
-        const swap = Math.round(e.rotation / 90) % 2 !== 0, f = d.footprint,
-          hx = (f ? Math.floor((swap ? f.depth : f.width) / 2) : 0) + 1, hz = (f ? Math.floor((swap ? f.width : f.depth) / 2) : 0) + 1;
+        const edge = footprintCellBounds({x:e.x,y:e.y}, d.footprint, e.rotation);
         rallies.push({id:e.id,slot:this.viewerSlot,to,
-          from:{x:Math.max(e.x-hx,Math.min(e.x+hx,to.x)),z:Math.max(e.y-hz,Math.min(e.y+hz,to.z)),surface:e.surface}});
+          from:{x:Math.max(edge.minX-1,Math.min(edge.maxX+1,to.x)),z:Math.max(edge.minY-1,Math.min(edge.maxY+1,to.z)),surface:e.surface}});
       }
       this.statusBadges.update(o, e, tick, o.userData.pickHeight);
       const hp = parts.hp;
@@ -816,8 +817,8 @@ export class SettlementLayer {
       const socket = this.registry.asset(observed.appearance?.asset ?? this.registry.get(observed.definition).asset).projectileSocket;
       return socket ? source.getObjectByName(socket)?.getWorldPosition(new Vector3()) : undefined;
     };
-    this.shells.update(state.shells ?? [], field, renderTick, launchPosition, this.registry.rules.unitScale);
-    this.projectiles.update(renderTick, state.missiles ?? [], field, launchPosition, this.registry.rules.unitScale);
+    this.shells.update(state.shells ?? [], field, renderTick, launchPosition);
+    this.projectiles.update(renderTick, state.missiles ?? [], field, launchPosition);
     this.abilityEffects.update(renderTick,id=>{const e=state.entities.find(e=>e.id===id);return e?{x:e.x,y:e.y,height:field.sample(e.x,e.y)+(e.elevation??0)}:undefined;},this.projectiles.effectPose,(id,name)=>{const e=byId.get(id),root=this.entities.get(id);return e&&root?.visible&&!e.remembered?resolveEffectSocket(root,this.registry.asset(e.appearance?.asset??this.registry.get(e.definition).asset).sockets,name):undefined;});
     perf.end('Projectiles / shell effects',projectileTiming);
     for (const [id, o] of this.entities)

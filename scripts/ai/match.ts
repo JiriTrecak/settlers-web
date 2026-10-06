@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { parseUtcMap } from "../../src/shared/map/utcmap";
 import { World } from "../../src/sim/world/world";
-const path = process.argv[2] ?? "assets/maps/skirmish/threewater-forest.utcmap";
+const path = process.argv[2] ?? "assets/maps/skirmish/amberwake-basin.utcmap";
 const map = parseUtcMap(JSON.parse(readFileSync(path, "utf8")))!;
 if (!map) throw new Error("Invalid map");
 const ticks = Number(process.argv[3] ?? 12000),
@@ -17,8 +17,10 @@ const world = new World({
 });
 if (process.argv[7]) world.restore(JSON.parse(readFileSync(process.argv[7], "utf8")));
 const initialTick = world.clock.tickIndex;
-const recruits: Record<string, number> = {}, shots: Record<string, number> = {};
-const known = new Map(world.settlement.entities.map(e=>[e.id,e.definition]));
+// Count newly created actors, not the old worker-to-soldier conversion. This
+// includes summoned actors; queued recruitment is reported separately by AI metrics.
+const spawnedUnits: Record<string, number> = {}, shots: Record<string, number> = {};
+const known = new Set(world.settlement.entities.map(e=>e.id));
 let lastShell = Math.max(0, ...world.settlement.state.shells.map(s=>s.id));
 const tickSamples: number[] = [];
 const samples: number[] = [],
@@ -29,12 +31,11 @@ for (let i = 0; i < ticks && !world.settlement.state.outcome; i++) {
   tickSamples.push(performance.now() - tickStarted);
   samples.push(...Object.values(world.aiTimings));
   for (const e of world.settlement.entities) {
-    const previous = known.get(e.id);
-    if (previous && previous !== e.definition && e.unit) {
+    if (!known.has(e.id) && e.unit && e.owner !== 'none') {
       const key = `${e.owner}:${e.definition}`;
-      recruits[key] = (recruits[key] ?? 0) + 1;
+      spawnedUnits[key] = (spawnedUnits[key] ?? 0) + 1;
     }
-    known.set(e.id,e.definition);
+    known.add(e.id);
   }
   for (const shell of world.settlement.state.shells) {
     if (shell.id <= lastShell) continue;
@@ -46,7 +47,8 @@ for (let i = 0; i < ticks && !world.settlement.state.outcome; i++) {
     console.log(
       JSON.stringify({
         tick: world.clock.tickIndex,
-        recruits, shots,
+        spawnedUnits, shots,
+        wallets: world.settlement.state.wallets,
         ai: world.aiSummary().map(({ trace, ...s }) => s),
       }),
     );
@@ -56,7 +58,8 @@ tickSamples.sort((a, b) => a - b);
 const summary = {
   map: path,
   tick: world.clock.tickIndex,
-  initialTick, recruits, shots,
+  initialTick, spawnedUnits, shots,
+  wallets: world.settlement.state.wallets,
   wallMs: performance.now() - started,
   simulationMs: {
     p50: tickSamples[Math.floor(tickSamples.length * .5)],

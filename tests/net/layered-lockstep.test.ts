@@ -3,19 +3,22 @@ import {expect,it} from 'vitest';
 import {Room,Lockstep,MemoryChannel} from '../../src/net';
 import {World} from '../../src/sim/world/world';
 import {emptyUtcMap,localMatch,type Commit} from '../../src/shared';
-import {placed,slots} from '../game/helpers';
+import {placed,slots,source,compactBodySource} from '../game/helpers';
+import {ContentRegistry} from '../../src/content/registry';
 import {precise} from '../../src/sim/game/motion';
 
 it('keeps two peers identical through over/under movement, a mid-climb restore, fog and downhill arrows',()=>{
  const base=emptyUtcMap(),map={...base,
-  playerStarts:base.playerStarts.map((s,i)=>({...s,x:200,z:i?80:200})),
+  playerStarts:base.playerStarts.map((s,i)=>({...s,x:201.5,z:i?81.5:201.5})),
   stamps:[{id:'root',asset:'leafbound-twig-bridge',x:40,y:40}],
   entities:[placed('climber','unit.ants.archer',40,26),placed('underpass','unit.ants.warrior',30,40),
    {...placed('defender','unit.ants.marshal',49,40),owner:'player.2' as const}],
  };
  const config={...localMatch({mapId:'layered-lockstep',mapRevision:'test',seed:4,slotCount:2,me:0,delay:3}),slots};
  const room=new Room(config),channels=slots.map(s=>new MemoryChannel(room,s.player)),peers=channels.map((c,i)=>new Lockstep(c,i,3));
- const opts={map,slots,seed:4},worlds=[new World(opts),new World(opts)];
+ // This fixed low arch exercises layered networking independently of art/body budgets.
+ const draft=source();compactBodySource(draft);
+ const opts={map,slots,seed:4,registry:new ContentRegistry(draft)},worlds=[new World(opts),new World(opts)];
  const find=(world:World,tag:string)=>world.settlement.entities.find(e=>e.placement===tag)!;
  const archer=find(worlds[0]!,'climber').id,lower=find(worlds[0]!,'underpass').id,enemy=find(worlds[0]!,'defender').id;
  const initialHp=find(worlds[0]!,'defender').hp!;
@@ -27,6 +30,7 @@ it('keeps two peers identical through over/under movement, a mid-climb restore, 
  peers[0]!.send({type:'move',actors:[archer],destination:{x:42,y:40,surface:'root'}});
  peers[0]!.send({type:'move',actors:[lower],destination:{x:50,y:40}});
  peers[0]!.send({type:'move',actors:[lower],destination:{x:50,y:24},append:true});
+ peers[0]!.send({type:'hold',actors:[lower],append:true});
  peers[1]!.send({type:'hold',actors:[enemy]});
  try{
   for(let tick=1;tick<=1100;tick++){

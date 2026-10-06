@@ -7,7 +7,7 @@ import {
 } from "../../src/shared";
 import { Room, Lockstep, MemoryChannel } from "../../src/net";
 import { World } from "../../src/sim/world/world";
-const map = {...emptyUtcMap(), entities: [{id: "supply", definition: "building.ants.house", position: {x:245,y:240}, rotation:0, owner:"player.1" as const}]};
+const map = {...emptyUtcMap(), entities: [{id: "supply", definition: "building.ants.house", position: {x:243.5,y:239.5}, rotation:0, owner:"player.1" as const}]};
 const config = {
   ...localMatch({
     mapId: "test",
@@ -57,10 +57,15 @@ describe("declarative lockstep integration", () => {
       type: "build",
       actors: [actor],
       definition: "building.ants.barracks",
-      position: { x: 205, y: 210 },
+      position: { x: 197.5, y: 233.5 },
     });
-    for (let tick = 1; tick <= 1600; tick++) {
-      if (tick === 1000) {
+    for (let tick = 1; tick <= 3400; tick++) {
+      if (tick === 100) peers[0]!.send({type:'stop',actors:[actor]});
+      if (tick === 200) {
+        const site=worlds[0]!.settlement!.entities.find(e=>e.definition==='building.ants.barracks')!;
+        peers[0]!.send({type:'construct',actors:[actor],target:site.id});
+      }
+      if (tick === 2300) {
         const b = worlds[0]!.settlement!.entities.find(
           (e) => e.definition === "building.ants.barracks",
         )!;
@@ -73,7 +78,7 @@ describe("declarative lockstep integration", () => {
       peers[tick % 2]!.confirm(tick);
       peers[1 - (tick % 2)]!.confirm(tick);
       for (let i = 0; i < 2; i++) apply(worlds[i]!, peers[i]!.take(tick)!);
-      if (tick === 1050) {
+      if (tick === 150 || tick === 2350) {
         const restored = new World({ map, slots: config.slots, seed: 4 });
         restored.restore(worlds[1]!.snapshot());
         worlds[1] = restored;
@@ -85,7 +90,7 @@ describe("declarative lockstep integration", () => {
       worlds[0]!.settlement!.entities.filter(
         (e) => e.owner === "player.1" && e.definition === "unit.ants.warrior",
       ),
-    ).toHaveLength(3);
+    ).toHaveLength(1);
     channels.forEach((c) => c.destroy());
   }, 20000);
   it("rejects malformed batches atomically and ignores replayed confirmations", () => {
@@ -146,7 +151,7 @@ describe("declarative lockstep integration", () => {
       uninterrupted.peers[1]!.take(tick);
     }
     const soldier = uninterrupted.world.settlement!.entities.find(
-      (e) => e.owner === "player.1" && e.definition === "unit.ants.warrior",
+      (e) => e.owner === "player.1" && e.definition === "unit.ants.marshal",
     )!;
     uninterrupted.peers[0]!.send({
       type: "move",

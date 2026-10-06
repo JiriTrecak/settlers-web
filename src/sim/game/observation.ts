@@ -1,3 +1,5 @@
+import {gatherAssignments} from './population';
+import {placementGeometryError} from '../../shared/spatial/placement';
 import {SpellCorpses,type CorpseView} from '../abilities/corpses';
 import {allEffects} from '../../content/abilities/schema';
 import {spellAppearance,spellFormOpacity} from '../abilities/forms';
@@ -69,7 +71,7 @@ export type EntityView = {
   upgrade?: Entity["upgrade"];
   research?: Entity["research"];
   resource?: Entity["resource"];
-  gathering?: { workers: number; capacity: number };
+  gathering?: { workers: number; recommendedWorkers: number };
   item?: Entity["item"];
   unit?: {
     flight?:{height:number};
@@ -149,8 +151,8 @@ const memoryEntity = z
     id: z.number().int().positive(),
     definition: z.string(),
     owner: ownerSchema,
-    x: z.number().int().min(0).max(511),
-    y: z.number().int().min(0).max(511),
+    x: z.number().multipleOf(.5).min(0).max(2047),
+    y: z.number().multipleOf(.5).min(0).max(2047),
     rotation: z.number(),
     hp: z.number().int().nonnegative().nullable(),
     stats: resolvedStatsSchema.optional(),
@@ -170,7 +172,7 @@ const memoryEntity = z
     gathering: z
       .object({
         workers: z.number().int().nonnegative(),
-        capacity: z.number().int().positive(),
+        recommendedWorkers: z.number().int().positive(),
       })
       .strict()
       .optional(),
@@ -231,13 +233,8 @@ export class Observation {
   private readonly gatherers=new Map<number,number>();
   private projectWork(){
     this.gatherers.clear();
-    const sources=new Map<number,number|null>();
-    for(const job of this.c.state.jobs)if(job.type==='harvest')sources.set(job.worker,job.source);
-    for(const worker of this.c.liveUnits()){
-      const source=sources.get(worker.id),order=worker.unit!.order,target=order?.type==='gather'?order.target:null;
-      if(source!=null)this.gatherers.set(source,(this.gatherers.get(source)??0)+1);
-      if(target!=null&&target!==source)this.gatherers.set(target,(this.gatherers.get(target)??0)+1);
-    }
+    for (const source of gatherAssignments(this.c.state, this.c.liveUnits()).values())
+      this.gatherers.set(source, (this.gatherers.get(source) ?? 0) + 1);
   }
   private job(id:number|null|undefined){return this.c.job(id);}
   private readonly forestIds=new Set<number>();
@@ -411,7 +408,7 @@ export class Observation {
   private cachedResource(e:Entity,observer?:Owner):EntityView|undefined {
     if(e.owner!=="none"||!e.resource||e.unit||e.item||e.construction||e.itemStatuses?.length)return undefined;
     const definition=this.c.def(e);
-    if(definition.kind!=="resource"||definition.body||definition.gatheringCapacity)return undefined;
+    if(definition.kind!=="resource"||definition.body)return undefined;
     const old=this.resourceViews.get(e.id),r=e.resource,f=r.felling,previous=old?.resource,of=previous?.felling;
     const appearance=e.appearance,oa=old?.appearance;
     if(old&&old.definition===e.definition&&old.x===e.x&&old.y===e.y&&old.surface===e.surface&&old.rotation===e.rotation&&old.hp===e.hp&&
@@ -472,7 +469,7 @@ export class Observation {
     if(privateData&&e.upgrade)result.upgrade={...e.upgrade};
     if(privateData&&e.research)result.research=structuredClone(e.research);
     if(e.resource)result.resource=structuredClone(e.resource);
-    if(definition.gatheringCapacity)result.gathering={workers:this.gatherers.get(e.id)??0,capacity:definition.gatheringCapacity};
+    if(definition.kind==="building"&&definition.harvesting)result.gathering={workers:this.gatherers.get(e.id)??0,recommendedWorkers:definition.harvesting.recommendedWorkers};
     if(e.item)result.item={...e.item};
     if(e.unit){
       const u=e.unit,unit:NonNullable<EntityView['unit']>={
@@ -507,20 +504,21 @@ export class Observation {
       const creation =
         job?.type === "construct" || job?.type === "repair"
           ? workplace && this.c.def(workplace).creation
-          : job?.type === "harvest" && job.phase !== "return" && job.item
+          : job?.type === "harvest" && (job.phase === "work" || job.phase === "fall") && job.item
             ? this.c.registry.get(job.item).creation
             : undefined;
       const target =
         job?.type === "harvest" ? this.c.get(job.source) : workplace;
       const strike = creation?.method === "harvest" && creation.impactTick !== undefined;
+      const animationTicks = creation?.method === "harvest" ? creation.animationTicks ?? creation.workTicks : creation?.workTicks;
       const progress = job?.phase === "fall" && target?.resource?.felling?.fallTick != null && strike
         ? creation.impactTick! + this.c.state.tick - target.resource.felling.fallTick
-        : job?.progress ?? 0;
+        : (job?.progress ?? 0) % (animationTicks ?? 1);
       if (
         creation &&
         "workAnimation" in creation &&
         creation.workAnimation &&
-        (!strike || progress < creation.workTicks) &&
+        (!strike || progress < animationTicks!) &&
         !isStunned(e, this.c.registry) &&
         target
       )
@@ -528,7 +526,7 @@ export class Observation {
           animation: creation.workAnimation,
           x: target.x,
           y: target.y,
-          ...(strike ? {cycle: {ticks: creation.workTicks, progress}} : {}),
+          ...(strike ? {cycle: {ticks: animationTicks!, progress}} : {}),
         };
     }
     if (privateData) {
@@ -884,7 +882,7 @@ export class Observation {
     return {
       supply:colonySupply(this.c.populationCandidates(),owner,this.c.registry),
       population:workerPopulation(this.c.populationCandidates(),owner,this.c.registry),
-      goods:summarizeGoods(actors,owner,this.c.registry,this.available),
+      goods:summarizeGoods(actors,owner,this.c.registry,this.available,this.c.state.wallets[owner]),
     };
   }
   private projectFog(nodes:Uint8Array):Pick<FogView,'cells'|'floors'>{
@@ -927,7 +925,7 @@ export class Observation {
       for (const e of row.entities) {
         const d = this.c.registry.get(e.definition);
         if (
-          ids.has(e.id) || !this.c.spatial.validPoint(e) ||
+          ids.has(e.id) || !this.c.spatial.validPoint(e) || placementGeometryError(d,e,e.rotation) ||
           !["resource", "building"].includes(d.kind) ||
           (e.hp !== null && (!d.body || e.hp > d.body.maxHp))
         )

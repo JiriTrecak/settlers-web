@@ -12,13 +12,13 @@ const initial=()=>({...emptyUtcMap(),name:'Threewater Forest'});
 describe('revision-aware editor drafts',()=>{
  it('restores unsaved edits only on the same base revision',()=>{
   const storage=new MemoryStorage(),base=initial(),edited={...base,description:'My unfinished edits'};
-  new EditorDraft(storage,'threewater-forest',base).write(edited,true);
-  expect(new EditorDraft(storage,'threewater-forest',base).restore().map).toEqual(edited);
+  new EditorDraft(storage,'amberwake-basin',base).write(edited,true);
+  expect(new EditorDraft(storage,'amberwake-basin',base).restore().map).toEqual(edited);
   const next={...base,description:'New project scenery'};
-  const result=new EditorDraft(storage,'threewater-forest',next).restore();
+  const result=new EditorDraft(storage,'amberwake-basin',next).restore();
   expect(result.map).toBeUndefined();expect(result.recovery).toEqual(edited);
-  new EditorDraft(storage,'threewater-forest',next).write(next,false);
-  expect(new EditorDraft(storage,'threewater-forest',next).restore().recovery).toEqual(edited);
+  new EditorDraft(storage,'amberwake-basin',next).write(next,false);
+  expect(new EditorDraft(storage,'amberwake-basin',next).restore().recovery).toEqual(edited);
  });
  it('keeps the original draft when recovery cannot be stored',()=>{
   const storage=new MemoryStorage(),base=initial(),edited={...base,description:'Unfinished'};
@@ -32,13 +32,13 @@ describe('revision-aware editor drafts',()=>{
  it('preserves legacy drafts without silently replacing the project or erasing the original',()=>{
   const storage=new MemoryStorage(),base=initial(),old={...base,description:'Old scenery'};
   storage.setItem('legacy',JSON.stringify(old));
-  const draft=new EditorDraft(storage,'threewater-forest',base),result=draft.restore(['legacy']);
+  const draft=new EditorDraft(storage,'amberwake-basin',base),result=draft.restore(['legacy']);
   expect(result.map).toBeUndefined();expect(result.recovery).toEqual(old);
   draft.write(base,false);expect(JSON.parse(storage.getItem('legacy')!)).toEqual(old);
  });
  it('does not restore another map from the legacy menu key or a clean saved copy',()=>{
   const storage=new MemoryStorage(),base=initial();storage.setItem('legacy',JSON.stringify({...base,name:'Another map'}));
-  const draft=new EditorDraft(storage,'threewater-forest',base);expect(draft.restore(['legacy'])).toEqual({});
+  const draft=new EditorDraft(storage,'amberwake-basin',base);expect(draft.restore(['legacy'])).toEqual({});
   draft.write({...base,description:'Saved locally'},false);expect(draft.restore()).toEqual({});
  });
 });

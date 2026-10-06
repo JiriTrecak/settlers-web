@@ -1,3 +1,4 @@
+import {revivalTerms} from '../../src/content/revival';
 import {heading} from '../../src/sim/game/facing';
 import { describe,it,expect } from "vitest";
 import { game,placed } from "./helpers";
@@ -87,7 +88,8 @@ it('revives the same hero with items, XP and skills after real combat death and 
  expect(g.command('player.1',{type:'revive',actor:shrine.id,hero:victim.id}).accepted).toBe(false);
  for(let t=0;t<125;t++)g.tick();
  const restored=setup();restored.restore(g.snapshot());
- for(const sim of [g,restored])for(let t=0;t<275;t++)sim.tick();
+ const duration=revivalTerms(g.registry.get(shrine.definition).behaviors.revival!,g.context.stats(victim).level).workTicks;
+ for(const sim of [g,restored])for(let t=0;t<duration-125;t++)sim.tick();
  expect(restored.snapshot()).toEqual(g.snapshot());
  expect(victim.fallen).toBeUndefined();expect(victim.hp).toBe(g.context.stats(victim).maxHp);
  expect(victim.equipment).toEqual(equipment);expect(victim.progression!.experience).toBe(xp);expect(victim.abilities!.ranks).toEqual(learned);

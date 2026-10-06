@@ -1,0 +1,4741 @@
+{
+  "v": 2,
+  "size": 512,
+  "name": "Amberwake Wilds",
+  "biome": "vibrant-forest",
+  "description": "A two-player woodland showcase on the competitive Amberwake layout. Build on clear colony shelves, scout around the lake, and fight for amber and Root beneath old watches, giant oaks and hollow logs. Four-node sites and mirrored starts follow the competitive foundation; wider balance remains a playtest.",
+  "stamps": [],
+  "playerStarts": [
+    {
+      "player": 1,
+      "x": 81.5,
+      "z": 425.5,
+      "rotation": 0,
+      "setup": "setup.ants",
+      "mainFort": "start.player.1/main-fort"
+    },
+    {
+      "player": 2,
+      "x": 429.5,
+      "z": 85.5,
+      "rotation": 180,
+      "setup": "setup.ants",
+      "mainFort": "start.player.2/main-fort"
+    }
+  ],
+  "entities": [
+    {
+      "id": "amber.1.home.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 69.5,
+        "y": 449.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.home.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 77.5,
+        "y": 449.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.home.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 85.5,
+        "y": 449.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.home.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 93.5,
+        "y": 449.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.home.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 441.5,
+        "y": 61.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.home.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 433.5,
+        "y": 61.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.home.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 425.5,
+        "y": 61.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.home.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 417.5,
+        "y": 61.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.natural.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 157.5,
+        "y": 353.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.natural.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 165.5,
+        "y": 353.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.natural.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 173.5,
+        "y": 353.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.natural.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 181.5,
+        "y": 353.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.natural.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 353.5,
+        "y": 157.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.natural.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 345.5,
+        "y": 157.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.natural.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 337.5,
+        "y": 157.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.natural.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 329.5,
+        "y": 157.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.third.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 69.5,
+        "y": 273.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.third.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 77.5,
+        "y": 273.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.third.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 85.5,
+        "y": 273.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.third.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 93.5,
+        "y": 273.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.third.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 441.5,
+        "y": 237.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.third.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 433.5,
+        "y": 237.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.third.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 425.5,
+        "y": 237.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.third.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 417.5,
+        "y": 237.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.contested.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 225.5,
+        "y": 121.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.contested.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 233.5,
+        "y": 121.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.contested.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 241.5,
+        "y": 121.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.contested.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 249.5,
+        "y": 121.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.contested.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 285.5,
+        "y": 389.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.contested.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 277.5,
+        "y": 389.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.contested.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 269.5,
+        "y": 389.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.contested.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 261.5,
+        "y": 389.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "root.1",
+      "definition": "building.neutral.corrupted-root",
+      "position": {
+        "x": 159.5,
+        "y": 291.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "root.2",
+      "definition": "building.neutral.corrupted-root",
+      "position": {
+        "x": 351.5,
+        "y": 219.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.ancient.1.0",
+      "definition": "unit.neutral.hollow-stag",
+      "position": {
+        "x": 86,
+        "y": 128
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.ancient.1.1",
+      "definition": "unit.neutral.barkguard",
+      "position": {
+        "x": 91,
+        "y": 124
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.ancient.1.2",
+      "definition": "unit.neutral.barkguard",
+      "position": {
+        "x": 91,
+        "y": 132
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.ancient.1.3",
+      "definition": "unit.neutral.willow-wisp",
+      "position": {
+        "x": 81,
+        "y": 132
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.ancient.1.4",
+      "definition": "unit.neutral.willow-wisp",
+      "position": {
+        "x": 81,
+        "y": 124
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.ancient.2.0",
+      "definition": "unit.neutral.hollow-stag",
+      "position": {
+        "x": 425,
+        "y": 383
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.ancient.2.1",
+      "definition": "unit.neutral.barkguard",
+      "position": {
+        "x": 420,
+        "y": 387
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.ancient.2.2",
+      "definition": "unit.neutral.barkguard",
+      "position": {
+        "x": 420,
+        "y": 379
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.ancient.2.3",
+      "definition": "unit.neutral.willow-wisp",
+      "position": {
+        "x": 430,
+        "y": 379
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.ancient.2.4",
+      "definition": "unit.neutral.willow-wisp",
+      "position": {
+        "x": 430,
+        "y": 387
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.foragers.1.0",
+      "definition": "unit.neutral.thorn-slinger",
+      "position": {
+        "x": 186,
+        "y": 429
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.foragers.1.1",
+      "definition": "unit.neutral.thorn-slinger",
+      "position": {
+        "x": 184,
+        "y": 431
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.foragers.1.2",
+      "definition": "unit.neutral.thorn-slinger",
+      "position": {
+        "x": 184,
+        "y": 427
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.foragers.2.0",
+      "definition": "unit.neutral.thorn-slinger",
+      "position": {
+        "x": 325,
+        "y": 82
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.foragers.2.1",
+      "definition": "unit.neutral.thorn-slinger",
+      "position": {
+        "x": 327,
+        "y": 80
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.foragers.2.2",
+      "definition": "unit.neutral.thorn-slinger",
+      "position": {
+        "x": 327,
+        "y": 84
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.rootguard.1.0",
+      "definition": "unit.neutral.old-root",
+      "position": {
+        "x": 159,
+        "y": 273
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.rootguard.1.1",
+      "definition": "unit.neutral.rootling",
+      "position": {
+        "x": 161,
+        "y": 271
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.rootguard.1.2",
+      "definition": "unit.neutral.rootling",
+      "position": {
+        "x": 161,
+        "y": 275
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.rootguard.1.3",
+      "definition": "unit.neutral.twigcaster",
+      "position": {
+        "x": 157,
+        "y": 275
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.rootguard.1.4",
+      "definition": "unit.neutral.twigcaster",
+      "position": {
+        "x": 157,
+        "y": 271
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "camp.rootguard.2.0",
+      "definition": "unit.neutral.old-root",
+      "position": {
+        "x": 352,
+        "y": 238
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.rootguard.2.1",
+      "definition": "unit.neutral.rootling",
+      "position": {
+        "x": 350,
+        "y": 240
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.rootguard.2.2",
+      "definition": "unit.neutral.rootling",
+      "position": {
+        "x": 350,
+        "y": 236
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.rootguard.2.3",
+      "definition": "unit.neutral.twigcaster",
+      "position": {
+        "x": 354,
+        "y": 236
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "camp.rootguard.2.4",
+      "definition": "unit.neutral.twigcaster",
+      "position": {
+        "x": 354,
+        "y": 240
+      },
+      "rotation": 180,
+      "owner": "none"
+    }
+  ],
+  "camps": [
+    {
+      "id": "camp/ancient.1",
+      "members": [
+        "camp.ancient.1.0",
+        "camp.ancient.1.1",
+        "camp.ancient.1.2",
+        "camp.ancient.1.3",
+        "camp.ancient.1.4"
+      ],
+      "home": {
+        "x": 86,
+        "y": 128
+      },
+      "aggroRange": 12,
+      "leash": 18,
+      "aggression": "players",
+      "lootPool": "loot.camp.hard"
+    },
+    {
+      "id": "camp/ancient.2",
+      "members": [
+        "camp.ancient.2.0",
+        "camp.ancient.2.1",
+        "camp.ancient.2.2",
+        "camp.ancient.2.3",
+        "camp.ancient.2.4"
+      ],
+      "home": {
+        "x": 425,
+        "y": 383
+      },
+      "aggroRange": 12,
+      "leash": 18,
+      "aggression": "players",
+      "lootPool": "loot.camp.hard"
+    },
+    {
+      "id": "camp/foragers.1",
+      "members": [
+        "camp.foragers.1.0",
+        "camp.foragers.1.1",
+        "camp.foragers.1.2"
+      ],
+      "home": {
+        "x": 186,
+        "y": 429
+      },
+      "aggroRange": 12,
+      "leash": 18,
+      "aggression": "players",
+      "lootPool": "loot.camp.easy"
+    },
+    {
+      "id": "camp/foragers.2",
+      "members": [
+        "camp.foragers.2.0",
+        "camp.foragers.2.1",
+        "camp.foragers.2.2"
+      ],
+      "home": {
+        "x": 325,
+        "y": 82
+      },
+      "aggroRange": 12,
+      "leash": 18,
+      "aggression": "players",
+      "lootPool": "loot.camp.easy"
+    },
+    {
+      "id": "camp/rootguard.1",
+      "members": [
+        "camp.rootguard.1.0",
+        "camp.rootguard.1.1",
+        "camp.rootguard.1.2",
+        "camp.rootguard.1.3",
+        "camp.rootguard.1.4"
+      ],
+      "home": {
+        "x": 159,
+        "y": 273
+      },
+      "aggroRange": 12,
+      "leash": 18,
+      "aggression": "players",
+      "lootPool": "loot.camp.medium"
+    },
+    {
+      "id": "camp/rootguard.2",
+      "members": [
+        "camp.rootguard.2.0",
+        "camp.rootguard.2.1",
+        "camp.rootguard.2.2",
+        "camp.rootguard.2.3",
+        "camp.rootguard.2.4"
+      ],
+      "home": {
+        "x": 352,
+        "y": 238
+      },
+      "aggroRange": 12,
+      "leash": 18,
+      "aggression": "players",
+      "lootPool": "loot.camp.medium"
+    }
+  ],
+  "landscape": {
+    "strokes": [],
+    "cover": [],
+    "environment": {
+      "hour": 12,
+      "playing": false,
+      "weather": {
+        "kind": "clear"
+      }
+    }
+  },
+  "authoring": {
+    "version": 1,
+    "layers": [
+      {
+        "id": "ridge.1",
+        "name": "South wooded ridge",
+        "recipe": "recipe.terrain.hill",
+        "overrides": {
+          "type": "terrain",
+          "height": 3.5,
+          "falloff": 18
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": -80,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 27,
+              "points": [
+                {
+                  "x": 244,
+                  "z": 413
+                },
+                {
+                  "x": 295,
+                  "z": 387
+                },
+                {
+                  "x": 361,
+                  "z": 380
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "pond.1",
+        "name": "Amberwake lake",
+        "recipe": "recipe.river.gentle",
+        "overrides": {
+          "type": "river",
+          "depth": 2.2,
+          "bankWidth": 4,
+          "flow": 0.15
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": -50,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 30,
+              "points": [
+                {
+                  "x": 175,
+                  "z": 175
+                },
+                {
+                  "x": 209,
+                  "z": 221
+                },
+                {
+                  "x": 255.5,
+                  "z": 255.5
+                },
+                {
+                  "x": 302,
+                  "z": 290
+                },
+                {
+                  "x": 336,
+                  "z": 336
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "ridge.2",
+        "name": "North wooded ridge",
+        "recipe": "recipe.terrain.hill",
+        "overrides": {
+          "type": "terrain",
+          "height": 3.5,
+          "falloff": 18
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": -80,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 27,
+              "points": [
+                {
+                  "x": 267,
+                  "z": 98
+                },
+                {
+                  "x": 216,
+                  "z": 124
+                },
+                {
+                  "x": 150,
+                  "z": 131
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.west.1",
+        "name": "West lake approach",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 6,
+          "shoulder": 6,
+          "flatten": 0,
+          "vegetationClearance": 17
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 11,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 81.5,
+              "z": 425.5,
+              "elevation": 0,
+              "incoming": {
+                "x": 81.58,
+                "z": 435.34
+              },
+              "outgoing": {
+                "x": 81.42,
+                "z": 415.66
+              },
+              "widthScale": 0.6,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 81,
+              "z": 364,
+              "elevation": 0,
+              "incoming": {
+                "x": 79.48,
+                "z": 384.08
+              },
+              "outgoing": {
+                "x": 82.52,
+                "z": 343.92
+              },
+              "widthScale": 0.8,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 91,
+              "z": 300,
+              "elevation": 0,
+              "incoming": {
+                "x": 86.36,
+                "z": 317.92
+              },
+              "outgoing": {
+                "x": 95.64,
+                "z": 282.08
+              },
+              "widthScale": 0.7,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 110,
+              "z": 252,
+              "elevation": 0,
+              "incoming": {
+                "x": 104.56,
+                "z": 266.88
+              },
+              "outgoing": {
+                "x": 115.44,
+                "z": 237.12
+              },
+              "widthScale": 0.9,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 125,
+              "z": 207,
+              "elevation": 0,
+              "incoming": {
+                "x": 121.8,
+                "z": 221.24
+              },
+              "outgoing": {
+                "x": 128.2,
+                "z": 192.76
+              },
+              "widthScale": 0.65,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 130,
+              "z": 163,
+              "elevation": 0,
+              "incoming": {
+                "x": 123.6,
+                "z": 175.32
+              },
+              "outgoing": {
+                "x": 136.4,
+                "z": 150.68
+              },
+              "widthScale": 0.75,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 165,
+              "z": 130,
+              "elevation": 0,
+              "incoming": {
+                "x": 152.04,
+                "z": 136.56
+              },
+              "outgoing": {
+                "x": 177.96,
+                "z": 123.44
+              },
+              "widthScale": 0.85,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 211,
+              "z": 122,
+              "elevation": 0,
+              "incoming": {
+                "x": 193.72,
+                "z": 124.88
+              },
+              "outgoing": {
+                "x": 228.28,
+                "z": 119.12
+              },
+              "widthScale": 0.7,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 273,
+              "z": 112,
+              "elevation": 0,
+              "incoming": {
+                "x": 254.44,
+                "z": 111.84
+              },
+              "outgoing": {
+                "x": 291.56,
+                "z": 112.16
+              },
+              "widthScale": 0.9,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 327,
+              "z": 123,
+              "elevation": 0,
+              "incoming": {
+                "x": 310.68,
+                "z": 122.52
+              },
+              "outgoing": {
+                "x": 343.32,
+                "z": 123.48
+              },
+              "widthScale": 0.65,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 375,
+              "z": 115,
+              "elevation": 0,
+              "incoming": {
+                "x": 358.6,
+                "z": 121
+              },
+              "outgoing": {
+                "x": 391.4,
+                "z": 109
+              },
+              "widthScale": 0.75,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 429.5,
+              "z": 85.5,
+              "elevation": 0,
+              "incoming": {
+                "x": 420.78,
+                "z": 90.22
+              },
+              "outgoing": {
+                "x": 438.22,
+                "z": 80.78
+              },
+              "widthScale": 0.6,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.natural.1",
+        "name": "Expansion spur 1",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 9,
+          "shoulder": 6,
+          "vegetationClearance": 3
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 12,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 118,
+              "z": 379,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 158,
+              "z": 349,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 169.5,
+              "z": 329.5,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 191,
+              "z": 321,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.camp.1",
+        "name": "Foragers footpath 1",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 5,
+          "shoulder": 6,
+          "vegetationClearance": 2
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 13,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 128,
+              "z": 389,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 150,
+              "z": 401,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 186,
+              "z": 429,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.west.2",
+        "name": "East lake approach",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 6,
+          "shoulder": 6,
+          "flatten": 0,
+          "vegetationClearance": 17
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 11,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 429.5,
+              "z": 85.5,
+              "elevation": 0,
+              "incoming": {
+                "x": 429.42,
+                "z": 75.66000000000003
+              },
+              "outgoing": {
+                "x": 429.58,
+                "z": 95.33999999999997
+              },
+              "widthScale": 0.6,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 430,
+              "z": 147,
+              "elevation": 0,
+              "incoming": {
+                "x": 431.52,
+                "z": 126.92000000000002
+              },
+              "outgoing": {
+                "x": 428.48,
+                "z": 167.07999999999998
+              },
+              "widthScale": 0.8,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 420,
+              "z": 211,
+              "elevation": 0,
+              "incoming": {
+                "x": 424.64,
+                "z": 193.07999999999998
+              },
+              "outgoing": {
+                "x": 415.36,
+                "z": 228.92000000000002
+              },
+              "widthScale": 0.7,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 401,
+              "z": 259,
+              "elevation": 0,
+              "incoming": {
+                "x": 406.44,
+                "z": 244.12
+              },
+              "outgoing": {
+                "x": 395.56,
+                "z": 273.88
+              },
+              "widthScale": 0.9,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 386,
+              "z": 304,
+              "elevation": 0,
+              "incoming": {
+                "x": 389.2,
+                "z": 289.76
+              },
+              "outgoing": {
+                "x": 382.8,
+                "z": 318.24
+              },
+              "widthScale": 0.65,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 381,
+              "z": 348,
+              "elevation": 0,
+              "incoming": {
+                "x": 387.4,
+                "z": 335.68
+              },
+              "outgoing": {
+                "x": 374.6,
+                "z": 360.32
+              },
+              "widthScale": 0.75,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 346,
+              "z": 381,
+              "elevation": 0,
+              "incoming": {
+                "x": 358.96000000000004,
+                "z": 374.44
+              },
+              "outgoing": {
+                "x": 333.03999999999996,
+                "z": 387.56
+              },
+              "widthScale": 0.85,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 300,
+              "z": 389,
+              "elevation": 0,
+              "incoming": {
+                "x": 317.28,
+                "z": 386.12
+              },
+              "outgoing": {
+                "x": 282.72,
+                "z": 391.88
+              },
+              "widthScale": 0.7,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 238,
+              "z": 399,
+              "elevation": 0,
+              "incoming": {
+                "x": 256.56,
+                "z": 399.15999999999997
+              },
+              "outgoing": {
+                "x": 219.44,
+                "z": 398.84000000000003
+              },
+              "widthScale": 0.9,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 184,
+              "z": 388,
+              "elevation": 0,
+              "incoming": {
+                "x": 200.32,
+                "z": 388.48
+              },
+              "outgoing": {
+                "x": 167.68,
+                "z": 387.52
+              },
+              "widthScale": 0.65,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 136,
+              "z": 396,
+              "elevation": 0,
+              "incoming": {
+                "x": 152.39999999999998,
+                "z": 390
+              },
+              "outgoing": {
+                "x": 119.60000000000002,
+                "z": 402
+              },
+              "widthScale": 0.75,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 81.5,
+              "z": 425.5,
+              "elevation": 0,
+              "incoming": {
+                "x": 90.22000000000003,
+                "z": 420.78
+              },
+              "outgoing": {
+                "x": 72.77999999999997,
+                "z": 430.22
+              },
+              "widthScale": 0.6,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.natural.2",
+        "name": "Expansion spur 2",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 9,
+          "shoulder": 6,
+          "vegetationClearance": 3
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 12,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 393,
+              "z": 132,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 353,
+              "z": 162,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 341.5,
+              "z": 181.5,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 320,
+              "z": 190,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "road.camp.2",
+        "name": "Foragers footpath 2",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 5,
+          "shoulder": 6,
+          "vegetationClearance": 2
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 13,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 383,
+              "z": 122,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 361,
+              "z": 110,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 325,
+              "z": 82,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.1",
+        "name": "Southern forest masses",
+        "recipe": "recipe.forest.conifer-edge",
+        "overrides": {
+          "spacing": 3.6,
+          "scaleMin": 1,
+          "scaleMax": 1.35,
+          "minSpacing": 3.3,
+          "type": "forest",
+          "details": [
+            {
+              "density": 1,
+              "pattern": "patches",
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-fern-bushy",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-fern-sword",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-grass-lush-b",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-grass-tall",
+                  "weight": 1
+                }
+              ],
+              "spacing": 1.65,
+              "probability": 0.5,
+              "jitter": 0.9,
+              "scaleMin": 0.7,
+              "scaleMax": 1.15,
+              "maxSlope": 1.2,
+              "waterClearance": 0.5,
+              "objectClearance": 0.3,
+              "edgeFade": 1,
+              "minSpacing": 0.8,
+              "patchiness": {
+                "scale": 6,
+                "strength": 0.5
+              },
+              "id": "undergrowth"
+            },
+            {
+              "density": 1,
+              "pattern": "patches",
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-flowers-white",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-flowers-yellow",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-daisy",
+                  "weight": 1
+                }
+              ],
+              "spacing": 2.4,
+              "probability": 0.4,
+              "jitter": 0.9,
+              "scaleMin": 0.8,
+              "scaleMax": 1.2,
+              "maxSlope": 1.2,
+              "waterClearance": 0.5,
+              "objectClearance": 0.3,
+              "edgeFade": 1,
+              "minSpacing": 1,
+              "patchiness": {
+                "scale": 8,
+                "strength": 0.6
+              },
+              "id": "flowers"
+            }
+          ]
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 30,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 45,
+              "points": [
+                {
+                  "x": 25,
+                  "z": 265
+                },
+                {
+                  "x": 25,
+                  "z": 347
+                },
+                {
+                  "x": 29,
+                  "z": 421
+                },
+                {
+                  "x": 30,
+                  "z": 479
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 65,
+              "points": [
+                {
+                  "x": 143,
+                  "z": 482
+                },
+                {
+                  "x": 225,
+                  "z": 477
+                },
+                {
+                  "x": 314,
+                  "z": 462
+                },
+                {
+                  "x": 406,
+                  "z": 463
+                },
+                {
+                  "x": 474,
+                  "z": 469
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 55,
+              "points": [
+                {
+                  "x": 472,
+                  "z": 383
+                },
+                {
+                  "x": 469,
+                  "z": 309
+                },
+                {
+                  "x": 481,
+                  "z": 260
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 36,
+              "points": [
+                {
+                  "x": 193,
+                  "z": 373
+                },
+                {
+                  "x": 227,
+                  "z": 344
+                },
+                {
+                  "x": 255,
+                  "z": 327
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 28,
+              "points": [
+                {
+                  "x": 224,
+                  "z": 421
+                },
+                {
+                  "x": 265,
+                  "z": 397
+                },
+                {
+                  "x": 318,
+                  "z": 377
+                },
+                {
+                  "x": 369,
+                  "z": 391
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 53,
+                  "z": 202
+                },
+                {
+                  "x": 58,
+                  "z": 150
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 49,
+              "points": [
+                {
+                  "x": 78,
+                  "z": 415
+                },
+                {
+                  "x": 87,
+                  "z": 429
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 169.5,
+                  "z": 338
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 81.5,
+                  "z": 258
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 237.5,
+                  "z": 98
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 21,
+              "points": [
+                {
+                  "x": 186,
+                  "z": 409
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 23,
+              "points": [
+                {
+                  "x": 139,
+                  "z": 309
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 25,
+              "points": [
+                {
+                  "x": 86,
+                  "z": 128
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 49,
+              "points": [
+                {
+                  "x": 433,
+                  "z": 96
+                },
+                {
+                  "x": 424,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 341.5,
+                  "z": 173
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 429.5,
+                  "z": 253
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 273.5,
+                  "z": 413
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 21,
+              "points": [
+                {
+                  "x": 325,
+                  "z": 102
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 23,
+              "points": [
+                {
+                  "x": 372,
+                  "z": 202
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 25,
+              "points": [
+                {
+                  "x": 425,
+                  "z": 383
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 355.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 355.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 155.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 155.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 371.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 371.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 139.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 139.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 387.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 387.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 123.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 123.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 403.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 403.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 107.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 107.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 419.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 419.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 91.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 91.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 427.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 427.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 83.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 83.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 186,
+                  "z": 429
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 18,
+              "points": [
+                {
+                  "x": 159,
+                  "z": 307
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 325,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 18,
+              "points": [
+                {
+                  "x": 352,
+                  "z": 204
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 18,
+              "points": [
+                {
+                  "x": 159,
+                  "z": 273
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 18,
+              "points": [
+                {
+                  "x": 352,
+                  "z": 238
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "fungi.1",
+        "name": "South mushroom hollows",
+        "recipe": "recipe.foliage.mushroom-patches",
+        "overrides": {
+          "spacing": 2.2,
+          "probability": 0.6,
+          "type": "ground-cover"
+        },
+        "seed": 8921,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 61,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 10,
+              "points": [
+                {
+                  "x": 155,
+                  "z": 430
+                },
+                {
+                  "x": 182,
+                  "z": 449
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 107,
+                  "z": 300
+                },
+                {
+                  "x": 118,
+                  "z": 311
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.2",
+        "name": "Northern forest masses",
+        "recipe": "recipe.forest.conifer-edge",
+        "overrides": {
+          "spacing": 3.6,
+          "scaleMin": 1,
+          "scaleMax": 1.35,
+          "minSpacing": 3.3,
+          "type": "forest",
+          "details": [
+            {
+              "density": 1,
+              "pattern": "patches",
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-fern-bushy",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-fern-sword",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-grass-lush-b",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-grass-tall",
+                  "weight": 1
+                }
+              ],
+              "spacing": 1.65,
+              "probability": 0.5,
+              "jitter": 0.9,
+              "scaleMin": 0.7,
+              "scaleMax": 1.15,
+              "maxSlope": 1.2,
+              "waterClearance": 0.5,
+              "objectClearance": 0.3,
+              "edgeFade": 1,
+              "minSpacing": 0.8,
+              "patchiness": {
+                "scale": 6,
+                "strength": 0.5
+              },
+              "id": "undergrowth"
+            },
+            {
+              "density": 1,
+              "pattern": "patches",
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-flowers-white",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-flowers-yellow",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-daisy",
+                  "weight": 1
+                }
+              ],
+              "spacing": 2.4,
+              "probability": 0.4,
+              "jitter": 0.9,
+              "scaleMin": 0.8,
+              "scaleMax": 1.2,
+              "maxSlope": 1.2,
+              "waterClearance": 0.5,
+              "objectClearance": 0.3,
+              "edgeFade": 1,
+              "minSpacing": 1,
+              "patchiness": {
+                "scale": 8,
+                "strength": 0.6
+              },
+              "id": "flowers"
+            }
+          ]
+        },
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 30,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 45,
+              "points": [
+                {
+                  "x": 486,
+                  "z": 246
+                },
+                {
+                  "x": 486,
+                  "z": 164
+                },
+                {
+                  "x": 482,
+                  "z": 90
+                },
+                {
+                  "x": 481,
+                  "z": 32
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 65,
+              "points": [
+                {
+                  "x": 368,
+                  "z": 29
+                },
+                {
+                  "x": 286,
+                  "z": 34
+                },
+                {
+                  "x": 197,
+                  "z": 49
+                },
+                {
+                  "x": 105,
+                  "z": 48
+                },
+                {
+                  "x": 37,
+                  "z": 42
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 55,
+              "points": [
+                {
+                  "x": 39,
+                  "z": 128
+                },
+                {
+                  "x": 42,
+                  "z": 202
+                },
+                {
+                  "x": 30,
+                  "z": 251
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 36,
+              "points": [
+                {
+                  "x": 318,
+                  "z": 138
+                },
+                {
+                  "x": 284,
+                  "z": 167
+                },
+                {
+                  "x": 256,
+                  "z": 184
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 28,
+              "points": [
+                {
+                  "x": 287,
+                  "z": 90
+                },
+                {
+                  "x": 246,
+                  "z": 114
+                },
+                {
+                  "x": 193,
+                  "z": 134
+                },
+                {
+                  "x": 142,
+                  "z": 120
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 458,
+                  "z": 309
+                },
+                {
+                  "x": 453,
+                  "z": 361
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 49,
+              "points": [
+                {
+                  "x": 78,
+                  "z": 415
+                },
+                {
+                  "x": 87,
+                  "z": 429
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 169.5,
+                  "z": 338
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 81.5,
+                  "z": 258
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 237.5,
+                  "z": 98
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 21,
+              "points": [
+                {
+                  "x": 186,
+                  "z": 409
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 23,
+              "points": [
+                {
+                  "x": 139,
+                  "z": 309
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 25,
+              "points": [
+                {
+                  "x": 86,
+                  "z": 128
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 49,
+              "points": [
+                {
+                  "x": 433,
+                  "z": 96
+                },
+                {
+                  "x": 424,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 341.5,
+                  "z": 173
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 429.5,
+                  "z": 253
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 34,
+              "points": [
+                {
+                  "x": 273.5,
+                  "z": 413
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 21,
+              "points": [
+                {
+                  "x": 325,
+                  "z": 102
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 23,
+              "points": [
+                {
+                  "x": 372,
+                  "z": 202
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 25,
+              "points": [
+                {
+                  "x": 425,
+                  "z": 383
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 355.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 355.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 155.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 155.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 371.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 371.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 139.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 139.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 387.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 387.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 123.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 123.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 403.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 403.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 107.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 107.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 419.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 419.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 91.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 91.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 67.5,
+                  "z": 427.5
+                },
+                {
+                  "x": 147.5,
+                  "z": 427.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 443.5,
+                  "z": 83.5
+                },
+                {
+                  "x": 363.5,
+                  "z": 83.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 186,
+                  "z": 429
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 18,
+              "points": [
+                {
+                  "x": 159,
+                  "z": 307
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 325,
+                  "z": 82
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 18,
+              "points": [
+                {
+                  "x": 352,
+                  "z": 204
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 18,
+              "points": [
+                {
+                  "x": 159,
+                  "z": 273
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 18,
+              "points": [
+                {
+                  "x": 352,
+                  "z": 238
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "fungi.2",
+        "name": "North mushroom hollows",
+        "recipe": "recipe.foliage.mushroom-patches",
+        "overrides": {
+          "spacing": 2.2,
+          "probability": 0.6,
+          "type": "ground-cover"
+        },
+        "seed": 8921,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 61,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 10,
+              "points": [
+                {
+                  "x": 356,
+                  "z": 81
+                },
+                {
+                  "x": 329,
+                  "z": 62
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 404,
+                  "z": 211
+                },
+                {
+                  "x": 393,
+                  "z": 200
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.start-wood.1",
+        "name": "Opening timber 1",
+        "recipe": "recipe.forest.conifer-edge",
+        "overrides": {
+          "spacing": 3.6,
+          "scaleMin": 1,
+          "scaleMax": 1.35,
+          "minSpacing": 3.3,
+          "type": "forest",
+          "details": [
+            {
+              "density": 1,
+              "pattern": "patches",
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-fern-bushy",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-fern-sword",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-grass-lush-b",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-grass-tall",
+                  "weight": 1
+                }
+              ],
+              "spacing": 2.4,
+              "probability": 0.4,
+              "jitter": 0.9,
+              "scaleMin": 0.7,
+              "scaleMax": 1.15,
+              "maxSlope": 1.2,
+              "waterClearance": 0.5,
+              "objectClearance": 0.3,
+              "edgeFade": 1,
+              "minSpacing": 0.8,
+              "patchiness": {
+                "scale": 6,
+                "strength": 0.5
+              },
+              "id": "undergrowth"
+            },
+            {
+              "density": 1,
+              "pattern": "patches",
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-flowers-white",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-flowers-yellow",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-daisy",
+                  "weight": 1
+                }
+              ],
+              "spacing": 2.4,
+              "probability": 0.4,
+              "jitter": 0.9,
+              "scaleMin": 0.8,
+              "scaleMax": 1.2,
+              "maxSlope": 1.2,
+              "waterClearance": 0.5,
+              "objectClearance": 0.3,
+              "edgeFade": 1,
+              "minSpacing": 1,
+              "patchiness": {
+                "scale": 8,
+                "strength": 0.6
+              },
+              "id": "flowers"
+            }
+          ]
+        },
+        "seed": 1941,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 32,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 45,
+                  "z": 419
+                },
+                {
+                  "x": 45,
+                  "z": 427
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest.start-wood.2",
+        "name": "Opening timber 2",
+        "recipe": "recipe.forest.conifer-edge",
+        "overrides": {
+          "spacing": 3.6,
+          "scaleMin": 1,
+          "scaleMax": 1.35,
+          "minSpacing": 3.3,
+          "type": "forest",
+          "details": [
+            {
+              "density": 1,
+              "pattern": "patches",
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-fern-bushy",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-fern-sword",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-grass-lush-b",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-grass-tall",
+                  "weight": 1
+                }
+              ],
+              "spacing": 2.4,
+              "probability": 0.4,
+              "jitter": 0.9,
+              "scaleMin": 0.7,
+              "scaleMax": 1.15,
+              "maxSlope": 1.2,
+              "waterClearance": 0.5,
+              "objectClearance": 0.3,
+              "edgeFade": 1,
+              "minSpacing": 0.8,
+              "patchiness": {
+                "scale": 6,
+                "strength": 0.5
+              },
+              "id": "undergrowth"
+            },
+            {
+              "density": 1,
+              "pattern": "patches",
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-flowers-white",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-flowers-yellow",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-daisy",
+                  "weight": 1
+                }
+              ],
+              "spacing": 2.4,
+              "probability": 0.4,
+              "jitter": 0.9,
+              "scaleMin": 0.8,
+              "scaleMax": 1.2,
+              "maxSlope": 1.2,
+              "waterClearance": 0.5,
+              "objectClearance": 0.3,
+              "edgeFade": 1,
+              "minSpacing": 1,
+              "patchiness": {
+                "scale": 8,
+                "strength": 0.6
+              },
+              "id": "flowers"
+            }
+          ]
+        },
+        "seed": 1941,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 32,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 12,
+              "points": [
+                {
+                  "x": 466,
+                  "z": 92
+                },
+                {
+                  "x": 466,
+                  "z": 84
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.clearing-soil.1",
+        "name": "Elder Watch worn clearing \u00b7 south",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 6,
+          "flatten": 0,
+          "vegetationClearance": 0
+        },
+        "seed": 97431,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 14,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 10,
+              "points": [
+                {
+                  "x": 206,
+                  "z": 434
+                },
+                {
+                  "x": 212,
+                  "z": 444
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 5,
+              "points": [
+                {
+                  "x": 207,
+                  "z": 425
+                },
+                {
+                  "x": 204,
+                  "z": 420
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 267,
+                  "z": 361
+                },
+                {
+                  "x": 288,
+                  "z": 365
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.clearing-soil.2",
+        "name": "Elder Watch worn clearing \u00b7 north",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 6,
+          "flatten": 0,
+          "vegetationClearance": 0
+        },
+        "seed": 97431,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 14,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 10,
+              "points": [
+                {
+                  "x": 305,
+                  "z": 77
+                },
+                {
+                  "x": 299,
+                  "z": 67
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 5,
+              "points": [
+                {
+                  "x": 304,
+                  "z": 86
+                },
+                {
+                  "x": 307,
+                  "z": 91
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 244,
+                  "z": 150
+                },
+                {
+                  "x": 223,
+                  "z": 146
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.camp-soil.1",
+        "name": "Shelter floor \u00b7 south",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 5,
+          "flatten": 0,
+          "vegetationClearance": 0
+        },
+        "seed": 97431,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 14,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 8,
+              "points": [
+                {
+                  "x": 85,
+                  "z": 117
+                },
+                {
+                  "x": 94,
+                  "z": 125
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 5,
+              "points": [
+                {
+                  "x": 50,
+                  "z": 340
+                },
+                {
+                  "x": 49,
+                  "z": 349
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.camp-soil.2",
+        "name": "Shelter floor \u00b7 north",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 5,
+          "flatten": 0,
+          "vegetationClearance": 0
+        },
+        "seed": 97431,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 14,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 8,
+              "points": [
+                {
+                  "x": 426,
+                  "z": 394
+                },
+                {
+                  "x": 417,
+                  "z": 386
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 5,
+              "points": [
+                {
+                  "x": 461,
+                  "z": 171
+                },
+                {
+                  "x": 462,
+                  "z": 162
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.fungal-colonies.1",
+        "name": "Fungal colonies at old timber \u00b7 south",
+        "recipe": "recipe.foliage.mushroom-patches",
+        "overrides": {
+          "spacing": 2.5,
+          "probability": 0.5,
+          "scaleMin": 0.7,
+          "scaleMax": 1.4,
+          "type": "ground-cover"
+        },
+        "seed": 97431,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 52,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 203,
+                  "z": 459
+                },
+                {
+                  "x": 230,
+                  "z": 459
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 8,
+              "points": [
+                {
+                  "x": 281,
+                  "z": 370
+                },
+                {
+                  "x": 300,
+                  "z": 354
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 59,
+                  "z": 215
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.fungal-colonies.2",
+        "name": "Fungal colonies at old timber \u00b7 north",
+        "recipe": "recipe.foliage.mushroom-patches",
+        "overrides": {
+          "spacing": 2.5,
+          "probability": 0.5,
+          "scaleMin": 0.7,
+          "scaleMax": 1.4,
+          "type": "ground-cover"
+        },
+        "seed": 97431,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 52,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 9,
+              "points": [
+                {
+                  "x": 308,
+                  "z": 52
+                },
+                {
+                  "x": 281,
+                  "z": 52
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 8,
+              "points": [
+                {
+                  "x": 230,
+                  "z": 141
+                },
+                {
+                  "x": 211,
+                  "z": 157
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 6,
+              "points": [
+                {
+                  "x": 452,
+                  "z": 296
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.base-floor.1",
+        "name": "Worn colony clearing \u00b7 1",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 8,
+          "flatten": 0,
+          "vegetationClearance": 0
+        },
+        "seed": 97435,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 13,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 13,
+              "points": [
+                {
+                  "x": 80,
+                  "z": 422
+                },
+                {
+                  "x": 90,
+                  "z": 428
+                },
+                {
+                  "x": 92,
+                  "z": 440
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.base-floor.2",
+        "name": "Worn colony clearing \u00b7 2",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "shoulder": 8,
+          "flatten": 0,
+          "vegetationClearance": 0
+        },
+        "seed": 97435,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 13,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 13,
+              "points": [
+                {
+                  "x": 431,
+                  "z": 89
+                },
+                {
+                  "x": 421,
+                  "z": 83
+                },
+                {
+                  "x": 419,
+                  "z": 71
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.leafy-ridge.1",
+        "name": "Leafy ridge behind the old watch \u00b7 1",
+        "recipe": "recipe.forest.leafy",
+        "overrides": {
+          "spacing": 6,
+          "scaleMin": 1,
+          "scaleMax": 1.35,
+          "minSpacing": 5,
+          "type": "forest"
+        },
+        "seed": 97435,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 30,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 14,
+              "points": [
+                {
+                  "x": 247,
+                  "z": 449
+                },
+                {
+                  "x": 260,
+                  "z": 440
+                },
+                {
+                  "x": 263,
+                  "z": 423
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.leafy-ridge.2",
+        "name": "Leafy ridge behind the old watch \u00b7 2",
+        "recipe": "recipe.forest.leafy",
+        "overrides": {
+          "spacing": 6,
+          "scaleMin": 1,
+          "scaleMax": 1.35,
+          "minSpacing": 5,
+          "type": "forest"
+        },
+        "seed": 97435,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 30,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 14,
+              "points": [
+                {
+                  "x": 264,
+                  "z": 62
+                },
+                {
+                  "x": 251,
+                  "z": 71
+                },
+                {
+                  "x": 248,
+                  "z": 88
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.hollow-woods.1",
+        "name": "Hollow log woodland \u00b7 1",
+        "recipe": "recipe.forest.leafy",
+        "overrides": {
+          "spacing": 5.5,
+          "scaleMin": 0.85,
+          "scaleMax": 1.2,
+          "minSpacing": 4.7,
+          "type": "forest"
+        },
+        "seed": 97435,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 30,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 272,
+                  "z": 350
+                },
+                {
+                  "x": 284,
+                  "z": 345
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "wilds.hollow-woods.2",
+        "name": "Hollow log woodland \u00b7 2",
+        "recipe": "recipe.forest.leafy",
+        "overrides": {
+          "spacing": 5.5,
+          "scaleMin": 0.85,
+          "scaleMax": 1.2,
+          "minSpacing": 4.7,
+          "type": "forest"
+        },
+        "seed": 97435,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 30,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 11,
+              "points": [
+                {
+                  "x": 239,
+                  "z": 161
+                },
+                {
+                  "x": 227,
+                  "z": 166
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "woodland.edge",
+        "name": "Forest-driven grass and living edges",
+        "recipe": "recipe.meadow.woodland-edge",
+        "seed": 6401,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 50,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.65,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 380,
+              "points": [
+                {
+                  "x": 255.5,
+                  "z": 255.5
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "objects": [
+      {
+        "id": "watchtower.1",
+        "asset": "asset.models.environment.woodland-ruined-watchtower",
+        "x": 210,
+        "z": 439,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1.3,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "tower-stones.1",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 177,
+        "z": 431,
+        "elevation": 0,
+        "yaw": 0.2,
+        "scale": 2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "sign-home.1",
+        "asset": "asset.models.environment.woodland-trail-sign",
+        "x": 115,
+        "z": 390,
+        "elevation": 0,
+        "yaw": 0.8,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "lantern-home.1",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 110,
+        "z": 400,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "cart.1",
+        "asset": "asset.models.environment.woodland-broken-trader-cart",
+        "x": 43,
+        "z": 345,
+        "elevation": 0,
+        "yaw": 0.8,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "cart-crate.1",
+        "asset": "asset.models.environment.woodland-supply-crate",
+        "x": 49,
+        "z": 341,
+        "elevation": 0,
+        "yaw": 1,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "cart-barrel.1",
+        "asset": "asset.models.environment.woodland-rain-barrel",
+        "x": 39,
+        "z": 343,
+        "elevation": 0,
+        "yaw": 0.2,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "log.1",
+        "asset": "asset.models.environment.woodland-fallen-log",
+        "x": 125,
+        "z": 364,
+        "elevation": 0,
+        "yaw": 1.1,
+        "scale": 1.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "spring.1",
+        "asset": "asset.models.environment.woodland-stone-spring",
+        "x": 145,
+        "z": 291,
+        "elevation": 0,
+        "yaw": 1.2,
+        "scale": 1.3,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "root-snag.1",
+        "asset": "asset.models.environment.woodland-root-snag",
+        "x": 149,
+        "z": 280,
+        "elevation": 0,
+        "yaw": 0.1,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "camp-stump.1",
+        "asset": "asset.models.environment.woodland-giant-stump",
+        "x": 73,
+        "z": 112,
+        "elevation": 0,
+        "yaw": 1.1,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "camp-shelter.1",
+        "asset": "asset.models.environment.woodland-leaf-shelter",
+        "x": 94,
+        "z": 114,
+        "elevation": 0,
+        "yaw": 0.3,
+        "scale": 1.6,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "fungal-hollow.1",
+        "asset": "asset.models.environment.woodland-giant-mushroom-russet",
+        "x": 163,
+        "z": 452,
+        "elevation": 0,
+        "yaw": 1.1,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "shore-stones.1",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 180,
+        "z": 236,
+        "elevation": 0,
+        "yaw": 0.2,
+        "scale": 2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "shore-stones-2.1",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 270,
+        "z": 214,
+        "elevation": 0,
+        "yaw": 0.7,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "camp-cache.1",
+        "asset": "asset.models.environment.woodland-acorn-cache",
+        "x": 182,
+        "z": 415,
+        "elevation": 0,
+        "yaw": 2.1,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "pond-log.1",
+        "asset": "asset.models.environment.woodland-drift-log",
+        "x": 211,
+        "z": 219,
+        "elevation": -0.5,
+        "yaw": 0.9,
+        "scale": 2,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "raft.1",
+        "asset": "asset.models.environment.woodland-broken-leaf-raft",
+        "x": 238,
+        "z": 250,
+        "elevation": -0.5,
+        "yaw": 0.4,
+        "scale": 1.3,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "watchtower.2",
+        "asset": "asset.models.environment.woodland-ruined-watchtower",
+        "x": 301,
+        "z": 72,
+        "elevation": 0,
+        "yaw": 3.541592653589793,
+        "scale": 1.3,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "tower-stones.2",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 334,
+        "z": 80,
+        "elevation": 0,
+        "yaw": 3.3415926535897933,
+        "scale": 2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "sign-home.2",
+        "asset": "asset.models.environment.woodland-trail-sign",
+        "x": 396,
+        "z": 121,
+        "elevation": 0,
+        "yaw": 3.941592653589793,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "lantern-home.2",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 401,
+        "z": 111,
+        "elevation": 0,
+        "yaw": 3.541592653589793,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "cart.2",
+        "asset": "asset.models.environment.woodland-broken-trader-cart",
+        "x": 468,
+        "z": 166,
+        "elevation": 0,
+        "yaw": 3.941592653589793,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "cart-crate.2",
+        "asset": "asset.models.environment.woodland-supply-crate",
+        "x": 462,
+        "z": 170,
+        "elevation": 0,
+        "yaw": 4.141592653589793,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "cart-barrel.2",
+        "asset": "asset.models.environment.woodland-rain-barrel",
+        "x": 472,
+        "z": 168,
+        "elevation": 0,
+        "yaw": 3.3415926535897933,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "log.2",
+        "asset": "asset.models.environment.woodland-fallen-log",
+        "x": 386,
+        "z": 147,
+        "elevation": 0,
+        "yaw": 4.241592653589793,
+        "scale": 1.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "spring.2",
+        "asset": "asset.models.environment.woodland-stone-spring",
+        "x": 366,
+        "z": 220,
+        "elevation": 0,
+        "yaw": 4.341592653589793,
+        "scale": 1.3,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "root-snag.2",
+        "asset": "asset.models.environment.woodland-root-snag",
+        "x": 362,
+        "z": 231,
+        "elevation": 0,
+        "yaw": 3.241592653589793,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "camp-stump.2",
+        "asset": "asset.models.environment.woodland-giant-stump",
+        "x": 438,
+        "z": 399,
+        "elevation": 0,
+        "yaw": 4.241592653589793,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "camp-shelter.2",
+        "asset": "asset.models.environment.woodland-leaf-shelter",
+        "x": 417,
+        "z": 397,
+        "elevation": 0,
+        "yaw": 3.441592653589793,
+        "scale": 1.6,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "fungal-hollow.2",
+        "asset": "asset.models.environment.woodland-giant-mushroom-russet",
+        "x": 348,
+        "z": 59,
+        "elevation": 0,
+        "yaw": 4.241592653589793,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "shore-stones.2",
+        "asset": "asset.models.environment.woodland-river-stones",
+        "x": 331,
+        "z": 275,
+        "elevation": 0,
+        "yaw": 3.3415926535897933,
+        "scale": 2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "shore-stones-2.2",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 241,
+        "z": 297,
+        "elevation": 0,
+        "yaw": 3.8415926535897933,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "camp-cache.2",
+        "asset": "asset.models.environment.woodland-acorn-cache",
+        "x": 329,
+        "z": 96,
+        "elevation": 0,
+        "yaw": 5.241592653589793,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "pond-log.2",
+        "asset": "asset.models.environment.woodland-drift-log",
+        "x": 300,
+        "z": 292,
+        "elevation": -0.5,
+        "yaw": 4.0415926535897935,
+        "scale": 2,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "raft.2",
+        "asset": "asset.models.environment.woodland-broken-leaf-raft",
+        "x": 273,
+        "z": 261,
+        "elevation": -0.5,
+        "yaw": 3.541592653589793,
+        "scale": 1.3,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.elder-watch.1",
+        "asset": "asset.models.environment.mega-oak-trunk",
+        "x": 230,
+        "z": 454,
+        "elevation": 0,
+        "yaw": 0.55,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.elder-watch.2",
+        "asset": "asset.models.environment.mega-oak-trunk",
+        "x": 281,
+        "z": 57,
+        "elevation": 0,
+        "yaw": 3.691592653589793,
+        "scale": 0.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-fungus.1",
+        "asset": "asset.models.environment.woodland-giant-mushroom-ochre",
+        "x": 208,
+        "z": 457,
+        "elevation": 0,
+        "yaw": 1.3,
+        "scale": 0.95,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-fungus.2",
+        "asset": "asset.models.environment.woodland-giant-mushroom-ochre",
+        "x": 303,
+        "z": 54,
+        "elevation": 0,
+        "yaw": 4.441592653589793,
+        "scale": 0.95,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-fungus-small.1",
+        "asset": "asset.models.environment.woodland-giant-mushroom-russet",
+        "x": 197,
+        "z": 453,
+        "elevation": 0,
+        "yaw": 2.1,
+        "scale": 0.62,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-fungus-small.2",
+        "asset": "asset.models.environment.woodland-giant-mushroom-russet",
+        "x": 314,
+        "z": 58,
+        "elevation": 0,
+        "yaw": 5.241592653589793,
+        "scale": 0.62,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-roots.1",
+        "asset": "asset.models.environment.woodland-root-snag",
+        "x": 218,
+        "z": 440,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-roots.2",
+        "asset": "asset.models.environment.woodland-root-snag",
+        "x": 293,
+        "z": 71,
+        "elevation": 0,
+        "yaw": 3.541592653589793,
+        "scale": 1.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-lantern.1",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 208,
+        "z": 428,
+        "elevation": 0,
+        "yaw": 0.6,
+        "scale": 1.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-lantern.2",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 303,
+        "z": 83,
+        "elevation": 0,
+        "yaw": 3.741592653589793,
+        "scale": 1.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-supplies.1",
+        "asset": "asset.models.environment.woodland-supply-crate",
+        "x": 216,
+        "z": 431,
+        "elevation": 0,
+        "yaw": 0.25,
+        "scale": 1.6,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-supplies.2",
+        "asset": "asset.models.environment.woodland-supply-crate",
+        "x": 295,
+        "z": 80,
+        "elevation": 0,
+        "yaw": 3.391592653589793,
+        "scale": 1.6,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-boulder.1",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 219,
+        "z": 461,
+        "elevation": 0,
+        "yaw": 0.8,
+        "scale": 2.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.watch-boulder.2",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 292,
+        "z": 50,
+        "elevation": 0,
+        "yaw": 3.941592653589793,
+        "scale": 2.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.hollow-log.1",
+        "asset": "asset.models.environment.woodland-great-fallen-log",
+        "x": 276,
+        "z": 363,
+        "elevation": 0,
+        "yaw": 0.18,
+        "scale": 1.05,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.hollow-log.2",
+        "asset": "asset.models.environment.woodland-great-fallen-log",
+        "x": 235,
+        "z": 148,
+        "elevation": 0,
+        "yaw": 3.3215926535897933,
+        "scale": 1.05,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.hollow-umbrella.1",
+        "asset": "asset.models.environment.woodland-giant-mushroom-ochre",
+        "x": 295,
+        "z": 369,
+        "elevation": 0,
+        "yaw": 0.7,
+        "scale": 1.15,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.hollow-umbrella.2",
+        "asset": "asset.models.environment.woodland-giant-mushroom-ochre",
+        "x": 216,
+        "z": 142,
+        "elevation": 0,
+        "yaw": 3.8415926535897933,
+        "scale": 1.15,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.hollow-broken-trunk.1",
+        "asset": "asset.models.environment.woodland-great-broken-trunk",
+        "x": 297,
+        "z": 350,
+        "elevation": 0,
+        "yaw": 0.25,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.hollow-broken-trunk.2",
+        "asset": "asset.models.environment.woodland-great-broken-trunk",
+        "x": 214,
+        "z": 161,
+        "elevation": 0,
+        "yaw": 3.391592653589793,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.hollow-cache.1",
+        "asset": "asset.models.environment.woodland-acorn-cache",
+        "x": 261,
+        "z": 365,
+        "elevation": 0,
+        "yaw": 1.5,
+        "scale": 1.7,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.hollow-cache.2",
+        "asset": "asset.models.environment.woodland-acorn-cache",
+        "x": 250,
+        "z": 146,
+        "elevation": 0,
+        "yaw": 4.641592653589793,
+        "scale": 1.7,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.timberbank-acorn.1",
+        "asset": "asset.models.environment.mega-acorn",
+        "x": 54,
+        "z": 195,
+        "elevation": 0,
+        "yaw": 1.1,
+        "scale": 0.72,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.timberbank-acorn.2",
+        "asset": "asset.models.environment.mega-acorn",
+        "x": 457,
+        "z": 316,
+        "elevation": 0,
+        "yaw": 4.241592653589793,
+        "scale": 0.72,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.timberbank-stump.1",
+        "asset": "asset.models.environment.woodland-great-broken-trunk",
+        "x": 57,
+        "z": 219,
+        "elevation": 0,
+        "yaw": 0.7,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.timberbank-stump.2",
+        "asset": "asset.models.environment.woodland-great-broken-trunk",
+        "x": 454,
+        "z": 292,
+        "elevation": 0,
+        "yaw": 3.8415926535897933,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.timberbank-log.1",
+        "asset": "asset.models.environment.woodland-fallen-log",
+        "x": 65,
+        "z": 204,
+        "elevation": 0,
+        "yaw": 0.6,
+        "scale": 2.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.timberbank-log.2",
+        "asset": "asset.models.environment.woodland-fallen-log",
+        "x": 446,
+        "z": 307,
+        "elevation": 0,
+        "yaw": 3.741592653589793,
+        "scale": 2.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.camp-elder.1",
+        "asset": "asset.models.environment.woodland-canopy-elder",
+        "x": 58,
+        "z": 105,
+        "elevation": 0,
+        "yaw": 1.4,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.camp-elder.2",
+        "asset": "asset.models.environment.woodland-canopy-elder",
+        "x": 453,
+        "z": 406,
+        "elevation": 0,
+        "yaw": 4.5415926535897935,
+        "scale": 0.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.camp-rock.1",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 102,
+        "z": 109,
+        "elevation": 0,
+        "yaw": 0.3,
+        "scale": 2.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.camp-rock.2",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 409,
+        "z": 402,
+        "elevation": 0,
+        "yaw": 3.441592653589793,
+        "scale": 2.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.camp-fern.1",
+        "asset": "asset.models.environment.pl-fern-bushy",
+        "x": 99,
+        "z": 119,
+        "elevation": 0,
+        "yaw": 0.3,
+        "scale": 1.7,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.camp-fern.2",
+        "asset": "asset.models.environment.pl-fern-bushy",
+        "x": 412,
+        "z": 392,
+        "elevation": 0,
+        "yaw": 3.441592653589793,
+        "scale": 1.7,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-shelf.1",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 197,
+        "z": 259,
+        "elevation": -0.25,
+        "yaw": 0.7,
+        "scale": 1.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-shelf.2",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 314,
+        "z": 252,
+        "elevation": -0.25,
+        "yaw": 3.8415926535897933,
+        "scale": 1.9,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-shelf-small.1",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 184,
+        "z": 246,
+        "elevation": -0.35,
+        "yaw": 0.9,
+        "scale": 1.3,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-shelf-small.2",
+        "asset": "asset.models.environment.woodland-bank-slabs",
+        "x": 327,
+        "z": 265,
+        "elevation": -0.35,
+        "yaw": 4.0415926535897935,
+        "scale": 1.3,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-stone.1",
+        "asset": "asset.models.environment.shore-boulder-b",
+        "x": 203,
+        "z": 267,
+        "elevation": -0.65,
+        "yaw": 0.3,
+        "scale": 1.7,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-stone.2",
+        "asset": "asset.models.environment.shore-boulder-b",
+        "x": 308,
+        "z": 244,
+        "elevation": -0.65,
+        "yaw": 3.441592653589793,
+        "scale": 1.7,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-wreckage.1",
+        "asset": "asset.models.environment.woodland-drift-scraps",
+        "x": 219,
+        "z": 260,
+        "elevation": -0.7,
+        "yaw": 0.8,
+        "scale": 1.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-wreckage.2",
+        "asset": "asset.models.environment.woodland-drift-scraps",
+        "x": 292,
+        "z": 251,
+        "elevation": -0.7,
+        "yaw": 3.941592653589793,
+        "scale": 1.9,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-reeds.1",
+        "asset": "asset.models.environment.shore-cattails",
+        "x": 195,
+        "z": 250,
+        "elevation": -0.7,
+        "yaw": 0.2,
+        "scale": 2.1,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-reeds.2",
+        "asset": "asset.models.environment.shore-cattails",
+        "x": 316,
+        "z": 261,
+        "elevation": -0.7,
+        "yaw": 3.3415926535897933,
+        "scale": 2.1,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-reeds-small.1",
+        "asset": "asset.models.environment.shore-cattails",
+        "x": 208,
+        "z": 268,
+        "elevation": -0.7,
+        "yaw": 1.4,
+        "scale": 1.5,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-reeds-small.2",
+        "asset": "asset.models.environment.shore-cattails",
+        "x": 303,
+        "z": 243,
+        "elevation": -0.7,
+        "yaw": 4.5415926535897935,
+        "scale": 1.5,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-lilies.1",
+        "asset": "asset.models.environment.shore-lily-white",
+        "x": 218,
+        "z": 247,
+        "elevation": -0.84,
+        "yaw": 0.2,
+        "scale": 2.2,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-lilies.2",
+        "asset": "asset.models.environment.shore-lily-white",
+        "x": 293,
+        "z": 264,
+        "elevation": -0.84,
+        "yaw": 3.3415926535897933,
+        "scale": 2.2,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-lilies-pink.1",
+        "asset": "asset.models.environment.shore-lily-pink",
+        "x": 210,
+        "z": 241,
+        "elevation": -0.84,
+        "yaw": 0.7,
+        "scale": 1.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.shore-lilies-pink.2",
+        "asset": "asset.models.environment.shore-lily-pink",
+        "x": 301,
+        "z": 270,
+        "elevation": -0.84,
+        "yaw": 3.8415926535897933,
+        "scale": 1.8,
+        "heightMode": "absolute",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.base-edge-fern.1",
+        "asset": "asset.models.environment.pl-fern-bushy",
+        "x": 119,
+        "z": 452,
+        "elevation": 0,
+        "yaw": 0.9,
+        "scale": 1.6,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.base-edge-fern.2",
+        "asset": "asset.models.environment.pl-fern-bushy",
+        "x": 392,
+        "z": 59,
+        "elevation": 0,
+        "yaw": 4.0415926535897935,
+        "scale": 1.6,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.base-edge-fern2.1",
+        "asset": "asset.models.environment.pl-fern-sword",
+        "x": 126,
+        "z": 450,
+        "elevation": 0,
+        "yaw": 1.4,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.base-edge-fern2.2",
+        "asset": "asset.models.environment.pl-fern-sword",
+        "x": 385,
+        "z": 61,
+        "elevation": 0,
+        "yaw": 4.5415926535897935,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.base-edge-pebbles.1",
+        "asset": "asset.models.environment.meadow-pebble-a",
+        "x": 130,
+        "z": 456,
+        "elevation": 0,
+        "yaw": 0.6,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.base-edge-pebbles.2",
+        "asset": "asset.models.environment.meadow-pebble-a",
+        "x": 381,
+        "z": 55,
+        "elevation": 0,
+        "yaw": 3.741592653589793,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.base-edge-stick.1",
+        "asset": "asset.models.environment.meadow-stick-a",
+        "x": 109,
+        "z": 458,
+        "elevation": 0,
+        "yaw": 0.7,
+        "scale": 1.7,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "wilds.base-edge-stick.2",
+        "asset": "asset.models.environment.meadow-stick-a",
+        "x": 402,
+        "z": 53,
+        "elevation": 0,
+        "yaw": 3.8415926535897933,
+        "scale": 1.7,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      }
+    ]
+  },
+  "waterLevel": -1
+}

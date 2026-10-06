@@ -10,7 +10,7 @@ Run `npm run dev:tools` and open `http://127.0.0.1:5175/`. This is the single as
 workbench. `?asset=<canonical-id>` opens a specific asset. It uses the actual game
 renderer, sky, weather, shadows, reflections and grading, both on an inspection
 floor and inside a custom map. Animated subjects use `CharacterPlayer`, the game
-ownership shader and game unit scale. The model's authored pivot/scale is kept
+ownership shader and definition model scale. The model's authored pivot/scale is kept
 separate from preview placement. Choose Game camera to check RTS readability.
 
 Canonical `capabilities.animations` defines semantic states, clip names, looping
@@ -28,10 +28,13 @@ Units and creatures have a 5,000-triangle publication limit, including separatel
 packaged attachments. Buildings have a 10,000-triangle limit. Texture dimensions,
 decoded memory, primitives and bones are also reported for performance review.
 
-`rules.unitScale` in `content/game.json` remains the global match-scale control:
-models, movement, collision, clearance, formation spacing and melee reach change
-together. Author source meshes and base stats at scale 1. The workbench applies
-this global scale once; its Placement scale is a temporary additional multiplier.
+Every unit definition declares its gameplay dimensions (radius, height and formation
+spacing) and movement speed in world units. Content loading never rescales gameplay
+values from assets. `modelScale` is presentation-only: changing it cannot alter
+collision, speed, weapon reach or supply. The game and spell preview apply the
+selected definition's model scale and the asset binding's scale once. The asset
+workbench uses its first geometry binding's game definition; unbound assets retain
+their authored size. Placement scale is a temporary preview multiplier.
 
 Blender build/export adapters currently live in `experiments/building-studio` and
 provider inputs in canonical `art/assets/<id>/` source roles. Those are authoring inputs, not the runtime

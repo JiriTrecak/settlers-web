@@ -13,15 +13,15 @@ describe("command categories", () => {
     expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.find(b => b.targetDefinition === "building.ants.bombardier-workshop")).toMatchObject({enabled: false, reason: "Requires Great Acorn Hall"});
     const basic = commandMenu(bindings, "category.build", g.registry).entries;
     expect(basic.filter(b => b.type === "build").map(b => b.targetDefinition)).toEqual(
-      ["house", "barracks", "sanctuary", "ironroot-forge", "rootworks"].map(id => `building.ants.${id}`),
+      ["fort", "house", "barracks", "sanctuary", "ironroot-forge", "rootworks"].map(id => `building.ants.${id}`),
     );
     expect(bindings.some(b => b.targetDefinition === "building.ants.forester")).toBe(false);
     expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.some(b => b.targetDefinition === "building.ants.tower")).toBe(true);
     const barracks = basic.find(b => b.targetDefinition === "building.ants.barracks")!;
     expect(barracks.actors).toEqual([w.id]);
-    expect(barracks.costs.map(c => c.amount)).toEqual([160, 60]);
+    expect(barracks.costs.map(c => c.amount)).toEqual([200, 60]);
     expect(commandPage(basic, 0).find(s => s.binding.type === "back")).toMatchObject({column: 1, row: 3, binding: {destination: null}});
-    const soldier = g.entities.find(e => e.definition === "unit.ants.warrior")!;
+    const soldier = g.entities.find(e => e.definition === "unit.ants.marshal")!;
     const army = commandCard(g.view("player.1"), [soldier.id], "player.1", g.registry);
     expect(commandMenu(army, "category.build", g.registry).category).toBeNull();
     expect(commandMenu(army, null, g.registry).entries.some(b => b.type === "category")).toBe(false);

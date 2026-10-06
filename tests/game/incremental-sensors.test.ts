@@ -5,7 +5,7 @@ import type {Entity} from '../../src/sim/game/state';
 
 const setup=()=>game([
  placed('scout','unit.ants.warrior',100,100),
- {...placed('target','unit.ants.warrior',130,100),owner:'player.2'},
+ {...placed('target','unit.ants.warrior',145,100),owner:'player.2'},
  ...Array.from({length:120},(_,i)=>placed('idle'+i,'unit.ants.warrior',20+i%12*8,180+Math.floor(i/12)*6)),
 ]);
 const actor=(g:ReturnType<typeof game>,id:string)=>g.entities.find(e=>e.placement===id)!;

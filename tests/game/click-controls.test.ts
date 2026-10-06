@@ -25,12 +25,12 @@ describe("RTS click intentions", () => {
     const replies:((error:string|null)=>void)[]=[];
     session.worker.request.mockImplementation(()=>new Promise(resolve=>replies.push(resolve)));
     session.onHover({clientX:0,clientY:0});
-    session.renderer.pickGround=()=>({x:244,z:245});session.onHover({clientX:1,clientY:0});
+    session.renderer.pickGround=()=>({x:240,z:245});session.onHover({clientX:1,clientY:0});
     expect(session.worker.request).toHaveBeenCalledTimes(1);
     replies[0](null);await vi.waitFor(()=>expect(session.worker.request).toHaveBeenCalledTimes(2));
-    expect(session.renderer.gamePreview.mock.calls.some((args:any[])=>args[1]===245&&args[3]===true)).toBe(false);
+    expect(session.renderer.gamePreview.mock.calls.some((args:any[])=>args[1]===245.5&&args[3]===true)).toBe(false);
     replies[1]('Blocked');await vi.waitFor(()=>expect(hud.placement).toHaveBeenCalledWith('Blocked'));
-    expect(session.renderer.gamePreview).toHaveBeenLastCalledWith('building.ants.barracks',244,245,false,0,0);
+    expect(session.renderer.gamePreview).toHaveBeenLastCalledWith('building.ants.barracks',241.5,245.5,false,0,0);
   });
   it("routes right-button gestures to commands in play and retains editor orbit", () => {
     vi.stubGlobal("window", new EventTarget());
@@ -71,10 +71,10 @@ describe("RTS click intentions", () => {
     const validate = vi.spyOn(g, "canBuild").mockReturnValue(null);
     session.onHover({clientX:0,clientY:0});await Promise.resolve();
     session.click(0, 0);
-    expect(validate).toHaveBeenCalledWith("player.1", "building.ants.barracks", {x: 245, y: 245}, unit.id, 270);
+    expect(validate).toHaveBeenCalledWith("player.1", "building.ants.barracks", {x: 245.5, y: 245.5}, unit.id, 270);
     expect(session.send).toHaveBeenCalledWith({
       type: "build", actors: [unit.id], definition: "building.ants.barracks",
-      position: {x: 245, y: 245}, rotation: 270,
+      position: {x: 245.5, y: 245.5}, rotation: 270,
     });
   });
   it("retains all selected workers after placement; Shift retains placement mode too", () => {
@@ -83,7 +83,9 @@ describe("RTS click intentions", () => {
       const workers = g.entities.filter(e => e.definition === "unit.ants.settler").slice(0, 3).map(e => e.id);
       hud.selectedIds = workers;
       Object.assign(hud, {mode: "building.ants.barracks", targeting: {type: "build", actors: hud.selectedIds}, buildingActor: unit.id, placementRotation: 0});
-      session.renderer.pickGround = () => ({x: 205, z: 210});
+      // This test covers selection intent; terrain exploration has separate placement coverage.
+      vi.spyOn(g.observation, 'explored').mockReturnValue(true);
+      session.renderer.pickGround = () => ({x: 190, z: 230});
       session.click(0, 0, shift);
       const action = session.send.mock.calls[0][0];
       expect(g.command("player.1", action).accepted).toBe(true);
@@ -110,6 +112,14 @@ describe("RTS click intentions", () => {
     expect(hud.clearMode).toHaveBeenCalledOnce();
     expect(session.send).not.toHaveBeenCalled();
   });
+  for (const shift of [false,true]) it(`right-click ${shift?'queues':'issues'} construction resumption on an owned foundation`,()=>{
+    const {session,g,unit}=setup();
+    expect(g.command('player.1',{type:'build',actors:[unit.id],definition:'building.ants.house',position:{x:235.5,y:239.5}}).accepted).toBe(true);
+    const site=g.entities.find(e=>e.construction)!;g.observation.update();
+    session.renderer.pickGameEntity=()=>site.id;
+    session.click(0,0,shift,true);
+    expect(session.send).toHaveBeenCalledWith({type:'construct',actors:[unit.id],target:site.id,...(shift?{append:true}:{})});
+  });
   it("left click still confirms explicit Move targeting", () => {
     const {session, hud, unit} = setup();
     hud.targeting = {type: "move", actors: [unit.id]};
@@ -119,8 +129,8 @@ describe("RTS click intentions", () => {
   });
   it("left click inspects enemies; right click orders the selected army to attack", () => {
     const {session, hud, g} = setup();
-    const own = g.entities.find(e => e.owner === "player.1" && e.definition === "unit.ants.warrior")!;
-    const enemy = g.entities.find(e => e.owner === "player.2" && e.definition === "unit.ants.warrior")!;
+    const own = g.entities.find(e => e.owner === "player.1" && e.definition === "unit.ants.marshal")!;
+    const enemy = g.entities.find(e => e.owner === "player.2" && e.definition === "unit.ants.marshal")!;
     enemy.x = own.x + 1; enemy.y = own.y;
     // Refresh authoritative visibility after placing the enemy within friendly sight.
     g.tick();

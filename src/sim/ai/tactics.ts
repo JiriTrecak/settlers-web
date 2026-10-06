@@ -149,7 +149,7 @@ export function reactions(f: Frame, s: AIState, emit: Emit) {
           y: f.home.y + (f.home.y - threat.y) * 0.4,
         };
       emit(
-        { type: "move", actors: [worker.id], destination: f.nearestSafe(v) },
+        { type: "move", actors: [worker.id], destination: f.nearestSafe(v,[worker]) },
         "Pull the threatened worker back through the base",
       );
     } else {
@@ -193,7 +193,7 @@ export function reactions(f: Frame, s: AIState, emit: Emit) {
         {
           type: "move",
           actors: [soldier.id],
-          destination: f.nearestSafe(f.home),
+          destination: f.nearestSafe(f.home,[soldier]),
         },
         "Preserve a badly wounded fighter",
       );
@@ -222,10 +222,10 @@ export function reactions(f: Frame, s: AIState, emit: Emit) {
     if (f.tick < seen + rules.reactionTicks) continue;
     // Limited archer spacing, only after a shot and only when a melee threat is already close.
     if (
-      combat.range > 3 &&
+      !!combat.projectile &&
       soldier.unit!.cooldown > f.tick &&
-      distance(target, soldier) < 3 &&
-      f.def(target).behaviors.combat!.range < 3
+      distance(target, soldier) < (f.def(soldier).dimensions!.radius+f.def(target).dimensions!.radius+3) &&
+      !f.def(target).behaviors.combat!.projectile && !f.def(target).behaviors.combat!.shell
     ) {
       const d = Math.max(1, distance(soldier, target)),
         p = {
@@ -234,7 +234,7 @@ export function reactions(f: Frame, s: AIState, emit: Emit) {
         };
       if (distance(p, center) <= rules.army.pursuitRadius)
         emit(
-          { type: "move", actors: [soldier.id], destination: f.nearestSafe(p) },
+          { type: "move", actors: [soldier.id], destination: f.nearestSafe(p,[soldier]) },
           "Create a little space for the ranged line",
         );
     } else if (

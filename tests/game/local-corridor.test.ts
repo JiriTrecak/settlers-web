@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {game,originalScaleGame,placed} from './helpers';
+import {compactBodyGame as game,placed} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
 import {heading,turnDifference} from '../../src/sim/game/facing';
 
@@ -99,8 +99,7 @@ it.each([0,1,2,3].flatMap(rotation=>[false,true].map(occupiedGoal=>({rotation,oc
  });
 
 it.each([0,1,2,3])('finds a local rejoin outside a fully occupied projected square, rotation %i',rotation=>{
- // This recorded crowded layout and its sub-cell gaps were captured at scale 1.
- const game=originalScaleGame;
+ // This recorded crowded layout deliberately exercises sub-cell gaps.
  const turn=(p:{x:number;y:number},scale=1)=>{let {x,y}=p;for(let n=0;n<rotation;n++)[x,y]=[255*scale-y,x];return {x,y};};
  const crowd=[[146,117],[147,119],[149,121],[146,121],[147,122],[147,121],[148,122],[149,122],[146,123],[145,122],[148,119],[147,123],[148,123],[149,123],[149,120],[149,119],[146,120],[147,120],[148,121],[146,122]];
  const start=turn({x:145,y:121});

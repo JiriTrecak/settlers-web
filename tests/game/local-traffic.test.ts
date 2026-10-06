@@ -1,5 +1,5 @@
 import {expect,it,vi} from 'vitest';
-import {game,placed} from './helpers';
+import {game,compactBodyGame,placed} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
 
 it.each([0,1,2,3])('keeps distant orders while passing moving traffic locally, rotation %i',rotation=>{
@@ -34,7 +34,8 @@ it.each([0,1,2,3])('keeps distant orders while passing moving traffic locally, r
 it('retains a long corridor at a blocked gate and resumes when it opens, without global traffic searches',()=>{
  const g=game([placed('mover','unit.ants.warrior',100,100),placed('gate','unit.ants.warrior',105,100)]);
  const mover=g.entities.find(e=>e.placement==='mover')!,gate=g.entities.find(e=>e.placement==='gate')!;
- for(let y=0;y<g.spatial.size;y++)if(y!==100)g.spatial.terrain[y*g.spatial.size+105]=0;
+ // Leave clearance beyond the three-unit body for the conservative sweep.
+ for(let y=0;y<g.spatial.size;y++)if(y<98||y>102)g.spatial.terrain[y*g.spatial.size+105]=0;
  g.spatial.rebuild();
  g.command(gate.owner,{type:'hold',actors:[gate.id]});
  g.command(mover.owner,{type:'move',actors:[mover.id],destination:{x:140,y:100}});
@@ -68,6 +69,7 @@ it('still replans a long corridor when a new building physically blocks it',()=>
 });
 
 it('gets two compact opposing formations through each other without losing their orders',()=>{
+ const game=compactBodyGame;
  const placements=Array.from({length:16},(_,i)=>placed('army-'+i,'unit.ants.warrior',100+(i<8?i%4:14+i%4),100+Math.floor(i%8/4)));
  const g=game(placements),army=placements.map(p=>g.entities.find(e=>e.placement===p.id)!);
  for(const side of [0,1])g.command('player.1',{type:'move',actors:army.slice(side*8,side*8+8).map(e=>e.id),destination:{x:side?60:160,y:101}});

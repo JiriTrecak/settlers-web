@@ -1,5 +1,5 @@
 /** A fixed test arch isolates layered simulation behavior from art-package dimensions.
- * Its underside must clear the tallest scaled unit body (3.4 at unitScale 1.7). */
+ * Its underside must clear the baseline infantry body (3.4 world units). */
 import {vi} from 'vitest';
 vi.mock('../../src/shared/assets/manifest',async original=>{
  const actual=await original<typeof import('../../src/shared/assets/manifest')>();

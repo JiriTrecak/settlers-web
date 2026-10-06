@@ -5,7 +5,7 @@ import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {updateMapScene} from '../../src/shared/authoring/updateMapScene';
 import {landscapeAssets} from '../../src/shared/authoring/project';
 import {parseUtcMap} from '../../src/shared/map/utcmap';
-const path=process.argv[2]??'assets/maps/skirmish/heartroot-glade.utcmap';
+const path=process.argv[2]??'assets/maps/skirmish/amberwake-basin.utcmap';
 const map=parseUtcMap(JSON.parse(readFileSync(path,'utf8')));if(!map?.authoring?.objects.length)throw Error('Map needs an authored object');
 const before=compileMapScene(map,landscapeAssets),object=map.authoring.objects.find(o=>!o.locked&&!o.bakedPlacement);if(!object)throw Error('Map needs an editable object');
 const next={...map,authoring:{...map.authoring,objects:[...map.authoring.objects.filter(o=>o.id!==object.id),{...object,yaw:object.yaw+Math.PI/12,elevation:object.elevation+.5}]}};

@@ -1,6 +1,6 @@
 import type {GameContext} from './context';
 import {alive,type Entity} from './state';
-import {atPoint,precise} from './motion';
+import {atPoint,fixed,precise} from './motion';
 import {isStunned} from './effects';
 
 /** Height belongs to the firing/sight origin, never to a pathfinding floor. */
@@ -39,15 +39,19 @@ export class Garrisons {
    if(u.order?.type!=='garrison'||!c.ready(e)||isStunned(e,c.registry))continue;
    const host=c.get(u.order.target);
    if(!host||!alive(host)||!this.available(e,host)){u.order=null;u.route=[];u.goal=null;continue;}
-   const entrance=c.spatial.entrance(host);
-   if(atPoint(e,entrance)){
+   const entrance=c.spatial.entrance(host),reach=Math.ceil(c.spatial.dimensions(e).radius)+2;
+   const access=u.goal===null?null:c.spatial.point(u.goal);
+   // The authored doorway marks the building edge. A full-size body must
+   // approach a clear cell outside that edge before entering the lookout.
+   if(access&&Math.abs(access.x-entrance.x)+Math.abs(access.y-entrance.y)<=reach&&atPoint(e,access)){
     u.garrison={building:host.id,height:c.def(host).garrison!.height};
-    u.order={type:'hold'};u.route=[];u.goal=null;u.segment=null;u.position=null;
+    u.order={type:'hold'};u.route=[];u.goal=null;u.segment=null;u.position=fixed(host);
     u.target=null;u.idle=null;delete u.detour;delete u.attack;delete u.pursuit;
-    e.x=host.x;e.y=host.y;if(host.surface)e.surface=host.surface;else delete e.surface;
+    e.x=Math.round(host.x);e.y=Math.round(host.y);if(host.surface)e.surface=host.surface;else delete e.surface;
     c.motionRevision++;c.observationRevision++;
    }else if(!u.route.length&&u.retryAt<=c.state.tick){
-    c.spatial.route(e,entrance);u.retryAt=c.state.tick+12;
+    c.spatial.routeBatch(e,()=>c.spatial.nearest(entrance,reach,e.id,e,p=>c.spatial.route(e,p)));
+    u.retryAt=c.state.tick+12;
    }
   }
  }

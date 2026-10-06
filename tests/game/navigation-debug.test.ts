@@ -8,7 +8,7 @@ import {placed} from './helpers';
 
 it('classifies tree discs as resource cells and draws a moving unit route to its goal',()=>{
  const base=emptyUtcMap();
- const map={...base,playerStarts:base.playerStarts.map((s,i)=>({...s,x:200,z:i?60:200})),entities:[placed('tree','resource.forest.tree',100,100),placed('walker','unit.ants.warrior',100,94)]};
+ const map={...base,playerStarts:base.playerStarts.map((s,i)=>({...s,x:201.5,z:i?61.5:201.5})),entities:[{...placed('tree','resource.forest.tree',100,100),owner:'none'},placed('walker','unit.ants.warrior',100,94)]};
  const g=new Game(map,[{player:0,kind:'human'},{player:1,kind:'human'}]);
  const walker=g.entities.find(e=>e.placement==='walker')!,s=g.spatial;
  const cells=walkabilityCells(g);

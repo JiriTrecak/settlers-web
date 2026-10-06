@@ -25,10 +25,10 @@ describe("generated game wiki", () => {
       "building-ants-house",
     );
     expect(result.files.get("buildings/building-ants-fort.md")).toContain(
-      "**Supply provided:** 12",
+      "**Supply provided:** 15",
     );
     expect(result.files.get("buildings/building-ants-house.md")).toContain(
-      "**Supply provided:** 6",
+      "**Supply provided:** 8",
     );
     expect(result.files.get("units/unit-ants-archer.md")).toContain(
       "1 supply",
@@ -36,6 +36,12 @@ describe("generated game wiki", () => {
     expect(result.files.get("units/unit-ants-marshal.md")).toContain(
       "| 10 | 3200 | 1375 | 58 | 6 |",
     );
+    const revival=result.files.get("buildings/building-ants-sanctuary.md")!;
+    expect(revival).toContain('200 [Amber]');expect(revival).toContain('**30 s**');
+    expect(revival).toContain('50 [Amber]');expect(revival).toContain('**5 s**');
+    expect(revival).not.toContain('currently free');
+    expect(result.fragments.opening).toContain("Choose one starting hero");
+    expect(result.fragments.opening).toContain("unit-ants-marshal");
     expect(seconds(400)).toBe("10 s");
   });
   it("balance and inherited behavior edits update output, without a hand-maintained wiki table", () => {

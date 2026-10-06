@@ -42,6 +42,6 @@ CPU scopes overlap and must not be added together. GPU timings arrive asynchrono
 
 The target is 8.33 ms for a complete 120 Hz frame, with headroom for slower machines. Average improvements do not establish that target: measure p95/p99, worst ticks, loading events and command latency. Simulation ticks, render CPU work, asynchronous GPU timing and display intervals are distinct scopes.
 
-Use `npm run bench:sim -- --map threewater-forest --ticks 12000 --output /tmp/utc-simulation.json`. Navigation tracing and checkpoint/resume options isolate expensive searches. The [sector](spatial-sectors.md) and [worker](simulation-worker.md) guides explain their boundaries. Keep results in ignored `tmp/` and record the map revision, camera, resolution and graphics settings for browser measurements.
+Use `npm run bench:sim -- --map amberwake-basin --ticks 12000 --output /tmp/utc-simulation.json`. Navigation tracing and checkpoint/resume options isolate expensive searches. The [sector](spatial-sectors.md) and [worker](simulation-worker.md) guides explain their boundaries. Keep results in ignored `tmp/` and record the map revision, camera, resolution and graphics settings for browser measurements.
 
 Verify the effect editor and profiling controls in the actual browser as well as automated tests. Whole-frame performance remains hardware- and scene-dependent; no historical benchmark establishes current 120 FPS performance.

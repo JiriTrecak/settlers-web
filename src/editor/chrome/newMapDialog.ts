@@ -1,3 +1,4 @@
+import {BUILDING_CELL_SIZE} from '../../shared/spatial/footprint';
 import {WEATHER_CHOICES, type WeatherSettings} from '../../shared/landscape/weather';
 import {BIOMES, MAP_DIMENSIONS, type MapSize} from '../../content/biomes';
 import {createBiomeMap} from '../../shared/map/newMap';
@@ -20,7 +21,7 @@ export function newMapDialog(host: HTMLElement): Promise<UtcMap | undefined> {
     const name = document.createElement('input'); name.name = 'name'; name.required = true;
     name.placeholder = 'Map name'; name.maxLength = 120; name.setAttribute('aria-label', 'Map name');
     const size = document.createElement('select'); size.setAttribute('aria-label', 'Map dimensions');
-    MAP_DIMENSIONS.forEach(d => size.add(new Option(`${d.name} · ${d.size} × ${d.size}`, String(d.size))));
+    MAP_DIMENSIONS.forEach(d => size.add(new Option(`${d.name} · ${d.size / BUILDING_CELL_SIZE} × ${d.size / BUILDING_CELL_SIZE} C`, String(d.size))));
     const biome = document.createElement('select'); biome.setAttribute('aria-label', 'Biome');
     BIOMES.forEach(b => biome.add(new Option(b.name, b.id)));
     const weather=document.createElement('select');weather.setAttribute('aria-label','Weather');

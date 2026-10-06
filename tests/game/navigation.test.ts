@@ -102,6 +102,21 @@ it('rejects an enclosed start before searching each candidate destination',()=>{
  expect(globalChecks).toBe(5);
 });
 
+it('bounds a larger base-pocket fallback without changing reachable path selection',()=>{
+ const size=128,goal=64*size+64,walls=new Set<number>();
+ for(let y=-8;y<=8;y++)for(let x=-8;x<=8;x++)if(Math.max(Math.abs(x),Math.abs(y))===8)walls.add(goal+y*size+x);
+ const nav=new Navigation(size,(_a,b)=>!walls.has(b),undefined,true);
+ // The 15×15 interior exceeds the normal 128-cell destination probe.
+ expect(nav.path(0,goal,undefined,Infinity,undefined,1000,512)).toBeNull();
+ expect(nav.lastExpanded).toBe(0);
+ const door=goal-8*size;walls.delete(door);nav.invalidate([door]);
+ const normal=nav.path(0,goal);expect(normal?.at(-1)).toBe(goal);
+ expect(nav.path(0,goal,undefined,Infinity,undefined,1000,512)).toEqual(normal);
+ walls.add(door);nav.invalidate([door]);
+ expect(nav.path(0,goal,undefined,Infinity,undefined,1000,512)).toBeNull();
+ expect(nav.lastExpanded).toBe(0);
+});
+
 it('bounds a traffic detour without restricting the underlying terrain route',()=>{
  const size=64,start=32*size+10,goal=32*size+50,door=32*size+30;
  let probes=0;

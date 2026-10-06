@@ -61,8 +61,8 @@ export function editorEntities(map: UtcMap): EntityView[] {
             },
           }
         : {}),
-      ...(d.gatheringCapacity
-        ? { gathering: { workers: 0, capacity: d.gatheringCapacity } }
+      ...(d.kind === "building" && d.harvesting
+        ? { gathering: { workers: 0, recommendedWorkers: d.harvesting.recommendedWorkers } }
         : {}),
       ...(d.yield
         ? {

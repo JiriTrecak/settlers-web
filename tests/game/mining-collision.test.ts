@@ -5,9 +5,10 @@ import { game, placed, worker } from "./helpers";
 it("amber assignments pass through units in planning and motion, but still respect solid terrain", () => {
   const g = game([{...placed("mine", "building.neutral.amber-mine", 228, 229), owner: "none"}]);
   const w = worker(g), mine = g.entities.find(e => e.placement === "mine")!;
-  const blocker = g.entities.find(e => e.owner === w.owner && e.definition === "unit.ants.warrior")!;
+  const blocker = g.entities.find(e => e.owner === w.owner && e.definition === "unit.ants.marshal")!;
   expect(g.command(w.owner, {type: "gather", actors: [w.id], target: mine.id}).accepted).toBe(true);
   w.x = 100; w.y = 100; blocker.x = 101; blocker.y = 100;
+  w.unit!.position=fixed(w);w.unit!.segment=null;blocker.unit!.position=fixed(blocker);
   expect(g.spatial.free(blocker, w.id)).toBe(true);
   expect(g.spatial.unitSegmentClear(fixed(w), fixed({x: 102, y: 100}), w.id)).toBe(true);
   expect(g.spatial.route(w, {x: 102, y: 100})).toBe(true);
@@ -27,7 +28,7 @@ it("wood gatherers pass through units too; a queued mine order does not grant pa
     {...placed("tree", "resource.forest.tree", 228, 235), owner: "none"},
   ]), w = worker(g);
   const tree = g.entities.find(e => e.placement === "tree")!, mine = g.entities.find(e => e.placement === "mine")!;
-  const blocker = g.entities.find(e => e.owner === w.owner && e.definition === "unit.ants.warrior")!;
+  const blocker = g.entities.find(e => e.owner === w.owner && e.definition === "unit.ants.marshal")!;
   g.command(w.owner, {type: "gather", actors: [w.id], target: tree.id});
   expect(g.spatial.free(blocker, w.id)).toBe(true);
   g.command(w.owner, {type: "move", actors: [w.id], destination: {x: 150, y: 150}});

@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {game,placed} from './helpers';
+import {compactBodyGame as game,placed} from './helpers';
 import {inspectTraffic} from '../../scripts/bench/traffic-report';
 import {heading} from '../../src/sim/game/facing';
 

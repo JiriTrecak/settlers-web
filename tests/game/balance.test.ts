@@ -46,13 +46,13 @@ describe('first combat balance', () => {
     expect(h.hp).toBe(0);expect(h.abilities!.mana).toBe(0);
   });
   it('preserves damage and spent mana on level-up, and uses the new attack interval in combat', () => {
-    const g=game([ {...placed('target','unit.ants.warrior',223,230),owner:'player.2'} ]),h=heroOf(g);
+    const g=game([ {...placed('target','unit.ants.warrior',222,202),owner:'player.2'} ]),h=heroOf(g);
     const target=g.entities.find(e=>e.placement==='target')!;
     h.progression!.experience=95;h.hp=500;h.abilities!.mana=100;
     new Progression(g.context).award(target,e=>e.id===h.id);
     expect(g.context.stats(h).level).toBe(2);expect(h.hp).toBe(575);expect(h.abilities!.mana).toBe(115);
     h.progression!.experience=3200;
-    target.x=h.x+1;target.y=h.y;g.observation.update();g.state.tick++;
+    target.x=h.x+4;target.y=h.y;g.observation.update();g.state.tick++;
     h.rotation=heading(h,target);h.unit!.target=target.id;const before=target.hp!;
     g.combat.resolve();
     expect(target.hp).toBe(before);expect(h.unit!.cooldown).toBe(60);

@@ -17,7 +17,7 @@ import {buildProbe, checkProbePath, disposeProbe, groundGeometry, queryProbe} fr
 
 const args = process.argv.slice(2);
 const option = (name: string, fallback: string) => { const i=args.indexOf(name); return i<0?fallback:args[i+1]??fallback; };
-const mapId = option('--map', 'heartroot-glade'), count = Number(option('--queries','32')),
+const mapId = option('--map', 'amberwake-basin'), count = Number(option('--queries','32')),
   repeats = Number(option('--repeats','10')), cellSize = Number(option('--cell-size','.25')),
   radiusMultiplier = Number(option('--radius-multiplier',String(Math.SQRT2)));
 if (!Number.isInteger(count)||count<1||!Number.isInteger(repeats)||repeats<1||![.125,.25,.5,1].includes(cellSize)||!Number.isFinite(radiusMultiplier)||radiusMultiplier<0) throw Error('Invalid benchmark options');

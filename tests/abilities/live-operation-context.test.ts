@@ -37,7 +37,7 @@ it('resolves a later teleport destination at the moved target instead of its old
 });
 it.each(['target','point'] as const)('uses %s center semantics after moving the primary recipient',center=>{
  const f=fixture([{...blink,target:'target',destination:'caster'},burst(center)],{targeting:{...base.targeting,kind:'unit',relations:['enemy'],radius:undefined}});
- const departure=enemy(f,'departure',134),arrival=enemy(f,'arrival',119,122),before={departure:departure.hp!,arrival:arrival.hp!};
+ const departure=enemy(f,'departure',136),arrival=enemy(f,'arrival',117,117),before={departure:departure.hp!,arrival:arrival.hp!};
  f.game.observation.update();expect(f.game.abilities.cast(f.caster,'preview',f.target!)).toBeNull();step(f);
  expect(f.t().x).toBeLessThan(124);
  expect(departure.hp).toBe(before.departure-(center==='point'?70:0));expect(arrival.hp).toBe(before.arrival-(center==='target'?70:0));

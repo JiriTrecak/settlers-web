@@ -37,7 +37,8 @@ export class UnitOrders {
   advance(activate: (e: Entity, order: UnitOrder) => boolean) {
     for (const e of this.c.activeUnits()) {
       const u = e.unit!;
-      if (u.order || u.job || u.cargo || u.pendingMove || e.abilities?.pending || isStunned(e, this.c.registry)) continue;
+      if (u.order || u.job || u.pendingMove || e.abilities?.pending || isStunned(e, this.c.registry)) continue;
+      if (u.cargo && (u.orderQueue[0]?.type !== 'construct' || this.economy.cargoBlocksConstruction(e))) continue;
       while (u.orderQueue.length) {
         const order = u.orderQueue.shift()!, remaining = u.orderQueue;
         // Normal activation replaces orders. Keep the already-authorized tail.

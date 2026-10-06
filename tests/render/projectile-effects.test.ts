@@ -14,8 +14,8 @@ it('batches authoritative volleys, uses their impact time, and reuses buffers',(
  const matrix=new Matrix4(),point=new Vector3();arrows.getMatrixAt(0,matrix);point.setFromMatrixPosition(matrix);
  expect(point.x).toBeCloseTo(5);expect(point.y).toBeCloseTo(field.walkSample(0,0)+1.25+.65);
  expect([...arrows.instanceMatrix.array].every(Number.isFinite)).toBe(true);
- fx.update(16,shots,field,undefined,1.7);arrows.getMatrixAt(0,matrix);
- expect(new Vector3().setFromMatrixScale(matrix).x).toBeCloseTo(1.7);
+ fx.update(16,shots,field);arrows.getMatrixAt(0,matrix);
+ expect(new Vector3().setFromMatrixScale(matrix).x).toBeCloseTo(2.4);
  expect(new Vector3().setFromMatrixPosition(matrix).x).toBeCloseTo(5);
  fx.update(22,shots,field);expect(arrows.count).toBe(0);expect(arrows.visible).toBe(false);
  fx.update(24,[{...shot(202),launched:23,impact:35}],field);

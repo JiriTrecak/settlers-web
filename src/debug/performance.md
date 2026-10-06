@@ -226,7 +226,7 @@ silently reset triangle/draw-call accounting. Category counts cover color
 passes; total counters also include shadow passes. Read timings rather than
 comparing old incomplete counters to the new all-pass total.
 
-`scripts/bench/four-peer-match.ts` is an offline correctness harness. It compares
+`scripts/bench/multiplayer-match.ts` is an offline correctness harness. It compares
 full-state hashes at every 100-tick checkpoint and deep-compares final snapshots,
 including a synthetic transport stall. This deliberately expensive audit does
 not change the live game's lightweight checksum and is not a CPU-budget run.

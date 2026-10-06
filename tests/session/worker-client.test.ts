@@ -82,7 +82,7 @@ it('runs two actual workers through lockstep with matching hashes and P2 command
   }}});
  });
  await Promise.all(peers.map(p=>p.init()));await Promise.all(peers.map(p=>p.client.request('start',undefined)));
- const actor=peers[1].client.latest!.selection.settlement.entities.find(e=>e.owner==='player.2'&&e.definition==='unit.ants.warrior')!;
+ const actor=peers[1].client.latest!.selection.settlement.entities.find(e=>e.owner==='player.2'&&e.definition==='unit.ants.marshal')!;
  peers[1].client.send({type:'move',actors:[actor.id],destination:{x:actor.x-3,y:actor.y-2}});
  await delay(650);
  const common=[...hashes[0].keys()].filter(tick=>hashes[1].has(tick));expect(common.length).toBeGreaterThanOrEqual(2);
@@ -93,7 +93,7 @@ it('runs two actual workers through lockstep with matching hashes and P2 command
 
 it('keeps the parent event loop responsive during a worker stall and applies the newest movement order last',async()=>{
  const f=fixture();await f.init();await f.client.request('start',undefined);
- const actor=f.client.latest!.selection.settlement.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.warrior')!;
+ const actor=f.client.latest!.selection.settlement.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.marshal')!;
  let beats=0;const timer=setInterval(()=>beats++,5);
  try{
   const done=new Promise<void>(resolve=>f.worker.on('message',m=>{if(m.type==='test-stall-ended')resolve();}));

@@ -106,6 +106,7 @@ export class World {
             ),
           ),
         );
+      for(const brain of this.brains.values())brain.prepareNavigation(this.settlement.view(brain.owner));
     }
   }
 
@@ -252,7 +253,9 @@ export class World {
           throw new Error("AI pending command mismatch");
       }
     this.settlement.restore(snap.game);
-    for (const a of validated) this.brains.get(a.player)!.restore(a.state);
+    for (const a of validated) {
+      const brain=this.brains.get(a.player)!;brain.restore(a.state);brain.prepareNavigation(this.settlement.view(brain.owner));
+    }
     this.clock.tickIndex = snap.tick;
     this.rng = seedRng(snap.rng);
     this.pending.splice(0, this.pending.length, ...snap.pending);

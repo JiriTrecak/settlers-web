@@ -1,4 +1,4 @@
-import {content} from '../../../src/content/builtin';
+import {previewModelScale} from './modelScale';
 import {InspectionSubject,type SubjectControls,type SubjectInfo} from './subject';
 import {biomeById} from '../../../src/content/biomes';
 import {type WeatherSettings} from '../../../src/shared/landscape/weather';
@@ -87,7 +87,7 @@ export class ProductionPreview{
    this.subject?.dispose();this.subject=undefined;this.subjectKey='';
    if(isSubject){const subject=await InspectionSubject.load(asset,geometryUrl??resourceUrl(asset,'geometry'),count);if(version!==this.generation||this.stopped){subject.dispose();return;}this.subject=subject;this.renderer.mountInspectionSubject(subject.root);this.subjectKey=subjectKey;if(this.subjectControls)subject.configure(this.subjectControls);}
   }
-  if(this.subject){this.subject.root.position.set(settings.x,field.sample(settings.x,settings.z)+settings.elevation,settings.z);this.subject.root.rotation.y=settings.yaw*Math.PI/180;this.subject.root.scale.setScalar(settings.scale*(asset.bindings.render.find(b=>b.geometry)?.scale??1)*(['unit','creature'].includes(asset.kind)?content.rules.unitScale:1));}
+  if(this.subject){this.subject.root.position.set(settings.x,field.sample(settings.x,settings.z)+settings.elevation,settings.z);this.subject.root.rotation.y=settings.yaw*Math.PI/180;this.subject.root.scale.setScalar(settings.scale*previewModelScale(asset));}
   if(resetView&&settings.mode!=='map')this.fit();this.interactive=true;
  }
  fit(){

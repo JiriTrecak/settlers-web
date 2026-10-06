@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {Mesh,MeshStandardMaterial,Texture} from 'three';
 import {content} from '../../src/content/builtin';
 const d=content.get('building.ants.sanctuary'),asset=content.asset(d.asset);
-it('declares sanctuary revival behavior',()=>{expect(d.behaviors.revival?.workTicks).toBe(400);});
+it('declares sanctuary revival behavior',()=>{expect(d.behaviors.revival?.workTicks).toBe(1200);});
 // The sanctuary still ships the missing-model placeholder; model checks resume once a real GLB is published.
 it.skipIf(asset.file!.includes('placeholder'))('loads the sanctuary model with a separately recolorable leaf canopy',async()=>{
  const bytes=readFileSync(asset.file!);const gltf=await new GLTFLoader().register(()=>({name:'geometry-test-textures',loadTexture:()=>Promise.resolve(new Texture())})).parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');let triangles=0,team=0;

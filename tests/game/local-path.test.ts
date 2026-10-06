@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {game,placed} from './helpers';
+import {compactBodyGame as game,placed} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
 import {localPath} from '../../src/sim/game/localPath';
 

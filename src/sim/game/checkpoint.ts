@@ -43,17 +43,23 @@ export function gameplayCheckpoint(s:GameState,actors:readonly Entity[]):number 
   h.integer(s.tick);h.integer(s.random);h.integer(s.entities.length);h.integer(actors.length);
   h.integer(s.nextId);h.integer(s.nextJob);h.integer(s.nextQueue);h.integer(s.nextFact);
   h.integer(s.nextCast);h.integer(s.nextMissile);h.integer(s.nextShell);h.integer(s.nextSpellVision);
+  // Jobs are a small active-work set, not a traversal of terrain or resource entities.
+  for (const job of s.jobs) if (job.type === 'harvest') {
+    h.integer(job.id); h.integer(job.worker); h.integer(job.source); h.integer(job.target);
+    h.text(job.phase); h.integer(job.arrivedTick); h.integer(job.progress); h.integer(job.amount);
+  }
   h.integer(s.jobs.length);h.integer(s.corpses.length);h.integer(s.missiles.length);h.integer(s.shells.length);
   h.integer(s.spellInstances.length);h.integer(s.spellDeliveries.length);h.integer(s.spellVisions.length);
   h.integer(s.spellLifecycleReactions.length);h.integer(s.spellCombatEvents.length);h.integer(s.clearedCamps.length);
   h.stock(s.accounting.produced);h.stock(s.accounting.consumed);h.stock(s.accounting.lost);
+  for(const owner of Object.keys(s.wallets).sort()){h.text(owner);h.stock(s.wallets[owner]);}
   h.stock(s.objectives);h.text(s.outcome?.winner);h.integer(s.outcome?.defeated.length);
   for(const owner of s.outcome?.defeated??[])h.text(owner);
   const stride=Math.max(1,Math.ceil(actors.length/CHECKPOINT_ACTORS));
   for(let i=checkpointPhase(s.tick)%stride;i<actors.length;i+=stride){
     const e=actors[i]!,u=e.unit,p=e.production,a=e.abilities,order=u?.order;
     h.integer(e.id);h.text(e.definition);h.text(e.owner);h.text(e.surface);
-    h.integer(e.x);h.integer(e.y);h.integer(u?.position?.x);h.integer(u?.position?.y);
+    h.integer(e.x*1000);h.integer(e.y*1000);h.integer(u?.position?.x);h.integer(u?.position?.y);
     h.integer(e.hp);h.stock(e.inventory);h.integer(e.construction?.progress);
     h.integer(e.resource?.amount);h.integer(e.progression?.experience);
     h.integer(u?.target);h.integer(u?.goal);h.integer(u?.cooldown);h.integer(u?.contained);
@@ -65,6 +71,8 @@ export function gameplayCheckpoint(s:GameState,actors:readonly Entity[]):number 
     h.integer(p?.queue.length);h.integer(p?.queue[0]?.id);h.text(p?.queue[0]?.definition);
     h.integer(p?.active?.progress);h.integer(p?.produced);
     h.integer(a?.mana);h.integer(a?.pending?.id);h.integer(a?.pending?.target);h.integer(a?.pending?.releaseTick);
+    h.integer(e.revival?.queue.length);
+    for(const q of e.revival?.queue??[]){h.integer(q.id);h.integer(q.hero);h.integer(q.level);h.integer(q.progress);}
     h.integer(e.spellStatuses?.length);h.integer(e.upgrade?.progress);
   }
   return h.value>>>0;

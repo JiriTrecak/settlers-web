@@ -107,8 +107,8 @@ export class SimulationRuntime {
    for(const receipt of this.world.commandReceipts)if(receipt.player===this.me&&receipt.action.type==='learnAbility')this.hooks.learned?.();
    if(!this.options.remote)for(const slot of this.match.slots){
     if(slot.kind!=='ai'||this.greeted.has(slot.player))continue;
-    const game=this.world.settlement,hall=game.context.get(game.state.objectives[slotOwner(slot.player)]),max=hall&&game.registry.get(hall.definition).body?.maxHp;
-    if((hall&&max&&hall.hp!==null&&hall.hp<=max*.15)||game.isDefeated(slotOwner(slot.player))){this.greeted.add(slot.player);this.hooks.chat?.({name:slot.name??`Player ${slot.player+1}`,player:slot.player,text:'gg'});}
+    const game=this.world.settlement;
+    if(game.isDefeated(slotOwner(slot.player))){this.greeted.add(slot.player);this.hooks.chat?.({name:slot.name??`Player ${slot.player+1}`,player:slot.player,text:'gg'});}
    }
    if(this.options.player===null)this.income.record(next,this.world.settlement.economy.deliveries);
    this.timings.checksum=0;

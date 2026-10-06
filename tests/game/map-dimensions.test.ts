@@ -5,8 +5,8 @@ import {HeightField,encodeHeight,decodeHeight} from '../../src/shared/map/height
 import {slots,run} from './helpers';
 it('runs a 512 map alongside a 256 map with independent path, fog and snapshot strides',()=>{
  const small=new Game(emptyUtcMap(),slots);
- const map={...emptyUtcMap(),size:512 as const,playerStarts:emptyUtcMap().playerStarts.map((p,i)=>({...p,x:i?38:400,z:i?38:400}))};
- const large=new Game(map,slots),a=large.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.warrior')!;
+ const map={...emptyUtcMap(),size:512 as const,playerStarts:emptyUtcMap().playerStarts.map((p,i)=>({...p,x:i?37.5:401.5,z:i?37.5:401.5}))};
+ const large=new Game(map,slots),a=large.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.marshal')!;
  expect(large.spatial.terrain.length).toBe(512**2);expect(small.spatial.terrain.length).toBe(256**2);
  expect(large.command('player.1',{type:'move',actors:[a.id],destination:{x:425,y:417}}).accepted).toBe(true);
  run(large,1500);expect(a.x).toBe(425);expect(a.y).toBe(417);

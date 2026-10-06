@@ -77,11 +77,12 @@ export function editorTools(hub: EditorHub) {
     editor_spawn: createTool({
       id: "editor_spawn",
       description:
-        "Place or move a player spawn point in the loaded map, validating dry level terrain and separation.",
+        "Place, move or rotate a player start. Hall and opening formation rotate together in 90-degree steps; validates grid, dry level terrain and separation.",
       inputSchema: z.object({
+        rotation: z.union([z.literal(0),z.literal(90),z.literal(180),z.literal(270)]).optional(),
         player: z.number().int().min(1).max(8),
-        x: z.number().int().min(8).max(503),
-        z: z.number().int().min(8).max(503),
+        x: z.number().finite().min(8).max(2047),
+        z: z.number().finite().min(8).max(2047),
       }),
       execute: async (input) => call("setSpawnPoint", input),
     }),
@@ -459,7 +460,7 @@ export function editorTools(hub: EditorHub) {
     editor_screenshot: createTool({
       id: "editor_screenshot",
       description:
-        "Screenshot the live editor canvas. Omit args for the current view. Optional x/z, zoom (ortho 6–180), yaw/pitch in degrees, iso, or gameCam. Pose is restored after the shot unless keep=true. Returns an image.",
+        "Screenshot the live editor canvas. Omit args for the current view. Optional x/z, zoom (orthographic half-height; up to 75% of map size), yaw/pitch in degrees, iso, or gameCam. Pose is restored after the shot unless keep=true. Returns an image.",
       inputSchema: z.object({
         inspection:inspectionShotSchema.optional().describe("World-space eye/target and FOV for ground-level environment inspection. Capture-only; editor camera is unchanged."),
         x: cellX.optional().describe("Look-at cell X. Omit for current view."),
@@ -470,7 +471,7 @@ export function editorTools(hub: EditorHub) {
         zoom: z
           .number()
           .optional()
-          .describe("Ortho half-height in cells (6–180). Ignored in Gamecam."),
+          .describe("Orthographic half-height in world units; up to 75% of map size. Set gameCam=false for an overview; ignored in Gamecam."),
         yaw: z
           .number()
           .optional()
@@ -479,7 +480,7 @@ export function editorTools(hub: EditorHub) {
         pitch: z
           .number()
           .optional()
-          .describe("Degrees down from the horizon. Iso ≈ 35, Gamecam 45."),
+          .describe("Degrees down from the horizon. Iso ≈ 35, Gamecam 56."),
         iso: z
           .boolean()
           .optional()
@@ -490,7 +491,7 @@ export function editorTools(hub: EditorHub) {
           .max(1.5)
           .optional()
           .describe(
-            "Perspective distance relative to the default Play camera (1). 1.5 is maximum zoom out; .27 is closest.",
+            "Perspective distance relative to the default Play camera (1). 1.5 is maximum zoom out; closest distance is 52 world units. Small maps may limit zoom out.",
           ),
         gameCam: z
           .boolean()

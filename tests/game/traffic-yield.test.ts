@@ -1,5 +1,5 @@
 import {expect,it,vi} from 'vitest';
-import {originalScaleGame as game,placed} from './helpers';
+import {compactBodyGame as game,placed} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
 import {TrafficRecoveryTrace} from '../../scripts/bench/traffic-recovery';
 import {trafficRequests} from '../../src/sim/game/trafficRequests';

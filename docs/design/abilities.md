@@ -172,7 +172,7 @@ The first spell uses integer HP/mana and ticks. All new derived fractional modif
 
 New random effects use deterministic streams derived from match seed, cast instance and stable operation ID. Save their state when necessary; visual randomness uses separate streams. Selection sorts by declared metric and entity ID before truncation or random sampling. No wall-clock timeout changes gameplay results.
 
-Declare spatial units in the schema. Lite range is in world units; it is not silently multiplied by model scale. Future caster-relative ranges must explicitly opt into the gameplay unit-scale rule during compilation. Cosmetic attachment sizes may follow model dimensions without affecting range or collision. Canonical hashes use ordinal key ordering, preserved list order, normalized finite numeric values and no locale-dependent sorting.
+Declare spatial units in the schema. Lite range is in world units; it is not silently multiplied by model scale. Future caster-relative ranges must explicitly reference the caster’s declared body dimensions during compilation. Cosmetic attachment sizes may follow model dimensions without affecting range or collision. Canonical hashes use ordinal key ordering, preserved list order, normalized finite numeric values and no locale-dependent sorting.
 
 Compile-time limits bound steps, nesting, target counts, scheduler jobs, summons and status listeners. Queries require explicit limits. An admitted effect cannot silently lose gameplay work because a frame is slow. Reserve required runtime capacity before committing resources, or reject deterministically. Reaction hooks enqueue bounded next-tick work with a cause chain and depth limit; no same-tick recursive on-hit loops. Quality settings may cull cosmetics only.
 

@@ -14,8 +14,8 @@ it('publishes the measured neutral deposit within its gameplay footprint and bud
  expect(gltf.accessors[p.indices].count/3).toBeLessThanOrEqual(10000);
  const def=content.get('building.neutral.amber-mine');
  expect(position.min[1]).toBeCloseTo(0,4);
- expect(position.max[0]-position.min[0]).toBeLessThan(def.footprint!.width);
- expect(position.max[2]-position.min[2]).toBeLessThan(def.footprint!.depth);
+ expect((position.max[0]-position.min[0])*(content.asset(def.asset).scale??1)*(def.modelScale??1)).toBeLessThan(def.footprint!.width);
+ expect((position.max[2]-position.min[2])*(content.asset(def.asset).scale??1)*(def.modelScale??1)).toBeLessThan(def.footprint!.depth);
  expect(manifest.bindings.render.map((r:any)=>r.id)).toContain(def.asset);
  expect(content.asset(def.icon!).image).toBeDefined();
 });

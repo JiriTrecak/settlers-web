@@ -39,7 +39,7 @@ export class Mission {
       stock:(rawOwner,rawItem)=>{
         const owner=ownerSchema.parse(rawOwner),item=string(rawItem),d=g.registry.find(item);
         if(!d||d.kind!=='item'||!d.currency)throw new Error('Stock requires an economy currency item');
-        return g.entities.filter(e=>e.owner===owner&&alive(e)).reduce((sum,e)=>sum+g.economy.available(e,item),0);
+        return g.economy.balance(owner,item);
       },
       alive:id=>{const e=entity(id);return !!e&&alive(e);},
       damage:(id,amount,source)=>{

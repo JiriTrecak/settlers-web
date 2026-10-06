@@ -2,8 +2,9 @@ import {expect,it,vi} from 'vitest';
 import {game,placed} from './helpers';
 
 it('reuses unchanged sight footprints but follows placement, shape and floor identity changes',()=>{
- const g=game([placed('scout','unit.ants.warrior',80,90),{...placed('enemy','building.ants.house',85,90),owner:'player.2'}],s=>{
-  (s.definitions as {id:string;footprint?:{width:number;depth:number}}[]).find(d=>d.id==='building.ants.house')!.footprint={width:7,depth:3};
+ const g=game([placed('scout','unit.ants.warrior',76,90),{...placed('enemy','building.ants.house',85,90),owner:'player.2',position:{x:83.5,y:89.5}}],s=>{
+  (s.definitions as {id:string;footprint?:{width:number;depth:number};entrance?:{x:number;y:number}}[]).find(d=>d.id==='building.ants.house')!.footprint={width:8,depth:4};
+  (s.definitions as {id:string;entrance?:{x:number;y:number}}[]).find(d=>d.id==='building.ants.house')!.entrance={x:.5,y:2.5};
  });
  const e=g.entities.find(e=>e.placement==='enemy')!,s=g.spatial,observer=g.observation;
  observer.update();const footprint=vi.spyOn(s,'footprint');

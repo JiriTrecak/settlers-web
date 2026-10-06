@@ -1,3 +1,6 @@
+import {BUILDING_CELL_SIZE} from '../../shared/spatial/footprint';
+import {content} from '../../content/builtin';
+import {heroSelect} from './heroSelect';
 import { GameScreen } from "../screen/screen";
 import { playableMaps, overviewOf } from "../../shared/map/library";
 import {
@@ -65,7 +68,7 @@ export class SkirmishScreen extends GameScreen {
     const rules = el("div", "skirmish-rules");
     rules.append(
       el("span", "", "VICTORY"),
-      el("p", "", "Destroy rival Mounds. The last surviving side wins."),
+      el("p", "", "Destroy all rival buildings. The last surviving side wins."),
       el("span", "", "OPPONENT"),
       el(
         "p",
@@ -101,10 +104,10 @@ export class SkirmishScreen extends GameScreen {
         mapPreview(selected, human),
       );
       title.textContent = selected.name;
-      meta.textContent = `${overviewOf(selected).size} × ${overviewOf(selected).size} · ${slots.length} players · ${overviewOf(selected).camps} neutral camps`;
-      if (overviewOf(selected).sandbox) meta.textContent = `${overviewOf(selected).size} × ${overviewOf(selected).size} · Single-player testbed`;
+      meta.textContent = `${overviewOf(selected).size / BUILDING_CELL_SIZE} × ${overviewOf(selected).size / BUILDING_CELL_SIZE} C · ${slots.length} players · ${overviewOf(selected).camps} neutral camps`;
+      if (overviewOf(selected).sandbox) meta.textContent = `${overviewOf(selected).size / BUILDING_CELL_SIZE} × ${overviewOf(selected).size / BUILDING_CELL_SIZE} C · Single-player testbed`;
       hint.textContent = overviewOf(selected).sandbox ? "One hero. Full visibility. No opponents." : "Choose your starting position, or set every player to AI to watch the match.";
-      rules.replaceChildren(el("span", "", overviewOf(selected).sandbox ? "TESTBED" : "VICTORY"), el("p", "", overviewOf(selected).sandbox ? "Explore freely. No base, automatic spawns, or victory conditions." : "Destroy rival Mounds. The last surviving side wins."));
+      rules.replaceChildren(el("span", "", overviewOf(selected).sandbox ? "TESTBED" : "VICTORY"), el("p", "", overviewOf(selected).sandbox ? "Explore freely. No base, automatic spawns, or victory conditions." : "Destroy all rival buildings. The last surviving side wins."));
       if (!overviewOf(selected).sandbox) rules.append(el("span", "", "OPPONENT"), el("p", "", "AI builds its economy, leads its hero, and commands its own army."));
       footer.firstElementChild!.textContent = overviewOf(selected).sandbox ? "Local terrain and texture testbed" : "Local match · All map positions are occupied";
       description.textContent =
@@ -116,7 +119,7 @@ export class SkirmishScreen extends GameScreen {
       });
       playerRows.replaceChildren();
       for (const slot of slots) {
-        const row = el("label", "skirmish-player");
+        const row = el("div", "skirmish-player");
         row.style.setProperty("--player-color", playerCss(slot.player));
         const marker = el(
           "span",
@@ -157,7 +160,13 @@ export class SkirmishScreen extends GameScreen {
           );
           refresh();
         };
-        row.append(marker, name, select);
+        const controls=el('div','skirmish-player-controls');controls.append(select);
+        const heroes=content.rules.startingSetup.hero;
+        if(heroes&&!overviewOf(selected).sandbox){
+          slot.hero=heroes.choices.includes(slot.hero??'')?slot.hero:heroes.default;
+          controls.append(heroSelect(heroes,slot.hero!,id=>{slot.hero=id;},`Player ${slot.player+1} starting hero`));
+        }
+        row.append(marker, name, controls);
         playerRows.append(row);
       }
       observer.textContent =
@@ -179,7 +188,7 @@ export class SkirmishScreen extends GameScreen {
         el(
           "small",
           "",
-          `${overviewOf(map).sandbox ? "Single-player testbed" : `${map.players} players`} · ${overviewOf(map).size} × ${overviewOf(map).size}`,
+          `${overviewOf(map).sandbox ? "Single-player testbed" : `${map.players} players`} · ${overviewOf(map).size / BUILDING_CELL_SIZE} × ${overviewOf(map).size / BUILDING_CELL_SIZE} C`,
         ),
       );
       button.append(thumb, name);

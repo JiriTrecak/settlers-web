@@ -1,3 +1,4 @@
+import {placementGeometryError} from '../../shared/spatial/placement';
 import {SimulationProfiler} from '../profiling';
 import {reconcileFlight} from './flight';
 import {controlImmune} from '../abilities/controlPolicy';
@@ -196,6 +197,8 @@ export class GameContext {
   }
   create(p: Placement, complete = true): Entity {
     if(!this.spatial.validPoint(p.position))throw new Error("Placement is not on a declared walk surface");
+    const geometryError = placementGeometryError(this.registry.get(p.definition), p.position, p.rotation);
+    if (geometryError) throw new Error(geometryError);
     const d = this.registry.get(p.definition),
       initial = p.initialState,
       e: Entity = {
@@ -245,6 +248,15 @@ export class GameContext {
     if (d.kind === "item") e.item = { quantity: initial?.quantity ?? 1 };
     if (d.behaviors.research) e.research = {queue: []};
     if (d.body && complete && initial?.health === undefined) e.hp = this.stats(e).maxHp;
+    // Authored starting funds become player property once, when a completed
+    // drop-off is created. Project inventories remain physical paid escrow.
+    if (complete && d.behaviors.storage?.dropoff && e.owner !== 'none') {
+      for (const [item, amount] of Object.entries(e.inventory)) {
+        if (!this.registry.get(item).currency) continue;
+        add(this.state.wallets[e.owner] ??= {}, item, amount);
+        delete e.inventory[item];
+      }
+    }
     this.observationRevision++;
     this.observationEntityChanges.push({type:'add',entity:e});
     this.membershipSnapshot=undefined;
@@ -349,7 +361,7 @@ export class GameContext {
     e.unit.order = null;
     e.unit.route = [];
     e.unit.goal = null;
-    const pos = this.spatial.nearest(at, 12, e.id);
+    const pos = this.spatial.nearest(at, 12, e.id, e);
     if (pos) {
       this.motionRevision++;
       e.x = pos.x;
@@ -389,7 +401,7 @@ export class GameContext {
       if (u.detour && (u.goal !== u.detour.goal || !u.route.length || u.route[0] !== u.detour.waypoint))
         delete u.detour;
       if (u.release) {
-        const p = this.spatial.nearest(u.release, 12, e.id);
+        const p = this.spatial.nearest(u.release, 12, e.id, e);
         if (p) {
           e.x = p.x;
           e.y = p.y;
@@ -426,7 +438,7 @@ export class GameContext {
       try {
         const charge = u.charge?.target !== null && u.charge?.target === u.target && u.charge.expires > this.state.tick
           ? (this.def(e).behaviors.combat?.charge?.speedPermille ?? 1000) : 1000;
-        // Fixed-point motion: scaled speeds (e.g. 7 × unitScale 1.7) must not leave fractional segment progress in snapshots.
+        // Fixed-point motion: fractional authored speeds (e.g. 11.9) must not leave fractional segment progress in snapshots.
         let budget = Math.floor((speed * POSITION_SCALE * this.stats(e).moveSpeedPermille * charge) / 40000000);
         u.position ??= fixed(e);
         if (u.detour) {
@@ -501,9 +513,14 @@ export class GameContext {
               // map-wide terrain corridor. Adjust an occupied destination only
               // on arrival; repair/rejoin nearby or wait without throwing away
               // the long route. Terrain invalidation above still replans it.
+              // Anchor arrival alternatives to the command, not the previous
+              // alternative: repeated body avoidance must not walk the goal
+              // across the map after a fight or crowded formation arrival.
+              const arrival = u.order?.type==='move' && u.target===null ? u.order.destination : desired;
               const target = Math.hypot(desired.x-current.x/1000,desired.y-current.y/1000)<=7
-                ? this.spatial.nearest(desired,3,e.id) : null;
+                ? this.spatial.nearest(arrival,3,e.id,e) : null;
               if(this.beginLocalDetour(e,target,localEligibility()))break;
+              if(this.askIdleAllyToYield(e,current,proposed,occupied))break;
               this.profile.count('Local traffic waits');
               {
                 // Stable yielding lets opposing friendly traffic pass without teleports.
@@ -572,12 +589,47 @@ export class GameContext {
     return true;
   }
 
+  /** A finished formation member can enclose another member's route. Only
+   * truly idle allies yield, and only after ordinary recovery has stalled. */
+  private askIdleAllyToYield(e:Entity,from:FixedPoint,to:FixedPoint,occupied:Set<number>) {
+    const u=e.unit!;
+    if(this.state.tick-(u.lastMovedTick??e.readyTick)<40||u.order?.type!=='move')return false;
+    const waypoint=fixed(this.spatial.point(u.route[0]));
+    const dx=waypoint.x-from.x,dy=waypoint.y-from.y,length=Math.hypot(dx,dy);
+    const reach=Math.min(length,4000*Math.max(1,Math.ceil(this.spatial.dimensions(e).radius)));
+    const ahead=length?{x:from.x+Math.round(dx/length*reach),y:from.y+Math.round(dy/length*reach),...(from.surface?{surface:from.surface}:{})}:to;
+    const blockers:number[]=[];this.spatial.unitSegmentClear(from,ahead,e.id,blockers);
+    for(const id of blockers.sort((a,b)=>a-b)){
+      const ally=this.get(id),idle=ally?.unit;
+      if(!ally||!idle||ally.owner!==e.owner||!this.ready(ally)||idle.order||idle.orderQueue.length||idle.route.length||
+        idle.job||idle.employment||idle.pendingMove||idle.contained||idle.release||idle.garrison||idle.target!==null||idle.attack||
+        ally.abilities?.pending||isStunned(ally,this.registry)||!this.def(ally).behaviors.movement?.speed||
+        itemFlag(ally,this.registry,'rooted')&&!controlImmune(ally,this.registry,'root'))continue;
+      const claims=new Set(occupied);claims.delete(this.spatial.cell(ally));claims.add(this.spatial.cell(e));
+      const separation=(this.spatial.dimensions(e).radius+this.spatial.dimensions(ally).radius)*1000;
+      const ax=ahead.x-from.x,ay=ahead.y-from.y,square=ax*ax+ay*ay;
+      // Do not ask an idle ally to park across the same approach again.
+      const plan=trafficEscape(this,ally,e,claims,p=>{
+        const px=p.x*1000-from.x,py=p.y*1000-from.y,t=square?Math.max(0,Math.min(1,(px*ax+py*ay)/square)):0;
+        return (px-t*ax)**2+(py-t*ay)**2>=separation**2;
+      });
+      if(!plan)continue;
+      idle.position??=fixed(ally);idle.segment=null;idle.goal=plan.waypoint;idle.route=[plan.waypoint];
+      idle.detour={goal:plan.waypoint,waypoint:plan.waypoint,points:plan.points,yielding:{leader:e.id,until:this.state.tick+120}};
+      this.spatial.updateUnitMovement(ally);occupied.add(plan.waypoint);
+      u.retryAt=this.state.tick+6;this.profile.count('Idle ally yields');return true;
+    }
+    return false;
+  }
+
   /** Rejoin the current corridor after a bounded escape around nearby bodies.
    * A distant order must not disable local clearance at the unit's feet. */
   private beginLocalDetour(e:Entity, destination:Point|null, eligible:ReadonlySet<Entity>) {
     const u=e.unit!, current=u.position!;
+    const probeStep=Math.max(1,Math.ceil(this.spatial.dimensions(e).radius));
+    const reach=4*probeStep;
     if (u.goal===null || !u.route.length) return false;
-    const nearbyDestination=destination && Math.hypot(destination.x-current.x/1000,destination.y-current.y/1000)<=4;
+    const nearbyDestination=destination && Math.hypot(destination.x-current.x/1000,destination.y-current.y/1000)<=reach;
     // A parked ally can occupy an intermediate waypoint after this route was
     // planned. Rejoining that point would reproduce the same blockage forever.
     const rejoin=nearbyDestination?0:u.route.findIndex(i=>{
@@ -588,28 +640,28 @@ export class GameContext {
     const next=nearbyDestination||replaceGoal ? destination! : this.spatial.point(u.route[rejoin]), dx=next.x-current.x/1000, dy=next.y-current.y/1000;
     const distance=Math.hypot(dx,dy);
     const reservations=this.localReservations(e,eligible), edge=(this.spatial.size-1)*POSITION_SCALE;
-    const projected={x:current.x/1000+dx/distance*3,y:current.y/1000+dy/distance*3};
+    const projected={x:current.x/1000+dx/distance*3*probeStep,y:current.y/1000+dy/distance*3*probeStep};
     const center={x:Math.round(projected.x),y:Math.round(projected.y)};
-    const candidates=distance<=4 ? [next] : [-1,0,1].flatMap(y=>[-1,0,1].map(x=>({x:center.x+x,y:center.y+y,...(e.surface?{surface:e.surface}:{})})))
+    const candidates=distance<=reach ? [next] : [-1,0,1].flatMap(y=>[-1,0,1].map(x=>({x:center.x+x*probeStep,y:center.y+y*probeStep,...(e.surface?{surface:e.surface}:{})})))
       .sort((a,b)=>(a.x-projected.x)**2+(a.y-projected.y)**2-((b.x-projected.x)**2+(b.y-projected.y)**2)||a.y-b.y||a.x-b.x);
     // Rounding a point on a clear diagonal can move it across a wall corner.
     // Choose a nearby grid anchor with a checked continuation before searching.
-    const usable=(p:Point)=>Math.hypot(p.x-current.x/1000,p.y-current.y/1000)<=4 &&
+    const usable=(p:Point)=>Math.hypot(p.x-current.x/1000,p.y-current.y/1000)<=reach &&
       this.spatial.clearSegment(fixed(p),fixed(next), undefined, e) &&
       this.spatial.clearSegment(fixed(p),fixed(p),reservations, e) && this.spatial.unitSegmentClear(fixed(p),fixed(p),e.id);
     // A packed destination can fill the entire 3×3 projection. Check one
-    // outer ring before giving up; retain the same local radius/search budget.
+    // outer ring before giving up; retain the body-relative radius and node budget.
     const fallback=()=>[-2,-1,0,1,2].flatMap(y=>[-2,-1,0,1,2]
-      .filter(x=>Math.abs(x)===2||Math.abs(y)===2).map(x=>({x:center.x+x,y:center.y+y,...(e.surface?{surface:e.surface}:{})})))
+      .filter(x=>Math.abs(x)===2||Math.abs(y)===2).map(x=>({x:center.x+x*probeStep,y:center.y+y*probeStep,...(e.surface?{surface:e.surface}:{})})))
       .sort((a,b)=>(a.x-projected.x)**2+(a.y-projected.y)**2-((b.x-projected.x)**2+(b.y-projected.y)**2)||a.y-b.y||a.x-b.x)
       .find(usable);
-    const target=candidates.find(usable) ?? (distance>4?fallback():undefined);
+    const target=candidates.find(usable) ?? (distance>reach?fallback():undefined);
     if (!target){this.profile.count('Local no usable anchor');return false;}
     const end=fixed(target);
-    const points=this.spatial.withLocalUnitClearance(current,4250,e.id,unitClear=>{
+    const points=this.spatial.withLocalUnitClearance(current,4250*probeStep,e.id,unitClear=>{
       const clear=this.profile.wrap('Local body sweep',unitClear);
       return this.profile.measure('Local grid expansion',()=>localPath(current,end,(a,b)=>b.x>=0&&b.y>=0&&b.x<=edge&&b.y<=edge&&
-        clear(a,b)&&this.spatial.clearLocalSegment(a,b,reservations,e),this.profile));
+        clear(a,b)&&this.spatial.clearLocalSegment(a,b,reservations,e),this.profile,250*probeStep));
     });
     this.profile.count(points?'Local detours found':'Local searches failed');
     if (!points) return false;
@@ -661,7 +713,10 @@ export class GameContext {
       detour.points.shift();
       if (!detour.points.length) {
         delete u.detour;u.route.shift();
-        if(finishedYield&&u.goal!==null)this.spatial.route(e,this.spatial.point(u.goal),false);
+        if(finishedYield&&u.goal!==null){
+          if(!u.order&&!u.job&&u.goal===detour.waypoint)u.goal=null;
+          else this.spatial.route(e,this.spatial.point(u.goal),false);
+        }
       }
     }
   }

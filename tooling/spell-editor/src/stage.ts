@@ -61,7 +61,7 @@ export class SpellStage{
   const dt=Math.max(0,Math.min(.1,(state.tick-this.lastTick)/40));this.lastTick=state.tick;
   for(const [id,subject]of this.subjects){
    const entity=[...state.entities,...state.corpses??[]].find(e=>e.id===id);subject.root.visible=!!entity&&this.showsEntity(id);if(!entity)continue;
-   subject.root.scale.setScalar(content.rules.unitScale*(entity.appearance?.scale??1));
+   subject.root.scale.setScalar((content.get(entity.definition).modelScale??1)*(content.asset(subject.root.userData.renderAsset).scale??1)*(entity.appearance?.scale??1));
    subject.root.position.set(entity.x,entity.elevation??0,entity.y);subject.root.rotation.y=entity.rotation*Math.PI/180;
    const controls=defaultSubjectControls();controls.owner=entity.owner==='player.2'?1:0;controls.paused=true;
    const pending=entity.abilities?.pending;
@@ -101,7 +101,7 @@ export class SpellStage{
  private updateEffects(tick:number){
   const state=this.state;if(!state)return;
   const origin=(shot:{source:number})=>{const e=state.entities.find(e=>e.id===shot.source),subject=this.subjects.get(shot.source);if(!e||!subject)return;const socket=content.asset(this.renderAsset(e,state)).projectileSocket;return socket?subject.root.getObjectByName(socket)?.getWorldPosition(new Vector3()):undefined;};
-  this.projectiles.update(tick,state.missiles??[],this.field,origin,content.rules.unitScale);this.shells.update(state.shells??[],this.field,tick,origin,content.rules.unitScale);
+  this.projectiles.update(tick,state.missiles??[],this.field,origin);this.shells.update(state.shells??[],this.field,tick,origin);
   this.effects.setAudioFrame(this.renderer.effectAudioView(),!!state.playing,state.speed);
   this.effects.update(tick,id=>{const e=this.state?.entities.find(e=>e.id===id);return e?{x:e.x,y:e.y,height:e.elevation??0}:undefined;},this.projectiles.effectPose,(id,name)=>{const e=state.entities.find(e=>e.id===id),subject=this.subjects.get(id);return e&&subject?resolveEffectSocket(subject.root,content.asset(this.renderAsset(e,state)).sockets,name):undefined;});
  }
@@ -138,7 +138,7 @@ export class SpellStage{
      const latest=this.state&&[...this.state.entities,...this.state.corpses??[]].find(x=>x.id===e.id);
      if(!latest||this.renderAsset(latest,this.state!)!==render){subject.dispose();return;}
      const previous=this.subjects.get(e.id);if(previous){this.concealment.remove(previous.root);previous.dispose();}
-     subject.root.userData.renderAsset=render;subject.root.scale.setScalar(content.rules.unitScale*(latest.appearance?.scale??1));subject.root.position.set(latest.x,latest.elevation??0,latest.y);
+     subject.root.userData.renderAsset=render;subject.root.scale.setScalar((content.get(latest.definition).modelScale??1)*(content.asset(render).scale??1)*(latest.appearance?.scale??1));subject.root.position.set(latest.x,latest.elevation??0,latest.y);
      this.renderer.mountInspectionSubject(subject.root);this.subjects.set(e.id,subject);
     }catch(error){this.onError(error);}finally{if(this.modelJobs.get(e.id)===job)this.modelJobs.delete(e.id);}
    })();this.modelJobs.set(e.id,job);jobs.push(job.promise);

@@ -36,7 +36,7 @@ it('retries occupied terrain and safely leaves a fallen hero after the deadline'
 });
 it('reserves supply and a unit slot, rejects duplicate altar revival, and ignores later supply loss',()=>{
  const f=fixture();die(f);step(f);const supply=colonySupply(f.game.entities,'player.1',f.game.registry);expect(supply.queuedUnits).toBe(1);expect(supply.reserved).toBe(f.game.registry.get(f.c.definition).supplyCost??0);
- const altar=f.game.context.create({id:'altar',definition:'building.ants.sanctuary',owner:'player.1',position:{x:140,y:140},rotation:0});expect(f.game.revival.enqueue(altar,f.c.id)).toMatch(/already returning/);step(f,12);expect(f.c.hp).toBe(500);expect(colonySupply(f.game.entities,'player.1',f.game.registry).queuedUnits).toBe(0);
+ const altar=f.game.context.create({id:'altar',definition:'building.ants.sanctuary',owner:'player.1',position:{x:141.5,y:141.5},rotation:0});expect(f.game.revival.enqueue(altar,f.c.id)).toMatch(/already returning/);step(f,12);expect(f.c.hp).toBe(500);expect(colonySupply(f.game.entities,'player.1',f.game.registry).queuedUnits).toBe(0);
 });
 it('honors the hard unit limit and cancels after ownership changes',()=>{
  const f=fixture();die(f);step(f);const population=f.game.context.populationCandidates();const full=vi.spyOn(f.game.context,'populationCandidates').mockReturnValue([...population,...Array.from({length:f.game.registry.rules.maxUnits},(_,i)=>({...f.c,id:1000+i,fallen:undefined,spellReturn:undefined,hp:500}))]);step(f,15);expect(f.c.hp).toBe(0);full.mockRestore();step(f);expect(f.c.hp).toBe(500);

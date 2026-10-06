@@ -11,9 +11,11 @@ it('transports the actual allied group through lockstep, preserving exclusions, 
  const ability=coreAbilities.abilities.find(a=>a.id==='ability.core.mass-teleport')!;
  const presentation=coreAbilities.presentations.find(p=>p.id===ability.presentation)!;
  const f=createAbilityEncounter(ability,presentation,encounterSettingsSchema.parse({relationship:'ally',targetCount:3,distance:3,targetSpacing:2,mana:1000,targetHealth:400}));
+ // Keep full-size passenger bodies separated inside the group radius.
+ for(const [i,e] of f.game.entities.filter(e=>e.id!==f.caster).entries()){e.x=124;e.y=116+i*4;}
  const passengers=f.game.entities.map(e=>({id:e.id,x:e.x,y:e.y,hp:e.hp}));
  const add=(id:string,owner:'player.1'|'player.2',x:number,y:number)=>f.game.context.create({id,definition:'unit.preview.target',owner,position:{x,y},rotation:0});
- const anchor=add('remote-anchor','player.1',160,120),outsider=add('outside-radius','player.1',134,120),enemy=add('nearby-enemy','player.2',118,120);
+ const anchor=add('remote-anchor','player.1',160,120),outsider=add('outside-radius','player.1',134,120),enemy=add('nearby-enemy','player.2',114,120);
  f.game.observation.update();
  const opts={map:f.game.map,slots:f.game.slots,registry:f.game.registry,seed:42};
  const worlds=[new World(opts),new World(opts)];for(const world of worlds)world.settlement.restore(f.game.snapshot());

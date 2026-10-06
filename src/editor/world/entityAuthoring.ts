@@ -1,3 +1,4 @@
+import {snapPlacement} from '../../shared/spatial/placement';
 import { content } from "../../content/builtin";
 import { expandMap, validatePlacements } from "../../content/map";
 import { CAMP_LOOT, campComposition, compositionMembers } from "../../content/campCompositions";
@@ -30,6 +31,9 @@ export function restoreEntityAuthoring(
 /** Entity authoring is a transaction over authored records, never runtime entity mutation. */
 export function putEntity(map: UtcMap, raw: unknown): UtcMap {
   const p = placementSchema.parse(raw);
+  const definition = content.get(p.definition);
+  if (definition.kind === 'building') p.rotation = Math.round(p.rotation / 90) * 90;
+  p.position = snapPlacement(definition, p.position, p.rotation);
   if (p.id.startsWith("start."))
     throw new Error("Move setup members with the spawn tool");
   const old = map.entities.find((e) => e.id === p.id),
@@ -97,7 +101,7 @@ export function placeCamp(map: UtcMap, stamp: CampStamp): UtcMap {
     }),
     ranged = rest.filter((d) => !melee.includes(d)),
     face = (rotation * Math.PI) / 180,
-    // Rendered bodies read ~1.5× their (already unit-scaled) collision radius; space rings so models don't interpenetrate.
+    // Rendered bodies read ~1.5× their declared collision radius; space rings so models don't interpenetrate.
     body = (d: string) => (content.get(d).dimensions?.radius ?? 0.6) * 1.5,
     widest = Math.max(0, ...rest.map(body)),
     radius = Math.max(2.6, body(leader!) + widest + 0.8),

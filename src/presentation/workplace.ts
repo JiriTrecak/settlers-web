@@ -25,6 +25,6 @@ export function workplaceCard(focus: EntityView | undefined, queue: readonly Tas
     waiting=queue.slice(1);
   }
   if(focus.production)summary=focus.production.status;
-  if(focus.gathering)summary=`${focus.gathering.workers}/${focus.gathering.capacity} workers · ${focus.resource?.amount??0} remaining`;
+  if(focus.gathering)summary=`${focus.gathering.workers} workers · ${focus.gathering.recommendedWorkers} recommended · ${focus.resource?.amount??0} remaining`;
   return {active,waiting,summary};
 }

@@ -28,7 +28,7 @@ it('manual casts issue a normal weapon order, commit once at release, and apply 
  until(f,()=>f.game.state.nextMissile>m.id+1);expect(f.game.state.missiles.find(n=>n.id===m.id+1)?.enhancement).toBeUndefined();expect(f.c.abilities!.mana).toBe(30);
 });
 it('walks to ordinary weapon range without teleporting or introducing a second delivery system',()=>{
- const f=fixture({distance:18});expect(cast(f).accepted).toBe(true);const start=f.c.x,m=shot(f);expect(f.c.x).toBeGreaterThan(start);expect(m.enhancement?.ability).toBe(f.a.id);expect(f.game.state.spellDeliveries).toEqual([]);
+ const f=fixture({distance:28});expect(cast(f).accepted).toBe(true);const start=f.c.x,m=shot(f);expect(f.c.x).toBeGreaterThan(start);expect(m.enhancement?.ability).toBe(f.a.id);expect(f.game.state.spellDeliveries).toEqual([]);
 });
 it('movement and stop interrupt windup without mana or cooldown payment',()=>{
  for(const type of ['move','stop'] as const){const f=fixture();cast(f);until(f,()=>!!f.c.unit?.attack&&!f.c.unit.attack.released);

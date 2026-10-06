@@ -55,7 +55,7 @@ describe("observer score projection", () => {
   it("includes declared Root balances and income without counting undelivered cargo", () => {
     const g = game(), income = new ObserverIncome();
     const mound = g.context.get(g.state.objectives["player.1"])!;
-    mound.inventory["item.root"] = 70;
+    g.state.wallets[mound.owner]["item.root"] = 70;
     worker(g).unit!.cargo = {item: "item.root", amount: 10};
     income.record(1200, [receipt(1200, 10, "item.root")]);
     const row = observerStats(g.state, slots, content, income).players[0];
@@ -72,14 +72,14 @@ describe("observer score projection", () => {
       stored: content.rules.startingSetup.inventory["item.amber"],
       perMinute: 16,
     });
-    hall.inventory["item.amber"] -= 20;
+    g.state.wallets[hall.owner]["item.amber"] -= 20;
     const spent = observerStats(g.state, slots, content, income);
     expect(spent.players[0].resources[0]).toEqual({
       item: "item.amber",
       stored: content.rules.startingSetup.inventory["item.amber"]-20,
       perMinute: 16,
     });
-    hall.inventory["item.amber"] += 20;
+    g.state.wallets[hall.owner]["item.amber"] += 20;
     worker(g).unit!.cargo = { item: "item.amber", amount: 8 };
     expect(
       observerStats(g.state, slots, content, income).players[0].resources[0]
@@ -120,7 +120,7 @@ describe("observer score projection", () => {
       status: "fallen",
     });
     g.context.get(g.state.objectives["player.1"])!.revival = {
-      queue: [{ hero: hero.id, progress: 10 }],
+      queue: [{ id: g.state.nextQueue++, hero: hero.id, level:5, progress: 10 }],
     };
     expect(
       observerStats(g.state, slots, content, income).players[0].heroes[0]
@@ -205,10 +205,10 @@ describe("economy delivery receipts", () => {
     for (const owner of ["player.1", "player.2"]) {
       const hall = g.context.get(g.state.objectives[owner])!;
       expect(totals.get(owner + "/item.amber")).toBe(
-        hall.inventory["item.amber"] - content.rules.startingSetup.inventory["item.amber"],
+        g.state.wallets[hall.owner]["item.amber"] - content.rules.startingSetup.inventory["item.amber"],
       );
       expect(totals.get(owner + "/item.wood")).toBe(
-        hall.inventory["item.wood"] - content.rules.startingSetup.inventory["item.wood"],
+        g.state.wallets[hall.owner]["item.wood"] - content.rules.startingSetup.inventory["item.wood"],
       );
     }
     expect(income.perMinute("player.1", "item.amber")).toBeGreaterThan(0);

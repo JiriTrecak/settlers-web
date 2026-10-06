@@ -6,7 +6,7 @@ import { game, placed, run, worker } from "./helpers";
 function setup(extra: ReturnType<typeof placed>[] = []) {
   const g = game([placed("mound", "building.ants.house", 245, 240), ...extra]);
   const hall = g.context.get(g.state.objectives["player.1"])!;
-  hall.inventory = {"item.amber": 10000, "item.wood": 10000, "item.root": 1000};
+  g.state.wallets[hall.owner] = {"item.amber": 10000, "item.wood": 10000, "item.root": 1000};
   return {g, hall};
 }
 const overlapping = (g: ReturnType<typeof game>, id: number) => {

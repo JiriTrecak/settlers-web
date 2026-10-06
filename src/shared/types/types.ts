@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { idSchema, pointSchema } from "../../content/schema";
+import { idSchema, pointSchema, placementPointSchema } from "../../content/schema";
 export type GridPos = z.infer<typeof pointSchema>;
 const actor = z.number().int().positive();
 const actors = z
@@ -21,6 +21,7 @@ export const actionSchema = z.discriminatedUnion("type", [
   z.object({type:z.literal("cancelRevival"),actor,hero:actor}).strict(),
   z.object({type:z.literal("learnAbility"),actor:z.number().int().positive(),ability:z.string().min(1)}).strict(),
   z.object({type:z.literal("gather"),actors,target:actor,append:z.boolean().optional()}).strict(),
+  z.object({type:z.literal("construct"),actors,target:actor,append:z.boolean().optional()}).strict(),
   z.object({type:z.literal("pickup"),actor,target:actor,append:z.boolean().optional()}).strict(),
   z.object({type:z.literal("dropItem"),actor,slot:z.number().int().min(0).max(11)}).strict(),
   z.object({type:z.literal("useItem"),actor,slot:z.number().int().min(0).max(11)}).strict(),
@@ -51,7 +52,7 @@ export const actionSchema = z.discriminatedUnion("type", [
       type: z.literal("build"),
       actors,
       definition: idSchema,
-      position: pointSchema,
+      position: placementPointSchema,
       rotation: z.number().int().multipleOf(90).optional(),
       append: z.boolean().optional(),
     })

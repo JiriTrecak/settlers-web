@@ -1,214 +1,92 @@
 {
-  "the-amber-watch": {
-    "name": "The Amber Watch",
-    "size": 256,
-    "description": "Chapter I — The Amber Watch. Lead Marshal Rowan and a small patrol along the lantern road. Rally the scattered watch, cross the Lantern Brook, and relieve a neutral ant outpost besieged by Briar raiders. Defeat every siege attacker to win. Rowan must survive. No base building is required.",
-    "starts": [
-      {
-        "player": 1,
-        "x": 36,
-        "z": 219,
-        "setup": "setup.ants",
-        "mainFort": "start.player.1/main-fort"
-      },
-      {
-        "player": 2,
-        "x": 205,
-        "z": 105,
-        "setup": "setup.ants",
-        "mainFort": "start.player.2/main-fort"
-      }
-    ],
-    "camps": 3,
-    "sandbox": false,
-    "mission": {
-      "campaign": "vanguard",
-      "order": 1
-    },
-    "playable": true,
-    "sourceHash": "7efa0444",
-    "image": "the-amber-watch.webp",
-    "custom": false,
-    "generationHash": "69c36e114af488a59bfbae413f26d441bcdb546c78910936246fb4f1089fd9c1"
-  },
-  "crown-marsh-forest": {
-    "name": "Crown Marsh · Forest",
-    "size": 256,
-    "starts": [
-      {
-        "player": 1,
-        "x": 64,
-        "z": 58,
-        "setup": "setup.ants",
-        "mainFort": "start.player.1/main-fort"
-      },
-      {
-        "player": 2,
-        "x": 192,
-        "z": 58,
-        "setup": "setup.ants",
-        "mainFort": "start.player.2/main-fort"
-      },
-      {
-        "player": 3,
-        "x": 64,
-        "z": 198,
-        "setup": "setup.ants",
-        "mainFort": "start.player.3/main-fort"
-      },
-      {
-        "player": 4,
-        "x": 192,
-        "z": 198,
-        "setup": "setup.ants",
-        "mainFort": "start.player.4/main-fort"
-      }
-    ],
-    "camps": 0,
-    "sandbox": false,
-    "playable": true,
-    "sourceHash": "76ad8383",
-    "image": "crown-marsh-forest.webp",
-    "custom": false,
-    "generationHash": "b5e31162b78e885c919f7a7529302a092dfa54f57e2ec5d5f9aaa9a199e4a680"
-  },
-  "crown-marsh-frost": {
-    "name": "Crown Marsh · Frost",
-    "size": 256,
-    "starts": [
-      {
-        "player": 1,
-        "x": 64,
-        "z": 58,
-        "setup": "setup.ants",
-        "mainFort": "start.player.1/main-fort"
-      },
-      {
-        "player": 2,
-        "x": 192,
-        "z": 58,
-        "setup": "setup.ants",
-        "mainFort": "start.player.2/main-fort"
-      },
-      {
-        "player": 3,
-        "x": 64,
-        "z": 198,
-        "setup": "setup.ants",
-        "mainFort": "start.player.3/main-fort"
-      },
-      {
-        "player": 4,
-        "x": 192,
-        "z": 198,
-        "setup": "setup.ants",
-        "mainFort": "start.player.4/main-fort"
-      }
-    ],
-    "camps": 0,
-    "sandbox": false,
-    "playable": true,
-    "sourceHash": "c0ff6773",
-    "image": "crown-marsh-frost.webp",
-    "custom": false,
-    "generationHash": "ccc4b2ce3a545a2c863d551520da85f1cd945bed1fb1d050b7cf52d57a7d48e1"
-  },
-  "heartroot-glade": {
-    "name": "Heartroot Glade",
+  "amberwake-basin": {
+    "name": "Amberwake Basin",
     "size": 512,
-    "description": "Four colonies in a deep pine wood. Neighbours share a root at the edge and another beside a Heartroot giant halfway to the centre; the four richest roots ring the crossroads spring, held by the Rotwood Court.",
+    "description": "Competitive migration playtest: mirrored 1v1 bases, four-node amber sites, opening timber and guarded expansions. Economy and save continuation verified; route pacing and wider opening balance are still being tuned.",
     "starts": [
       {
         "player": 1,
-        "x": 84,
-        "z": 428,
+        "x": 81.5,
+        "z": 425.5,
+        "rotation": 0,
         "setup": "setup.ants",
         "mainFort": "start.player.1/main-fort"
       },
       {
         "player": 2,
-        "x": 84,
-        "z": 84,
+        "x": 429.5,
+        "z": 85.5,
+        "rotation": 180,
         "setup": "setup.ants",
         "mainFort": "start.player.2/main-fort"
-      },
-      {
-        "player": 3,
-        "x": 428,
-        "z": 84,
-        "setup": "setup.ants",
-        "mainFort": "start.player.3/main-fort"
-      },
-      {
-        "player": 4,
-        "x": 428,
-        "z": 428,
-        "setup": "setup.ants",
-        "mainFort": "start.player.4/main-fort"
       }
     ],
-    "camps": 48,
+    "camps": 6,
     "sandbox": false,
     "playable": true,
-    "sourceHash": "8bf73f6e",
-    "image": "heartroot-glade.webp",
+    "sourceHash": "ec3feac7",
+    "image": "amberwake-basin.webp",
     "custom": false,
-    "generationHash": "da98c5e1690e3c74154b3fe46b5fcff280de30d71612a63a61f1e87ffd664e4f"
+    "generationHash": "4dcc4ad4edede775fb6e3d6b45b4030622bfd67c13e06054b2a2d5fe0f7695c8"
   },
-  "oakfall-hollow": {
-    "name": "Oakfall Hollow",
-    "size": 256,
-    "description": "Two dew brooks run from the meres to the ponds beneath the Hollow Oak, a trunk so vast the woods ring it like a hall. Cloverbank's oaks and Capwood's pines hide giants of their own.",
+  "amberwake-frost": {
+    "name": "Amberwake Frost",
+    "size": 512,
+    "description": "Competitive migration playtest: mirrored 1v1 bases, four-node amber sites, opening timber and guarded expansions. Economy and save continuation verified; route pacing and wider opening balance are still being tuned.",
     "starts": [
       {
         "player": 1,
-        "x": 54,
-        "z": 204,
+        "x": 81.5,
+        "z": 425.5,
+        "rotation": 0,
         "setup": "setup.ants",
         "mainFort": "start.player.1/main-fort"
       },
       {
         "player": 2,
-        "x": 202,
-        "z": 52,
+        "x": 429.5,
+        "z": 85.5,
+        "rotation": 180,
         "setup": "setup.ants",
         "mainFort": "start.player.2/main-fort"
       }
     ],
-    "camps": 8,
+    "camps": 6,
     "sandbox": false,
     "playable": true,
-    "sourceHash": "eee745bc",
-    "image": "oakfall-hollow.webp",
+    "sourceHash": "b33449e1",
+    "image": "amberwake-frost.webp",
     "custom": false,
-    "generationHash": "3e4f2ca86607149c781808535ceae970858ed02749ec25b037828cb9430b6497"
+    "generationHash": "eff466da6ff77a89e8b2907d1b7a2c2baa3c1a3b5716b5a48a2ce75053e25b26"
   },
-  "threewater-forest": {
-    "name": "Threewater Forest",
-    "size": 256,
-    "description": "Oldoak and Amberleaf glades face one another across three woodland crossings. A stranded leaf ferry, raised watchpost, spring hollow and waterworn root snags frame clear base sites and winding supply tracks.",
+  "amberwake-wilds": {
+    "name": "Amberwake Wilds",
+    "size": 512,
+    "description": "A two-player woodland showcase on the competitive Amberwake layout. Build on clear colony shelves, scout around the lake, and fight for amber and Root beneath old watches, giant oaks and hollow logs. Four-node sites and mirrored starts follow the competitive foundation; wider balance remains a playtest.",
     "starts": [
       {
         "player": 1,
-        "x": 60,
-        "z": 205,
+        "x": 81.5,
+        "z": 425.5,
+        "rotation": 0,
         "setup": "setup.ants",
         "mainFort": "start.player.1/main-fort"
       },
       {
         "player": 2,
-        "x": 163,
-        "z": 56,
+        "x": 429.5,
+        "z": 85.5,
+        "rotation": 180,
         "setup": "setup.ants",
         "mainFort": "start.player.2/main-fort"
       }
     ],
-    "camps": 0,
+    "camps": 6,
     "sandbox": false,
     "playable": true,
-    "sourceHash": "aa995229",
-    "image": "threewater-forest.webp",
+    "sourceHash": "710c328a",
+    "image": "amberwake-wilds.webp",
     "custom": false,
-    "generationHash": "6cff3e118db13cbda84a31c655b1547fce329b430b81d94fad0f280f6b032c32"
+    "generationHash": "436027243a5ce49000563ae96eeac9c2bf6be4b1ca3540644bf29699a889ce18"
   }
 }

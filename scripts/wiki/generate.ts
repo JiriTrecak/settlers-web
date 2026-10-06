@@ -138,7 +138,7 @@ export async function generate() {
       if (maps.some((m) => m.id === id))
         throw new Error(`Duplicate map slug: ${id}`);
       const mines = map.entities.filter(
-        (e) => registry.get(e.definition).gatheringCapacity,
+        (e) => registry.get(e.definition).harvesting,
       );
       const summary = {
         id,

@@ -22,9 +22,11 @@ export type MatchDebugControls = {
   lookAt(x: number, y: number, distance?: number): void;
   /** Navigation overlay toggles; only polled while the profiler panel is enabled. */
   paths: boolean;
+  worldGrid: boolean;
   walkability: boolean;
   navmesh: boolean;
   onPaths(value: boolean): void;
+  onWorldGrid(value: boolean): void;
   onWalkability(value: boolean): void;
   onNavmesh(value: boolean): void;
 };
@@ -122,6 +124,11 @@ export class PerformanceDebug {
       spec.paths = v;
       spec.onPaths(v);
     });
+    const worldGrid = toggle(" Show world grid", spec.worldGrid, (v) => {
+      spec.worldGrid = v;
+      spec.onWorldGrid(v);
+    });
+    worldGrid.title = "Terrain-following coordinate grid shared with the map editor. Visual only; available in multiplayer too.";
     const walkability = toggle(" Show walkable / blocked cells", spec.walkability, (v) => {
       spec.walkability = v;
       spec.onWalkability(v);
@@ -145,7 +152,7 @@ export class PerformanceDebug {
     const details=toggle(' Detailed simulation timings',this.detailedSimulation,value=>{this.detailedSimulation=value;});
     details.querySelector('input')!.dataset.simulationDetails='';
     details.title='Adds hierarchical instrumentation. Disable for budget measurements.';
-    box.append(reveal, speed, vision, paths, walkability, navmesh, meshStatus, details, hint);
+    box.append(reveal, speed, vision, worldGrid, paths, walkability, navmesh, meshStatus, details, hint);
     this.text?.before(box);
     this.visibility();
   }

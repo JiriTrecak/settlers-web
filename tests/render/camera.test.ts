@@ -1,9 +1,27 @@
 import { describe, expect, it } from "vitest";
 import { OrthographicCamera, PerspectiveCamera, Vector3 } from "three";
-import { MAP_BLOCK, MAP_SIZE } from "../../src/shared";
 import { Camera, GAME_ASPECT, GAME_DISTANCE, GAME_DISTANCE_MAX, GAME_DISTANCE_MIN, GAME_FOV, GAME_PITCH, GAME_YAW, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
+import {BUILDING_CELL_SIZE} from '../../src/shared/spatial/footprint';
 
 describe("iso camera", () => {
+  it('frames 32 building cells at default game distance, with readable infantry and base context',()=>{
+    const camera=new Camera();camera.setGame(true,512);camera.lookAt(256,256);
+    const left=camera.groundAt(-1,0,GAME_ASPECT),right=camera.groundAt(1,0,GAME_ASPECT);
+    expect(Math.hypot(right[0]-left[0],right[1]-left[1])/BUILDING_CELL_SIZE).toBeCloseTo(32,4);
+    const view=new PerspectiveCamera();camera.applyTo(view,1920,1080);view.updateMatrixWorld();
+    const feet=new Vector3(256,0,256).project(view),head=new Vector3(256,4.8,256).project(view);
+    const heightPx=Math.abs(head.y-feet.y)*540;
+    expect(heightPx).toBeGreaterThan(40);expect(heightPx).toBeLessThan(60);
+  });
+  it('retains authored map dimensions through game, free and top-down mode changes',()=>{
+    const cam=new Camera();
+    for(const size of [512,256,1024]){
+      cam.setGame(true,size);cam.setTopDown();cam.pose({zoom:size*.6});
+      expect(cam.maxZoom).toBe(size*.75);expect(cam.zoom).toBe(size*.6);
+      cam.setGame(true);cam.setGame(false);cam.pose({zoom:size*.6});
+      expect(cam.maxZoom).toBe(size*.75);expect(cam.zoom).toBe(size*.6);
+    }
+  });
   it("edge/arrow travel moves toward the corresponding projected ground edge", () => {
     for (const game of [false, true]) {
       for (const yaw of [0, Math.PI / 4, Math.PI / 2]) {
@@ -118,30 +136,59 @@ describe("iso camera", () => {
     expect(cam.yaw).toBe(yaw);
   });
 
-  it("setGame clamps the perspective footprint to half a block past the red", () => {
-    const pad = MAP_BLOCK / 2;
-    const cam = new Camera();
-    cam.lookAt(-80, -80);
-    cam.setGame(true);
-    cam.applyTo(new PerspectiveCamera(), 1280, 720);
-    let minX = Infinity;
-    let minZ = Infinity;
-    for (const ndc of [
-      [-1, -1],
-      [1, -1],
-      [1, 1],
-      [-1, 1],
-    ] as const) {
-      const [x, z] = cam.groundAt(ndc[0], ndc[1], 1280 / 720);
-      minX = Math.min(minX, x);
-      minZ = Math.min(minZ, z);
-      expect(x).toBeGreaterThanOrEqual(-pad - 0.05);
-      expect(z).toBeGreaterThanOrEqual(-pad - 0.05);
-      expect(x).toBeLessThanOrEqual(MAP_SIZE + pad + 0.05);
-      expect(z).toBeLessThanOrEqual(MAP_SIZE + pad + 0.05);
+  it("keeps the minimap footprint north-up, trapezoidal, and equal to the rendered frustum", () => {
+    const cam = new Camera(); cam.setGame(true,512); cam.lookAt(256,256);
+    const rendered = new PerspectiveCamera(); cam.applyTo(rendered,1920,1080); rendered.updateMatrixWorld();
+    const corners=cam.viewGround(1920,1080);
+    const [nearLeft,nearRight,farRight,farLeft]=corners;
+    expect(nearLeft[1]).toBeCloseTo(nearRight[1],8);
+    expect(farLeft[1]).toBeCloseTo(farRight[1],8);
+    expect(farLeft[1]).toBeLessThan(nearLeft[1]);
+    expect(farRight[0]-farLeft[0]).toBeGreaterThan(nearRight[0]-nearLeft[0]);
+    expect(rendered.position.x).toBeCloseTo(cam.targetX,8);
+    const direction=rendered.getWorldDirection(new Vector3());
+    expect(Math.atan2(-direction.y,Math.hypot(direction.x,direction.z))*180/Math.PI).toBeCloseTo(56,8);
+    for (const [i,[x,z]] of corners.entries()) {
+      const ndc=new Vector3(x,0,z).project(rendered);
+      expect(ndc.x).toBeCloseTo([-1,1,1,-1][i],7);
+      expect(ndc.y).toBeCloseTo([-1,-1,1,1][i],7);
     }
-    expect(minX).toBeLessThan(-1);
-    expect(minZ).toBeLessThan(-1);
+  });
+
+  it("keeps every viewport corner over the map at all edges, zooms and aspect ratios", () => {
+    for(const size of [64,256,512]) for(const [w,h] of [[1920,1080],[3440,1440],[900,1200]]) {
+      const cam=new Camera(); cam.setGame(true,size);
+      for(const zoom of [.4,1,1.5]) for(const [x,z] of [[-1000,-1000],[1000,-1000],[1000,1000],[-1000,1000]]) {
+        cam.pose({x,z,gameZoom:zoom});
+        cam.applyTo(new PerspectiveCamera(),w,h);
+        for(const [px,pz] of cam.viewGround(w,h)) {
+          expect(px).toBeGreaterThanOrEqual(-.001); expect(pz).toBeGreaterThanOrEqual(-.001);
+          expect(px).toBeLessThanOrEqual(size-1+.001); expect(pz).toBeLessThanOrEqual(size-1+.001);
+        }
+      }
+    }
+  });
+
+  it("bounds a raised view against lower terrain at the map boundary", () => {
+    const cam=new Camera();cam.setGame(true,512);cam.setTerrain(()=>24);
+    cam.lookAt(10000,-10000);
+    const rendered=new PerspectiveCamera();cam.applyTo(rendered,1920,1080);rendered.updateMatrixWorld();
+    for(const [x,y] of [[-1,-1],[1,-1],[1,1],[-1,1]]) {
+      const a=new Vector3(x,y,-1).unproject(rendered),b=new Vector3(x,y,1).unproject(rendered);
+      const t=-a.y/(b.y-a.y),hit=a.clone().lerp(b,t);
+      expect(hit.x).toBeGreaterThanOrEqual(-.001);expect(hit.z).toBeGreaterThanOrEqual(-.001);
+      expect(hit.x).toBeLessThanOrEqual(511.001);expect(hit.z).toBeLessThanOrEqual(511.001);
+    }
+  });
+
+  it("uses the actual orthographic footprint for the editor minimap", () => {
+    const cam=new Camera();cam.pose({x:100,z:100,zoom:24,yaw:.3});
+    const view=new OrthographicCamera();cam.applyTo(view,1280,720);view.updateMatrixWorld();
+    for(const [i,[x,z]] of cam.viewGround(1280,720).entries()) {
+      const ndc=new Vector3(x,0,z).project(view);
+      expect(ndc.x).toBeCloseTo([-1,1,1,-1][i],7);
+      expect(ndc.y).toBeCloseTo([-1,-1,1,1][i],7);
+    }
   });
 
   it("pose sets look, zoom, and orbit in one shot", () => {

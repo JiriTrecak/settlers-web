@@ -43,7 +43,7 @@ export class EntityDock {
       }
       editor.entityDefinition = this.definition.value;
       const d = content.get(editor.entityDefinition);
-      if (d.behaviors.campDefense || d.gatheringCapacity)
+      if (d.behaviors.campDefense || d.harvesting)
         editor.entityOwner = "none";
       this.sync();
     };
@@ -157,8 +157,8 @@ export class EntityDock {
         this.editor.entityMessage || `${c.theme}\n${members.join(", ")}\nClick to stamp the camp. R rotates its front.`;
       return;
     }
-    if (!p && d.gatheringCapacity) this.editor.entityOwner = "none";
-    this.owner.disabled = !!d.gatheringCapacity;
+    if (!p && d.harvesting) this.editor.entityOwner = "none";
+    this.owner.disabled = !!d.harvesting;
     this.controls.hidden = !p;
     this.scripted.disabled=!this.editor.map.mission;
     this.category.disabled = !!p;

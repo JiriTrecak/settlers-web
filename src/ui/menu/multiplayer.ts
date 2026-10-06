@@ -1,3 +1,5 @@
+import {BUILDING_CELL_SIZE} from '../../shared/spatial/footprint';
+import {heroSelect} from './heroSelect';
 /** Multiplayer discovery and waiting rooms share the skirmish atlas; App owns networking. */
 import type { RoomView } from "../../shared";
 import { authoredMaps } from "../../shared/map/library";
@@ -185,6 +187,8 @@ export class RoomWaitScreen extends GameScreen {
 
   constructor(room: RoomView, private readonly hooks: {
     onStart: () => void;
+    player?: number;
+    onHero?: (hero:string) => void;
     onBack: () => void;
     host: boolean;
     mapName: string;
@@ -212,7 +216,7 @@ export class RoomWaitScreen extends GameScreen {
   setView(room: RoomView): void {
     this.meta.textContent = `${occupied(room)} / ${room.slots.length} players joined${!this.hooks.load&&room.inputDelayMs!=null?` · Input buffer ${room.inputDelayMs} ms`:''}`;
     this.details.show(room.mapId, this.hooks.mapName);
-    paintRoster(this.roster, room);
+    paintRoster(this.roster, room, this.hooks.load?undefined:this.hooks.player, this.hooks.onHero);
     this.footerText.textContent = this.hooks.load && occupied(room) < room.slots.length ? "Waiting for all saved player slots to fill" : room.state === "waiting" ? "Lobby open · Players can join until the match starts" : "Match starting…";
     if (this.startBtn) this.startBtn.disabled = room.state !== "waiting" || (this.hooks.load === true && occupied(room) < room.slots.length);
   }
@@ -232,20 +236,24 @@ class Battlefield {
     const preview = el("div", "skirmish-preview mp-preview");
     preview.append(entry ? mapPreview(entry, null) : el("div", "mp-preview-empty", empty ? "Choose your battlefield" : "Preview unavailable"));
     this.root.replaceChildren(preview, el("p", "skirmish-preview-legend", map ? "◆ Player starting positions" : "UNDER THE CANOPY"), el("h2", "skirmish-map-title", name));
-    if (map) this.root.append(el("p", "skirmish-meta", `${map.size} × ${map.size} · ${map.playerStarts?.length ?? 0} starting positions`));
+    if (map) this.root.append(el("p", "skirmish-meta", `${map.size / BUILDING_CELL_SIZE} × ${map.size / BUILDING_CELL_SIZE} C · ${map.playerStarts?.length ?? 0} starting positions`));
     this.root.append(el("p", "skirmish-description", map?.description || (empty ? "Find a gathering of fellow settlers, or create a new lobby and lead the expedition." : "Build your settlement and claim your place beneath the canopy.")));
   }
 }
 
 function occupied(room: RoomView): number { return room.slots.filter((s) => s.name).length; }
 function joinable(room: RoomView): boolean { return room.state === "waiting" && room.slots.some((s) => !s.name); }
-function paintRoster(root: HTMLElement, room: RoomView): void {
+function paintRoster(root: HTMLElement, room: RoomView, player?:number, onHero?:(hero:string)=>void): void {
   root.replaceChildren(...room.slots.map((slot) => {
     const row = el("div", `skirmish-player ${slot.name ? "" : "mp-open-slot"}`);
     row.style.setProperty("--player-color", playerCss(slot.player));
     const name = el("div", "skirmish-player-name", slot.name || "Open slot");
     name.append(el("small", "", slot.name ? slot.roundTripMs!=null?`Connected · ${slot.roundTripMs} ms RTT`:"Connected" : "Waiting for a player"));
     row.append(el("span", "skirmish-player-marker", String(slot.player + 1)), name);
+    if(slot.name&&room.heroes){
+      const select=heroSelect(room.heroes,slot.hero??room.heroes.default,id=>onHero?.(id),`Player ${slot.player+1} starting hero`);
+      select.disabled=room.state!=='waiting'||slot.player!==player||!onHero;row.append(select);
+    }
     return row;
   }));
 }

@@ -1,9 +1,13 @@
+import {prerequisiteReason} from '../../content/prerequisites';
+import {heroAdmission, heroRoster} from '../../content/heroRoster';
+import {workplaceHead, workplaceQueueSize} from '../../content/workplaceQueue';
+import {revivalTerms} from '../../content/revival';
+import {gatherAssignments} from './population';
 import {discardNavigation, releaseCombat} from './combatIntent';
 import { colonySupply, supplyAdmission, supplyStart } from "./supply";
 import { isStunned } from "./effects";
-import { atPoint, precise } from "./motion";
+import { atPoint, precise, fixed } from "./motion";
 import type { Creation, Owner, Stock } from "../../content/schema";
-import { gathererCount } from "./population";
 import { GameContext } from "./context";
 import { distance2 } from "./spatial";
 import {
@@ -25,18 +29,17 @@ export type ResourceDelivery = {
   amount: number;
 };
 
-/** Hall stores fund work atomically; workers only carry harvests back to a drop-off. */
+type Reservation = { stock: Stock; item: string; amount: number }[];
+
+/** Player wallets fund projects; workers must still physically deliver harvests. */
 export class Economy {
   readonly deliveries: ResourceDelivery[] = [];
   private depositCargo(worker: Entity, store: Entity) {
     const cargo = worker.unit!.cargo;
     if (!cargo) return;
-    // A drop-off validates the physical delivery. Earned currency is credited
-    // to the colony's existing Mound account, not left in a vulnerable outpost.
-    const objective = this.c.get(this.s.objectives[store.owner]);
-    const account = this.c.registry.get(cargo.item).currency && objective && alive(objective)
-      ? objective : store;
-    add(account.inventory, cargo.item, cargo.amount);
+    const stock = this.c.registry.get(cargo.item).currency
+      ? (this.s.wallets[worker.owner] ??= {}) : store.inventory;
+    add(stock, cargo.item, cargo.amount);
     if (this.c.def(store).behaviors.storage?.dropoff)
       this.deliveries.push({
         tick: this.s.tick,
@@ -65,11 +68,17 @@ export class Economy {
     );
   }
   available(e: Entity, item: string): number {
+    if (this.c.registry.get(item).currency) return 0;
     if (e.construction || !this.c.def(e).behaviors.storage?.dropoff) return 0;
-    // A hall is both treasury and trainer. Its queue escrow cannot be spent twice.
+    // Physical production inputs cannot spend the same queue escrow twice.
     const reserved = (e.production?.queue ?? []).reduce((n, q) =>
       n + (this.price(q.definition)[item] ?? 0), 0);
     return Math.max(0, quantity(e.inventory, item) - reserved);
+  }
+  balance(owner: Owner, item: string): number {
+    if (this.c.registry.get(item).currency) return this.s.wallets[owner]?.[item] ?? 0;
+    return this.c.live().filter(e => e.owner === owner)
+      .reduce((sum, e) => sum + this.available(e, item), 0);
   }
   private incoming(id: number, item?: string) {
     return this.s.jobs
@@ -86,7 +95,9 @@ export class Economy {
       ? total(this.price(e.definition))
       : (this.c.def(e).behaviors.storage?.capacity ?? 0);
   }
-  private room(e: Entity) {
+  private room(e: Entity, item?: string) {
+    if (item && this.c.registry.get(item).currency && !e.construction &&
+        this.c.def(e).behaviors.storage?.dropoff) return Number.MAX_SAFE_INTEGER;
     return Math.max(
       0,
       this.capacity(e) - total(e.inventory) - this.incoming(e.id),
@@ -120,12 +131,18 @@ export class Economy {
   reserveBill(
     owner: Owner,
     definition: string,
-  ): { source: Entity; item: string; amount: number }[] | null {
+  ): Reservation | null {
     return this.reserveCost(owner, this.price(definition));
   }
-  reserveCost(owner: Owner, bill: Stock): { source: Entity; item: string; amount: number }[] | null {
-    const entries: { source: Entity; item: string; amount: number }[] = [];
+  reserveCost(owner: Owner, bill: Stock): Reservation | null {
+    const entries: Reservation = [];
     for (const [item, required] of Object.entries(bill)) {
+      if (this.c.registry.get(item).currency) {
+        const stock = this.s.wallets[owner];
+        if ((stock?.[item] ?? 0) < required) return null;
+        if (required) entries.push({stock, item, amount: required});
+        continue;
+      }
       let left = required;
       for (const source of this.c
         .live()
@@ -133,7 +150,7 @@ export class Economy {
         .sort((a, b) => a.id - b.id)) {
         const amount = Math.min(left, this.available(source, item));
         if (amount) {
-          entries.push({ source, item, amount });
+          entries.push({ stock: source.inventory, item, amount });
           left -= amount;
         }
         if (!left) break;
@@ -142,12 +159,20 @@ export class Economy {
     }
     return entries;
   }
+  pay(reserved: Reservation) {
+    for (const r of reserved) add(r.stock, r.item, -r.amount);
+  }
+  /** Tech tasks hold their bill in the task; return it through the same refund path. */
+  refundCost(project: Entity, bill: Stock) {
+    for (const [item, amount] of Object.entries(bill)) add(project.inventory, item, amount);
+    this.refund(project, bill);
+  }
   admitProject(
     project: Entity,
     reserved: NonNullable<ReturnType<Economy["reserveBill"]>>,
   ) {
     for (const r of reserved) {
-      add(r.source.inventory, r.item, -r.amount);
+      add(r.stock, r.item, -r.amount);
       add(project.inventory, r.item, r.amount);
     }
   }
@@ -197,25 +222,22 @@ export class Economy {
       this.findJob(worker.unit?.job ?? null)?.type === "construct";
   }
   /** Explicit orders reserve the builder even while their last harvest is going home. */
-  private constructionOrders(): Set<number> {
-    const claimed = new Set<number>();
+  private constructionOrders() {
+    const occupied = new Set(this.s.jobs.filter(j => j.type === "construct").map(j => j.target));
     for (const worker of this.c.activeUnits()) {
       const u = worker.unit!, order = u.order;
-      for (const pending of u.orderQueue)
-        if (pending.type === "construct") claimed.add(pending.target);
       if (order?.type !== "construct") continue;
       const building = this.c.get(order.target);
-      if (!building?.construction || !alive(building) || building.owner !== worker.owner) {
+      if (!building?.construction || !alive(building) || building.owner !== worker.owner || !this.c.def(worker).behaviors.work?.builds.includes(building.definition)) {
         u.order = null;
         continue;
       }
-      claimed.add(building.id);
-      if (u.job || u.cargo || u.retryAt > this.s.tick || isStunned(worker, this.c.registry)) continue;
+      if (occupied.has(building.id)) continue;
+      if (u.job || this.cargoBlocksConstruction(worker) || u.retryAt > this.s.tick || isStunned(worker, this.c.registry)) continue;
       if (this.missing(building, this.price(building.definition))) continue;
-      if (this.workPoint(building, worker)) this.job("construct", worker, building);
+      if (this.workPoint(building, worker)) { this.job("construct", worker, building); occupied.add(building.id); }
       else u.retryAt = this.s.tick + 40;
     }
-    return claimed;
   }
   private eraseJob(job: Job) {
     const w = this.c.get(job.worker);
@@ -235,40 +257,47 @@ export class Economy {
       // Drop-off, construction and repair happen at any side, as in WC3: the nearest
       // touching cell to the worker approximates the shortest walk. Standing bodies can
       // fill that edge, so the next ring out is still in service range.
-      const origin = precise(worker);
-      return this.c.spatial.routeBatch(worker, () => {
-        for (let ring = 1; ring <= 2; ring++)
-          for (const p of this.c.spatial.perimeter(target, ring).sort((a, b) =>
-            distance2(a, origin) - distance2(b, origin) || a.y - b.y || a.x - b.x))
-            if (this.c.spatial.free(p, worker.id) && this.c.spatial.attackClear(p,target,false) && this.c.spatial.route(worker, p)) return p;
+      const origin = precise(worker), spatial = this.c.spatial;
+      const candidates: Point[] = [];
+      for (let ring = 1; ring <= Math.ceil(this.c.def(worker).dimensions!.radius) + 2; ring++)
+        candidates.push(...spatial.perimeter(target, ring).sort((a, b) =>
+          distance2(a, origin) - distance2(b, origin) || a.y - b.y || a.x - b.x));
+      return spatial.routeBatch(worker, () => {
+        // A work site has many equivalent endpoints. Prefer a directly reachable
+        // side over a closer cell behind parked bodies. Keep the existing batched
+        // router for sites that genuinely require a detour around terrain.
+        const from = fixed(origin);
+        for (const p of candidates)
+          if (spatial.free(p, worker.id) && spatial.attackClear(p,target,false) &&
+              spatial.unitSegmentClear(from,fixed(p),worker.id) && spatial.clearSegment(from,fixed(p),undefined,worker) &&
+              spatial.route(worker,p)) return p;
+        for (const p of candidates)
+          if (spatial.free(p, worker.id) && spatial.attackClear(p,target,false) && spatial.route(worker,p)) return p;
         return null;
       });
     }
-    // Resources are approached from outside their movement disc, not the one-cell trunk.
+    // Expand the existing collision-cell boundary by the actor's body. Keep
+    // routeBatch's cached terrain probes; no new pathfinder or forest scan.
     const footprint = this.c.spatial.collision(target).filter(i => i >= 0),
-      occupied = new Set(footprint),
-      candidates = new Set<number>();
-    for (const i of footprint)
-      for (const delta of [-this.c.spatial.size, -1, 1, this.c.spatial.size]) {
-        const n = i + delta;
-        if (
-          n < 0 ||
-          n >= this.c.spatial.size ** 2 ||
-          Math.abs((n % this.c.spatial.size) - (i % this.c.spatial.size)) > 1 ||
-          occupied.has(n)
-        )
-          continue;
-        if (this.c.spatial.walkable(n)) candidates.add(n);
+      occupied = new Set(footprint), candidates = new Set<number>(), origin = precise(worker),
+      reach = Math.ceil(this.c.def(worker).dimensions!.radius) + 1,
+      size = this.c.spatial.size;
+    for (const i of footprint) {
+      const x = i % size, y = Math.floor(i / size);
+      for (let dy = -reach; dy <= reach; dy++) for (let dx = -reach; dx <= reach; dx++) {
+        if (dx * dx + dy * dy > reach * reach || x + dx < 0 || x + dx >= size || y + dy < 0 || y + dy >= size) continue;
+        const n = (y + dy) * size + x + dx;
+        if (!occupied.has(n) && this.c.spatial.walkable(n)) candidates.add(n);
       }
-    for (const i of [...candidates].sort(
-      (a, b) =>
-        distance2(this.c.spatial.point(a), worker) -
-          distance2(this.c.spatial.point(b), worker) || a - b,
-    )) {
-      const p = this.c.spatial.point(i);
-      if (this.c.spatial.attackClear(p,target,false) && this.c.spatial.route(worker, p)) return p;
     }
-    return null;
+    return this.c.spatial.routeBatch(worker, () => {
+      for (const i of [...candidates].sort((a, b) =>
+        distance2(this.c.spatial.point(a), origin) - distance2(this.c.spatial.point(b), origin) || a - b)) {
+        const p = this.c.spatial.point(i);
+        if (this.c.spatial.attackClear(p,target,false) && this.c.spatial.route(worker, p)) return p;
+      }
+      return null;
+    });
   }
 
   private requestInputs(target: Entity) {
@@ -281,22 +310,10 @@ export class Economy {
     );
     if (total(target.inventory) + missingTotal > this.capacity(target)) return;
     // Reserve a complete bill. Partial funding never starves another process.
-    const entries: { source: Entity; item: string; amount: number }[] = [];
-    for (const [item, n] of Object.entries(this.price(head.definition))) {
-      let left = Math.max(0, n - quantity(target.inventory, item));
-      for (const source of this.c
-        .live()
-        .filter((e) => e.owner === target.owner)
-        .sort((a, b) => a.id - b.id)) {
-        const amount = Math.min(left, this.available(source, item));
-        if (amount) {
-          entries.push({ source, item, amount });
-          left -= amount;
-        }
-        if (!left) break;
-      }
-      if (left) return;
-    }
+    const bill = Object.fromEntries(Object.entries(this.price(head.definition))
+      .map(([item, n]) => [item, Math.max(0, n - quantity(target.inventory, item))]));
+    const entries = this.reserveCost(target.owner, bill);
+    if (!entries) return;
     this.admitProject(target, entries);
   }
   startGathering() {
@@ -334,28 +351,30 @@ export class Economy {
     }
   }
   canAssignGather(w: Entity, resource: Entity): boolean {
-    const capacity = this.c.def(resource).gatheringCapacity;
-    return (
-      capacity === undefined ||
-      gathererCount(this.s, resource.id, w.id, this.c.liveUnits()) < capacity
-    );
+    return alive(resource) && !!resource.resource?.amount && !!this.harvestItem(w, resource);
   }
+
   harvestItem(w: Entity, resource: Entity): string | undefined {
     return this.c.def(w).behaviors.work?.harvests?.find((id) => {
       const c = this.c.registry.get(id).creation;
       return c?.method === "harvest" && c.source === resource.definition;
     });
   }
+  /** Keep cargo on the builder when no completed drop-off survives; otherwise
+   * delivery precedes construction. This allows a loaded worker to rebuild it. */
+  cargoBlocksConstruction(w: Entity): boolean {
+    return !!w.unit?.cargo && !!this.hall(w, w.unit.cargo.item);
+  }
   private hall(w: Entity, item: string): Entity | undefined {
     return this.c
-      .live()
+      .liveBuildings()
       .filter(
         (e) =>
           e.owner === w.owner &&
           !e.construction &&
           this.c.def(e).behaviors.storage?.dropoff &&
           this.legalStore(e, item) &&
-          this.room(e) > 0,
+          this.room(e, item) > 0,
       )
       .sort((a, b) => distance2(a, w) - distance2(b, w) || a.id - b.id)[0];
   }
@@ -366,30 +385,20 @@ export class Economy {
       !this.canAssignGather(w, resource)
     )
       return false;
-    const claimed = this.s.jobs
-      .filter(
-        (j) =>
-          j.type === "harvest" &&
-          j.source === resource.id &&
-          j.phase !== "return",
-      )
-      .reduce(
-        (n, j) =>
-          n + j.amount - (this.c.get(j.worker)?.unit?.cargo?.amount ?? 0),
-        0,
-      );
-    const amount = Math.min(
-      resource.resource.amount - claimed,
-      this.c.def(w).behaviors.work!.carryCapacity,
-      this.room(hall),
-    );
-    // A felled tree is one reserved load. A second worker chooses another tree.
-    if (this.c.def(resource).felling && amount !== resource.resource.amount) return false;
+    const recipe = this.c.registry.get(item).creation!;
+    if (recipe.method !== "harvest") return false;
+    // Waiting workers do not reserve unmined stock. A productive worker claims
+    // only its completed load, atomically, so oversaturation never hides reserves.
+    const amount = Math.min(recipe.amount, this.c.def(w).behaviors.work!.carryCapacity, this.room(hall, item));
     if (amount <= 0 || !this.workPoint(resource, w)) return false;
     this.job("harvest", w, hall, { source: resource.id, item, amount });
     return true;
   }
+
   private gatherOrders() {
+    // One job/actor pass, not one allocation and scan per candidate tree.
+    const assignments = gatherAssignments(this.s, this.c.liveUnits()), counts = new Map<number, number>();
+    for (const source of assignments.values()) counts.set(source, (counts.get(source) ?? 0) + 1);
     for (const w of this.c.activeUnits()) {
       const u = w.unit!,
         order = u.order;
@@ -406,26 +415,22 @@ export class Economy {
         u.order = null;
         continue;
       }
-      const candidates = (this.c.def(origin).gatheringCapacity ? [origin] : this.c.nearbyResources(origin,32))
-        .filter(
-          (e) =>
-            e.definition === origin.definition &&
-            e.resource!.amount > 0 &&
-            (this.c.def(origin).gatheringCapacity
-              ? e.id === origin.id
-              : distance2(e, origin) <= 32 ** 2),
-        )
-        .sort((a, b) =>
-          a.id === origin.id
-            ? -1
-            : b.id === origin.id
-              ? 1
-              : distance2(a, w) - distance2(b, w) || a.id - b.id,
-        );
+      const policy = this.c.def(origin).harvesting!, previous = assignments.get(w.id),
+        radius = policy.searchRadius,
+        load = (e: Entity) => ((counts.get(e.id) ?? 0) - (previous === e.id ? 1 : 0)) / this.c.def(e).harvesting!.activeWorkers;
+      const candidates = (radius ? this.c.nearbyResources(origin, radius) : [origin])
+        .filter(e => e.definition === origin.definition && e.resource!.amount > 0 && distance2(e, origin) <= radius ** 2)
+        .sort((a, b) => load(a) - load(b) || Number(b.id === origin.id) - Number(a.id === origin.id) || distance2(a, w) - distance2(b, w) || a.id - b.id);
       // Failed candidate probes do not mutate stores or jobs. Resolve the same
       // drop-off once for this worker, not again for every nearby forest tree.
       const hall = candidates.length ? this.hall(w, item) : undefined;
-      if (!this.c.spatial.routeBatch(w,()=>candidates.some((r) => this.startHarvest(w, r, item, hall))))
+      if (!this.c.spatial.routeBatch(w, () => candidates.some(r => {
+        if (!this.startHarvest(w, r, item, hall)) return false;
+        if (previous !== undefined) counts.set(previous, (counts.get(previous) ?? 0) - 1);
+        counts.set(r.id, (counts.get(r.id) ?? 0) + 1);
+        u.order = {type: "gather", target: r.id};
+        return true;
+      })))
         if (!candidates.length && u.orderQueue.length) u.order = null;
         else u.retryAt = this.s.tick + 40;
     }
@@ -444,7 +449,7 @@ export class Economy {
       creation = this.c.registry.get(job.item!).creation!;
     if (creation.method !== "harvest") throw new Error("Harvest job needs a harvest recipe");
     if (job.phase === "return") {
-      if (u.cargo && this.legalStore(hall, u.cargo.item) && this.room(hall) + job.amount >= u.cargo.amount) {
+      if (u.cargo && this.legalStore(hall, u.cargo.item) && this.room(hall, u.cargo.item) + job.amount >= u.cargo.amount) {
         this.depositCargo(w, hall);
         this.finishHarvest(job, w);
       } else this.abandon(job);
@@ -458,42 +463,46 @@ export class Economy {
       if (!this.workPoint(hall, w)) this.abandon(job);
       return;
     }
-    if (!resource?.resource?.amount) {
+    if (!resource?.resource?.amount || !alive(resource)) {
       this.abandon(job);
       return;
     }
+    if (job.phase !== "work") return;
     const felling = resource.resource.felling;
-    if (felling) {
-      job.progress++;
-      if (job.progress >= creation.workTicks) job.progress = 0;
-      if (job.progress !== creation.impactTick) return;
-      const hitDamage = Math.max(1, ...(this.s.research[w.owner] ?? []).flatMap(id =>
-        this.c.registry.rules.research[id].effects.filter(e => e.units.includes(w.definition)).map(e => e.treeHitDamage ?? 1)));
-      this.c.resourceChanged(resource);
-      felling.hp = Math.max(0, felling.hp - hitDamage);
+    const speed = felling ? Math.max(1, ...(this.s.research[w.owner] ?? []).flatMap(id =>
+      this.c.registry.rules.research[id].effects.filter(e => e.units.includes(w.definition)).map(e => e.treeWorkRate ?? 1))) : 1;
+    job.progress += speed;
+    const cycle = creation.animationTicks ?? creation.workTicks;
+    if (felling && job.progress % cycle < speed + creation.impactTick! && job.progress % cycle >= creation.impactTick!) {
       felling.lastHitTick = this.s.tick;
-      if (felling.hp > 0) return;
-      felling.fallTick = this.s.tick;
-      const position = precise(w);
-      felling.direction = {x: resource.x - position.x, y: resource.y - position.y};
-    } else {
-      if (++job.progress < creation.workTicks) return;
-      job.progress = 0;
+      this.c.resourceChanged(resource);
     }
+    if (job.progress < creation.workTicks) return;
+    job.progress = 0;
     const amount = Math.min(creation.amount, job.amount - (u.cargo?.amount ?? 0), resource.resource.amount);
     resource.resource.amount -= amount;
     this.c.resourceChanged(resource);
     u.cargo = { item: job.item!, amount: (u.cargo?.amount ?? 0) + amount };
     this.c.event(w.owner, "Harvested", "produced", job.item!, amount);
+    if (felling) {
+      const definition = this.c.def(resource);
+      felling.hp = Math.min(definition.felling!.maxHp, Math.ceil(definition.felling!.maxHp * resource.resource.amount / definition.yield!));
+      if (!resource.resource.amount) {
+        felling.lastHitTick = felling.fallTick = this.s.tick;
+        const position = precise(w);
+        felling.direction = {x: resource.x - position.x, y: resource.y - position.y};
+      }
+    }
     if (!resource.resource.amount) this.c.spatial.refreshAfterRemoval(resource.id);
     if (u.cargo.amount >= job.amount || !resource.resource.amount) {
       job.amount = u.cargo.amount;
       // Goods belong to this worker at the final blow; departure waits for the fall.
-      job.phase = felling ? "fall" : "return";
-      if (!felling && !this.workPoint(hall, w)) this.abandon(job);
+      job.phase = felling && !resource.resource.amount ? "fall" : "return";
+      if (job.phase === "return" && !this.workPoint(hall, w)) this.abandon(job);
     }
   }
   private startWorkplace(b: Entity) {
+    if (b.upgrade) { b.production!.status = "Upgrading"; return; }
     const p = b.production!,
       r = this.c.def(b).behaviors.production!;
     if (p.paused) {
@@ -503,6 +512,7 @@ export class Economy {
       }
       return;
     }
+    if (workplaceHead(b) === "revival") { p.status = "Reviving hero"; return; }
     const t = this.head(b);
     if (!t) {
       p.status = "Idle";
@@ -591,20 +601,7 @@ export class Economy {
       );
     for (const b of buildings.filter((e) => !!e.construction))
       this.requestInputs(b);
-    const claimedConstruction = this.constructionOrders();
-    for (const b of buildings.filter((e) => !!e.construction)) {
-      if (
-        claimedConstruction.has(b.id) ||
-        this.missing(b, this.price(b.definition)) ||
-        this.s.jobs.some((j) => j.target === b.id && j.type === "construct")
-      )
-        continue;
-      for (const w of this.workers(b.owner, true))
-        if (this.workPoint(b, w)) {
-          this.job("construct", w, b);
-          break;
-        }
-    }
+    this.constructionOrders();
     for (const b of buildings.filter(
       (e) =>
         e.production &&
@@ -674,8 +671,33 @@ export class Economy {
     this.finishCycle(b);
     return true;
   }
+  /** Arrival order is saved on the job itself. There is no second mutable queue
+   * on the resource to reconcile after death, interruption, depletion or restore. */
+  private admitHarvesters() {
+    const active = new Map<number, number>(), waiting: Job[] = [];
+    for (const job of this.s.jobs) {
+      if (job.type !== "harvest" || job.source === null) continue;
+      const w = this.c.get(job.worker), source = this.c.get(job.source), hall = this.c.get(job.target);
+      if (!w?.unit || !alive(w) || !hall || !alive(hall) || !source || !alive(source) || !source.resource?.amount) continue;
+      const u = w.unit;
+      if (job.phase === "walk" && !u.route.length && (u.goal === null || this.at(w, this.c.spatial.point(u.goal)))) {
+        job.phase = "wait";
+        job.arrivedTick = this.s.tick;
+      }
+      if (job.phase === "work") active.set(source.id, (active.get(source.id) ?? 0) + 1);
+      else if (job.phase === "wait" && !isStunned(w, this.c.registry)) waiting.push(job);
+    }
+    waiting.sort((a, b) => a.arrivedTick! - b.arrivedTick! || a.id - b.id);
+    for (const job of waiting) {
+      const source = this.c.get(job.source)!, used = active.get(source.id) ?? 0;
+      if (used >= this.c.def(source).harvesting!.activeWorkers) continue;
+      job.phase = "work";
+      active.set(source.id, used + 1);
+    }
+  }
   advance() {
     this.deliveries.length = 0;
+    this.admitHarvesters();
     for (const job of [...this.s.jobs]) {
       if (!this.s.jobs.includes(job)) continue;
       const w = this.c.get(job.worker),
@@ -700,7 +722,7 @@ export class Economy {
         continue;
       }
       if (job.type === "construct") {
-        if (!b.construction) {
+        if (!b.construction || b.owner !== w.owner || !this.c.def(w).behaviors.work?.builds.includes(b.definition)) {
           this.eraseJob(job);
           continue;
         }
@@ -840,7 +862,8 @@ export class Economy {
   /** Nearest free cell to the unit just outside the disc's bounding ring. */
   private regrowthExit(r: Entity, reach: number, cells: ReadonlySet<number>, e: Entity): Point | null {
     const s = this.c.spatial, origin = precise(e);
-    for (let ring = reach + 2; ring <= reach + 5; ring++) {
+    const firstRing = Math.ceil(reach + 0.5 + s.dimensions(e).radius) + 1;
+    for (let ring = firstRing; ring <= firstRing + 3; ring++) {
       const around: Point[] = [];
       for (let dy = -ring; dy <= ring; dy++)
         for (let dx = -ring; dx <= ring; dx += Math.abs(dy) === ring ? 1 : 2 * ring)
@@ -858,7 +881,7 @@ export class Economy {
       !this.c.def(b).behaviors.storage?.dropoff ||
       !this.legalStore(b, cargo.item) ||
       b.owner !== w.owner ||
-      this.room(b) + job.amount < cargo.amount
+      this.room(b, cargo.item) + job.amount < cargo.amount
     ) {
       this.abandon(job);
       return;
@@ -882,14 +905,14 @@ export class Economy {
     if (!cargo || !alive(w) || w.unit!.job || this.s.tick < w.unit!.retryAt)
       return;
     const stores = this.c
-      .live()
+      .liveBuildings()
       .filter(
         (e) =>
           e.owner === w.owner &&
           !e.construction &&
           this.c.def(e).behaviors.storage?.dropoff &&
           this.legalStore(e, cargo.item) &&
-          this.room(e) >= cargo.amount,
+          this.room(e, cargo.item) >= cargo.amount,
       )
       .sort((a, b) => distance2(a, w) - distance2(b, w) || a.id - b.id);
     for (const b of stores)
@@ -901,6 +924,7 @@ export class Economy {
         });
         return;
       }
+    if (!stores.length && w.unit!.order?.type === 'construct') return;
     w.unit!.retryAt = this.s.tick + 40;
     if (w.unit!.pendingMove) {
       w.unit!.order = {
@@ -990,6 +1014,7 @@ export class Economy {
     const paidTasks = [
       ...(e.upgrade ? this.c.def(e).upgrade!.items : []),
       ...(e.research?.queue.flatMap(q => this.c.registry.rules.research[q.id].items) ?? []),
+      ...(e.revival?.queue.flatMap(q=>revivalTerms(this.c.def(e).behaviors.revival!,q.level).items) ?? []),
     ];
     for (const p of paidTasks)
       this.c.event(e.owner, "Unfinished technology lost", "lost", p.item, p.amount);
@@ -1014,7 +1039,11 @@ export class Economy {
       if (w?.unit?.contained === e.id)
         this.c.release(w, this.c.spatial.entrance(e));
     }
-    if (cancel) this.refund(e);
+    if (cancel) {
+      const fraction = e.construction ? this.c.registry.rules.constructionRefundPermille : 1000;
+      const bill = Object.fromEntries(Object.entries(e.inventory).map(([item, amount]) => [item, Math.floor(amount * fraction / 1000)]));
+      this.refund(e, bill);
+    }
     const inventory = { ...e.inventory };
     this.c.remove(e);
     this.c.spatial.refreshAfterRemoval(e.id);
@@ -1022,7 +1051,7 @@ export class Economy {
       if (amount)
         this.c.event(
           e.owner,
-          cancel ? "Refund has no available hall" : "Stored resources lost",
+          cancel ? "Unrefunded project resources" : "Stored resources lost",
           "lost",
           item,
           amount,
@@ -1038,7 +1067,7 @@ export class Economy {
   }
   private refund(e: Entity, bill: Stock = e.inventory) {
     const halls = this.c
-      .live()
+      .liveBuildings()
       .filter(
         (h) =>
           h.id !== e.id &&
@@ -1049,9 +1078,13 @@ export class Economy {
       .sort((a, b) => a.id - b.id);
     for (const [item, n] of Object.entries(bill)) {
       let left = Math.min(n, quantity(e.inventory, item));
+      if (this.c.registry.get(item).currency) {
+        add(this.s.wallets[e.owner] ??= {}, item, left);
+        add(e.inventory, item, -left);
+        continue;
+      }
       for (const h of halls) {
-        const treasury = h.id === this.s.objectives[e.owner] && this.c.registry.get(item).currency;
-        if (!treasury && !this.legalStore(h, item)) continue;
+        if (!this.legalStore(h, item)) continue;
         const amount = Math.min(left, this.room(h));
         add(h.inventory, item, amount);
         add(e.inventory, item, -amount);
@@ -1064,6 +1097,11 @@ export class Economy {
     // Every queue entry owns its whole bill. Cancelling any slot returns exactly
     // that bill; starting the next unit cannot silently charge it again.
     if (supplyAdmission(colonySupply(this.c.populationCandidates(), b.owner, this.c.registry), this.c.registry.get(definition).supplyCost!)) return null;
+    const policy = this.c.def(b).behaviors.production;
+    if (!b.production || b.construction || policy?.mode !== 'queued' || !policy.outputs.includes(definition) ||
+        workplaceQueueSize(b) >= policy.queueCapacity! ||
+        prerequisiteReason(this.c.registry.get(definition), b.owner, this.c.populationCandidates(), this.c.registry) ||
+        heroAdmission(this.c.registry.get(definition), heroRoster(this.c.populationCandidates(), b.owner, this.c.registry))) return null;
     const reservation = this.reserveBill(b.owner, definition);
     if (!reservation) return null;
     this.admitProject(b, reservation);

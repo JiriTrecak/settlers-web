@@ -2,25 +2,34 @@ import {viewRotation,type ClosePose} from './unitCamera';
 /**
  * Look-at on the XZ plane.
  * Editor free-cam is ortho and can orbit. Gamecam / play is WC3-style perspective:
- * 32° FoV, 45° pitch, -45° yaw, terrain-following distance zoom, pan only, view half a block past the red.
+ * North-up, 56° downward pitch, terrain-following distance zoom and footprint bounds.
  * `rev` is the view epoch — any widget that mirrors the camera keys off it.
  */
 import { OrthographicCamera, PerspectiveCamera, Quaternion, Vector3 } from "three";
-import { MAP_BLOCK, MAP_SIZE } from "../../shared";
+import { MAP_SIZE } from "../../shared";
+import { BUILDING_CELL_SIZE } from "../../shared/spatial/footprint";
 
 /** True-iso yaw / pitch. Preview snapshots and the editor free-cam use this pair. */
 export const ISO_YAW = Math.PI / 4;
 export const ISO_PITCH = Math.atan(1 / Math.sqrt(2));
-/** Lower RTS viewing angle reveals more of the landscape behind the foreground. */
-export const GAME_YAW = -Math.PI / 4;
-export const GAME_PITCH = (45 * Math.PI) / 180;
-/** Mild RTS perspective keeps foreground trees readable without wide-angle stretching. */
-export const GAME_FOV = 32;
+/** Warcraft's north-facing view, translated to our +Z-south, Y-up world. */
+export const GAME_YAW = 0;
+/** Classic angle of attack 304°: 56° below the horizontal. */
+export const GAME_PITCH = (56 * Math.PI) / 180;
 export const GAME_ASPECT = 16 / 9;
-/** Play eye ↔ target distance: default and the wheel limits. `gameZoom` is relative to the default. */
-export const GAME_DISTANCE = 52;
-export const GAME_DISTANCE_MIN = 14;
-export const GAME_DISTANCE_MAX = 78;
+/** Warcraft's authored 70° is not a Three.js vertical FOV. Its classic world
+ * viewport uses 70 / sqrt(1 + aspect²); retain that reference lens at 16:9.
+ * Source and viewport differences are documented in camera.md. */
+export const GAME_FOV = 70 / Math.hypot(1, GAME_ASPECT);
+/** Horizontal ground coverage through the focus at the standard RTS aspect.
+ * A 24-C base shelf fits with room for its harvest lanes and nearby approaches.
+ * Define framing in the same cells as gameplay, rather than resizing units to
+ * compensate for an unrelated camera distance. */
+export const GAME_VIEW_WIDTH_C = 32;
+/** Play eye ↔ target distance; `gameZoom` is relative to this calibrated default. */
+export const GAME_DISTANCE = GAME_VIEW_WIDTH_C * BUILDING_CELL_SIZE / (2 * Math.tan(GAME_FOV * Math.PI / 360) * GAME_ASPECT);
+export const GAME_DISTANCE_MIN = 52;
+export const GAME_DISTANCE_MAX = GAME_DISTANCE * 1.5;
 /** Extra view-axis distance so the near-side ground stays in front of the ortho near plane. */
 const SLACK = 32;
 const PITCH_MIN = 0.12;
@@ -28,6 +37,7 @@ const PITCH_MAX = Math.PI / 2 - 0.04;
 const ORBIT = 0.007;
 
 export class Camera {
+  private mapSize=MAP_SIZE;
   private topDown=false;
   get isTopDown(){return this.topDown;}
   /** Exact orthographic overhead editing; focus and zoom survive mode changes. */
@@ -68,7 +78,7 @@ export class Camera {
   maxZoom = 60;
   /** Play leaves this on — orbit is a no-op. Editor clears it. */
   locked = true;
-  /** Play / Gamecam: perspective, distance zoom, view clamped half a block past the red. */
+  /** Play / Gamecam: perspective, distance zoom, complete ground footprint inside the map. */
   game = false;
   /** Bumps on every view mutation. Widgets (minimap) key off this, not field lists. */
   rev = 0;
@@ -91,8 +101,9 @@ export class Camera {
   private readonly rayA = new Vector3();
   private readonly rayB = new Vector3();
 
-  /** Play pose: fixed perspective at the default distance, pan to half a block past the red. */
-  setGame(on: boolean, size = MAP_SIZE): void {
+  /** Play pose: fixed north-up perspective with the full ground view bounded by the map. */
+  setGame(on: boolean, size = this.mapSize): void {
+    this.mapSize=size;
     this.topDown=false;
     this.focusHeight=0;
     this.setClosePose(null);
@@ -200,30 +211,44 @@ export class Camera {
     this.targetZ -= dx * (r[1] - c[1]) + dy * (d[1] - c[1]);
   }
 
-  /** Keep the active footprint inside the red plus half a block (mid-halo). */
+  /** Bound the entire view, not just its focus. A small map or a wide window
+   * can require a closer distance even when the requested zoom is otherwise legal. */
   private clamp(): void {
     if (this.followingUnit || this.bound <= 0) return;
-    const pad = MAP_BLOCK / 2;
-    const lo = -pad;
-    const hi = this.bound + pad;
-    const corners = [
-      this.groundAt(-1, -1, this.lastAspect),
-      this.groundAt(1, -1, this.lastAspect),
-      this.groundAt(1, 1, this.lastAspect),
-      this.groundAt(-1, 1, this.lastAspect),
-    ];
-    let minX = Infinity;
-    let maxX = -Infinity;
-    let minZ = Infinity;
-    let maxZ = -Infinity;
-    for (const [x, z] of corners) {
-      minX = Math.min(minX, x);
-      maxX = Math.max(maxX, x);
-      minZ = Math.min(minZ, z);
-      maxZ = Math.max(maxZ, z);
+    const lo = 0;
+    const hi = this.bound - 1;
+    let corners = this.boundCorners();
+    const extent = () => {
+      const xs = corners.map(p => p[0]), zs = corners.map(p => p[1]);
+      return {minX: Math.min(...xs), maxX: Math.max(...xs), minZ: Math.min(...zs), maxZ: Math.max(...zs)};
+    };
+    let bounds = extent();
+    // Flat-ground coverage scales linearly with distance. Terrain clearance can
+    // add a little height, so repeat after applying the fit and translation.
+    for (let attempt = 0; attempt < 4; attempt++) {
+      const fit = Math.min(1, (hi-lo)/(bounds.maxX-bounds.minX), (hi-lo)/(bounds.maxZ-bounds.minZ));
+      if (fit < 1) {
+        this.distance = Math.max(1, this.distance * fit * .999);
+        corners = this.boundCorners();
+        bounds = extent();
+      }
+      const dx = shift(bounds.minX, bounds.maxX, lo, hi);
+      const dz = shift(bounds.minZ, bounds.maxZ, lo, hi);
+      this.targetX += dx;
+      this.targetZ += dz;
+      if (Math.abs(dx)+Math.abs(dz) < 1e-6 && fit >= 1) break;
+      corners = this.boundCorners();
+      bounds = extent();
     }
-    this.targetX += shift(minX, maxX, lo, hi);
-    this.targetZ += shift(minZ, maxZ, lo, hi);
+  }
+
+  private boundCorners(): [number, number][] {
+    this.applyTo(this.persp, 1024*this.lastAspect, 1024);
+    this.persp.updateMatrixWorld();
+    // A hill beneath the focus must not let the far rays see past lower map
+    // edges. Bound against the lowest visible ground/water plane as well.
+    const plane = Math.min(0, this.waterLevel);
+    return [[-1,-1],[1,-1],[1,1],[-1,1]].map(([x,y])=>this.hitGround(this.persp,x,y,plane));
   }
 
   /** XZ hit of an NDC corner through the active projection. */
@@ -242,17 +267,20 @@ export class Camera {
 
   /** Frustum ∩ ground. Gamecam uses the active perspective lens; free-cam matches the ortho pose. */
   viewGround(width: number, height: number): [number, number][] {
-    this.applyTo(this.persp, width, height);
-    this.persp.updateMatrixWorld();
+    this.lastAspect = Math.max(1,width)/Math.max(1,height);
+    this.clamp();
+    const camera = this.game || this.closePose ? this.persp : this.probe;
+    this.applyTo(camera, width, height);
+    camera.updateMatrixWorld();
     return [
-      this.hitGround(this.persp, -1, -1),
-      this.hitGround(this.persp, 1, -1),
-      this.hitGround(this.persp, 1, 1),
-      this.hitGround(this.persp, -1, 1),
+      this.hitGround(camera, -1, -1),
+      this.hitGround(camera, 1, -1),
+      this.hitGround(camera, 1, 1),
+      this.hitGround(camera, -1, 1),
     ];
   }
 
-  private hitGround(cam: OrthographicCamera | PerspectiveCamera, ndcX: number, ndcY: number): [number, number] {
+  private hitGround(cam: OrthographicCamera | PerspectiveCamera, ndcX: number, ndcY: number, groundPlane?: number): [number, number] {
     const a = this.rayA.set(ndcX, ndcY, -1).unproject(cam);
     const b = this.rayB.set(ndcX, ndcY, 1).unproject(cam);
     const dy = b.y - a.y;
@@ -261,7 +289,7 @@ export class Camera {
       const t=direction.y<-.0001?Math.max(0,(this.closePose.focus.y-a.y)/direction.y):100;
       return [a.x+direction.x*Math.min(100,t),a.z+direction.z*Math.min(100,t)];
     }
-    const planeY = this.game ? cam.position.y - Math.sin(this.pitch) * this.distance : this.focusHeight;
+    const planeY = groundPlane ?? (this.game ? cam.position.y - Math.sin(this.pitch) * this.distance : this.focusHeight);
     const t = Math.abs(dy) < 1e-8 ? 0 : (planeY - a.y) / dy;
     return [a.x + (b.x - a.x) * t, a.z + (b.z - a.z) * t];
   }

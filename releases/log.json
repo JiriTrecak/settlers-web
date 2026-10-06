@@ -2,7 +2,13 @@
   "schemaVersion": 1,
   "unreleased": {
     "added": [
-      "Release notes can include image galleries with captions and a larger keyboard-accessible viewer."
+      "Release notes can include image galleries with captions and a larger keyboard-accessible viewer.",
+      "Match Debug now includes a terrain-following world grid shared with the map editor.",
+      "Choose your starting hero in skirmish and multiplayer setup. Choices persist through saves and restarts; the Marshal is the current available hero.",
+      "Hall tiers now unlock distinct hero roster slots. Sanctuary recruitment and revival share one ordered queue, preserve fallen heroes, and support deterministic save/load.",
+      "Added Amberwake Basin as a competitive 1v1 playtest with four-node amber sites, opening timber, guarded expansions and editable forest scenery; route pacing is still being tuned.",
+      "Amberwake Frost joins Amberwake Basin as a paired two-player playtest, with matching terrain, resource positions and movement collision.",
+      "Amberwake Wilds adds a woodland showcase with giant oaks, ruined watches, hollow logs and living shore vegetation on the new two-player competitive layout."
     ],
     "improved": [
       "Reduced unnecessary collision-index preparation during combat planning while preserving movement and combat behavior.",
@@ -16,9 +22,36 @@
       "Reduced nearby collision and visibility bookkeeping during unit movement while preserving movement and sight rules.",
       "Added a forest-backed campaign selector with ant, beetle and bee crests, Play and Locked states, fading navigation, and a campaign-only dark backdrop.",
       "Reduced simulation spikes from fallen heroes and AI building placement, and reused navigation connectivity when local obstacle edits leave routes connected the same way.",
-      "Reduced temporary simulation allocations and unnecessary AI harvesting searches while preserving combat and harvesting decisions."
+      "Reduced temporary simulation allocations and unnecessary AI harvesting searches while preserving combat and harvesting decisions.",
+      "Earned resources now belong to the player wallet and survive building destruction; cancellations refund directly even without a Hall.",
+      "Buildings now use a shared placement grid with exact footprints and snapped entrances; the editor shows building-cell dimensions and exposes a Grid toggle.",
+      "Unit sizes, movement speeds, weapon reach and starting formations now follow explicit competitive grid measurements; local movement recovery handles larger bodies.",
+      "Amber nodes now serve one miner at a time with waiting queues and no worker cap. Four-node sites target eight workers; trees hold fifty wood and fall only when depleted.",
+      "Competitive construction and training now use defined costs and timings. Foundations pause without a builder and support right-click resumption; cancellation refunds 75%. Colonies can rebuild a lost Hall while another building survives, without losing their wallet.",
+      "Hero revival now uses level-based prices and times, shows paid queue costs, preserves progress through save/load, and lets AI save for fallen veterans.",
+      "Player starts can face any cardinal direction, rotating the Hall and its complete formation together for mirrored map openings.",
+      "Amberwake Basin playtest now has two balanced 45-second approaches, larger construction shelves, and safer first-camp positions.",
+      "The standard RTS camera now frames the new building grid, showing base space and nearby approaches while keeping units readable.",
+      "Retired the old-scale project maps and updated editor and benchmark defaults to Amberwake; browser-saved maps remain recoverable.",
+      "Unreachable routes into enclosed bases are rejected with bounded checks, avoiding expensive full-map searches.",
+      "Computer opponents choose body-clear retreat and rally points and leave base service lanes for larger trainable units.",
+      "Amberwake Wilds now uses large forest masses to shape its routes, with living grass and undergrowth that fade from tree edges into open dirt. The forest-driven meadow recipe is available in the editor foliage list.",
+      "Map selection and multiplayer lobbies now display battlefield dimensions in the same building cells as the editor grid."
     ],
-    "fixed": [],
+    "fixed": [
+      "Building placement now checks units’ full collision bodies, preventing foundations from overlapping units whose centers are just outside the footprint.",
+      "Saves now retain combat pursuit of buildings positioned between navigation cells.",
+      "Calibrated building and resource model sizes to their grid footprints, kept depleted amber previews at the same scale, and reject starting bodies clipping adjacent obstacles.",
+      "Top-down editor zoom retains the current map dimensions when switching camera modes, allowing full overviews of larger maps.",
+      "Units can replan safely beside newly blocked terrain without snapping or getting stranded by grid rounding.",
+      "Movement planning no longer reveals unseen units through destination adjustments; physical collisions still apply.",
+      "Idle allies step aside to let crowded formations finish moving, while Hold Position and busy units remain protected.",
+      "Archers can enter rotated watchtowers with full body clearance, and occupied lookouts restore correctly from saves.",
+      "Hall upgrades preserve navigation caches, avoiding a full forest rebuild when the next tree is harvested.",
+      "Melee reinforcements find clear attack positions around allies, and crowded arrivals stay near the commanded destination instead of drifting away.",
+      "Map validation now rejects overlapping unit bodies across neighboring cells while respecting bridge levels and air units.",
+      "Aligned the game camera north-up with a steeper Warcraft-style view. The minimap now shows a horizontal camera outline, and viewport bounds prevent looking past map edges when panning, zooming or resizing."
+    ],
     "knownIssues": []
   },
   "releases": [

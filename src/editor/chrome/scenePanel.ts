@@ -35,7 +35,7 @@ export class ScenePanel{
   window.addEventListener('keydown',this.onKey,true);
   host.classList.add('authoring-editor');this.left.className='scene-hierarchy pointer-events-auto absolute top-[76px] bottom-[102px] left-4 z-[18] w-[var(--scene-left)] overflow-hidden rounded-xl border border-solid border-zinc-700/70 font-dock shadow-xl';this.right.className='scene-inspector';
   this.left.setAttribute('aria-label','Scene hierarchy');this.right.setAttribute('aria-label','Scene inspector');
-  this.tools=new SceneToolstrip(host,{mode:mode=>this.choose(mode),camera:mode=>{editor.authoringCamera(mode);this.sync();},undo:redo=>this.action(()=>editor.undoLayers(redo)),placement:scenery=>{if(scenery)editor.setAsset(biomeById(editor.map.biome).scenery.default);editor.setTool(scenery?'stamp':'entity');this.changed();this.sync();},mcp,environment});
+  this.tools=new SceneToolstrip(host,{mode:mode=>this.choose(mode),camera:mode=>{editor.authoringCamera(mode);this.sync();},undo:redo=>this.action(()=>editor.undoLayers(redo)),placement:scenery=>{if(scenery)editor.setAsset(biomeById(editor.map.biome).scenery.default);editor.setTool(scenery?'stamp':'entity');this.changed();this.sync();},grid:()=>{editor.setGridMode(editor.gridMode==='none'?'full':'none');this.sync();},mcp,environment});
   host.append(this.left,this.right);this.hierarchy=new SceneHierarchyView(this.left);this.overlay=new ShapeOverlay(host,editor,message=>{this.error=message;this.sync();});this.sync();
  }
  setUtilities(mcp:boolean,environment:boolean){this.tools.utilities(mcp,environment);}
@@ -63,7 +63,7 @@ export class ScenePanel{
   const recipes=assets.filter(a=>a.recipe&&allowed.some(p=>p.id===a.id));
   if(this.editor.tool==='select'&&(selection||this.editor.selectedEntity||this.editor.selectedStamp())&&!this.editor.isPaintingLayer)this.mode='select';
   this.host.dataset.authoringTool=this.mode;
-  const view=this.editor.view();this.tools.sync(this.mode,this.editor.layers.canUndo,this.editor.layers.canRedo,view.gameCam?'game':view.pitch>1.5?'top':'free',this.editor.tool==='stamp');
+  const view=this.editor.view();this.tools.sync(this.mode,this.editor.layers.canUndo,this.editor.layers.canRedo,view.gameCam?'game':view.pitch>1.5?'top':'free',this.editor.tool==='stamp',this.editor.gridMode!=='none');
   const choices=this.mode==='water'?biome.rivers:this.mode==='terrain'?biome.landforms:biome.foliage;
   if(!choices.some(p=>p.id===this.creationRecipe))this.creationRecipe=choices[0]?.id??'';
   const stamp=this.editor.selectedStamp();

@@ -1,7 +1,7 @@
+import {previewModelScale} from '../../src/asset-editor/modelScale';
 import {InspectionSubject,defaultSubjectControls} from '../../src/asset-editor/subject';
 import {resolveEffectSocket} from '../../../src/render/abilities/effectSocket';
 import published from '../../../assets/authoring/published.json';
-import {content} from '../../../src/content/builtin';
 import {assetDefinitionSchema,type AssetDefinition} from '../../../src/shared/authoring/asset';
 import {visibleBounds,frameBounds,inspectionCapture} from './framing';
 import {Vector3,Group,Mesh,MeshStandardMaterial,GridHelper,PlaneGeometry} from 'three';
@@ -31,7 +31,7 @@ export class EffectStage{
   const asset=assetDefinitionSchema.parse(raw);
   this.modelLoading=InspectionSubject.load(asset,`/runtime-assets/${id}/geometry.glb`,1).then(subject=>{
    if(generation!==this.modelGeneration){subject.dispose();return;}
-   this.subject=subject;this.subjectAsset=asset;subject.root.scale.setScalar(content.rules.unitScale);this.renderer.mountInspectionSubject(subject.root);this.sample();this.fit();
+   this.subject=subject;this.subjectAsset=asset;subject.root.scale.setScalar(previewModelScale(asset));this.renderer.mountInspectionSubject(subject.root);this.sample();this.fit();
   }).catch(error=>{if(generation===this.modelGeneration)this.modelId='';throw error;}).finally(()=>{if(generation===this.modelGeneration)this.modelLoading=undefined;});return this.modelLoading;
  }
  private sample(){

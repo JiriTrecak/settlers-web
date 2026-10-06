@@ -244,14 +244,14 @@ describe("hero and tactical decisions", () => {
     world.settlement.context.create({
       id: "sanctuary",
       definition: "building.ants.sanctuary",
-      position: { x: 225, y: 220 },
+      position: { x: 193.5, y: 237.5 },
       rotation: 0,
       owner: "player.1",
     });
     actual.hp = 0;
     world.settlement.economy.remove(actual);
     world.settlement.revival.retain(actual);
-    for (let t = 0; t < 1000; t++) world.tick();
+    for (let t = 0; t < 1600; t++) world.tick();
     expect(
       world.settlement.entities.find((e) => e.id === actual.id)?.hp,
     ).toBeGreaterThan(0);
@@ -371,8 +371,8 @@ describe("disruption and scaling gates", () => {
       ...emptyUtcMap(512),
       playerStarts: Array.from({ length: 8 }, (_, i) => ({
         player: i + 1,
-        x: 48 + (i % 4) * 130,
-        z: 64 + Math.floor(i / 4) * 360,
+        x: 49.5 + (i % 4) * 128,
+        z: 65.5 + Math.floor(i / 4) * 360,
         setup: "setup.ants",
         mainFort: `start.player.${i + 1}/main-fort`,
       })),

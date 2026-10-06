@@ -39,9 +39,12 @@ describe('mode-scoped local saves',()=>{
   expect(()=>validateSaveDestination({...save,player:null},'campaign',entry)).toThrow(/assignment/);
  });
  it('reveals the cinematic set without changing exploration or authoritative state',()=>{
-  const {world}=fixture(true),projection=new PresentationView(),before=world.checksum();
+  const {world}=fixture(true),projection=new PresentationView();
+  // Stage a remote set beyond the current hero sight radius.
+  world.settlement.state.mission!.scene={x:120,y:195};
+  const before=world.checksum();
   const normal=world.view(0),cells=normal.settlement.fog!.cells.slice(),shown=projection.project(world,0,false);
-  expect(shown.settlement.fog!.cells[195*256+190]).toBe(2);
+  expect(shown.settlement.fog!.cells[195*256+120]).toBe(2);
   expect(shown.settlement.fog!.cells).not.toEqual(cells);
   expect(world.view(0).settlement.fog!.cells).toEqual(cells);expect(world.checksum()).toBe(before);
   world.settlement.state.mission!.scene=null;world.tick();

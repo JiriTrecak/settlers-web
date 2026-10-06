@@ -1,3 +1,4 @@
+import {BUILDING_CELL_SIZE} from '../../shared/spatial/footprint';
 import {useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {createRoot,type Root} from 'react-dom/client';
 import {useTree} from '@headless-tree/react';
@@ -51,7 +52,7 @@ function SceneHierarchy(props:Props){
  },[selected,items,virtualizer]);
  return <div className="editor-theme flex h-full min-h-0 flex-col bg-background text-foreground [&_*]:box-border">
   <header className="shrink-0 border-0 border-b border-solid border-border p-3">
-   <div className="flex items-center justify-between gap-2"><span className="text-sm font-semibold">Scene</span><span className="text-[10px] tabular-nums text-muted-foreground">{props.size} × {props.size}</span></div>
+   <div className="flex items-center justify-between gap-2"><span className="text-sm font-semibold">Scene</span><span className="text-[10px] tabular-nums text-muted-foreground">{props.size / BUILDING_CELL_SIZE} × {props.size / BUILDING_CELL_SIZE} C</span></div>
    <div className="mt-0.5 truncate text-[11px] text-muted-foreground">{props.biome}</div>
    <div className="relative mt-3"><Search aria-hidden className="pointer-events-none absolute left-2.5 top-2 size-3.5 text-muted-foreground"/><Input aria-label="Search scene" placeholder="Find layers, objects, IDs…" value={query} onChange={e=>setQuery(e.target.value)} className="pl-8 pr-8"/>{query&&<Button variant="ghost" size="icon-xs" className="absolute right-1 top-1" aria-label="Clear scene search" onClick={()=>setQuery('')}><X className="size-3"/></Button>}</div>
    <div className="mt-2 flex items-center gap-1" aria-label="Scene filter">{(['all','layers','objects'] as const).map(f=><Button key={f} variant={f===filter?'secondary':'ghost'} size="xs" className="flex-1 capitalize" aria-pressed={f===filter} onClick={()=>setFilter(f)}>{f}</Button>)}<Button variant="ghost" size="icon-xs" aria-label="Collapse scene groups" title="Collapse groups" onClick={()=>setExpanded([])}><ChevronsDownUp className="size-3.5"/></Button></div>

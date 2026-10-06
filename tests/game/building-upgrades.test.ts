@@ -12,12 +12,13 @@ const mound = (g: ReturnType<typeof setup>) => g.context.get(g.state.objectives[
 const start = (g: ReturnType<typeof setup>) => g.command("player.1", {type: "upgrade", actor: mound(g).id});
 
 it("pays once, pauses training, preserves identity and damage, and survives save/restore", () => {
-  const g = setup(), m = mound(g), original = structuredClone(m.inventory), id = m.id;
+  const g = setup(), m = mound(g), original = structuredClone(g.state.wallets[m.owner]), id = m.id;
   expect(g.command("player.1",{type:"produce",actor:m.id,definition:"unit.ants.settler"}).accepted).toBe(true);
   m.hp! -= 200;
   run(g, 1);
   expect(start(g).accepted).toBe(true);
-  expect(m.inventory["item.amber"]).toBe(original["item.amber"] - 100);
+  const workerCost = g.registry.get('unit.ants.settler').creation!.items.find(p => p.item === 'item.amber')!.amount;
+  expect(g.state.wallets[m.owner]["item.amber"]).toBe(original["item.amber"] - 100 - workerCost);
   expect(start(g).accepted).toBe(false);
   const count = g.entities.filter(e => e.owner === "player.1" && e.unit).length;
   run(g, 500);
@@ -30,17 +31,17 @@ it("pays once, pauses training, preserves identity and damage, and survives save
   expect(mound(g)).toMatchObject({id, definition: "building.ants.great-mound", hp: 2200});
   expect(m.upgrade).toBeUndefined();
   const complete = setup(); complete.restore(g.snapshot());
-  run(g, 480);
+  run(g, g.registry.get("unit.ants.settler").creation!.workTicks);
   expect(g.entities.filter(e => e.owner === "player.1" && e.unit).length).toBeGreaterThan(count);
 });
 
 it("refunds a canceled upgrade exactly once to the colony account", () => {
-  const g = setup(), m = mound(g), inventory = structuredClone(m.inventory);
+  const g = setup(), m = mound(g), inventory = structuredClone(g.state.wallets[m.owner]);
   expect(start(g).accepted).toBe(true); run(g, 10);
   expect(g.command("player.1", {type: "cancelUpgrade", actor: m.id}).accepted).toBe(true);
-  expect(m.inventory).toEqual(inventory);
+  expect(g.state.wallets[m.owner]).toEqual(inventory);
   expect(g.command("player.1", {type: "cancelUpgrade", actor: m.id}).accepted).toBe(false);
-  expect(m.inventory).toEqual(inventory);
+  expect(g.state.wallets[m.owner]).toEqual(inventory);
   expect(m.definition).toBe("building.ants.fort");
 });
 
@@ -55,17 +56,17 @@ it("rejects impossible saved upgrade targets and completed progress", () => {
 
 it("does not partially pay an unaffordable upgrade or refund a destroyed project", () => {
   const g = setup(), m = mound(g);
-  m.inventory["item.wood"] = 0;
-  const before = structuredClone(m.inventory);
+  g.state.wallets[m.owner]["item.wood"] = 0;
+  const before = structuredClone(g.state.wallets[m.owner]);
   expect(start(g).accepted).toBe(false);
-  expect(m.inventory).toEqual(before);
+  expect(g.state.wallets[m.owner]).toEqual(before);
   expect(m.upgrade).toBeUndefined();
-  m.inventory["item.wood"] = 100;
+  g.state.wallets[m.owner]["item.wood"] = 100;
   expect(start(g).accepted).toBe(true);
   const other = g.entities.find(e => e.owner === "player.2" && e.production)!;
-  const otherStock = structuredClone(other.inventory);
+  const otherStock = structuredClone(g.state.wallets[other.owner]);
   g.economy.remove(m);
   expect(g.context.get(m.id)).toBeUndefined();
-  expect(other.inventory).toEqual(otherStock);
+  expect(g.state.wallets[other.owner]).toEqual(otherStock);
   expect(g.command("player.1", {type: "cancelUpgrade", actor: m.id}).accepted).toBe(false);
 });

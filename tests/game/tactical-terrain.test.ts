@@ -99,9 +99,9 @@ describe('tactical heights',()=>{
 });
 it('shares allied cliff-top vision without granting it to another team',()=>{
  const map={...emptyUtcMap(),waterLevel:0,height:encodeHeight(terrain().samples),playerStarts:[
-  {player:1,x:38,z:38,setup:'setup.ants',mainFort:'start.player.1/main-fort'},
-  {player:2,x:218,z:218,setup:'setup.ants',mainFort:'start.player.2/main-fort'},
-  {player:3,x:38,z:218,setup:'setup.ants',mainFort:'start.player.3/main-fort'}],entities:[
+  {player:1,x:37.5,z:37.5,setup:'setup.ants',mainFort:'start.player.1/main-fort'},
+  {player:2,x:217.5,z:217.5,setup:'setup.ants',mainFort:'start.player.2/main-fort'},
+  {player:3,x:37.5,z:217.5,setup:'setup.ants',mainFort:'start.player.3/main-fort'}],entities:[
   placed('low','unit.ants.archer',108,110),{...placed('ally','unit.ants.warrior',112,116),owner:'player.2' as const},
   {...placed('enemy','unit.ants.warrior',112,110),owner:'player.3' as const}]};
  const g=new Game(map,[{player:0,kind:'human',team:1},{player:1,kind:'human',team:1},{player:2,kind:'human',team:2}]);
@@ -120,7 +120,7 @@ it('keeps remembered trees immutable while visible harvest changes refresh immed
  const original=read(),originalAmount=original.resource!.amount;
  expect(g.view().entities.find(e=>e.id===tree.id)).toMatchObject({inventory:{},job:'Available',resource:{amount:originalAmount}});
  tree.resource!.felling!.hp=9;tree.resource!.felling!.lastHitTick=0;g.observation.update();
- expect(read().resource!.felling!.hp).toBe(9);expect(original.resource!.felling!.hp).toBe(10);
+ expect(read().resource!.felling!.hp).toBe(9);expect(original.resource!.felling!.hp).toBe(50);
  scout.x=80;scout.y=80;scout.unit!.position={x:80000,y:80000};g.observation.update();
  tree.resource!.amount=0;tree.resource!.felling!.hp=0;tree.resource!.felling!.fallTick=0;g.observation.update();
  expect(read().remembered).toBe(true);expect(read().resource!.amount).toBe(originalAmount);expect(read().resource!.felling!.hp).toBe(9);

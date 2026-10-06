@@ -1,8 +1,8 @@
+import {startingUnits} from '../../src/content/startingHero';
 import {describe,it,expect} from 'vitest';
 import {readFileSync} from 'node:fs';
 import sharp from 'sharp';
 import {content} from '../../src/content/builtin';
-import {unitDimensions} from '../../src/content/unitScale';
 import {assetDefinitionSchema} from '../../src/shared/authoring/asset';
 const folder='art/assets/asset.models.buildings.ants-acorn-hall';
 const bytes=readFileSync(folder+'/geometry.glb');
@@ -10,12 +10,12 @@ const jsonLength=bytes.readUInt32LE(12);
 const gltf=JSON.parse(bytes.subarray(20,20+jsonLength).toString());
 describe('Acorn Main Hall',()=>{
  it('replaces both main-building placeholders while keeping the economic and entrance contracts',()=>{
-  for(const id of ['building.ants.fort','building.ants.great-mound']){
+  for(const id of ['building.ants.fort','building.ants.great-mound','building.ants.elder-hall']){
    const hall=content.get(id),asset=content.asset(hall.asset);
    expect(asset.file).toContain('ants-acorn-hall/geometry.glb');
-   expect(hall.footprint).toEqual({width:15,depth:15});expect(hall.entrance).toEqual({x:0,y:9});
+   expect(hall.footprint).toEqual({width:20,depth:20});expect(hall.entrance).toEqual({x:0.5,y:10.5});
    expect(hall.behaviors.storage).toMatchObject({dropoff:true,accepts:['item.wood','item.amber']});
-   expect(hall.behaviors.production).toMatchObject({mode:'queued',outputs:['unit.ants.settler']}); expect(hall.supplyProvided).toBe(12);
+   expect(hall.behaviors.production).toMatchObject({mode:'queued',outputs:['unit.ants.settler']}); expect(hall.supplyProvided).toBe(15);
    expect(content.asset(hall.icon!).image).toContain('ants-acorn-hall/image.png');
   }
  });
@@ -59,9 +59,9 @@ describe('Acorn Main Hall',()=>{
 
 it('keeps the starting company and entrance clear of the enlarged hall footprint',()=>{
  const hall=content.get(content.rules.startingSetup.fort),half=hall.footprint!.depth/2;
- expect(hall.entrance!.y).toBeGreaterThan(half+1);
- for(const unit of content.rules.startingSetup.units){
-  const {radius}=unitDimensions(content.rules.unitScale);
-  expect(unit.offset.y-radius).toBeGreaterThan(half);
+ expect(hall.entrance!.y).toBeGreaterThan(half);
+ for(const unit of startingUnits(content.rules.startingSetup)){
+  const {radius}=content.get(unit.definition).dimensions!;
+  expect(Math.max(Math.abs(unit.offset.x),Math.abs(unit.offset.y))-radius).toBeGreaterThan(half);
  }
 });

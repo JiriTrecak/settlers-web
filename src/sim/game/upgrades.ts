@@ -1,7 +1,7 @@
 import { prerequisiteReason } from "../../content/prerequisites";
 import type { GameContext } from "./context";
 import type { Economy } from "./economy";
-import { add, type Entity } from "./state";
+import type { Entity } from "./state";
 
 /** Paid, in-place transforms. The original entity stays authoritative until completion. */
 export class BuildingUpgrades {
@@ -15,15 +15,13 @@ export class BuildingUpgrades {
     const bill = Object.fromEntries(recipe.items.map(p => [p.item, p.amount]));
     const payment = this.economy.reserveCost(building.owner, bill);
     if (!payment) return "Insufficient resources";
-    for (const p of payment) add(p.source.inventory, p.item, -p.amount);
+    this.economy.pay(payment);
     building.upgrade = {target: recipe.target, progress: 0};
     return null;
   }
   cancel(building: Entity): string | null {
     if (!building.upgrade) return "No upgrade in progress";
-    const account = this.c.get(this.c.state.objectives[building.owner]);
-    if (!account || account.hp === 0) return "No living colony account";
-    for (const p of this.c.def(building).upgrade!.items) add(account.inventory, p.item, p.amount);
+    this.economy.refundCost(building, Object.fromEntries(this.c.def(building).upgrade!.items.map(p => [p.item, p.amount])));
     delete building.upgrade;
     return null;
   }
@@ -37,6 +35,7 @@ export class BuildingUpgrades {
         this.c.event(building.owner, "Building upgrade completed", "consumed", p.item, p.amount);
       building.hp = building.hp! + target.body!.maxHp - old.body!.maxHp;
       building.definition = target.id;
+      this.c.spatial.refreshOccupancyDefinition(building);
       this.c.observationRevision++;
       delete building.upgrade;
       this.c.event(building.owner, `${target.name} completed`);

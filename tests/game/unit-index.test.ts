@@ -130,11 +130,15 @@ it('uses local buckets for idle separation while retaining route choices and rel
 it('waits at a temporarily occupied passage instead of marching around the map edge',()=>{
  const g=game([placed('mover','unit.ants.warrior',100,100),placed('gate','unit.ants.warrior',105,100)]);
  const a=g.entities.find(e=>e.placement==='mover')!,b=g.entities.find(e=>e.placement==='gate')!;
- for(let y=1;y<255;y++)if(y!==100)g.spatial.terrain[y*256+105]=0;
+ // Five navigation cells fit one three-unit body, but not two abreast.
+ for(let y=6;y<250;y++)if(y<98||y>102)g.spatial.terrain[y*256+105]=0;
+ g.spatial.rebuild();
+ // Keep the obstruction intentional: ordinary idle allies may now yield.
+ g.command('player.1',{type:'hold',actors:[b.id]});
  g.command('player.1',{type:'move',actors:[a.id],destination:{x:110,y:100}});
  for(let i=0;i<180;i++){g.tick();expect(a.y).toBe(100);}
  expect(a.x).toBeLessThan(105);
- g.command('player.1',{type:'move',actors:[b.id],destination:{x:108,y:103}});
+ g.command('player.1',{type:'move',actors:[b.id],destination:{x:110,y:104}});
  for(let i=0;i<160;i++)g.tick();
  expect(a.x).toBe(110);expect(a.y).toBe(100);
 });

@@ -41,4 +41,4 @@ The editor's MCP `editor_landscape` tool exposes the same `plateau` and `ramp` o
 
 ## Try it
 
-Open [Threewater Forest](/maps/threewater-forest) in the editor to inspect riverbanks, wooded landforms and its three crossings. Use a local test copy when changing heights or bridge endpoints, then verify movement and fog in gameplay.
+Open [Amberwake Basin](/maps/amberwake-basin) in the editor to inspect riverbanks, wooded landforms and its three crossings. Use a local test copy when changing heights or bridge endpoints, then verify movement and fog in gameplay.

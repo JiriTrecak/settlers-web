@@ -7,7 +7,7 @@ import {resolveDamage} from '../../src/sim/game/damage';
 
 const hunter = 'unit.ants.hunter';
 function duel(researched=false) {
- const g=game([placed('hunter',hunter,205,210), {...placed('target','unit.ants.warrior',211,210),owner:'player.2'}]);
+ const g=game([placed('hunter',hunter,100,100), {...placed('target','unit.ants.warrior',120,100),owner:'player.2'}]);
  const a=g.entities.find(e=>e.placement==='hunter')!,b=g.entities.find(e=>e.placement==='target')!;
  a.rotation=heading(a,b);
  if(researched)g.state.research[a.owner]=['research.ants.driving-spear'];
@@ -30,33 +30,34 @@ it('persists an active charge deterministically and clears it on a new move comm
  const restored=duel().g;restored.restore(g.snapshot());
  run(g,80);run(restored,80);expect(restored.snapshot()).toEqual(g.snapshot());
  const second=duel();run(second.g,2);
- second.g.command(second.a.owner,{type:'move',actors:[second.a.id],destination:{x:200,y:210},attackMove:false});
+ second.g.command(second.a.owner,{type:'move',actors:[second.a.id],destination:{x:95,y:100},attackMove:false});
  run(second.g,1);expect(second.a.unit!.charge?.target).toBeNull();
 });
 it('halves charge cooldown through colony research without enabling point-blank or building charges',()=>{
  const plain=duel(),upgraded=duel(true);run(plain.g,1);run(upgraded.g,1);
  expect(plain.a.unit!.charge!.readyTick-plain.g.state.tick).toBe(319);
  expect(upgraded.a.unit!.charge!.readyTick-upgraded.g.state.tick).toBe(159);
- const g=game([placed('h',hunter,205,210),{...placed('b','building.ants.house',212,210),owner:'player.2'}]);run(g,1);
+ const g=game([placed('h',hunter,100,100),{...placed('b','building.ants.house',112,100),owner:'player.2'}]);run(g,1);
  const a=g.entities.find(e=>e.placement==='h')!,b=g.entities.find(e=>e.placement==='b')!;
  g.command(a.owner,{type:'attack',actors:[a.id],target:b.id,force:false});run(g,3);expect(a.unit!.charge).toBeUndefined();
 });
 it('gates the Barracks Hunter by Great Acorn Hall and trains a new unit without Root',()=>{
- const g=game([placed('supply','building.ants.house',245,245),placed('b','building.ants.barracks',205,210)]);const b=g.entities.find(e=>e.placement==='b')!;
- const mound=g.context.get(g.state.objectives[b.owner])!;mound.inventory={'item.amber':1000,'item.wood':1000};
+ const g=game([placed('supply','building.ants.house',245,245),placed('b','building.ants.barracks',189.5,209.5)]);const b=g.entities.find(e=>e.placement==='b')!;
+ const mound=g.context.get(g.state.objectives[b.owner])!;g.state.wallets[mound.owner]={'item.amber':1000,'item.wood':1000};
  const card=()=>commandCard(g.view(b.owner),[b.id],b.owner,g.registry).find(c=>c.targetDefinition===hunter)!;
  expect(card().enabled).toBe(false);expect(card().reason).toContain('Great Acorn Hall');
  mound.definition='building.ants.great-mound';run(g,1);
  expect(card().enabled).toBe(true);expect(g.command(b.owner,card().immediate!).accepted).toBe(true);
  for(let i=0;i<2000&&!g.entities.some(e=>e.definition===hunter);i++)g.tick();
  expect(g.entities.some(e=>e.definition===hunter)).toBe(true);
- expect(mound.inventory['item.amber']).toBe(810);expect(mound.inventory['item.wood']).toBe(955);
+ expect(g.state.wallets[mound.owner]['item.amber']).toBe(800);expect(g.state.wallets[mound.owner]['item.wood']).toBe(960);
 });
 it('does not spend charge on a blocked approach or a target already in spear range',()=>{
  for(const blocked of [false,true]){
-  const placements=[placed('h',hunter,205,210),{...placed('t','unit.ants.warrior',blocked?211:206,210),owner:'player.2'}];
-  if(blocked)placements.push(placed('wall','building.ants.house',208,210));
+  const placements=[placed('h',hunter,100,100),{...placed('t','unit.ants.warrior',blocked?120:104,100),owner:'player.2'}];
   const g=game(placements),a=g.entities.find(e=>e.placement==='h')!,b=g.entities.find(e=>e.placement==='t')!;
+  if(blocked){g.spatial.terrain[g.spatial.cell({x:110,y:100})]=0;g.spatial.rebuild();}
+  g.command(b.owner,{type:'hold',actors:[b.id]});
   run(g,1);g.command(a.owner,{type:'attack',actors:[a.id],target:b.id,force:false});run(g,1);
   expect(a.unit!.charge).toBeUndefined();
  }

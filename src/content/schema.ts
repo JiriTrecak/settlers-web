@@ -17,6 +17,11 @@ export const pointSchema = z
     surface: surfaceSchema.optional(),
   })
   .strict();
+/** Static foundations may be centered between navigation cells; movement addresses stay integral. */
+export const placementPointSchema = pointSchema.extend({
+  x: z.number().multipleOf(.5).min(0).max(2047),
+  y: z.number().multipleOf(.5).min(0).max(2047),
+});
 const natural = z.number().int().nonnegative();
 const positive = z.number().int().positive();
 export const stockSchema = z.record(idSchema, natural);
@@ -48,6 +53,7 @@ export const creationSchema = z.discriminatedUnion("method", [
       source: idSchema,
       amount: positive.max(32),
       impactTick: positive.optional(),
+      animationTicks: positive.optional(),
       workTicks: work,
     })
     .strict(),
@@ -62,8 +68,8 @@ export const creationSchema = z.discriminatedUnion("method", [
 ]);
 const movement = z
   .object({
-    speed: positive.max(40),
-    walkSpeed: positive.max(40).optional(),
+    speed: z.number().positive().max(40),
+    walkSpeed: z.number().positive().max(40).optional(),
     turnRate: positive.max(3600).default(720),
     idleWander: z.boolean().optional(),
     locomotion: locomotionSchema.optional().describe('Ground by default. Air units ignore ground obstacles and collide only with other air units.'),
@@ -75,7 +81,7 @@ const combat = z
     damage: positive,
     damageType: idSchema,
     targets: z.array(locomotionSchema).min(1).max(2).refine(a=>new Set(a).size===a.length).optional().describe('Allowed target locomotion. Defaults to ground for melee/siege and both for straight projectiles.'),
-    range: z.number().positive().max(64),
+    range: z.number().positive().max(64).describe("Weapon reach beyond body edges, in world units; sight and spell ranges are separate."),
     cooldownTicks: positive,
     attack: z.object({windupTicks: positive.max(120), recoveryTicks: positive.max(120), rangeBuffer: z.number().min(0).max(4)}).strict().default({windupTicks: 12, recoveryTicks: 12, rangeBuffer: .75}),
     aggroRange: positive.max(64),
@@ -147,11 +153,14 @@ export const researchSchema = z.object({
     units: z.array(idSchema).min(1),
     maxHp: natural.optional(), armor: natural.optional(),
     damagePermille: natural.max(3000).optional(),
-    treeHitDamage: positive.max(10).optional(),
+    treeWorkRate: positive.max(10).optional(),
     splashRadius: z.number().positive().max(12).optional(),
     splashSlowPermille: natural.max(800).optional(),
     chargeCooldownPermille: positive.min(250).max(1000).optional(),
   }).strict()).min(1),
+}).strict();
+export const revivalSchema = z.object({
+  items: priceSchema, itemsPerLevel: priceSchema, workTicks: positive, workTicksPerLevel: natural, queueCapacity: positive.max(12),
 }).strict();
 export const behaviorSchema = z
   .object({
@@ -166,10 +175,7 @@ export const behaviorSchema = z
     progression: progression.optional(),
     inventory: inventory.optional(),
     abilities: abilityCasterSchema.optional(),
-    revival: z
-      .object({ workTicks: positive, queueCapacity: positive.max(12) })
-      .strict()
-      .optional(),
+    revival: revivalSchema.optional(),
   })
   .strict();
 export const behaviorNames = Object.keys(
@@ -188,10 +194,7 @@ const rawBehaviors = z
     progression: progression.partial().optional(),
     inventory: inventory.partial().optional(),
     abilities: abilityCasterSchema.optional(),
-    revival: z
-      .object({ workTicks: positive, queueCapacity: positive.max(12) })
-      .strict()
-      .optional(),
+    revival: revivalSchema.optional(),
   })
   .strict();
 export const unitDimensionsSchema=z.object({radius:z.number().positive().max(16),height:z.number().positive().max(64),formationSpacing:z.number().positive().max(64)}).strict().refine(d=>d.formationSpacing>=d.radius*2,'Formation spacing must fit the body diameter');
@@ -208,8 +211,12 @@ const fields = {
   icon: idSchema,
   displayOrder: z.number().int().optional(),
   hero: z.boolean().optional(),
+  /** Maximum distinct colony heroes, provided by the highest completed Hall. */
+  heroCapacity: positive.max(16).optional(),
   unitNature: unitNatureSchema.describe("Spell targeting classification. Units default to organic; does not change armor or movement.").optional(),
   dimensions: unitDimensionsSchema.optional(),
+  /** Presentation only; never modifies movement, collision or weapon range. */
+  modelScale: z.number().positive().max(64).optional(),
   supplyCost: natural.max(100).optional(),
   supplyProvided: positive.max(1000).optional(),
   level: positive.optional(),
@@ -228,13 +235,17 @@ const fields = {
     .strict()
     .optional(),
   entrance: z
-    .object({ x: z.number().int(), y: z.number().int() })
+    .object({ x: z.number().multipleOf(.5), y: z.number().multipleOf(.5) })
     .strict()
     .optional(),
   stackLimit: positive.max(100).optional(),
   yield: positive.optional(),
   felling: z.object({ maxHp: positive, fallTicks: positive, decayTicks: positive }).strict().optional(),
-  gatheringCapacity: positive.max(100).optional(),
+  harvesting: z.object({
+    activeWorkers: positive.max(100),
+    recommendedWorkers: positive.max(100),
+    searchRadius: z.number().nonnegative().max(128),
+  }).strict().optional(),
   gatheringUnitCollision: z.boolean().optional(),
   /** Movement-only blocking disc (cells, before appearance scale) around a standing resource.
    * Sized so neighbouring forest trees join into a wall, while `footprint` stays the
@@ -359,8 +370,6 @@ export const assetSchema = z
 export const rulesSchema = z
   .object({
     id: z.string(),
-    /** Global unit size and locomotion tuning; authored stats remain at scale 1. */
-    unitScale: z.number().min(0.25).max(4).default(1),
     armorTypes: z.record(
       idSchema,
       z.object({ name: z.string().min(1), icon: idSchema }).strict(),
@@ -370,6 +379,7 @@ export const rulesSchema = z
     supplyIcon: idSchema,
     maxBuildings: positive,
     constructionHpPermille: positive.max(1000),
+    constructionRefundPermille: z.number().int().min(0).max(1000),
     repairTicks: positive,
     research: z.record(idSchema, researchSchema),
     lootPools: z.record(
@@ -402,6 +412,11 @@ export const rulesSchema = z
       .object({
         id: idSchema,
         fort: idSchema,
+        hero: z.object({
+          default: idSchema,
+          choices: z.array(idSchema).min(1).max(32),
+          offset: z.object({x:z.number().int(),y:z.number().int()}).strict(),
+        }).strict().optional(),
         gathering: z
           .array(
             z
@@ -480,7 +495,7 @@ export const placementSchema = z
     id: z.string().min(1),
     mapKnowledge: z.enum(["public", "hidden"]).optional(),
     definition: idSchema,
-    position: pointSchema,
+    position: placementPointSchema,
     rotation: z.number().finite().default(0),
     owner: ownerSchema,
     initialState: z
@@ -517,6 +532,7 @@ export const campSchema = z
     legendary: z.boolean().optional(),
   })
   .strict().refine(c => !(c.lootPool && c.fixedDrops), "Choose a loot pool or fixed drops, not both");
+export type AuthoredDefinition = z.infer<typeof authoredDefinitionSchema>;
 export type Definition = z.infer<typeof definitionSchema>;
 export type Behaviors = z.infer<typeof behaviorSchema>;
 export type Creation = z.infer<typeof creationSchema>;

@@ -1,3 +1,9 @@
+import {heroAdmission, heroRoster} from '../../content/heroRoster';
+import {workplaceHead, workplaceQueueSize} from '../../content/workplaceQueue';
+import {revivalTerms} from '../../content/revival';
+import {hasColonyBuildings} from './colony';
+import {placementGeometryError} from '../../shared/spatial/placement';
+import {footprintBounds, navigationBodyOverlapsBounds} from '../../shared/spatial/footprint';
 import {validateFlight} from './flight';
 import {SpellCorpses} from '../abilities/corpses';
 import {formDefinition} from '../abilities/forms';
@@ -95,7 +101,7 @@ export class Game {
     seed?: number,
     company?: CampaignCompany,
   ) {
-    validatePlacements(map, registry);
+    validatePlacements(map, registry, slots);
     this.state.random =
       (seed === undefined
         ? parseInt(fingerprint({ map, slots }), 16)
@@ -103,7 +109,7 @@ export class Game {
     this.owners = slots.map((s) => slotOwner(s.player));
     this.context = new GameContext(this.state, registry, map);
     const arrivals=company?companyForMap(this.context,company):undefined;
-    for (const p of expandMap(map, registry)) {
+    for (const p of expandMap(map, registry, slots)) {
       if(arrivals&&map.mission?.company?.includes(p.id)&&!arrivals.has(p.id))continue;
       if(p.activation === "script") continue;
       if (p.owner !== "none" && !this.owners.includes(p.owner))
@@ -126,7 +132,7 @@ export class Game {
     this.orders = new UnitOrders(this.context, this.economy);
     this.garrisons = new Garrisons(this.context);
     this.campLoot = new CampLoot(this.context, map.camps);
-    this.revival = new Revival(this.context);
+    this.revival = new Revival(this.context,this.economy);
     this.observation = new Observation(
       this.context,
       this.owners,
@@ -174,6 +180,9 @@ export class Game {
       w = this.context.get(actor);
     if (!d || d.kind !== "building" || d.creation?.method !== "construct")
       return "Unknown building";
+    const geometryError = placementGeometryError(d, position, rotation);
+    if (geometryError) return geometryError;
+    if (position.surface) return "Buildings require ground foundations";
     if (
       !w ||
       w.owner !== owner ||
@@ -204,11 +213,13 @@ export class Game {
         Math.hypot(e.x - position.x, e.y - position.y) <= rule.radius);
       if (!nearby) return `Build within ${rule.radius} cells of ${this.registry.get(rule.source).name}`;
     }
+    const bounds = footprintBounds(position, d.footprint, rotation);
     if (
       cells.some((i) => !this.spatial.walkable(i) || this.spatial.decks[i]) ||
       this.context
         .activeUnits()
-        .some((e) => cells.includes(this.spatial.cell(e)))
+        .some(e => !this.spatial.airborne(e) &&
+          navigationBodyOverlapsBounds(precise(e), this.context.def(e).dimensions!.radius, bounds))
     )
       return "Placement blocked";
     for (const resource of this.context.live()) {
@@ -364,6 +375,15 @@ export class Game {
         ? { accepted: true, actors: applied }
         : reject("No actors support that order");
     }
+    if (action.type === "construct") {
+      const target = this.context.get(action.target);
+      if (!target?.construction || !alive(target) || target.owner !== owner)
+        return reject("Select an owned unfinished building");
+      const builder = eligible.find(e => e.unit && this.context.def(e).behaviors.work?.builds.includes(target.definition) && this.orders.canIssue(e, action.append));
+      if (!builder) return reject("Select an eligible worker");
+      this.orders.issue(builder, {type: "construct", target: target.id}, action.append);
+      return {accepted: true, actors: [builder.id]};
+    }
     if (action.type === "gather") {
       const target = this.context.get(action.target);
       if (
@@ -386,7 +406,7 @@ export class Game {
       return actors.length
         ? { accepted: true, actors: actors.map((e) => e.id) }
         : reject(
-            "Mine is full or no eligible workers can gather this resource",
+            "No eligible workers can gather this resource",
           );
     }
     const actor = eligible[0]!,
@@ -480,10 +500,12 @@ export class Game {
         !production.outputs.includes(action.definition)
       )
         return reject("Unsupported output");
-      if (actor.production.queue.length >= production.queueCapacity!)
+      if (workplaceQueueSize(actor) >= production.queueCapacity!)
         return reject("Queue is full");
       const prerequisite = prerequisiteReason(this.registry.get(action.definition), owner, this.state.entities, this.registry);
       if (prerequisite) return reject(prerequisite);
+      const rosterError = heroAdmission(this.registry.get(action.definition), heroRoster(this.context.populationCandidates(), owner, this.registry));
+      if (rosterError) return reject(rosterError);
       const supplyError = supplyAdmission(colonySupply(this.context.populationCandidates(), owner, this.registry), this.registry.get(action.definition).supplyCost!);
       if (supplyError) return reject(supplyError);
       if (!this.economy.queue(actor, action.definition))
@@ -591,9 +613,11 @@ export class Game {
     });
     measure("Ability delivery", () => this.abilities.resolve());
     measure("Economy", () => {
+      // Revival precedes completion of training. The workplace head chosen at
+      // assignment owns this tick; switching task kinds never grants double work.
+      for(const result of this.revival.tick())this.abilities.revivalOutcome(result.hero,result.record,result.success);
       measure('Economy · jobs and production',()=>this.economy.advance());
       measure('Economy · inventory',()=>this.inventory.advance());
-      for(const result of this.revival.tick())this.abilities.revivalOutcome(result.hero,result.record,result.success);
       this.upgrades.tick();
       this.research.tick();
     });
@@ -602,7 +626,7 @@ export class Game {
     if(this.mission || this.map.sandbox) return;
     const defeated=this.owners.filter(owner=>this.isDefeated(owner));
     if(defeated.length)measure('Colony cleanup',()=>{
-      // Losing a Mound eliminates that colony, not the entire FFA. Remove its
+      // Losing every building eliminates that colony, not the entire FFA. Remove its
       // remaining actors without combat XP/loot and release outstanding jobs.
       let removed=false;
       for(const owner of defeated){
@@ -621,8 +645,7 @@ export class Game {
   isDefeated(owner:Owner):boolean {
     if(this.map.sandbox) return false;
     if(this.mission) return this.state.outcome?.defeated.includes(owner) ?? false;
-    const objective=this.context.get(this.state.objectives[owner]);
-    return !objective || !alive(objective);
+    return !hasColonyBuildings(this.context.liveBuildings(), owner, this.registry);
   }
   view(owner?: number | Owner) {
     const viewer=typeof owner==='number'?slotOwner(owner):owner;
@@ -664,6 +687,10 @@ export class Game {
       ids = new Set(state.entities.map((e) => e.id)),
       jobs = new Set(state.jobs.map((j) => j.id));
     validateSpellWorld(state,this.registry,this.map.size,this.map.camps);
+    for (const [owner, wallet] of Object.entries(state.wallets)) {
+      if (!this.owners.includes(owner as Owner) || Object.keys(wallet).some(item => !this.registry.find(item)?.currency))
+        throw new Error("Invalid saved player wallet");
+    }
     const casts=state.entities.flatMap(e=>[...(e.abilities?.pending?[e.abilities.pending.id]:[]),...(e.abilities?.weaponOrder?[e.abilities.weaponOrder.id]:[])]);
     if(new Set(casts).size!==casts.length)throw Error('Duplicate saved cast identity');
     for (const [owner, ids] of Object.entries(state.research)) {
@@ -700,7 +727,8 @@ export class Game {
       const host=state.entities.find(h=>h.id===u.garrison!.building),policy=host&&this.registry.get(host.definition).garrison;
       if(!host||!alive(host)||!alive(e)||host.construction||host.owner!==e.owner||!policy?.accepts.includes(e.definition)||
         policy.height!==u.garrison.height||occupiedLookouts.has(host.id)||u.contained||u.release||u.cargo||u.job||u.employment||
-        u.route.length||u.segment||u.position||u.goal!==null||e.x!==host.x||e.y!==host.y||e.surface!==host.surface||
+        u.route.length||u.segment||u.goal!==null||e.x!==Math.round(host.x)||e.y!==Math.round(host.y)||e.surface!==host.surface||
+        !u.position||u.position.x!==Math.round(host.x*1000)||u.position.y!==Math.round(host.y*1000)||u.position.surface!==host.surface||
         (u.order&&u.order.type!=='hold'&&u.order.type!=='attack'))throw new Error('Invalid saved lookout occupant');
       occupiedLookouts.add(host.id);
     }
@@ -734,7 +762,7 @@ export class Game {
     )
       throw new Error("Invalid saved identity counters");
     const queues = state.entities
-      .flatMap((e) => e.production?.queue ?? [])
+      .flatMap((e) => [...(e.production?.queue ?? []), ...(e.revival?.queue ?? [])])
       .map((q) => q.id);
     if (
       new Set(queues).size !== queues.length ||
@@ -746,6 +774,13 @@ export class Game {
     );
     if (new Set(queuedHeroes).size !== queuedHeroes.length)
       throw new Error("Duplicate hero revival");
+    const recruited = new Set(state.entities.filter(e => this.registry.get(e.definition).hero && !e.summoned).map(e => `${e.owner}:${e.definition}`));
+    for (const e of state.entities) for (const q of e.production?.queue ?? []) {
+      if (!this.registry.get(q.definition).hero) continue;
+      const key = `${e.owner}:${q.definition}`;
+      if (recruited.has(key)) throw new Error('Duplicate saved hero recruitment');
+      recruited.add(key);
+    }
     for (const e of state.entities) {
       if(e.surface&&!this.spatial.validPoint(e)||e.unit?.position&&e.unit.position.surface!==e.surface)throw new Error("Invalid saved walk surface");
       if (
@@ -760,6 +795,8 @@ export class Game {
         throw new Error("Saved position outside map");
       validateFlight(e,this.registry,state.tick,state.nextCast);
       const d = formDefinition(this.registry.get(e.definition),e,this.registry);
+      const geometryError = placementGeometryError(d, e, d.kind === 'building' ? e.rotation : 0);
+      if (geometryError) throw new Error(`Invalid saved position: ${geometryError}`);
       if (e.upgrade && (!d.upgrade || e.construction ||
           e.upgrade.target !== d.upgrade.target || e.upgrade.progress >= d.upgrade.workTicks))
         throw new Error("Invalid saved building upgrade");
@@ -769,14 +806,17 @@ export class Game {
         throw new Error("Invalid revival building");
       if (
         e.revival &&
-        (e.revival.queue.length > d.behaviors.revival!.queueCapacity ||
-          e.revival.queue.some((q) => {
+        (workplaceQueueSize(e) > d.behaviors.revival!.queueCapacity ||
+          e.revival.queue.some((q,index) => {
             const hero = state.entities.find((h) => h.id === q.hero);
             return (
               !hero?.fallen ||
               !!hero.spellReturn ||
               hero.owner !== e.owner ||
-              q.progress > d.behaviors.revival!.workTicks
+              (index > 0 && q.id <= e.revival!.queue[index-1].id) ||
+              ((index > 0 || workplaceHead(e) !== "revival") && q.progress !== 0) ||
+              q.level > entityStats(this.registry.get(hero.definition),hero,this.registry,state.research[hero.owner]).level ||
+              q.progress > revivalTerms(d.behaviors.revival!,q.level).workTicks
             );
           }))
       )
@@ -811,6 +851,7 @@ export class Game {
       if (!!d.felling !== !!felling || (felling && (
         felling.hp > d.felling!.maxHp ||
         (felling.hp === 0) !== (felling.fallTick !== null) ||
+        (felling.fallTick !== null && e.resource!.amount !== 0) ||
         (felling.lastHitTick !== null && felling.lastHitTick > state.tick) ||
         (felling.fallTick !== null && (felling.fallTick > state.tick || felling.fallTick !== felling.lastHitTick))
       ))) throw new Error("Invalid saved felling state");
@@ -897,12 +938,12 @@ export class Game {
       if (e.production) {
         const p = e.production;
         if (
-          p.queue.length > (d.behaviors.production!.queueCapacity ?? 0) ||
+          workplaceQueueSize(e) > (d.behaviors.production!.queueCapacity ?? 0) ||
           p.queue.some(
-            (q) => !d.behaviors.production!.outputs.includes(q.definition),
+            (q, index) => !d.behaviors.production!.outputs.includes(q.definition) || (index > 0 && q.id <= p.queue[index-1].id),
           ) ||
           (d.behaviors.production!.mode === "queued" && p.active &&
-            (p.active.worker !== null || p.active.queue !== p.queue[0]?.id ||
+            (workplaceHead(e) !== "production" || p.active.worker !== null || p.active.queue !== p.queue[0]?.id ||
              p.active.definition !== p.queue[0]?.definition ||
              p.active.progress > this.registry.get(p.active.definition).creation!.workTicks)) ||
           (p.active &&
@@ -919,13 +960,36 @@ export class Game {
           throw new Error("Unfunded saved training queue");
       }
     }
-    for (const j of state.jobs)
-      if (
-        !ids.has(j.worker) ||
-        !ids.has(j.target) ||
-        state.entities.find((e) => e.id === j.worker)?.unit?.job !== j.id
-      )
+    const workEntities = new Map(state.entities.map(e => [e.id, e])), activeMiners = new Map<number, number>(), constructionSites = new Set<number>();
+    for (const j of state.jobs) {
+      if (!ids.has(j.worker) || !ids.has(j.target) || workEntities.get(j.worker)?.unit?.job !== j.id)
         throw new Error("Invalid saved work reference");
+      if (j.type === "construct") {
+        const worker = workEntities.get(j.worker)!, project = workEntities.get(j.target)!;
+        if (constructionSites.has(j.target) || !project.construction || worker.owner !== project.owner ||
+            !this.registry.get(worker.definition).behaviors.work?.builds.includes(project.definition))
+          throw new Error("Invalid saved construction assignment");
+        constructionSites.add(j.target);
+      }
+      if (j.type !== "harvest") {
+        if (j.phase === "wait" || j.arrivedTick !== undefined) throw new Error("Invalid saved harvesting queue");
+        continue;
+      }
+      const source = j.source === null ? undefined : workEntities.get(j.source), recipe = j.item ? this.registry.find(j.item)?.creation : undefined;
+      const policy = source && this.registry.get(source.definition).harvesting;
+      if (!source?.resource || !policy || recipe?.method !== "harvest" || recipe.source !== source.definition ||
+          j.amount <= 0 || j.amount > recipe.amount || j.progress >= recipe.workTicks ||
+          (j.phase !== "work" && j.progress !== 0) ||
+          (j.phase !== "walk" && j.arrivedTick === undefined) ||
+          (j.phase === "walk" && j.arrivedTick !== undefined) ||
+          (j.arrivedTick !== undefined && j.arrivedTick > state.tick))
+        throw new Error("Invalid saved harvesting queue");
+      if (j.phase === "work") {
+        const count = (activeMiners.get(source.id) ?? 0) + 1;
+        if (count > policy.activeWorkers) throw new Error("Invalid saved extraction capacity");
+        activeMiners.set(source.id, count);
+      }
+    }
     if (
       this.owners.some(
         (owner) => state.objectives[owner] !== this.state.objectives[owner],

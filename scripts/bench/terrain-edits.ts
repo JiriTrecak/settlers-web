@@ -12,7 +12,7 @@ function identical(a:CompiledMapScene,b:CompiledMapScene,label:string){
  for(const key of ['samples','grassCoverage','rockCoverage','forestCoverage','surfacePaint','watercourses'] as const)assert(isDeepStrictEqual(a.field[key],b.field[key]),`${label}: ${key}`);
 }
 const paths=process.argv.slice(2);
-if(!paths.length)paths.push('assets/maps/skirmish/heartroot-glade.utcmap');
+if(!paths.length)paths.push('assets/maps/skirmish/amberwake-basin.utcmap');
 const reports=[];
 for(const path of paths){
  const map=parseUtcMap(JSON.parse(readFileSync(path,'utf8')));if(!map)throw Error(`Invalid map: ${path}`);

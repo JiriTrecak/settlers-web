@@ -72,6 +72,7 @@ const BASE_BIOMES: readonly Biome[] = [{
   environment: {postProcessing:WOODLAND_FINISH,light:{...FOREST.light,ambientTint:'#e5f3e8',ambientStrength:.3,skyTint:'#e0eeff',fillStrength:.8,sunTint:'#eef0ff',sunStrength:1,sunHeight:45,sunDirection:-100,shadowSoftness:3},atmosphere:{...DEFAULT_ATMOSPHERE,enabled:false,density:0,shaftDensity:0,regions:[]},hour: 12, season: 'summer', playing: false, canopy: {...DEFAULT_CANOPY,enabled:true,height:140,scale:240,coverage:.55,softness:.22,strength:.14,cloudShadow:0}},
   materials: [{id: 'sand', name: 'Exposed soil'}, {id: 'road', name: 'Dirt path'}, {id: 'grass', name: 'Grass ground'}, {id: 'rock', name: 'Rock'}],
   foliage: [
+    {id: 'recipe.meadow.woodland-edge', name: 'Forest-driven grass and undergrowth'},
     {id: 'recipe.grass.meadow', name: 'Patchy meadow'},
     {id: 'recipe.forest.conifer-edge', name: 'Pine forest'},
     {id: 'recipe.forest.diverse', name: 'Living pine forest'},

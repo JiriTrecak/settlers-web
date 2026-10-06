@@ -5,7 +5,7 @@ import {BoxGeometry,BufferAttribute,BufferGeometry,Color,CylinderGeometry,Dynami
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
 export type ProjectileKind='arrow'|'thorn';
-type Flight={cast?:number;kind:ProjectileKind;start:Vector3;end:Vector3;tick:number;duration:number};
+type Flight={scale:number;cast?:number;kind:ProjectileKind;start:Vector3;end:Vector3;tick:number;duration:number};
 type Batch={mesh:InstancedMesh;capacity:number};
 const UP=new Vector3(0,1,0);
 function colored(geometry:BufferGeometry,tint:number){
@@ -35,7 +35,7 @@ export class ProjectileEffects {
  private readonly rotation=new Quaternion();
  private readonly matrix=new Matrix4();
  // Batches exist (hidden) from the start so warm-up links their program before the first volley.
- constructor(parent:Group){parent.add(this.root);for(const kind of ['arrow','thorn'] as const)this.batch(kind,1).mesh.visible=false;}
+ constructor(parent:Group,private readonly registry=content){parent.add(this.root);for(const kind of ['arrow','thorn'] as const)this.batch(kind,1).mesh.visible=false;}
  private batch(kind:ProjectileKind,count:number){
   let batch=this.batches.get(kind);if(batch&&batch.capacity>=count)return batch;
   let capacity=batch?.capacity??16;while(capacity<count)capacity*=2;
@@ -44,8 +44,8 @@ export class ProjectileEffects {
   mesh.instanceMatrix.setUsage(DynamicDrawUsage);mesh.frustumCulled=false;mesh.count=0;
   this.root.add(mesh);batch={mesh,capacity};this.batches.set(kind,batch);return batch;
  }
- update(tick:number, missiles:GameState["missiles"], field:HeightField, launchPosition?:(missile:GameState["missiles"][number])=>Vector3|undefined,unitScale=1){
-  this.scale.setScalar(unitScale);this.effectPoses.clear();
+ update(tick:number, missiles:GameState["missiles"], field:HeightField, launchPosition?:(missile:GameState["missiles"][number])=>Vector3|undefined){
+  this.effectPoses.clear();
   const active=missiles.filter(m=>tick>=m.launched&&tick<m.impact);
   const liveIds=new Set(active.map(m=>m.id));
   for(const id of this.origins.keys())if(!liveIds.has(id))this.origins.delete(id);
@@ -59,7 +59,7 @@ export class ProjectileEffects {
     cached={launched:m.launched,position};this.origins.set(m.id,cached);
    }
    return {
-    cast:m.enhancement?.cast,kind:content.asset(content.get(m.definition).asset).projectile??'arrow',
+    cast:m.enhancement?.cast,scale:this.registry.get(m.definition).modelScale??1,kind:this.registry.asset(this.registry.get(m.definition).asset).projectile??'arrow',
     start:cached.position,
     end:new Vector3(m.destination.x,field.walkSample(m.destination.x,m.destination.y,m.destination.surface)+1+(m.destination.elevation??0),m.destination.y),
     tick:m.launched,duration:m.impact-m.launched,
@@ -78,7 +78,7 @@ export class ProjectileEffects {
    this.tangent.subVectors(flight.end,flight.start);this.tangent.y+=4*arc*(1-2*t);
    if(this.tangent.lengthSq()<1e-10)this.tangent.copy(UP);else this.tangent.normalize();
    if(flight.cast!==undefined)this.effectPoses.set(flight.cast,{position:this.position.clone(),direction:this.tangent.clone()});
-   this.rotation.setFromUnitVectors(UP,this.tangent);this.matrix.compose(this.position,this.rotation,this.scale);
+   this.scale.setScalar(flight.scale);this.rotation.setFromUnitVectors(UP,this.tangent);this.matrix.compose(this.position,this.rotation,this.scale);
    const mesh=this.batches.get(flight.kind)!.mesh;mesh.setMatrixAt(mesh.count++,this.matrix);
   }
   for(const batch of this.batches.values())if(batch.mesh.count)batch.mesh.instanceMatrix.needsUpdate=true;

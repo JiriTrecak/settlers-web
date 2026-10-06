@@ -12,7 +12,7 @@ function setup(){
   ...Array.from({length:4},(_,i)=>placed(`worker${i}`,'unit.ants.settler',208+i,218)),
   ...Array.from({length:3},(_,i)=>placed(`soldier${i}`,'unit.ants.warrior',210+i,220)),
  ]);
- const mound=g.context.get(g.state.objectives['player.1'])!;mound.inventory={'item.amber':1000,'item.wood':1000,'item.root':100};
+ const mound=g.context.get(g.state.objectives['player.1'])!;g.state.wallets[mound.owner]={'item.amber':1000,'item.wood':1000,'item.root':100};
  const geo=new Geography(createMapBriefing(g.map,g.registry));
  const frame=()=>new Frame(g.view('player.1'),'player.1',g.registry,geo,g.state.tick);
  const decide=()=>{const actions:Action[]=[];economy(frame(),newAIState(geo.map.fingerprint,1),(a)=>{actions.push(a);return true});return actions;};
@@ -26,14 +26,14 @@ it('uses shared prerequisites and only accepts Root with a completed specialized
 });
 it('buys an affordable Great Mound upgrade using the normal command interface',()=>{
  const {g,mound,decide}=setup();const action=decide()[0];expect(action).toEqual({type:'upgrade',actor:mound.id});
- expect(g.command('player.1',action).accepted).toBe(true);expect(mound.inventory['item.root']??0).toBe(0);
+ expect(g.command('player.1',action).accepted).toBe(true);expect(g.state.wallets[mound.owner]['item.root']??0).toBe(100);
 });
 it('chooses paid research for current units after reaching Tier 2',()=>{
  const {g,mound,decide}=setup();mound.definition='building.ants.great-mound';g.observation.update();
  const action=decide()[0];expect(action.type).toBe('research');expect(g.command('player.1',action).accepted).toBe(true);
 });
 it('places a Rootworks near an observed safe deposit, but not beside visible enemies',()=>{
- const {g,mound}=setup();mound.inventory['item.root']=0;
+ const {g,mound}=setup();g.state.wallets[mound.owner]['item.root']=0;
  g.context.create({...placed('root','building.neutral.corrupted-root',240,175),owner:'none'});g.observation.update();
  const geo=new Geography(createMapBriefing(g.map,g.registry));
  const choose=(danger=false)=>{
@@ -48,15 +48,15 @@ it('places a Rootworks near an observed safe deposit, but not beside visible ene
 it('preserves upgrade savings instead of spending every Amber delivery on recruits',()=>{
  const {g,mound,decide}=setup();
  for(let i=0;i<5;i++)g.context.create(placed(`reserve-army-${i}`,'unit.ants.warrior',205+i,220));
- mound.inventory={'item.amber':150,'item.wood':100,'item.root':0};
+ g.state.wallets[mound.owner]={'item.amber':150,'item.wood':100,'item.root':0};
  g.observation.update();
  expect(decide().some(a=>a.type==='produce')).toBe(false);
  // Once the next investment is funded, use the ordinary upgrade action.
- mound.inventory={'item.amber':320,'item.wood':180,'item.root':100};g.observation.update();
+ g.state.wallets[mound.owner]={'item.amber':450,'item.wood':200,'item.root':100};g.observation.update();
  expect(decide()[0]).toEqual({type:'upgrade',actor:mound.id});
 });
 it('staffs a new Rootworks by rebalancing empty-handed gatherers, preserving cargo and a source floor',()=>{
- const {g,mound}=setup();mound.inventory={'item.wood':2000,'item.amber':0,'item.root':0};
+ const {g,mound}=setup();g.state.wallets[mound.owner]={'item.wood':2000,'item.amber':0,'item.root':0};
  const root=g.context.create({...placed('rebalance-root','building.neutral.corrupted-root',240,175),owner:'none'});
  g.context.create(placed('rebalance-dropoff','building.ants.rootworks',240,187));
  const tree=g.context.create({...placed('rebalance-tree','resource.forest.tree',215,218),owner:'none'});
@@ -80,9 +80,9 @@ it('saves for an unlocked underrepresented Hunter instead of endlessly buying ch
  g.state.research['player.1']=Object.keys(g.registry.rules.research);
  for(let i=0;i<8;i++)g.context.create(placed(`mix-worker-${i}`,'unit.ants.settler',210+i,225));
  for(let i=0;i<4;i++)g.context.create(placed(`archer-mix-${i}`,'unit.ants.archer',212+i,219));
- mound.inventory={'item.amber':150,'item.wood':100,'item.root':100};g.observation.update();
+ g.state.wallets[mound.owner]={'item.amber':150,'item.wood':100,'item.root':100};g.observation.update();
  expect(decide().some(a=>a.type==='produce')).toBe(false);
- mound.inventory['item.amber']=190;g.observation.update();
+ g.state.wallets[mound.owner]['item.amber']=200;g.observation.update();
  expect(decide()[0]).toMatchObject({type:'produce',definition:'unit.ants.hunter'});
 });
 it('still buys affordable emergency troops below the army floor',()=>{
@@ -91,6 +91,29 @@ it('still buys affordable emergency troops below the army floor',()=>{
  for(let i=0;i<8;i++)g.context.create(placed(`emergency-worker-${i}`,'unit.ants.settler',210+i,225));
  const soldiers=g.entities.filter(e=>e.owner==='player.1'&&g.registry.get(e.definition).behaviors.combat&&!g.registry.get(e.definition).behaviors.work);
  for(const e of soldiers.slice(3))g.context.remove(e);
- mound.inventory={'item.amber':100,'item.wood':100,'item.root':100};g.observation.update();
+ g.state.wallets[mound.owner]={'item.amber':135,'item.wood':100,'item.root':100};g.observation.update();
  expect(decide()[0]).toMatchObject({type:'produce',definition:'unit.ants.warrior'});
+});
+it('saves the declared level-based revival price before buying more recruits',()=>{
+ const {g,mound,decide}=setup();
+ const altar=g.context.create(placed('revival-altar','building.ants.sanctuary',161.5,221.5));
+ const hero=g.entities.find(e=>e.owner==='player.1'&&g.registry.get(e.definition).hero)!;
+ hero.progression!.experience=g.registry.get(hero.definition).behaviors.progression!.levels[3].experience;
+ g.economy.remove(hero);g.revival.retain(hero);
+ g.state.wallets[mound.owner]={'item.amber':349,'item.wood':100};g.observation.update();
+ const spending=new Set(['produce','build','upgrade','research','revive']);
+ expect(decide().filter(a=>spending.has(a.type))).toEqual([]);
+ g.state.wallets[mound.owner]['item.amber']=350;g.observation.update();
+ const action=decide()[0];expect(action).toEqual({type:'revive',actor:altar.id,hero:hero.id});
+ expect(g.command('player.1',action).accepted).toBe(true);expect(g.state.wallets[mound.owner]['item.amber']??0).toBe(0);
+});
+it('can replace a critically depleted workforce while saving for hero recovery',()=>{
+ const {g,mound,decide}=setup();g.context.create(placed('revival-altar','building.ants.sanctuary',161.5,221.5));
+ const hero=g.entities.find(e=>e.owner==='player.1'&&g.registry.get(e.definition).hero)!;
+ g.economy.remove(hero);g.revival.retain(hero);
+ const workers=g.entities.filter(e=>e.owner==='player.1'&&g.registry.get(e.definition).behaviors.work);
+ for(const w of workers.slice(1))g.economy.remove(w);
+ g.state.wallets[mound.owner]={'item.amber':100,'item.wood':0};g.observation.update();
+ const action=decide()[0];expect(action).toEqual({type:'produce',actor:mound.id,definition:'unit.ants.settler'});
+ expect(g.command('player.1',action).accepted).toBe(true);
 });
