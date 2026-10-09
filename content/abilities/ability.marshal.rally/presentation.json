@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.marshal.rally",
+  "icon": "asset.spells.marshal.rally-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "pulse",
+      "effect": "effect.marshal.rally.cast",
+      "event": "released",
+      "anchor": "caster",
+      "lifetime": "finite"
+    },
+    {
+      "id": "ward",
+      "effect": "effect.marshal.rally.ward",
+      "statusId": "rally",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import {source,castLifecycleSource} from '../game/helpers';
 import {it,expect} from 'vitest';
 import {coreAbilities} from '../../src/content/abilities/core';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
@@ -10,7 +11,8 @@ const names=['storm-bolt','entangling-roots','bloodlust','chain-lightning','shoc
 function setup(name:string,settings:Record<string,unknown>={}){
  const spell=coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!;
  const look=coreAbilities.presentations.find(p=>p.id===spell.presentation)!;
- const f=createAbilityEncounter(spell,look,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:500,...settings}));
+ const data=source();castLifecycleSource(data);
+ const f=createAbilityEncounter(spell,look,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:500,...settings}),false,data);
  const {game,caster,target}=f;
  const cast=()=>game.command('player.1',{type:'castAbility',actor:caster,binding:'preview',target:spell.targeting.kind==='point'?{kind:'point',position:{x:126,y:120}}:{kind:'unit',entity:spell.targeting.kind==='self'?caster:target}});
  return {...f,spell,cast,c:()=>game.context.get(caster)!,t:()=>game.context.get(target)!};

@@ -167,3 +167,24 @@ Reusable quest operations:
 Deferred placements may overlap initial placements, allowing a ruin to replace a destroyed cottage. Bounds are still checked. The author must spawn the replacement only after the original obstruction is gone; initial buildings still cannot overlap.
 
 Consumable item definitions can declare `permanent: {maxHp, damage, armor, maxMana}`. Optional `onPickup: true` applies such a power-up immediately, even with a full satchel. Bonuses are saved on hero progression, survive death, and travel with the campaign company. Ordinary equipment still occupies a slot.
+
+### Mission selection and loading artwork
+
+Optional `mission.presentation` controls the chapter page and the loading screen:
+
+```json
+{
+  "loadingBackground": "asset.interface.campaign.amber-watch-loading",
+  "selectionBackground": "asset.interface.campaign.amber-watch-selection",
+  "chapter": "Chapter One",
+  "briefing": "The watchfires have gone silent.\nRally the scattered guard and break the siege.",
+  "tips": ["Attack-move to advance as a company.", "Explore side paths for supplies."],
+  "features": ["One hero", "Allies along the road", "Break the siege"]
+}
+```
+
+Images reference published canonical **interface** assets with an `image.webp` resource. They are bundled for offline play; external URLs are rejected. Missing artwork uses the campaign forest fallback. Titles, briefings, tips and progress remain live accessible UI; do not bake them into the illustration. The loading bar displays real asset counts during model loading and becomes indeterminate during terrain/shader preparation. Tips rotate every nine seconds while loading. Errors retain a Back to menu action.
+
+The editor’s **Mission & Lua → Mission artwork & loading screen** fields edit these values. Briefings preserve line breaks; enter tips and selection features one per line. Existing maps can omit presentation entirely.
+
+**The Amber Watch** is the first Queensguard chapter, authored on a 128 × 128 building-cell woodland map. A single Marshal and three escorts follow a lantern road, recruit two scattered patrols, optionally explore three neutral camps, cross a walkable twig bridge and relieve a neutral ant outpost. Lua camera shots and cinematic dialogue provide letterbox scenes. Victory requires all nine siege units and all three members of the incoming relief column to be defeated; Rowan’s death loses the mission. The hero is capped at level three.

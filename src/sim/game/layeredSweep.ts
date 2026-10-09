@@ -19,15 +19,35 @@ export function clearLayeredSweep(graph:WalkSurfaces,from:FixedPoint,to:FixedPoi
   }else if(!clearRay(from,to,step,graph.size))return false;
   // Sweep the same physical footprint used on ordinary terrain. At a
   // portal its leading/trailing corners can already touch the other floor
-  // before the center changes surface. Only an adjacent legal portal edge
-  // permits that fallback; side rails and unrelated overlapping floors do not.
+  // before the center changes surface. Legal portal edges permit that
+  // fallback; side rails and unrelated overlapping floors do not.
+  // Large units can touch a ramp two or more cells before their center
+  // changes floors. Resolve only nearby nodes reachable through real portals;
+  // a railing or a disconnected deck never supplies that support.
+  let portalSupport:Map<number,number[]>|undefined;
+  const support=()=>{
+    if(portalSupport)return portalSupport;
+    portalSupport=new Map();
+    const limit=Math.ceil(radius/1000)+1,seen=new Set<number>([start,goal]);
+    const queue=[{id:start,depth:0},{id:goal,depth:0}];
+    for(let i=0;i<queue.length;i++){
+      const {id,depth}=queue[i]!,n=graph.nodes[id]!;
+      if(walkable(id)&&graph.walkable(id,Math.round(height*100))){
+        const ids=portalSupport.get(n.cell)??[];ids.push(id);portalSupport.set(n.cell,ids);
+      }
+      if(depth>=limit)continue;
+      for(const next of graph.neighbors(id,blockedNode))if(!seen.has(next)){
+        seen.add(next);queue.push({id:next,depth:depth+1});
+      }
+    }
+    return portalSupport;
+  };
   const candidates=(cell:number)=>{
     const result:number[]=[];
     for(const id of [node(cell,from.surface),node(cell,to.surface)])
       if(id!==undefined&&walkable(id)&&graph.walkable(id,Math.round(height*100))&&!result.includes(id))result.push(id);
     if(!result.length){
-      for(const id of graph.at(cell%graph.size,Math.floor(cell/graph.size)))
-        if((graph.step(start,id)||graph.step(goal,id))&&walkable(id))result.push(id);
+      for(const id of support().get(cell)??[])if(!blocked?.has(id))result.push(id);
     }
     return result;
   };

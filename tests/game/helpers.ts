@@ -72,3 +72,12 @@ export function physical(g: Game, item: string) {
     Object.values(g.state.wallets).reduce((sum, wallet) => sum + (wallet[item] ?? 0), 0),
   );
 }
+
+/** An explicit healing/channel loadout for cast lifecycle fixtures, independent of hero balance. */
+export function castLifecycleSource(draft: ReturnType<typeof source>) {
+ const hero=(draft.definitions as AuthoredDefinition[]).find(d=>d.id==='unit.ants.marshal')!;
+ hero.behaviors!.abilities!.bindings=[
+  {id:'holy-light',ability:'ability.core.holy-light-lite',initialRank:1,controls:['player'],command:{hotkey:'Q',column:1}},
+  {id:'blizzard',ability:'ability.core.blizzard',initialRank:1,controls:['player'],command:{hotkey:'W',column:2}},
+ ];
+}

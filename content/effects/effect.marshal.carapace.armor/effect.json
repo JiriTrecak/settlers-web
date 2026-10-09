@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.marshal.carapace.armor",
+  "name": "Iron Carapace · living armor",
+  "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
+  "durationTicks": 64,
+  "loop": true,
+  "layers": [
+    {
+      "id": "amber-shell",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#d87527",
+      "accent": "#ffe5a2",
+      "durationTicks": 64,
+      "count": 1,
+      "size": 3,
+      "height": 2.5,
+      "motion": {
+        "opacity": {
+          "periodTicks": 64,
+          "min": 0.28,
+          "max": 0.55,
+          "easing": "smoothstep"
+        }
+      },
+      "follow": true,
+      "intensity": 0.65
+    },
+    {
+      "id": "shell-glints",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "continuous",
+        "lifetimeTicks": 28,
+        "rate": 6,
+        "speed": 0.5,
+        "speedVariation": 0.5,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 160,
+        "gravity": 0,
+        "drag": 1,
+        "spawnRadius": 1.7,
+        "startSize": 0.14,
+        "endSize": 0,
+        "spin": 0,
+        "fadeIn": 0.2,
+        "fadeOut": 0.6
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#f0b94f",
+      "accent": "#fff2bb",
+      "durationTicks": 64,
+      "count": 10,
+      "size": 0.15,
+      "height": 1.8,
+      "follow": true,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "ward-glyph",
+      "sustain": true,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "billboard",
+      "colour": "#ffffff",
+      "accent": "#ffffff",
+      "durationTicks": 80,
+      "count": 1,
+      "size": 1.9,
+      "height": 6.4,
+      "motion": {
+        "opacity": {
+          "periodTicks": 80,
+          "min": 0.6,
+          "max": 0.9,
+          "easing": "sine"
+        }
+      },
+      "orientation": "camera",
+      "follow": true,
+      "texture": {
+        "asset": "asset.effects.marshal.chitin-ward",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

@@ -2007,6 +2007,48 @@
       "scenery": []
     },
     {
+      "id": "asset.effects.marshal.chitin-ward",
+      "name": "Marshal chitin ward glyph",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.marshal.chitin-ward/image.png",
+          "sha256": "91e220a1746170396cfa18668bbd48c1e8fe15bc9ab5c2fd2f88bb2c8c8e6a6d",
+          "bytes": 192164
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.marshal.crown-fracture",
+      "name": "Crownfall amber fracture",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.marshal.crown-fracture/image.png",
+          "sha256": "ecd0f7850db30fedac551f312c3e10273f9cb1de1b2d7c8094814a601c1ff0af",
+          "bytes": 282713
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
       "id": "asset.effects.seismic-crescent",
       "name": "seismic crescent effect texture",
       "kind": "texture",
@@ -4314,6 +4356,50 @@
           "path": "assets/library/asset.interface.app-icon.under-the-canopy/image.png",
           "sha256": "b2e10d98f24addc3f34ac89e15864f92d0bf8e93f556797184f57664d3b3ad71",
           "bytes": 1938054
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.interface.campaign.amber-watch-loading",
+      "name": "amber watch loading",
+      "kind": "interface",
+      "tags": [
+        "campaign",
+        "original",
+        "amber-watch"
+      ],
+      "revision": 4,
+      "profile": "interface-image",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.interface.campaign.amber-watch-loading/image.webp",
+          "sha256": "fc07136b585dea35fc7ae3e8745e88a0e8d09a398e888e23979887a6c9deec7f",
+          "bytes": 261956
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.interface.campaign.amber-watch-selection",
+      "name": "amber watch selection",
+      "kind": "interface",
+      "tags": [
+        "campaign",
+        "original",
+        "amber-watch"
+      ],
+      "revision": 4,
+      "profile": "interface-image",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.interface.campaign.amber-watch-selection/image.webp",
+          "sha256": "961265cfdb6c2b75659a1c54bf40fde530a0eed348a0d62e4ae541c0d3f2b547",
+          "bytes": 373540
         }
       ],
       "render": [],
@@ -12211,6 +12297,110 @@
           "file": "library/asset.placeholder.missing-model/geometry.glb"
         }
       ]
+    },
+    {
+      "id": "asset.spells.marshal.carapace-icon",
+      "name": "Iron Carapace",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.marshal.carapace-icon/image.png",
+          "sha256": "77cc896560b252539a858a4b6005bf52c9c1d2d729f691df42c129bd1e018452",
+          "bytes": 43311
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.marshal.carapace-icon",
+          "image": "assets/library/asset.spells.marshal.carapace-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.marshal.crownfall-icon",
+      "name": "Crownfall",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.marshal.crownfall-icon/image.png",
+          "sha256": "b20a154eddab80668674e0fc9926e325cb8efb278d0e630e81219fd9e5738910",
+          "bytes": 45893
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.marshal.crownfall-icon",
+          "image": "assets/library/asset.spells.marshal.crownfall-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.marshal.faultline-icon",
+      "name": "Faultline",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.marshal.faultline-icon/image.png",
+          "sha256": "8a1dd3d617400f05e15eb333c30e62ee7e7670efe386c2a64a6e3ace94183c7e",
+          "bytes": 43632
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.marshal.faultline-icon",
+          "image": "assets/library/asset.spells.marshal.faultline-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.marshal.rally-icon",
+      "name": "Rally the Colony",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.marshal.rally-icon/image.png",
+          "sha256": "944c8c565ba4cb0a7445c1ef1860200649f4c4f4b6e2306004bf3cafff5a53f9",
+          "bytes": 46569
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.marshal.rally-icon",
+          "image": "assets/library/asset.spells.marshal.rally-icon/image.png"
+        }
+      ],
+      "scenery": []
     },
     {
       "id": "asset.terrain.autumn-leaf-litter",

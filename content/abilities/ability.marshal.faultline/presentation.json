@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "presentation.marshal.faultline",
+  "icon": "asset.spells.marshal.faultline-icon",
+  "animations": {
+    "prepare": "attack",
+    "release": "attack",
+    "recover": "idle",
+    "fallback": "idle"
+  },
+  "effects": [
+    {
+      "id": "flight",
+      "effect": "effect.marshal.faultline.flight",
+      "event": "projectile",
+      "anchor": "target",
+      "lifetime": "finite",
+      "durationFrom": "delivery"
+    },
+    {
+      "id": "hit",
+      "effect": "effect.marshal.faultline.hit",
+      "event": "damaged",
+      "anchor": "target",
+      "lifetime": "finite"
+    }
+  ]
+}

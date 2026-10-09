@@ -21,7 +21,7 @@ Calibrate the Warcraft-inspired camera by visible battlefield coverage and unit/
 
 Earned currency belongs to a player wallet. Destroying any building, including the last Hall, cannot destroy that wallet. Physical cargo is credited only on delivery and is lost with its carrier. Queued production and construction hold paid escrow; a destroyed project loses its remaining escrow. A cancellation refunds according to the relevant policy even if no Hall survives. Research and upgrade tasks also own their paid costs. Wallets are authoritative, saved, validated and included in multiplayer checksums.
 
-An amber site contains four nodes with 4,500 amber each. A node serves one miner at a time. Others wait in a deterministic queue; there is no hard assignment limit. Each completed load carries 10 amber; extraction takes 2 seconds. The standard Hall-to-node arrangement targets approximately 1.8–1.9 seconds away from extraction, so eight workers approximately saturate the four nodes at 1,200 amber/minute. Extra workers mostly wait, but longer travel may justify more workers. These rates must be measured in simulation before acceptance.
+An amber site contains five nodes with 4,500 amber each (22,500 total). A node serves one miner at a time. Others wait in a deterministic queue; there is no hard assignment limit. Each completed load carries 10 amber; extraction takes 2 seconds. The standard Hall-to-node arrangement is a centred, touching arc: two outer near nodes at local (−8,24)/(8,24), and three inner far nodes at (−4,28)/(0,28)/(4,28), in world units relative to the Hall. Ten workers are the economical baseline. The fifth node increases extraction capacity from 1,200 to 1,500 amber/minute; measured deliveries with ten workers are 1,410–1,420/minute after warm-up. More workers mostly wait but fill some far-node travel gaps. Measure these rates on each authored layout.
 
 Trees contain 50 wood and yield five loads of 10. A load targets 8 seconds of productive chopping plus travel. Trees disappear only when depleted. No ranked forest regrowth. Root is an advanced economy resource, not a Tier 2 prerequisite; initial target: one active miner, 10 per 5 seconds, 1,500 reserve, two-worker standard saturation.
 
@@ -167,7 +167,7 @@ The old project map catalogue and legacy standalone composers were removed.
 Local browser saves are retained for recovery. Three editor-authored project
 maps have current validated previews:
 
-- **Amberwake Basin:** 128 × 128 C mirrored 1v1 benchmark; eight four-node amber
+- **Amberwake Basin:** 128 × 128 C mirrored 1v1 benchmark; eight five-node amber
   sites, two guarded Root sites, six neutral camps, opening wood and build shelves.
 - **Amberwake Frost:** the benchmark's paired winter edition. Terrain, blockers,
   starts and resource geometry are checked for equality by
@@ -180,9 +180,11 @@ maps have current validated previews:
 
 `tests/game/amberwake-map.test.ts` runs the same seven contracts on Basin and
 Wilds; `tests/game/tier-two-maps.test.ts` checks all three maps' Root layouts.
-All **17** checks pass. Both bases deliver **1,200 amber/minute with eight or
-twelve workers**, and 600–680 with four, after a ten-second warm-up. Actual
-opposing scout journeys are within 3% of 45 seconds and do not pull camps,
+The map/topology suite checks the five-node layout, 5/10/15-worker mining and
+cold continuation. Ten workers deliver **1,410–1,420 amber/minute** and fifteen
+approximately **1,500** after a ten-second warm-up. Adjacent node footprints touch
+while the initial worker formation and all five mining approaches remain accessible.
+Actual opposing scout journeys are within 3% of 45 seconds and do not pull camps,
 including a cold restore mid-route. The full mirrored 24 × 22 C production
 layout fits and Bombardiers can leave its production buildings. Rootworks
 can be built near both deposits and actually deliver Root after guards are cleared.
@@ -191,7 +193,13 @@ fight, XP and cold continuation; it does not establish general matchup balance.
 
 ### AI, save/load and multiplayer evidence
 
-On the corrected Wilds export, a fresh five-minute two-replica match agrees at
+The centred five-node Wilds export passes a fresh 2,400-tick two-replica lockstep
+check with 25 matching full-state checkpoints, equal final snapshots and checksum
+391307542. Ordered synthetic delivery includes one injected upstream stall; this
+is a determinism check, not an Internet latency benchmark.
+
+On the forest-corrected Wilds export before the later near/far amber rearrangement,
+a fresh five-minute two-replica match agrees at
 **121 full-state checkpoints**, ends with equal complete snapshots and checksum
 **1745537715**, and has 74 live units per replica. A separate AI opening restored
 cold at tick 6,000 and matched through tick 12,000. All nine completed-building
@@ -225,3 +233,39 @@ Vite still reports non-fatal third-party directive and bundle-size advisories.
 Initial balance values are ready for playtesting; broader matchup studies,
 new hero content and graphics/performance work beyond the migration remain
 separate work. No release has been published.
+
+## Hero progression contract
+
+The shipped Marshal caps at level **11**, with cumulative XP
+`0, 160, 400, 720, 1120, 1600, 2160, 2800, 3520, 4320, 5200`.
+Each level including the first provides one learn point. Three regular skills
+use gates `1/3/5`; the two-rank ultimate uses `5/8`. Gate validation rejects
+unreachable or non-increasing requirements. AI learns through the same command
+path, preferring newly unlocked ranks and then breadth.
+
+`rules.experience` owns the ordinary-unit and hero-level reward tables, summon
+multiplier, neutral ceiling, per-level neutral multipliers, global fallback and
+solo-hero Hall-tier bonuses. Shipped positive ad-hoc `experienceYield` values are
+removed; explicit zero excludes workers and split bodies. Authored overrides
+remain available for deliberate scenario content. Ordinary combat levels drive
+rewards; Bombardiers are level 3. Kill credit comes from the authoritative lethal
+hit's captured owner, including released spells whose caster died or changed
+allegiance. Friendly kills and non-combat removals earn nothing.
+
+Nearby eligible allied heroes share one pool within their authored radius
+(Marshal: **10 C**). If none qualify, only the credited owner's eligible living
+heroes receive the global fallback. Stable ID order assigns integer remainder
+points. Apply recipient multipliers after splitting, round down once, then clamp;
+no redistribution or banking of capped overflow. Neutral rewards at levels 1–5
+are `100/90/80/70/60%`, ending exactly at level 6 (1600 XP). Player-controlled
+victims continue progression to level 11. Summons pay 50%. A single rostered hero
+receives tier-2/3 bonuses of 15/30%; fallen and paid queued heroes count in the
+roster. Missions may cap progression earlier. Stat growth preserves wounds and
+mana expenditure by adding only the maximum-pool increases.
+
+Marshal's published bindings are `ability.marshal.faultline`,
+`ability.marshal.rally`, `ability.marshal.carapace` and
+`ability.marshal.crownfall`. Their ranks, target queries, damage, shields,
+reflection, hero-specific stun durations and linked effects are ordinary authored
+data, with no bespoke spell runtime. The [hero guide](../wiki/guide/heroes.md)
+describes the kit. Simulation build 110 separates this ruleset from older peers.

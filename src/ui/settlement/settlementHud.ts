@@ -28,7 +28,7 @@ import {
 } from "../../presentation/commands";
 import type { Action } from "../../shared/types/types";
 import type { SettlementView } from "../../sim/game/observation";
-import { healthPipState } from "../../presentation/health";
+import { healthColor } from "../../presentation/health";
 import { iconArt } from "./commandArt";
 import { CommandTooltips } from "./tooltips";
 import "./commandDock.css";
@@ -229,7 +229,7 @@ export class SettlementHud {
       mode: () => void;
       home: () => void;
       focus: (id: number, group?: readonly number[]) => void;
-      portrait?: (host:HTMLElement,definition:string|null,owner:Owner)=>void;
+      portrait?: (host:HTMLElement,definition:string|null,owner:Owner,asset?:string)=>void;
       lookAt?: (x:number,y:number)=>void;
     },
   ) {
@@ -506,7 +506,7 @@ export class SettlementHud {
     this.experience.hidden = true;
     if (focus) {
       const d = formDefinition(content.get(focus.definition),focus,content);
-      const xp = experienceMeter(focus, d, this.current?.heroLevelCap);
+      const xp = experienceMeter(focus, d, this.current?.heroLevelCap, content.rules.experience.neutralLevelCap);
       this.experience.hidden = !xp;
       if (xp) {
         this.experience.style.setProperty(
@@ -540,7 +540,7 @@ export class SettlementHud {
         tipDescription: d.description,
         tipCosts: JSON.stringify(costs(content, d.id)),
       });
-      this.hooks.portrait?.(this.portrait,d.id,focus.owner);
+      this.hooks.portrait?.(this.portrait,d.id,focus.owner,focus.appearance?.asset);
       this.portrait.dataset.mana = String(!!focus.abilities);
       this.portraitMana.hidden = !focus.abilities;
       this.portraitMana.firstChild!.textContent = focus.abilities
@@ -553,12 +553,10 @@ export class SettlementHud {
         this.portraitHp.setAttribute('aria-label','Health');this.portraitHp.setAttribute('aria-valuenow',String(focus.hp??0));this.portraitHp.setAttribute('aria-valuemax',String(focus.stats?.maxHp??d.body.maxHp));
         this.portraitHp.firstChild!.textContent = `${focus.hp ?? 0} / ${focus.stats?.maxHp ?? d.body.maxHp}`;
         this.portraitHp.style.setProperty('--fill',`${Math.max(0,Math.min(1,(focus.hp??0)/Math.max(1,focus.stats?.maxHp??d.body.maxHp)))*100}%`);
-        this.portraitHp.style.setProperty('--bar-color', `#${healthPipState(
+        this.portraitHp.style.setProperty('--bar-color', `#${healthColor(
           focus.hp ?? 0,
           focus.stats?.maxHp ?? d.body.maxHp,
-          d.kind === "building",
-        )
-          .color.toString(16)
+        ).toString(16)
           .padStart(6, "0")}`);
       }
       const statKey = `${d.id}/${focus.stats?.damage}/${focus.stats?.armor}/${focus.stats?.cooldownTicks}`;
@@ -634,12 +632,10 @@ export class SettlementHud {
           hp.className = "rts-unit-hp";
           const fill = document.createElement("i");
           fill.style.width = `${(e.hp! / (e.stats?.maxHp ?? d.body.maxHp)) * 100}%`;
-          fill.style.backgroundColor = `#${healthPipState(
+          fill.style.backgroundColor = `#${healthColor(
             e.hp ?? 0,
             e.stats?.maxHp ?? d.body.maxHp,
-            false,
-          )
-            .color.toString(16)
+          ).toString(16)
             .padStart(6, "0")}`;
           hp.append(fill);
           button.append(hp);

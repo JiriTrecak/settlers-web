@@ -8,16 +8,36 @@ import type {Rules} from '../../src/content/schema';
 import {Game} from '../../src/sim/game/game';
 import {run,slots} from './helpers';
 import {precise} from '../../src/sim/game/motion';
-import {footprintCellBounds} from '../../src/shared/spatial/footprint';
+import {footprintCellBounds,footprintBounds} from '../../src/shared/spatial/footprint';
 
 // Live-editor exports. These checks establish foundations, not finished map balance.
 describe.each(['amberwake-basin','amberwake-wilds'])('%s competitive map contract',id=>{
 const map=parseUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${id}.utcmap`,'utf8')))!;
-it('provides two legal opposing starts, eight four-node sites and live landscape layers',()=>{
+it('arranges every amber site as two outer near nodes and three inner far nodes',()=>{
+ for(const site of ['home','natural','third','contested']){
+  const nodes=[1,2,3,4,5].map(n=>map.entities.find(e=>e.id===`amber.1.${site}.${n}`)!);
+  const centerX=(nodes[0].position.x+nodes[4].position.x)/2;
+  const hallY=nodes[0].position.y-24;
+  expect(nodes.map(e=>[e.position.x-centerX,e.position.y-hallY])).toEqual([[-8,24],[-4,28],[0,28],[4,28],[8,24]]);
+  // Neighboring node foundations touch; no empty passage remains between them.
+  for(let i=1;i<nodes.length;i++){
+   const a=footprintBounds(nodes[i-1].position,content.get(nodes[i-1].definition).footprint);
+   const b=footprintBounds(nodes[i].position,content.get(nodes[i].definition).footprint);
+   expect(b.minX).toBe(a.maxX);
+   expect(Math.max(a.minY,b.minY)).toBeLessThanOrEqual(Math.min(a.maxY,b.maxY));
+  }
+  if(site==='home')expect(map.playerStarts[0]).toMatchObject({x:centerX,z:hallY});
+  for(const [i,node] of nodes.entries()){
+   const twin=map.entities.find(e=>e.id===`amber.2.${site}.${i+1}`)!;
+   expect(twin.position).toEqual({x:511-node.position.x,y:511-node.position.y});
+  }
+ }
+});
+it('provides two legal opposing starts, eight five-node sites and live landscape layers',()=>{
  expect(playableMapError(map)).toBeNull();expect(map.size).toBe(512);
  expect(map.playerStarts).toHaveLength(2);
  const [a,b]=map.playerStarts;expect(b).toMatchObject({x:511-a.x,z:511-a.z,rotation:180});
- expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(32);
+ expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(40);
  expect(map.entities.filter(e=>e.definition==='building.neutral.corrupted-root')).toHaveLength(2);
  expect(map.camps).toHaveLength(6);
  expect(map.authoring!.layers.some(l=>['recipe.grass.meadow','recipe.meadow.woodland-edge'].includes(l.recipe))).toBe(true);
@@ -44,11 +64,12 @@ it('keeps opposing approach routes within the 135-C pacing target for the real i
  for(const length of lengths)expect(Math.abs(length/12-45)).toBeLessThan(1.35);
 });
 
-it.each([4,8,12])('measures %i miners at both authored home sites, with no production or AI subsidy',count=>{
+it.each([5,10,15])('measures %i miners at both authored home sites, with no production or AI subsidy',count=>{
  const source=structuredClone(builtinSource),rules=source.rules as Rules;
  rules.startingSetup.gathering=[];
  const original=rules.startingSetup.units;
- rules.startingSetup.units=Array.from({length:count},(_,i)=>original[i]??{definition:'unit.ants.settler',offset:{x:-10+(i-6)*4,y:30}});
+ // Extra benchmark workers start behind the Hall, clear of the far-node row.
+ rules.startingSetup.units=Array.from({length:count},(_,i)=>original[i]??{definition:'unit.ants.settler',offset:{x:-10+((i-6)%6)*4,y:-16-Math.floor((i-6)/6)*4}});
  const registry=new ContentRegistry(source),g=new Game(map,slots,registry,6401);
  for(const owner of ['player.1','player.2'] as const){
   const workers=g.entities.filter(e=>e.owner===owner&&registry.get(e.definition).behaviors.work);
@@ -56,12 +77,22 @@ it.each([4,8,12])('measures %i miners at both authored home sites, with no produ
   for(const worker of workers)expect(g.spatial.unitWalkable(worker,worker)).toBe(true);
   expect(g.command(owner,{type:'gather',actors:workers.map(w=>w.id),target:node.id}).actors).toHaveLength(count);
  }
- run(g,400);const start=structuredClone(g.state.wallets);run(g,2400);
+ run(g,400);const start=structuredClone(g.state.wallets);
+ const nodes=g.entities.filter(e=>e.placement?.startsWith('amber.')&&e.placement.includes('.home.'));
+ const reserves=new Map(nodes.map(e=>[e.id,e.resource!.amount]));
+ run(g,2400);
  const income=['player.1','player.2'].map(owner=>g.state.wallets[owner]['item.amber']-start[owner]['item.amber']);
- if(count===4){for(const amount of income){expect(amount).toBeGreaterThanOrEqual(600);expect(amount).toBeLessThan(680);}}
- else expect(income).toEqual([1200,1200]);
+ if(count===5){for(const amount of income){expect(amount).toBeGreaterThanOrEqual(700);expect(amount).toBeLessThanOrEqual(850);}}
+ else if(count===10)expect(income).toEqual([1420,1410]);
+ else for(const amount of income)expect(Math.abs(amount-1500)).toBeLessThanOrEqual(10); // One cargo can straddle the measurement boundary.
  expect(Math.abs(income[0]-income[1])/Math.max(...income)).toBeLessThan(.03);
- if(count===8){
+ if(count===10){
+  // The near/far distinction is economic as well as visual: with two workers
+  // per node the far pair leaves more extraction time idle during return trips.
+  for(const side of [1,2]){
+   const output=(n:number)=>{const e=nodes.find(e=>e.placement===`amber.${side}.home.${n}`)!;return reserves.get(e.id)!-e.resource!.amount;};
+   expect((output(1)+output(5))/2).toBeGreaterThan((output(2)+output(3)+output(4))/3);
+  }
   const restored=new Game(map,slots,registry,6401);restored.restore(g.snapshot());
   for(let i=0;i<400;i++){g.tick();restored.tick();if(i%40===0)expect(restored.checksum('full')).toBe(g.checksum('full'));}
   expect(restored.snapshot()).toEqual(g.snapshot());

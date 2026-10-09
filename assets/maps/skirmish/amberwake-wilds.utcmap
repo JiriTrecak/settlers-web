@@ -28,7 +28,7 @@
       "id": "amber.1.home.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 69.5,
+        "x": 73.5,
         "y": 449.5
       },
       "rotation": 0,
@@ -39,7 +39,7 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 77.5,
-        "y": 449.5
+        "y": 453.5
       },
       "rotation": 0,
       "owner": "none"
@@ -48,8 +48,8 @@
       "id": "amber.1.home.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 85.5,
-        "y": 449.5
+        "x": 81.5,
+        "y": 453.5
       },
       "rotation": 0,
       "owner": "none"
@@ -58,8 +58,8 @@
       "id": "amber.1.home.4",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 93.5,
-        "y": 449.5
+        "x": 85.5,
+        "y": 453.5
       },
       "rotation": 0,
       "owner": "none"
@@ -68,7 +68,7 @@
       "id": "amber.2.home.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 441.5,
+        "x": 437.5,
         "y": 61.5
       },
       "rotation": 180,
@@ -79,7 +79,7 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 433.5,
-        "y": 61.5
+        "y": 57.5
       },
       "rotation": 180,
       "owner": "none"
@@ -88,8 +88,8 @@
       "id": "amber.2.home.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 425.5,
-        "y": 61.5
+        "x": 429.5,
+        "y": 57.5
       },
       "rotation": 180,
       "owner": "none"
@@ -98,8 +98,8 @@
       "id": "amber.2.home.4",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 417.5,
-        "y": 61.5
+        "x": 425.5,
+        "y": 57.5
       },
       "rotation": 180,
       "owner": "none"
@@ -108,7 +108,7 @@
       "id": "amber.1.natural.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 157.5,
+        "x": 161.5,
         "y": 353.5
       },
       "rotation": 0,
@@ -119,7 +119,7 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 165.5,
-        "y": 353.5
+        "y": 357.5
       },
       "rotation": 0,
       "owner": "none"
@@ -128,8 +128,8 @@
       "id": "amber.1.natural.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 173.5,
-        "y": 353.5
+        "x": 169.5,
+        "y": 357.5
       },
       "rotation": 0,
       "owner": "none"
@@ -138,8 +138,8 @@
       "id": "amber.1.natural.4",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 181.5,
-        "y": 353.5
+        "x": 173.5,
+        "y": 357.5
       },
       "rotation": 0,
       "owner": "none"
@@ -148,7 +148,7 @@
       "id": "amber.2.natural.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 353.5,
+        "x": 349.5,
         "y": 157.5
       },
       "rotation": 180,
@@ -159,7 +159,7 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 345.5,
-        "y": 157.5
+        "y": 153.5
       },
       "rotation": 180,
       "owner": "none"
@@ -168,8 +168,8 @@
       "id": "amber.2.natural.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 337.5,
-        "y": 157.5
+        "x": 341.5,
+        "y": 153.5
       },
       "rotation": 180,
       "owner": "none"
@@ -178,8 +178,8 @@
       "id": "amber.2.natural.4",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 329.5,
-        "y": 157.5
+        "x": 337.5,
+        "y": 153.5
       },
       "rotation": 180,
       "owner": "none"
@@ -188,7 +188,7 @@
       "id": "amber.1.third.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 69.5,
+        "x": 73.5,
         "y": 273.5
       },
       "rotation": 0,
@@ -199,7 +199,7 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 77.5,
-        "y": 273.5
+        "y": 277.5
       },
       "rotation": 0,
       "owner": "none"
@@ -208,8 +208,8 @@
       "id": "amber.1.third.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 85.5,
-        "y": 273.5
+        "x": 81.5,
+        "y": 277.5
       },
       "rotation": 0,
       "owner": "none"
@@ -218,8 +218,8 @@
       "id": "amber.1.third.4",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 93.5,
-        "y": 273.5
+        "x": 85.5,
+        "y": 277.5
       },
       "rotation": 0,
       "owner": "none"
@@ -228,7 +228,7 @@
       "id": "amber.2.third.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 441.5,
+        "x": 437.5,
         "y": 237.5
       },
       "rotation": 180,
@@ -239,7 +239,7 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 433.5,
-        "y": 237.5
+        "y": 233.5
       },
       "rotation": 180,
       "owner": "none"
@@ -248,8 +248,8 @@
       "id": "amber.2.third.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 425.5,
-        "y": 237.5
+        "x": 429.5,
+        "y": 233.5
       },
       "rotation": 180,
       "owner": "none"
@@ -258,8 +258,8 @@
       "id": "amber.2.third.4",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 417.5,
-        "y": 237.5
+        "x": 425.5,
+        "y": 233.5
       },
       "rotation": 180,
       "owner": "none"
@@ -268,7 +268,7 @@
       "id": "amber.1.contested.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 225.5,
+        "x": 229.5,
         "y": 121.5
       },
       "rotation": 0,
@@ -279,7 +279,7 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 233.5,
-        "y": 121.5
+        "y": 125.5
       },
       "rotation": 0,
       "owner": "none"
@@ -288,8 +288,8 @@
       "id": "amber.1.contested.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 241.5,
-        "y": 121.5
+        "x": 237.5,
+        "y": 125.5
       },
       "rotation": 0,
       "owner": "none"
@@ -298,8 +298,8 @@
       "id": "amber.1.contested.4",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 249.5,
-        "y": 121.5
+        "x": 241.5,
+        "y": 125.5
       },
       "rotation": 0,
       "owner": "none"
@@ -308,7 +308,7 @@
       "id": "amber.2.contested.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 285.5,
+        "x": 281.5,
         "y": 389.5
       },
       "rotation": 180,
@@ -319,7 +319,7 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 277.5,
-        "y": 389.5
+        "y": 385.5
       },
       "rotation": 180,
       "owner": "none"
@@ -328,8 +328,8 @@
       "id": "amber.2.contested.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 269.5,
-        "y": 389.5
+        "x": 273.5,
+        "y": 385.5
       },
       "rotation": 180,
       "owner": "none"
@@ -338,8 +338,8 @@
       "id": "amber.2.contested.4",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 261.5,
-        "y": 389.5
+        "x": 269.5,
+        "y": 385.5
       },
       "rotation": 180,
       "owner": "none"
@@ -620,6 +620,86 @@
       "position": {
         "x": 354,
         "y": 240
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.home.5",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 89.5,
+        "y": 449.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.home.5",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 421.5,
+        "y": 61.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.natural.5",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 177.5,
+        "y": 353.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.natural.5",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 333.5,
+        "y": 157.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.third.5",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 89.5,
+        "y": 273.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.third.5",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 421.5,
+        "y": 237.5
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber.1.contested.5",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 245.5,
+        "y": 121.5
+      },
+      "rotation": 0,
+      "owner": "none"
+    },
+    {
+      "id": "amber.2.contested.5",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 265.5,
+        "y": 389.5
       },
       "rotation": 180,
       "owner": "none"
@@ -2995,7 +3075,7 @@
       },
       {
         "id": "wilds.clearing-soil.1",
-        "name": "Elder Watch worn clearing \u00b7 south",
+        "name": "Elder Watch worn clearing · south",
         "recipe": "recipe.path.soil",
         "overrides": {
           "type": "path",
@@ -3059,7 +3139,7 @@
       },
       {
         "id": "wilds.clearing-soil.2",
-        "name": "Elder Watch worn clearing \u00b7 north",
+        "name": "Elder Watch worn clearing · north",
         "recipe": "recipe.path.soil",
         "overrides": {
           "type": "path",
@@ -3123,7 +3203,7 @@
       },
       {
         "id": "wilds.camp-soil.1",
-        "name": "Shelter floor \u00b7 south",
+        "name": "Shelter floor · south",
         "recipe": "recipe.path.soil",
         "overrides": {
           "type": "path",
@@ -3173,7 +3253,7 @@
       },
       {
         "id": "wilds.camp-soil.2",
-        "name": "Shelter floor \u00b7 north",
+        "name": "Shelter floor · north",
         "recipe": "recipe.path.soil",
         "overrides": {
           "type": "path",
@@ -3223,7 +3303,7 @@
       },
       {
         "id": "wilds.fungal-colonies.1",
-        "name": "Fungal colonies at old timber \u00b7 south",
+        "name": "Fungal colonies at old timber · south",
         "recipe": "recipe.foliage.mushroom-patches",
         "overrides": {
           "spacing": 2.5,
@@ -3284,7 +3364,7 @@
       },
       {
         "id": "wilds.fungal-colonies.2",
-        "name": "Fungal colonies at old timber \u00b7 north",
+        "name": "Fungal colonies at old timber · north",
         "recipe": "recipe.foliage.mushroom-patches",
         "overrides": {
           "spacing": 2.5,
@@ -3345,7 +3425,7 @@
       },
       {
         "id": "wilds.base-floor.1",
-        "name": "Worn colony clearing \u00b7 1",
+        "name": "Worn colony clearing · 1",
         "recipe": "recipe.path.soil",
         "overrides": {
           "type": "path",
@@ -3385,7 +3465,7 @@
       },
       {
         "id": "wilds.base-floor.2",
-        "name": "Worn colony clearing \u00b7 2",
+        "name": "Worn colony clearing · 2",
         "recipe": "recipe.path.soil",
         "overrides": {
           "type": "path",
@@ -3425,7 +3505,7 @@
       },
       {
         "id": "wilds.leafy-ridge.1",
-        "name": "Leafy ridge behind the old watch \u00b7 1",
+        "name": "Leafy ridge behind the old watch · 1",
         "recipe": "recipe.forest.leafy",
         "overrides": {
           "spacing": 6,
@@ -3466,7 +3546,7 @@
       },
       {
         "id": "wilds.leafy-ridge.2",
-        "name": "Leafy ridge behind the old watch \u00b7 2",
+        "name": "Leafy ridge behind the old watch · 2",
         "recipe": "recipe.forest.leafy",
         "overrides": {
           "spacing": 6,
@@ -3507,7 +3587,7 @@
       },
       {
         "id": "wilds.hollow-woods.1",
-        "name": "Hollow log woodland \u00b7 1",
+        "name": "Hollow log woodland · 1",
         "recipe": "recipe.forest.leafy",
         "overrides": {
           "spacing": 5.5,
@@ -3544,7 +3624,7 @@
       },
       {
         "id": "wilds.hollow-woods.2",
-        "name": "Hollow log woodland \u00b7 2",
+        "name": "Hollow log woodland · 2",
         "recipe": "recipe.forest.leafy",
         "overrides": {
           "spacing": 5.5,

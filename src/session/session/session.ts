@@ -387,7 +387,7 @@ export class Session {
       cameraMode:()=>this.unitCameraMode,
       cycleCamera:()=>{this.unitCameraMode=nextCameraMode(this.unitCameraMode);},
       resetCamera:()=>{this.unitCameraMode='rts';renderer.unitCamera(null);},
-      portrait: (host,definition,owner)=>renderer.gamePortrait(host,definition,owner),
+      portrait: (host,definition,owner,asset)=>renderer.gamePortrait(host,definition,owner,asset),
       mode: () => {
         if (this.placementPointer) this.onHover(this.placementPointer);
         else {

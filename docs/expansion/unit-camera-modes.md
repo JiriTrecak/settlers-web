@@ -6,7 +6,7 @@ Select a visible living unit and click the spyglass in the command card, or pres
 
 Close-up views follow the unit's rendered position and facing, including its current walk surface. They retain normal RTS orders; the camera does not steer the unit. Losing the subject, selecting a building or clearing selection restores RTS. The original RTS focus and zoom are retained. Loading a save starts in RTS. Player camera choices stay local and never become simulation actions.
 
-Ant render assets declare `cameraAnchor` with eye height, forward offset and third-person distance. Other units fall back to a height derived from their declared health-label height. Third person shortens its boom against terrain, static scenery and observed buildings. First person suppresses its own model's color/depth draw while preserving animated shadows and other instances sharing the same materials. Nearby health labels have a screen-size cap. The overhead scenery-cutaway mask is disabled in close views to avoid cutting holes into the floor; interior maps use a dark backdrop.
+Ant render assets declare `cameraAnchor` with eye height, forward offset and third-person distance. Other units fall back to a height derived from their declared health-label height. Third person shortens its boom against terrain, static scenery and observed buildings. First person suppresses its own model's color/depth draw while preserving animated shadows and other instances sharing the same materials. Health/mana bars retain a fixed CSS-pixel size in all camera modes; other nearby sprite labels have a screen-size cap. The overhead scenery-cutaway mask is disabled in close views to avoid cutting holes into the floor; interior maps use a dark backdrop.
 
 ## Mission shots
 

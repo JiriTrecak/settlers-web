@@ -4996,6 +4996,118 @@
     },
     {
       "version": 1,
+      "id": "asset.effects.marshal.chitin-ward",
+      "name": "Marshal chitin ward glyph",
+      "kind": "texture",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "58aef1ce48fd21d2b09537d8f507cb1e38980d4ccdd3af54fdc858bc887f375c",
+          "bytes": 730
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "91e220a1746170396cfa18668bbd48c1e8fe15bc9ab5c2fd2f88bb2c8c8e6a6d",
+          "bytes": 192164
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "4eb927982a56588c5b15748d0885e53d1ce32481f3a933b44d875781f38f3185",
+          "bytes": 1072997
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.effects.marshal.crown-fracture",
+      "name": "Crownfall amber fracture",
+      "kind": "texture",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "3c21e50368746e8251c0877c75cc77a52a06a18d282aa00db6c1fc0405e58037",
+          "bytes": 872
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "ecd0f7850db30fedac551f312c3e10273f9cb1de1b2d7c8094814a601c1ff0af",
+          "bytes": 282713
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "22f71941367a0cb6f808076f057a043b4cdda044f681f751daa9d708d523127b",
+          "bytes": 1446478
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.effects.seismic-crescent",
       "name": "seismic crescent effect texture",
       "kind": "texture",
@@ -9796,6 +9908,108 @@
       "provenance": {
         "method": "migration",
         "sourceHash": "b2e10d98f24addc3f34ac89e15864f92d0bf8e93f556797184f57664d3b3ad71"
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.interface.campaign.amber-watch-loading",
+      "name": "amber watch loading",
+      "kind": "interface",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "campaign",
+        "original",
+        "amber-watch"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "713b832db87e98a926d8485e1631122f4cddd9df0f1d80e00c79fa7138f8d88e",
+          "bytes": 357
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "webp",
+          "sha256": "fc07136b585dea35fc7ae3e8745e88a0e8d09a398e888e23979887a6c9deec7f",
+          "bytes": 261956
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "interface-image",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original Under the Canopy artwork, generated from approved clean menu concepts."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.interface.campaign.amber-watch-selection",
+      "name": "amber watch selection",
+      "kind": "interface",
+      "revision": 4,
+      "status": "published",
+      "tags": [
+        "campaign",
+        "original",
+        "amber-watch"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "da69ccce304e32320d9a3f873d1a106a451a866d5e03bbbb600fb98e83e4f635",
+          "bytes": 339
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "webp",
+          "sha256": "961265cfdb6c2b75659a1c54bf40fde530a0eed348a0d62e4ae541c0d3f2b547",
+          "bytes": 373540
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "profile": "interface-image",
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original Under the Canopy artwork, generated from approved clean menu concepts."
       }
     },
     {
@@ -33409,6 +33623,266 @@
       "provenance": {
         "method": "authored",
         "licenseNote": "Procedural diagnostic placeholder authored for this project."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.spells.marshal.carapace-icon",
+      "name": "Iron Carapace",
+      "kind": "icon",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "7d44171f66c063a7f07da0ed15ac70242b129e850afb80edfb17b286e6421a5a",
+          "bytes": 634
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "77cc896560b252539a858a4b6005bf52c9c1d2d729f691df42c129bd1e018452",
+          "bytes": 43311
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "c729d7c093b477fd741f1a7ab2622b19c43ead7f4f0c7dad1039100ac09fb244",
+          "bytes": 1790589
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [
+          {
+            "id": "asset.spells.marshal.carapace-icon",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.spells.marshal.carapace-icon"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.spells.marshal.crownfall-icon",
+      "name": "Crownfall",
+      "kind": "icon",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "72a790e8df7dd3ce746e74f47ba8664d5c7c86ea609fb42fea628d24a9607fe2",
+          "bytes": 652
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "b20a154eddab80668674e0fc9926e325cb8efb278d0e630e81219fd9e5738910",
+          "bytes": 45893
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "de6bac142b5fb12a3644f55d888f18712ef38baaae6077d926f1d21a757e32f6",
+          "bytes": 1770366
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [
+          {
+            "id": "asset.spells.marshal.crownfall-icon",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.spells.marshal.crownfall-icon"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.spells.marshal.faultline-icon",
+      "name": "Faultline",
+      "kind": "icon",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "bc0d2c398df996251e8d72173d764ebbfb76612ec916e069e2dfb7d420f12492",
+          "bytes": 604
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "8a1dd3d617400f05e15eb333c30e62ee7e7670efe386c2a64a6e3ace94183c7e",
+          "bytes": 43632
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "d302f74e6fe22b19e6c4d1249fe136cb8200f42073e46fa178019a75ee7a4e15",
+          "bytes": 1598189
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [
+          {
+            "id": "asset.spells.marshal.faultline-icon",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.spells.marshal.faultline-icon"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.spells.marshal.rally-icon",
+      "name": "Rally the Colony",
+      "kind": "icon",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "55a7f62382ccdbff994b18c841ef5b5f06a28db483d73754c4106415322ee8d0",
+          "bytes": 617
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "944c8c565ba4cb0a7445c1ef1860200649f4c4f4b6e2306004bf3cafff5a53f9",
+          "bytes": 46569
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "41fbffd768893d1204944934fd75f496eb25d1acb584f53158ebb864f4ec5155",
+          "bytes": 1669612
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [
+          {
+            "id": "asset.spells.marshal.rally-icon",
+            "image": {
+              "role": "image",
+              "index": 1,
+              "asset": "asset.spells.marshal.rally-icon"
+            }
+          }
+        ],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
       }
     },
     {

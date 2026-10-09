@@ -27,7 +27,7 @@ import { AbilityTarget, type AbilityAim } from "./abilityTarget";
 import { batchCharacterMaterials } from "../characters/materialBatch";
 import { ProjectileEffects } from "./projectileEffects";
 import {AbilityEffects} from '../abilities/abilityEffects';
-import { HealthPips } from "./healthPips";
+import { VitalBar } from "./healthBars";
 import { HeldShortcuts } from "../../shared/input/heldShortcuts";
 import { healthBarVisible } from "../../presentation/healthVisibility";
 import { SelectionCircles, type CircleRelation, type SelectionCircle } from "./selectionCircles";
@@ -103,11 +103,16 @@ export class SettlementLayer {
   }
   private overlaysClose=false;
   cameraOverlays(camera:Camera,height:number,close:boolean):void {
+    camera.updateMatrixWorld();
+    for(const root of this.entities.values())if(root.visible){
+      const bar=this.parts.get(root)?.hp;
+      if(bar?.visible)bar.fitCamera(camera,height);
+    }
     if(!close&&!this.overlaysClose)return;
     this.overlaysClose=close;
     const world=new Vector3(),view=new Vector3();camera.updateMatrixWorld();
     for(const root of this.entities.values())if(root.visible)root.traverse(o=>{
-      if(!(o instanceof Sprite))return;
+      if(!(o instanceof Sprite)||o instanceof VitalBar)return;
       const base=(o.userData.cameraBaseScale??=o.scale.clone()) as Vector3;
       if(!close){o.scale.copy(base);return;}
       o.getWorldPosition(world);view.copy(world).applyMatrix4(camera.matrixWorldInverse);
@@ -166,7 +171,7 @@ export class SettlementLayer {
       body: Object3D;
       carry: Object3D | undefined;
       cargo: Group;
-      hp: Sprite;
+      hp: VitalBar;
       mine?: Sprite;
     }
   >();
@@ -181,7 +186,6 @@ export class SettlementLayer {
   private relation: (owner: EntityView["owner"]) => Exclude<CircleRelation, "target"> = (owner) => (owner === "none" ? "neutral" : "own");
   private viewerSlot = -1;
   private readonly statusBadges = new StatusBadges();
-  private readonly healthPips = new HealthPips();
   private readonly healthKeys = new HeldShortcuts(['health.all','health.friendly','health.enemy']);
   private readonly mineLabels = new MineLabels();
   private readonly entranceGhost = new Mesh(
@@ -377,8 +381,8 @@ export class SettlementLayer {
     return this.warmModels;
   }
   /** HUD previews share loaded geometry/textures, but own their skeleton and materials. */
-  createPortrait(definition: string, owner: number) {
-    const asset = this.registry.get(definition).asset;
+  createPortrait(definition: string, owner: number, appearanceAsset?: string) {
+    const asset = appearanceAsset ?? this.registry.get(definition).asset;
     const source = this.characterSources.get(asset);
     if(!this.prototypes.has(asset)){this.requestModel(asset);return null;}
     const character = source ? createCharacterInstance(source, this.registry.asset(asset).character,geometryModel(this.registry.asset(asset).file!)?.capabilities) : null;
@@ -498,23 +502,10 @@ export class SettlementLayer {
     o.userData.circleRadius = d.dimensions
       ? Math.max(d.dimensions.radius + .32, d.dimensions.formationSpacing * .45)
       : d.footprint && bounds ? Math.max(d.footprint.width / 2, d.footprint.depth / 2, bounds.x * .45, bounds.z * .45) + .35 : .9 * visualScale;
-    const hp = new Sprite(
-      this.healthPips.material(
-        e.hp ?? 1,
-        e.stats?.maxHp ?? d.body?.maxHp ?? 1,
-        d.kind === "building",
-        false,
-      ),
-    );
-    hp.name = "Health";
-    hp.position.set(0, o.userData.pickHeight, 0);
-    hp.scale.set(
-      d.kind === "building" ? 3.8 : 1.35,
-      d.kind === "building" ? 0.36 : 0.42,
-      1,
-    );
-    hp.renderOrder = 21;
-    hp.raycast = () => {};
+    const hp = new VitalBar(d.kind === "building");
+    hp.setValues({hp:e.hp??0,maxHp:e.stats?.maxHp??d.body?.maxHp??1,
+      mana:e.abilities?.mana??d.behaviors.abilities?.maxMana,maxMana:e.stats?.maxMana??d.behaviors.abilities?.maxMana??0});
+    hp.position.set(0, o.userData.pickHeight + .25, 0);
     o.add(hp);
     let mine: Sprite | undefined;
     if (e.gathering) {
@@ -757,7 +748,6 @@ export class SettlementLayer {
         o.userData.previousHealth !== undefined &&
         e.hp < o.userData.previousHealth
       ) {
-        o.userData.lastDamageTick = tick;
         const attacker=this.modelEntities.find(a=>a.unit?.attack?.target===e.id&&a.unit.attack.released);
         const angle=attacker?Math.atan2(e.x-attacker.x,e.y-attacker.y):o.rotation.y;
         this.impacts.hit(e.id,o.position.x,o.position.y+(d.kind==='building'?1.7:1.1*(o.userData.visualScale??1)),o.position.z,renderTick,angle,d.hero?1.4:1);
@@ -767,15 +757,8 @@ export class SettlementLayer {
         !!d.body &&
         healthBarVisible(e,d.kind,e.stats?.maxHp ?? d.body.maxHp,this.selected.has(e.id),heldHealth);
       if (hp.visible && d.body) {
-        const elapsed = tick - (o.userData.lastDamageTick ?? -Infinity);
-        const blink =
-          elapsed >= 0 && elapsed < 40 && Math.floor(elapsed / 5) % 2 === 0;
-        hp.material = this.healthPips.material(
-          e.hp!,
-          e.stats?.maxHp ?? d.body.maxHp,
-          d.kind === "building",
-          blink,
-        );
+        hp.setValues({hp:e.hp!,maxHp:e.stats?.maxHp??d.body.maxHp,
+          mana:e.abilities?.mana??d.behaviors.abilities?.maxMana,maxMana:e.stats?.maxMana??d.behaviors.abilities?.maxMana??0});
       }
       const cargo = parts.cargo;
       const cargoKey = e.unit?.cargo?.item ?? "";
@@ -935,6 +918,7 @@ export class SettlementLayer {
   }
 
   private removeModel(id: number, o: Object3D) {
+    this.parts.get(o)?.hp.dispose();
     const body=this.parts.get(o)?.body;if(body)this.concealment.remove(body);
     // Socket-attached cargo was added after character cloning, so its materials
     // are owned here rather than by the character factory.
@@ -987,7 +971,6 @@ export class SettlementLayer {
     this.circles.dispose();
     this.rallies.dispose();
     this.statusBadges.dispose();
-    this.healthPips.dispose();
     this.healthKeys.dispose();
     this.mineLabels.dispose();
     this.entranceGhost.geometry.dispose();

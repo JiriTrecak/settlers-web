@@ -46,12 +46,21 @@ assume painted dirt or visible ground proves a traversable passage.
 
 ## Economy
 
-An amber site is **four nodes**, each holding 4,500 amber, with one active miner
-and an arrival-ordered waiting queue. Eight workers are the standard saturation
-of a properly arranged main: 10 per load, 2 seconds mining, about 1.8–1.9 seconds
-outside extraction. Target approximately 1,200 amber/minute; measure 4/8/12-worker
-throughput on the authored map. Oversaturation is allowed and should add little
-income at the standard layout. Longer travel can justify more workers.
+An amber site is **five nodes**, each holding 4,500 amber, with one active miner
+and an arrival-ordered waiting queue. Arrange two outer nodes nearer the Hall and
+three inner nodes farther away. For a Hall facing +Z, use relative node centres
+`(-8,24), (-4,28), (0,28), (4,28), (8,24)` in world units; rotate or point-mirror
+the whole arrangement with the base. The five-node cluster is centred on the Hall
+and occupies the same 5-C width. Adjacent foundations touch at the outer corners
+and along the inner row. Workers approach from the Hall-facing side.
+
+Ten workers are the standard economical assignment: 10 per load and 2 seconds
+mining. Five active nodes have a 1,500 amber/minute extraction ceiling, 25% above
+the previous four-node layout; a full site holds 22,500 amber. Measured Amberwake
+home deliveries are 1,410–1,420/minute with ten workers and approximately 1,500
+with fifteen after warm-up. Measure 5/10/15-worker throughput after authoring;
+longer travel can justify extra workers. The initial match still starts with six
+workers; ten is the mining recommendation, not a starting-unit count or hard cap.
 
 Keep each node's approach and Hall return lane open. Use the same tested node/Hall
 arrangement at symmetric sites; allow room for a future snapped Hall at expansions.
@@ -128,3 +137,18 @@ unmodified game-camera views at bases and landmarks. Run AI openings from both
 starts; record income, supply blocks, building completion and first engagement.
 Verify a deterministic multiplayer replay and cold save restore on the exported map.
 Do not label a map accepted while those checks are still pending.
+
+### Hero experience budget
+
+Budget camps from their members' declared combat levels and `rules.experience`,
+not from hand-entered XP totals on map placements. The ordinary reward table starts
+24 / 44 / 72 / 108 / 152 / 204 XP for levels 1–6. A three-level-1 opening camp
+therefore has a 72-XP base pool, before sharing, level-dependent neutral reductions
+and Hall-tier bonuses. Check actual fights as well as nominal budgets: successive
+kills may cross a hero level and change the multiplier for later kills.
+
+Heroes need 160 / 400 / 720 / 1120 / 1600 cumulative XP for levels 2–6. Neutral
+camps can reach level 6 but cannot bank XP beyond it; the first ultimate unlocks
+at level 5 and its second rank at level 8 requires player combat. Keep early camp
+routes contestable and symmetric, and retain the forest shapes, build shelves and
+measured travel-time rules above. Do not change map resource layouts to tune XP.

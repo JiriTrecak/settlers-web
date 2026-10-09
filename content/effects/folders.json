@@ -550,6 +550,11 @@
       "id": "folder.fe93e884-be82-40cf-b0df-991c7d95c8e8",
       "name": "assistant-trials",
       "parent": "folder.spells"
+    },
+    {
+      "id": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
+      "name": "Marshal",
+      "parent": "folder.heroes"
     }
   ],
   "items": {
@@ -679,6 +684,14 @@
     "effect.custom.rallying-spark.impact": "folder.fe93e884-be82-40cf-b0df-991c7d95c8e8",
     "effect.custom.rallying-spark.ward": "folder.fe93e884-be82-40cf-b0df-991c7d95c8e8",
     "effect.custom.ashstep.departure": "folder.fe93e884-be82-40cf-b0df-991c7d95c8e8",
-    "effect.custom.ashstep.arrival": "folder.fe93e884-be82-40cf-b0df-991c7d95c8e8"
+    "effect.custom.ashstep.arrival": "folder.fe93e884-be82-40cf-b0df-991c7d95c8e8",
+    "effect.marshal.faultline.flight": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
+    "effect.marshal.faultline.hit": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
+    "effect.marshal.rally.cast": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
+    "effect.marshal.rally.ward": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
+    "effect.marshal.carapace.cast": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
+    "effect.marshal.carapace.armor": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
+    "effect.marshal.crownfall.prepare": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
+    "effect.marshal.crownfall.impact": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54"
   }
 }

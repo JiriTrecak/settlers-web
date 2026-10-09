@@ -1,6 +1,6 @@
 import {shortcuts,keyLabel} from '../../shared/input/shortcuts';
 import type { HeroShortcut } from '../../presentation/heroes';
-import { healthPipState } from '../../presentation/health';
+import { healthColor } from '../../presentation/health';
 import { iconArt } from './commandArt';
 import './heroBar.css';
 
@@ -43,7 +43,7 @@ export class HeroBar {
         ? 'Click to select. Double-click to center the camera.'
         : hero.hp <= 0 ? 'Fallen. Revive this hero at a Sanctuary.' : 'Hero is currently unavailable.';
       health.style.setProperty('--hero-health', `${Math.max(0, Math.min(1, hero.hp / hero.maxHp)) * 100}%`);
-      health.style.setProperty('--hero-health-color', `#${healthPipState(hero.hp, hero.maxHp, false).color.toString(16).padStart(6, '0')}`);
+      health.style.setProperty('--hero-health-color', `#${healthColor(hero.hp, hero.maxHp).toString(16).padStart(6, '0')}`);
     }
   }
 }

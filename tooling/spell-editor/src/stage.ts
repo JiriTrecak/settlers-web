@@ -18,7 +18,7 @@ import {AbilityEffects} from '../../../src/render/abilities/abilityEffects';
 import published from '../../../assets/authoring/published.json';
 import {content} from '../../../src/content/builtin';
 import type {AssetDefinition} from '../../../src/shared/authoring/asset';
-import type {PreviewState} from '../shared/view';
+import {previewModelDefinition,type PreviewState} from '../shared/view';
 export type ViewMode='encounter'|'caster'|'target'|'effect'|'environment';
 type TargetSelection={kind:'point';position:{x:number;y:number}}|{kind:'unit';entity:number};
 export class SpellStage{
@@ -61,7 +61,7 @@ export class SpellStage{
   const dt=Math.max(0,Math.min(.1,(state.tick-this.lastTick)/40));this.lastTick=state.tick;
   for(const [id,subject]of this.subjects){
    const entity=[...state.entities,...state.corpses??[]].find(e=>e.id===id);subject.root.visible=!!entity&&this.showsEntity(id);if(!entity)continue;
-   subject.root.scale.setScalar((content.get(entity.definition).modelScale??1)*(content.asset(subject.root.userData.renderAsset).scale??1)*(entity.appearance?.scale??1));
+   subject.root.scale.setScalar((content.get(previewModelDefinition(entity,state.settings)).modelScale??1)*(content.asset(subject.root.userData.renderAsset).scale??1)*(entity.appearance?.scale??1));
    subject.root.position.set(entity.x,entity.elevation??0,entity.y);subject.root.rotation.y=entity.rotation*Math.PI/180;
    const controls=defaultSubjectControls();controls.owner=entity.owner==='player.2'?1:0;controls.paused=true;
    const pending=entity.abilities?.pending;
@@ -117,7 +117,7 @@ export class SpellStage{
   this.fixtures.visible=this.mode!=='environment';this.fit();
  }
  private renderAsset(e:PreviewState['entities'][number],state:PreviewState){
-  const id=e.modelDefinition??(e.definition==='unit.preview.caster'?state.settings.casterDefinition:e.definition==='unit.preview.target'?state.settings.targetDefinition:e.definition);
+  const id=previewModelDefinition(e,state.settings);
   return e.appearance?.asset??content.get(id).asset;
  }
  /** Swap only changed actors; shared updates await the same in-flight load. */
@@ -138,7 +138,7 @@ export class SpellStage{
      const latest=this.state&&[...this.state.entities,...this.state.corpses??[]].find(x=>x.id===e.id);
      if(!latest||this.renderAsset(latest,this.state!)!==render){subject.dispose();return;}
      const previous=this.subjects.get(e.id);if(previous){this.concealment.remove(previous.root);previous.dispose();}
-     subject.root.userData.renderAsset=render;subject.root.scale.setScalar((content.get(latest.definition).modelScale??1)*(content.asset(render).scale??1)*(latest.appearance?.scale??1));subject.root.position.set(latest.x,latest.elevation??0,latest.y);
+     subject.root.userData.renderAsset=render;subject.root.scale.setScalar((content.get(previewModelDefinition(latest,this.state!.settings)).modelScale??1)*(content.asset(render).scale??1)*(latest.appearance?.scale??1));subject.root.position.set(latest.x,latest.elevation??0,latest.y);
      this.renderer.mountInspectionSubject(subject.root);this.subjects.set(e.id,subject);
     }catch(error){this.onError(error);}finally{if(this.modelJobs.get(e.id)===job)this.modelJobs.delete(e.id);}
    })();this.modelJobs.set(e.id,job);jobs.push(job.promise);

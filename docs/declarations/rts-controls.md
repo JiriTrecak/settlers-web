@@ -60,3 +60,11 @@ Action priorities in `content/game.json` put Move, Attack, Stop and Hold in the 
 Category metadata accepts optional `placement: "banner"`. The hero learning category uses it for **New spell available**, a full-width fourth row outside the twelve paginated slots. The label, icon and shortcut are declared alongside the category; the adapter has no hero-specific button label or key. The banner remains keyboard-accessible through the normal command resolver.
 
 Spell declarations use `placement: "bottom-row"` to reserve slots 9–12 for learned cast commands, independent of the number of movement controls. Each spell declares a `column` from 1 to 4, so learning other spells never shifts its position. The registry rejects duplicate columns within a hero’s ability set. The generic card layout respects reserved rows and pagination; Back still owns slot 9 in submenus. Learning entries keep their normal submenu layout. The presentation model omits unlearned cast commands. Learn commands populate the learning category only while skill points remain; learning returns to the root card. Locked higher ranks still describe their level requirement in the learning submenu. No simulation commands or ability costs change.
+
+World health bars use a continuous red–amber–green fill, subtle vertical shading,
+and separators at each 100 maximum HP. A 400-HP bar therefore has four sections;
+partial final sections retain their true size. Mana appears below only when the
+observed maximum mana is positive. Bars remain 52 CSS pixels wide for units and
+76 for buildings across camera zoom, projection and model scale. Extremely dense
+subpixel HP dividers fade to preserve readability. The renderer updates shared
+shader code through per-entity uniforms without generating health-state textures.

@@ -9,6 +9,6 @@ it('picks up a permanent power-up with a full inventory and keeps bonuses across
  expect(g.entities.some(e=>e.id===seed.id)).toBe(false);expect(hero.equipment).toEqual(Array(4).fill('item.barkguard'));
  expect(g.context.stats(hero).maxHp).toBe(stats.maxHp+25);expect(g.context.stats(hero).damage).toBe(stats.damage+1);
  const copy=new Game(g.map,g.slots,g.registry);copy.restore(g.snapshot());expect(copy.checksum()).toBe(g.checksum());
- hero.progression!.experience=100;expect(g.context.stats(hero).maxHp).toBe(800);expect(g.context.stats(hero).damage).toBe(35);
+ hero.progression!.experience=160;expect(g.context.stats(hero).maxHp).toBe(800);expect(g.context.stats(hero).damage).toBe(35);
  hero.hp=0;expect(hero.progression!.bonuses).toMatchObject({maxHp:25,damage:1});
 });

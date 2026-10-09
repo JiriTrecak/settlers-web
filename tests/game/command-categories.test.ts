@@ -24,7 +24,7 @@ describe("command categories", () => {
     const soldier = g.entities.find(e => e.definition === "unit.ants.marshal")!;
     const army = commandCard(g.view("player.1"), [soldier.id], "player.1", g.registry);
     expect(commandMenu(army, "category.build", g.registry).category).toBeNull();
-    expect(commandMenu(army, null, g.registry).entries.some(b => b.type === "category")).toBe(false);
+    expect(commandMenu(army, null, g.registry).entries.filter(b => b.type === "category").map(b=>b.id)).toEqual(["category:category.hero.skills"]);
     expect(commandMenu([], null, g.registry).entries).toEqual([]);
   });
 

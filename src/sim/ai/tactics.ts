@@ -21,7 +21,17 @@ function itemValue(f: Frame, id: string | null) {
 export function abilityActions(f:Frame,emit:Emit){
  for(const caster of [...f.own].sort((a,b)=>a.id-b.id)){
   const state=caster.abilities;if(!state||state.pending||state.weaponOrder||caster.control?.stunned)continue;
-  for(const binding of f.def(caster).behaviors.abilities?.bindings??[]){
+  const bindings=f.def(caster).behaviors.abilities?.bindings??[];
+  const level=caster.stats?.level??1;
+  const spent=bindings.reduce((sum,b)=>sum+(state.ranks[b.id]??b.initialRank)-b.initialRank,0);
+  // Learn through the ordinary command path. Prefer newly unlocked ranks, then
+  // breadth; no spell names or hero-specific build orders in the AI.
+  const learn=bindings.filter(b=>b.controls.includes('ai')&&b.learning&&
+    (b.learning.requiredLevels[state.ranks[b.id]]??Infinity)<=level)
+    .sort((a,b)=>b.learning!.requiredLevels[state.ranks[b.id]]-a.learning!.requiredLevels[state.ranks[a.id]]||
+      state.ranks[a.id]-state.ranks[b.id]||bindings.indexOf(a)-bindings.indexOf(b))[0];
+  if(spent<level&&learn&&emit({type:'learnAbility',actor:caster.id,ability:learn.id},'Learn an available hero ability'))continue;
+  for(const binding of bindings){
    if(!binding.ai||!binding.controls.includes('ai'))continue;
    const ability=f.registry.abilityLibrary.abilities.find(a=>a.id===binding.ability)!,rank=state.ranks[binding.id];
    if(ability.activation==='passive'||ability.autocast)continue;

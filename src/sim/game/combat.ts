@@ -336,9 +336,13 @@ export class Combat {
     b.hp=Math.max(0,b.hp-damage);this.c.clampPools(b);
     const dead=!b.hp&&!this.items.rescue(b)?[b]:[];
     if(dead.length){this.onLethal?.(hit.source,b,hit.owner??a.owner);this.finishWitnessedPursuits(b);}
-    if(dead.length&&this.opponents(a,b))new Progression(this.c).award(b,hero=>this.opponents(hero,b));
+    if(dead.length)this.awardExperience(b,hit.owner??a.owner);
     this.spellEvent(hit.source,b.id,Math.min(before,damage),false,false);
     return {damage:Math.min(before,damage),dead};
+  }
+  private awardExperience(target: Entity, owner: Owner) {
+    if(owner === 'none' || !this.opponents({owner} as Entity,target))return;
+    new Progression(this.c).award(target,owner,hero => hero.owner !== 'none' && this.teams.get(hero.owner) === this.teams.get(owner));
   }
   /** Called while the dead entity still has its position for observer visibility.
    * Never clear unseen pursuit: the last-seen search must remain identical to a
@@ -355,7 +359,6 @@ export class Combat {
   resolve(extra:DamageHit[]=[],only?:ReadonlySet<number>): Entity[] {
     extra = [...extra, ...this.items.drainHits(), ...this.shells.resolve(), ...this.missiles.resolve()];
     const hits = new Map<number, number>();
-    const contested = new Set<number>();
     const lethal = new Map<number,{source:number;owner:Owner}>();
     for (const a of this.c.activeUnits()) {
       if(only&&!only.has(a.id))continue;
@@ -407,7 +410,6 @@ export class Combat {
         if(critical)this.onSpellModifier?.(a.id,b.id,critical.ability,'criticalStrike',actual);
         extra.push(...this.cleave(a,b,raw,combat.damageType,cleavePolicy));
       }
-      if (damage > 0 && this.opponents(a,b)) contested.add(b.id);
     }
     for(const hit of extra){
       const a=this.c.get(hit.source)??(hit.owner?{id:hit.source,owner:hit.owner} as Entity:undefined),b=this.c.get(hit.target);
@@ -422,7 +424,6 @@ export class Combat {
       if (hit.weapon && a && alive(a)) extra.push(...this.items.onHit(a,b,Math.min(damage,Math.max(0,b.hp-(hits.get(b.id)??0))),hit.damageType));
       this.spellEvent(hit.source,b.id,Math.min(damage,Math.max(0,b.hp-(hits.get(b.id)??0))),!!hit.weapon,false);
       hits.set(b.id,(hits.get(b.id)??0)+damage);
-      if(damage>0 && (a ? this.opponents(a,b) : hit.owner !== b.owner && (hit.owner === "none" || b.owner === "none" || this.teams.get(hit.owner!) !== this.teams.get(b.owner))))contested.add(b.id);
     }
     const dead: Entity[] = [];
     for (const [id, damage] of [...hits].sort((a, b) => a[0] - b[0])) {
@@ -434,9 +435,10 @@ export class Combat {
     // A witnessed death completes pursuit; an unseen removal must not disclose it.
     for(const target of dead){const credit=lethal.get(target.id);if(credit)this.onLethal?.(credit.source,target,credit.owner);}
     for(const target of dead)this.finishWitnessedPursuits(target);
-    const progression = new Progression(this.c);
-    for (const target of dead) if (contested.has(target.id))
-      progression.award(target,hero => this.opponents(hero,target));
+    for (const target of dead) {
+      const credit = lethal.get(target.id);
+      if (credit) this.awardExperience(target, credit.owner);
+    }
     return dead;
   }
 }

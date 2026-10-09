@@ -1,12 +1,12 @@
 import {expect,it} from 'vitest';
-import {compactBodyGame as game,placed} from './helpers';
+import {compactBodyGame as game,placed,castLifecycleSource} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
 import {localPath} from '../../src/sim/game/localPath';
 
 function fixture(definition='unit.ants.warrior'){
  const placements=[placed('mover',definition,100,100),
   ...[[99,100],[101,100],[100,99],[100,101]].map(([x,y],i)=>placed('hold-'+i,'unit.ants.warrior',x,y))];
- const g=game(placements),mover=g.entities.find(e=>e.placement==='mover')!;
+ const g=game(placements,castLifecycleSource),mover=g.entities.find(e=>e.placement==='mover')!;
  const neighbors=g.entities.filter(e=>e.placement?.startsWith('hold-'));
  g.command('player.1',{type:'hold',actors:neighbors.map(e=>e.id)});
  g.command('player.1',{type:'move',actors:[mover.id],destination:{x:103,y:103}});
@@ -34,7 +34,7 @@ it('saves the escape route and cancels it immediately on replacement input',()=>
  const {g,mover,placements}=fixture();
  for(let n=0;n<40&&!mover.unit!.detour;n++)g.tick();
  expect(mover.unit!.detour).toBeDefined();
- const restored=game(placements);restored.restore(g.snapshot());
+ const restored=game(placements,castLifecycleSource);restored.restore(g.snapshot());
  for(let n=0;n<15;n++){g.tick();restored.tick();expect(restored.checksum()).toBe(g.checksum());}
  const before={...precise(mover)};
  g.command('player.1',{type:'stop',actors:[mover.id]});g.tick();
@@ -84,7 +84,7 @@ it('rejects corrupt saved local destinations',()=>{
  for(let n=0;n<40&&!mover.unit!.detour;n++)g.tick();
  const saved=g.snapshot();
  saved.state.entities.find(e=>e.id===mover.id)!.unit!.detour!.points.at(-1)!.x++;
- expect(()=>game(placements).restore(saved)).toThrow('Invalid saved local detour');
+ expect(()=>game(placements,castLifecycleSource).restore(saved)).toThrow('Invalid saved local detour');
 });
 
 it('finishes a hero pickup from inside a crowd and saves immediately after collecting',()=>{
@@ -95,7 +95,7 @@ it('finishes a hero pickup from inside a crowd and saves immediately after colle
  for(let n=0;n<160&&g.context.get(item.id);n++){g.tick();sawDetour||=!!mover.unit!.detour;}
  expect(sawDetour).toBe(true);expect(mover.equipment).toContain('item.heartseed');
  expect(mover.unit!.detour).toBeUndefined();
- const restored=game(placements);restored.restore(g.snapshot());expect(restored.checksum()).toBe(g.checksum());
+ const restored=game(placements,castLifecycleSource);restored.restore(g.snapshot());expect(restored.checksum()).toBe(g.checksum());
 });
 
 it('a new spell cancels a local escape before turning toward its cast point',()=>{
@@ -105,7 +105,7 @@ it('a new spell cancels a local escape before turning toward its cast point',()=
  mover.hp=100;
  expect(g.abilities.cast(mover.id,'holy-light',mover.id)).toBeNull();
  expect(mover.unit!.detour).toBeUndefined();
- const restored=game(placements);restored.restore(g.snapshot());expect(restored.checksum()).toBe(g.checksum());
+ const restored=game(placements,castLifecycleSource);restored.restore(g.snapshot());expect(restored.checksum()).toBe(g.checksum());
 });
 
 it('keeps self-spell visuals and saves at the hero’s precise position between cells',()=>{
@@ -120,7 +120,7 @@ it('keeps self-spell visuals and saves at the hero’s precise position between 
  const cue=g.abilities.observedEvents().at(-1)!;
  expect(cue.origin).toEqual({...center,height:0});expect(cue.point).toEqual({...center,height:0});
  expect(cue.viewers).toContain('player.2');
- const restored=game(placements);restored.restore(g.snapshot());
+ const restored=game(placements,castLifecycleSource);restored.restore(g.snapshot());
  for(let n=0;n<25;n++){g.tick();restored.tick();expect(restored.checksum()).toBe(g.checksum());}
  expect(g.abilities.observedEvents().some(v=>v.ability===spell&&v.event==='released'&&v.point.x===center.x)).toBe(true);
 });

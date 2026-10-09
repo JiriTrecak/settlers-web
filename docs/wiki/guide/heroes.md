@@ -1,42 +1,40 @@
 # Heroes, abilities and inventory
 
-The **[Ant Marshal](/units/unit-ants-marshal)** is the current hero: a larger armored ant with a heavy mace. He starts with the colony and progresses through ten levels. The unit page contains the generated level-by-level XP, health, damage and armor table.
+The **[Ant Marshal](/units/unit-ants-marshal)** starts with the colony, one unspent skill point, and room to grow through **eleven levels**. His unit page contains the generated XP and stat table. Choose his opening ability before the first fight.
 
 ## Experience and levels
 
-Nearby opposing defeats grant experience. When multiple eligible heroes are in range, the reward is shared. Leveling increases health, damage, armor, maximum mana and attack speed according to an explicit level table. Increases in maximum health and mana are added to the current pools, preserving previous damage and mana spent. It is not a free full heal.
+Cumulative experience for levels 1–11 is **0, 160, 400, 720, 1,120, 1,600, 2,160, 2,800, 3,520, 4,320, 5,200**. Rewards come from the defeated unit's combat level; heroes use a separate reward table based on their actual current level. Workers and temporary split bodies award none. Summoned units award half the normal reward. Buildings, natural summon expiry and friendly kills do not grant XP.
 
-A hero's range for receiving experience, required totals and stat growth come from its definition. Experience stops growing at the final level. Living heroes recover health and mana continuously; fractional recovery is saved exactly. At level one the Marshal recovers 1.45 HP and 0.76 mana per second, rising to 2.8 HP and 1.41 mana per second at level ten. Dead heroes do not regenerate.
+The killing side shares one reward pool among eligible living allied heroes within **10 C** of the defeated unit. If none are nearby, eligible living heroes belonging to the killing player receive it globally. Enemies do not receive XP for standing nearby. Integer remainders are assigned in stable entity order. Heroes already at the applicable cap do not take a share.
+
+Neutral creeps grant **100%, 90%, 80%, 70%, 60%** of a share to heroes at levels 1–5. They can take a hero all the way to **level 6**, but never provide progress toward level 7. Overflow is discarded. Defeating player-controlled enemies continues progression to level 11. A colony with exactly one rostered hero gains a **15% / 30%** XP bonus at Hall tiers 2 / 3; fallen and paid queued heroes still count toward that roster. Mission level caps may impose a lower ceiling.
+
+Leveling adds the increases in maximum health and mana to current pools, preserving wounds and mana spent. It does not fully heal the hero. Living heroes regenerate continuously; fractional recovery is saved. The Marshal starts at 1.45 HP and 0.76 mana per second and reaches 2.95 HP and 1.51 mana per second at level 11.
 
 ## Learn an ability
 
-Open **Learn Ability** to spend a skill point. The Marshal has three regular abilities and one ultimate:
+Open **Learn Ability** to spend a point. You receive one at creation and one per level. The three regular abilities each have three ranks, unlocked at hero levels **1 / 3 / 5**. The ultimate has two ranks, unlocked at **5 / 8**. Eleven points complete the whole kit; points can be saved for later.
 
-- **[Faultline](/abilities/spell-marshal-faultline)** — a line of impact from a mace strike, damaging and briefly stunning enemies.
-- **[Rally the Colony](/abilities/spell-marshal-rally)** — briefly increases the damage of nearby friendly units.
-- **[Iron Carapace](/abilities/spell-marshal-carapace)** — temporary damage reduction for the Marshal himself.
-- **[Crownfall](/abilities/spell-marshal-crownfall)** — a powerful targeted area attack, available at hero level six.
+- **Faultline (Q):** a travelling ground fracture deals **70 / 110 / 150** spell damage and briefly stuns each ground enemy it crosses. The stun lasts **0.4 / 0.5 / 0.6 seconds**, halved against heroes. Costs 45 mana; 9-second cooldown.
+- **Rally the Colony (W):** shields up to sixteen nearby allies, including the Marshal, for **50 / 80 / 110** damage and grants **10 / 15 / 20%** attack damage for eight seconds. Breaking the shield leaves the attack bonus until expiry. Costs 45 mana; 14-second cooldown.
+- **Iron Carapace (E):** reduces incoming damage by **20 / 30 / 40%** after ordinary defenses and reflects **15 / 25 / 35%** of ordinary melee damage actually suffered. Lasts six seconds; movement and casting remain available. Costs 40 mana; 14-second cooldown.
+- **Crownfall (R):** after a visible 0.8-second windup, deals **180 / 260** spell damage and stuns enemies for **1 / 1.4 seconds**, halved against heroes. Allies in the impact area receive **100 / 160** shielding for six seconds. Radius **1.75 / 2.25 C**; up to sixteen targets per side. Costs **110 / 140** mana; **60 / 54-second** cooldown.
 
-Regular abilities have three ranks, gated by hero level. Mana, cooldowns, damage and rank requirements are generated on each ability page.
+These are published spell definitions with separate editable effects and original icons, organized under **Spells → Heroes → Marshal** in the Spell & Effect Studio. Balance values are an initial playtest baseline.
 
 ## Aim before committing
 
-Choose a ground-targeted ability and move the pointer to preview the impact shape. Faultline shows a line; Crownfall shows a circle. A range outline helps show whether the aim is legal. Unexplored or out-of-range ground is red. Click a legal position to cast; Escape or right-click cancels targeting.
-
-Rally and Carapace are self-cast abilities and do not ask for a ground destination. Rally adds 10/20/30% attack damage, including equipment, and refreshes rather than stacking with another Rally. Carapace reduces incoming damage by 20/30/40% after armor or spell resistance.
-
-Faultline and Crownfall each have a six-target damage budget. More than six eligible targets share the damage budget; immune targets do not dilute it. Stuns affect units only, last half as long against heroes, and are not subject to the damage budget.
+Faultline and Crownfall target ground. Aim the line or circle, then click a valid visible position within **6 C**. Escape or right-click cancels targeting. Rally and Carapace cast immediately on the Marshal. Rally reaches allies within **3 C**; it refreshes its own buff instead of stacking repeated copies.
 
 ## Chests and equipment
 
-Clear a camp, then right-click its dropped chest with a hero. The hero moves within pickup range and places the item into a free inventory slot. A full inventory prevents pickup; the game does not automatically discard an item to make room.
+Clear a camp, then right-click its dropped chest with a hero. The hero moves within pickup range and places the item into a free inventory slot. A full inventory prevents pickup; nothing is discarded automatically.
 
-Equipment provides passive bonuses while carried. Consumables are used from the inventory and are spent on activation. Right-click an inventory item to drop it deliberately. The [item pages](/items/) list exact effects, and the [loot tables](/guide/loot) list weighted chances.
+Equipment provides passive bonuses while carried. Consumables are spent on activation. Right-click an inventory item to drop it deliberately. The [item pages](/items/) list effects, and the [loot tables](/guide/loot) list weighted chances.
 
 ## Death is not the end
 
-A fallen hero retains **items, experience and learned abilities**. Build an **[Amber Sanctuary](/buildings/building-ants-sanctuary)** and select the fallen hero's revival command.
+A fallen hero retains **items, experience and learned abilities**. An **[Amber Sanctuary](/buildings/building-ants-sanctuary)** revives the same hero for **200 + 50 × (level − 1) amber**, taking **30 + 5 × (level − 1) seconds**. He returns with full derived health and mana. Cooldowns keep their deadlines. Blocked exits delay the return; destroying the Sanctuary does not erase the fallen hero.
 
-Revival is currently free and returns the same hero with full derived health and mana. Cooldowns keep their original deadlines. Blocked exits delay the return; destroying the Sanctuary removes its queue but does not erase the fallen hero.
-
-Purchasing extra heroes is not implemented. A Sanctuary revives an existing hero; it does not create a new one.
+Hall tier 2 permits a second distinct hero and tier 3 a third. The current faction ships only the Marshal, so extra hero choices become available when additional hero definitions are added. Dead heroes continue reserving their identity and roster slot.

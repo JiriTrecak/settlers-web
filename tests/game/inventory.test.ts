@@ -73,7 +73,7 @@ it('revives the same hero with items, XP and skills after real combat death and 
  const g=setup(),victim=g.context.create(placed('fallen','unit.ants.marshal',230,230,{health:1})),attacker=g.context.create(placed('attacker','unit.ants.warrior',231,230)),shrine=g.context.create(placed('shrine','building.ants.sanctuary',239,230));
  g.context.create(placed('supply','building.ants.house',245,245));
  for(const e of [victim,attacker,shrine])e.readyTick=0;
- victim.equipment!.fill('item.test-ring');victim.progression!.experience=100;
+ victim.equipment!.fill('item.test-ring');victim.progression!.experience=160;
 
  g.tick();
  attacker.rotation=heading(attacker,victim);

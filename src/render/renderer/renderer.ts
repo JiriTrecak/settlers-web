@@ -83,8 +83,8 @@ const GROUND = new Plane(new Vector3(0, 1, 0), 0);
 
 export class Renderer {
   private readonly portrait: SelectionPortrait;
-  gamePortrait(host:HTMLElement, definition:string|null, owner:Owner){
-    this.portrait.set(host,definition ? `${definition}/${owner}` : '',()=>definition ? this.settlement?.createPortrait(definition,ownerSlot(owner)) ?? null : null);
+  gamePortrait(host:HTMLElement, definition:string|null, owner:Owner,asset?:string){
+    this.portrait.set(host,definition ? `${definition}/${owner}/${asset??''}` : '',()=>definition ? this.settlement?.createPortrait(definition,ownerSlot(owner),asset) ?? null : null);
   }
   private destroyed = false;
   gameTimeScale = 1;

@@ -367,6 +367,9 @@ export class ContentRegistry {
           if(!ability) fail(`Unknown ability ${binding.ability}`);
           if(binding.initialRank>ability!.ranks.length)fail('Invalid initial ability rank');
           if(binding.learning&&(!d.behaviors.progression||binding.learning.requiredLevels.length!==ability!.ranks.length))fail('Ability learning requires progression and a requirement per rank');
+          if(binding.learning && binding.learning.requiredLevels.some((level,i,levels) =>
+            level > d.behaviors.progression!.levels.length || (i > 0 && level <= levels[i-1])))
+            fail('Ability learning levels must increase and fit the hero progression');
           if(binding.command){if(!binding.controls.includes('player'))fail('A command requires player control');if(columns.has(binding.command.column))fail('Duplicate ability column');columns.add(binding.command.column);if(binding.command.icon)this.asset(binding.command.icon);}
           if(binding.ai&&!binding.controls.includes('ai'))fail('AI policy requires AI control');
           if(binding.ai?.intent&&binding.ai.intent!=='utility'){

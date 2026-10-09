@@ -1,4 +1,37 @@
 {
+  "the-amber-watch": {
+    "name": "The Amber Watch",
+    "size": 512,
+    "starts": [
+      {
+        "player": 1,
+        "x": 81.5,
+        "z": 421.5,
+        "rotation": 180,
+        "setup": "setup.ants",
+        "mainFort": "start.player.1/main-fort"
+      },
+      {
+        "player": 2,
+        "x": 473.5,
+        "z": 473.5,
+        "rotation": 0,
+        "setup": "setup.ants",
+        "mainFort": "start.player.2/main-fort"
+      }
+    ],
+    "camps": 3,
+    "sandbox": false,
+    "mission": {
+      "campaign": "vanguard",
+      "order": 1
+    },
+    "playable": true,
+    "sourceHash": "e6508281",
+    "image": "the-amber-watch.webp",
+    "custom": false,
+    "generationHash": "63144e9855644f8d212284f52b8822f8022d98c75d32a53b9fb679cc9fbffd8e"
+  },
   "amberwake-basin": {
     "name": "Amberwake Basin",
     "size": 512,
@@ -24,10 +57,10 @@
     "camps": 6,
     "sandbox": false,
     "playable": true,
-    "sourceHash": "ec3feac7",
+    "sourceHash": "142060b9",
     "image": "amberwake-basin.webp",
     "custom": false,
-    "generationHash": "4dcc4ad4edede775fb6e3d6b45b4030622bfd67c13e06054b2a2d5fe0f7695c8"
+    "generationHash": "bd055e2671c01a441b9b7964298b2b66c9cd4144ce4ed06157ffd43509734000"
   },
   "amberwake-frost": {
     "name": "Amberwake Frost",
@@ -54,10 +87,10 @@
     "camps": 6,
     "sandbox": false,
     "playable": true,
-    "sourceHash": "b33449e1",
+    "sourceHash": "bf79c185",
     "image": "amberwake-frost.webp",
     "custom": false,
-    "generationHash": "eff466da6ff77a89e8b2907d1b7a2c2baa3c1a3b5716b5a48a2ce75053e25b26"
+    "generationHash": "3167401950124a7ba0b94fd14e53a0be711f77634823cacf06461b3af1929a1e"
   },
   "amberwake-wilds": {
     "name": "Amberwake Wilds",
@@ -84,9 +117,9 @@
     "camps": 6,
     "sandbox": false,
     "playable": true,
-    "sourceHash": "710c328a",
+    "sourceHash": "d77a9b08",
     "image": "amberwake-wilds.webp",
     "custom": false,
-    "generationHash": "436027243a5ce49000563ae96eeac9c2bf6be4b1ca3540644bf29699a889ce18"
+    "generationHash": "996b3f526a96f6b0fc93569b9604e4d47a4c4f0f0994726d0cd8375043be712c"
   }
 }

@@ -839,7 +839,7 @@ export class Game {
         !!e.progression !== !!d.behaviors.progression ||
         (e.progression !== undefined &&
           e.progression.experience >
-            d.behaviors.progression!.levels[Math.min(d.behaviors.progression!.levels.length,this.map.mission?.heroLevelCap??10)-1].experience) ||
+            d.behaviors.progression!.levels[Math.min(d.behaviors.progression!.levels.length,this.map.mission?.heroLevelCap??d.behaviors.progression!.levels.length)-1].experience) ||
         !!d.body !== (e.hp !== null) ||
         !!e.production !== !!d.behaviors.production
       )

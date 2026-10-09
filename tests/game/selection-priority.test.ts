@@ -16,7 +16,7 @@ it('box selection puts the hero before warriors and still excludes workers when 
  const {g,view,hero,warriors,w}=fixture();
  const ids=areaSelection(view.entities,'player.1',g.registry);
  expect(ids[0]).toBe(hero.id);expect(ids).toContain(warriors[0].id);expect(ids).not.toContain(w.id);
- expect(commandCard(view,ids,'player.1',g.registry).some(b=>b.type==='castAbility'&&b.actors[0]===hero.id)).toBe(true);
+ expect(commandCard(view,ids,'player.1',g.registry).some(b=>b.type==='learnAbility'&&b.actors[0]===hero.id)).toBe(true);
  expect(areaSelection(view.entities.filter(e=>e.id===w.id),'player.1',g.registry)).toEqual([w.id]);
 });
 it('orders mixed selections by hero, army, workers while preserving ties and explicit focus',()=>{

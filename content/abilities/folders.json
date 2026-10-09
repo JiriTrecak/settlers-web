@@ -180,6 +180,11 @@
       "id": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
       "name": "assistant-trials",
       "parent": "folder.spells"
+    },
+    {
+      "id": "folder.142ad6e2-001b-447e-b108-e6e85d87334e",
+      "name": "Marshal",
+      "parent": "folder.heroes"
     }
   ],
   "items": {
@@ -265,6 +270,10 @@
     "ability.custom.dewspring": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
     "ability.custom.spore-sanctuary": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
     "ability.custom.rallying-spark": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
-    "ability.custom.ashstep": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76"
+    "ability.custom.ashstep": "folder.9ca418b1-7918-4fb3-8bf0-3079ce3f5a76",
+    "ability.marshal.faultline": "folder.142ad6e2-001b-447e-b108-e6e85d87334e",
+    "ability.marshal.rally": "folder.142ad6e2-001b-447e-b108-e6e85d87334e",
+    "ability.marshal.carapace": "folder.142ad6e2-001b-447e-b108-e6e85d87334e",
+    "ability.marshal.crownfall": "folder.142ad6e2-001b-447e-b108-e6e85d87334e"
   }
 }

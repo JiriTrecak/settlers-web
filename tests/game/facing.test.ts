@@ -1,5 +1,5 @@
 import {expect,it,vi} from 'vitest';
-import {game,placed} from './helpers';
+import {game,placed,castLifecycleSource} from './helpers';
 import {precise} from '../../src/sim/game/motion';
 import {heading,turnDifference,turnToward} from '../../src/sim/game/facing';
 it('turns toward the real next leg when a retry route starts with reached or repeated anchors',()=>{
@@ -44,7 +44,7 @@ it('starts the attack windup only after facing the victim',()=>{
  expect(a.unit!.attack?.started).toBe(5);expect(b.hp).toBe(300);
 });
 it('turns before a directional cast starts rather than snapping on the cast command',()=>{
- const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!;
+ const g=game([],castLifecycleSource),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!;
  const id='ability.core.holy-light-lite';
  const point={x:hero.x+2,y:hero.y};hero.rotation=270;
  const target=g.context.create({...placed('cast-target','unit.ants.warrior',point.x,point.y)});target.hp=100;g.observation.update();expect(g.abilities.cast(hero.id,'holy-light',target.id)).toBeNull();
@@ -57,7 +57,7 @@ it('turns before a directional cast starts rather than snapping on the cast comm
 });
 
 it('a replacement move cancels a turning cast immediately and refunds an unreleased spell',()=>{
- const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!,id='ability.core.holy-light-lite';
+ const g=game([],castLifecycleSource),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!,id='ability.core.holy-light-lite';
  hero.rotation=270;const mana=hero.abilities!.mana;
  hero.hp=100;g.abilities.cast(hero.id,'holy-light',hero.id);
  expect(hero.abilities!.pending).not.toBeNull();
@@ -66,7 +66,7 @@ it('a replacement move cancels a turning cast immediately and refunds an unrelea
  g.tick();expect(hero.unit!.route.length).toBeGreaterThan(0);
 });
 it('an appended move waits for the spell instead of cancelling it',()=>{
- const g=game(),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!;
+ const g=game([],castLifecycleSource),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!;
  hero.hp=100;g.abilities.cast(hero.id,'holy-light',hero.id);
  g.command(hero.owner,{type:'move',actors:[hero.id],destination:{x:hero.x,y:hero.y+2},append:true});
  expect(hero.abilities!.pending).not.toBeNull();expect(hero.unit!.orderQueue).toHaveLength(1);

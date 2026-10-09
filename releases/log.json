@@ -8,7 +8,9 @@
       "Hall tiers now unlock distinct hero roster slots. Sanctuary recruitment and revival share one ordered queue, preserve fallen heroes, and support deterministic save/load.",
       "Added Amberwake Basin as a competitive 1v1 playtest with four-node amber sites, opening timber, guarded expansions and editable forest scenery; route pacing is still being tuned.",
       "Amberwake Frost joins Amberwake Basin as a paired two-player playtest, with matching terrain, resource positions and movement collision.",
-      "Amberwake Wilds adds a woodland showcase with giant oaks, ruined watches, hollow logs and living shore vegetation on the new two-player competitive layout."
+      "Amberwake Wilds adds a woodland showcase with giant oaks, ruined watches, hollow logs and living shore vegetation on the new two-player competitive layout.",
+      "Missions can define loading and selection artwork, chapter labels, briefings, and rotating loading tips in Mission & Lua; campaign loading uses a stylized progress bar.",
+      "The Ant Marshal now has four learnable abilities with original icons and editable effects: Faultline, Rally the Colony, Iron Carapace, and Crownfall."
     ],
     "improved": [
       "Reduced unnecessary collision-index preparation during combat planning while preserving movement and combat behavior.",
@@ -36,7 +38,13 @@
       "Unreachable routes into enclosed bases are rejected with bounded checks, avoiding expensive full-map searches.",
       "Computer opponents choose body-clear retreat and rally points and leave base service lanes for larger trainable units.",
       "Amberwake Wilds now uses large forest masses to shape its routes, with living grass and undergrowth that fade from tree edges into open dirt. The forest-driven meadow recipe is available in the editor foliage list.",
-      "Map selection and multiplayer lobbies now display battlefield dimensions in the same building cells as the editor grid."
+      "Map selection and multiplayer lobbies now display battlefield dimensions in the same building cells as the editor grid.",
+      "Amber sites now form staggered arcs with two close and two distant nodes. All three Amberwake maps retain mirrored resource layouts and clear worker return lanes.",
+      "Amber deposits now form compact, touching clusters with two near and two far nodes, while keeping starting workers and mining approaches clear.",
+      "Amber sites now centre five touching nodes beneath the Hall, with ten recommended miners. Health bars retain a consistent screen size and show a smooth red-to-green fill, 100-HP dividers and a separate mana row for casters.",
+      "Rebuilt The Amber Watch with a lantern-road woodland map, neutral camp detours, recruitable patrols, Lua cinematics, and a siege finale.",
+      "Campaign chapter selection now matches the new forest menus, with mission artwork, briefings, and a clear Begin Mission action.",
+      "Heroes now progress through 11 levels on a consistent combat-level XP curve. Neutral creeps can reach level 6; regular skills unlock ranks at 1/3/5 and ultimates at 5/8. Kill credit, allied sharing, AI learning, and save validation follow the same rules."
     ],
     "fixed": [
       "Building placement now checks units’ full collision bodies, preventing foundations from overlapping units whose centers are just outside the footprint.",
@@ -50,7 +58,10 @@
       "Hall upgrades preserve navigation caches, avoiding a full forest rebuild when the next tree is harvested.",
       "Melee reinforcements find clear attack positions around allies, and crowded arrivals stay near the commanded destination instead of drifting away.",
       "Map validation now rejects overlapping unit bodies across neighboring cells while respecting bridge levels and air units.",
-      "Aligned the game camera north-up with a steeper Warcraft-style view. The minimap now shows a horizontal camera outline, and viewport bounds prevent looking past map edges when panning, zooming or resizing."
+      "Aligned the game camera north-up with a steeper Warcraft-style view. The minimap now shows a horizontal camera outline, and viewport bounds prevent looking past map edges when panning, zooming or resizing.",
+      "Large units can cross bridge entrances with their full body footprint without getting stuck on the ramp.",
+      "HUD portraits now use a unit's map-authored appearance, matching its model on the battlefield.",
+      "Spell Studio now resolves preview-clone model scales correctly, so grouped targets and the caster remain visible while inspecting effects."
     ],
     "knownIssues": []
   },

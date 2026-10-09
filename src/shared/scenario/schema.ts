@@ -7,12 +7,24 @@ export const missionCameraSchema=z.object({
 }).strict();
 export const regionSchema=z.object({id:z.string().regex(/^[a-zA-Z][\w.-]*$/),x:z.number().int().min(0).max(2047),y:z.number().int().min(0).max(2047),radius:z.number().positive().max(64)}).strict();
 export const objectiveDefinitionSchema=z.object({id:z.string().regex(/^[a-zA-Z][\w.-]*$/),title:z.string().min(1).max(120),description:z.string().min(1).max(500),optional:z.boolean().default(false)}).strict();
+/** Canonical interface image IDs, resolved through the compiled project library. */
+export const missionImageSchema=z.string().regex(/^asset\.interface\.[a-z0-9]+(?:[.-][a-z0-9]+)*$/).max(160);
+export const missionPresentationSchema=z.object({
+  loadingBackground:missionImageSchema.optional(),
+  selectionBackground:missionImageSchema.optional(),
+  chapter:z.string().min(1).max(80).optional(),
+  briefing:z.string().min(1).max(1200).optional(),
+  tips:z.array(z.string().min(1).max(300)).max(12).optional(),
+  features:z.array(z.string().min(1).max(80)).max(4).optional(),
+}).strict();
+export type MissionPresentation=z.infer<typeof missionPresentationSchema>;
 export const missionSchema=z.object({
   campaign:z.string().min(1).max(80), title:z.string().min(1).max(120), order:z.number().int().min(1).max(100),
   nextMission:z.string().regex(/^[a-z0-9][a-z0-9-]*$/).max(100).optional(),
   company:z.array(z.string().min(1).max(120)).min(1).max(32).refine(ids=>new Set(ids).size===ids.length,'Duplicate company tag').optional(),
   objectives:z.array(objectiveDefinitionSchema).max(64).optional(),
-  heroLevelCap:z.number().int().min(1).max(10).optional(),
+  presentation:missionPresentationSchema.optional(),
+  heroLevelCap:z.number().int().min(1).max(50).optional(),
   script:z.string().min(1).max(64000), regions:z.array(regionSchema).max(128),
 }).strict().refine(m=>new Set(m.regions.map(r=>r.id)).size===m.regions.length,'Region IDs must be unique').refine(m=>new Set(m.objectives?.map(o=>o.id)).size===(m.objectives?.length??0),'Objective IDs must be unique');
 export type MissionDefinition=z.infer<typeof missionSchema>;

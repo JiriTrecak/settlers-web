@@ -16,7 +16,7 @@ A dead worker loses its cargo. Earned money remains in your wallet even when bui
 
 Amber Mines are neutral buildings already present on the map. You can select them, inspect their remaining yield and assign workers directly. They do not need to be captured or constructed.
 
-A standard amber site contains **four nodes of 4,500 amber**. Each node serves **one miner at a time**; additional miners wait in arrival order. **Two workers per node** is the normal recommendation, not an assignment cap. Eight workers can nearly saturate a well-placed four-node site. Longer walks may justify extra workers. The label shows how many workers are assigned, and inspection shows the recommendation.
+A standard amber site contains **five nodes of 4,500 amber**. Each node serves **one miner at a time**; additional miners wait in arrival order. **Two workers per node** is the normal recommendation, not an assignment cap. Ten workers can nearly saturate a well-placed five-node site. Longer walks may justify extra workers. The label shows how many workers are assigned, and inspection shows the recommendation.
 
 Workers spread across nearby matching nodes. A carrier remains assigned to its current node until its load is delivered, even when given a new gather order. Exhausted nodes can redirect to another matching node within their local search radius, not to a mine across the map.
 

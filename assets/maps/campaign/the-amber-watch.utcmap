@@ -1,0 +1,2021 @@
+{
+  "v": 2,
+  "size": 512,
+  "name": "The Amber Watch",
+  "biome": "vibrant-forest",
+  "mission": {
+    "campaign": "vanguard",
+    "title": "The Amber Watch",
+    "order": 1,
+    "objectives": [
+      {
+        "id": "lantern-road",
+        "title": "Reach the Amber Watch",
+        "description": "Follow the lantern road across Lantern Brook. Marshal Rowan must survive.",
+        "optional": false
+      },
+      {
+        "id": "rally-watch",
+        "title": "Rally the scattered guard",
+        "description": "Recruit the survivors at the ruined post and beyond the brook.",
+        "optional": true
+      },
+      {
+        "id": "break-siege",
+        "title": "Break the siege",
+        "description": "Defeat all siege attackers and their approaching relief column.",
+        "optional": false
+      }
+    ],
+    "presentation": {
+      "loadingBackground": "asset.interface.campaign.amber-watch-loading",
+      "selectionBackground": "asset.interface.campaign.amber-watch-selection",
+      "chapter": "Chapter One",
+      "briefing": "The watchfires have gone silent.\nLead Rowan along the lantern road, rally the scattered guard, and break the siege.",
+      "tips": [
+        "Attack-move along the road to keep the company together.",
+        "Explore the hollows for supplies before taking on the siege.",
+        "The bridge wardens can heal your surviving company."
+      ],
+      "features": [
+        "One hero",
+        "Allies along the road",
+        "Break the siege"
+      ]
+    },
+    "heroLevelCap": 3,
+    "script": "-- All narrative state uses mission.get/set so cinematics and reinforcements survive saves.\nfunction siege_remaining()\n  local n=0\n  local ids={'siege-captain','siege-raider-1','siege-raider-2','siege-raider-3','siege-raider-4','siege-poacher-1','siege-poacher-2','siege-mortar-1','siege-mortar-2','relief-raider-1','relief-raider-2','relief-poacher'} for i=1,#ids do local id=ids[i]\n    if mission.alive(id) then n=n+1 end\n  end\n  return n\nend\nfunction mend_company()\n  local ids={'rowan','vanguard-1','vanguard-2','bow-1','post-warrior','post-archer','post-warrior-2','bridge-hunter','bridge-archer'} for i=1,#ids do local id=ids[i]\n    if mission.alive(id) then mission.recover(id) end\n  end\nend\nfunction spawn_siege()\n  local ids={'siege-captain','siege-raider-1','siege-raider-2','siege-raider-3','siege-raider-4','siege-poacher-1','siege-poacher-2','siege-mortar-1','siege-mortar-2'} for i=1,#ids do local id=ids[i] mission.spawn(id) end\n  mission.attack('siege-mortar-1','amber-watch')\n  mission.attack('siege-mortar-2','watch-tower-west')\nend\nfunction on_start()\n  mission.set('phase','opening')\n  mission.begin_objective('lantern-road')\n  mission.begin_objective('rally-watch')\n  mission.objective('Follow the lantern road to the Amber Watch. Rowan must survive.')\n  mission.camera('third-person','rowan','vanguard-1',10,3.2,55,1)\n  mission.say('Marshal Rowan','unit.ants.marshal','No watchfire. No messenger. The Amber Watch has never missed a signal. We take the old road. Keep your blades close.',6,true,'rowan')\nend\nfunction on_tick()\n  if not mission.alive('rowan') then mission.end_scene() mission.objective('Marshal Rowan has fallen.') mission.lose() return end\n  if mission.dialogue_busy() then return end\n  local phase=mission.get('phase')\n  if phase=='opening' then\n    mission.camera('rts','bow-1','rowan',14,8,55,.7)\n    mission.set('phase','opening-reply')\n    mission.say('Watch Archer','unit.ants.archer','Something moved in the mushrooms. We can follow the road, or clear the hollows for supplies. Your command, Marshal.',5,true,'bow-1')\n  elseif phase=='opening-reply' then\n    mission.end_scene() mission.set('phase','road')\n  elseif phase=='post-reply' then\n    mission.camera('third-person','rowan','post-archer',9,3,55,.6)\n    mission.say('Marshal Rowan','unit.ants.marshal','Then we march together. The Watch will not stand alone.',4,true,'rowan')\n    mission.set('phase','post-end')\n  elseif phase=='post-end' or phase=='crossing-end' then\n    mission.end_scene() mission.set('phase','road')\n  elseif phase=='road' then\n    if not mission.get('road-recruits') and mission.in_region('rowan','road-post') then\n      local ids={'post-warrior','post-archer','post-warrior-2'} for i=1,#ids do local id=ids[i] mission.transfer(id,'player.1') end\n      mission.set('road-recruits',true)\n      mission.camera('third-person','post-archer','rowan',9,2.8,55,.7)\n      mission.say('Watch Scout','unit.ants.archer','Rowan! Briar raiders burned the signal post. We held the road, but the others fell back across Lantern Brook. Let us join you.',6,true,'post-archer')\n      mission.set('phase','post-reply') return\n    end\n    if not mission.get('bridge-recruits') and mission.in_region('rowan','bridge-watch') then\n      mission.transfer('bridge-hunter','player.1') mission.transfer('bridge-archer','player.1')\n      mission.set('bridge-recruits',true) mend_company()\n      mission.camera('third-person','bridge-hunter','rowan',10,3,55,.7)\n      mission.say('Bridge Warden','unit.ants.hunter','The brook is behind us. Our last salves are yours. Listen... those are mortar shells. The Watch is still fighting!',6,true,'bridge-hunter')\n      mission.set('phase','crossing-end') return\n    end\n    if mission.get('road-recruits') and mission.get('bridge-recruits') and not mission.get('rallied') then mission.complete_objective('rally-watch') mission.set('rallied',true) end\n    if not mission.get('spring') and mission.in_region('rowan','spring') then\n      mend_company() mission.give_item('rowan','item.resin-salve') mission.set('spring',true)\n      mission.say('Marshal Rowan','unit.ants.marshal','Clear water, and a cache of resin. Take what we need. There is still time to reach the Watch.',4,false,'rowan')\n      return\n    end\n    if mission.in_region('rowan','siege-overlook') then\n      mission.complete_objective('lantern-road') mission.begin_objective('break-siege')\n      spawn_siege()\n      mission.camera('rts','fort-sentinel','rowan',24,13,55,1)\n      mission.set('phase','siege-call')\n      mission.say('Watch Sentinel','unit.ants.archer','The fort is under siege! Their mortars are breaking our towers. We cannot hold the gate alone!',6,true,'fort-sentinel') return\n    end\n  elseif phase=='siege-call' then\n    mission.camera('third-person','rowan','fort-sentinel',10,3.5,55,.8)\n    mission.say('Marshal Rowan','unit.ants.marshal','Those are our people. We are going to help them. Shields to the gate! Bows, cover the advance. Silence those mortars!',6,true,'rowan')\n    mission.set('phase','siege-reply')\n  elseif phase=='siege-reply' then\n    mission.end_scene()\n    local ids={'fort-sentinel','fort-guard-1','fort-guard-2'} for i=1,#ids do local id=ids[i] mission.transfer(id,'player.1') mission.attack_move(id,405,155) end\n    local ids={'siege-captain','siege-raider-1','siege-raider-2','siege-raider-3','siege-raider-4','siege-poacher-1','siege-poacher-2'} for i=1,#ids do local id=ids[i] mission.attack_move(id,405,140) end\n    mission.set('phase','siege') mission.set('siege-start',mission.tick()) mission.set('last-remaining',-1)\n    mission.objective('Break the siege. Defeat every attacker; a relief column is approaching. Rowan must survive.')\n  elseif phase=='siege' then\n    -- Reinforcements arrive by elapsed gameplay time, never during a paused cinematic.\n    if not mission.get('relief') and mission.tick()-mission.get('siege-start')>=1000 then\n      local ids={'relief-raider-1','relief-raider-2','relief-poacher'} for i=1,#ids do local id=ids[i] mission.spawn(id) mission.attack_move(id,405,155) end\n      mission.set('relief',true)\n      mission.say('Marshal Rowan','unit.ants.marshal','Another column from the briars! Hold together. This is their last push!',4,false,'rowan')\n    end\n    local n=siege_remaining()\n    if n~=mission.get('last-remaining') then\n      mission.set('last-remaining',n)\n      mission.objective('Defeat every siege attacker. Remaining: '..n..(mission.get('relief') and '' or ' + approaching relief column')..'. Rowan must survive.')\n    end\n    if n==0 and mission.get('relief') then\n      mission.complete_objective('break-siege') mission.set('phase','victory-speech')\n      mission.camera('rts','rowan',nil,23,12,55,1)\n      mission.say('Marshal Rowan','unit.ants.marshal','Raise the watchfire. Let the whole canopy see it. The Amber Watch stands, and tonight no ant stands alone.',7,true,'rowan')\n    end\n  elseif phase=='victory-speech' then mission.end_scene() mission.win() end\nend\n",
+    "regions": [
+      {
+        "id": "road-post",
+        "x": 137,
+        "y": 341,
+        "radius": 23
+      },
+      {
+        "id": "bridge-watch",
+        "x": 290,
+        "y": 220,
+        "radius": 22
+      },
+      {
+        "id": "spring",
+        "x": 175,
+        "y": 290,
+        "radius": 20
+      },
+      {
+        "id": "siege-overlook",
+        "x": 396,
+        "y": 153,
+        "radius": 22
+      }
+    ]
+  },
+  "stamps": [
+    {
+      "id": "77ed9b04-94a2-4548-8313-56f7999ee655",
+      "asset": "leafbound-twig-bridge",
+      "walk": {
+        "level": 1,
+        "height": 1.2,
+        "connections": {
+          "start": 0,
+          "end": 0
+        }
+      },
+      "x": 285,
+      "y": 245,
+      "scale": 1.6
+    }
+  ],
+  "playerStarts": [
+    {
+      "player": 1,
+      "x": 81.5,
+      "z": 421.5,
+      "rotation": 180,
+      "setup": "setup.ants",
+      "mainFort": "start.player.1/main-fort"
+    },
+    {
+      "player": 2,
+      "x": 473.5,
+      "z": 473.5,
+      "rotation": 0,
+      "setup": "setup.ants",
+      "mainFort": "start.player.2/main-fort"
+    }
+  ],
+  "entities": [
+    {
+      "id": "rowan",
+      "definition": "unit.ants.marshal",
+      "position": {
+        "x": 80,
+        "y": 420
+      },
+      "rotation": 180,
+      "owner": "player.1",
+      "appearance": {
+        "asset": "asset.ants.warrior",
+        "scale": 1.15
+      }
+    },
+    {
+      "id": "vanguard-1",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 74,
+        "y": 427
+      },
+      "rotation": 180,
+      "owner": "player.1"
+    },
+    {
+      "id": "vanguard-2",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 87,
+        "y": 427
+      },
+      "rotation": 180,
+      "owner": "player.1"
+    },
+    {
+      "id": "bow-1",
+      "definition": "unit.ants.archer",
+      "position": {
+        "x": 80,
+        "y": 435
+      },
+      "rotation": 180,
+      "owner": "player.1"
+    },
+    {
+      "id": "post-warrior",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 129,
+        "y": 334
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "post-warrior-2",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 137,
+        "y": 328
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "post-archer",
+      "definition": "unit.ants.archer",
+      "position": {
+        "x": 130,
+        "y": 322
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "bridge-hunter",
+      "definition": "unit.ants.hunter",
+      "position": {
+        "x": 306,
+        "y": 216
+      },
+      "rotation": 180,
+      "owner": "none",
+      "appearance": {
+        "asset": "asset.ants.warrior",
+        "scale": 1
+      }
+    },
+    {
+      "id": "bridge-archer",
+      "definition": "unit.ants.archer",
+      "position": {
+        "x": 297,
+        "y": 218
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "fort-sentinel",
+      "definition": "unit.ants.archer",
+      "position": {
+        "x": 406,
+        "y": 133
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "fort-guard-1",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 398,
+        "y": 129
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "fort-guard-2",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 415,
+        "y": 132
+      },
+      "rotation": 180,
+      "owner": "none"
+    },
+    {
+      "id": "amber-watch",
+      "definition": "building.ants.fort",
+      "position": {
+        "x": 413.5,
+        "y": 101.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "health": 900,
+        "construction": "complete"
+      }
+    },
+    {
+      "id": "watch-tower-west",
+      "definition": "building.ants.tower",
+      "position": {
+        "x": 383.5,
+        "y": 111.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete"
+      }
+    },
+    {
+      "id": "watch-tower-east",
+      "definition": "building.ants.tower",
+      "position": {
+        "x": 439.5,
+        "y": 119.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete"
+      }
+    },
+    {
+      "id": "watch-mound",
+      "definition": "building.ants.house",
+      "position": {
+        "x": 439.5,
+        "y": 91.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete"
+      }
+    },
+    {
+      "activation": "script",
+      "id": "siege-captain",
+      "definition": "unit.ants.hunter",
+      "position": {
+        "x": 415,
+        "y": 160
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 500
+      },
+      "appearance": {
+        "asset": "asset.ants.warrior",
+        "scale": 1
+      }
+    },
+    {
+      "activation": "script",
+      "id": "siege-raider-1",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 388,
+        "y": 154
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 220
+      }
+    },
+    {
+      "activation": "script",
+      "id": "siege-raider-2",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 397,
+        "y": 158
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 220
+      }
+    },
+    {
+      "activation": "script",
+      "id": "siege-raider-3",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 425,
+        "y": 157
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 220
+      }
+    },
+    {
+      "activation": "script",
+      "id": "siege-raider-4",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 434,
+        "y": 152
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 220
+      }
+    },
+    {
+      "activation": "script",
+      "id": "siege-poacher-1",
+      "definition": "unit.ants.archer",
+      "position": {
+        "x": 392,
+        "y": 178
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 180
+      }
+    },
+    {
+      "activation": "script",
+      "id": "siege-poacher-2",
+      "definition": "unit.ants.archer",
+      "position": {
+        "x": 427,
+        "y": 180
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 180
+      }
+    },
+    {
+      "activation": "script",
+      "id": "siege-mortar-1",
+      "definition": "unit.ants.bombardier",
+      "position": {
+        "x": 412,
+        "y": 131
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 350
+      }
+    },
+    {
+      "activation": "script",
+      "id": "siege-mortar-2",
+      "definition": "unit.ants.bombardier",
+      "position": {
+        "x": 368,
+        "y": 134
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 350
+      }
+    },
+    {
+      "activation": "script",
+      "id": "relief-raider-1",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 452,
+        "y": 195
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 220
+      }
+    },
+    {
+      "activation": "script",
+      "id": "relief-raider-2",
+      "definition": "unit.ants.warrior",
+      "position": {
+        "x": 461,
+        "y": 190
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 220
+      }
+    },
+    {
+      "activation": "script",
+      "id": "relief-poacher",
+      "definition": "unit.ants.archer",
+      "position": {
+        "x": 443,
+        "y": 195
+      },
+      "rotation": 180,
+      "owner": "player.2",
+      "initialState": {
+        "health": 180
+      }
+    },
+    {
+      "id": "camp.mushroom-rise.0",
+      "definition": "unit.neutral.capling",
+      "position": {
+        "x": 230,
+        "y": 358
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "camp.mushroom-rise.1",
+      "definition": "unit.neutral.capling",
+      "position": {
+        "x": 230,
+        "y": 361
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "camp.mushroom-rise.2",
+      "definition": "unit.neutral.puffcap",
+      "position": {
+        "x": 230,
+        "y": 355
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "camp.dewdrop-pool.0",
+      "definition": "unit.neutral.puddle-wisp",
+      "position": {
+        "x": 175,
+        "y": 290
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "camp.dewdrop-pool.1",
+      "definition": "unit.neutral.dew-sprite",
+      "position": {
+        "x": 173,
+        "y": 288
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "camp.dewdrop-pool.2",
+      "definition": "unit.neutral.dew-sprite",
+      "position": {
+        "x": 177,
+        "y": 288
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "camp.silk-hollow.0",
+      "definition": "unit.neutral.webling",
+      "position": {
+        "x": 190,
+        "y": 400
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "camp.silk-hollow.1",
+      "definition": "unit.neutral.webling",
+      "position": {
+        "x": 192,
+        "y": 402
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "camp.silk-hollow.2",
+      "definition": "unit.neutral.webling",
+      "position": {
+        "x": 188,
+        "y": 402
+      },
+      "rotation": 90,
+      "owner": "none"
+    },
+    {
+      "id": "camp.silk-hollow.3",
+      "definition": "unit.neutral.spitter",
+      "position": {
+        "x": 190,
+        "y": 397
+      },
+      "rotation": 90,
+      "owner": "none"
+    }
+  ],
+  "camps": [
+    {
+      "id": "camp/mushroom-rise",
+      "members": [
+        "camp.mushroom-rise.0",
+        "camp.mushroom-rise.1",
+        "camp.mushroom-rise.2"
+      ],
+      "home": {
+        "x": 230,
+        "y": 358
+      },
+      "aggroRange": 12,
+      "leash": 18,
+      "aggression": "players",
+      "lootPool": "loot.camp.easy"
+    },
+    {
+      "id": "camp/dewdrop-pool",
+      "members": [
+        "camp.dewdrop-pool.0",
+        "camp.dewdrop-pool.1",
+        "camp.dewdrop-pool.2"
+      ],
+      "home": {
+        "x": 175,
+        "y": 290
+      },
+      "aggroRange": 12,
+      "leash": 18,
+      "aggression": "players",
+      "lootPool": "loot.camp.easy"
+    },
+    {
+      "id": "camp/silk-hollow",
+      "members": [
+        "camp.silk-hollow.0",
+        "camp.silk-hollow.1",
+        "camp.silk-hollow.2",
+        "camp.silk-hollow.3"
+      ],
+      "home": {
+        "x": 190,
+        "y": 400
+      },
+      "aggroRange": 12,
+      "leash": 18,
+      "aggression": "players",
+      "lootPool": "loot.camp.easy"
+    }
+  ],
+  "landscape": {
+    "strokes": [],
+    "cover": [],
+    "environment": {
+      "hour": 16.5,
+      "playing": false,
+      "weather": {
+        "kind": "clear"
+      }
+    }
+  },
+  "authoring": {
+    "version": 1,
+    "layers": [
+      {
+        "id": "west-ridge",
+        "name": "Rootwall ridge",
+        "recipe": "recipe.terrain.hill",
+        "overrides": {
+          "type": "terrain",
+          "height": 6,
+          "falloff": 20
+        },
+        "seed": 73841,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 0,
+        "shape": {
+          "type": "mask",
+          "elevation": 0,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 45,
+              "points": [
+                {
+                  "x": 60,
+                  "z": 250
+                },
+                {
+                  "x": 78,
+                  "z": 285
+                },
+                {
+                  "x": 65,
+                  "z": 330
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "east-ridge",
+        "name": "Briar escarpment",
+        "recipe": "recipe.terrain.hill",
+        "overrides": {
+          "type": "terrain",
+          "height": 7,
+          "falloff": 22
+        },
+        "seed": 73842,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 1,
+        "shape": {
+          "type": "mask",
+          "elevation": 0,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 40,
+              "points": [
+                {
+                  "x": 340,
+                  "z": 340
+                },
+                {
+                  "x": 365,
+                  "z": 370
+                },
+                {
+                  "x": 410,
+                  "z": 380
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "north-ridge",
+        "name": "Watch sheltering ridge",
+        "recipe": "recipe.terrain.hill",
+        "overrides": {
+          "type": "terrain",
+          "height": 5,
+          "falloff": 18
+        },
+        "seed": 73843,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 2,
+        "shape": {
+          "type": "mask",
+          "elevation": 0,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 35,
+              "points": [
+                {
+                  "x": 380,
+                  "z": 62
+                },
+                {
+                  "x": 415,
+                  "z": 60
+                },
+                {
+                  "x": 463,
+                  "z": 80
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "lantern-brook",
+        "name": "Lantern Brook",
+        "recipe": "recipe.river.gentle",
+        "overrides": {
+          "type": "river",
+          "width": 9,
+          "depth": 2,
+          "bankWidth": 4,
+          "flow": 0.4
+        },
+        "seed": 73844,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 3,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": -15,
+              "z": 253,
+              "elevation": -0.8,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 70,
+              "z": 245,
+              "elevation": -0.8,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 150,
+              "z": 236,
+              "elevation": -0.8,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 220,
+              "z": 245,
+              "elevation": -0.8,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 285,
+              "z": 245,
+              "elevation": -0.8,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 340,
+              "z": 252,
+              "elevation": -0.8,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 415,
+              "z": 283,
+              "elevation": -0.8,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 526,
+              "z": 285,
+              "elevation": -0.8,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "lantern-road",
+        "name": "The old lantern road",
+        "recipe": "recipe.path.pebbles",
+        "overrides": {
+          "type": "path",
+          "width": 16,
+          "shoulder": 4,
+          "flatten": 0,
+          "vegetationClearance": 4
+        },
+        "seed": 73845,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 4,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 80,
+              "z": 420,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 100,
+              "z": 390,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 140,
+              "z": 350,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 195,
+              "z": 342,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 235,
+              "z": 320,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 265,
+              "z": 285,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 285,
+              "z": 262,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 285,
+              "z": 227,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 320,
+              "z": 210,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 350,
+              "z": 185,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 380,
+              "z": 170,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 405,
+              "z": 148,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "spring-path",
+        "name": "Dewdrop sanctuary detour",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 12,
+          "shoulder": 3,
+          "vegetationClearance": 2
+        },
+        "seed": 73846,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 5,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 195,
+              "z": 342,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 190,
+              "z": 305,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 175,
+              "z": 290,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "hollow-path",
+        "name": "Silk hollow detour",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 12,
+          "shoulder": 3,
+          "vegetationClearance": 2
+        },
+        "seed": 73847,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 6,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 140,
+              "z": 350,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 165,
+              "z": 380,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 190,
+              "z": 400,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "post-path",
+        "name": "The ruined post",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 12,
+          "shoulder": 3,
+          "vegetationClearance": 2
+        },
+        "seed": 73848,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 7,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 140,
+              "z": 350,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 130,
+              "z": 326,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "fort-ground",
+        "name": "Amber Watch courtyard",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 18,
+          "shoulder": 3,
+          "vegetationClearance": 2
+        },
+        "seed": 73849,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 8,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 380,
+              "z": 138,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 420,
+              "z": 138,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 435,
+              "z": 118,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 422,
+              "z": 98,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest-masses",
+        "name": "Ancient woodland and hidden hollows",
+        "recipe": "recipe.forest.leafy",
+        "overrides": {
+          "density": 0.85,
+          "spacing": 7,
+          "scaleMin": 0.85,
+          "scaleMax": 1.35,
+          "waterClearance": 4,
+          "minSpacing": 6,
+          "type": "forest",
+          "details": []
+        },
+        "seed": 73850,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 9,
+        "shape": {
+          "type": "mask",
+          "elevation": 0,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 400,
+              "points": [
+                {
+                  "x": 255,
+                  "z": 255
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 25,
+              "points": [
+                {
+                  "x": 80,
+                  "z": 420
+                },
+                {
+                  "x": 100,
+                  "z": 390
+                },
+                {
+                  "x": 140,
+                  "z": 350
+                },
+                {
+                  "x": 195,
+                  "z": 342
+                },
+                {
+                  "x": 235,
+                  "z": 320
+                },
+                {
+                  "x": 265,
+                  "z": 285
+                },
+                {
+                  "x": 285,
+                  "z": 262
+                },
+                {
+                  "x": 285,
+                  "z": 227
+                },
+                {
+                  "x": 320,
+                  "z": 210
+                },
+                {
+                  "x": 350,
+                  "z": 185
+                },
+                {
+                  "x": 380,
+                  "z": 170
+                },
+                {
+                  "x": 405,
+                  "z": 148
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 35,
+              "points": [
+                {
+                  "x": 80,
+                  "z": 420
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 32,
+              "points": [
+                {
+                  "x": 130,
+                  "z": 330
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 28,
+              "points": [
+                {
+                  "x": 175,
+                  "z": 290
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 27,
+              "points": [
+                {
+                  "x": 190,
+                  "z": 400
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 36,
+              "points": [
+                {
+                  "x": 285,
+                  "z": 225
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 65,
+              "points": [
+                {
+                  "x": 413,
+                  "z": 128
+                },
+                {
+                  "x": 407,
+                  "z": 162
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 24,
+              "points": [
+                {
+                  "x": 330,
+                  "z": 208
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 23,
+              "points": [
+                {
+                  "x": 230,
+                  "z": 358
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 36,
+              "points": [
+                {
+                  "x": 473.5,
+                  "z": 473.5
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 195,
+                  "z": 342
+                },
+                {
+                  "x": 190,
+                  "z": 305
+                },
+                {
+                  "x": 175,
+                  "z": 290
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 140,
+                  "z": 350
+                },
+                {
+                  "x": 165,
+                  "z": 380
+                },
+                {
+                  "x": 190,
+                  "z": 400
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 140,
+                  "z": 350
+                },
+                {
+                  "x": 130,
+                  "z": 326
+                }
+              ]
+            },
+            {
+              "operation": "subtract",
+              "radius": 19,
+              "points": [
+                {
+                  "x": 175,
+                  "z": 290
+                },
+                {
+                  "x": 220,
+                  "z": 300
+                },
+                {
+                  "x": 265,
+                  "z": 285
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest-meadow",
+        "name": "Living woodland edges",
+        "recipe": "recipe.meadow.woodland-edge",
+        "overrides": {
+          "type": "meadow",
+          "accents": [
+            {
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-grass-lush-b",
+                  "weight": 5
+                },
+                {
+                  "asset": "asset.models.environment.pl-grass-lush-c",
+                  "weight": 4
+                },
+                {
+                  "asset": "asset.models.environment.pl-grass-lush-a",
+                  "weight": 2
+                }
+              ],
+              "spacing": 4,
+              "probability": 0.28,
+              "jitter": 0.8,
+              "scaleMin": 0.45,
+              "scaleMax": 0.8,
+              "maxSlope": 1,
+              "waterClearance": 0.3,
+              "objectClearance": 0,
+              "edgeFade": 0,
+              "minSpacing": 0.45,
+              "patchiness": {
+                "scale": 3.5,
+                "strength": 0.6
+              },
+              "id": "fringe",
+              "coverage": {
+                "min": 0.15,
+                "max": 0.6
+              }
+            },
+            {
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-fern-bushy",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-fern-bushy-b",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-fern-sword",
+                  "weight": 1.5
+                },
+                {
+                  "asset": "asset.models.environment.pl-fern-sword-b",
+                  "weight": 1.5
+                }
+              ],
+              "spacing": 4,
+              "probability": 0.28,
+              "jitter": 0.8,
+              "scaleMin": 1.1,
+              "scaleMax": 1.6,
+              "maxSlope": 1,
+              "waterClearance": 0.3,
+              "objectClearance": 0,
+              "edgeFade": 0,
+              "minSpacing": 2,
+              "patchiness": {
+                "scale": 6,
+                "strength": 0.75
+              },
+              "id": "ferns",
+              "trees": {
+                "min": 1.2,
+                "max": 5
+              }
+            },
+            {
+              "species": [
+                {
+                  "asset": "asset.models.environment.pl-flowers-white",
+                  "weight": 3
+                },
+                {
+                  "asset": "asset.models.environment.pl-flowers-yellow",
+                  "weight": 2
+                },
+                {
+                  "asset": "asset.models.environment.pl-flowers-blue",
+                  "weight": 1
+                },
+                {
+                  "asset": "asset.models.environment.pl-daisy",
+                  "weight": 1.5
+                }
+              ],
+              "spacing": 4,
+              "probability": 0.28,
+              "jitter": 0.8,
+              "scaleMin": 1.05,
+              "scaleMax": 1.55,
+              "maxSlope": 1,
+              "waterClearance": 0.3,
+              "objectClearance": 0,
+              "edgeFade": 0,
+              "minSpacing": 0.9,
+              "patchiness": {
+                "scale": 5,
+                "strength": 0.95
+              },
+              "id": "flowers",
+              "trees": {
+                "min": 2,
+                "max": 10
+              }
+            }
+          ]
+        },
+        "seed": 73851,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 11,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 40,
+              "points": [
+                {
+                  "x": 80,
+                  "z": 420
+                },
+                {
+                  "x": 140,
+                  "z": 350
+                },
+                {
+                  "x": 195,
+                  "z": 342
+                },
+                {
+                  "x": 265,
+                  "z": 285
+                },
+                {
+                  "x": 285,
+                  "z": 245
+                },
+                {
+                  "x": 320,
+                  "z": 210
+                },
+                {
+                  "x": 380,
+                  "z": 170
+                },
+                {
+                  "x": 415,
+                  "z": 120
+                }
+              ]
+            },
+            {
+              "operation": "add",
+              "radius": 27,
+              "points": [
+                {
+                  "x": 175,
+                  "z": 290
+                },
+                {
+                  "x": 190,
+                  "z": 400
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "spring-return",
+        "name": "Dewdrop return loop",
+        "recipe": "recipe.path.soil",
+        "overrides": {
+          "type": "path",
+          "width": 12,
+          "shoulder": 3,
+          "vegetationClearance": 2
+        },
+        "seed": 73862,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 8,
+        "shape": {
+          "type": "spline",
+          "knots": [
+            {
+              "x": 175,
+              "z": 290,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 220,
+              "z": 300,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            },
+            {
+              "x": 265,
+              "z": 285,
+              "elevation": 0,
+              "widthScale": 1,
+              "depthScale": 1,
+              "flowScale": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": "forest-floor",
+        "name": "Moss beneath the canopy",
+        "recipe": "recipe.meadow.woodland-edge",
+        "overrides": {
+          "type": "meadow",
+          "accents": []
+        },
+        "seed": 73865,
+        "enabled": true,
+        "visible": true,
+        "locked": false,
+        "order": 10,
+        "shape": {
+          "type": "mask",
+          "elevation": -0.6,
+          "strokes": [
+            {
+              "operation": "add",
+              "radius": 400,
+              "points": [
+                {
+                  "x": 255,
+                  "z": 255
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "objects": [
+      {
+        "id": "road-elder",
+        "asset": "asset.models.environment.mega-oak-trunk",
+        "x": 34,
+        "z": 435,
+        "elevation": 0,
+        "yaw": 0.6,
+        "scale": 1.5,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "post-tower",
+        "asset": "asset.models.environment.woodland-ruined-watchtower",
+        "x": 113,
+        "z": 319,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "post-cart",
+        "asset": "asset.models.environment.woodland-broken-trader-cart",
+        "x": 153,
+        "z": 328,
+        "elevation": 0,
+        "yaw": 0.5,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "post-crates",
+        "asset": "asset.models.environment.woodland-supply-crate",
+        "x": 118,
+        "z": 340,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "spring",
+        "asset": "asset.models.environment.woodland-stone-spring",
+        "x": 167,
+        "z": 277,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "hollow-log",
+        "asset": "asset.models.environment.woodland-hollow-log",
+        "x": 214,
+        "z": 407,
+        "elevation": 0,
+        "yaw": 0.7,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "hollow-mushroom",
+        "asset": "asset.models.environment.mega-mushroom",
+        "x": 167,
+        "z": 399,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "crossing-shelter",
+        "asset": "asset.models.environment.woodland-leaf-shelter",
+        "x": 305,
+        "z": 226,
+        "elevation": 0,
+        "yaw": 0.8,
+        "scale": 1.3,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "crossing-stump",
+        "asset": "asset.models.environment.woodland-giant-stump",
+        "x": 308,
+        "z": 255,
+        "elevation": 0,
+        "yaw": 0.3,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "watch-boulder",
+        "asset": "asset.models.environment.woodland-moss-boulder",
+        "x": 450,
+        "z": 145,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1.6,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "watch-elder",
+        "asset": "asset.models.environment.woodland-canopy-elder",
+        "x": 454,
+        "z": 103,
+        "elevation": 0,
+        "yaw": 0.6,
+        "scale": 1.8,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "watch-shelter",
+        "asset": "asset.models.environment.woodland-leaf-shelter",
+        "x": 433,
+        "z": 102,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "briar-cart",
+        "asset": "asset.models.environment.woodland-broken-trader-cart",
+        "x": 439,
+        "z": 181,
+        "elevation": 0,
+        "yaw": 0.4,
+        "scale": 1.4,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "briar-crate",
+        "asset": "asset.models.environment.woodland-supply-crate",
+        "x": 455,
+        "z": 181,
+        "elevation": 0,
+        "yaw": 0.5,
+        "scale": 1.6,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "overlook-acorn",
+        "asset": "asset.models.environment.mega-acorn",
+        "x": 342,
+        "z": 173,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.2,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-lantern-0",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 93,
+        "z": 410,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-lantern-1",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 113,
+        "z": 380,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-lantern-2",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 153,
+        "z": 348,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-lantern-3",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 213,
+        "z": 335,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-lantern-4",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 253,
+        "z": 297,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-lantern-5",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 275,
+        "z": 269,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-lantern-6",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 294,
+        "z": 218,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-lantern-7",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 335,
+        "z": 199,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-lantern-8",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 370,
+        "z": 179,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-lantern-9",
+        "asset": "asset.models.environment.woodland-amber-lantern",
+        "x": 395,
+        "z": 145,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.1,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "road-sign",
+        "asset": "asset.models.environment.woodland-trail-sign",
+        "x": 101,
+        "z": 398,
+        "elevation": 0,
+        "yaw": 0.3,
+        "scale": 1.3,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "crossing-sign",
+        "asset": "asset.models.environment.woodland-trail-sign",
+        "x": 270,
+        "z": 222,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 1.3,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "watch-barricade-0",
+        "asset": "asset.models.environment.woodland-great-fallen-log",
+        "x": 383,
+        "z": 83,
+        "elevation": 0,
+        "yaw": 1.5707963267948966,
+        "scale": 0.65,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "watch-barricade-1",
+        "asset": "asset.models.environment.woodland-great-fallen-log",
+        "x": 414,
+        "z": 73,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 0.65,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "watch-barricade-2",
+        "asset": "asset.models.environment.woodland-great-fallen-log",
+        "x": 448,
+        "z": 79,
+        "elevation": 0,
+        "yaw": 0,
+        "scale": 0.65,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      },
+      {
+        "id": "watch-barricade-3",
+        "asset": "asset.models.environment.woodland-great-fallen-log",
+        "x": 461,
+        "z": 110,
+        "elevation": 0,
+        "yaw": 1.5707963267948966,
+        "scale": 0.65,
+        "heightMode": "terrain",
+        "visible": true,
+        "locked": false
+      }
+    ]
+  },
+  "waterLevel": -1
+}

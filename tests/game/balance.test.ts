@@ -27,11 +27,11 @@ describe('first combat balance', () => {
     expect(armorMultiplier(rules,-1000)).toBeLessThan(2);
     expect(armorMultiplier(rules,-5)).toBeGreaterThan(armorMultiplier(rules,-1));
   });
-  it('publishes one complete stat table through level ten, including item and percentage bonuses', () => {
+  it('publishes one complete stat table through level eleven, including item and percentage bonuses', () => {
     const d=content.get('unit.ants.marshal');
     expect(entityStats(d,{},content)).toEqual({moveSpeedPermille:1000,cooldownReductionPermille:0,lifestealPermille:0,meleeReflectionPermille:0,level:1,maxHp:700,damage:31,armor:2,cooldownTicks:73,maxMana:225,healthRegenPerSecond:1.45,manaRegenPerSecond:.76});
-    const e={progression:{experience:3200},equipment:Array(6).fill('item.royal-crest')};
-    expect(entityStats(d,e,content)).toMatchObject({level:10,maxHp:1975,damage:118,armor:24,cooldownTicks:60,maxMana:420,healthRegenPerSecond:2.8,manaRegenPerSecond:1.41});
+    const e={progression:{experience:5200},equipment:Array(6).fill('item.royal-crest')};
+    expect(entityStats(d,e,content)).toMatchObject({level:11,maxHp:2050,damage:121,armor:24,cooldownTicks:59,maxMana:450,healthRegenPerSecond:2.95,manaRegenPerSecond:1.51});
   });
   it('accumulates fractional regeneration exactly across saves, without banking recovery at full pools', () => {
     const g=game(),h=heroOf(g);h.hp=500;h.abilities!.mana=0;
@@ -48,10 +48,10 @@ describe('first combat balance', () => {
   it('preserves damage and spent mana on level-up, and uses the new attack interval in combat', () => {
     const g=game([ {...placed('target','unit.ants.warrior',222,202),owner:'player.2'} ]),h=heroOf(g);
     const target=g.entities.find(e=>e.placement==='target')!;
-    h.progression!.experience=95;h.hp=500;h.abilities!.mana=100;
-    new Progression(g.context).award(target,e=>e.id===h.id);
+    h.progression!.experience=155;h.hp=500;h.abilities!.mana=100;
+    new Progression(g.context).award(target,h.owner,e=>e.id===h.id);
     expect(g.context.stats(h).level).toBe(2);expect(h.hp).toBe(575);expect(h.abilities!.mana).toBe(115);
-    h.progression!.experience=3200;
+    h.progression!.experience=4320;
     target.x=h.x+4;target.y=h.y;g.observation.update();g.state.tick++;
     h.rotation=heading(h,target);h.unit!.target=target.id;const before=target.hp!;
     g.combat.resolve();

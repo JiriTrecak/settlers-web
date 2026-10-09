@@ -6653,6 +6653,442 @@
           }
         ],
         "presentation": "presentation.core.flight-form"
+      },
+      {
+        "schemaVersion": 1,
+        "id": "ability.marshal.faultline",
+        "name": "Faultline",
+        "description": "Slam the mace to send a travelling fracture through enemies: 70/110/150 spell damage and a brief 0.4/0.5/0.6-second stun. Heroes are stunned for half as long.",
+        "activation": "targeted",
+        "delivery": {
+          "kind": "line",
+          "speed": 28,
+          "length": 24,
+          "width": 2.6
+        },
+        "ranks": [
+          {
+            "damage": 70,
+            "stun": 16,
+            "heroStun": 8,
+            "mana": 45,
+            "cooldown": 360
+          },
+          {
+            "damage": 110,
+            "stun": 20,
+            "heroStun": 10,
+            "mana": 45,
+            "cooldown": 360
+          },
+          {
+            "damage": 150,
+            "stun": 24,
+            "heroStun": 12,
+            "mana": 45,
+            "cooldown": 360
+          }
+        ],
+        "targeting": {
+          "filter": {
+            "locomotion": [
+              "ground"
+            ]
+          },
+          "kind": "point",
+          "radius": 3,
+          "alive": true,
+          "visible": true,
+          "relations": [
+            "enemy"
+          ],
+          "allowSelf": false,
+          "range": 24,
+          "outOfRange": "reject"
+        },
+        "cast": {
+          "prepareTicks": 14,
+          "recoverTicks": 10,
+          "cost": {
+            "resource": "mana",
+            "amount": {
+              "rankParameter": "mana"
+            },
+            "commit": "release"
+          },
+          "cooldown": {
+            "ticks": {
+              "rankParameter": "cooldown"
+            },
+            "start": "release",
+            "scope": "ability"
+          },
+          "cancelBeforeRelease": "refund",
+          "revalidateAtRelease": [
+            "caster",
+            "target",
+            "range",
+            "visibility",
+            "relationship"
+          ]
+        },
+        "onRelease": [
+          {
+            "op": "damage",
+            "target": "target",
+            "amount": {
+              "rankParameter": "damage"
+            },
+            "damageType": "spell"
+          },
+          {
+            "op": "status",
+            "target": "target",
+            "id": "stagger",
+            "amount": {
+              "rankParameter": "stun"
+            },
+            "heroDuration": {
+              "rankParameter": "heroStun"
+            },
+            "polarity": "negative",
+            "dispel": true,
+            "modifiers": {},
+            "stun": true,
+            "lifetime": "duration"
+          }
+        ],
+        "presentation": "presentation.marshal.faultline"
+      },
+      {
+        "schemaVersion": 1,
+        "id": "ability.marshal.rally",
+        "name": "Rally the Colony",
+        "description": "Protect up to sixteen nearby allies for eight seconds: absorb 50/80/110 damage and increase attack damage by 10/15/20%. The attack bonus remains if the shield breaks.",
+        "activation": "targeted",
+        "ranks": [
+          {
+            "shield": 50,
+            "bonus": 100,
+            "mana": 45,
+            "cooldown": 560,
+            "duration": 320
+          },
+          {
+            "shield": 80,
+            "bonus": 150,
+            "mana": 45,
+            "cooldown": 560,
+            "duration": 320
+          },
+          {
+            "shield": 110,
+            "bonus": 200,
+            "mana": 45,
+            "cooldown": 560,
+            "duration": 320
+          }
+        ],
+        "targeting": {
+          "kind": "self",
+          "alive": true,
+          "visible": true,
+          "relations": [
+            "ally"
+          ],
+          "allowSelf": true,
+          "range": 0,
+          "outOfRange": "reject"
+        },
+        "cast": {
+          "prepareTicks": 12,
+          "recoverTicks": 10,
+          "cost": {
+            "resource": "mana",
+            "amount": {
+              "rankParameter": "mana"
+            },
+            "commit": "release"
+          },
+          "cooldown": {
+            "ticks": {
+              "rankParameter": "cooldown"
+            },
+            "start": "release",
+            "scope": "ability"
+          },
+          "cancelBeforeRelease": "refund",
+          "revalidateAtRelease": [
+            "caster",
+            "target",
+            "range",
+            "visibility",
+            "relationship"
+          ]
+        },
+        "onRelease": [
+          {
+            "op": "status",
+            "target": "caster",
+            "query": {
+              "center": "caster",
+              "radius": 12,
+              "relations": [
+                "ally"
+              ],
+              "allowSelf": true,
+              "includeBuildings": false,
+              "excludePrimary": false,
+              "maxTargets": 16,
+              "order": "nearest"
+            },
+            "id": "rally",
+            "amount": {
+              "rankParameter": "duration"
+            },
+            "polarity": "positive",
+            "dispel": true,
+            "modifiers": {},
+            "rankedModifiers": {
+              "damagePermille": {
+                "rankParameter": "bonus"
+              }
+            },
+            "shield": {
+              "rankParameter": "shield"
+            },
+            "onShieldDepleted": "retain",
+            "lifetime": "duration"
+          }
+        ],
+        "presentation": "presentation.marshal.rally"
+      },
+      {
+        "schemaVersion": 1,
+        "id": "ability.marshal.carapace",
+        "name": "Iron Carapace",
+        "description": "Harden the Marshal’s chitin for six seconds: take 20/30/40% less damage and reflect 15/25/35% of ordinary melee damage actually suffered. The Marshal can still move and cast.",
+        "activation": "targeted",
+        "ranks": [
+          {
+            "taken": 800,
+            "reflection": 150,
+            "mana": 40,
+            "cooldown": 560,
+            "duration": 240
+          },
+          {
+            "taken": 700,
+            "reflection": 250,
+            "mana": 40,
+            "cooldown": 560,
+            "duration": 240
+          },
+          {
+            "taken": 600,
+            "reflection": 350,
+            "mana": 40,
+            "cooldown": 560,
+            "duration": 240
+          }
+        ],
+        "targeting": {
+          "kind": "self",
+          "alive": true,
+          "visible": true,
+          "relations": [
+            "ally"
+          ],
+          "allowSelf": true,
+          "range": 0,
+          "outOfRange": "reject"
+        },
+        "cast": {
+          "prepareTicks": 12,
+          "recoverTicks": 10,
+          "cost": {
+            "resource": "mana",
+            "amount": {
+              "rankParameter": "mana"
+            },
+            "commit": "release"
+          },
+          "cooldown": {
+            "ticks": {
+              "rankParameter": "cooldown"
+            },
+            "start": "release",
+            "scope": "ability"
+          },
+          "cancelBeforeRelease": "refund",
+          "revalidateAtRelease": [
+            "caster",
+            "target",
+            "range",
+            "visibility",
+            "relationship"
+          ]
+        },
+        "onRelease": [
+          {
+            "op": "status",
+            "target": "caster",
+            "id": "carapace",
+            "amount": {
+              "rankParameter": "duration"
+            },
+            "polarity": "positive",
+            "dispel": true,
+            "damageTakenPermille": {
+              "melee": {
+                "rankParameter": "taken"
+              },
+              "piercing": {
+                "rankParameter": "taken"
+              },
+              "hero": {
+                "rankParameter": "taken"
+              },
+              "spell": {
+                "rankParameter": "taken"
+              },
+              "siege": {
+                "rankParameter": "taken"
+              }
+            },
+            "modifiers": {},
+            "rankedModifiers": {
+              "meleeReflectionPermille": {
+                "rankParameter": "reflection"
+              }
+            },
+            "lifetime": "duration"
+          }
+        ],
+        "presentation": "presentation.marshal.carapace"
+      },
+      {
+        "schemaVersion": 1,
+        "id": "ability.marshal.crownfall",
+        "name": "Crownfall",
+        "description": "Call down an amber crown with a thunderous mace strike. After a visible windup, deal 180/260 spell damage and stun enemies for 1/1.4 seconds (half against heroes) in a 7/9-unit radius. Up to sixteen allies in the impact area gain a 100/160-damage shield for six seconds.",
+        "activation": "targeted",
+        "ranks": [
+          {
+            "damage": 180,
+            "stun": 40,
+            "heroStun": 20,
+            "radius": 7,
+            "shield": 100,
+            "mana": 110,
+            "cooldown": 2400
+          },
+          {
+            "damage": 260,
+            "stun": 56,
+            "heroStun": 28,
+            "radius": 9,
+            "shield": 160,
+            "mana": 140,
+            "cooldown": 2160
+          }
+        ],
+        "targeting": {
+          "kind": "point",
+          "radius": {
+            "rankParameter": "radius"
+          },
+          "maxTargets": 16,
+          "alive": true,
+          "visible": true,
+          "relations": [
+            "enemy"
+          ],
+          "allowSelf": false,
+          "range": 24,
+          "outOfRange": "reject"
+        },
+        "cast": {
+          "prepareTicks": 32,
+          "recoverTicks": 10,
+          "cost": {
+            "resource": "mana",
+            "amount": {
+              "rankParameter": "mana"
+            },
+            "commit": "release"
+          },
+          "cooldown": {
+            "ticks": {
+              "rankParameter": "cooldown"
+            },
+            "start": "release",
+            "scope": "ability"
+          },
+          "cancelBeforeRelease": "refund",
+          "revalidateAtRelease": [
+            "caster",
+            "target",
+            "range",
+            "visibility",
+            "relationship"
+          ]
+        },
+        "onRelease": [
+          {
+            "op": "damage",
+            "target": "target",
+            "amount": {
+              "rankParameter": "damage"
+            },
+            "damageType": "spell"
+          },
+          {
+            "op": "status",
+            "target": "target",
+            "id": "crownStun",
+            "amount": {
+              "rankParameter": "stun"
+            },
+            "heroDuration": {
+              "rankParameter": "heroStun"
+            },
+            "polarity": "negative",
+            "dispel": true,
+            "modifiers": {},
+            "stun": true,
+            "lifetime": "duration"
+          },
+          {
+            "op": "status",
+            "target": "caster",
+            "query": {
+              "center": "point",
+              "radius": {
+                "rankParameter": "radius"
+              },
+              "relations": [
+                "ally"
+              ],
+              "allowSelf": true,
+              "includeBuildings": false,
+              "excludePrimary": false,
+              "maxTargets": 16,
+              "order": "nearest"
+            },
+            "id": "crownWard",
+            "amount": 240,
+            "polarity": "positive",
+            "dispel": true,
+            "modifiers": {},
+            "shield": {
+              "rankParameter": "shield"
+            },
+            "onShieldDepleted": "remove",
+            "lifetime": "duration"
+          }
+        ],
+        "presentation": "presentation.marshal.crownfall"
       }
     ],
     "presentations": [
@@ -8714,6 +9150,126 @@
             "id": "form",
             "effect": "effect.core.flight-form.status",
             "statusId": "soaring",
+            "event": "statusApplied",
+            "anchor": "target",
+            "lifetime": "status"
+          }
+        ]
+      },
+      {
+        "schemaVersion": 1,
+        "id": "presentation.marshal.faultline",
+        "icon": "asset.spells.marshal.faultline-icon",
+        "animations": {
+          "prepare": "attack",
+          "release": "attack",
+          "recover": "idle",
+          "fallback": "idle"
+        },
+        "effects": [
+          {
+            "id": "flight",
+            "effect": "effect.marshal.faultline.flight",
+            "event": "projectile",
+            "anchor": "target",
+            "lifetime": "finite",
+            "durationFrom": "delivery"
+          },
+          {
+            "id": "hit",
+            "effect": "effect.marshal.faultline.hit",
+            "event": "damaged",
+            "anchor": "target",
+            "lifetime": "finite"
+          }
+        ]
+      },
+      {
+        "schemaVersion": 1,
+        "id": "presentation.marshal.rally",
+        "icon": "asset.spells.marshal.rally-icon",
+        "animations": {
+          "prepare": "attack",
+          "release": "attack",
+          "recover": "idle",
+          "fallback": "idle"
+        },
+        "effects": [
+          {
+            "id": "pulse",
+            "effect": "effect.marshal.rally.cast",
+            "event": "released",
+            "anchor": "caster",
+            "lifetime": "finite"
+          },
+          {
+            "id": "ward",
+            "effect": "effect.marshal.rally.ward",
+            "statusId": "rally",
+            "event": "statusApplied",
+            "anchor": "target",
+            "lifetime": "status"
+          }
+        ]
+      },
+      {
+        "schemaVersion": 1,
+        "id": "presentation.marshal.carapace",
+        "icon": "asset.spells.marshal.carapace-icon",
+        "animations": {
+          "prepare": "attack",
+          "release": "attack",
+          "recover": "idle",
+          "fallback": "idle"
+        },
+        "effects": [
+          {
+            "id": "harden",
+            "effect": "effect.marshal.carapace.cast",
+            "event": "released",
+            "anchor": "caster",
+            "lifetime": "finite"
+          },
+          {
+            "id": "armor",
+            "effect": "effect.marshal.carapace.armor",
+            "statusId": "carapace",
+            "event": "statusApplied",
+            "anchor": "target",
+            "lifetime": "status"
+          }
+        ]
+      },
+      {
+        "schemaVersion": 1,
+        "id": "presentation.marshal.crownfall",
+        "icon": "asset.spells.marshal.crownfall-icon",
+        "animations": {
+          "prepare": "attack",
+          "release": "attack",
+          "recover": "idle",
+          "fallback": "idle"
+        },
+        "effects": [
+          {
+            "id": "warning",
+            "effect": "effect.marshal.crownfall.prepare",
+            "event": "accepted",
+            "anchor": "target",
+            "lifetime": "finite",
+            "sizeFrom": "radius"
+          },
+          {
+            "id": "impact",
+            "effect": "effect.marshal.crownfall.impact",
+            "event": "released",
+            "anchor": "target",
+            "lifetime": "finite"
+          },
+          {
+            "id": "ward",
+            "effect": "effect.marshal.rally.ward",
+            "statusId": "crownWard",
             "event": "statusApplied",
             "anchor": "target",
             "lifetime": "status"

@@ -54,7 +54,7 @@ export class PlayScreen extends GameScreen {
       match: hooks.match,
       hooks: { onMissionLeave: hooks.onLeave, onMissionContinue:hooks.onContinue, onHud: (state) => this.hud.update(state) },
     });
-    this.loading = new LoadingScreen(this.root, hooks.onLeave);
+    this.loading = new LoadingScreen(this.root, hooks.onLeave, undefined, entry.map.mission);
   }
 
   start(): void {

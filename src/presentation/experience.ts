@@ -1,7 +1,7 @@
 import type {Definition} from '../content/schema';
 import type {EntityView} from '../sim/game/observation';
 /** Private progression is absent for opponents; never infer their exact experience. */
-export function experienceMeter(entity:EntityView,definition:Definition,missionCap?:number){
+export function experienceMeter(entity:EntityView,definition:Definition,missionCap?:number,neutralCap?:number){
  const thresholds=definition.behaviors.progression?.levels.map(l => l.experience);
  if(!thresholds||!entity.progression)return null;
  const level=Math.min(thresholds.length,Math.max(1,entity.stats?.level??1));
@@ -9,5 +9,5 @@ export function experienceMeter(entity:EntityView,definition:Definition,missionC
  if(missionCap!==undefined && level>=missionCap)return {fraction:1,label:`Mission maximum level ${missionCap}`,description:`${experience} experience. Mission level cap reached; no additional experience is banked.`};
  if(next===undefined)return {fraction:1,label:`Maximum level ${level}`,description:`${experience} experience. Maximum level reached.`};
  const earned=Math.max(0,experience-base),required=next-base;
- return {fraction:Math.min(1,earned/required),label:`Experience: ${earned} / ${required}`,description:`${experience} total experience. ${Math.max(0,next-experience)} more to reach level ${level+1}.`};
+ return {fraction:Math.min(1,earned/required),label:`Experience: ${earned} / ${required}`,description:`${experience} total experience. ${Math.max(0,next-experience)} more to reach level ${level+1}.${neutralCap!==undefined&&level>=neutralCap?' Neutral creeps no longer grant experience; defeat player-controlled enemies to progress.':''}`};
 }

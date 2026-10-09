@@ -50,7 +50,7 @@ it.each([1,1.7,2])('renders unit bodies and indicators at the definition model s
   const body=root.getObjectByName('Body')!;
   expect(body.scale.x).toBeCloseTo((asset.scale??1)*multiplier);
   expect(body.scale.y).toBeCloseTo(body.scale.x);expect(body.scale.z).toBeCloseTo(body.scale.x);
-  expect(root.getObjectByName('Health')!.position.y).toBeCloseTo(registry.get(e.definition).dimensions?.height??(asset.healthHeight??2.5)*multiplier);
+  expect(root.getObjectByName('Health')!.position.y).toBeCloseTo((registry.get(e.definition).dimensions?.height??(asset.healthHeight??2.5)*multiplier)+.25);
   if(e.gathering)expect(root.getObjectByName('Mine occupancy')!.position.y).toBeCloseTo((asset.healthHeight??3)*multiplier+.55);
   expect(root.position.x).toBe(e.x);expect(root.position.z).toBe(e.y);expect(root.scale.x).toBe(1);
   if(unit){

@@ -42,3 +42,31 @@
 @keyframes canopy-reveal { from {opacity:0} to {opacity:1} }
 .canopy-menu { animation:canopy-reveal .3s ease-out; }
 @media(prefers-reduced-motion:reduce) { .canopy-menu { animation:none; } }
+/* The chapter page uses quiet timber and one illustration, matching the new menus. */
+.is-mission-selection .canopy-art{filter:blur(8px) brightness(.4);transform:scale(1.03)}
+.is-mission-selection .campaign-stage::after{background:linear-gradient(#07100b55,#05090799)}
+.is-mission-selection .canopy-effects{display:none}
+.is-mission-selection .campaign-content{padding:24px 4vw;gap:20px;max-width:1800px;margin:auto}
+.is-mission-selection .campaign-heading h1{font-size:clamp(32px,4.8vw,70px);font-weight:400;line-height:1.15;margin:0}
+.is-mission-selection .campaign-heading p{letter-spacing:.2em;color:#e3dac5;margin:0 0 10px;font-size:14px}
+.mission-selection{display:grid;grid-template-columns:minmax(240px,29%) minmax(0,1fr);gap:26px;width:100%;flex:1;min-height:0}
+.mission-selection-list{display:flex;flex-direction:column;gap:12px;background:linear-gradient(#0e1210dd,#101412ed),url('../../../assets/library/asset.interface.main-menu.panel-charcoal/image.webp') center/cover;border:1px solid #a18a59;padding:30px 14px;box-shadow:inset 0 0 0 3px #080d0baa,0 8px 24px #0006}
+.mission-selection-list .campaign-chapter.mission-selection-row{display:flex;align-items:center;gap:18px;min-height:72px;width:100%;padding:14px 16px;color:#d9d1be;background:#141913c9;border:1px solid #715d3f;border-radius:0;text-align:left;font:20px Georgia,serif;cursor:pointer}
+.mission-selection-row span{font-size:30px;font-weight:400;padding-right:16px;border-right:1px solid #80603f}
+.mission-selection-row strong{font-weight:400}.mission-selection-list .mission-selection-row.is-selected{background:linear-gradient(90deg,#422815ed,#231c12dd);border-color:#be8b42;box-shadow:0 2px 0 #d59c43}
+.mission-selection-row:focus-visible{outline:2px solid #edbf70;outline-offset:4px}
+.mission-selection-more{margin:auto 0;text-align:center;font:14px Georgia,serif;color:#b9b19c;letter-spacing:.08em;padding:35px 0}
+.mission-selection-detail{text-align:center;display:flex;flex-direction:column;align-items:center;min-width:0;color:#ebe4d1}
+.mission-selection-art{width:100%;height:clamp(190px,35vh,410px);object-fit:cover;object-position:center 45%;border:1px solid #9c8056;box-shadow:0 6px 26px #0009}
+.mission-selection-chapter{font:14px Georgia,serif;text-transform:uppercase;letter-spacing:.2em;margin:20px 0 5px;color:#d0bea0}
+.mission-selection-detail h2{font:400 clamp(28px,3vw,46px)/1.15 Georgia,serif;margin:0 0 16px;text-shadow:0 3px 6px #000}
+.mission-selection-description{font:clamp(15px,1.3vw,20px)/1.5 Georgia,serif;white-space:pre-line;max-width:790px;margin:0 20px;color:#ddd6c6}
+.mission-selection-features{display:flex;list-style:none;justify-content:center;padding:0;margin:22px 0;gap:0;font:16px Georgia,serif;color:#c9bda6}
+.mission-selection-features li{padding:0 22px}.mission-selection-features li+li{border-left:1px solid #947446}
+.canopy-action.mission-selection-begin{width:300px;height:62px;margin:16px 0 0 auto;font-size:22px;padding:0 40px;white-space:nowrap}
+.is-mission-selection .campaign-footer{margin-top:0;min-height:46px}.is-mission-selection .campaign-footer span{display:none}
+@media(max-width:800px){.mission-selection{grid-template-columns:1fr}.mission-selection-list{padding:12px}.mission-selection-more{padding:8px;margin:0}.mission-selection-art{height:240px}.mission-selection-features{flex-wrap:wrap;gap:10px}.mission-selection-features li{padding:0 10px}.canopy-action.mission-selection-begin{margin:10px auto}.is-mission-selection .campaign-content{padding:24px 5vw}}
+.is-mission-selection .campaign-footer{width:100%;margin-top:0;align-items:center}
+.is-mission-selection .campaign-footer .mission-selection-begin{margin:0 0 0 auto}
+@media(max-width:800px){.is-mission-selection .campaign-footer .mission-selection-begin{width:min(260px,55vw);font-size:20px}}
+@media(max-width:500px){.is-mission-selection .campaign-footer{gap:12px}.is-mission-selection .campaign-back-action{width:120px}.is-mission-selection .campaign-footer .mission-selection-begin{width:auto;flex:1;font-size:17px;padding:0 24px}}

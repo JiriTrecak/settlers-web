@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.marshal.crownfall.impact",
+  "name": "Crownfall · royal impact",
+  "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
+  "durationTicks": 52,
+  "loop": false,
+  "layers": [
+    {
+      "id": "outer-shock",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#f0b94f",
+      "accent": "#fff2bb",
+      "durationTicks": 32,
+      "count": 1,
+      "size": 7,
+      "height": 0.15,
+      "intensity": 0.45
+    },
+    {
+      "id": "crown",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "pillar",
+      "colour": "#f0b94f",
+      "accent": "#fff2bb",
+      "durationTicks": 18,
+      "count": 1,
+      "size": 2.2,
+      "height": 8
+    },
+    {
+      "id": "sun-flash",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "light",
+      "colour": "#f0b94f",
+      "accent": "#fff2bb",
+      "durationTicks": 16,
+      "count": 1,
+      "size": 10,
+      "height": 3,
+      "intensity": 9
+    },
+    {
+      "id": "amber-shrapnel",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "emitter": {
+        "mode": "burst",
+        "lifetimeTicks": 48,
+        "rate": 4,
+        "speed": 10,
+        "speedVariation": 0.5,
+        "direction": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "coneDegrees": 80,
+        "gravity": 14,
+        "drag": 0.8,
+        "spawnRadius": 3,
+        "startSize": 0.3,
+        "endSize": 0,
+        "spin": 4,
+        "fadeIn": 0.02,
+        "fadeOut": 0.7
+      },
+      "anchor": "target",
+      "shape": "particles",
+      "colour": "#f0b94f",
+      "accent": "#fff2bb",
+      "durationTicks": 48,
+      "count": 64,
+      "size": 0.15,
+      "height": 0.3,
+      "texture": {
+        "asset": "asset.effects.holy-light-spark",
+        "role": "image",
+        "index": 1
+      }
+    },
+    {
+      "id": "fracture",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "billboard",
+      "colour": "#ffffff",
+      "accent": "#ffe8af",
+      "durationTicks": 44,
+      "count": 1,
+      "size": 18,
+      "height": 0.12,
+      "motion": {
+        "scale": {
+          "periodTicks": 160,
+          "min": 0.75,
+          "max": 1.1,
+          "easing": "smoothstep"
+        }
+      },
+      "blend": "additive",
+      "orientation": "ground",
+      "intensity": 0.9,
+      "texture": {
+        "asset": "asset.effects.marshal.crown-fracture",
+        "role": "image",
+        "index": 1
+      }
+    }
+  ]
+}

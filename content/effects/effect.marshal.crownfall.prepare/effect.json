@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "effect.marshal.crownfall.prepare",
+  "name": "Crownfall · warning crown",
+  "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
+  "durationTicks": 32,
+  "loop": false,
+  "layers": [
+    {
+      "id": "warning",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "ring",
+      "colour": "#e6a136",
+      "accent": "#ffe9a1",
+      "durationTicks": 32,
+      "count": 1,
+      "size": 7,
+      "height": 0.15
+    },
+    {
+      "id": "focus",
+      "sustain": false,
+      "enabled": true,
+      "startTick": 0,
+      "anchor": "target",
+      "shape": "glow",
+      "colour": "#f0b94f",
+      "accent": "#fff2bb",
+      "durationTicks": 32,
+      "count": 1,
+      "size": 3,
+      "height": 0.15,
+      "intensity": 0.7
+    }
+  ]
+}

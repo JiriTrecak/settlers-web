@@ -407,6 +407,16 @@ export const rulesSchema = z
       name: z.string().min(1), appliesArmor: z.boolean(),
     }).strict()),
     heroStunDurationPermille: natural.max(1000),
+    experience: z.object({
+      unitRewards: z.array(natural.max(100000)).min(1).max(50),
+      heroRewards: z.array(natural.max(100000)).min(1).max(50),
+      neutralLevelCap: positive.max(50),
+      neutralMultipliersPermille: z.array(natural.max(1000)).min(1).max(50),
+      summonMultiplierPermille: natural.max(1000),
+      globalFallback: z.boolean(),
+      soloHeroTierBonusPermille: z.array(natural.max(1000)).min(1).max(16),
+    }).strict().refine(p => p.neutralMultipliersPermille.length === p.neutralLevelCap - 1,
+      'Neutral XP needs one multiplier for each level below the cap'),
     damageMultipliers: z.record(idSchema, z.record(idSchema, natural)),
     startingSetup: z
       .object({

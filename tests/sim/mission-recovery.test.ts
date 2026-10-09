@@ -9,14 +9,14 @@ function fixture(script:string){
 it('recovers current health and mana without replenishing charges, resetting cooldowns or reviving losses',()=>{
  const g=new Game(fixture('function on_start() end function on_tick() if not mission.get("rested") then mission.recover("hero"); mission.recover("guard"); mission.set("rested",true) end end'),[{player:0,kind:'human'}]);
  g.tick();const hero=g.entities.find(e=>e.placement==='hero')!,guard=g.entities.find(e=>e.placement==='guard')!;
- hero.hp=25;hero.abilities!.mana=0;hero.abilities!.cooldowns['ability.core.holy-light-lite']=500;
+ hero.hp=25;hero.abilities!.mana=0;hero.abilities!.cooldowns['ability.marshal.faultline']=500;
  hero.equipment![0]='item.trailkeeper-flask';hero.equipmentState=hero.equipment!.map((_,i)=>i===0?{charges:1,readyTick:300,hits:0}:null);
  guard.hp=0;
  const copy=new Game(g.map,g.slots);copy.restore(g.snapshot());
  for(let i=0;i<4;i++){g.tick();copy.tick();}
  expect(g.state.mission?.error).toBeNull();expect(g.checksum()).toBe(copy.checksum());
  expect(hero.hp).toBe(g.context.stats(hero).maxHp);expect(hero.abilities!.mana).toBe(g.context.stats(hero).maxMana);
- expect(hero.abilities!.cooldowns['ability.core.holy-light-lite']).toBe(500);
+ expect(hero.abilities!.cooldowns['ability.marshal.faultline']).toBe(500);
  expect(hero.equipmentState![0]).toEqual({charges:1,readyTick:300,hits:0});
  expect(g.entities.some(e=>e.placement==='guard'&&e.hp!>0)).toBe(false);
  hero.hp=100;for(let i=0;i<8;i++)g.tick();expect(hero.hp).toBeLessThan(g.context.stats(hero).maxHp);

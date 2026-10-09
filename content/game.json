@@ -809,7 +809,50 @@
     },
     "maxSupply": 100,
     "supplyIcon": "icon.ants.house",
-    "constructionRefundPermille": 750
+    "constructionRefundPermille": 750,
+    "experience": {
+      "unitRewards": [
+        24,
+        44,
+        72,
+        108,
+        152,
+        204,
+        264,
+        332,
+        408,
+        492,
+        584
+      ],
+      "heroRewards": [
+        90,
+        120,
+        165,
+        225,
+        300,
+        390,
+        495,
+        615,
+        750,
+        900,
+        1065
+      ],
+      "neutralLevelCap": 6,
+      "neutralMultipliersPermille": [
+        1000,
+        900,
+        800,
+        700,
+        600
+      ],
+      "summonMultiplierPermille": 500,
+      "globalFallback": true,
+      "soloHeroTierBonusPermille": [
+        0,
+        150,
+        300
+      ]
+    }
   },
   "definitions": [
     {
@@ -853,7 +896,6 @@
         "workTicks": 600
       },
       "level": 1,
-      "experienceYield": 15,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
@@ -907,7 +949,6 @@
         "workTicks": 800
       },
       "level": 1,
-      "experienceYield": 25,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
@@ -968,7 +1009,6 @@
         "workTicks": 960
       },
       "level": 1,
-      "experienceYield": 25,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
@@ -1313,7 +1353,7 @@
       "id": "building.ants.tower",
       "kind": "building",
       "name": "Watchtower",
-      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit\u2019s own weapon and upgrades.",
+      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit’s own weapon and upgrades.",
       "asset": "asset.ants.tower",
       "icon": "icon.ants.tower",
       "body": {
@@ -1457,7 +1497,7 @@
           }
         },
         "progression": {
-          "experienceRadius": 18,
+          "experienceRadius": 40,
           "levels": [
             {
               "experience": 0,
@@ -1470,7 +1510,7 @@
               "manaRegenPerSecond": 0.76
             },
             {
-              "experience": 100,
+              "experience": 160,
               "maxHp": 775,
               "damage": 34,
               "armor": 3,
@@ -1480,7 +1520,7 @@
               "manaRegenPerSecond": 0.81
             },
             {
-              "experience": 250,
+              "experience": 400,
               "maxHp": 850,
               "damage": 37,
               "armor": 3,
@@ -1490,7 +1530,7 @@
               "manaRegenPerSecond": 0.91
             },
             {
-              "experience": 450,
+              "experience": 720,
               "maxHp": 925,
               "damage": 40,
               "armor": 4,
@@ -1500,7 +1540,7 @@
               "manaRegenPerSecond": 0.96
             },
             {
-              "experience": 700,
+              "experience": 1120,
               "maxHp": 1000,
               "damage": 43,
               "armor": 4,
@@ -1510,7 +1550,7 @@
               "manaRegenPerSecond": 1.06
             },
             {
-              "experience": 1000,
+              "experience": 1600,
               "maxHp": 1075,
               "damage": 46,
               "armor": 4,
@@ -1520,7 +1560,7 @@
               "manaRegenPerSecond": 1.11
             },
             {
-              "experience": 1400,
+              "experience": 2160,
               "maxHp": 1150,
               "damage": 49,
               "armor": 5,
@@ -1530,7 +1570,7 @@
               "manaRegenPerSecond": 1.21
             },
             {
-              "experience": 1900,
+              "experience": 2800,
               "maxHp": 1225,
               "damage": 52,
               "armor": 5,
@@ -1540,7 +1580,7 @@
               "manaRegenPerSecond": 1.26
             },
             {
-              "experience": 2500,
+              "experience": 3520,
               "maxHp": 1300,
               "damage": 55,
               "armor": 6,
@@ -1550,7 +1590,7 @@
               "manaRegenPerSecond": 1.36
             },
             {
-              "experience": 3200,
+              "experience": 4320,
               "maxHp": 1375,
               "damage": 58,
               "armor": 6,
@@ -1558,6 +1598,16 @@
               "cooldownTicks": 60,
               "healthRegenPerSecond": 2.8,
               "manaRegenPerSecond": 1.41
+            },
+            {
+              "experience": 5200,
+              "maxHp": 1450,
+              "damage": 61,
+              "armor": 6,
+              "maxMana": 450,
+              "cooldownTicks": 59,
+              "healthRegenPerSecond": 2.95,
+              "manaRegenPerSecond": 1.51
             }
           ]
         },
@@ -1570,9 +1620,9 @@
           "manaRegenPerSecond": 0.76,
           "bindings": [
             {
-              "id": "holy-light",
-              "ability": "ability.core.holy-light-lite",
-              "initialRank": 1,
+              "id": "faultline",
+              "ability": "ability.marshal.faultline",
+              "initialRank": 0,
               "controls": [
                 "player",
                 "ai",
@@ -1580,18 +1630,24 @@
               ],
               "command": {
                 "hotkey": "Q",
-                "column": 1,
-                "icon": "icon.item.moon-dew"
+                "column": 1
+              },
+              "learning": {
+                "requiredLevels": [
+                  1,
+                  3,
+                  5
+                ]
               },
               "ai": {
-                "preference": "wounded-ally",
-                "intervalTicks": 12
+                "preference": "enemy",
+                "intervalTicks": 20
               }
             },
             {
-              "id": "blizzard",
-              "ability": "ability.core.blizzard",
-              "initialRank": 1,
+              "id": "rally",
+              "ability": "ability.marshal.rally",
+              "initialRank": 0,
               "controls": [
                 "player",
                 "ai",
@@ -1600,6 +1656,62 @@
               "command": {
                 "hotkey": "W",
                 "column": 2
+              },
+              "learning": {
+                "requiredLevels": [
+                  1,
+                  3,
+                  5
+                ]
+              },
+              "ai": {
+                "preference": "wounded-ally",
+                "intervalTicks": 20
+              }
+            },
+            {
+              "id": "carapace",
+              "ability": "ability.marshal.carapace",
+              "initialRank": 0,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "E",
+                "column": 3
+              },
+              "learning": {
+                "requiredLevels": [
+                  1,
+                  3,
+                  5
+                ]
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 20
+              }
+            },
+            {
+              "id": "crownfall",
+              "ability": "ability.marshal.crownfall",
+              "initialRank": 0,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "R",
+                "column": 4
+              },
+              "learning": {
+                "requiredLevels": [
+                  5,
+                  8
+                ]
               },
               "ai": {
                 "preference": "enemy",
@@ -1612,7 +1724,6 @@
           "speed": 13
         }
       },
-      "experienceYield": 150,
       "supplyCost": 4,
       "dimensions": {
         "radius": 2,
@@ -1749,7 +1860,7 @@
       "id": "building.neutral.amber-mine",
       "kind": "building",
       "name": "Amber Node",
-      "description": "One miner extracts ten amber at a time; other workers queue. Four nodes form a standard amber site.",
+      "description": "One miner extracts ten amber at a time; other workers queue. Five nodes form a standard amber site.",
       "asset": "asset.resource.amber-seam",
       "icon": "icon.neutral.amber-deposit",
       "footprint": {
@@ -1856,7 +1967,7 @@
       "id": "item.trailkeeper-flask",
       "kind": "item",
       "itemTier": 1,
-      "name": "Trailkeeper\u2019s Flask",
+      "name": "Trailkeeper’s Flask",
       "description": "3 charges: restore 70 health and 25 mana. 10s cooldown between uses.",
       "asset": "asset.item.chest",
       "icon": "icon.item.trailkeeper-flask",
@@ -1940,7 +2051,7 @@
       "id": "item.scout-whistle",
       "kind": "item",
       "itemTier": 1,
-      "name": "Scout\u2019s Whistle",
+      "name": "Scout’s Whistle",
       "description": "2 charges: allied units within 6 tiles gain 15% movement speed for 8s. 25s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.scout-whistle",
@@ -2008,7 +2119,7 @@
       "id": "item.predator-talon",
       "kind": "item",
       "itemTier": 2,
-      "name": "Predator\u2019s Talon",
+      "name": "Predator’s Talon",
       "description": "+10 damage. Basic attacks restore 10% of damage dealt as health.",
       "asset": "asset.item.chest",
       "icon": "icon.item.predator-talon",
@@ -2055,7 +2166,7 @@
       "id": "item.broodkeeper-lantern",
       "kind": "item",
       "itemTier": 2,
-      "name": "Broodkeeper\u2019s Lantern",
+      "name": "Broodkeeper’s Lantern",
       "description": "Aura: allied living units within 6 tiles regenerate 2 health per second.",
       "asset": "asset.item.chest",
       "icon": "icon.item.broodkeeper-lantern",
@@ -2079,7 +2190,7 @@
       "id": "item.warcaller-standard",
       "kind": "item",
       "itemTier": 2,
-      "name": "Warcaller\u2019s Standard",
+      "name": "Warcaller’s Standard",
       "description": "Aura: allied units within 6 tiles gain 10% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.warcaller-standard",
@@ -2147,7 +2258,7 @@
       "id": "item.rootbinder-idol",
       "kind": "item",
       "itemTier": 2,
-      "name": "Rootbinder\u2019s Idol",
+      "name": "Rootbinder’s Idol",
       "description": "Activate: enemies within 4 tiles take 60 magic damage and are rooted for 2s (they can still attack). 35s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.rootbinder-idol",
@@ -2228,7 +2339,7 @@
       "id": "item.reaper-mandible",
       "kind": "item",
       "itemTier": 3,
-      "name": "Reaper\u2019s Mandible",
+      "name": "Reaper’s Mandible",
       "description": "+18 damage. Every fourth basic hit cleaves up to 4 enemies within 3 tiles of the target for 50% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.reaper-mandible",
@@ -2611,7 +2722,7 @@
       "id": "unit.ants.hunter",
       "kind": "unit",
       "name": "Hunter",
-      "description": "Spear infantry that charges enemy units from 3\u20138 building cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
+      "description": "Spear infantry that charges enemy units from 3–8 building cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
       "asset": "asset.ants.hunter",
       "icon": "icon.ants.hunter",
       "selectionClass": "army",
@@ -2667,7 +2778,6 @@
         "building.ants.great-mound"
       ],
       "level": 2,
-      "experienceYield": 50,
       "supplyCost": 2,
       "dimensions": {
         "radius": 2,
@@ -2738,8 +2848,7 @@
       "requires": [
         "building.ants.great-mound"
       ],
-      "level": 2,
-      "experienceYield": 65,
+      "level": 3,
       "supplyCost": 3,
       "dimensions": {
         "radius": 2.5,
@@ -2834,14 +2943,14 @@
         }
       },
       "level": 1,
-      "experienceYield": 15,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
         "height": 4.8,
         "formationSpacing": 3.25
       },
-      "modelScale": 2.4
+      "modelScale": 2.4,
+      "experienceYield": 0
     },
     {
       "id": "unit.ants.youngling",
@@ -2865,14 +2974,14 @@
         }
       },
       "level": 1,
-      "experienceYield": 15,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
         "height": 4.8,
         "formationSpacing": 3.25
       },
-      "modelScale": 2.4
+      "modelScale": 2.4,
+      "experienceYield": 0
     },
     {
       "id": "unit.briar.scavenger",
@@ -2910,7 +3019,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 20,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
@@ -2955,7 +3063,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 20,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
@@ -3000,7 +3107,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 20,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
@@ -3045,7 +3151,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 45,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
@@ -3093,7 +3198,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 20,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
@@ -3137,7 +3241,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 20,
       "supplyCost": 1,
       "dimensions": {
         "radius": 1.5,
@@ -3218,7 +3321,7 @@
     {
       "id": "item.briar-ledger",
       "kind": "item",
-      "name": "Merchant\u2019s Leaf Ledger",
+      "name": "Merchant’s Leaf Ledger",
       "description": "Return this stolen ledger to Pell at the roadside cart.",
       "asset": "asset.briar.leaf-ledger",
       "icon": "icon.briar.leaf-ledger",
@@ -3313,7 +3416,7 @@
     {
       "id": "item.briar-rescue-ring",
       "kind": "item",
-      "name": "Caretaker\u2019s Ring",
+      "name": "Caretaker’s Ring",
       "description": "A gift for bringing the youngling home. +1 armor.",
       "asset": "asset.briar.family-ring",
       "icon": "icon.briar.family-ring",
@@ -3372,7 +3475,7 @@
       "id": "unit.neutral.thorn-slinger",
       "kind": "unit",
       "name": "Thorn Slinger",
-      "description": "Thornback Foragers \u00b7 ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
+      "description": "Thornback Foragers · ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
       "asset": "asset.neutral.thorn-slinger",
       "icon": "icon.neutral.thorn-slinger",
       "selectionClass": "army",
@@ -3411,7 +3514,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 25,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3419,7 +3521,7 @@
       "id": "unit.neutral.dew-sprite",
       "kind": "unit",
       "name": "Dew Sprite",
-      "description": "Dewdrop Sprites \u00b7 ranged forest creature. Fragile water spirits gathered around wet leaves.",
+      "description": "Dewdrop Sprites · ranged forest creature. Fragile water spirits gathered around wet leaves.",
       "asset": "asset.neutral.dew-sprite",
       "icon": "icon.neutral.dew-sprite",
       "selectionClass": "army",
@@ -3458,7 +3560,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 25,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3466,7 +3567,7 @@
       "id": "unit.neutral.puddle-wisp",
       "kind": "unit",
       "name": "Puddle Wisp",
-      "description": "Dewdrop Sprites \u00b7 melee forest creature. Fragile water spirits gathered around wet leaves.",
+      "description": "Dewdrop Sprites · melee forest creature. Fragile water spirits gathered around wet leaves.",
       "asset": "asset.neutral.puddle-wisp",
       "icon": "icon.neutral.puddle-wisp",
       "selectionClass": "army",
@@ -3502,7 +3603,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 25,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3510,7 +3610,7 @@
       "id": "unit.neutral.webling",
       "kind": "unit",
       "name": "Webling",
-      "description": "Hungry Weblings \u00b7 melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "description": "Hungry Weblings · melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
       "asset": "asset.neutral.webling",
       "icon": "icon.neutral.webling",
       "selectionClass": "army",
@@ -3546,7 +3646,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 25,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3554,7 +3653,7 @@
       "id": "unit.neutral.spitter",
       "kind": "unit",
       "name": "Spitter",
-      "description": "Hungry Weblings \u00b7 ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "description": "Hungry Weblings · ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
       "asset": "asset.neutral.spitter",
       "icon": "icon.neutral.spitter",
       "selectionClass": "army",
@@ -3593,7 +3692,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 25,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3601,7 +3699,7 @@
       "id": "unit.neutral.capling",
       "kind": "unit",
       "name": "Capling",
-      "description": "Mushroom Circle \u00b7 melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "description": "Mushroom Circle · melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
       "asset": "asset.neutral.capling",
       "icon": "icon.neutral.capling",
       "selectionClass": "army",
@@ -3637,7 +3735,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 25,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3645,7 +3742,7 @@
       "id": "unit.neutral.puffcap",
       "kind": "unit",
       "name": "Puffcap",
-      "description": "Mushroom Circle \u00b7 ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "description": "Mushroom Circle · ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
       "asset": "asset.neutral.puffcap",
       "icon": "icon.neutral.puffcap",
       "selectionClass": "army",
@@ -3684,7 +3781,6 @@
         }
       },
       "level": 1,
-      "experienceYield": 25,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3692,7 +3788,7 @@
       "id": "unit.neutral.rootling",
       "kind": "unit",
       "name": "Rootling",
-      "description": "Rootbound Guardians \u00b7 melee forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians · melee forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.rootling",
       "icon": "icon.neutral.rootling",
       "selectionClass": "army",
@@ -3728,7 +3824,6 @@
         }
       },
       "level": 4,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3736,7 +3831,7 @@
       "id": "unit.neutral.twigcaster",
       "kind": "unit",
       "name": "Twigcaster",
-      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.twigcaster",
       "icon": "icon.neutral.twigcaster",
       "selectionClass": "army",
@@ -3775,7 +3870,6 @@
         }
       },
       "level": 3,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3783,7 +3877,7 @@
       "id": "unit.neutral.old-root",
       "kind": "unit",
       "name": "Old Root",
-      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.old-root",
       "icon": "icon.neutral.old-root",
       "selectionClass": "army",
@@ -3822,7 +3916,6 @@
         }
       },
       "level": 4,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3830,7 +3923,7 @@
       "id": "unit.neutral.hornet-guard",
       "kind": "unit",
       "name": "Hornet Guard",
-      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders · melee forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.hornet-guard",
       "icon": "icon.neutral.hornet-guard",
       "selectionClass": "army",
@@ -3866,7 +3959,6 @@
         }
       },
       "level": 3,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3874,7 +3966,7 @@
       "id": "unit.neutral.needle-wasp",
       "kind": "unit",
       "name": "Needle Wasp",
-      "description": "Hornet Raiders \u00b7 ranged forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders · ranged forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.needle-wasp",
       "icon": "icon.neutral.needle-wasp",
       "selectionClass": "army",
@@ -3913,7 +4005,6 @@
         }
       },
       "level": 3,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3921,7 +4012,7 @@
       "id": "unit.neutral.nest-mother",
       "kind": "unit",
       "name": "Nest Mother",
-      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders · melee forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.nest-mother",
       "icon": "icon.neutral.nest-mother",
       "selectionClass": "army",
@@ -3957,7 +4048,6 @@
         }
       },
       "level": 4,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -3965,7 +4055,7 @@
       "id": "unit.neutral.young-toad",
       "kind": "unit",
       "name": "Young Toad",
-      "description": "Bog Toad Hunters \u00b7 melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters · melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.young-toad",
       "icon": "icon.neutral.young-toad",
       "selectionClass": "army",
@@ -4001,7 +4091,6 @@
         }
       },
       "level": 3,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4009,7 +4098,7 @@
       "id": "unit.neutral.tree-frog",
       "kind": "unit",
       "name": "Tree Frog",
-      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters · ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.tree-frog",
       "icon": "icon.neutral.tree-frog",
       "selectionClass": "army",
@@ -4048,7 +4137,6 @@
         }
       },
       "level": 3,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4056,7 +4144,7 @@
       "id": "unit.neutral.tadpole-spirit",
       "kind": "unit",
       "name": "Tadpole Spirit",
-      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters · ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -4095,7 +4183,6 @@
         }
       },
       "level": 3,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4103,7 +4190,7 @@
       "id": "unit.neutral.briar-hulk",
       "kind": "unit",
       "name": "Briar Hulk",
-      "description": "Briar Covenant \u00b7 melee forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant · melee forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.briar-hulk",
       "icon": "icon.neutral.briar-hulk",
       "selectionClass": "army",
@@ -4139,7 +4226,6 @@
         }
       },
       "level": 4,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4147,7 +4233,7 @@
       "id": "unit.neutral.seedcaster",
       "kind": "unit",
       "name": "Seedcaster",
-      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant · ranged forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.seedcaster",
       "icon": "icon.neutral.seedcaster",
       "selectionClass": "army",
@@ -4186,7 +4272,6 @@
         }
       },
       "level": 3,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4194,7 +4279,7 @@
       "id": "unit.neutral.bloom-witch",
       "kind": "unit",
       "name": "Bloom Witch",
-      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant · ranged forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.bloom-witch",
       "icon": "icon.neutral.bloom-witch",
       "selectionClass": "army",
@@ -4233,7 +4318,6 @@
         }
       },
       "level": 3,
-      "experienceYield": 80,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4241,7 +4325,7 @@
       "id": "unit.neutral.hollow-stag",
       "kind": "unit",
       "name": "Hollow Stag",
-      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.hollow-stag",
       "icon": "icon.neutral.hollow-stag",
       "selectionClass": "army",
@@ -4277,7 +4361,6 @@
         }
       },
       "level": 9,
-      "experienceYield": 540,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4285,7 +4368,7 @@
       "id": "unit.neutral.barkguard",
       "kind": "unit",
       "name": "Barkguard",
-      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.barkguard",
       "icon": "icon.neutral.barkguard",
       "selectionClass": "army",
@@ -4321,7 +4404,6 @@
         }
       },
       "level": 6,
-      "experienceYield": 180,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4329,7 +4411,7 @@
       "id": "unit.neutral.willow-wisp",
       "kind": "unit",
       "name": "Willow Wisp",
-      "description": "The Hollow Stag \u00b7 ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag · ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.willow-wisp",
       "icon": "icon.neutral.willow-wisp",
       "selectionClass": "army",
@@ -4368,7 +4450,6 @@
         }
       },
       "level": 6,
-      "experienceYield": 180,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4376,7 +4457,7 @@
       "id": "unit.neutral.rotwood-ancient",
       "kind": "unit",
       "name": "Rotwood Ancient",
-      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.rotwood-ancient",
       "icon": "icon.neutral.rotwood-ancient",
       "selectionClass": "army",
@@ -4412,7 +4493,6 @@
         }
       },
       "level": 9,
-      "experienceYield": 540,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4420,7 +4500,7 @@
       "id": "unit.neutral.corrupted-rootbeast",
       "kind": "unit",
       "name": "Corrupted Rootbeast",
-      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.corrupted-rootbeast",
       "icon": "icon.neutral.corrupted-rootbeast",
       "selectionClass": "army",
@@ -4456,7 +4536,6 @@
         }
       },
       "level": 7,
-      "experienceYield": 180,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4464,7 +4543,7 @@
       "id": "unit.neutral.violet-sporeling",
       "kind": "unit",
       "name": "Violet Sporeling",
-      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.violet-sporeling",
       "icon": "icon.neutral.violet-sporeling",
       "selectionClass": "army",
@@ -4503,7 +4582,6 @@
         }
       },
       "level": 6,
-      "experienceYield": 180,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4511,7 +4589,7 @@
       "id": "unit.neutral.root-seer",
       "kind": "unit",
       "name": "Root Seer",
-      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.root-seer",
       "icon": "icon.neutral.root-seer",
       "selectionClass": "army",
@@ -4569,7 +4647,6 @@
         }
       },
       "level": 7,
-      "experienceYield": 180,
       "supplyCost": 1,
       "modelScale": 1.7
     },
@@ -4613,7 +4690,6 @@
         }
       },
       "level": 3,
-      "experienceYield": 20,
       "supplyCost": 0,
       "modelScale": 1.7
     },
@@ -4621,7 +4697,7 @@
       "id": "unit.spell.shadow-spirit-lesser",
       "kind": "unit",
       "name": "Lesser Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -4657,7 +4733,6 @@
         }
       },
       "level": 2,
-      "experienceYield": 20,
       "supplyCost": 0,
       "modelScale": 1.7
     },
@@ -4665,7 +4740,7 @@
       "id": "unit.spell.shadow-spirit-standard",
       "kind": "unit",
       "name": "Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -4701,7 +4776,6 @@
         }
       },
       "level": 3,
-      "experienceYield": 30,
       "supplyCost": 0,
       "modelScale": 1.7
     },
@@ -4709,7 +4783,7 @@
       "id": "unit.spell.shadow-spirit-greater",
       "kind": "unit",
       "name": "Greater Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -4745,7 +4819,6 @@
         }
       },
       "level": 4,
-      "experienceYield": 40,
       "supplyCost": 0,
       "modelScale": 1.7
     },
@@ -4773,7 +4846,6 @@
         "playerControl": {}
       },
       "level": 1,
-      "experienceYield": 30,
       "supplyCost": 0,
       "modelScale": 1.7
     },

@@ -3,3 +3,30 @@
 .match-loading h1{font:600 27px Georgia,serif;margin:0 0 28px}.match-loading p{margin:16px 0}
 .match-loading progress{width:100%;height:10px;accent-color:#a9bf88}.match-loading-detail{font-size:13px;color:#b4bdb2;overflow-wrap:anywhere;max-height:24vh;overflow:auto}
 .match-loading button{margin-top:24px;padding:10px 24px;background:#252e26;color:#eee;border:1px solid #74806e;border-radius:4px;cursor:pointer}
+/* Campaign loading: artwork stays quiet; copy and native progress remain live. */
+.mission-loading{display:block;background:#0b0e0d;backdrop-filter:none;overflow:auto;font-family:Georgia,serif}
+.mission-loading-art{position:absolute;width:100%;height:100%;inset:0;object-fit:cover;object-position:center;pointer-events:none}
+.mission-loading::after{content:'';position:absolute;inset:0;pointer-events:none;border:1px solid #99764688;margin:22px;box-shadow:inset 0 0 40px #0005}
+.mission-loading section.mission-loading-copy{position:absolute;left:64%;top:12%;width:32%;padding:0;background:none;border:0;box-shadow:none;border-radius:0}
+.mission-loading-crest{width:clamp(90px,12vw,185px);height:clamp(100px,15vw,220px);object-fit:contain}
+.mission-loading p.mission-loading-chapter{font-size:clamp(12px,1.25vw,19px);letter-spacing:.24em;text-transform:uppercase;margin:12px 0 24px}
+.mission-loading h1{font-size:clamp(28px,3.15vw,52px);font-weight:400;text-shadow:0 2px 5px #000;margin:0 0 28px}
+.mission-loading p.mission-loading-briefing{white-space:pre-line;line-height:1.7;font-size:clamp(15px,1.35vw,22px);margin:0 auto;max-width:460px;color:#e7dfcb}
+.mission-loading-footer{position:absolute;bottom:5%;left:20%;width:60%;text-align:center}
+.mission-loading progress{display:block;appearance:none;-webkit-appearance:none;height:26px;border:2px solid #a17a42;border-radius:40px;padding:4px;background:linear-gradient(#31271f,#111714);box-shadow:0 0 0 3px #12130f,inset 0 1px 3px #000,0 3px 12px #0009;overflow:hidden;width:100%}
+.mission-loading progress::-webkit-progress-bar{background:#080d0b;border-radius:20px;box-shadow:inset 0 2px 5px #000}
+.mission-loading progress::-webkit-progress-value{background:linear-gradient(#ffe293,#c77d28 52%,#edb14e);box-shadow:0 0 10px #d89a47;border-radius:20px;transition:width .2s}
+.mission-loading progress::-moz-progress-bar{background:linear-gradient(#ffe293,#c77d28 52%,#edb14e);border-radius:20px}
+.mission-loading progress:indeterminate{background:linear-gradient(100deg,#101410 20%,#9d702d 48%,#101410 75%);background-size:200% 100%;animation:mission-loading-pulse 2s linear infinite}
+.mission-loading progress:indeterminate::-webkit-progress-bar{background:transparent}
+.mission-loading p.mission-loading-label{margin:13px 0 7px;text-transform:uppercase;letter-spacing:.4em;font-size:14px}
+.mission-loading p.match-loading-stage{margin:8px 0;color:#c7b48d;letter-spacing:.03em;font-size:14px}
+.mission-loading p.match-loading-detail{margin:4px 0;font:12px system-ui,sans-serif;color:#aaa994}
+.mission-loading p.mission-loading-tip{margin:12px auto 0;font:13px/1.4 Georgia,serif;color:#b9b3a3;max-width:660px}
+.mission-loading button.mission-loading-leave{position:absolute;left:3%;bottom:5%;padding:10px 18px;font:14px Georgia,serif;background:#111612c9;border:1px solid #8d7044;border-radius:2px;color:#d8cdb7}
+.mission-loading button:focus-visible{outline:2px solid #edbf70;outline-offset:5px}
+.mission-loading.is-error .match-loading-stage{color:#ffb8a0}.mission-loading.is-error .match-loading-detail{color:#f1d6ca}
+@keyframes mission-loading-pulse{to{background-position:-200% 0}}
+@media(max-width:700px){.mission-loading-art{object-position:25% center;opacity:.35}.mission-loading section.mission-loading-copy{left:10%;width:80%;top:8%}.mission-loading h1{font-size:34px}.mission-loading-crest{height:120px}.mission-loading-footer{left:8%;width:84%;bottom:14%}.mission-loading button.mission-loading-leave{bottom:3%;left:50%;transform:translateX(-50%)}.mission-loading::after{margin:12px}}
+@media(prefers-reduced-motion:reduce){.mission-loading progress{animation:none;transition:none}}
+@media(min-width:701px) and (max-height:650px){.mission-loading section.mission-loading-copy{top:5%}.mission-loading-crest{height:100px}.mission-loading p.mission-loading-chapter{margin:8px 0 12px}.mission-loading h1{margin-bottom:16px}.mission-loading p.mission-loading-briefing{line-height:1.5}.mission-loading-footer{bottom:3%}}
