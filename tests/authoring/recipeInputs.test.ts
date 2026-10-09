@@ -2,7 +2,7 @@ import {describe,it,expect} from 'vitest';
 import {landscapeRecipeSchema,resolveRecipe,recipeOverridesSchema} from '../../src/shared/authoring/recipes';
 import {changeRecipeInput,recipeInputValue,recipeInputs} from '../../src/shared/authoring/recipeInputs';
 import {authoringSceneSchema,proceduralLayerSchema} from '../../src/shared/authoring/layers';
-import {generateScene,bakeLayer,type TerrainGrid} from '../../src/shared/authoring/generate';
+import {generateScene,type TerrainGrid} from '../../src/shared/authoring/generate';
 import {AuthoringHistory} from '../../src/shared/authoring/history';
 const defaults=landscapeRecipeSchema.parse({type:'forest',species:[{asset:'pine',weight:1}],spacing:2,probability:1,jitter:.8,scaleMin:.8,scaleMax:1.2,maxSlope:5,waterClearance:0,objectClearance:0,edgeFade:0,patchiness:{scale:10,strength:.6}});
 const layer=proceduralLayerSchema.parse({id:'forest',name:'Forest',recipe:'conifer',seed:4,shape:{type:'region',points:[{x:0,z:0},{x:32,z:0},{x:32,z:32},{x:0,z:32}]}});
@@ -47,11 +47,10 @@ describe('recipe defaults and sparse map inputs',()=>{
   expect(resolveRecipe(forest,{type:'forest',density:2,edge:{density:.25,patchiness:{strength:.2}}})).toMatchObject({density:2,edge:{density:.25,width:4,patchiness:{scale:10,strength:.2}}});
   expect(recipeInputs(forest).some(f=>f.path==='edge.patchiness.strength')).toBe(true);
  });
- it('persists sparse inputs and bakes their exact result while undo restores inheritance',()=>{
+ it('keeps sparse inputs in editor history while undo restores inheritance',()=>{
   const input=scene({type:'forest',density:.5,pattern:'scattered'});
   expect(authoringSceneSchema.parse(JSON.parse(JSON.stringify(input)))).toEqual(input);
-  const history=new AuthoringHistory(input),generated=generateScene(input,base,assets),baked=bakeLayer(input,layer.id,generated);
-  expect(baked.layers).toHaveLength(0);expect(baked.objects).toHaveLength(generated.objects.length);
+  const history=new AuthoringHistory(input);
   history.putLayer({...layer,overrides:{type:'forest',density:2}});history.undo();expect(history.scene).toEqual(input);
  });
  it('applies river overrides to carving and water width together',()=>{

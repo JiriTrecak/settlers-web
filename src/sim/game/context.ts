@@ -1,3 +1,4 @@
+import {charging} from '../abilities/charge';
 import {placementGeometryError} from '../../shared/spatial/placement';
 import {SimulationProfiler} from '../profiling';
 import {reconcileFlight} from './flight';
@@ -105,6 +106,7 @@ export class GameContext {
     readonly state: GameState,
     readonly registry: ContentRegistry,
     readonly map: UtcMap,
+    readonly slots:readonly import("../../shared/match/match").Slot[] = [],
   ) {
     this.reindex();
     this.spatial = new Spatial(map, registry, () => state.entities, e => {
@@ -423,6 +425,7 @@ export class GameContext {
         continue;
       const movement = this.def(e).behaviors.movement;
       const turnStep=(movement?.turnRate ?? 720)*TICK_MS/1000;
+      if(charging(this,e.id))continue;
       if(e.abilities?.pending){const p=e.abilities.pending,target=this.get(p.target),point=p.point??(target?precise(target):undefined);if(point)turnToward(e,point,turnStep);continue;}
       if(castFacingOnly&&!active?.has(e.id))continue;
       const victim=this.get(u.target);

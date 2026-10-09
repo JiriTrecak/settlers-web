@@ -4,7 +4,8 @@
 
 Start/restart select a common input pipeline from server-measured player round trips; load preserves the saved pipeline. `MatchHost.pulse()` performs bounded transport probing and must be called by a hosted server. It never commits a game tick. See [latency](latency.md).
 
-Hero choices come from `rules.startingSetup.hero` in the shared game declarations.
+Race choices come from `rules.races`; each resolved starting setup supplies its hero choices.
+Lobby `selectRace` validates the owned seat and resets its hero to the race default.
 Lobby `selectHero` changes only the authenticated player's own seat while waiting;
 spectators, undeclared choices and changes after Start cannot alter the match.
 Room views publish the available IDs/default and each occupied seat's choice.
@@ -14,3 +15,5 @@ The existing HTTP start endpoint remains available to integrations. Frozen slots
 restarts and saves retain each choice. The deployment script includes
 `content/game.json`; clients and MatchHost must be updated together. This does not
 require the server to load rendering assets or run the simulation.
+
+See [race configuration](../../docs/expansion/races.md) for starts, campaign overrides and AI.

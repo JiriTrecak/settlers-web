@@ -18,6 +18,7 @@ export type Slot = {
   team?: number;
   /** Frozen pre-match choice; omitted only for authored scenarios or default setup callers. */
   hero?: string;
+  race?: string;
 };
 
 export type MatchConfig = {

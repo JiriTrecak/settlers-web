@@ -23,6 +23,7 @@ const savedMatch = z.object({
     name: z.string().optional(),
     team: natural.optional(),
     hero: idSchema.optional(),
+    race: z.string().regex(/^[a-z][a-z0-9-]*$/).optional(),
   }).strict()).min(1).max(8),
 }).strict().refine(match => new Set(match.slots.map(slot => slot.player)).size === match.slots.length, "Duplicate player slots");
 export const localSaveSchema = z

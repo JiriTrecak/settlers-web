@@ -1,7 +1,7 @@
 import {BUILDING_CELL_SIZE, GRID_ORIGIN} from '../../shared/spatial/footprint';
 /**
  * Grid lines to the blue halo. Fringe past that is void + grid (orientation only).
- * Dirt plate is HeightMesh. Lights live on `Sky`. Tiles = 16-cell lines. Full =
+ * Dirt plate is HeightMesh. Lights live on `Sky`. Tiles = building/terrain-cell lines. Full =
  * every navigation cell + stronger building-cell boundaries. Ribbons drape when `heightAt` is passed.
  */
 import {
@@ -73,7 +73,7 @@ function buildGrid(
   for (let index = lo; index <= hi; index++) {
     const i = index + GRID_ORIGIN;
     const block = index % MAP_BLOCK === 0;
-    if (tiles && !block) continue;
+    if (tiles && index % BUILDING_CELL_SIZE !== 0) continue;
     if (block) {
       run(solid, i, lo, i, hi, BLOCK_W, 0.035, MAJOR, lift);
       run(solid, lo, i, hi, i, BLOCK_W, 0.035, MAJOR, lift);

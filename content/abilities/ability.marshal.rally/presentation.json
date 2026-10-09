@@ -10,16 +10,17 @@
   },
   "effects": [
     {
-      "id": "pulse",
+      "id": "march",
       "effect": "effect.marshal.rally.cast",
-      "event": "released",
-      "anchor": "caster",
-      "lifetime": "finite"
+      "statusId": "standard",
+      "event": "statusApplied",
+      "anchor": "target",
+      "lifetime": "status"
     },
     {
-      "id": "ward",
-      "effect": "effect.marshal.rally.ward",
-      "statusId": "rally",
+      "id": "cadence-motes",
+      "effect": "effect.marshal.rally.recipient",
+      "statusId": "cadence",
       "event": "statusApplied",
       "anchor": "target",
       "lifetime": "status"

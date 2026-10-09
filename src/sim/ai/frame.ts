@@ -1,3 +1,4 @@
+import {raceAI} from '../../content/races';
 import {clearLayeredSweep} from '../game/layeredSweep';
 import {fixed} from '../game/motion';
 import {adjacentSweep} from '../game/adjacentSweep';
@@ -204,6 +205,7 @@ export class Frame {
     }
     return this._blocked;
   }
+  get aiRules(){return raceAI(this.registry.rules,this.race);}
   readonly home: Point;
   constructor(
     readonly view: SettlementView,
@@ -213,6 +215,7 @@ export class Frame {
     readonly tick: number,
     private readonly blockers=new ObservedBlockers(),
     readonly profile=new SimulationProfiler(),
+    readonly race?:string,
   ) {
     this.placeable=this.profile.wrap('Building site checks',this.placeable.bind(this));
     this.doorReachable=this.profile.wrap('Building approach search',this.doorReachable.bind(this));

@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "id": "asset.effects.marshal.cadence-wheel",
+  "name": "Colony cadence wheel",
+  "kind": "texture",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "9b0767fe5c121eb86e6a774a86d2c3b88935f3cd4f5db610375304dfa5071b79",
+      "bytes": 907
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "dc8d2cc652bdd359a1deddb522609f0156227e44311e24120f8b15da662aca8e",
+      "bytes": 299306
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "58a9739bb6ab70d00a32767816aad4fa027030036bb72bf4d32e211fa68ddef8",
+      "bytes": 1400126
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

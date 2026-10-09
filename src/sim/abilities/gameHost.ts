@@ -1,3 +1,4 @@
+import {chargeStep} from './charge';
 import {discardNavigation,releaseCombat} from '../game/combatIntent';
 import {locomotion} from '../game/locomotion';
 import {SpellWeaponCasts} from './weaponCasts';
@@ -50,6 +51,7 @@ export function createGameAbilities(game:Game){
   return game.observation.visible(owner as Owner,entity);
  };
  const host:AbilityHost={
+  chargeStep:(...args)=>chargeStep(c,...args),
   height:p=>c.spatial.height({...p,x:Math.max(0,Math.min(c.spatial.size-1,p.x)),y:Math.max(0,Math.min(c.spatial.size-1,p.y))}),
   weaponOrders:()=>c.profile.measure('Weapon cast orders',()=>weapons.tick()),weaponCastReason:(s,t,a)=>weapons.reason(s,t,a),orderWeaponCast:(...args)=>weapons.order(...args),
   heroReturns:()=>c.indexedUnits().filter(e=>e.fallen&&e.spellReturn).map(e=>({id:e.id,owner:e.owner,x:e.x,y:e.y,ability:e.spellReturn!.ability,cast:e.spellReturn!.cast,started:e.spellReturn!.started,due:e.spellReturn!.due})),
@@ -67,7 +69,7 @@ export function createGameAbilities(game:Game){
    const t=Math.min(1,Math.max(0,(c.state.tick-m.launched)/(m.impact-m.launched))),dx=m.destination.x-m.origin.x,dy=m.destination.y-m.origin.y,start=c.spatial.height(m.origin)+(m.origin.elevation??0),end=c.spatial.height(m.destination)+(m.destination.elevation??0),dh=end-start,n=Math.hypot(dx,dy,dh)||1;
    return {cast:m.enhancement!.cast,ability:m.enhancement!.ability,tick:c.state.tick,position:{x:m.origin.x+dx*t,y:m.origin.y+dy*t,height:start+dh*t},direction:{x:dx/n,y:dy/n,height:dh/n}};
   }),
-  validateAim:(...args)=>world.validateAim(...args),
+  validateAim:(source,aim,spell,rank)=>spell.delivery?.kind==='charge'&&(!c.get(source)?.unit||locomotion(c.def(c.get(source)!))!=='ground'||typeof aim!=='number'||!c.get(aim)?.unit||locomotion(c.def(c.get(aim)!))!=='ground')?'Charge requires grounded units':world.validateAim(source,aim,spell,rank),
   endInstance:cast=>{for(const e of c.state.entities){if(!e.spellStatuses)continue;const before=e.spellStatuses.length;e.spellStatuses=e.spellStatuses?.filter(s=>s.cast!==cast||spellStatusDefinition(s,c.registry)?.lifetime!=='instance');if(!e.spellStatuses?.length)delete e.spellStatuses;if(before!==(e.spellStatuses?.length??0))c.clampPools(e);}},instances:()=>c.state.spellInstances,reactions:()=>c.profile.measure('Reactions',()=>reactions.resolve()),death:id=>{const e=c.get(id);if(e)reactions.death(e);},deliveries:()=>c.state.spellDeliveries,lifecycle:()=>c.profile.measure('Status lifecycle',()=>statuses.tick()),effect:(...args)=>statuses.apply(...args),hasStatus:(...args)=>statuses.has(...args),
   ambientCasters:()=>c.activeUnits().filter(e=>e.owner==='none'&&e.abilities).map(e=>e.id).sort((a,b)=>a-b),targets:()=>c.liveBodies().map(e=>e.id),
   visibleTargets:caster=>c.liveBodies().filter(e=>visibleEntity(caster.owner,e,caster)).map(e=>e.id),

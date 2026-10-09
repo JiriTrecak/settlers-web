@@ -1,4 +1,6 @@
 import {z} from 'zod';
+import {cleanupRequestSchema} from './cleanup';
+import {gridTerrainEditSchema} from './gridTerrain';
 import {authoringId} from './recipes';
 import {proceduralLayerSchema,authoredObjectSchema,type AuthoringScene} from './layers';
 const putLayer=z.object({action:z.literal('put-layer'),layer:proceduralLayerSchema}).strict();
@@ -14,7 +16,9 @@ export const sceneCommandSchema=z.discriminatedUnion('action',[
  remove,
  z.object({action:z.literal('batch'),edits:z.array(sceneEditSchema).min(1).max(1024)}).strict(),
  z.object({action:z.literal('lock'),kind:z.enum(['layer','object']),id:authoringId,locked:z.boolean()}).strict(),
- z.object({action:z.literal('bake'),id:authoringId}).strict(),
+ z.object({action:z.literal('apply')}).strict(),
+ z.object({action:z.literal('terrain'),edit:gridTerrainEditSchema}).strict(),
+ z.object({action:z.literal('cleanup'),request:cleanupRequestSchema,preview:z.boolean().default(true)}).strict(),
  z.object({action:z.literal('undo')}).strict(),z.object({action:z.literal('redo')}).strict(),
  z.object({action:z.literal('camera'),mode:z.enum(['top','free','game'])}).strict(),
 ]);

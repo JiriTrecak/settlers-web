@@ -7,11 +7,14 @@ import type { MapStamp } from "../../shared";
 export const CLEAN_RADIUS_MIN = 1;
 export const CLEAN_RADIUS_MAX = 32;
 
-export type CleanType = "objects" | "foliage";
+export type CleanType = "objects" | "foliage" | "trees" | "props" | "decals";
 
 export const CLEAN_TYPES: readonly { id: CleanType; name: string; ready: boolean }[] = [
   { id: "objects", name: "Objects", ready: true },
   { id: "foliage", name: "Foliage", ready: true },
+  { id: "trees", name: "Trees", ready: true },
+  { id: "decals", name: "Decals", ready: true },
+  { id: "props", name: "Props and rocks", ready: true },
 ];
 
 export class CleanTool {

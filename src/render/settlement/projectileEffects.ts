@@ -1,12 +1,13 @@
 import type { GameState } from "../../sim/game/state";
 import type { HeightField } from "../../shared";
 import { content } from "../../content/builtin";
-import {BoxGeometry,BufferAttribute,BufferGeometry,Color,CylinderGeometry,DynamicDrawUsage,Group,InstancedMesh,Matrix4,MeshStandardMaterial,Quaternion,Vector3} from 'three';
+import {IcosahedronGeometry,BoxGeometry,BufferAttribute,BufferGeometry,Color,CylinderGeometry,DynamicDrawUsage,Group,InstancedMesh,Matrix4,MeshStandardMaterial,Quaternion,Vector3} from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
-export type ProjectileKind='arrow'|'thorn';
+export type ProjectileKind='arrow'|'thorn'|'stone';
 type Flight={scale:number;cast?:number;kind:ProjectileKind;start:Vector3;end:Vector3;tick:number;duration:number};
 type Batch={mesh:InstancedMesh;capacity:number};
+const KINDS:readonly ProjectileKind[]=['arrow','thorn','stone'];
 const UP=new Vector3(0,1,0);
 function colored(geometry:BufferGeometry,tint:number){
  const color=new Color(tint),values=new Float32Array(geometry.getAttribute('position').count*3);
@@ -22,7 +23,7 @@ function arrowGeometry(){
 export class ProjectileEffects {
  readonly root=new Group();
  private readonly material=new MeshStandardMaterial({vertexColors:true,roughness:.75});
- private readonly geometry={arrow:arrowGeometry(),thorn:colored(new CylinderGeometry(0,.195,.84,4),0xc3a779)};
+ private readonly geometry={stone:colored(new IcosahedronGeometry(.16,0),0xa39479),arrow:arrowGeometry(),thorn:colored(new CylinderGeometry(0,.195,.84,4),0xc3a779)};
  private readonly batches=new Map<ProjectileKind,Batch>();
  private flights:Flight[]=[];
  private readonly effectPoses=new Map<number,{position:Vector3;direction:Vector3}>();
@@ -35,7 +36,7 @@ export class ProjectileEffects {
  private readonly rotation=new Quaternion();
  private readonly matrix=new Matrix4();
  // Batches exist (hidden) from the start so warm-up links their program before the first volley.
- constructor(parent:Group,private readonly registry=content){parent.add(this.root);for(const kind of ['arrow','thorn'] as const)this.batch(kind,1).mesh.visible=false;}
+ constructor(parent:Group,private readonly registry=content){parent.add(this.root);for(const kind of KINDS)this.batch(kind,1).mesh.visible=false;}
  private batch(kind:ProjectileKind,count:number){
   let batch=this.batches.get(kind);if(batch&&batch.capacity>=count)return batch;
   let capacity=batch?.capacity??16;while(capacity<count)capacity*=2;
@@ -65,10 +66,10 @@ export class ProjectileEffects {
     tick:m.launched,duration:m.impact-m.launched,
    };
   });
-  let live=0;const counts:Record<ProjectileKind,number>={arrow:0,thorn:0};
+  let live=0;const counts:Record<ProjectileKind,number>={arrow:0,thorn:0,stone:0};
   for(const flight of this.flights)if(tick-flight.tick<flight.duration){this.flights[live++]=flight;counts[flight.kind]++;}
   this.flights.length=live;
-  for(const kind of ['arrow','thorn'] as const){
+  for(const kind of KINDS){
    const batch=counts[kind]?this.batch(kind,counts[kind]):this.batches.get(kind);
    if(batch){batch.mesh.count=0;batch.mesh.visible=counts[kind]>0;}
   }

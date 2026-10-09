@@ -8,7 +8,7 @@ import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {landscapeAssets} from '../../src/shared/authoring/project';
 import {authoredTerrain} from '../../src/render/terrain/authoredTerrain';
 import {waterSurface} from '../../src/render/water/waterSurface';
-import {bakeLayer} from '../../src/shared/authoring/generate';
+import {AuthoringHistory} from '../../src/shared/authoring/history';
 import {expandMap,validatePlacements} from '../../src/content/map';
 import {content} from '../../src/content/builtin';
 import {sampleDaytime} from '../../src/shared/environment/dayCycle';
@@ -49,11 +49,11 @@ describe('Frozen Forest and living woodland',()=>{
   expect(trees.some(e=>e.appearance?.asset==='asset.scenery.canopy-oak')).toBe(true);
  });
  it('bakes a diverse forest without moving, duplicating or dropping its harvestable trees and details',()=>{
-  const doc=map('vibrant-forest'),before=compileMapScene(doc,landscapeAssets),baked=bakeLayer(doc.authoring!,'forest.west',before.generated!),after=compileMapScene({...doc,authoring:baked},landscapeAssets);
+  const doc=map('vibrant-forest'),before=compileMapScene(doc,landscapeAssets),history=new AuthoringHistory(doc.authoring!);history.apply(before);const baked=history.document,after=compileMapScene({...doc,authoring:baked},landscapeAssets);
   const sort=<T extends {id:string}>(xs:T[])=>xs.slice().sort((a,b)=>a.id.localeCompare(b.id));
   expect(sort(after.resources)).toEqual(sort(before.resources));expect(sort(after.stamps)).toEqual(sort(before.stamps));
   expect(after.field.grassCoverage).toEqual(before.field.grassCoverage);expect(after.field.forestCoverage).toEqual(before.field.forestCoverage);
-  expect(baked.objects.some(o=>o.asset.includes('mushrooms')&&o.bakedPlacement?.blocksVegetation===false)).toBe(true);
+  expect(baked.objects.some(o=>o.asset.includes('mushrooms')&&!('bakedPlacement' in o))).toBe(true);
  });
  it('exports local water profile indices and settings, including painted lake holes',()=>{
   const scene=compileMapScene(map('frozen-forest'),landscapeAssets),water=waterSurface(scene.field);

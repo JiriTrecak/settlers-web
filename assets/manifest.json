@@ -2007,6 +2007,48 @@
       "scenery": []
     },
     {
+      "id": "asset.effects.marshal.cadence-wheel",
+      "name": "Colony cadence wheel",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.marshal.cadence-wheel/image.png",
+          "sha256": "dc8d2cc652bdd359a1deddb522609f0156227e44311e24120f8b15da662aca8e",
+          "bytes": 299306
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.marshal.carapace-shell",
+      "name": "Living chitin shell",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.marshal.carapace-shell/image.png",
+          "sha256": "d6ef710f96fe96f8350ffe954dc66c3c046cba0e11ac20acb04ca0d7934055df",
+          "bytes": 319902
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
       "id": "asset.effects.marshal.chitin-ward",
       "name": "Marshal chitin ward glyph",
       "kind": "texture",
@@ -2043,6 +2085,27 @@
           "path": "assets/library/asset.effects.marshal.crown-fracture/image.png",
           "sha256": "ecd0f7850db30fedac551f312c3e10273f9cb1de1b2d7c8094814a601c1ff0af",
           "bytes": 282713
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.marshal.crown-sigil",
+      "name": "Royal crown sigil",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.marshal.crown-sigil/image.png",
+          "sha256": "6c18c3daa3b39738a8799b8e255f9f968556cdb6ff74ff96f60b5b71da320cfd",
+          "bytes": 270745
         }
       ],
       "render": [],
@@ -12058,7 +12121,7 @@
         "placeholder",
         "diagnostic"
       ],
-      "revision": 18,
+      "revision": 20,
       "profile": "prop",
       "outputs": [
         {
@@ -12286,6 +12349,19 @@
             "distance": 7
           },
           "castContact": 0.68
+        },
+        {
+          "id": "asset.placeholder.missing-model",
+          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
+          "scale": 1,
+          "healthHeight": 2.8
+        },
+        {
+          "id": "asset.beetles.stone-slinger",
+          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
+          "scale": 1,
+          "healthHeight": 2.8,
+          "projectile": "stone"
         }
       ],
       "scenery": [

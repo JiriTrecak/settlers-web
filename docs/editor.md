@@ -1,20 +1,26 @@
 # Map authoring
 
-Open the game's Editor, or `/?screen=editor&map=amberwake-basin`. The top strip names, creates, saves, loads and exports maps. New maps choose a name, dimensions, biome and weather. The biome establishes the base ground and the available river, forest, foliage and landform presets; it is not a separate season switch.
+Open the game's Editor, or `/?screen=editor` to start a blank map. The top strip names, creates, saves, loads and exports maps. New maps choose a name, dimensions, biome and weather. The biome establishes the base ground and the available river, forest, foliage and landform presets; it is not a separate season switch.
 
 ## Layout and tools
 
 The left panel is a searchable hierarchy with All/Layers/Objects filters. Selecting a generated object selects its owning layer. Select a layer or authored object and choose **Go to selection** in the inspector to move the camera there; use the hierarchy to locate forests, shore objects and camps. Independent scenery and gameplay entities have their own groups. Group expansion and list scrolling persist while changing selection.
 
-The bottom icon strip contains Select, Place, Terrain, Foliage, Water and Spawn, plus layer undo/redo, Environment and MCP. Place switches between single units/buildings and scenery/landmarks. The right inspector holds contextual settings; authored scenery exposes position, elevation, rotation and scale. Top down, Game and Free camera presets sit above the viewport.
+The bottom icon strip contains Select, Place, Terrain, Foliage, Water Spawn and Clean, plus edit undo/redo, Environment and MCP. Place switches between single units/buildings and scenery/landmarks. The right inspector holds contextual settings; authored scenery exposes position, elevation, rotation and scale. Top down, Game and Free camera presets sit above the viewport.
 
 Select picks an object, then an intersecting layer, or clears selection on empty ground. Right-click the canvas to choose any overlapping visible layer from a context menu; right-drag still orbits. With an object or unit selected, Q/E snap backward/forward to the next 15° increment; Shift+Q/E use 90° increments. Bridges can be moved and rotated over water, with their rendered orientation and walk surface updated together. Their ends must still meet a walkable bank at a compatible height. Paint and path authoring work best in Top down view. Water supports Paint lake, Line and Curve. Painted masks have Add/Subtract and one brush-size control; Shift temporarily subtracts. Line/curve drawing uses Enter to finish and Escape to cancel. Curves expose draggable anchors and tangent handles. Terrain offers painted landforms and ground surfaces as well as direct height tools.
 
-## Live layers
+## The map is the applied result
 
-Maps retain masks, splines, seeds, recipe IDs and sparse per-layer overrides. Recipe assets own defaults; an instance can change density, spacing or other exposed inputs and reset them to those defaults. Generation follows dependencies: shape ground and water before paths, forests and ground cover. Broad forest strokes can cross a river because placement constraints exclude unsuitable ground.
+A version 3 `.utcmap` stores committed terrain heights, local water surfaces and flow, ground-material weights, ordinary placed objects and decals. These are editable map data. Loading never runs a river, mountain, forest or foliage generator. There is no publishing bake and no separate runtime-map artifact. Earlier procedural map formats are retired rather than migrated.
 
-`src/shared/authoring/mapScene.ts` compiles the same scene for editor and game. Biome choices live in `src/content/biomes.ts`. Generated objects retain layer ownership. Scatter layers can be baked as a whole into independent objects; there is no detach-selected workflow. Terrain, path and river layers remain live. Layer history and entity history are separate; the bottom history buttons explicitly act on layers.
+Generators are tools in the editor. Draw or paint a temporary preview, adjust it, then choose **Apply previews**. Apply writes its terrain, water and objects into the map in one undoable operation and removes the preview. Every resulting tree or rock is an ordinary editable placement. Later edits and deletions cannot trigger regrowth. Unapplied preview shapes, seeds and recipe references are never included in saves, exports or map drafts; export before Apply contains the unchanged committed map.
+
+**Terrain** provides absolute grid levels, ground-material painting, dry ground, shallow water and deep water. Terrain cells use the building grid: four world units per cell with an origin of -0.5. Rectangles select whole cells; polygon anchors snap to corners and edge midpoints. Optional sculpting writes into the same terrain data. Apply or discard a generator preview before directly editing terrain.
+
+Shallow and deep water have separate bed and surface heights. Shallow crossings are traversable by ground units; deep channels block them. Building foundations must remain dry and level. Navigation uses the same saved heights and water surfaces that rendering uses; textures do not determine traversability.
+
+**Clean** supports brush, rectangle and lasso selections, category and asset filters, an exact removal count, and locked-object protection. Apply removes matching authored scenery, placed stamps and decals together; Undo restores the complete removal. Keep efficient instanced rendering for the remaining objects.
 
 **Environment → Biome & conditions** selects the biome, time of day and optional weather kind. Biomes own lighting, grading, atmosphere, canopy and water styles; maps cannot override their appearance. Define a biome variant in `src/content/biomes.ts` to change that direction consistently in the game, editor and asset workbench. MCP exposes the same validated operations: `editor_landscape` with `action: "biome"` and a biome ID, or `action: "environment"` with hour, playing and weather kind. Asset definitions and publication are managed in the [asset editor](asset-pipeline/publication.md), separate from placing instances on a map.
 
@@ -24,26 +30,15 @@ Vibrant Forest and Amberleaf Forest offer **Woodland mushroom patches** in Folia
 
 The editable source and geometry live in each canonical asset package. `scripts/assets/build-forest-giants.py` rebuilds the models in background Blender; `scripts/assets/publish-forest-giants.ts` publishes them. Painted bark and mushroom albedos, including their ImageGen prompts, are in `art/assets/asset.textures.forest-giants-*`. Temporary renders stay outside the repository.
 
-## Competitive maps
+## New map composition
 
-Amberwake Basin and Amberwake Frost are paired 128 × 128 C, two-player playtest
-maps. Read [the map-design contract](game/map-design.md) before authoring starts,
-resource sites and construction shelves. Gameplay placement snaps to the shared
-building grid; **Grid** displays it in the editor. Organic scenery remains free.
-
-Author through the live editor MCP and export into `assets/maps/skirmish`; do not
-regenerate maps with separate scripts. Keep terrain, forests, water and ground
-cover as editable layers. The frost edition uses winter visuals while retaining
-identical resource bodies, terrain and collision. Run
-`npx vitest run tests/game/amberwake-map.test.ts tests/game/amberwake-biomes.test.ts tests/game/tier-two-maps.test.ts`
-for the current route, economy, construction and seasonal-parity checks. Map
-composition, opening combat balance and the new showcase are still in progress.
+Read [the map-design contract](game/map-design.md) before authoring starts, resource sites and construction shelves. Previous procedural maps are retired. New maps should be authored through the live editor and exported into `assets/maps/skirmish`; do not create a separate generation script.
 
 ## Save and verify
 
 Project maps and browser saves are separate entries: browser saves are labelled **(local copy)** and never replace the project map of the same name. Autosaved drafts restore only against the map revision they were edited from. After a project update, the editor opens the new map and offers **Open earlier draft** when older unsaved edits were recovered; the earlier data stays preserved in browser storage.
 
-Save preserves the authored `.utcmap`, not a dump of generated scatter instances. Check navigation at bridges and water margins, player spawns, resource access, fog visibility and landmark readability in the game view. Use the minimap as a spatial check, then play the map; a visual preview alone does not prove traversal.
+Save writes the committed map, including applied scenery instances. Generator previews remain outside the document. Check navigation at bridges and water margins, player spawns, resource access, fog visibility and landmark readability in the game view. Use the minimap as a spatial check, then play the map; a visual preview alone does not prove traversal.
 
 ## Performance
 
@@ -51,4 +46,4 @@ Object dragging updates only the selected model’s instance transforms. The doc
 
 Generation uses exact indexed spline queries, broad river/path bounds and cached vertex wetness. Moving scenery refreshes vegetation coverage but preserves unchanged terrain geometry and water meshes. Debug includes `Editor drag preview` and `Editor drag commit` scopes; commit timings include synchronous regeneration and renderer updates.
 
-Run `npm run bench:authoring` for repeated Amberwake CPU compilation timings and a generated-output checksum. Pass another `.utcmap` path after `--` to benchmark it. Benchmarks and profiles belong in temporary storage, not the repository. Full procedural commits still run synchronously; drag previews do not.
+Measure loading and editor Apply separately. Loading decodes committed map data and builds ordinary render/navigation structures; generation cost belongs exclusively to editor previews and Apply. Do not claim loading speedups without measuring them.

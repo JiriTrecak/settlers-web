@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {authoringSceneSchema,proceduralLayerSchema,type AuthoringScene} from '../../src/shared/authoring/layers';
 import {landscapeRecipeSchema,type LandscapeRecipe} from '../../src/shared/authoring/recipes';
-import {generateScene,bakeLayer,type TerrainGrid} from '../../src/shared/authoring/generate';
+import {generateScene,type TerrainGrid} from '../../src/shared/authoring/generate';
 import {sampleBezier,nearestSpline,regionDistance} from '../../src/shared/authoring/shapes';
 const forest:LandscapeRecipe=landscapeRecipeSchema.parse({type:'forest',species:[{asset:'pine',weight:1}],spacing:2,probability:1,jitter:.6,scaleMin:.8,scaleMax:1.2,maxSlope:10,waterClearance:1,objectClearance:0,edgeFade:0});
 const river:LandscapeRecipe=landscapeRecipeSchema.parse({type:'river',water:'muddy',width:4,depth:2,bankWidth:2,flow:1,maxUphillGrade:0,bankMaterial:'mud'});
@@ -29,14 +29,6 @@ describe('procedural scene compiler',()=>{
   const before=generateScene(scene([trees]),base(),assets).objects.filter(o=>o.x<8);
   const after=generateScene(scene(),base(),assets).objects.filter(o=>o.x<8);
   expect(after).toEqual(before);
- });
- it('bakes the whole forest without keeping live ownership; undo is the original document',()=>{
-  const source=scene(),compiled=generateScene(source,base(),assets),baked=bakeLayer(source,'trees',compiled);
-  expect(source.layers).toHaveLength(2);expect(source.objects).toHaveLength(0);
-  expect(baked.layers.map(l=>l.id)).toEqual(['stream']);expect(baked.objects).toHaveLength(compiled.objects.length);
-  expect(baked.objects.every(o=>o.bakedFrom==='trees'&&!('owner'in o))).toBe(true);
-  expect(generateScene(baked,base(),assets).objects).toHaveLength(0);
-  expect(()=>bakeLayer(source,'stream',compiled)).toThrow('terrain and water');
  });
  it('warns about river overlap without moving baked or hand-placed objects',()=>{
   const input=scene();input.objects.push({id:'hut',asset:'hut',x:16,z:16,elevation:0,yaw:0,scale:1,heightMode:'terrain',visible:true,locked:false});
@@ -71,7 +63,7 @@ describe('source-informed compositional patterns',()=>{
   const core=result.objects.filter(o=>o.asset==='pine'),edge=result.objects.filter(o=>o.asset==='sapling');expect(core.length).toBeGreaterThan(40);expect(edge.length).toBeGreaterThan(30);
   const distance=(o:{x:number;z:number})=>Math.min(o.x,o.z,32-o.x,32-o.z);
   expect(core.every(o=>distance(o)>=5)).toBe(true);expect(edge.every(o=>distance(o)<=4)).toBe(true);
-  expect(new Set(result.objects.map(o=>o.id)).size).toBe(result.objects.length);expect(bakeLayer(scene([trees]),'trees',result).objects).toHaveLength(result.objects.length);
+  expect(new Set(result.objects.map(o=>o.id)).size).toBe(result.objects.length);
  });
  it('riverbank vegetation follows the water edge automatically and disappears when its river is removed',()=>{
   const bank=landscapeRecipeSchema.parse({...Object.fromEntries(Object.entries(forest).filter(([k])=>!['type','interiorMargin'].includes(k))),type:'ground-cover',species:[{asset:'reeds',weight:1}],spacing:1,waterClearance:0,riverBank:{min:.25,max:2}});

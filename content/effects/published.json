@@ -6689,35 +6689,244 @@
     },
     {
       "schemaVersion": 1,
+      "id": "effect.marshal.rally.cast",
+      "name": "Rally the Colony · marching standard",
+      "description": "Layered Marshal spell artwork. Gameplay and lifecycle are supplied by its ability binding.",
+      "durationTicks": 320,
+      "loop": true,
+      "layers": [
+        {
+          "id": "warm-pool",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#df9d3f",
+          "accent": "#ffe4a2",
+          "durationTicks": 320,
+          "count": 1,
+          "size": 2.7,
+          "height": 0.08,
+          "follow": true,
+          "intensity": 0.22
+        },
+        {
+          "id": "marching-leaves",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 320,
+          "count": 1,
+          "size": 6.8,
+          "height": 0.14,
+          "motion": {
+            "rotation": {
+              "periodTicks": 320,
+              "direction": "clockwise"
+            }
+          },
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.82,
+          "texture": {
+            "asset": "asset.effects.marshal.cadence-wheel",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "heart-crest",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 320,
+          "count": 1,
+          "size": 2.6,
+          "height": 0.17,
+          "motion": {
+            "scale": {
+              "periodTicks": 80,
+              "min": 0.86,
+              "max": 1.07,
+              "easing": "sine",
+              "phase": 0
+            },
+            "opacity": {
+              "periodTicks": 80,
+              "min": 0.5,
+              "max": 0.85,
+              "easing": "sine",
+              "phase": 0
+            }
+          },
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.8,
+          "texture": {
+            "asset": "asset.effects.marshal.crown-sigil",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "rising-standard",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 44,
+            "rate": 5,
+            "speed": 1.5,
+            "speedVariation": 0.5,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 12,
+            "gravity": 0,
+            "drag": 0.5,
+            "spawnRadius": 2.3,
+            "startSize": 0.2,
+            "endSize": 0,
+            "spin": 1,
+            "fadeIn": 0.04,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffc56e",
+          "accent": "#ffe4a2",
+          "durationTicks": 320,
+          "count": 12,
+          "size": 0.2,
+          "height": 0.15,
+          "follow": true,
+          "intensity": 0.6,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.marshal.rally.recipient",
+      "name": "Rally the Colony · allied cadence",
+      "description": "Layered Marshal spell artwork. Gameplay and lifecycle are supplied by its ability binding.",
+      "durationTicks": 80,
+      "loop": true,
+      "layers": [
+        {
+          "id": "march-motes",
+          "sustain": true,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "continuous",
+            "lifetimeTicks": 32,
+            "rate": 2,
+            "speed": 1.4,
+            "speedVariation": 0.5,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 15,
+            "gravity": 0,
+            "drag": 0,
+            "spawnRadius": 0.8,
+            "startSize": 0.12,
+            "endSize": 0,
+            "spin": 1,
+            "fadeIn": 0.04,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffc56e",
+          "accent": "#ffe4a2",
+          "durationTicks": 80,
+          "count": 4,
+          "size": 0.12,
+          "height": 0.1,
+          "follow": true,
+          "intensity": 0.5,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
       "id": "effect.marshal.faultline.flight",
-      "name": "Faultline · travelling fracture",
-      "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
+      "name": "Faultline · chitin breaker",
+      "description": "Layered Marshal spell artwork. Gameplay and lifecycle are supplied by its ability binding.",
       "durationTicks": 40,
       "loop": false,
       "layers": [
         {
-          "id": "crescent",
+          "id": "crest",
           "sustain": false,
           "enabled": true,
           "startTick": 0,
           "anchor": "target",
           "shape": "wavefront",
           "colour": "#ffffff",
-          "accent": "#ffcf77",
+          "accent": "#ffe4a2",
           "durationTicks": 28,
           "count": 1,
-          "size": 5.5,
-          "height": 0.25,
+          "size": 6.5,
+          "height": 0.4,
           "orientation": "ground",
-          "intensity": 1.25,
+          "intensity": 1.35,
+          "length": 1.15,
           "trail": {
-            "durationTicks": 14,
-            "maxPoints": 24,
-            "width": 0.8,
-            "colour": "#bf7834",
-            "opacity": 0.45,
+            "durationTicks": 18,
+            "maxPoints": 28,
+            "width": 1.35,
+            "colour": "#eea447",
+            "opacity": 0.6,
             "breakDistance": 12
           },
+          "texture": {
+            "asset": "asset.effects.seismic-crescent",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "raised-shards",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "wavefront",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 28,
+          "count": 1,
+          "size": 4.5,
+          "height": 1.3,
+          "orientation": "camera",
+          "intensity": 0.8,
+          "length": 0.65,
           "texture": {
             "asset": "asset.effects.seismic-crescent",
             "role": "image",
@@ -6729,45 +6938,66 @@
     {
       "schemaVersion": 1,
       "id": "effect.marshal.faultline.hit",
-      "name": "Faultline · splinter impact",
-      "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
+      "name": "Faultline · erupting fracture",
+      "description": "Layered Marshal spell artwork. Gameplay and lifecycle are supplied by its ability binding.",
       "durationTicks": 40,
       "loop": false,
       "layers": [
         {
-          "id": "splinters",
+          "id": "cracked-earth",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 36,
+          "count": 1,
+          "size": 5.5,
+          "height": 0.12,
+          "orientation": "ground",
+          "intensity": 0.8,
+          "texture": {
+            "asset": "asset.effects.marshal.crown-fracture",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "rock-splinters",
           "sustain": false,
           "enabled": true,
           "startTick": 0,
           "emitter": {
             "mode": "burst",
-            "lifetimeTicks": 28,
-            "rate": 4,
-            "speed": 5,
-            "speedVariation": 0.55,
+            "lifetimeTicks": 32,
+            "rate": 8,
+            "speed": 8,
+            "speedVariation": 0.5,
             "direction": {
               "x": 0,
               "y": 1,
               "z": 0
             },
-            "coneDegrees": 85,
-            "gravity": 9,
+            "coneDegrees": 75,
+            "gravity": 18,
             "drag": 1,
-            "spawnRadius": 1,
-            "startSize": 0.18,
+            "spawnRadius": 0.75,
+            "startSize": 0.34,
             "endSize": 0,
-            "spin": 2,
-            "fadeIn": 0.03,
+            "spin": 3,
+            "fadeIn": 0.04,
             "fadeOut": 0.65
           },
           "anchor": "target",
           "shape": "particles",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
-          "durationTicks": 28,
-          "count": 16,
-          "size": 0.15,
-          "height": 0.3,
+          "colour": "#ffc56e",
+          "accent": "#ffe4a2",
+          "durationTicks": 32,
+          "count": 18,
+          "size": 0.34,
+          "height": 0.1,
           "texture": {
             "asset": "asset.effects.holy-light-spark",
             "role": "image",
@@ -6781,72 +7011,92 @@
           "startTick": 0,
           "anchor": "target",
           "shape": "light",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
-          "durationTicks": 12,
+          "colour": "#ffd27a",
+          "accent": "#ffe4a2",
+          "durationTicks": 10,
           "count": 1,
-          "size": 3,
-          "height": 1,
-          "intensity": 3
+          "size": 5,
+          "height": 1.3,
+          "intensity": 10
         }
       ]
     },
     {
       "schemaVersion": 1,
-      "id": "effect.marshal.rally.cast",
-      "name": "Rally · colony pulse",
-      "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
-      "durationTicks": 40,
+      "id": "effect.marshal.faultline.prepare",
+      "name": "Faultline · gathering force",
+      "description": "Layered Marshal spell artwork. Gameplay and lifecycle are supplied by its ability binding.",
+      "durationTicks": 14,
       "loop": false,
       "layers": [
         {
-          "id": "pulse",
+          "id": "gather",
           "sustain": false,
           "enabled": true,
           "startTick": 0,
           "anchor": "target",
-          "shape": "ring",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
-          "durationTicks": 32,
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 14,
           "count": 1,
-          "size": 12,
-          "height": 0.1
+          "size": 3.8,
+          "height": 0.12,
+          "motion": {
+            "rotation": {
+              "periodTicks": 80,
+              "direction": "counterclockwise"
+            },
+            "scale": {
+              "periodTicks": 56,
+              "min": 0.4,
+              "max": 1.2,
+              "easing": "smoothstep",
+              "phase": 0.5
+            }
+          },
+          "orientation": "ground",
+          "intensity": 0.65,
+          "texture": {
+            "asset": "asset.effects.marshal.cadence-wheel",
+            "role": "image",
+            "index": 1
+          }
         },
         {
-          "id": "rising-motes",
+          "id": "charge",
           "sustain": false,
           "enabled": true,
           "startTick": 0,
           "emitter": {
             "mode": "burst",
-            "lifetimeTicks": 36,
-            "rate": 4,
-            "speed": 3,
+            "lifetimeTicks": 14,
+            "rate": 8,
+            "speed": 2,
             "speedVariation": 0.5,
             "direction": {
               "x": 0,
               "y": 1,
               "z": 0
             },
-            "coneDegrees": 30,
-            "gravity": -1,
+            "coneDegrees": 75,
+            "gravity": -2,
             "drag": 1,
-            "spawnRadius": 5,
-            "startSize": 0.22,
+            "spawnRadius": 0.7,
+            "startSize": 0.16,
             "endSize": 0,
-            "spin": 1,
-            "fadeIn": 0.08,
-            "fadeOut": 0.7
+            "spin": 3,
+            "fadeIn": 0.04,
+            "fadeOut": 0.65
           },
           "anchor": "target",
           "shape": "particles",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
-          "durationTicks": 28,
-          "count": 36,
-          "size": 0.25,
-          "height": 0.3,
+          "colour": "#ffc56e",
+          "accent": "#ffe4a2",
+          "durationTicks": 14,
+          "count": 10,
+          "size": 0.16,
+          "height": 0.6,
           "texture": {
             "asset": "asset.effects.holy-light-spark",
             "role": "image",
@@ -6858,11 +7108,32 @@
     {
       "schemaVersion": 1,
       "id": "effect.marshal.carapace.cast",
-      "name": "Iron Carapace · harden",
-      "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
-      "durationTicks": 40,
+      "name": "Iron Carapace · shell ignition",
+      "description": "Layered Marshal spell artwork. Gameplay and lifecycle are supplied by its ability binding.",
+      "durationTicks": 32,
       "loop": false,
       "layers": [
+        {
+          "id": "hardening-shell",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 28,
+          "count": 1,
+          "size": 6,
+          "height": 2.8,
+          "intensity": 0.85,
+          "length": 1.12,
+          "texture": {
+            "asset": "asset.effects.marshal.carapace-shell",
+            "role": "image",
+            "index": 1
+          }
+        },
         {
           "id": "chitin-flare",
           "sustain": false,
@@ -6870,33 +7141,33 @@
           "startTick": 0,
           "emitter": {
             "mode": "burst",
-            "lifetimeTicks": 28,
-            "rate": 4,
+            "lifetimeTicks": 32,
+            "rate": 8,
             "speed": 5,
-            "speedVariation": 0.55,
+            "speedVariation": 0.5,
             "direction": {
               "x": 0,
               "y": 1,
               "z": 0
             },
-            "coneDegrees": 85,
-            "gravity": 9,
+            "coneDegrees": 75,
+            "gravity": 5,
             "drag": 1,
-            "spawnRadius": 1,
-            "startSize": 0.18,
+            "spawnRadius": 1.7,
+            "startSize": 0.25,
             "endSize": 0,
-            "spin": 2,
-            "fadeIn": 0.03,
+            "spin": 3,
+            "fadeIn": 0.04,
             "fadeOut": 0.65
           },
           "anchor": "target",
           "shape": "particles",
-          "colour": "#e38a32",
-          "accent": "#fff2bb",
-          "durationTicks": 28,
-          "count": 24,
-          "size": 0.15,
-          "height": 1.8,
+          "colour": "#ffc56e",
+          "accent": "#ffe4a2",
+          "durationTicks": 32,
+          "count": 28,
+          "size": 0.25,
+          "height": 0.8,
           "texture": {
             "asset": "asset.effects.holy-light-spark",
             "role": "image",
@@ -6904,149 +7175,303 @@
           }
         },
         {
-          "id": "flash",
+          "id": "forge-flash",
           "sustain": false,
           "enabled": true,
           "startTick": 0,
           "anchor": "target",
           "shape": "light",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
+          "colour": "#ffd391",
+          "accent": "#ffe4a2",
           "durationTicks": 12,
           "count": 1,
-          "size": 4,
+          "size": 6,
           "height": 2,
-          "intensity": 4
+          "intensity": 10
         }
       ]
     },
     {
       "schemaVersion": 1,
-      "id": "effect.marshal.crownfall.prepare",
-      "name": "Crownfall · warning crown",
-      "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
-      "durationTicks": 32,
-      "loop": false,
+      "id": "effect.marshal.carapace.armor",
+      "name": "Iron Carapace · living shell",
+      "description": "Layered Marshal spell artwork. Gameplay and lifecycle are supplied by its ability binding.",
+      "durationTicks": 160,
+      "loop": true,
       "layers": [
         {
-          "id": "warning",
-          "sustain": false,
+          "id": "protective-shell",
+          "sustain": true,
           "enabled": true,
           "startTick": 0,
           "anchor": "target",
-          "shape": "ring",
-          "colour": "#e6a136",
-          "accent": "#ffe9a1",
-          "durationTicks": 32,
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 160,
           "count": 1,
-          "size": 7,
-          "height": 0.15
+          "size": 5.4,
+          "height": 2.5,
+          "motion": {
+            "scale": {
+              "periodTicks": 120,
+              "min": 0.98,
+              "max": 1.03,
+              "easing": "sine",
+              "phase": 0
+            },
+            "opacity": {
+              "periodTicks": 120,
+              "min": 0.58,
+              "max": 0.82,
+              "easing": "sine",
+              "phase": 0
+            }
+          },
+          "follow": true,
+          "intensity": 0.68,
+          "length": 1.1,
+          "texture": {
+            "asset": "asset.effects.marshal.carapace-shell",
+            "role": "image",
+            "index": 1
+          }
         },
         {
-          "id": "focus",
-          "sustain": false,
+          "id": "armor-seal",
+          "sustain": true,
           "enabled": true,
           "startTick": 0,
           "anchor": "target",
-          "shape": "glow",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
-          "durationTicks": 32,
+          "shape": "billboard",
+          "colour": "#ef9d64",
+          "accent": "#ffe4a2",
+          "durationTicks": 160,
           "count": 1,
-          "size": 3,
-          "height": 0.15,
-          "intensity": 0.7
-        }
-      ]
-    },
-    {
-      "schemaVersion": 1,
-      "id": "effect.marshal.crownfall.impact",
-      "name": "Crownfall · royal impact",
-      "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
-      "durationTicks": 52,
-      "loop": false,
-      "layers": [
-        {
-          "id": "outer-shock",
-          "sustain": false,
-          "enabled": true,
-          "startTick": 0,
-          "anchor": "target",
-          "shape": "ring",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
-          "durationTicks": 32,
-          "count": 1,
-          "size": 7,
-          "height": 0.15,
-          "intensity": 0.45
+          "size": 4.8,
+          "height": 0.13,
+          "motion": {
+            "rotation": {
+              "periodTicks": 640,
+              "direction": "counterclockwise"
+            }
+          },
+          "orientation": "ground",
+          "follow": true,
+          "intensity": 0.52,
+          "texture": {
+            "asset": "asset.effects.marshal.cadence-wheel",
+            "role": "image",
+            "index": 1
+          }
         },
         {
-          "id": "crown",
-          "sustain": false,
+          "id": "ward-glyph",
+          "sustain": true,
           "enabled": true,
           "startTick": 0,
           "anchor": "target",
-          "shape": "pillar",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
-          "durationTicks": 18,
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 160,
           "count": 1,
-          "size": 2.2,
-          "height": 8
+          "size": 1.4,
+          "height": 6.1,
+          "motion": {
+            "opacity": {
+              "periodTicks": 100,
+              "min": 0.7,
+              "max": 1,
+              "easing": "sine",
+              "phase": 0
+            }
+          },
+          "follow": true,
+          "intensity": 0.8,
+          "texture": {
+            "asset": "asset.effects.marshal.chitin-ward",
+            "role": "image",
+            "index": 1
+          }
         },
         {
-          "id": "sun-flash",
-          "sustain": false,
-          "enabled": true,
-          "startTick": 0,
-          "anchor": "target",
-          "shape": "light",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
-          "durationTicks": 16,
-          "count": 1,
-          "size": 10,
-          "height": 3,
-          "intensity": 9
-        },
-        {
-          "id": "amber-shrapnel",
-          "sustain": false,
+          "id": "shell-glints",
+          "sustain": true,
           "enabled": true,
           "startTick": 0,
           "emitter": {
-            "mode": "burst",
-            "lifetimeTicks": 48,
-            "rate": 4,
-            "speed": 10,
+            "mode": "continuous",
+            "lifetimeTicks": 36,
+            "rate": 5,
+            "speed": 1.8,
             "speedVariation": 0.5,
             "direction": {
               "x": 0,
               "y": 1,
               "z": 0
             },
-            "coneDegrees": 80,
-            "gravity": 14,
-            "drag": 0.8,
-            "spawnRadius": 3,
-            "startSize": 0.3,
+            "coneDegrees": 10,
+            "gravity": 0,
+            "drag": 1,
+            "spawnRadius": 1.7,
+            "startSize": 0.17,
             "endSize": 0,
-            "spin": 4,
-            "fadeIn": 0.02,
-            "fadeOut": 0.7
+            "spin": 3,
+            "fadeIn": 0.04,
+            "fadeOut": 0.65
           },
           "anchor": "target",
           "shape": "particles",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
-          "durationTicks": 48,
-          "count": 64,
-          "size": 0.15,
-          "height": 0.3,
+          "colour": "#ffc56e",
+          "accent": "#ffe4a2",
+          "durationTicks": 160,
+          "count": 10,
+          "size": 0.17,
+          "height": 0.4,
+          "follow": true,
           "texture": {
             "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.marshal.crownfall.prepare",
+      "name": "Crownfall · coronation warning",
+      "description": "Layered Marshal spell artwork. Gameplay and lifecycle are supplied by its ability binding.",
+      "durationTicks": 32,
+      "loop": false,
+      "layers": [
+        {
+          "id": "crown-apparition",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 32,
+          "count": 1,
+          "size": 7,
+          "height": 7.5,
+          "motion": {
+            "scale": {
+              "periodTicks": 128,
+              "min": 0.65,
+              "max": 1.15,
+              "easing": "smoothstep"
+            }
+          },
+          "intensity": 1.2,
+          "texture": {
+            "asset": "asset.effects.marshal.crown-sigil",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "gathering-sigil",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 32,
+          "count": 1,
+          "size": 13,
+          "height": 0.16,
+          "motion": {
+            "rotation": {
+              "periodTicks": 120,
+              "direction": "counterclockwise"
+            }
+          },
+          "orientation": "ground",
+          "intensity": 0.85,
+          "texture": {
+            "asset": "asset.effects.marshal.cadence-wheel",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "gathering-light",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#f0b94f",
+          "accent": "#ffe4a2",
+          "durationTicks": 32,
+          "count": 1,
+          "size": 6,
+          "height": 0.1,
+          "intensity": 0.23
+        },
+        {
+          "id": "ascending-rays",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "streaks",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 32,
+          "count": 12,
+          "size": 0.22,
+          "height": 8,
+          "intensity": 0.8,
+          "spread": 5,
+          "length": 2.8,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "effect.marshal.crownfall.impact",
+      "name": "Crownfall · royal cataclysm",
+      "description": "Layered Marshal spell artwork. Gameplay and lifecycle are supplied by its ability binding.",
+      "durationTicks": 72,
+      "loop": false,
+      "layers": [
+        {
+          "id": "royal-crown",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "billboard",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 24,
+          "count": 1,
+          "size": 9,
+          "height": 6,
+          "motion": {
+            "scale": {
+              "periodTicks": 96,
+              "min": 0.85,
+              "max": 1.3,
+              "easing": "smoothstep"
+            }
+          },
+          "intensity": 1.3,
+          "texture": {
+            "asset": "asset.effects.marshal.crown-sigil",
             "role": "image",
             "index": 1
           }
@@ -7059,24 +7484,171 @@
           "anchor": "target",
           "shape": "billboard",
           "colour": "#ffffff",
-          "accent": "#ffe8af",
-          "durationTicks": 44,
+          "accent": "#ffe4a2",
+          "durationTicks": 68,
           "count": 1,
-          "size": 18,
-          "height": 0.12,
+          "size": 20,
+          "height": 0.15,
           "motion": {
             "scale": {
-              "periodTicks": 160,
-              "min": 0.75,
-              "max": 1.1,
+              "periodTicks": 180,
+              "min": 0.8,
+              "max": 1.15,
               "easing": "smoothstep"
             }
           },
-          "blend": "additive",
           "orientation": "ground",
-          "intensity": 0.9,
+          "intensity": 1.05,
           "texture": {
             "asset": "asset.effects.marshal.crown-fracture",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "sun-core",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "pillar",
+          "colour": "#ffe2a0",
+          "accent": "#ffe4a2",
+          "durationTicks": 14,
+          "count": 1,
+          "size": 1.5,
+          "height": 12,
+          "intensity": 0.4
+        },
+        {
+          "id": "ground-flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "glow",
+          "colour": "#ffca6b",
+          "accent": "#ffe4a2",
+          "durationTicks": 16,
+          "count": 1,
+          "size": 7,
+          "height": 0.09,
+          "intensity": 0.6
+        },
+        {
+          "id": "sun-flash",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "light",
+          "colour": "#ffd58d",
+          "accent": "#ffe4a2",
+          "durationTicks": 16,
+          "count": 1,
+          "size": 14,
+          "height": 3,
+          "intensity": 20
+        },
+        {
+          "id": "amber-shrapnel",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 52,
+            "rate": 8,
+            "speed": 13,
+            "speedVariation": 0.5,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 75,
+            "gravity": 19,
+            "drag": 0.7,
+            "spawnRadius": 4,
+            "startSize": 0.48,
+            "endSize": 0,
+            "spin": 3,
+            "fadeIn": 0.04,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffc56e",
+          "accent": "#ffe4a2",
+          "durationTicks": 52,
+          "count": 64,
+          "size": 0.48,
+          "height": 0.3,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "falling-cinders",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 5,
+          "emitter": {
+            "mode": "burst",
+            "lifetimeTicks": 60,
+            "rate": 8,
+            "speed": 5,
+            "speedVariation": 0.5,
+            "direction": {
+              "x": 0,
+              "y": 1,
+              "z": 0
+            },
+            "coneDegrees": 75,
+            "gravity": 2.5,
+            "drag": 0.5,
+            "spawnRadius": 5,
+            "startSize": 0.17,
+            "endSize": 0,
+            "spin": 3,
+            "fadeIn": 0.04,
+            "fadeOut": 0.65
+          },
+          "anchor": "target",
+          "shape": "particles",
+          "colour": "#ffc56e",
+          "accent": "#ffe4a2",
+          "durationTicks": 72,
+          "count": 28,
+          "size": 0.17,
+          "height": 0.3,
+          "intensity": 0.75,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
+            "role": "image",
+            "index": 1
+          }
+        },
+        {
+          "id": "royal-rays",
+          "sustain": false,
+          "enabled": true,
+          "startTick": 0,
+          "anchor": "target",
+          "shape": "streaks",
+          "colour": "#ffffff",
+          "accent": "#ffe4a2",
+          "durationTicks": 32,
+          "count": 10,
+          "size": 0.3,
+          "height": 9,
+          "intensity": 0.9,
+          "spread": 6,
+          "length": 3.2,
+          "texture": {
+            "asset": "asset.effects.holy-light-spark",
             "role": "image",
             "index": 1
           }
@@ -7086,7 +7658,7 @@
     {
       "schemaVersion": 1,
       "id": "effect.marshal.rally.ward",
-      "name": "Rally · amber ward",
+      "name": "Crownfall · allied royal ward",
       "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
       "durationTicks": 80,
       "loop": true,
@@ -7168,110 +7740,6 @@
           "durationTicks": 80,
           "count": 1,
           "size": 1.25,
-          "height": 6.4,
-          "motion": {
-            "opacity": {
-              "periodTicks": 80,
-              "min": 0.6,
-              "max": 0.9,
-              "easing": "sine"
-            }
-          },
-          "orientation": "camera",
-          "follow": true,
-          "texture": {
-            "asset": "asset.effects.marshal.chitin-ward",
-            "role": "image",
-            "index": 1
-          }
-        }
-      ]
-    },
-    {
-      "schemaVersion": 1,
-      "id": "effect.marshal.carapace.armor",
-      "name": "Iron Carapace · living armor",
-      "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
-      "durationTicks": 64,
-      "loop": true,
-      "layers": [
-        {
-          "id": "amber-shell",
-          "sustain": true,
-          "enabled": true,
-          "startTick": 0,
-          "anchor": "target",
-          "shape": "glow",
-          "colour": "#d87527",
-          "accent": "#ffe5a2",
-          "durationTicks": 64,
-          "count": 1,
-          "size": 3,
-          "height": 2.5,
-          "motion": {
-            "opacity": {
-              "periodTicks": 64,
-              "min": 0.28,
-              "max": 0.55,
-              "easing": "smoothstep"
-            }
-          },
-          "follow": true,
-          "intensity": 0.65
-        },
-        {
-          "id": "shell-glints",
-          "sustain": true,
-          "enabled": true,
-          "startTick": 0,
-          "emitter": {
-            "mode": "continuous",
-            "lifetimeTicks": 28,
-            "rate": 6,
-            "speed": 0.5,
-            "speedVariation": 0.5,
-            "direction": {
-              "x": 0,
-              "y": 1,
-              "z": 0
-            },
-            "coneDegrees": 160,
-            "gravity": 0,
-            "drag": 1,
-            "spawnRadius": 1.7,
-            "startSize": 0.14,
-            "endSize": 0,
-            "spin": 0,
-            "fadeIn": 0.2,
-            "fadeOut": 0.6
-          },
-          "anchor": "target",
-          "shape": "particles",
-          "colour": "#f0b94f",
-          "accent": "#fff2bb",
-          "durationTicks": 64,
-          "count": 10,
-          "size": 0.15,
-          "height": 1.8,
-          "follow": true,
-          "texture": {
-            "asset": "asset.effects.holy-light-spark",
-            "role": "image",
-            "index": 1
-          }
-        },
-        {
-          "id": "ward-glyph",
-          "sustain": true,
-          "enabled": true,
-          "startTick": 0,
-          "anchor": "target",
-          "shape": "billboard",
-          "colour": "#ffffff",
-          "accent": "#ffffff",
-          "durationTicks": 80,
-          "count": 1,
-          "size": 1.9,
           "height": 6.4,
           "motion": {
             "opacity": {

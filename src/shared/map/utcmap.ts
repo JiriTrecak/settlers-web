@@ -1,6 +1,7 @@
 import {BIOMES, type MapSize} from '../../content/biomes';
 import {missionSchema, type MissionDefinition} from "../scenario/schema";
-import {authoringSceneSchema,type AuthoringScene} from '../authoring/layers';
+import {savedSceneSchema,type SavedScene} from '../authoring/layers';
+import {flatTerrainData} from './terrainData';
 import { z } from "zod";
 import {
   placementSchema,
@@ -12,14 +13,14 @@ import { parseLandscape, type Landscape } from "../landscape/curve";
 /**
  * Authored map file. `.utcmap` is JSON; `v` is the schema.
  * `name` is the document title. `stamps` are placed catalog assets (cell coords, optional yaw).
- * Optional `height` is base64 Int16 cm; `waterLevel` is meters (omit = 0 / flat).
+ * Terrain and local water are explicit committed samples in authoring.terrain.
  */
-import { decodeHeight, encodeHeight } from "./height";
 export const UTCMAP_EXT = ".utcmap";
-export const UTCMAP_VERSION = 2;
+export const UTCMAP_VERSION = 3;
 export const DEFAULT_MAP_NAME = "Untitled";
 
 export type MapStamp = {
+  readonly locked?: boolean;
   readonly id: string;
   readonly asset: string;
   readonly x: number;
@@ -71,8 +72,8 @@ export type UtcMap = {
   readonly waterLevel?: number;
   readonly height?: string;
   readonly landscape?: Landscape;
-  /** Editable recipes and shapes; generated output is rebuilt from the base height. */
-  readonly authoring?: AuthoringScene;
+  /** Committed editable terrain and placed objects. Generator previews are editor-only. */
+  readonly authoring?: SavedScene;
 };
 
 export function emptyUtcMap(size: MapSize = 256): UtcMap {
@@ -80,10 +81,11 @@ export function emptyUtcMap(size: MapSize = 256): UtcMap {
     v: UTCMAP_VERSION,
     size,
     name: DEFAULT_MAP_NAME,
+    authoring:{version:1,terrain:flatTerrainData(size),objects:[]},
     stamps: [],
     entities: [],
     camps: [],
-    waterLevel: -1,
+
     playerStarts: [1, 2].map((player) => ({
       player,
       x: player === 1 ? size - 38.5 : 37.5,
@@ -138,8 +140,9 @@ export function readUtcMap(raw: unknown): { map: UtcMap } | { error: string } {
   const size = o.size;
   const mission = missionSchema.optional().safeParse(o.mission);
   if (!mission.success) return fail(issue("mission", mission.error));
-  const authoring=authoringSceneSchema.optional().safeParse(o.authoring);
+  const authoring=savedSceneSchema.refine(s=>!!s.terrain,"Saved maps require committed terrain cells").safeParse(o.authoring);
   if(!authoring.success)return fail(issue("authoring", authoring.error));
+  if(authoring.data?.terrain&&authoring.data.terrain.size!==size)return fail('authoring.terrain.size: must match map size');
   if (o.sandbox !== undefined && typeof o.sandbox !== "boolean") return fail("sandbox: must be a boolean");
   if (o.sandbox && mission.data) return fail("A testbed (sandbox) cannot also be a mission");
   const starts = z.array(startSchema).min(mission.data || o.sandbox ? 1 : 2).max(o.sandbox ? 1 : 8).safeParse(o.playerStarts);
@@ -170,12 +173,12 @@ export function readUtcMap(raw: unknown): { map: UtcMap } | { error: string } {
     const bad = Array.isArray(o.stamps) ? o.stamps.findIndex((item) => !parseStamps([item])) : -1;
     return fail(bad < 0 ? "stamps: must be an array" : `stamps.${bad}: invalid stamp ${JSON.stringify((o.stamps as {id?: unknown}[])[bad]?.id ?? null)}`);
   }
-  const waterLevel = parseWaterLevel(o.waterLevel);
-  if (waterLevel === false) return fail("waterLevel: must be a finite number");
-  const height = parseHeight(o.height, size);
-  if (height === false) return fail(`height: not a valid packed ${size}² height field`);
-  const landscape = parseLandscape(o.landscape);
+  if(o.height!==undefined||o.waterLevel!==undefined)return fail('Terrain must be stored as committed cells, not legacy height/water fields');
+  const rawLandscape=o.landscape as Record<string,unknown>|undefined;
+  if(rawLandscape&&(!rawLandscape||typeof rawLandscape!=='object'||Object.keys(rawLandscape).some(k=>!['environment','water','decals'].includes(k))))return fail('landscape: only environment, water appearance and placed decals belong in a saved map');
+  const landscape = rawLandscape?parseLandscape({...rawLandscape,strokes:[],cover:[]}):undefined;
   if (o.landscape !== undefined && !landscape) return fail("landscape: invalid strokes, cover or environment");
+  if(landscape&&(landscape.strokes.length||landscape.cover.length||landscape.rivers?.length||landscape.importedTerrain))return fail('Generator inputs do not belong in a saved map');
   return { map: {
     v: UTCMAP_VERSION,
     size,
@@ -190,17 +193,14 @@ export function readUtcMap(raw: unknown): { map: UtcMap } | { error: string } {
     camps: camps.data,
     ...(landscape ? { landscape } : {}),
     ...(authoring.data?{authoring:authoring.data}:{}),
-    ...(waterLevel !== undefined ? { waterLevel } : {}),
-    ...(height !== undefined ? { height } : {}),
   } };
 }
 
 export function stringifyUtcMap(map: UtcMap): string {
-  const height = map.height
-    ? encodeHeight(decodeHeight(map.height, map.size) ?? [], map.size)
-    : undefined;
-  const waterLevel =
-    map.waterLevel && map.waterLevel !== 0 ? map.waterLevel : undefined;
+  if(!map.authoring?.terrain)throw Error('Map has no committed terrain cells');
+  if(map.height!==undefined||map.waterLevel!==undefined)throw Error('Legacy terrain fields cannot be saved');
+  const landscape=map.landscape;
+  if(landscape&&(landscape.strokes.length||landscape.cover.length||landscape.rivers?.length||landscape.importedTerrain))throw Error('Apply generator results before saving the map');
   return `${JSON.stringify(
     {
       v: map.v,
@@ -214,10 +214,9 @@ export function stringifyUtcMap(map: UtcMap): string {
       playerStarts: map.playerStarts,
       entities: map.entities,
       camps: map.camps,
-      ...(map.landscape ? { landscape: parseLandscape(map.landscape) } : {}),
-      ...(map.authoring?{authoring:map.authoring}:{}),
-      ...(waterLevel !== undefined ? { waterLevel } : {}),
-      ...(height ? { height } : {}),
+      ...(map.landscape ? { landscape: {environment:map.landscape.environment,...(map.landscape.water?{water:map.landscape.water}:{}),...(map.landscape.decals?.length?{decals:map.landscape.decals}:{})} } : {}),
+      ...(map.authoring?{authoring:savedSceneSchema.parse(map.authoring)}:{}),
+
     },
     null,
     2,
@@ -232,21 +231,6 @@ export function mapFileName(name: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
   return `${slug || "untitled"}${UTCMAP_EXT}`;
-}
-
-function parseWaterLevel(raw: unknown): number | undefined | false {
-  if (raw === undefined) return undefined;
-  if (typeof raw !== "number" || !Number.isFinite(raw)) return false;
-  return raw;
-}
-
-function parseHeight(raw: unknown, size: number): string | undefined | false {
-  if (raw === undefined) return undefined;
-  if (typeof raw !== "string" || !raw) return false;
-  const samples = decodeHeight(raw, size);
-  if (!samples) return false;
-  const packed = encodeHeight(samples, size);
-  return packed ?? undefined;
 }
 
 function parseName(raw: unknown): string | null {
@@ -269,6 +253,7 @@ function parseStamps(raw: unknown): MapStamp[] | null {
     if (typeof s.id !== "string" || typeof s.asset !== "string") return null;
     if (typeof s.x !== "number" || typeof s.y !== "number") return null;
     if (!Number.isFinite(s.x) || !Number.isFinite(s.y)) return null;
+    if(s.locked!==undefined&&typeof s.locked!=="boolean")return null;
     const walk=walkStampSchema.optional().safeParse(s.walk);if(!walk.success)return null;
     const sourceTransform=z.object({packedUserData:z.tuple([z.number().int().min(0).max(255),z.number().int().min(0).max(255),z.number().int().min(0).max(255)]).optional(),height:z.number().finite(),quaternion:z.tuple([z.number().finite(),z.number().finite(),z.number().finite(),z.number().finite()]).refine(q=>Math.abs(Math.hypot(...q)-1)<.001)}).strict().optional().safeParse(s.sourceTransform);
     if(!sourceTransform.success)return null;
@@ -314,6 +299,7 @@ function parseStamps(raw: unknown): MapStamp[] | null {
       return null;
     out.push({
       id: s.id,
+      ...(s.locked!==undefined?{locked:s.locked as boolean}:{}),
       asset: s.asset,
       ...(walk.data?{walk:walk.data}:{}),
       ...(sourceTransform.data?{sourceTransform:sourceTransform.data}:{}),

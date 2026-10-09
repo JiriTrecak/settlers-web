@@ -18,7 +18,7 @@ const next:typeof previous={};
 // Include generator and validation dependencies so cached images/eligibility are
 // regenerated when recipes, biome palettes, map rules or compiler behavior change.
 const hash=createHash('sha256');
-for(const path of ['scripts/maps/atlas.ts','scripts/maps/previews.ts','src/content/biomes.ts','content/game.json','assets/authoring/catalogue.json','src/shared/map/playable.ts',
+for(const path of ['scripts/maps/atlas.ts','scripts/maps/previews.ts','src/content/biomes.ts','content/game.json','assets/authoring/catalogue.json','src/shared/map/playable.ts','src/shared/player/player.ts',
  ...((await readdir('src/shared/authoring',{recursive:true})).filter(p=>p.endsWith('.ts')).sort().map(p=>'src/shared/authoring/'+p))])hash.update(await readFile(path));
 const engineHash=hash.digest('hex');
 let stale=0;

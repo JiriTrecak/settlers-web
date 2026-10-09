@@ -6,13 +6,14 @@ import {landscapeAssets} from '../../src/shared/authoring/project';
 import {createBiomeMap} from '../../src/shared/map/newMap';
 import {parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
 import {waterSurface} from '../../src/render/water/waterSurface';
-import {bakeLayer} from '../../src/shared/authoring/generate';
+import {AuthoringHistory} from '../../src/shared/authoring/history';
+import {flatTerrainData} from '../../src/shared/map/terrainData';
 import {hitLayer} from '../../src/editor/select/layerHit';
 const mask=()=>paintedMaskSchema.parse({type:'mask',elevation:-.6,strokes:[
  {operation:'add',radius:18,points:[{x:110,z:128},{x:146,z:128}]},
  {operation:'subtract',radius:6,points:[{x:128,z:128}]},
 ]});
-const map=()=>({...createBiomeMap('Paint test',256,'vibrant-forest'),waterLevel:-8,authoring:authoringSceneSchema.parse({version:1,objects:[],layers:[
+const map=()=>({...createBiomeMap('Paint test',256,'vibrant-forest'),authoring:authoringSceneSchema.parse({version:1,terrain:flatTerrainData(256,0,-8),objects:[],layers:[
  {id:'lake',name:'Painted lake',recipe:'recipe.river.gentle',seed:9,shape:mask()},
  {id:'forest',name:'Painted pines',recipe:'recipe.forest.conifer-edge',seed:3,shape:{type:'mask',strokes:[{operation:'add',radius:35,points:[{x:128,z:128}]}]}},
 ]})});
@@ -32,12 +33,11 @@ describe('painted procedural masks',()=>{
   expect(a.generated!.objects.some(o=>o.id.includes('river-banks'))).toBe(true);
   const surface=waterSurface(a.field);expect(surface.tiles.length).toBeGreaterThan(0);expect([...surface.tiles.flatMap(t=>[...t.positions])].every(Number.isFinite)).toBe(true);
  });
- it('reopens exactly and remains identical after baking the forest',()=>{
-  const m=map(),a=compileMapScene(m,landscapeAssets),reopened=parseUtcMap(JSON.parse(stringifyUtcMap(m)))!;
-  expect(compileMapScene(reopened,landscapeAssets).stamps).toEqual(a.stamps);
-  const b=compileMapScene({...m,authoring:bakeLayer(m.authoring,'forest',a.generated!)},landscapeAssets);
-  const byId=(s:typeof a.stamps)=>[...s].sort((x,y)=>x.id.localeCompare(y.id));
-  expect(byId(b.stamps)).toEqual(byId(a.stamps));expect(b.field.grassCoverage).toEqual(a.field.grassCoverage);
+ it('applies and reopens exactly without retaining masks or ownership',()=>{
+  const m=map(),a=compileMapScene(m,landscapeAssets),history=new AuthoringHistory(m.authoring);history.apply(a);
+  const saved={...m,authoring:history.document},reopened=parseUtcMap(JSON.parse(stringifyUtcMap(saved)))!;
+  const b=compileMapScene(reopened,landscapeAssets);
+  expect(b.stamps).toEqual(a.stamps);expect(b.field.samples).toEqual(a.field.samples);expect(b.field.grassCoverage).toEqual(a.field.grassCoverage);
  });
  it('selects painted areas, but leaves subtracted holes and empty ground unselected',()=>{
   const lake=map().authoring.layers[0]!;

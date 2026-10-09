@@ -6,7 +6,7 @@ import {selectedWalk} from '../../editor/select/select';
 import {ScenePanel} from '../../editor/chrome/scenePanel';
 import {MissionEditor} from "../../editor/chrome/missionEditor";
 import { EntityDock } from "../../editor/chrome/entityDock";
-import { getMap, rememberAuthoredMap } from "../../shared/map/library";
+import { rememberAuthoredMap } from "../../shared/map/library";
 import { playableMapError } from "../../shared/map/playable";
 import { SpawnDock } from "../../editor/chrome/spawnDock";
 import type { UtcMap } from "../../shared/map/utcmap";
@@ -64,8 +64,8 @@ export class EditorScreen extends GameScreen {
   ) {
     super("screen");
     this.enableHudToggle();
-    const initial = hooks.map ?? getMap("amberwake-basin").map;
-    const mapId = hooks.mapId ?? (hooks.map ? 'new' : 'amberwake-basin');
+    const initial = hooks.map ?? emptyUtcMap();
+    const mapId = hooks.mapId ?? 'new';
     this.draft = new EditorDraft(sessionStorage,mapId,initial);
     const restored = this.draft.restore([
       'utc-editor-threewater-draft:'+mapId,
@@ -155,6 +155,10 @@ export class EditorScreen extends GameScreen {
       onLoadPreset: (id) => this.loadPreset(id),
       onCleanRadius: (n) => this.editor.setCleanRadius(n),
       onCleanType: (type) => this.editor.setCleanType(type),
+      onCleanShape:shape=>{this.editor.cancelClean();this.editor.cleanShape=shape;this.syncClean();},
+      onCleanAsset:asset=>{this.editor.cleanAsset=asset;this.editor.refreshCleanPreview();},
+      onCleanApply:()=>{void this.editor.applyClean().catch(error=>this.alert("Cleanup",error instanceof Error?error.message:String(error)));},
+      onCleanCancel:()=>this.editor.cancelClean(),
       onSculptRadius: (n) => this.editor.setSculptRadius(n),
       onSculptStrength: (n) => this.editor.setSculptStrength(n),
       onSculptMode: (mode) => this.editor.setSculptMode(mode),
@@ -350,6 +354,7 @@ export class EditorScreen extends GameScreen {
     this.chrome.setClean({
       radius: this.editor.clean.radius,
       type: this.editor.clean.type,
+      shape:this.editor.cleanShape,asset:this.editor.cleanAsset,preview:this.editor.cleanPreview,
     });
   }
 

@@ -8,7 +8,7 @@ import type {LandscapeAsset} from '../catalogue';
 import {WatercourseIndex} from '../watercourses';
 
 export type SceneSnapshot=Omit<CompiledMapScene,'field'>&{
- field:Pick<HeightField,'size'|'origin'|'span'|'verts'|'samples'|'biome'|'forestCoverage'|'baseMaterial'|'grassCoverage'|'rockCoverage'|'surfacePaint'|'watercourses'|'waterLevel'>;
+ field:Pick<HeightField,'size'|'origin'|'span'|'verts'|'samples'|'biome'|'forestCoverage'|'baseMaterial'|'grassCoverage'|'rockCoverage'|'surfacePaint'|'watercourses'|'waterLevel'|'cellWater'>;
  fieldId:number;terrainId:number;riversId:number;paintId:number;fieldPaintId:number;source:boolean;sourceWater:boolean;courseWater:boolean;
 };
 /** Identity is scoped to one worker, not persisted or exposed as asset versions. */
@@ -50,7 +50,7 @@ export class SceneSnapshotReader {
     if(!generated)throw Error('Missing generated rivers');
     field.courseWater=prior&&snapshot.riversId===prior.snapshot.riversId?prior.scene.field.courseWater:new WatercourseIndex(generated.rivers);
    }
-   if(prior)rememberHeightChange(field,prior.scene.field,snapshot.riversId===prior.snapshot.riversId&&field.waterLevel===prior.scene.field.waterLevel&&field.sourceWater===prior.scene.field.sourceWater);
+   if(prior)rememberHeightChange(field,prior.scene.field,map.authoring?.terrain===prior.map.authoring?.terrain&&snapshot.riversId===prior.snapshot.riversId&&field.waterLevel===prior.scene.field.waterLevel&&field.sourceWater===prior.scene.field.sourceWater);
   }
   const scene:CompiledMapScene={field,generated,stamps:snapshot.stamps,resources:snapshot.resources,owners:snapshot.owners,profile:snapshot.profile};
   if(this.catalogue)rememberCompiledSource(scene,map,this.catalogue);

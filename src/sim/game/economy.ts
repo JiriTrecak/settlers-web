@@ -1,3 +1,4 @@
+import {raceDefinition} from '../../content/races';
 import {prerequisiteReason} from '../../content/prerequisites';
 import {heroAdmission, heroRoster} from '../../content/heroRoster';
 import {workplaceHead, workplaceQueueSize} from '../../content/workplaceQueue';
@@ -324,7 +325,7 @@ export class Economy {
         w.placement?.startsWith("start."),
       );
       const used = new Set<number>();
-      for (const task of this.c.registry.rules.startingSetup.gathering ?? []) {
+      for (const task of raceDefinition(this.c.registry.rules,this.c.slots.find(s=>`player.${s.player+1}`===owner)?.race).startingSetup.gathering ?? []) {
         const recipe = this.c.registry.get(task.item).creation!;
         if (recipe.method !== "harvest") continue;
         const resource = this.c

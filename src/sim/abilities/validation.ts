@@ -61,7 +61,7 @@ export function validateSpellWorld(state:import('../game/state').GameState,regis
    if(Object.keys(ranks).length!==bindings.length||bindings.some(b=>ranks[b.id]===undefined||ranks[b.id]!==0&&!ability(b.ability)?.ranks[ranks[b.id]-1])||Object.keys(corpse.abilities.cooldowns).some(id=>!bindings.some(b=>b.ability===id))||Object.keys(corpse.abilities.autocast??{}).some(id=>!bindings.some(b=>b.id===id&&ability(b.ability)?.autocast)))fail();
   }
  }
- const ids=new Set<number>(),swarmIndices=new Set<string>();
+ const ids=new Set<number>(),swarmIndices=new Set<string>(),chargingSources=new Set<number>();
  const swarmGroups=new Map<number,{ability:string;rank:number;source:number;owner:string;started:number}>();
  for(const d of state.spellDeliveries){
   const a=ability(d.ability);
@@ -69,6 +69,10 @@ export function validateSpellWorld(state:import('../game/state').GameState,regis
   if(needsSource(a)&&!d.sourceContext)fail();if(d.sourceContext)validSource(d.sourceContext,d.source,d.owner);
   ids.add(d.cast);
   if((a?.delivery?.kind==='swarm')!==!!d.swarm)fail();
+  if(a?.delivery?.kind==='charge'){
+   if(!d.target||d.hit.length||d.power!==1000||chargingSources.has(d.source)||state.tick-d.started>a.delivery.maxTicks+1)fail();
+   chargingSources.add(d.source);
+  }
   if(d.swarm&&a?.delivery?.kind==='swarm'){
    const s=d.swarm,p=a.delivery,r=a.ranks[d.rank-1],key=`${s.group}:${s.index}`,group=swarmGroups.get(s.group);
    if(!d.sourceContext||s.group>=d.cast||s.group>=state.nextCast||s.index>=value(p.count,r)||swarmIndices.has(key)||s.launchTick!==d.started+s.index*p.launchIntervalTicks||s.expires!==d.started+value(p.durationTicks,r)||s.expires+p.returnTimeoutTicks<=state.tick||s.hits>p.maxHitsPerTrip||d.hit.length||d.power!==1000||d.nextTick>state.tick+p.attackIntervalTicks||s.phase==='waiting'&&(s.launchTick<state.tick||s.hits||s.health||s.mana||d.target)||s.phase!=='waiting'&&s.launchTick>state.tick||s.phase==='returning'&&d.target||s.phase!=='returning'&&state.tick>=s.expires)fail();
@@ -135,8 +139,9 @@ export function validateSpellWorld(state:import('../game/state').GameState,regis
   const seen=new Set<string>();
   for(const s of e.spellStatuses??[]){
    const a=ability(s.ability),d=a&&allEffects(a).find(op=>op.op==='status'&&op.id===s.status);
-   const key=s.ability+':'+s.status;
+   const key=s.ability+':'+s.status+(d?.op==='status'&&d.stacking?.scope==='source'?':'+s.source:'');
    if(!a||!a.ranks[s.rank-1]||!d||d.op!=='status'||seen.has(key)||s.started>state.tick||s.expires<=state.tick||!s.aura&&s.cast>=state.nextCast)return fail();
+   if(d.stacking?(!s.stacks||s.stacks>d.stacking.max):s.stacks!==undefined)fail();
    const requiresSource=a.triggers?.some(t=>t.executor==='statusSource'&&t.whileStatus===s.status);
    if(!!s.sourceContext!==!!requiresSource)fail();if(s.sourceContext)validSource(s.sourceContext,s.source,s.owner);
    seen.add(key);

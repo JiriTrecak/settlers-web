@@ -14,8 +14,7 @@
       "effect": "effect.marshal.crownfall.prepare",
       "event": "accepted",
       "anchor": "target",
-      "lifetime": "finite",
-      "sizeFrom": "radius"
+      "lifetime": "finite"
     },
     {
       "id": "impact",

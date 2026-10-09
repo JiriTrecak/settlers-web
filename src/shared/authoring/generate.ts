@@ -8,7 +8,7 @@ import {compileMaskDistance} from './maskDistance';
 import {distanceBands} from './distanceBands';
 import type {BuildProfile} from './buildProfile';
 export type TerrainGrid={originX:number;originZ:number;step:number;width:number;height:number;samples:Float32Array};
-export type GenerationAssets={recipe:(id:string)=>LandscapeRecipe|undefined;clearance:(id:string)=>number};
+export type GenerationAssets={recipe:(id:string)=>LandscapeRecipe|undefined;clearance:(id:string)=>number;isTree?:(id:string)=>boolean};
 export type GeneratedObject=AuthoredObject&{owner:string;blocksVegetation?:boolean};
 export type GenerationIssue={code:'missing-recipe'|'shape-mismatch'|'uphill-river'|'object-water-conflict';id:string;message:string};
 export type MaterialPaint={owner:string;material:string;weights:Float32Array};
@@ -190,7 +190,7 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
  const inWater=(x:number,z:number,clearance=0)=>rivers.some(r=>{if(outside(x,z,riverBounds.get(r)!,clearance))return false;if(r.area&&!distanceQuery(r.area).intersects(x,z,-clearance))return false;const p=riverPoint(x,z,r);return p.offset<r.width*p.widthScale/2+clearance;});
  const paths=prepared.filter(p=>p.recipe.type==='path');
  const footprints=new Footprints();
- for(const obj of scene.objects.filter(o=>!o.bakedPlacement)){const r=Math.max(0,assets.clearance(obj.asset))*obj.scale;footprints.add(obj.x,obj.z,r);
+ for(const obj of scene.objects){const r=Math.max(0,assets.clearance(obj.asset))*obj.scale;footprints.add(obj.x,obj.z,r);
   if(inWater(obj.x,obj.z)&&obj.heightMode==='terrain')issues.push({code:'object-water-conflict',id:obj.id,message:'A placed object overlaps a river; its authored transform was preserved'});
  }
  // Candidate budget scales with map area: ~30 per cell (two million on a 256² map).
@@ -270,10 +270,9 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
   if(p.recipe.type!=='forest')return [core];
   return [core,...(p.recipe.edge?[{...p,recipe:{...p.recipe.edge,type:'forest' as const,interiorMargin:0},stage,band:noBand,reserve:true,embed:false,pass:'edge',minEdge:0,maxEdge:p.recipe.edge.width}]:[]),...(p.recipe.details??[]).map(d=>({...p,recipe:{...d,type:'forest' as const,interiorMargin:0},stage,band:noBand,reserve:false,embed:false,pass:'detail-'+d.id,minEdge:0,maxEdge:Infinity}))];
  });
- const baked=scene.objects.filter(o=>o.bakedPlacement?.blocksVegetation).sort((a,b)=>a.bakedPlacement!.stage-b.bakedPlacement!.stage||a.bakedPlacement!.order-b.bakedPlacement!.order||a.bakedFrom!.localeCompare(b.bakedFrom!));
- // Meadows read the trees actually placed, so they are grown once every forest pass has run.
+ // Meadows use ordinary placed trees and newly previewed trees alike.
  const meadows=prepared.filter(p=>p.recipe.type==='meadow');
- const trees=baked.filter(o=>o.bakedPlacement!.stage===generationStage.forest).map(o=>({x:o.x,z:o.z}));
+ const trees=scene.objects.filter(o=>o.visible&&assets.isTree?.(o.asset)).map(o=>({x:o.x,z:o.z}));
  const meadowCover=new Map<string,Float32Array>();
  let meadow:Float32Array|undefined,nearest:Float32Array|undefined;
  const growMeadows=()=>{
@@ -333,12 +332,7 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
   }
  };
  profile?.mark('Prepare vegetation passes');
- let bakedIndex=0;
  for(const {layer,recipe,bounds,pass,minEdge,maxEdge,reserve,embed,stage,band} of scatterPasses){
-  while(bakedIndex<baked.length){const obj=baked[bakedIndex]!,rank=obj.bakedPlacement!;
-   if(rank.stage>generationStage[recipe.type]||(rank.stage===generationStage[recipe.type]&&(rank.order>layer.order||(rank.order===layer.order&&obj.bakedFrom!>layer.id))))break;
-   footprints.add(obj.x,obj.z,Math.max(0,assets.clearance(obj.asset))*obj.scale);bakedIndex++;
-  }
   if(stage>=generationStage.meadow){growMeadows();profile?.mark('Meadow coverage');}
   if(layer.shape.type==='spline')continue;
   const cover=band?.coverage?{...terrain,samples:meadowCover.get(layer.id)!}:undefined;
@@ -403,13 +397,4 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
  profile?.mark('Finish generation');
  const result={terrain,objects,rivers,paint,issues,landformSurface,meadow,forestLayers:prepared.filter(p=>p.recipe.type==='forest').map(p=>p.layer.id),scatterLayers:prepared.filter(p=>'species'in p.recipe).map(p=>p.layer.id)};
  surfacePlans.set(result.terrain,surfacePlan);return result;
-}
-/** Baking is a document operation; callers record this entire result as one undo step. */
-export function bakeLayer(scene:AuthoringScene,layerId:string,compiled:GeneratedScene):AuthoringScene{
- const layer=scene.layers.find(l=>l.id===layerId);if(!layer)throw Error('Layer does not exist');if(layer.locked)throw Error('Layer is locked');
- // Terrain/river/path bakes need the map's terrain and water transaction, never silently discard them.
- if(!compiled.scatterLayers.includes(layerId))throw Error('This layer must be baked with its terrain and water output');
- const stage=4; // Only forest instances reserve space for later scatter passes.
- const generated=compiled.objects.filter(o=>o.owner===layerId).map(({owner,blocksVegetation,...o})=>({...o,bakedFrom:owner,bakedPlacement:{stage,order:layer.order,blocksVegetation:blocksVegetation??compiled.forestLayers?.includes(layerId)??false}}));
- return authoringSceneSchema.parse({...scene,layers:scene.layers.filter(l=>l.id!==layerId),objects:[...scene.objects,...generated]});
 }

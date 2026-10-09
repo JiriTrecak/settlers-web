@@ -2,6 +2,7 @@ import {HeightField,type HeightDirty} from '../../shared/map/height';
 import {sourceHeight,unpackSourceBytes,type ImportedTerrain} from '../../shared/map/importedTerrain';
 import {sourceWater} from '../../shared/map/importedWater';
 import {riverPoint} from '../../shared/authoring/generate';
+import {landscapeAssets} from '../../shared/authoring/project';
 export type WaterSurfaceData={origin:[number,number];offset:[number,number];size:[number,number];heightOffset:number;ground:Float32Array;groundSize:[number,number];groundScale:number;flow:Uint8Array;profiles?:Float32Array;color?:{bytes:Uint8Array;size:[number,number]};tiles:{x:number;z:number;positions:Float32Array;indices:number[]}[]};
 /** Both imported maps and editable rivers feed the same source water renderer. */
 export function waterSurface(input:ImportedTerrain|HeightField):WaterSurfaceData{
@@ -18,7 +19,8 @@ export function waterSurface(input:ImportedTerrain|HeightField):WaterSurfaceData
  const cornerHeights=new Float32Array(stride*stride);
  const profiles=new Float32Array(256*4*4),profileIds=new Map<string,number>();
  const linear=(hex:string)=>[1,3,5].map(i=>{const v=parseInt(hex.slice(i,i+2),16)/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
- for(const river of field.watercourses){if(profileIds.has(river.profile))continue;const id=profileIds.size+1;if(id>255)throw Error('A map supports at most 255 distinct water profiles');profileIds.set(river.profile,id);const p=river.style;
+ const styles=[...(field.cellWater?.profiles??[]).map(profile=>{const style=landscapeAssets.find(a=>a.id===profile)?.water;if(!style)throw Error('Missing water profile '+profile);return {profile,style};}),...field.watercourses];
+ for(const river of styles){if(profileIds.has(river.profile))continue;const id=profileIds.size+1;if(id>255)throw Error('A map supports at most 255 distinct water profiles');profileIds.set(river.profile,id);const p=river.style;
   profiles.set([...linear(p.shallowColor),p.clarity],id*4);profiles.set([...linear(p.deepColor),p.reflectionStrength],(256+id)*4);
   profiles.set([p.rippleScale,p.rippleStrength,p.causticStrength,p.foamStrength],(512+id)*4);profiles.set([p.cloudStrength,p.flowSpeed,0,0],(768+id)*4);
  }
@@ -35,6 +37,7 @@ export function waterSurface(input:ImportedTerrain|HeightField):WaterSurfaceData
  for(let z=0;z<span;z++)for(let x=0;x<span;x++){
   const wx=x+origin[0]+.5,wz=z+origin[1]+.5,i=(z*span+x)*4;
   flow[i]=flow[i+1]=128;flow[i+3]=0;
+  if(field.cellWater)flow.set(field.cellWater.flow.subarray(i,i+4),i);
   const cell=z*span+x;centers[cell]=field.sample(wx,wz)>surface(wx,wz)+.15?1:2;
   if(centers[cell]===1)continue;
   wet.add(Math.floor(x/16)+':'+Math.floor(z/16));

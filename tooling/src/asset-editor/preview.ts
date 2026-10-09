@@ -49,7 +49,7 @@ export class ProductionPreview{
    const recipe=asset.recipe??definitions.at(-1)!.recipe!,spline={type:'spline',knots:[{x:x-20,z:z-10,elevation:-.2,outgoing:{x:x-7,z:z-17}},{x:x+20,z:z+10,elevation:-.2,incoming:{x:x+6,z:z+17}}]};
    const region={type:'region',points:[{x:x-16,z:z-16},{x:x+16,z:z-16},{x:x+16,z:z+16},{x:x-16,z:z+16}]};
    const needsRiver='riverBank'in recipe&&recipe.riverBank;
-   map={...map,authoring:authoringSceneSchema.parse({version:1,objects:map.authoring?.objects??[],layers:[...(map.authoring?.layers??[]),...(needsRiver?[{id:'preview.bank-stream',name:'Preview stream',seed:1,recipe:'recipe.river.gentle',shape:spline}]:[]),{id:'preview.asset-layer',name:asset.name,seed:1,recipe:asset.recipe?asset.id:'preview.river',shape:['river','path'].includes(recipe.type)?spline:region}]})};
+   map={...map,authoring:authoringSceneSchema.parse({version:1,objects:map.authoring?.objects??[],layers:[...([]),...(needsRiver?[{id:'preview.bank-stream',name:'Preview stream',seed:1,recipe:'recipe.river.gentle',shape:spline}]:[]),{id:'preview.asset-layer',name:asset.name,seed:1,recipe:asset.recipe?asset.id:'preview.river',shape:['river','path'].includes(recipe.type)?spline:region}]})};
   }
   const isSubject=asset.usesGeometry&&['unit','creature','building'].includes(asset.kind);
   const sceneKey=JSON.stringify([settings.mode,settings.map,settings.environment,asset,asset.recipe||asset.water?[settings.x,settings.z]:null]);

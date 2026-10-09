@@ -51,3 +51,14 @@ export function enhanceWeapon(holder:Entity,target:Entity,registry:ContentRegist
  const p=grant.attackBonus!;if(p.manaCost)holder.abilities!.mana-=p.manaCost;
  return {ability:grant.ability,rank:grant.rank,bonus:p.amount,...(p.status?{status:p.status}:{})};
 }
+
+/** A mark benefits its source's primary weapon only, never allies, spells or cleave. */
+export function markedWeaponBonus(source:Entity,target:Entity,registry:ContentRegistry,tick:number){
+ let bonus=0;
+ for(const s of target.spellStatuses??[]){
+  if(s.source!==source.id||s.owner!==source.owner||s.expires<=tick)continue;
+  const a=registry.findAbility(s.ability),d=a&&statusDefinition(a,s.status);
+  if(a&&d?.sourceAttackBonus!==undefined)bonus+=value(d.sourceAttackBonus,a.ranks[s.rank-1])*(s.stacks??1);
+ }
+ return bonus;
+}

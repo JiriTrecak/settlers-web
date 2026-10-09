@@ -122,10 +122,12 @@ export function parseMatchConfig(raw: unknown): MatchConfig | null {
     const r = s as Record<string, unknown>;
     if (typeof r.player !== "number" || (r.kind !== "human" && r.kind !== "ai"))
       return null;
+    if(r.race!==undefined&&(typeof r.race!=='string'||!/^[a-z][a-z0-9-]*$/.test(r.race)))return null;
     if(r.hero!==undefined&&!idSchema.safeParse(r.hero).success)return null;
     slots.push({
       player: r.player,
       kind: r.kind,
+      ...(typeof r.race==='string'?{race:r.race}:{}),
       ...(typeof r.hero==='string'?{hero:r.hero}:{}),
       ...(typeof r.team === "number" ? { team: r.team } : {}),
       name: typeof r.name === "string" ? r.name : undefined,

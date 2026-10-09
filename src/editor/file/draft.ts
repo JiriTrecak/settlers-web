@@ -1,5 +1,5 @@
 import {fingerprint} from '../../content/registry';
-import {parseUtcMap,type UtcMap} from '../../shared/map/utcmap';
+import {parseUtcMap,stringifyUtcMap,type UtcMap} from '../../shared/map/utcmap';
 
 /** Drafts belong to a map and the exact project revision they were edited from. */
 export class EditorDraft {
@@ -27,7 +27,7 @@ export class EditorDraft {
     // Preserve before the editor's first sync writes its new draft. No deletion/migration in place.
     const recoveryKey=this.key+'.recovery:'+fingerprint(map);
     try{
-     this.storage.setItem(recoveryKey,JSON.stringify(map));
+     this.storage.setItem(recoveryKey,stringifyUtcMap(map));
      this.storage.setItem(this.key+'.recovery',recoveryKey);
     }catch{this.preserveStoredDraft=true;}
     return {recovery:map};
@@ -39,6 +39,6 @@ export class EditorDraft {
  }
  write(map:UtcMap,dirty:boolean){
   if(this.preserveStoredDraft)return; // Never overwrite the only older draft when recovery storage is full.
-  try{this.storage.setItem(this.key,JSON.stringify({version:1,baseRevision:this.baseRevision,dirty,map}));}catch{/* Export remains available when storage is full. */}
+  try{this.storage.setItem(this.key,JSON.stringify({version:1,baseRevision:this.baseRevision,dirty,map:JSON.parse(stringifyUtcMap(map))}));}catch{/* Export remains available when storage is full. */}
  }
 }

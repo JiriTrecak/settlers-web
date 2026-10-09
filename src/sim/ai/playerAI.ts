@@ -1,3 +1,4 @@
+import {raceAI} from '../../content/races';
 import {SimulationProfiler} from '../profiling';
 import {continuesOrder,orderIntent,approachingArmy,REINFORCEMENT_JOIN_RADIUS} from './orderContinuity';
 import { canonical, type ContentRegistry } from "../../content/registry";
@@ -40,15 +41,17 @@ export class PlayerAI {
     seed: number,
     readonly allies: readonly Owner[] = [owner],
     readonly phase = 0,
+    readonly race?:string,
   ) {
     this.state = newAIState(geography.map.fingerprint, seed);
   }
+  get aiRules(){return raceAI(this.registry.rules,this.race);}
   /** Build derived route profiles while loading, from the ordinary observation. */
   prepareNavigation(input:SettlementView){
-    new Frame(playerObservation(input,this.owner),this.owner,this.registry,this.geography,0,this.blockers,this.profile).prepareNavigation();
+    new Frame(playerObservation(input,this.owner),this.owner,this.registry,this.geography,0,this.blockers,this.profile,this.race).prepareNavigation();
   }
   due(tick: number) {
-    return tick % this.registry.rules.ai.decisionTicks === this.phase;
+    return tick % this.aiRules.decisionTicks === this.phase;
   }
   snapshot() {
     return structuredClone(this.state);
@@ -107,7 +110,7 @@ export class PlayerAI {
   }
   decide(tick: number, input: SettlementView): AICommand[] {
     const s = this.state,
-      rules = this.registry.rules.ai;
+      rules = this.aiRules;
     if (input.outcome || !this.due(tick)) return [];
     const f = this.profile.measure('Observation and frame',()=>new Frame(
       playerObservation(input, this.owner),
@@ -117,6 +120,7 @@ export class PlayerAI {
       tick,
       this.blockers,
       this.profile,
+      this.race,
     ));
     this.profile.measure('Memory',()=>this.observe(f));
     const output: AICommand[] = [],
@@ -213,8 +217,8 @@ export class PlayerAI {
             ? Math.min(
                 old.reactAt > f.tick
                   ? old.reactAt
-                  : f.tick + this.registry.rules.ai.reactionTicks,
-                f.tick + this.registry.rules.ai.reactionTicks,
+                  : f.tick + this.aiRules.reactionTicks,
+                f.tick + this.aiRules.reactionTicks,
               )
             : (old?.reactAt ?? f.tick),
       };
@@ -358,7 +362,7 @@ export class PlayerAI {
         s.mission = null;
       else return;
     }
-    const rules = f.registry.rules.ai,
+    const rules = f.aiRules,
       power = f.army.reduce((n, e) => n + f.power(e), 0);
     const buildings = f.view.entities
       .filter(
@@ -481,7 +485,7 @@ export class PlayerAI {
   }
   private operations(f: Frame, emit: (a: Action, reason: string) => boolean) {
     const s = this.state,
-      rules = this.registry.rules.ai;
+      rules = this.aiRules;
     const threats = f.hostiles.filter(
         (e) => e.unit && distance(e, f.home) < 30,
       ),
@@ -490,7 +494,7 @@ export class PlayerAI {
       localPower = local.reduce((n, e) => n + f.power(e), 0);
     const totalPower = f.army.reduce((n, e) => n + f.power(e), 0),
       smallRaid =
-        f.registry.rules.ai.composition.reduce(
+        f.aiRules.composition.reduce(
           (n, c) => Math.min(n, f.nominalPower(f.registry.get(c.definition))),
           Infinity,
         ) * 2;

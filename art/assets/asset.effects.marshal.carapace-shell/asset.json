@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "id": "asset.effects.marshal.carapace-shell",
+  "name": "Living chitin shell",
+  "kind": "texture",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "483b22300bbad642ea7b22d3415971eb8f56c43f81c1ae4be2c529406404b16a",
+      "bytes": 923
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "d6ef710f96fe96f8350ffe954dc66c3c046cba0e11ac20acb04ca0d7934055df",
+      "bytes": 319902
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "90c6c502d0905e2f92d0a938b21955885932c0630e612cf450fc73a7f1a9ae59",
+      "bytes": 1304718
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

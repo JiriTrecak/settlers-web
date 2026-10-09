@@ -107,17 +107,17 @@ export const entitySchema = z
           goal:natural.max(1048575),
           waypoint:natural.max(1048575),
           yielding:z.object({leader:positive,until:natural}).strict().optional(),
-          points:z.array(z.object({x:natural.max(511000),y:natural.max(511000),surface:surfaceSchema.optional()}).strict()).min(1).max(256),
+          points:z.array(z.object({x:natural.max(2047000),y:natural.max(2047000),surface:surfaceSchema.optional()}).strict()).min(1).max(256),
         }).strict().optional(),
         goal: natural.max(1048575).nullable(),
         position: z
-          .object({ x: natural.max(511000), y: natural.max(511000), surface: surfaceSchema.optional() })
+          .object({ x: natural.max(2047000), y: natural.max(2047000), surface: surfaceSchema.optional() })
           .strict()
           .nullable(),
         segment: z
           .object({
             from: z
-              .object({ x: natural.max(511000), y: natural.max(511000), surface: surfaceSchema.optional() })
+              .object({ x: natural.max(2047000), y: natural.max(2047000), surface: surfaceSchema.optional() })
               .strict(),
             to: natural.max(1048575),
             length: positive,

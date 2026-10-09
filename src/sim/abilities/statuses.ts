@@ -20,14 +20,22 @@ export function spellStatusDefinition(s:SpellStatus,registry:ContentRegistry){
 export function spellModifiers(e:Pick<Entity,'equipment'|'itemStatuses'|'spellStatuses'>,registry:ContentRegistry):ItemModifiers[]{
  if(!e.spellStatuses?.length)return [];
  const immune=controlImmunities(e,registry);
- return (e.spellStatuses??[]).flatMap(s=>{
+ const sourceGroups=new Map<string,ItemModifiers>();
+ const result=(e.spellStatuses??[]).flatMap(s=>{
   const d=spellStatusDefinition(s,registry),a=registry.findAbility(s.ability);if(!d||!a)return [];
-  const m=statusModifiersRaw(d,a,s.rank),blocked=blockedStatusControls(s,immune);
+  const m=statusModifiersRaw(d,a,s.rank,s.stacks??1),blocked=blockedStatusControls(s,immune);
   if(blocked.has('root'))delete m.rooted;
   if(blocked.has('moveSlow')&&(m.moveSpeedPermille??0)<0)delete m.moveSpeedPermille;
   if(blocked.has('attackSlow')&&(m.attackSpeedPermille??0)<0)delete m.attackSpeedPermille;
+  if(d.stacking?.scope==='source'){
+   // Keep independent damage marks, but a named debuff never multiplies its slow across casters.
+   const key=s.ability+':'+s.status,combined=sourceGroups.get(key)??{};
+   for(const [key,v] of Object.entries(m)){const previous=(combined as Record<string,number|boolean>)[key];if(previous===undefined||typeof v==='number'&&Math.abs(v)>Math.abs(Number(previous)))(combined as Record<string,unknown>)[key]=v;}
+   sourceGroups.set(key,combined);return [];
+  }
   return [m];
  });
+ return [...result,...sourceGroups.values()];
 }
 export function spellControl(e:Entity,registry:ContentRegistry,kind:'stun'|'disarm'|'silence'|'itemBlocked'){
  if(!e.spellStatuses?.length)return false;
@@ -105,13 +113,14 @@ export class SpellStatuses{
    const sourceContext=needsSource?(context?.origin.sourceContext??(this.c.get(source)?spellSource(this.c,this.c.get(source)!):undefined)):undefined;
    if(needsSource&&(!sourceContext||sourceContext.owner!==resolvedOwner))return 0;
    const statuses=e.spellStatuses??=[];
-   const existing=statuses.find(s=>s.ability===ability.id&&s.status===effect.id);
+   const existing=statuses.find(s=>s.ability===ability.id&&s.status===effect.id&&(effect.stacking?.scope!=='source'||s.source===source));
    // Same aura does not stack. Prefer the stronger rank, then the lower source ID.
    if(aura&&existing&&(existing.rank>rank||existing.rank===rank&&existing.source<source))return 0;
    if(existing)statuses.splice(statuses.indexOf(existing),1);
    if(statuses.length>=32)return 0;
 
-   statuses.push({...(sourceContext?{sourceContext}:{}),owner:resolvedOwner,ability:ability.id,status:effect.id,source,rank,cast,started:now,expires:now+(aura?1:duration),nextTick:now+(effect.periodic?.intervalTicks??duration),...(blocked.length?{blockedControls:blocked}:{}),...(effect.shield!==undefined?{shield:value(effect.shield,ability.ranks[rank-1])}:{}),aura});
+   const stacks=effect.stacking?Math.min(effect.stacking.max,(existing&&existing.expires>now?(existing.stacks??1):0)+1):undefined;
+   statuses.push({...(stacks?{stacks}:{}),...(sourceContext?{sourceContext}:{}),owner:resolvedOwner,ability:ability.id,status:effect.id,source,rank,cast,started:now,expires:now+(aura?1:duration),nextTick:now+(effect.periodic?.intervalTicks??duration),...(blocked.length?{blockedControls:blocked}:{}),...(effect.shield!==undefined?{shield:value(effect.shield,ability.ranks[rank-1])}:{}),aura});
    const stun=spellControl(e,this.c.registry,'stun'),silence=spellControl(e,this.c.registry,'silence'),disarm=spellControl(e,this.c.registry,'disarm')||isEthereal(e,this.c.registry);
    if(stun||silence)this.game.abilities.cancel(e.id,stun?'Stunned':'Silenced');
    if(stun||disarm){if(e.unit)delete e.unit.attack;}

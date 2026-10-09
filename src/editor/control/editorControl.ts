@@ -21,7 +21,6 @@ import {
 import { readUtcMap, stringifyUtcMap } from "../../shared";
 import type {
   CurvePoint,
-  TerrainLayer,
 } from "../../shared/landscape/curve";
 /**
  * Named editor ops the MCP bridge dispatches. Add a method here when you add a tool.
@@ -75,7 +74,9 @@ export class EditorControl {
         case 'remove':e.selectLayer({kind:p.kind,id:p.id});pending=e.removeLayerSelection();break;
         case 'batch':pending=e.applySceneEdits(p.edits);break;
         case 'lock':e.selectLayer({kind:p.kind,id:p.id});pending=e.lockLayerSelection(p.locked);break;
-        case 'bake':e.selectLayer({kind:'layer',id:p.id});pending=e.bakeSelectedLayer();break;
+        case 'apply':pending=e.applyGenerators();break;
+        case 'terrain':pending=e.editGridTerrain(p.edit);break;
+        case 'cleanup':return e.cleanupObjects(p.request,p.preview);
         case 'undo':pending=e.undoLayers();break;case 'redo':pending=e.undoLayers(true);break;
         case 'camera':e.authoringCamera(p.mode);break;
       }
@@ -159,7 +160,7 @@ export class EditorControl {
     screenshot: (p) => this.screenshot(p),
   };
 
-  private decals(params: unknown): unknown {
+  private async decals(params: unknown): Promise<unknown> {
     const o = obj(params),
       action = String(o.action ?? "list");
     const list = () => this.editor.map.landscape?.decals ?? [];
@@ -176,7 +177,7 @@ export class EditorControl {
       if (!validDecal(d)) throw new Error("Invalid decal");
       if (list().some((item) => item.id === d.id))
         throw new Error("Decal id already exists");
-      this.editor.putDecal(d);
+      await this.editor.putDecal(d);
     } else if (action === "update") {
       const current = list().find((d) => d.id === o.id);
       if (!current) throw new Error("Unknown decal id");
@@ -192,11 +193,11 @@ export class EditorControl {
         if (o[key] !== undefined)
           (d as unknown as Record<string, unknown>)[key] = o[key];
       if (!validDecal(d)) throw new Error("Invalid decal");
-      this.editor.putDecal(d);
+      await this.editor.putDecal(d);
     } else if (action === "delete") {
       if (typeof o.id !== "string" || !list().some((d) => d.id === o.id))
         throw new Error("Unknown decal id");
-      this.editor.removeDecal(o.id);
+      await this.editor.removeDecal(o.id);
     } else if (action === "config") {
       const d: Partial<GroundDecal> = {};
       for (const key of ["kind", "size", "rotation", "opacity"] as const)
@@ -287,18 +288,15 @@ export class EditorControl {
         )
       )
         throw new Error("Provide 1..128 finite curve points");
-      const mode = str(o.mode) ?? "terrain";
+      const mode = str(o.mode) ?? "raise";
       if (
-        !["terrain", "river", "shallows", "cover", "foliage", "raise", "smooth", "flatten"].includes(
+        !["raise", "smooth", "flatten"].includes(
           mode,
         )
       )
         throw new Error("Invalid curve mode");
       const radius = num(o.radius) ?? 4;
       if (radius <= 0 || radius > 64) throw new Error("radius must be 0..64");
-      const layer = str(o.layer) ?? "sand";
-      if (!["grass", "sand", "road", "mud", "rock", "snow"].includes(layer))
-        throw new Error("Invalid terrain layer");
       const depth = num(o.depth) ?? 1.4;
       if (Math.abs(depth) > 16) throw new Error("depth must be -16..16");
       const opacity = num(o.opacity) ?? 1;
@@ -307,54 +305,9 @@ export class EditorControl {
         points,
         radius,
         mode: mode as
-          "terrain" | "river" | "shallows" | "cover" | "foliage" | "raise" | "smooth" | "flatten",
+          "raise" | "smooth" | "flatten",
         depth,
-        layer: layer as TerrainLayer,
         opacity,
-      });
-    } else if (action === "cover") {
-      const x = num(o.x),
-        z = num(o.z),
-        radius = num(o.radius) ?? 10,
-        density = num(o.density) ?? 3,
-        flowers = num(o.flowers) ?? 0.1;
-      if (
-        x === undefined ||
-        z === undefined ||
-        radius <= 0 ||
-        radius > 100 ||
-        density < 0 ||
-        density > 12 ||
-        flowers < 0 ||
-        flowers > 1
-      )
-        throw new Error("Invalid cover patch");
-      const palette = str(o.palette);
-      if (
-        palette !== undefined &&
-        !["meadow", "straw", "ochre", "sage", "forest"].includes(palette)
-      )
-        throw new Error("Invalid cover palette");
-      const grassScale = num(o.grassScale),
-        broadRatio = num(o.broadRatio);
-      if (
-        (o.grassScale !== undefined &&
-          (grassScale === undefined || grassScale < 0.2 || grassScale > 4)) ||
-        (o.broadRatio !== undefined &&
-          (broadRatio === undefined || broadRatio < 0 || broadRatio > 1))
-      )
-        throw new Error("Invalid cover proportions");
-      this.editor.addCover({
-        x,
-        z,
-        radius,
-        density,
-        flowers,
-        grassScale,
-        broadRatio,
-        seed: num(o.seed) ?? 42,
-        palette: palette as
-          "meadow" | "straw" | "ochre" | "sage" | "forest" | undefined,
       });
     } else if (action === "water") {
       const water = parseWaterStyle({
@@ -602,7 +555,7 @@ export class EditorControl {
     };
   }
 
-  private clean(raw: unknown): unknown {
+  private async clean(raw: unknown): Promise<unknown> {
     const o = obj(raw);
     const r = num(o.radius);
     if (r !== undefined) this.editor.setCleanRadius(r);
@@ -614,6 +567,7 @@ export class EditorControl {
     this.editor.setCleanType(o.type === "foliage" ? "foliage" : "objects");
     this.editor.setTool("clean");
     this.editor.dabClean(x, z);
+    await this.editor.applyClean();
     return {
       stamps: this.editor.map.stamps.length,
       radius: this.editor.clean.radius,

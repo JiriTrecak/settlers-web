@@ -1,3 +1,4 @@
+import {raceDefinition} from './races';
 import {startingUnits,startingUnitPosition} from './startingHero';
 import type {Slot} from '../shared/match/match';
 import {placementGeometryError} from '../shared/spatial/placement';
@@ -22,10 +23,11 @@ function placementFloors(map:UtcMap){
 
 /** Expansion is pure author data → explicit placements, never a separate simulation constructor. */
 export function expandMap(map: UtcMap, registry: ContentRegistry, slots: readonly Slot[] = []): Placement[] {
+  for(const slot of slots)raceDefinition(registry.rules,slot.race);
   const result = [...map.entities,...(projectScene(map)?.resources??[])];
   for (const s of map.mission || map.sandbox ? [] : map.playerStarts) {
-    const setup = registry.rules.startingSetup;
-    if (s.setup !== setup.id)
+    const setup = raceDefinition(registry.rules,slots.find(slot=>slot.player===s.player-1)?.race).startingSetup;
+    if (s.setup !== registry.rules.startingSetup.id && !Object.values(registry.rules.races).some(r=>r.startingSetup?.id===s.setup))
       throw new Error(`Player ${s.player}: unknown setup ${s.setup}`);
     const prefix = `start.player.${s.player}`,
       owner = `player.${s.player}` as const;
@@ -60,6 +62,8 @@ export function validatePlacements(
 ): void {
   if(map.mission) {
     missionSchema.parse(map.mission);
+    raceDefinition(registry.rules,map.mission.race??registry.rules.campaigns[map.mission.campaign]?.race);
+    for(const [owner,race] of Object.entries(map.mission.playerRaces??{})){raceDefinition(registry.rules,race);if(!map.playerStarts.some(s=>`player.${s.player}`===owner))throw Error(`Mission race assigned to missing participant ${owner}`);}
     for(const tag of map.mission.company??[]){
       const p=map.entities.find(p=>p.id===tag);
       if(!p||p.activation||p.owner!=='player.1'||registry.get(p.definition).kind!=='unit')throw new Error(`Invalid campaign company slot: ${tag}`);

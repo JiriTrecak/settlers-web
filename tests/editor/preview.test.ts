@@ -63,7 +63,7 @@ it('rotates an authored object and undoes it without another terrain upload',()=
  const renderer={setTerrain:vi.fn(),setLandscape:vi.fn(),setSpawnPoints:vi.fn(),setSelected:vi.fn(),gameSelect:vi.fn(),previewCurve:vi.fn(),draw:vi.fn(),camera:{setGame:vi.fn()}};
  (editor as any).renderer=renderer;
  const object={id:'test.oak',asset:'asset.models.environment.canopy-oak',x:20,z:20,elevation:3,yaw:0,scale:1,heightMode:'absolute' as const,visible:true,locked:false};
- editor.replace({...emptyUtcMap(),authoring:{version:1,layers:[],objects:[object]}});
+ editor.replace({...emptyUtcMap(),authoring:{...emptyUtcMap().authoring!,objects:[object]}});
  const field=(editor as any).compiledScene.field;
  editor.putAuthoredObject({...object,yaw:1});
  expect(renderer.setTerrain).toHaveBeenCalledTimes(1);expect((editor as any).compiledScene.field).toBe(field);

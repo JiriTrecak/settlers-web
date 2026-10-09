@@ -12,16 +12,7 @@
         "playerControl": {},
         "work": {
           "carryCapacity": 10,
-          "builds": [
-            "building.ants.fort",
-            "building.ants.barracks",
-            "building.ants.house",
-            "building.ants.tower",
-            "building.ants.sanctuary",
-            "building.ants.ironroot-forge",
-            "building.ants.rootworks",
-            "building.ants.bombardier-workshop"
-          ]
+          "builds": []
         }
       }
     },
@@ -805,6 +796,114 @@
             "splashSlowPermille": 350
           }
         ]
+      },
+      "research.beetles.serrated-tools": {
+        "name": "Serrated Tools",
+        "description": "Workers extract wood twice as fast. Each tree still contains fifty Wood.",
+        "icon": "icon.item.root",
+        "priority": 100,
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 100
+          },
+          {
+            "item": "item.wood",
+            "amount": 60
+          }
+        ],
+        "workTicks": 1200,
+        "effects": [
+          {
+            "units": [
+              "unit.beetles.worker"
+            ],
+            "treeWorkRate": 2
+          }
+        ]
+      },
+      "research.beetles.reinforced-carapace": {
+        "name": "Reinforced Carapace",
+        "description": "Horn Guards gain 150 maximum health and 2 armor. Existing wounds are preserved.",
+        "icon": "icon.item.root",
+        "priority": 90,
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 150
+          },
+          {
+            "item": "item.wood",
+            "amount": 80
+          }
+        ],
+        "workTicks": 1600,
+        "effects": [
+          {
+            "units": [
+              "unit.beetles.horn-guard"
+            ],
+            "maxHp": 150,
+            "armor": 2
+          }
+        ]
+      },
+      "research.beetles.broadheads": {
+        "name": "Broadheads",
+        "description": "Stone Slingers deal 35% more attack damage.",
+        "icon": "icon.item.root",
+        "priority": 80,
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 150
+          },
+          {
+            "item": "item.wood",
+            "amount": 60
+          }
+        ],
+        "workTicks": 1600,
+        "effects": [
+          {
+            "units": [
+              "unit.beetles.stone-slinger"
+            ],
+            "damagePermille": 350
+          }
+        ]
+      },
+      "research.beetles.campaign-harness": {
+        "name": "Campaign Harness",
+        "description": "The Hornbreaker gains 200 maximum health. Existing wounds are preserved; the improvement remains through death and revival.",
+        "icon": "icon.item.root",
+        "priority": 50,
+        "requires": [
+          "building.beetles.great-bastion"
+        ],
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 200
+          },
+          {
+            "item": "item.wood",
+            "amount": 80
+          },
+          {
+            "item": "item.root",
+            "amount": 60
+          }
+        ],
+        "workTicks": 2000,
+        "effects": [
+          {
+            "units": [
+              "unit.beetles.hornbreaker"
+            ],
+            "maxHp": 200
+          }
+        ]
       }
     },
     "maxSupply": 100,
@@ -852,6 +951,151 @@
         150,
         300
       ]
+    },
+    "defaultRace": "ants",
+    "races": {
+      "ants": {
+        "name": "Ants",
+        "description": "Versatile colony with quick infantry and a broad combined-arms roster.",
+        "roster": [
+          "unit.ants.settler",
+          "unit.ants.warrior",
+          "unit.ants.archer",
+          "building.ants.fort",
+          "building.ants.great-mound",
+          "building.ants.elder-hall",
+          "building.ants.barracks",
+          "building.ants.forester",
+          "building.ants.house",
+          "building.ants.tower",
+          "unit.ants.marshal",
+          "building.ants.sanctuary",
+          "building.ants.ironroot-forge",
+          "building.ants.rootworks",
+          "unit.ants.hunter",
+          "unit.ants.bombardier",
+          "building.ants.bombardier-workshop",
+          "unit.ants.civilian",
+          "unit.ants.youngling"
+        ]
+      },
+      "beetles": {
+        "name": "Beetles",
+        "description": "Stout, expensive infantry and a relentless frontline champion. Economy follows the same rules as ants.",
+        "startingSetup": {
+          "fort": "building.beetles.bastion",
+          "inventory": {
+            "item.amber": 500,
+            "item.wood": 150
+          },
+          "units": [
+            {
+              "definition": "unit.beetles.worker",
+              "offset": {
+                "x": -4,
+                "y": 14
+              }
+            },
+            {
+              "definition": "unit.beetles.worker",
+              "offset": {
+                "x": 0,
+                "y": 14
+              }
+            },
+            {
+              "definition": "unit.beetles.worker",
+              "offset": {
+                "x": 4,
+                "y": 14
+              }
+            },
+            {
+              "definition": "unit.beetles.worker",
+              "offset": {
+                "x": -4,
+                "y": 18
+              }
+            },
+            {
+              "definition": "unit.beetles.worker",
+              "offset": {
+                "x": 0,
+                "y": 18
+              }
+            },
+            {
+              "definition": "unit.beetles.worker",
+              "offset": {
+                "x": 4,
+                "y": 18
+              }
+            }
+          ],
+          "id": "setup.beetles",
+          "gathering": [
+            {
+              "item": "item.amber",
+              "workers": 4,
+              "radius": 40
+            },
+            {
+              "item": "item.wood",
+              "workers": 2,
+              "radius": 40
+            }
+          ],
+          "hero": {
+            "default": "unit.beetles.hornbreaker",
+            "choices": [
+              "unit.beetles.hornbreaker"
+            ],
+            "offset": {
+              "x": 0,
+              "y": -16
+            }
+          }
+        },
+        "roster": [
+          "unit.beetles.worker",
+          "unit.beetles.horn-guard",
+          "unit.beetles.stone-slinger",
+          "unit.beetles.hornbreaker",
+          "building.beetles.bastion",
+          "building.beetles.great-bastion",
+          "building.beetles.elder-bastion",
+          "building.beetles.brood-den",
+          "building.beetles.war-lodge",
+          "building.beetles.shell-forge",
+          "building.beetles.ancestor-shrine",
+          "building.beetles.rootworks",
+          "building.beetles.hornwatch"
+        ],
+        "ai": {
+          "composition": [
+            {
+              "definition": "unit.beetles.horn-guard",
+              "weight": 65
+            },
+            {
+              "definition": "unit.beetles.stone-slinger",
+              "weight": 35
+            }
+          ],
+          "skillPreference": [
+            "ability.hornbreaker.colossus",
+            "ability.hornbreaker.overwhelm",
+            "ability.hornbreaker.horn-rush",
+            "ability.hornbreaker.steadfast"
+          ]
+        }
+      }
+    },
+    "campaigns": {
+      "vanguard": {
+        "name": "The Ant Vanguard",
+        "race": "ants"
+      }
     }
   },
   "definitions": [
@@ -878,6 +1122,16 @@
             "item.wood",
             "item.amber",
             "item.root"
+          ],
+          "builds": [
+            "building.ants.fort",
+            "building.ants.barracks",
+            "building.ants.house",
+            "building.ants.tower",
+            "building.ants.sanctuary",
+            "building.ants.ironroot-forge",
+            "building.ants.rootworks",
+            "building.ants.bombardier-workshop"
           ]
         },
         "movement": {
@@ -1309,7 +1563,7 @@
       "id": "building.ants.house",
       "kind": "building",
       "name": "Mound",
-      "description": "A compact colony mound that provides 6 supply when completed.",
+      "description": "A compact colony mound that provides 8 supply when completed.",
       "asset": "asset.ants.house",
       "icon": "icon.ants.house",
       "body": {
@@ -1353,7 +1607,7 @@
       "id": "building.ants.tower",
       "kind": "building",
       "name": "Watchtower",
-      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit’s own weapon and upgrades.",
+      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit\u2019s own weapon and upgrades.",
       "asset": "asset.ants.tower",
       "icon": "icon.ants.tower",
       "body": {
@@ -1967,7 +2221,7 @@
       "id": "item.trailkeeper-flask",
       "kind": "item",
       "itemTier": 1,
-      "name": "Trailkeeper’s Flask",
+      "name": "Trailkeeper\u2019s Flask",
       "description": "3 charges: restore 70 health and 25 mana. 10s cooldown between uses.",
       "asset": "asset.item.chest",
       "icon": "icon.item.trailkeeper-flask",
@@ -2051,7 +2305,7 @@
       "id": "item.scout-whistle",
       "kind": "item",
       "itemTier": 1,
-      "name": "Scout’s Whistle",
+      "name": "Scout\u2019s Whistle",
       "description": "2 charges: allied units within 6 tiles gain 15% movement speed for 8s. 25s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.scout-whistle",
@@ -2119,7 +2373,7 @@
       "id": "item.predator-talon",
       "kind": "item",
       "itemTier": 2,
-      "name": "Predator’s Talon",
+      "name": "Predator\u2019s Talon",
       "description": "+10 damage. Basic attacks restore 10% of damage dealt as health.",
       "asset": "asset.item.chest",
       "icon": "icon.item.predator-talon",
@@ -2166,7 +2420,7 @@
       "id": "item.broodkeeper-lantern",
       "kind": "item",
       "itemTier": 2,
-      "name": "Broodkeeper’s Lantern",
+      "name": "Broodkeeper\u2019s Lantern",
       "description": "Aura: allied living units within 6 tiles regenerate 2 health per second.",
       "asset": "asset.item.chest",
       "icon": "icon.item.broodkeeper-lantern",
@@ -2190,7 +2444,7 @@
       "id": "item.warcaller-standard",
       "kind": "item",
       "itemTier": 2,
-      "name": "Warcaller’s Standard",
+      "name": "Warcaller\u2019s Standard",
       "description": "Aura: allied units within 6 tiles gain 10% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.warcaller-standard",
@@ -2258,7 +2512,7 @@
       "id": "item.rootbinder-idol",
       "kind": "item",
       "itemTier": 2,
-      "name": "Rootbinder’s Idol",
+      "name": "Rootbinder\u2019s Idol",
       "description": "Activate: enemies within 4 tiles take 60 magic damage and are rooted for 2s (they can still attack). 35s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.rootbinder-idol",
@@ -2339,7 +2593,7 @@
       "id": "item.reaper-mandible",
       "kind": "item",
       "itemTier": 3,
-      "name": "Reaper’s Mandible",
+      "name": "Reaper\u2019s Mandible",
       "description": "+18 damage. Every fourth basic hit cleaves up to 4 enemies within 3 tiles of the target for 50% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.reaper-mandible",
@@ -2722,7 +2976,7 @@
       "id": "unit.ants.hunter",
       "kind": "unit",
       "name": "Hunter",
-      "description": "Spear infantry that charges enemy units from 3–8 building cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
+      "description": "Spear infantry that charges enemy units from 3\u20138 building cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
       "asset": "asset.ants.hunter",
       "icon": "icon.ants.hunter",
       "selectionClass": "army",
@@ -3321,7 +3575,7 @@
     {
       "id": "item.briar-ledger",
       "kind": "item",
-      "name": "Merchant’s Leaf Ledger",
+      "name": "Merchant\u2019s Leaf Ledger",
       "description": "Return this stolen ledger to Pell at the roadside cart.",
       "asset": "asset.briar.leaf-ledger",
       "icon": "icon.briar.leaf-ledger",
@@ -3416,7 +3670,7 @@
     {
       "id": "item.briar-rescue-ring",
       "kind": "item",
-      "name": "Caretaker’s Ring",
+      "name": "Caretaker\u2019s Ring",
       "description": "A gift for bringing the youngling home. +1 armor.",
       "asset": "asset.briar.family-ring",
       "icon": "icon.briar.family-ring",
@@ -3475,7 +3729,7 @@
       "id": "unit.neutral.thorn-slinger",
       "kind": "unit",
       "name": "Thorn Slinger",
-      "description": "Thornback Foragers · ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
+      "description": "Thornback Foragers \u00b7 ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
       "asset": "asset.neutral.thorn-slinger",
       "icon": "icon.neutral.thorn-slinger",
       "selectionClass": "army",
@@ -3521,7 +3775,7 @@
       "id": "unit.neutral.dew-sprite",
       "kind": "unit",
       "name": "Dew Sprite",
-      "description": "Dewdrop Sprites · ranged forest creature. Fragile water spirits gathered around wet leaves.",
+      "description": "Dewdrop Sprites \u00b7 ranged forest creature. Fragile water spirits gathered around wet leaves.",
       "asset": "asset.neutral.dew-sprite",
       "icon": "icon.neutral.dew-sprite",
       "selectionClass": "army",
@@ -3567,7 +3821,7 @@
       "id": "unit.neutral.puddle-wisp",
       "kind": "unit",
       "name": "Puddle Wisp",
-      "description": "Dewdrop Sprites · melee forest creature. Fragile water spirits gathered around wet leaves.",
+      "description": "Dewdrop Sprites \u00b7 melee forest creature. Fragile water spirits gathered around wet leaves.",
       "asset": "asset.neutral.puddle-wisp",
       "icon": "icon.neutral.puddle-wisp",
       "selectionClass": "army",
@@ -3610,7 +3864,7 @@
       "id": "unit.neutral.webling",
       "kind": "unit",
       "name": "Webling",
-      "description": "Hungry Weblings · melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "description": "Hungry Weblings \u00b7 melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
       "asset": "asset.neutral.webling",
       "icon": "icon.neutral.webling",
       "selectionClass": "army",
@@ -3653,7 +3907,7 @@
       "id": "unit.neutral.spitter",
       "kind": "unit",
       "name": "Spitter",
-      "description": "Hungry Weblings · ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "description": "Hungry Weblings \u00b7 ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
       "asset": "asset.neutral.spitter",
       "icon": "icon.neutral.spitter",
       "selectionClass": "army",
@@ -3699,7 +3953,7 @@
       "id": "unit.neutral.capling",
       "kind": "unit",
       "name": "Capling",
-      "description": "Mushroom Circle · melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "description": "Mushroom Circle \u00b7 melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
       "asset": "asset.neutral.capling",
       "icon": "icon.neutral.capling",
       "selectionClass": "army",
@@ -3742,7 +3996,7 @@
       "id": "unit.neutral.puffcap",
       "kind": "unit",
       "name": "Puffcap",
-      "description": "Mushroom Circle · ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "description": "Mushroom Circle \u00b7 ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
       "asset": "asset.neutral.puffcap",
       "icon": "icon.neutral.puffcap",
       "selectionClass": "army",
@@ -3788,7 +4042,7 @@
       "id": "unit.neutral.rootling",
       "kind": "unit",
       "name": "Rootling",
-      "description": "Rootbound Guardians · melee forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians \u00b7 melee forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.rootling",
       "icon": "icon.neutral.rootling",
       "selectionClass": "army",
@@ -3831,7 +4085,7 @@
       "id": "unit.neutral.twigcaster",
       "kind": "unit",
       "name": "Twigcaster",
-      "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.twigcaster",
       "icon": "icon.neutral.twigcaster",
       "selectionClass": "army",
@@ -3877,7 +4131,7 @@
       "id": "unit.neutral.old-root",
       "kind": "unit",
       "name": "Old Root",
-      "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.old-root",
       "icon": "icon.neutral.old-root",
       "selectionClass": "army",
@@ -3923,7 +4177,7 @@
       "id": "unit.neutral.hornet-guard",
       "kind": "unit",
       "name": "Hornet Guard",
-      "description": "Hornet Raiders · melee forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.hornet-guard",
       "icon": "icon.neutral.hornet-guard",
       "selectionClass": "army",
@@ -3966,7 +4220,7 @@
       "id": "unit.neutral.needle-wasp",
       "kind": "unit",
       "name": "Needle Wasp",
-      "description": "Hornet Raiders · ranged forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders \u00b7 ranged forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.needle-wasp",
       "icon": "icon.neutral.needle-wasp",
       "selectionClass": "army",
@@ -4012,7 +4266,7 @@
       "id": "unit.neutral.nest-mother",
       "kind": "unit",
       "name": "Nest Mother",
-      "description": "Hornet Raiders · melee forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.nest-mother",
       "icon": "icon.neutral.nest-mother",
       "selectionClass": "army",
@@ -4055,7 +4309,7 @@
       "id": "unit.neutral.young-toad",
       "kind": "unit",
       "name": "Young Toad",
-      "description": "Bog Toad Hunters · melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters \u00b7 melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.young-toad",
       "icon": "icon.neutral.young-toad",
       "selectionClass": "army",
@@ -4098,7 +4352,7 @@
       "id": "unit.neutral.tree-frog",
       "kind": "unit",
       "name": "Tree Frog",
-      "description": "Bog Toad Hunters · ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.tree-frog",
       "icon": "icon.neutral.tree-frog",
       "selectionClass": "army",
@@ -4144,7 +4398,7 @@
       "id": "unit.neutral.tadpole-spirit",
       "kind": "unit",
       "name": "Tadpole Spirit",
-      "description": "Bog Toad Hunters · ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -4190,7 +4444,7 @@
       "id": "unit.neutral.briar-hulk",
       "kind": "unit",
       "name": "Briar Hulk",
-      "description": "Briar Covenant · melee forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant \u00b7 melee forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.briar-hulk",
       "icon": "icon.neutral.briar-hulk",
       "selectionClass": "army",
@@ -4233,7 +4487,7 @@
       "id": "unit.neutral.seedcaster",
       "kind": "unit",
       "name": "Seedcaster",
-      "description": "Briar Covenant · ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.seedcaster",
       "icon": "icon.neutral.seedcaster",
       "selectionClass": "army",
@@ -4279,7 +4533,7 @@
       "id": "unit.neutral.bloom-witch",
       "kind": "unit",
       "name": "Bloom Witch",
-      "description": "Briar Covenant · ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.bloom-witch",
       "icon": "icon.neutral.bloom-witch",
       "selectionClass": "army",
@@ -4325,7 +4579,7 @@
       "id": "unit.neutral.hollow-stag",
       "kind": "unit",
       "name": "Hollow Stag",
-      "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.hollow-stag",
       "icon": "icon.neutral.hollow-stag",
       "selectionClass": "army",
@@ -4368,7 +4622,7 @@
       "id": "unit.neutral.barkguard",
       "kind": "unit",
       "name": "Barkguard",
-      "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.barkguard",
       "icon": "icon.neutral.barkguard",
       "selectionClass": "army",
@@ -4411,7 +4665,7 @@
       "id": "unit.neutral.willow-wisp",
       "kind": "unit",
       "name": "Willow Wisp",
-      "description": "The Hollow Stag · ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag \u00b7 ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.willow-wisp",
       "icon": "icon.neutral.willow-wisp",
       "selectionClass": "army",
@@ -4457,7 +4711,7 @@
       "id": "unit.neutral.rotwood-ancient",
       "kind": "unit",
       "name": "Rotwood Ancient",
-      "description": "The Rotwood Court · melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.rotwood-ancient",
       "icon": "icon.neutral.rotwood-ancient",
       "selectionClass": "army",
@@ -4500,7 +4754,7 @@
       "id": "unit.neutral.corrupted-rootbeast",
       "kind": "unit",
       "name": "Corrupted Rootbeast",
-      "description": "The Rotwood Court · melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.corrupted-rootbeast",
       "icon": "icon.neutral.corrupted-rootbeast",
       "selectionClass": "army",
@@ -4543,7 +4797,7 @@
       "id": "unit.neutral.violet-sporeling",
       "kind": "unit",
       "name": "Violet Sporeling",
-      "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.violet-sporeling",
       "icon": "icon.neutral.violet-sporeling",
       "selectionClass": "army",
@@ -4589,7 +4843,7 @@
       "id": "unit.neutral.root-seer",
       "kind": "unit",
       "name": "Root Seer",
-      "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.root-seer",
       "icon": "icon.neutral.root-seer",
       "selectionClass": "army",
@@ -4697,7 +4951,7 @@
       "id": "unit.spell.shadow-spirit-lesser",
       "kind": "unit",
       "name": "Lesser Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -4740,7 +4994,7 @@
       "id": "unit.spell.shadow-spirit-standard",
       "kind": "unit",
       "name": "Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -4783,7 +5037,7 @@
       "id": "unit.spell.shadow-spirit-greater",
       "kind": "unit",
       "name": "Greater Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -5040,6 +5294,987 @@
       "experienceYield": 0,
       "supplyCost": 0,
       "modelScale": 1.7
+    },
+    {
+      "id": "unit.beetles.worker",
+      "kind": "unit",
+      "name": "Worker",
+      "description": "Gather resources and construct beetle buildings. Same gathering, movement and training rules as ant workers.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "selectionClass": "worker",
+      "body": {
+        "maxHp": 240,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 28,
+      "behaviorSets": [
+        "behavior-set.worker"
+      ],
+      "behaviors": {
+        "work": {
+          "harvests": [
+            "item.wood",
+            "item.amber",
+            "item.root"
+          ],
+          "builds": [
+            "building.beetles.bastion",
+            "building.beetles.war-lodge",
+            "building.beetles.brood-den",
+            "building.beetles.hornwatch",
+            "building.beetles.ancestor-shrine",
+            "building.beetles.shell-forge",
+            "building.beetles.rootworks"
+          ]
+        },
+        "movement": {
+          "speed": 12,
+          "walkSpeed": 6
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 100
+          }
+        ],
+        "workTicks": 600
+      },
+      "level": 1,
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
+    },
+    {
+      "id": "unit.beetles.horn-guard",
+      "kind": "unit",
+      "name": "Horn Guard",
+      "description": "Durable heavy infantry. Slower and more expensive than ant Warriors; uses 1 supply.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 440,
+        "armor": 3,
+        "armorType": "heavy"
+      },
+      "vision": 32,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 15,
+          "damageType": "melee",
+          "range": 0.6,
+          "cooldownTicks": 64,
+          "aggroRange": 20,
+          "attack": {
+            "windupTicks": 12,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.6
+          }
+        },
+        "movement": {
+          "speed": 11
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 195
+          }
+        ],
+        "workTicks": 1120
+      },
+      "level": 1,
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.75,
+        "height": 4.8,
+        "formationSpacing": 3.75
+      },
+      "modelScale": 2.4
+    },
+    {
+      "id": "unit.beetles.stone-slinger",
+      "kind": "unit",
+      "name": "Stone Slinger",
+      "description": "Heavy thrown stones strike ground and flying enemies. Shorter reach than ant Archers; uses 1 supply.",
+      "asset": "asset.beetles.stone-slinger",
+      "icon": "icon.item.root",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 330,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 36,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 20,
+          "damageType": "piercing",
+          "range": 16,
+          "cooldownTicks": 76,
+          "aggroRange": 24,
+          "attack": {
+            "windupTicks": 20,
+            "recoveryTicks": 16,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        },
+        "movement": {
+          "speed": 11
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 180
+          },
+          {
+            "item": "item.wood",
+            "amount": 25
+          }
+        ],
+        "workTicks": 1120
+      },
+      "level": 1,
+      "supplyCost": 1,
+      "dimensions": {
+        "radius": 1.75,
+        "height": 4.8,
+        "formationSpacing": 3.75
+      },
+      "modelScale": 2.4
+    },
+    {
+      "id": "unit.beetles.hornbreaker",
+      "kind": "unit",
+      "name": "Hornbreaker",
+      "description": "Beetle champion. Charges into battle, overwhelms a chosen enemy, sustains nearby allies and becomes a Colossus.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "hero": true,
+      "level": 1,
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 820,
+        "armor": 3,
+        "armorType": "hero"
+      },
+      "vision": 36,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 37,
+          "damageType": "hero",
+          "range": 0.6,
+          "cooldownTicks": 84,
+          "aggroRange": 20,
+          "attack": {
+            "windupTicks": 18,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.6
+          }
+        },
+        "progression": {
+          "experienceRadius": 40,
+          "levels": [
+            {
+              "experience": 0,
+              "maxHp": 820,
+              "damage": 37,
+              "armor": 3,
+              "maxMana": 200,
+              "cooldownTicks": 84,
+              "healthRegenPerSecond": 1.6,
+              "manaRegenPerSecond": 0.7
+            },
+            {
+              "experience": 160,
+              "maxHp": 905,
+              "damage": 41,
+              "armor": 3,
+              "maxMana": 220,
+              "cooldownTicks": 82,
+              "healthRegenPerSecond": 1.75,
+              "manaRegenPerSecond": 0.77
+            },
+            {
+              "experience": 400,
+              "maxHp": 990,
+              "damage": 45,
+              "armor": 4,
+              "maxMana": 240,
+              "cooldownTicks": 80,
+              "healthRegenPerSecond": 1.9000000000000001,
+              "manaRegenPerSecond": 0.84
+            },
+            {
+              "experience": 720,
+              "maxHp": 1075,
+              "damage": 49,
+              "armor": 4,
+              "maxMana": 260,
+              "cooldownTicks": 78,
+              "healthRegenPerSecond": 2.05,
+              "manaRegenPerSecond": 0.91
+            },
+            {
+              "experience": 1120,
+              "maxHp": 1160,
+              "damage": 53,
+              "armor": 5,
+              "maxMana": 280,
+              "cooldownTicks": 76,
+              "healthRegenPerSecond": 2.2,
+              "manaRegenPerSecond": 0.98
+            },
+            {
+              "experience": 1600,
+              "maxHp": 1245,
+              "damage": 57,
+              "armor": 5,
+              "maxMana": 300,
+              "cooldownTicks": 74,
+              "healthRegenPerSecond": 2.35,
+              "manaRegenPerSecond": 1.05
+            },
+            {
+              "experience": 2160,
+              "maxHp": 1330,
+              "damage": 61,
+              "armor": 6,
+              "maxMana": 320,
+              "cooldownTicks": 72,
+              "healthRegenPerSecond": 2.5,
+              "manaRegenPerSecond": 1.12
+            },
+            {
+              "experience": 2800,
+              "maxHp": 1415,
+              "damage": 65,
+              "armor": 6,
+              "maxMana": 340,
+              "cooldownTicks": 70,
+              "healthRegenPerSecond": 2.6500000000000004,
+              "manaRegenPerSecond": 1.19
+            },
+            {
+              "experience": 3520,
+              "maxHp": 1500,
+              "damage": 69,
+              "armor": 7,
+              "maxMana": 360,
+              "cooldownTicks": 68,
+              "healthRegenPerSecond": 2.8,
+              "manaRegenPerSecond": 1.26
+            },
+            {
+              "experience": 4320,
+              "maxHp": 1585,
+              "damage": 73,
+              "armor": 7,
+              "maxMana": 380,
+              "cooldownTicks": 68,
+              "healthRegenPerSecond": 2.95,
+              "manaRegenPerSecond": 1.33
+            },
+            {
+              "experience": 5200,
+              "maxHp": 1670,
+              "damage": 77,
+              "armor": 8,
+              "maxMana": 400,
+              "cooldownTicks": 68,
+              "healthRegenPerSecond": 3.1,
+              "manaRegenPerSecond": 1.4
+            }
+          ]
+        },
+        "inventory": {
+          "slots": 4,
+          "pickupRange": 1.5
+        },
+        "abilities": {
+          "maxMana": 200,
+          "manaRegenPerSecond": 0.7,
+          "bindings": [
+            {
+              "id": "horn-rush",
+              "ability": "ability.hornbreaker.horn-rush",
+              "initialRank": 0,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              },
+              "learning": {
+                "requiredLevels": [
+                  1,
+                  3,
+                  5
+                ]
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 20
+              }
+            },
+            {
+              "id": "overwhelm",
+              "ability": "ability.hornbreaker.overwhelm",
+              "initialRank": 0,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "W",
+                "column": 2
+              },
+              "learning": {
+                "requiredLevels": [
+                  1,
+                  3,
+                  5
+                ]
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 20
+              }
+            },
+            {
+              "id": "steadfast",
+              "ability": "ability.hornbreaker.steadfast",
+              "initialRank": 0,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "E",
+                "column": 3
+              },
+              "learning": {
+                "requiredLevels": [
+                  1,
+                  3,
+                  5
+                ]
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 20
+              }
+            },
+            {
+              "id": "colossus",
+              "ability": "ability.hornbreaker.colossus",
+              "initialRank": 0,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "R",
+                "column": 4
+              },
+              "learning": {
+                "requiredLevels": [
+                  5,
+                  8
+                ]
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 20
+              }
+            }
+          ]
+        },
+        "movement": {
+          "speed": 12
+        }
+      },
+      "supplyCost": 4,
+      "dimensions": {
+        "radius": 2,
+        "height": 5.6,
+        "formationSpacing": 4.25
+      },
+      "modelScale": 2.8,
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 425
+          },
+          {
+            "item": "item.wood",
+            "amount": 100
+          }
+        ],
+        "workTicks": 2200
+      }
+    },
+    {
+      "id": "building.beetles.bastion",
+      "kind": "building",
+      "name": "Bastion",
+      "description": "Bastion of the beetle colony. Model pending.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "body": {
+        "maxHp": 1800,
+        "armor": 5,
+        "armorType": "structure"
+      },
+      "vision": 42,
+      "footprint": {
+        "width": 20,
+        "depth": 20
+      },
+      "entrance": {
+        "x": 0.5,
+        "y": 10.5
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 400
+          },
+          {
+            "item": "item.wood",
+            "amount": 150
+          }
+        ],
+        "workTicks": 3600,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 100000,
+          "accepts": [
+            "item.wood",
+            "item.amber"
+          ],
+          "dropoff": true
+        },
+        "production": {
+          "mode": "queued",
+          "outputs": [
+            "unit.beetles.worker"
+          ],
+          "workerSlots": 0,
+          "queueCapacity": 6
+        }
+      },
+      "level": 1,
+      "upgrade": {
+        "target": "building.beetles.great-bastion",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 450
+          },
+          {
+            "item": "item.wood",
+            "amount": 200
+          }
+        ],
+        "workTicks": 3200
+      },
+      "supplyProvided": 15,
+      "heroCapacity": 1,
+      "modelScale": 1
+    },
+    {
+      "id": "building.beetles.great-bastion",
+      "kind": "building",
+      "name": "Great Bastion",
+      "description": "Great Bastion of the beetle colony. Model pending.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "body": {
+        "maxHp": 2400,
+        "armor": 6,
+        "armorType": "structure"
+      },
+      "vision": 42,
+      "footprint": {
+        "width": 20,
+        "depth": 20
+      },
+      "entrance": {
+        "x": 0.5,
+        "y": 10.5
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 100000,
+          "accepts": [
+            "item.wood",
+            "item.amber"
+          ],
+          "dropoff": true
+        },
+        "production": {
+          "mode": "queued",
+          "outputs": [
+            "unit.beetles.worker"
+          ],
+          "workerSlots": 0,
+          "queueCapacity": 6
+        }
+      },
+      "level": 2,
+      "supplyProvided": 15,
+      "heroCapacity": 2,
+      "upgrade": {
+        "target": "building.beetles.elder-bastion",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 600
+          },
+          {
+            "item": "item.wood",
+            "amount": 250
+          }
+        ],
+        "workTicks": 4000
+      },
+      "modelScale": 1
+    },
+    {
+      "id": "building.beetles.elder-bastion",
+      "kind": "building",
+      "name": "Elder Bastion",
+      "description": "Elder Bastion of the beetle colony. Model pending.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "body": {
+        "maxHp": 3000,
+        "armor": 6,
+        "armorType": "structure"
+      },
+      "vision": 42,
+      "footprint": {
+        "width": 20,
+        "depth": 20
+      },
+      "entrance": {
+        "x": 0.5,
+        "y": 10.5
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 100000,
+          "accepts": [
+            "item.wood",
+            "item.amber"
+          ],
+          "dropoff": true
+        },
+        "production": {
+          "mode": "queued",
+          "outputs": [
+            "unit.beetles.worker"
+          ],
+          "workerSlots": 0,
+          "queueCapacity": 6
+        }
+      },
+      "level": 3,
+      "supplyProvided": 15,
+      "heroCapacity": 3,
+      "modelScale": 1
+    },
+    {
+      "id": "building.beetles.brood-den",
+      "kind": "building",
+      "name": "Brood Den",
+      "description": "Brood Den of the beetle colony. Model pending.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "body": {
+        "maxHp": 600,
+        "armor": 3,
+        "armorType": "structure"
+      },
+      "vision": 14,
+      "footprint": {
+        "width": 8,
+        "depth": 8
+      },
+      "entrance": {
+        "x": 0.5,
+        "y": 4.5
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 100
+          },
+          {
+            "item": "item.wood",
+            "amount": 25
+          }
+        ],
+        "workTicks": 1000,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {},
+      "level": 1,
+      "supplyProvided": 8,
+      "modelScale": 1
+    },
+    {
+      "id": "building.beetles.war-lodge",
+      "kind": "building",
+      "name": "War Lodge",
+      "description": "War Lodge of the beetle colony. Model pending.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "body": {
+        "maxHp": 1200,
+        "armor": 5,
+        "armorType": "structure"
+      },
+      "vision": 14,
+      "footprint": {
+        "width": 12,
+        "depth": 12
+      },
+      "entrance": {
+        "x": 0.5,
+        "y": 6.5
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 200
+          },
+          {
+            "item": "item.wood",
+            "amount": 60
+          }
+        ],
+        "workTicks": 2000,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 500,
+          "accepts": [
+            "item.wood",
+            "item.amber"
+          ]
+        },
+        "production": {
+          "mode": "queued",
+          "outputs": [
+            "unit.beetles.horn-guard",
+            "unit.beetles.stone-slinger"
+          ],
+          "workerSlots": 0,
+          "queueCapacity": 6
+        }
+      },
+      "category": "category.build-advanced",
+      "level": 1,
+      "modelScale": 1
+    },
+    {
+      "id": "building.beetles.shell-forge",
+      "kind": "building",
+      "name": "Shell Forge",
+      "description": "Shell Forge of the beetle colony. Model pending.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "body": {
+        "maxHp": 1100,
+        "armor": 5,
+        "armorType": "structure"
+      },
+      "vision": 14,
+      "footprint": {
+        "width": 12,
+        "depth": 12
+      },
+      "entrance": {
+        "x": 0.5,
+        "y": 6.5
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 150
+          },
+          {
+            "item": "item.wood",
+            "amount": 75
+          }
+        ],
+        "workTicks": 1600,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "research": {
+          "outputs": [
+            "research.beetles.serrated-tools",
+            "research.beetles.reinforced-carapace",
+            "research.beetles.broadheads",
+            "research.beetles.campaign-harness"
+          ],
+          "queueCapacity": 3
+        }
+      },
+      "category": "category.build",
+      "level": 1,
+      "modelScale": 1
+    },
+    {
+      "id": "building.beetles.ancestor-shrine",
+      "kind": "building",
+      "name": "Ancestor Shrine",
+      "description": "Ancestor Shrine of the beetle colony. Model pending.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "body": {
+        "maxHp": 1000,
+        "armor": 5,
+        "armorType": "structure"
+      },
+      "vision": 14,
+      "footprint": {
+        "width": 12,
+        "depth": 12
+      },
+      "entrance": {
+        "x": 0.5,
+        "y": 6.5
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 180
+          },
+          {
+            "item": "item.wood",
+            "amount": 60
+          }
+        ],
+        "workTicks": 1600,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "revival": {
+          "items": [
+            {
+              "item": "item.amber",
+              "amount": 200
+            }
+          ],
+          "itemsPerLevel": [
+            {
+              "item": "item.amber",
+              "amount": 50
+            }
+          ],
+          "workTicksPerLevel": 200,
+          "workTicks": 1200,
+          "queueCapacity": 4
+        },
+        "production": {
+          "mode": "queued",
+          "outputs": [
+            "unit.beetles.hornbreaker"
+          ],
+          "queueCapacity": 4,
+          "workerSlots": 0
+        },
+        "storage": {
+          "capacity": 100000,
+          "accepts": [
+            "item.amber",
+            "item.wood"
+          ]
+        }
+      },
+      "level": 1,
+      "category": "category.build-advanced",
+      "modelScale": 1
+    },
+    {
+      "id": "building.beetles.rootworks",
+      "kind": "building",
+      "name": "Rootworks",
+      "description": "Rootworks of the beetle colony. Model pending.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "body": {
+        "maxHp": 1000,
+        "armor": 5,
+        "armorType": "structure"
+      },
+      "vision": 14,
+      "footprint": {
+        "width": 12,
+        "depth": 12
+      },
+      "entrance": {
+        "x": 0.5,
+        "y": 6.5
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 150
+          },
+          {
+            "item": "item.wood",
+            "amount": 75
+          }
+        ],
+        "workTicks": 1600,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {
+        "storage": {
+          "capacity": 100000,
+          "accepts": [
+            "item.root"
+          ],
+          "dropoff": true
+        }
+      },
+      "placementNear": {
+        "source": "building.neutral.corrupted-root",
+        "radius": 20
+      },
+      "category": "category.build",
+      "level": 1,
+      "modelScale": 1
+    },
+    {
+      "id": "building.beetles.hornwatch",
+      "kind": "building",
+      "name": "Hornwatch",
+      "description": "Hornwatch of the beetle colony. Model pending.",
+      "asset": "asset.placeholder.missing-model",
+      "icon": "icon.item.root",
+      "body": {
+        "maxHp": 500,
+        "armor": 2,
+        "armorType": "structure"
+      },
+      "vision": 25,
+      "footprint": {
+        "width": 8,
+        "depth": 8
+      },
+      "entrance": {
+        "x": 0.5,
+        "y": 4.5
+      },
+      "creation": {
+        "method": "construct",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 100
+          },
+          {
+            "item": "item.wood",
+            "amount": 50
+          }
+        ],
+        "workTicks": 1400,
+        "workAnimation": "build"
+      },
+      "behaviorSets": [
+        "behavior-set.player-building"
+      ],
+      "behaviors": {},
+      "category": "category.build-advanced",
+      "level": 1,
+      "garrison": {
+        "capacity": 1,
+        "accepts": [
+          "unit.beetles.stone-slinger"
+        ],
+        "height": 5.8,
+        "lookoutRadius": 1.35
+      },
+      "modelScale": 1
     }
   ]
 }

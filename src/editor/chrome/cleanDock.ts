@@ -7,11 +7,18 @@ import { field, sheet } from "../../ui";
 export type CleanDockState = {
   radius: number;
   type: CleanType;
+  shape:'brush'|'rectangle'|'lasso';
+  asset:string;
+  preview:{count:number;lockedCount:number}|null;
 };
 
 export type CleanDockHooks = {
   onCleanRadius(n: number): void;
   onCleanType(type: CleanType): void;
+  onCleanShape(shape:CleanDockState['shape']):void;
+  onCleanAsset(asset:string):void;
+  onCleanApply():void;
+  onCleanCancel():void;
 };
 
 export class CleanDock {
@@ -19,6 +26,9 @@ export class CleanDock {
   private readonly size: HTMLInputElement;
   private readonly sizeVal: HTMLElement;
   private readonly pick: HTMLSelectElement;
+  private readonly shape=document.createElement('select');
+  private readonly asset=document.createElement('input');
+  private readonly preview=document.createElement('p');
 
   constructor(host: HTMLElement, private readonly hooks: CleanDockHooks) {
     this.root = document.createElement("div");
@@ -46,8 +56,14 @@ export class CleanDock {
     this.size.addEventListener("input", () => this.hooks.onCleanRadius(Number(this.size.value)));
     const hint = document.createElement("p");
     hint.className = "text-[10px] leading-4 tracking-wide text-canopy/40";
-    hint.textContent = "Drag to wipe · Space+drag pan · Shift+wheel size";
-    this.root.append(title, typeRow, sizeRow, hint);
+    hint.textContent = "Drag to select an area, then Apply cleanup. Locked objects are protected.";
+    this.shape.setAttribute('aria-label','Cleanup shape');for(const shape of ['brush','rectangle','lasso']as const)this.shape.add(new Option(shape,shape));this.shape.className=this.pick.className;
+    this.shape.onchange=()=>hooks.onCleanShape(this.shape.value as CleanDockState['shape']);
+    this.asset.placeholder='All assets (or enter asset ID)';this.asset.setAttribute('aria-label','Cleanup asset filter');this.asset.className=this.pick.className;this.asset.onchange=()=>hooks.onCleanAsset(this.asset.value.trim());
+    const apply=document.createElement('button');apply.textContent='Apply cleanup';apply.onclick=()=>hooks.onCleanApply();
+    const cancel=document.createElement('button');cancel.textContent='Clear selection';cancel.onclick=()=>hooks.onCleanCancel();
+    this.preview.setAttribute('role','status');this.preview.className='text-xs text-canopy';
+    this.root.append(title,typeRow,this.shape,sizeRow,this.asset,this.preview,apply,cancel,hint);
     this.root.classList.add("hidden");
     host.append(this.root);
   }
@@ -60,6 +76,8 @@ export class CleanDock {
     this.size.value = String(state.radius);
     this.sizeVal.textContent = state.radius.toFixed(1);
     this.pick.value = state.type;
+    this.shape.value=state.shape;this.asset.value=state.asset;
+    this.preview.textContent=state.preview?`${state.preview.count} objects selected · ${state.preview.lockedCount} locked`:'No selection';
   }
 
   destroy(): void {

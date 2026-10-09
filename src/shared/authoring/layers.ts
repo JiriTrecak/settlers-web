@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {terrainDataSchema} from '../map/terrainData';
 import {authoringId,recipeOverridesSchema} from './recipes';
 const coordinate=z.number().finite().min(-4096).max(4096);
 const point=z.object({x:coordinate,z:coordinate}).strict();
@@ -30,10 +31,20 @@ export const authoredObjectSchema=z.object({
  heightMode:z.enum(['terrain','absolute']).default('terrain'),
  visible:z.boolean().default(true),locked:z.boolean().default(false),
  // Provenance is informational. A baked object no longer depends on its former layer.
- bakedFrom:authoringId.optional(),
- bakedPlacement:z.object({stage:z.number().int(),order:z.number().int(),blocksVegetation:z.boolean()}).strict().optional(),
 }).strict();
+/** The saved map contains values and placements only. Generator previews have
+ * their own editor schema below and cannot pass this strict document schema. */
+export const savedSceneSchema=z.object({
+ terrain:terrainDataSchema.optional(),version:z.literal(1),objects:z.array(authoredObjectSchema).max(200000),
+}).strict().superRefine((scene,c)=>{
+ if(new Set(scene.objects.map(o=>o.id)).size!==scene.objects.length)c.addIssue({code:'custom',message:'Duplicate object ID'});
+});
+export type SavedScene=z.infer<typeof savedSceneSchema>;
+export function savedScene(scene:AuthoringScene):SavedScene{
+ return {version:scene.version,objects:scene.objects,...(scene.terrain?{terrain:scene.terrain}:{})};
+}
 export const authoringSceneSchema=z.object({
+ terrain:terrainDataSchema.optional(),
  version:z.literal(1),layers:z.array(proceduralLayerSchema).max(1024),objects:z.array(authoredObjectSchema).max(200000),
 }).strict().superRefine((scene,c)=>{
  const ids=new Set<string>();for(const item of [...scene.layers,...scene.objects]){if(ids.has(item.id))c.addIssue({code:'custom',message:`Duplicate scene ID ${item.id}`});ids.add(item.id);}

@@ -14,7 +14,7 @@ describe('Biome documents',()=>{
   expect(map.playerStarts.every(p=>p.x<size&&p.z<size)).toBe(true);
   expect(new HeightField(size).size).toBe(size);
   expect(map.name).toBe('Pinewater');
-  expect(map.authoring?.layers).toEqual([]);
+  expect(map.authoring).not.toHaveProperty('layers');expect(map.authoring?.terrain?.size).toBe(size);
  });
  it('rejects unknown biomes instead of silently substituting another look',()=>{
   expect(()=>createBiomeMap('Map',256,'unknown')).toThrow('Unknown biome');

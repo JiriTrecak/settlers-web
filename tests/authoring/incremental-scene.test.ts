@@ -25,7 +25,7 @@ describe('pose-only scene compilation',()=>{
   expect(next.resources.find(r=>r.id==='oak')?.rotation).toBeCloseTo(.7*180/Math.PI);
   sameResult(next,full);sameResult(updateMapScene(map,before,next,landscapeAssets),compiled);
  });
- it.each<Partial<AuthoredObject>>([{x:110},{z:110},{scale:2},{visible:false},{heightMode:'absolute'},{asset:'asset.models.environment.frost-pine-a'},{bakedFrom:'forest',bakedPlacement:{stage:1,order:1,blocksVegetation:true}}])('invalidates generation for surface inputs %j',change=>{
+ it.each<Partial<AuthoredObject>>([{x:110},{z:110},{scale:2},{visible:false},{heightMode:'absolute'},{asset:'asset.models.environment.frost-pine-a'}])('invalidates generation for surface inputs %j',change=>{
   const before=fixture(),compiled=compileMapScene(before,landscapeAssets);
   const map={...before,authoring:{...before.authoring!,objects:before.authoring!.objects.map((o,i)=>i===0?{...o,...change}:o)}};
   const next=updateMapScene(before,map,compiled,landscapeAssets);

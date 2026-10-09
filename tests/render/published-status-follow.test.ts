@@ -3,7 +3,7 @@ import {AbilityEffects} from '../../src/render/abilities/abilityEffects';
 import {coreEffects} from '../../src/content/effects/library';
 import {presentationSchema} from '../../src/content/abilities/schema';
 
-const attachedEffects=['effect.core.frost-arrows.chill','effect.assistant-trials.frost-relay.chill','effect.core.wind-walk','effect.core.invisibility','effect.core.true-sight','effect.core.battle-rhythm.momentum','effect.core.doom.curse','effect.core.black-arrow.mark','effect.core.animate-dead.ward'];
+const attachedEffects=['effect.marshal.rally.cast','effect.marshal.rally.recipient','effect.marshal.carapace.armor','effect.marshal.rally.ward','effect.core.frost-arrows.chill','effect.assistant-trials.frost-relay.chill','effect.core.wind-walk','effect.core.invisibility','effect.core.true-sight','effect.core.battle-rhythm.momentum','effect.core.doom.curse','effect.core.black-arrow.mark','effect.core.animate-dead.ward'];
 it.each(attachedEffects)('%s keeps every attached layer with its recipient and cleans up on status loss',id=>{
  const effect=coreEffects.find(e=>e.id===id)!;expect(effect).toBeDefined();
  const presentation=presentationSchema.parse({schemaVersion:1,id:'presentation.test.follow',animations:{prepare:'idle',release:'idle',recover:'idle',fallback:'idle'},effects:[{id:'attached',effect:id,event:'statusApplied',anchor:'target',lifetime:'status',statusId:'mark'}]});

@@ -107,7 +107,7 @@ export class Game {
         ? parseInt(fingerprint({ map, slots }), 16)
         : seed >>> 0) || 1;
     this.owners = slots.map((s) => slotOwner(s.player));
-    this.context = new GameContext(this.state, registry, map);
+    this.context = new GameContext(this.state, registry, map, this.slots);
     const arrivals=company?companyForMap(this.context,company):undefined;
     for (const p of expandMap(map, registry, slots)) {
       if(arrivals&&map.mission?.company?.includes(p.id)&&!arrivals.has(p.id))continue;

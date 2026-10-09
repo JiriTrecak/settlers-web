@@ -2,7 +2,7 @@ import {describe,it,expect} from 'vitest';
 import {parseUtcMap,stringifyUtcMap,emptyUtcMap} from '../../src/shared/map/utcmap';
 import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {landscapeAssets} from '../../src/shared/authoring/project';
-import {bakeLayer} from '../../src/shared/authoring/generate';
+import {AuthoringHistory} from '../../src/shared/authoring/history';
 import {WatercourseIndex} from '../../src/shared/authoring/watercourses';
 import {Camera} from '../../src/render/camera/camera';
 import {OrthographicCamera,Vector3} from 'three';
@@ -10,30 +10,31 @@ import {Spatial} from '../../src/sim/game/spatial';
 import {content} from '../../src/content/builtin';
 import {proceduralFixture as fixture} from './fixture';
 describe('authored map compilation',()=>{
- it('serializes only authored inputs and regenerates identical trees and stream elevations on reload',()=>{
-  const map=fixture(),before=stringifyUtcMap(map),a=compileMapScene(map,landscapeAssets),reloaded=parseUtcMap(JSON.parse(before))!,b=compileMapScene(reloaded,landscapeAssets);
-  expect(reloaded.authoring).toEqual(map.authoring);expect(b.stamps).toEqual(a.stamps);expect(b.field.samples).toEqual(a.field.samples);expect(stringifyUtcMap(map)).toBe(before);
-  expect(a.generated!.objects.length).toBeGreaterThan(50);expect(a.stamps.length+a.resources.length).toBe(a.generated!.objects.length);
-  expect(a.field.waterAt(127,129)).toBeCloseTo(-.2);expect(a.field.sample(127,129)).toBeLessThan(-1);expect(a.field.waterAt(0,0)).toBe(-8);
+ it('saves only applied values and restores identical terrain and placements',()=>{
+  const preview=fixture(),a=compileMapScene(preview,landscapeAssets),history=new AuthoringHistory(preview.authoring!);history.apply(a);
+  const map={...preview,authoring:history.document},saved=stringifyUtcMap(map),reloaded=parseUtcMap(JSON.parse(saved))!,b=compileMapScene(reloaded,landscapeAssets);
+  expect(reloaded.authoring).toEqual(map.authoring);expect(b.stamps).toEqual(a.stamps);expect(b.field.samples).toEqual(a.field.samples);
+  expect(saved).not.toContain('"layers"');expect(b.generated!.objects).toHaveLength(0);
+  expect(b.field.waterAt(127,129)).toBeCloseTo(-.2);expect(b.field.waterAt(0,0)).toBe(-8);
  });
- it('preserves terrain and object transforms when the full forest layer is baked',()=>{
-  const map=fixture(),a=compileMapScene(map,landscapeAssets);const scene=bakeLayer(map.authoring!,'forest',a.generated!);
+ it('preserves terrain and object transforms when the preview is applied',()=>{
+  const map=fixture(),a=compileMapScene(map,landscapeAssets);const history=new AuthoringHistory(map.authoring!);history.apply(a);const scene=history.document;
   const b=compileMapScene({...map,authoring:scene},landscapeAssets);
   const forest=a.stamps.filter(s=>a.owners.get(s.id)==='forest');expect(forest.length).toBeGreaterThan(20);
   expect(b.stamps.filter(s=>forest.some(f=>f.id===s.id))).toEqual(forest);expect(b.field.samples).toEqual(a.field.samples);expect([...b.owners.values()]).not.toContain('forest');expect(b.field.grassCoverage).toEqual(a.field.grassCoverage);
  });
  it('restores base height and water when a river is removed and excludes stale bank foliage',()=>{
-  const map=fixture();const result=compileMapScene({...map,authoring:{...map.authoring!,layers:map.authoring!.layers.filter(l=>l.id!=='stream')}},landscapeAssets);
+  const map=fixture();map.authoring!.layers=map.authoring!.layers.filter(l=>l.id!=='stream');const result=compileMapScene(map,landscapeAssets);
   expect(result.field.sample(127,129)).toBe(0);expect(result.field.waterAt(127,129)).toBe(-8);expect(result.generated!.objects.some(o=>o.owner==='banks')).toBe(false);
  });
- it('rejects undeclared authored map fields and does not add authoring to old maps',()=>{
-  const map=emptyUtcMap();expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))!.authoring).toBeUndefined();expect(parseUtcMap({...map,authoring:{version:1,layers:[],objects:[],detach:true}})).toBeNull();
+ it('rejects generator fields in saved maps and creates explicit flat terrain',()=>{
+  const map=emptyUtcMap();expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))!.authoring?.terrain).toEqual(map.authoring!.terrain);expect(parseUtcMap({...map,authoring:{version:1,layers:[],objects:[],detach:true}})).toBeNull();
  });
  it('indexes only the affected water sectors',()=>{
   const rivers=compileMapScene(fixture(),landscapeAssets).generated!.rivers;const index=new WatercourseIndex(rivers);expect(index.sample(127,129)).toBeCloseTo(-.2);expect(index.sample(20,20)).toBeUndefined();
  });
  it('feeds the same variable water elevations and bed heights to navigation',()=>{
-  const map=fixture(),render=compileMapScene(map,landscapeAssets),sim=new Spatial(map,content,()=>[]);
+  const preview=fixture(),render=compileMapScene(preview,landscapeAssets),history=new AuthoringHistory(preview.authoring!);history.apply(render);const map={...preview,authoring:history.document},sim=new Spatial(map,content,()=>[]);
   const cell=129*map.size+127;expect(sim.heights[cell]).toBe(Math.round(render.field.sample(127,129)*100));expect(sim.waterHeights[cell]).toBe(-20);expect(sim.terrain[cell]).toBe(0);
   expect(sim.terrain[180*map.size+180]).toBe(1);expect(sim.waterHeights[180*map.size+180]).toBe(-800);
  });

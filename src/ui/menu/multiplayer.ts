@@ -1,3 +1,4 @@
+import {raceSelect} from './raceSelect';
 import {BUILDING_CELL_SIZE} from '../../shared/spatial/footprint';
 import {heroSelect} from './heroSelect';
 /** Multiplayer discovery and waiting rooms share the skirmish atlas; App owns networking. */
@@ -189,6 +190,7 @@ export class RoomWaitScreen extends GameScreen {
     onStart: () => void;
     player?: number;
     onHero?: (hero:string) => void;
+    onRace?: (race:string) => void;
     onBack: () => void;
     host: boolean;
     mapName: string;
@@ -216,7 +218,7 @@ export class RoomWaitScreen extends GameScreen {
   setView(room: RoomView): void {
     this.meta.textContent = `${occupied(room)} / ${room.slots.length} players joined${!this.hooks.load&&room.inputDelayMs!=null?` · Input buffer ${room.inputDelayMs} ms`:''}`;
     this.details.show(room.mapId, this.hooks.mapName);
-    paintRoster(this.roster, room, this.hooks.load?undefined:this.hooks.player, this.hooks.onHero);
+    paintRoster(this.roster, room, this.hooks.load?undefined:this.hooks.player, this.hooks.onHero, this.hooks.onRace);
     this.footerText.textContent = this.hooks.load && occupied(room) < room.slots.length ? "Waiting for all saved player slots to fill" : room.state === "waiting" ? "Lobby open · Players can join until the match starts" : "Match starting…";
     if (this.startBtn) this.startBtn.disabled = room.state !== "waiting" || (this.hooks.load === true && occupied(room) < room.slots.length);
   }
@@ -243,16 +245,19 @@ class Battlefield {
 
 function occupied(room: RoomView): number { return room.slots.filter((s) => s.name).length; }
 function joinable(room: RoomView): boolean { return room.state === "waiting" && room.slots.some((s) => !s.name); }
-function paintRoster(root: HTMLElement, room: RoomView, player?:number, onHero?:(hero:string)=>void): void {
+function paintRoster(root: HTMLElement, room: RoomView, player?:number, onHero?:(hero:string)=>void,onRace?:(race:string)=>void): void {
   root.replaceChildren(...room.slots.map((slot) => {
     const row = el("div", `skirmish-player ${slot.name ? "" : "mp-open-slot"}`);
     row.style.setProperty("--player-color", playerCss(slot.player));
     const name = el("div", "skirmish-player-name", slot.name || "Open slot");
     name.append(el("small", "", slot.name ? slot.roundTripMs!=null?`Connected · ${slot.roundTripMs} ms RTT`:"Connected" : "Waiting for a player"));
     row.append(el("span", "skirmish-player-marker", String(slot.player + 1)), name);
-    if(slot.name&&room.heroes){
-      const select=heroSelect(room.heroes,slot.hero??room.heroes.default,id=>onHero?.(id),`Player ${slot.player+1} starting hero`);
-      select.disabled=room.state!=='waiting'||slot.player!==player||!onHero;row.append(select);
+    const controls=el('div','skirmish-player-controls');row.append(controls);
+    if(slot.name&&room.races){const select=raceSelect(room.races,slot.race??Object.keys(room.races)[0],id=>onRace?.(id),`Player ${slot.player+1} race`);select.disabled=room.state!=='waiting'||slot.player!==player||!onRace;controls.append(select);}
+    const heroes=slot.race?room.races?.[slot.race]?.heroes:room.heroes;
+    if(slot.name&&heroes){
+      const select=heroSelect(heroes,slot.hero??heroes.default,id=>onHero?.(id),`Player ${slot.player+1} starting hero`);
+      select.disabled=room.state!=='waiting'||slot.player!==player||!onHero;controls.append(select);
     }
     return row;
   }));

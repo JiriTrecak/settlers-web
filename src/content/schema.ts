@@ -360,13 +360,94 @@ export const assetSchema = z
     cameraAnchor:z.object({height:z.number().positive().max(40),forward:z.number().min(-5).max(5).default(0),distance:z.number().min(1).max(40).default(7)}).strict().optional(),
     stackHeight: z.number().positive().optional(),
     stackColumns: positive.optional(),
-    projectile: z.enum(["arrow", "thorn"]).optional(),
+    projectile: z.enum(["arrow", "thorn", "stone"]).optional(),
     projectileSocket: z.string().min(1).optional(),
     sockets:z.array(z.object({name:z.string().min(1).max(160),node:z.string().min(1).max(160),offset:z.tuple([z.number().finite(),z.number().finite(),z.number().finite()])}).strict()).max(128).optional(),
     castContact: z.number().min(0).max(1).optional(),
     sceneryAsset: z.string().optional(),
   })
   .strict();
+export const startingSetupSchema = z
+      .object({
+        id: idSchema,
+        fort: idSchema,
+        hero: z.object({
+          default: idSchema,
+          choices: z.array(idSchema).min(1).max(32),
+          offset: z.object({x:z.number().int(),y:z.number().int()}).strict(),
+        }).strict().optional(),
+        gathering: z
+          .array(
+            z
+              .object({
+                item: idSchema,
+                workers: positive.max(32),
+                radius: positive.max(96),
+              })
+              .strict(),
+          )
+          .optional(),
+        inventory: stockSchema,
+        units: z.array(
+          z
+            .object({
+              definition: idSchema,
+              offset: z
+                .object({ x: z.number().int(), y: z.number().int() })
+                .strict(),
+            })
+            .strict(),
+        ),
+      })
+      .strict();
+export const aiRulesSchema = z
+      .object({
+        revision: positive,
+        decisionTicks: positive.max(400),
+        economyTicks: positive.max(2400),
+        strategyTicks: positive.max(2400),
+        operationTicks: positive.max(400),
+        reactionTicks: natural.max(200),
+        orderIntervalTicks: positive.max(400),
+        workers: z
+          .object({
+            minimum: positive.max(100),
+            target: positive.max(100),
+            maximum: positive.max(120),
+            reserve: natural.max(12),
+          })
+          .strict(),
+        army: z
+          .object({
+            minimum: positive.max(160),
+            maximum: positive.max(160),
+            homeGuard: natural.max(16),
+            engagePermille: positive.max(5000),
+            campPermille: positive.max(5000),
+            retreatHealthPermille: positive.max(900),
+            pursuitRadius: positive.max(64),
+          })
+          .strict(),
+        limits: z
+          .object({
+            commandsPerBeat: positive.max(16),
+            placementCandidates: positive.max(64),
+            spellCandidates: positive.max(64),
+          })
+          .strict(),
+        composition: z
+          .array(
+            z
+              .object({ definition: idSchema, weight: positive.max(1000) })
+              .strict(),
+          )
+          .min(1)
+          .max(16),
+        skillPreference: z.array(idSchema).max(16),
+      })
+      .strict();
+export const raceSchema=z.object({name:z.string().min(1).max(80),description:z.string().max(1000),startingSetup:startingSetupSchema.optional(),roster:z.array(idSchema).min(1),ai:z.object({composition:aiRulesSchema.shape.composition,skillPreference:aiRulesSchema.shape.skillPreference}).strict().optional()}).strict();
+export type RaceDefinition=z.infer<typeof raceSchema>;
 export const rulesSchema = z
   .object({
     id: z.string(),
@@ -418,85 +499,11 @@ export const rulesSchema = z
     }).strict().refine(p => p.neutralMultipliersPermille.length === p.neutralLevelCap - 1,
       'Neutral XP needs one multiplier for each level below the cap'),
     damageMultipliers: z.record(idSchema, z.record(idSchema, natural)),
-    startingSetup: z
-      .object({
-        id: idSchema,
-        fort: idSchema,
-        hero: z.object({
-          default: idSchema,
-          choices: z.array(idSchema).min(1).max(32),
-          offset: z.object({x:z.number().int(),y:z.number().int()}).strict(),
-        }).strict().optional(),
-        gathering: z
-          .array(
-            z
-              .object({
-                item: idSchema,
-                workers: positive.max(32),
-                radius: positive.max(96),
-              })
-              .strict(),
-          )
-          .optional(),
-        inventory: stockSchema,
-        units: z.array(
-          z
-            .object({
-              definition: idSchema,
-              offset: z
-                .object({ x: z.number().int(), y: z.number().int() })
-                .strict(),
-            })
-            .strict(),
-        ),
-      })
-      .strict(),
-    ai: z
-      .object({
-        revision: positive,
-        decisionTicks: positive.max(400),
-        economyTicks: positive.max(2400),
-        strategyTicks: positive.max(2400),
-        operationTicks: positive.max(400),
-        reactionTicks: natural.max(200),
-        orderIntervalTicks: positive.max(400),
-        workers: z
-          .object({
-            minimum: positive.max(100),
-            target: positive.max(100),
-            maximum: positive.max(120),
-            reserve: natural.max(12),
-          })
-          .strict(),
-        army: z
-          .object({
-            minimum: positive.max(160),
-            maximum: positive.max(160),
-            homeGuard: natural.max(16),
-            engagePermille: positive.max(5000),
-            campPermille: positive.max(5000),
-            retreatHealthPermille: positive.max(900),
-            pursuitRadius: positive.max(64),
-          })
-          .strict(),
-        limits: z
-          .object({
-            commandsPerBeat: positive.max(16),
-            placementCandidates: positive.max(64),
-            spellCandidates: positive.max(64),
-          })
-          .strict(),
-        composition: z
-          .array(
-            z
-              .object({ definition: idSchema, weight: positive.max(1000) })
-              .strict(),
-          )
-          .min(1)
-          .max(16),
-        skillPreference: z.array(idSchema).max(16),
-      })
-      .strict(),
+    startingSetup: startingSetupSchema,
+    ai: aiRulesSchema,
+    defaultRace: z.string().regex(/^[a-z][a-z0-9-]*$/).default('ants'),
+    races: z.record(z.string().regex(/^[a-z][a-z0-9-]*$/),raceSchema).default({}),
+    campaigns: z.record(z.string().min(1),z.object({name:z.string().min(1),race:z.string().min(1)}).strict()).default({}),
   })
   .strict();
 export const placementSchema = z

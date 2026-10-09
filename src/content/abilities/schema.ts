@@ -41,8 +41,10 @@ export const statusEffectSchema=z.object({op:z.literal('status'),...recipients,i
  ethereal:z.boolean().describe("Cannot attack or take non-spell damage; remains visible, collidable and spell-targetable. Independent of disarm immunity.").optional(),
  damageTakenPermille:z.record(z.string().min(1).max(80),amountSchema).refine(m=>Object.keys(m).length>0&&Object.keys(m).length<=16,"Use 1–16 damage types").describe("1000 is unchanged. Strongest vulnerability and strongest reduction per damage type combine once, before armor and shields.").optional(),
  combatModifiers:combatModifiersSchema.optional(),
+ stacking:z.object({max:z.number().int().min(2).max(16),scope:z.enum(['source','ability'])}).strict().describe('Refresh all stacks on reapplication. Additive numeric stat modifiers scale per stack; source scope keeps each caster independent.').optional(),
+ sourceAttackBonus:amountSchema.describe('Flat bonus per stack to subsequent primary basic attacks from this status source only.').optional(),
  modifiers:itemModifiersSchema.default({}),
- rankedModifiers:z.partialRecord(z.enum(['damage','armor','damagePermille','attackSpeedPermille','moveSpeedPermille','lifestealPermille','meleeReflectionPermille']),amountSchema).optional(),
+ rankedModifiers:z.partialRecord(z.enum(['maxHp','healthRegenPerSecond','manaRegenPerSecond','damage','armor','damagePermille','attackSpeedPermille','moveSpeedPermille','lifestealPermille','meleeReflectionPermille']),amountSchema).optional(),
  stun:z.boolean().optional(),disarm:z.boolean().optional(),silence:z.boolean().optional(),itemBlocked:z.boolean().optional(),
  breakOnDamage:z.boolean().optional(),shield:amountSchema.optional(),
  onShieldDepleted:z.enum(['retain','remove']).describe('Finite shield exhaustion: retain (default) keeps the status and its other payload until its ordinary lifetime ends; remove ends the whole status, including modifiers, reactions and bound visuals, immediately after absorbing the final point. Requires a positive shield at every rank. Does not apply to mana shields.').optional(),
@@ -75,6 +77,7 @@ const sacrifice=z.object({op:z.literal('sacrifice'),...recipients,amount:z.numbe
 export const effectSchema = z.discriminatedUnion('op',[heal,damage,statusEffectSchema,dispel,summon,split,resurrect,revive,drain,mana,teleport,vision,convert,contain,releaseContained,sacrifice]);
 export type StatusEffect=z.infer<typeof statusEffectSchema>;
 export const deliverySchema=z.discriminatedUnion('kind',[
+ z.object({kind:z.literal('charge'),speed:z.number().min(1).max(60),maxTicks:ticks.min(1).max(400)}).strict().describe('Move the grounded caster toward a unit using body and terrain clearance. Stop on obstruction, interruption or timeout; apply release operations only on contact.'),
  z.object({kind:z.literal('swarm'),count:amountSchema,durationTicks:amountSchema,speed:z.number().min(1).max(100),radius:z.number().min(1).max(32),launchIntervalTicks:ticks.max(40),attackIntervalTicks:ticks.min(1).max(400),maxPerTarget:z.number().int().min(1).max(32),returnThreshold:amountSchema,returnPermille:z.number().int().min(0).max(1000),maxHitsPerTrip:z.number().int().min(1).max(32),returnTimeoutTicks:ticks.min(1).max(4000),filter:targetFilterSchema.optional(),includeBuildings:z.boolean().default(false)}).strict().describe('Self-cast seekers execute onRelease on visible enemies. Drain restoreCaster is carried home before restoration; damage-only seekers return after maxHitsPerTrip.'),
  z.object({kind:z.literal('projectile'),speed:z.number().min(1).max(100)}).strict(),
  z.object({kind:z.literal('chain'),skipFullHealth:z.boolean().default(false),bounces:amountSchema,radius:z.number().min(1).max(20),intervalTicks:ticks.min(1).max(80),retentionPermille:z.number().int().min(1).max(1000)}).strict(),
@@ -191,6 +194,11 @@ export const abilitySchema = z.object({
    if(e.target==='point')ctx.addIssue({code:'custom',message:'Point operations run once and cannot declare a unit query'});
   }
   if(e.op==='status'){
+   if(e.sourceAttackBonus!==undefined){check(e.sourceAttackBonus,['status','sourceAttackBonus'],1000000);if(e.stacking?.scope!=='source')ctx.addIssue({code:'custom',message:'Source attack bonuses require source-scoped stacking'});}
+   if(e.stacking){
+    if(ability.aura||e.lifetime!=='duration'||e.form||e.periodic||e.shield!==undefined||e.manaShield||e.combatModifiers||e.concealment)ctx.addIssue({code:'custom',message:'Stacking supports independent duration statuses with additive stat modifiers, not auras, forms, periodic damage or shields'});
+    for(const rank of ability.ranks){const m={...e.modifiers,...Object.fromEntries(Object.entries(e.rankedModifiers??{}).map(([k,v])=>[k,value(v,rank)]))};for(const k of Object.keys(m))if(typeof m[k as keyof typeof m]==='number')(m as Record<string,unknown>)[k]=Number(m[k as keyof typeof m])*e.stacking.max;if(!itemModifiersSchema.safeParse(m).success)ctx.addIssue({code:'custom',message:'Maximum stacked modifiers exceed stat bounds'});}
+   }
    if(e.combatModifiers)checkCombat(e.combatModifiers);
    for(const [kind,n] of Object.entries(e.damageTakenPermille??{}))check(n,["onRelease","damageTakenPermille",kind],5000);
    if(e.form&&ability.aura)ctx.addIssue({code:'custom',message:'Forms require timed statuses, not continuously reapplied auras'});
@@ -257,7 +265,7 @@ export const abilitySchema = z.object({
  }
  if(ability.activation==='passive' && (ability.targeting.kind!=='self'||(!ability.aura&&!ability.triggers?.length&&!ability.combatModifiers)||(ability.aura&&effects.some(e=>e.op!=='status'||e.periodic||e.stun||e.disarm||e.silence||e.itemBlocked||e.breakOnDamage||e.shield!==undefined||e.immunity||e.spellImmunity||e.manaShield))||ability.delivery||ability.cast.channel||ability.autocast))ctx.addIssue({code:'custom',message:'Passives require a self aura, combat modifiers or triggers; auras only apply modifier statuses'});
  if(ability.activation!=='passive'&&ability.aura)ctx.addIssue({code:'custom',message:'Only passive abilities declare auras'});
- if(ability.delivery && (ability.cast.channel||ability.activation==='passive'||ability.delivery.kind==='line'&&ability.targeting.kind!=='point'||ability.delivery.kind==='swarm'&&ability.targeting.kind!=='self'||(ability.delivery.kind==='chain'||ability.delivery.kind==='projectile')&&ability.targeting.kind!=='unit'))ctx.addIssue({code:'custom',message:'Delivery does not match targeting'});
+ if(ability.delivery && (ability.cast.channel||ability.activation==='passive'||ability.delivery.kind==='line'&&ability.targeting.kind!=='point'||ability.delivery.kind==='swarm'&&ability.targeting.kind!=='self'||(ability.delivery.kind==='chain'||ability.delivery.kind==='projectile'||ability.delivery.kind==='charge')&&ability.targeting.kind!=='unit'))ctx.addIssue({code:'custom',message:'Delivery does not match targeting'});
  if(ability.delivery?.kind==='swarm'){
   const d=ability.delivery;for(const [key,max] of [['count',32],['durationTicks',144000],['returnThreshold',1000000]] as const)check(d[key],['delivery',key],max);
   if(ability.ranks.some(r=>value(d.count,r)<1||value(d.durationTicks,r)<1+(value(d.count,r)-1)*d.launchIntervalTicks||value(d.returnThreshold,r)<1))ctx.addIssue({code:'custom',message:'Swarm count and return threshold must be positive, and all seekers must launch before expiry'});

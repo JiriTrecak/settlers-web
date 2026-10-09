@@ -1,11 +1,11 @@
 /** Painted surface details; coordinates and size are in world metres, rotation in degrees. */
 export const DECAL_KINDS = ['leaf-litter', 'tiny-flowers', 'pebbles', 'root-rot', 'mycelium-bed'] as const;
 export type DecalKind = typeof DECAL_KINDS[number];
-export type GroundDecal = { id: string; kind: DecalKind; x: number; z: number; size: number; rotation: number; opacity: number };
+export type GroundDecal = { locked?: boolean; id: string; kind: DecalKind; x: number; z: number; size: number; rotation: number; opacity: number };
 export function validDecal(raw: unknown): raw is GroundDecal {
   if (!raw || typeof raw !== 'object') return false;
   const d = raw as GroundDecal;
-  return typeof d.id === 'string' && d.id.length > 0 && d.id.length <= 128 && DECAL_KINDS.includes(d.kind)
+  return (d.locked===undefined||typeof d.locked==='boolean') && typeof d.id === 'string' && d.id.length > 0 && d.id.length <= 128 && DECAL_KINDS.includes(d.kind)
     && [d.x,d.z,d.size,d.rotation,d.opacity].every(Number.isFinite)
     && Math.abs(d.x)<=512 && Math.abs(d.z)<=512 && d.size>=.5 && d.size<=32
     && Math.abs(d.rotation)<=360 && d.opacity>=0 && d.opacity<=1;

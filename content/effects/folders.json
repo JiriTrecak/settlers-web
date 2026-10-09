@@ -692,6 +692,8 @@
     "effect.marshal.carapace.cast": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
     "effect.marshal.carapace.armor": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
     "effect.marshal.crownfall.prepare": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
-    "effect.marshal.crownfall.impact": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54"
+    "effect.marshal.crownfall.impact": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
+    "effect.marshal.faultline.prepare": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54",
+    "effect.marshal.rally.recipient": "folder.c82876ff-0fd9-4af6-8353-143e5ff72a54"
   }
 }

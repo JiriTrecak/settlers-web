@@ -7,10 +7,11 @@ import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 
 it.each([
- {name:'vampiric-aura',stat:'lifestealPermille' as const,amount:150},
- {name:'thorns-aura',stat:'meleeReflectionPermille' as const,amount:200},
-])('$name reconstructs recipient membership through delayed movement, source death and peer restoration',({name,stat,amount})=>{
- const ability=coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!,presentation=coreAbilities.presentations.find(p=>p.id===ability.presentation)!;
+ {name:'vampiric-aura',namespace:'core',baseline:0,stat:'lifestealPermille' as const,amount:150},
+ {name:'thorns-aura',namespace:'core',baseline:0,stat:'meleeReflectionPermille' as const,amount:200},
+ {name:'rally',namespace:'marshal',baseline:1000,stat:'moveSpeedPermille' as const,amount:1080},
+])('$name reconstructs recipient membership through delayed movement, source death and peer restoration',({name,namespace,baseline,stat,amount})=>{
+ const ability=coreAbilities.abilities.find(a=>a.id==='ability.'+namespace+'.'+name)!,presentation=coreAbilities.presentations.find(p=>p.id===ability.presentation)!;
  const f=createAbilityEncounter(ability,presentation,encounterSettingsSchema.parse({relationship:'ally',combat:true,distance:6,casterHealth:1,targetHealth:500}));
  const enemy=f.game.context.create({id:'hunter',definition:'unit.preview.target',owner:'player.2',position:{x:150,y:140},rotation:270});
  const opts={map:f.game.map,slots:f.game.slots,registry:f.game.registry,seed:42};
@@ -32,10 +33,10 @@ it.each([
    const game=worlds[0].settlement,recipient=game.context.get(f.target)!;
    expect(recipient?.hp).toBeGreaterThan(0);
    if(tick===1)expect(game.context.stats(recipient)[stat]).toBe(amount);
-   if(tick>5&&tick<180&&game.context.stats(recipient)[stat]===0)left=true;
+   if(tick>5&&tick<180&&game.context.stats(recipient)[stat]===baseline)left=true;
    if(tick>180&&tick<350&&game.context.stats(recipient)[stat]===amount)returned=true;
    if(!game.context.get(f.caster)&&!deathTick)deathTick=tick;
-   if(deathTick&&tick>deathTick){expect(game.context.stats(recipient)[stat]).toBe(0);expect(recipient.spellStatuses?.some(s=>s.ability===ability.id)).toBeFalsy();lostSource=true;}
+   if(deathTick&&tick>deathTick){expect(game.context.stats(recipient)[stat]).toBe(baseline);expect(recipient.spellStatuses?.some(s=>s.ability===ability.id)).toBeFalsy();lostSource=true;}
    if([3,100,250].includes(tick)||tick===deathTick||deathTick&&tick===deathTick+1){const saved=JSON.parse(JSON.stringify(worlds[1].snapshot()));worlds[1]=new World(opts);worlds[1].restore(saved);}
    expect(worlds[1].checksum(),`tick ${tick}`).toBe(worlds[0].checksum());
   }

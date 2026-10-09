@@ -1,4 +1,7 @@
 import gameSource from '../../../content/game.json' with {type:'json'};
+import {raceDefinition} from '../../content/races';
+import {rulesSchema} from '../../content/schema';
+const raceRules=rulesSchema.parse(gameSource.rules);
 import {chosenHero,type HeroChoice} from '../../content/startingHero';
 import type { PlayerStart } from "../map/utcmap";
 import {
@@ -61,6 +64,7 @@ export function createSkirmishMatch(
     throw new Error(
       "A local skirmish supports one human or an AI-only observer match.",
     );
+  for(const slot of setup.slots)raceDefinition(raceRules,slot.race);
   const player = humans[0]?.player ?? null;
   return {
     player,
@@ -75,7 +79,8 @@ export function createSkirmishMatch(
       tickMs: TICK_MS,
       slots: setup.slots.map(({hero,...s}) => ({
         ...s,
-        ...(!sandbox&&heroes?{hero:chosenHero(heroes,hero)}:{}),
+        race:s.race??raceRules.defaultRace,
+        ...(!sandbox?{hero:chosenHero((s.race&&s.race!==raceRules.defaultRace?raceDefinition(raceRules,s.race).startingSetup.hero:heroes),hero)}:{}),
         name:
           s.kind === "human"
             ? name.trim() || "You"

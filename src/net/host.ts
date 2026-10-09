@@ -1,3 +1,5 @@
+import {rulesSchema} from '../content/schema';
+import {raceDefinition} from '../content/races';
 import gameSource from '../../content/game.json' with {type:'json'};
 import {chosenHero,type HeroChoice} from '../content/startingHero';
 import { chatText } from "../shared/chat/chat";
@@ -24,12 +26,15 @@ import {
 } from "../shared";
 import { Room } from "./room";
 
+const hostRules=rulesSchema.parse(gameSource.rules);
+
 type Member = {
   token: string;
   name: string;
   role: "player" | "spectator";
   player?: number;
   hero?: string;
+  race?: string;
   send: ((msg: ServerMsg) => void) | null;
   latency: ConnectionLatency;
 };
@@ -53,7 +58,7 @@ export class HostedMatch {
   private lastSave: unknown = null;
   private chatTimes = new Map<string, number>();
 
-  constructor(draft: CreateRoom, id: string = crypto.randomUUID(), private readonly now=()=>performance.now(), private readonly heroes:HeroChoice|undefined=gameSource.rules.startingSetup.hero) {
+  constructor(draft: CreateRoom, id: string = crypto.randomUUID(), private readonly now=()=>performance.now(), private readonly heroes:HeroChoice|undefined=hostRules.startingSetup.hero) {
     this.id = id;
     this.name = draft.name;
     this.mapId = draft.mapId;
@@ -70,12 +75,14 @@ export class HostedMatch {
     });
   }
 
+  private raceId(m:Member){return m.race??hostRules.defaultRace;}
+  private heroPolicy(m:Member){return this.raceId(m)===hostRules.defaultRace?this.heroes:raceDefinition(hostRules,this.raceId(m)).startingSetup.hero;}
   view(): RoomView {
     const seats: RoomView['slots'] = [];
     for (let i = 0; i < this.slotCount; i++) {
       const m = [...this.members.values()].find((x) => x.player === i);
       const rtt=m?.latency.roundTrip(this.now());
-      seats.push({ player: i, name: m?.name ?? null, ...(m&&this.heroes?{hero:m.hero??this.heroes.default}:{}), ...(rtt!=null?{roundTripMs:rtt}:{}) });
+      seats.push({ player: i, name: m?.name ?? null, ...(m?{race:this.raceId(m),...(this.heroPolicy(m)?{hero:m.hero??this.heroPolicy(m)!.default}:{})}:{}), ...(rtt!=null?{roundTripMs:rtt}:{}) });
     }
     return {
       id: this.id,
@@ -84,6 +91,7 @@ export class HostedMatch {
       mapId: this.mapId,
       host: this.members.get(this.hostToken)?.name ?? "",
       slots: seats,
+      races:Object.fromEntries(Object.entries(hostRules.races).map(([id,r])=>[id,{name:r.name,heroes:id===hostRules.defaultRace?this.heroes:raceDefinition(hostRules,id).startingSetup.hero}])),
       ...(this.heroes?{heroes:{default:this.heroes.default,choices:[...this.heroes.choices]}}:{}),
       spectators: [...this.members.values()].filter(
         (m) => m.role === "spectator",
@@ -170,7 +178,8 @@ export class HostedMatch {
       player: m.player!,
       kind: "human" as const,
       name: m.name,
-      ...(this.heroes?{hero:chosenHero(this.heroes,m.hero)}:{}),
+      race:this.raceId(m),
+      ...(this.heroPolicy(m)?{hero:chosenHero(this.heroPolicy(m),m.hero)}:{}),
     }));
     const config: MatchConfig = {
       v: 1,
@@ -207,6 +216,12 @@ export class HostedMatch {
     if (this.state === "ended") return { error: "ended" };
     const parsed = parseSaveForHost(save);
     if (!parsed) return { error: "bad_save" };
+    for(const slot of parsed.match.slots){
+      const race=slot.race??hostRules.defaultRace;
+      if(!Object.hasOwn(hostRules.races,race))return {error:'bad_race'};
+      const policy=race===hostRules.defaultRace?this.heroes:raceDefinition(hostRules,race).startingSetup.hero;
+      try{chosenHero(policy,slot.hero);}catch{return {error:'bad_hero'};}
+    }
     if (parsed.match.slots.length < 1) return { error: "empty" };
     if (!parsed.remote) return { error: "sp_save" };
     const players = [...this.members.values()].filter(
@@ -224,6 +239,7 @@ export class HostedMatch {
     }
     const config = namedMatch({ ...parsed.match, roomId: this.id }, names);
     this.config = config;
+    for(const m of this.members.values()){const slot=config.slots.find(s=>s.player===m.player);if(slot){m.race=slot.race;m.hero=slot.hero;}}
     this.lastSave = save;
     this.mailbox = new Room(config,false);
     this.mailbox.subscribe((msg) => this.fanout(msg));
@@ -304,9 +320,14 @@ export class HostedMatch {
       if('error' in result)m.send?.({type:'error',code:'START_REJECTED',message:result.error});
       return;
     }
+    if(msg.type==='selectRace') {
+      if(this.state!=='waiting'||m.role!=='player')return;
+      if(typeof msg.race!=='string'||!Object.hasOwn(hostRules.races,msg.race)){m.send?.({type:'error',code:'INVALID_RACE',message:'Choose an available race.'});return;}
+      m.race=msg.race;m.hero=this.heroPolicy(m)?.default;this.fanout({type:'room',room:this.view()});return;
+    }
     if(msg.type==='selectHero') {
       if(this.state!=='waiting'||m.role!=='player')return;
-      if(typeof msg.hero!=='string'||!this.heroes?.choices.includes(msg.hero)){
+      if(typeof msg.hero!=='string'||!this.heroPolicy(m)?.choices.includes(msg.hero)){
         m.send?.({type:'error',code:'INVALID_HERO',message:'Choose an available starting hero.'});return;
       }
       m.hero=msg.hero;this.fanout({type:'room',room:this.view()});return;
@@ -463,7 +484,7 @@ export class HostedMatch {
 export class MatchHost {
   private readonly rooms = new Map<string, HostedMatch>();
   private nextId = 1;
-  constructor(private readonly heroes:HeroChoice|undefined=gameSource.rules.startingSetup.hero) {}
+  constructor(private readonly heroes:HeroChoice|undefined=hostRules.startingSetup.hero) {}
   pulse(){for(const room of this.rooms.values())room.pulse();}
 
   create(draft: CreateRoom): {

@@ -9,8 +9,13 @@ import {hitLayer,hitLayers} from '../select/layerHit';
 import {walkStampSchema} from '../../shared/map/utcmap';
 import {AuthoringHistory,type SceneSelection} from '../../shared/authoring/history';
 import type {SceneEdit} from '../../shared/authoring/sceneCommands';
+import {cleanupPreview,type CleanupRequest} from '../../shared/authoring/cleanup';
+import {captureTerrain} from '../../shared/authoring/captureTerrain';
+import {restoreTerrain} from '../../shared/map/terrainData';
+import {editTerrainGrid,type GridTerrainEdit} from '../../shared/authoring/gridTerrain';
+import {TERRAIN_AUTHORING} from '../../content/terrain';
 import {proceduralLayerSchema,authoredObjectSchema,type ProceduralLayer,type AuthoredObject} from '../../shared/authoring/layers';
-import {compileMapScene,type CompiledMapScene} from '../../shared/authoring/mapScene';
+import {compileMapScene,type PreviewMap,type CompiledMapScene} from '../../shared/authoring/mapScene';
 import {updateMapScene} from '../../shared/authoring/updateMapScene';
 import {BuildProfile} from '../../shared/authoring/buildProfile';
 import {createMapCompiler,type MapCompilerClient} from '../../shared/authoring/worker/client';
@@ -21,7 +26,6 @@ import {missionSchema,type MissionDefinition} from "../../shared/scenario/schema
 import {renameEntity} from "./entityAuthoring";
 import {validatePlacements} from "../../content/map";
 import {sculptPlateau,sculptRamp} from '../../shared/landscape/tacticalAuthoring';
-import {forestCoverStroke} from './forestCover';
 import { content } from "../../content/builtin";
 import { expandMap } from "../../content/map";
 import { type Owner } from "../../content/schema";
@@ -59,16 +63,13 @@ import {
   emptyLandscape,
   type CurvePoint,
   type TerrainLayer,
-  type CoverPatch,
 } from "../../shared/landscape/curve";
 /**
  * Authored map view. Same Renderer as play. No Session, no lockstep, no World.tick.
  */
 import {
   DEFAULT_MAP_NAME,
-  decodeHeight,
   emptyUtcMap,
-  encodeHeight,
   HeightField,
   inStamp,
   sitAllowed,
@@ -81,7 +82,7 @@ import { ISO_PITCH, ISO_YAW, MapInput, Minimap, Renderer } from "../../render";
 import { BrushMask } from "../brush/brush";
 import { BrushKit } from "../brush/kit";
 import { scatterBrush } from "../brush/scatter";
-import { CleanTool, wipeStamps, eraseCover } from "../clean/clean";
+import { CleanTool } from "../clean/clean";
 import { nearestStamp, SelectTool, withPose, stepYaw, YAW_STEP } from "../select/select";
 import { SculptTool, type SculptMode } from "../sculpt/sculpt";
 
@@ -136,6 +137,11 @@ export class WorldEditor {
   map: UtcMap = emptyUtcMap();
   readonly authoringAssets=landscapeAssets;
   layers=new AuthoringHistory({version:1,layers:[],objects:[]});
+  private previewInput?:{map:UtcMap;revision:number;value:PreviewMap};
+  private previewMap():PreviewMap{
+    if(this.previewInput?.map===this.map&&this.previewInput.revision===this.layers.revision)return this.previewInput.value;
+    const value={...this.map,authoring:this.layers.input};this.previewInput={map:this.map,revision:this.layers.revision,value};return value;
+  }
   private compiledScene:CompiledMapScene|null=null;
   private compiledInputs:unknown[]=[];
   private compiledDocument:UtcMap|null=null;
@@ -194,8 +200,9 @@ export class WorldEditor {
   private editScene(change:(history:AuthoringHistory)=>void,after?:()=>void):void|Promise<void>{
     const compiler=this.compiler;
     if(!compiler){
+      this.layers.decorations={stamps:this.map.stamps,decals:this.map.landscape?.decals??[]};
       const next=this.layers.fork();change(next);
-      const compiled=updateMapScene(this.map,{...this.map,authoring:next.scene},this.compiledMap(),this.authoringAssets);
+      const compiled=updateMapScene(this.map,{...this.map,stamps:next.decorations.stamps,authoring:next.input},this.compiledMap(),this.authoringAssets);
       this.layers=next;this.commitLayers(compiled);after?.();return;
     }
     const epoch=this.compileEpoch;
@@ -204,13 +211,14 @@ export class WorldEditor {
       // Retry on its new immutable inputs; never overwrite that newer document.
       for(;;){
         if(epoch!==this.compileEpoch)throw new Error('Map changed before edit completed');
-        const history=this.layers,next=history.fork(),selection=history.selection,inputs=sceneInputs(this.map);change(next);
-        const map={...this.map,authoring:next.scene},compiled=await compiler.compile(map);
+        const history=this.layers;history.decorations={stamps:this.map.stamps,decals:this.map.landscape?.decals??[]};
+        const next=history.fork(),selection=history.selection,inputs=sceneInputs(this.map);change(next);
+        const map={...this.map,stamps:next.decorations.stamps,authoring:next.input},compiled=await compiler.compile(map);
         if(epoch!==this.compileEpoch)throw new Error('Map changed before edit completed');
         if(history!==this.layers||sceneInputs(this.map).some((v,i)=>v!==inputs[i]))continue;
         const previous=this.compiledScene;
         if(previous&&previous.field!==compiled.field)rememberHeightChange(compiled.field,previous.field,
-          previous.field.waterLevel===compiled.field.waterLevel&&previous.field.sourceWater===compiled.field.sourceWater&&JSON.stringify(previous.generated?.rivers)===JSON.stringify(compiled.generated?.rivers));
+          previous.field.cellWater===compiled.field.cellWater&&previous.field.waterLevel===compiled.field.waterLevel&&previous.field.sourceWater===compiled.field.sourceWater&&JSON.stringify(previous.generated?.rivers)===JSON.stringify(compiled.generated?.rivers));
         if(history.selection!==selection)next.selection=history.selection;
         const publication=perf.start();
         try{this.sceneUpdateError='';this.layers=next;this.commitLayers(compiled);after?.();}
@@ -231,14 +239,14 @@ export class WorldEditor {
     const epoch=this.compileEpoch;
     const run=async()=>{
       for(;;){
-        const map=this.map,inputs=sceneInputs(map),compiled=await compiler.compile(map);
+        const map=this.previewMap(),inputs=sceneInputs(map),compiled=await compiler.compile(map);
         if(epoch!==this.compileEpoch)return;
-        if(sceneInputs(this.map).some((v,i)=>v!==inputs[i]))continue;
+        if(sceneInputs(this.previewMap()).some((v,i)=>v!==inputs[i]))continue;
         const previous=this.compiledScene;
         if(previous&&previous.field!==compiled.field)rememberHeightChange(compiled.field,previous.field,
-          previous.field.waterLevel===compiled.field.waterLevel&&previous.field.sourceWater===compiled.field.sourceWater&&JSON.stringify(previous.generated?.rivers)===JSON.stringify(compiled.generated?.rivers));
+          previous.field.cellWater===compiled.field.cellWater&&previous.field.waterLevel===compiled.field.waterLevel&&previous.field.sourceWater===compiled.field.sourceWater&&JSON.stringify(previous.generated?.rivers)===JSON.stringify(compiled.generated?.rivers));
         const publication=perf.start();
-        try{this.sceneUpdateError='';rememberProjectScene(this.map,compiled);this.paint();this.hooks.onSelect?.();}
+        try{this.sceneUpdateError='';rememberProjectScene(this.previewMap(),compiled);this.paint();this.hooks.onSelect?.();}
         finally{perf.end('Editor scene publication (event)',publication);}
         return;
       }
@@ -277,9 +285,29 @@ export class WorldEditor {
   applySceneEdits(edits:readonly SceneEdit[]){const captured=structuredClone(edits);return this.editScene(history=>history.batch(captured),()=>this.cancelLayerShape());}
   removeLayerSelection(){const selection=this.layers.selection;return this.editScene(history=>{if(selection)history.remove(selection);},()=>this.cancelLayerShape());}
   lockLayerSelection(locked:boolean){const selection=this.layers.selection;return this.editScene(history=>{if(selection)history.setLocked(selection,locked);},()=>{if(locked)this.cancelLayerShape();});}
-  bakeSelectedLayer(){const selection=this.layers.selection;if(selection?.kind!=='layer')throw Error('Select a generated layer');return this.editScene(history=>{if(!this.generatedScene)throw Error('Select a generated layer');history.bake(selection.id,this.generatedScene);},()=>this.cancelLayerShape());}
+  async applyGenerators(){
+    await this.editsReady();
+    const compiled=this.compiledMap(),revision=this.layers.revision;
+    return this.editScene(history=>{if(history.revision!==revision)throw Error('The preview changed. Apply the updated preview.');history.apply(compiled);},()=>this.cancelLayerShape());
+  }
+  async cleanupObjects(request:CleanupRequest,preview=true){
+    await this.editsReady();
+    const result=cleanupPreview(this.layers.scene,request,this.authoringAssets,{stamps:this.map.stamps,decals:this.map.landscape?.decals??[]});
+    if(!preview)await this.editScene(history=>history.cleanup(request,this.authoringAssets));
+    return result;
+  }
+  async editGridTerrain(edit:GridTerrainEdit){
+    await this.editsReady();
+    if(this.layers.scene.layers.length)throw Error('Apply or remove generator previews before editing terrain cells');
+    const initial=captureTerrain(this.compiledMap().field);
+    await this.editScene(history=>{
+      if(history.scene.layers.length)throw Error('Apply or remove generator previews before editing terrain cells');
+      const result=editTerrainGrid(history.scene.terrain??initial,edit);
+      if(result.samples)history.setTerrain(result.terrain);
+    });
+  }
   undoLayers(redo=false){return this.editScene(history=>{if(redo)history.redo();else history.undo();},()=>{if(this.paintingLayer){const l=this.layers.scene.layers.find(l=>l.id===this.paintingLayer!.id);this.paintingLayer=l?structuredClone(l):{...this.paintingLayer,shape:{type:'mask',elevation:-.6,strokes:[]}};}});}
-  private commitLayers(compiled?:CompiledMapScene){this.map={...this.map,authoring:this.layers.scene};if(compiled)rememberProjectScene(this.map,compiled);this.paint();this.hooks.onChange?.();this.hooks.onSelect?.();}
+  private commitLayers(compiled?:CompiledMapScene,notify=true){const {height:_,waterLevel:__,...document}=this.map;this.map={...document,stamps:this.layers.decorations.stamps,landscape:{...(this.map.landscape??emptyLandscape()),decals:[...this.layers.decorations.decals]},authoring:this.layers.document};this.renderer?.setLandscape(this.map.landscape!);if(this.map.authoring?.terrain)restoreTerrain(this.height,this.map.authoring.terrain);if(compiled)rememberProjectScene(this.previewMap(),compiled);if(notify){this.paint();this.hooks.onChange?.();this.hooks.onSelect?.();}}
   authoringCamera(mode:'top'|'free'|'game'){
     const camera=this.renderer?.camera;if(!camera)return;this.gameCam=mode==='game';camera.setGame(this.gameCam,this.map.size);
     if(mode==='top')camera.setTopDown();else if(mode==='free')camera.pose({pitch:ISO_PITCH,yaw:ISO_YAW});
@@ -304,14 +332,14 @@ export class WorldEditor {
   shapeWorldPoint(clientX:number,clientY:number){return this.renderer?.pickGround(clientX,clientY);}
   previewLayerShape(shape:ProceduralLayer['shape']){this.renderer?.previewCurve(shape.type==='mask'?[]:shape.type==='region'?[...shape.points,shape.points[0]!]:sampleBezier(shape.knots));}
   private compiledMap():CompiledMapScene{
-    const keys=sceneInputs(this.map);
+    const map=this.previewMap(),keys=sceneInputs(map);
     if(!this.compiledScene||keys.some((v,i)=>v!==this.compiledInputs[i])){
       const previous=this.compiledScene;
-      this.compiledScene=cachedProjectScene(this.map)??(previous&&this.compiledDocument?updateMapScene(this.compiledDocument,this.map,previous,this.authoringAssets):compileMapScene(this.map,this.authoringAssets));
-      rememberProjectScene(this.map,this.compiledScene);
+      this.compiledScene=cachedProjectScene(map)??(previous&&this.compiledDocument?updateMapScene(this.compiledDocument,map,previous,this.authoringAssets):compileMapScene(map,this.authoringAssets));
+      rememberProjectScene(map,this.compiledScene);
       // Pose-only edits reuse the exact terrain buffers, including GPU uploads.
       if(!this.compiledInputs.length||previous?.field!==this.compiledScene.field)this.renderer?.setTerrain(this.compiledScene.field);
-      this.compiledInputs=keys;this.compiledDocument=this.map;
+      this.compiledInputs=keys;this.compiledDocument=map;
     }
     return this.compiledScene;
   }
@@ -392,6 +420,7 @@ export class WorldEditor {
   tool: EditorTool | null = "select";
   asset: string | null = null;
   terrainMode:
+    | 'grid-level' | 'grid-shallow' | 'grid-deep' | 'grid-dry' | 'grid-material'
     | "terrain"
     | "river"
     | "shallows"
@@ -403,7 +432,9 @@ export class WorldEditor {
     | "hill"
     | "plateau"
     | "ramp"
-    | "basin" = "terrain";
+    | "basin" = "grid-level";
+  terrainGridLevel=0;
+  terrainGridMaterial='';
   terrainLayer: TerrainLayer = "sand";
   private terrainSize = readBrushSize("terrain", 64);
   get terrainRadius(): number {
@@ -434,6 +465,25 @@ export class WorldEditor {
   readonly brush = new BrushMask();
   readonly kit = new BrushKit();
   readonly clean = new CleanTool();
+  cleanShape:'brush'|'rectangle'|'lasso'='brush';
+  cleanAsset='';
+  cleanPreview:{count:number;lockedCount:number}|null=null;
+  private cleanPoints:{x:number;z:number}[]=[];
+  private cleanRequest():CleanupRequest|null{
+    const points=this.cleanPoints;if(!points.length)return null;
+    const area=this.cleanShape==='brush'?{type:'brush' as const,points,radius:this.clean.radius}:this.cleanShape==='rectangle'?{type:'rectangle' as const,from:points[0],to:points.at(-1)!}:points.length>=3?{type:'lasso' as const,points}:null;
+    if(!area)return null;
+    return {area,kinds:this.clean.type==='trees'?['tree']:this.clean.type==='foliage'?['tree','foliage']:this.clean.type==='props'?['prop']:this.clean.type==='decals'?['decal']:['tree','foliage','prop','building','bridge','decal'],...(this.cleanAsset?{assets:[this.cleanAsset]}:{})};
+  }
+  refreshCleanPreview(){const request=this.cleanRequest();this.cleanPreview=request?cleanupPreview(this.layers.scene,request,this.authoringAssets,{stamps:this.map.stamps,decals:this.map.landscape?.decals??[]}):null;
+    if(request){const a=request.area;let outline:{x:number;z:number}[]=[];
+      if(a.type==='rectangle')outline=[a.from,{x:a.to.x,z:a.from.z},a.to,{x:a.from.x,z:a.to.z},a.from];
+      else if(a.type==='lasso')outline=[...a.points,a.points[0]];
+      else{const p=a.points.at(-1)!;outline=Array.from({length:49},(_,i)=>({x:p.x+Math.cos(i*Math.PI/24)*a.radius,z:p.z+Math.sin(i*Math.PI/24)*a.radius}));}
+      this.renderer?.previewCurve(outline);
+    }this.hooks.onClean?.();}
+  cancelClean(){this.cleanPoints=[];this.cleanPreview=null;this.renderer?.previewCurve([]);this.hooks.onClean?.();}
+  async applyClean(){const request=this.cleanRequest();if(!request)return;await this.cleanupObjects(request,false);this.cancelClean();}
   height = new HeightField();
   readonly sculpt = new SculptTool();
   readonly select = new SelectTool();
@@ -475,7 +525,7 @@ export class WorldEditor {
     this.layerMenu?.close();
     this.finishGrab(true);this.paintedMap=null;
     this.map = map;
-    this.layers=new AuthoringHistory(map.authoring??{version:1,layers:[],objects:[]});this.compiledScene=null;this.compiledInputs=[];this.compiledDocument=null;this.drawingLayer=null;this.paintingLayer=null;
+    this.layers=new AuthoringHistory({...map.authoring,version:1,layers:[],objects:map.authoring?.objects??[]});this.layers.decorations={stamps:map.stamps,decals:map.landscape?.decals??[]};this.compiledScene=null;this.compiledInputs=[];this.compiledDocument=null;this.drawingLayer=null;this.paintingLayer=null;
     this.entityUndo = [];
     this.entityRedo = [];
     this.selectedEntity = null;
@@ -645,12 +695,12 @@ export class WorldEditor {
   setCleanRadius(n: number): void {
     this.clean.setRadius(n);
     saveBrushSize("clean", this.clean.radius);
-    this.hooks.onClean?.();
+    this.refreshCleanPreview();
   }
 
   setCleanType(type: CleanTool["type"]): void {
     this.clean.setType(type);
-    this.hooks.onClean?.();
+    this.refreshCleanPreview();
   }
 
   setSculptRadius(n: number): void {
@@ -755,6 +805,16 @@ export class WorldEditor {
   }
   applyTerrainCurve(): void {
     if (!this.terrainPoints.length) return;
+    if(this.terrainMode.startsWith('grid-')){
+      const {cellSize,origin}=TERRAIN_AUTHORING;
+      const points=this.terrainPoints.map(p=>({x:Math.round((p.x-origin)/cellSize*2)/2,z:Math.round((p.z-origin)/cellSize*2)/2}));
+      const a=this.terrainPoints[0],b=this.terrainPoints.at(-1)!;
+      const selection:GridTerrainEdit['selection']=this.terrainCurve?{type:'polygon',points}:{type:'rectangle',from:{x:Math.floor((Math.min(a.x,b.x)-origin)/cellSize),z:Math.floor((Math.min(a.z,b.z)-origin)/cellSize)},to:{x:Math.floor((Math.max(a.x,b.x)-origin)/cellSize)+1,z:Math.floor((Math.max(a.z,b.z)-origin)/cellSize)+1}};
+      const type=this.terrainMode,level=this.terrainGridLevel;
+      const operation:GridTerrainEdit['operation']=type==='grid-shallow'||type==='grid-deep'?{type:'water',surfaceLevel:level,depth:type==='grid-shallow'?'shallow':'deep'}:type==='grid-material'?{type:'material',material:this.terrainGridMaterial}:{type:type==='grid-dry'?'dry':'level',level};
+      void this.editGridTerrain({selection,operation}).catch(error=>{this.entityMessage=(error as Error).message;this.hooks.onSelect?.();});
+      this.clearTerrainCurve();return;
+    }
     if(this.terrainMode === "plateau"){
       if(this.terrainCurve)this.tacticalTerrain("plateau",this.terrainPoints,this.terrainDepth,this.terrainRadius);
       else for(const p of this.terrainPoints){
@@ -783,7 +843,7 @@ export class WorldEditor {
         points: this.terrainPoints,
         radius: this.terrainRadius,
         depth: this.terrainDepth,
-        mode: this.terrainMode,
+        mode: this.terrainMode as 'raise'|'smooth'|'flatten',
         layer: this.terrainLayer,
       });
     this.clearTerrainCurve();
@@ -801,56 +861,13 @@ export class WorldEditor {
   curveStroke(opts: {
     points: CurvePoint[];
     radius: number;
-    mode: "river" | "shallows" | "terrain" | "cover" | "foliage" | "raise" | "smooth" | "flatten";
+    mode: "raise" | "smooth" | "flatten";
     depth?: number;
     layer?: TerrainLayer;
     opacity?: number;
   }): void {
     const samples = sampleCurve(opts.points, opts.radius);
-    if (opts.mode === "river" || opts.mode === "shallows") {
-      const landscape = this.map.landscape ?? emptyLandscape();
-      this.map = {
-        ...this.map,
-        landscape: {
-          ...landscape,
-          rivers: [
-            ...(landscape.rivers ?? []),
-            {
-              points: opts.points,
-              radius: opts.radius,
-              depth: opts.mode === "shallows" ? .32 : opts.depth ?? 1.4,
-            },
-          ],
-        },
-      };
-    }
-    if (opts.mode === "terrain") {
-      const landscape = this.map.landscape ?? emptyLandscape();
-      this.map = {
-        ...this.map,
-        landscape: {
-          ...landscape,
-          strokes: [
-            ...landscape.strokes,
-            {
-              points: opts.points,
-              radius: opts.radius,
-              layer: opts.layer ?? "sand",
-              opacity: opts.opacity ?? 1,
-            },
-          ],
-        },
-      };
-    } else if (opts.mode === "cover") {
-      const landscape=this.map.landscape??emptyLandscape();
-      this.map={...this.map,landscape:{...landscape,cover:[...landscape.cover,...forestCoverStroke(opts.points,opts.radius)]}};
-    } else if (opts.mode === "foliage") {
-      for (const p of samples) {
-        this.brush.setRadius(p.radius);
-        this.dabBrush(p.x, p.z);
-      }
-      this.applyBrush();
-    } else {
+    {
       const original = this.height.samples.slice();
       for (let iz = 0; iz < this.height.verts; iz++)
         for (let ix = 0; ix < this.height.verts; ix++) {
@@ -862,20 +879,7 @@ export class WorldEditor {
           if (d >= 1) continue;
           const i = iz * this.height.verts + ix;
           const w = (1 - d * d) ** 2;
-          if (opts.mode === "river" || opts.mode === "shallows") {
-            // Constant riverbed depth along the centerline; overlapping dabs never dig holes.
-            const bank = Math.max(0, Math.min(1, (d - 0.68) / 0.32));
-            const blend = bank * bank * (3 - 2 * bank);
-            const channel =
-              this.height.waterLevel -
-              (opts.mode === "shallows" ? .32 : opts.depth ?? 1.4) * Math.max(0, 1 - (d / 0.68) ** 2);
-            const target =
-              d < 0.68
-                ? channel
-                : this.height.waterLevel +
-                  (original[i]! - this.height.waterLevel) * blend;
-            this.height.samples[i] = opts.mode === "shallows" ? target : Math.min(original[i]!, target);
-          } else if (opts.mode === "smooth") {
+          if (opts.mode === "smooth") {
             let sum = 0,
               count = 0;
             for (let dz = -2; dz <= 2; dz++)
@@ -910,17 +914,6 @@ export class WorldEditor {
     this.hooks.onChange?.();
   }
 
-  addCover(patch: CoverPatch): void {
-    const landscape = this.map.landscape ?? emptyLandscape();
-    this.map = {
-      ...this.map,
-      landscape: { ...landscape, cover: [...landscape.cover, patch] },
-    };
-    this.renderer?.setLandscape(this.map.landscape!);
-    this.hooks.onChange?.();
-    this.paint();
-  }
-
   waterStyle(_settings: WaterStyle): void {
     throw new Error('Water appearance belongs to the biome river profiles. Select a river recipe instead.');
   }
@@ -940,33 +933,20 @@ export class WorldEditor {
     this.renderer?.setLandscape(this.map.landscape!);this.hooks.onChange?.();this.paint();
   }
 
-  putDecal(decal: GroundDecal): void {
-    if (!validDecal(decal)) throw new Error("Invalid decal");
-    const landscape = this.map.landscape ?? emptyLandscape(),
-      existing = landscape.decals ?? [];
-    if (existing.length >= 2048 && !existing.some((d) => d.id === decal.id))
-      throw new Error("Decal limit reached");
-    const decals = existing.some((d) => d.id === decal.id)
-      ? existing.map((d) => (d.id === decal.id ? decal : d))
-      : [...existing, decal];
-    this.map = { ...this.map, landscape: { ...landscape, decals } };
-    this.renderer?.setLandscape(this.map.landscape!);
-    this.paint();
-    this.hooks.onChange?.();
+  putDecal(decal: GroundDecal):void|Promise<void> {
+    if(!validDecal(decal))throw Error('Invalid decal');
+    return this.editScene(history=>{
+      const existing=history.decorations.decals,current=existing.find(d=>d.id===decal.id);
+      if(current?.locked)throw Error('Decal is locked');
+      if(existing.length>=2048&&!current)throw Error('Decal limit reached');
+      history.setDecorations({...history.decorations,decals:current?existing.map(d=>d.id===decal.id?decal:d):[...existing,decal]});
+    });
   }
-  removeDecal(id: string): void {
-    const landscape = this.map.landscape ?? emptyLandscape();
-    this.map = {
-      ...this.map,
-      landscape: {
-        ...landscape,
-        decals: (landscape.decals ?? []).filter((d) => d.id !== id),
-      },
-    };
-    if (this.selectedDecal === id) this.selectedDecal = null;
-    this.renderer?.setLandscape(this.map.landscape!);
-    this.paint();
-    this.hooks.onChange?.();
+  removeDecal(id:string):void|Promise<void> {
+    return this.editScene(history=>{
+      if(history.decorations.decals.find(d=>d.id===id)?.locked)throw Error('Decal is locked');
+      history.setDecorations({...history.decorations,decals:history.decorations.decals.filter(d=>d.id!==id)});
+    },()=>{if(this.selectedDecal===id)this.selectedDecal=null;});
   }
   configureDecal(
     settings: Partial<
@@ -1230,29 +1210,8 @@ export class WorldEditor {
   }
 
   private cleanAt(x: number, z: number): void {
-    const hits = this.clean.strokeHits(x, z);
-    const stamps = wipeStamps(
-      this.map.stamps,
-      hits,
-      this.clean.radius,
-      this.clean.type,
-    );
-    const landscape = this.map.landscape;
-    const cover =
-      this.clean.type === "foliage" && landscape
-        ? eraseCover(landscape.cover, hits, this.clean.radius)
-        : landscape?.cover;
-    const changed =
-      !!landscape && !!cover && cover.some((p, i) => p !== landscape.cover[i]);
-    if (stamps.length === this.map.stamps.length && !changed) return;
-    this.map = {
-      ...this.map,
-      stamps,
-      ...(changed ? { landscape: { ...landscape!, cover: cover! } } : {}),
-    };
-    if (changed) this.renderer?.setLandscape(this.map.landscape!);
-    this.paint();
-    this.hooks.onChange?.();
+    const last=this.cleanPoints.at(-1);if(!last||Math.hypot(last.x-x,last.z-z)>.25)this.cleanPoints.push({x,z});
+    this.refreshCleanPreview();
   }
 
   dabSculpt(wx: number, wz: number, erase = false): void {
@@ -1773,7 +1732,7 @@ export class WorldEditor {
   }
 
   private paint(): void {
-    if(this.compiler&&(!this.compiledScene||sceneInputs(this.map).some((v,i)=>v!==this.compiledInputs[i]))&&!cachedProjectScene(this.map)){
+    if(this.compiler&&(!this.compiledScene||sceneInputs(this.previewMap()).some((v,i)=>v!==this.compiledInputs[i]))&&!cachedProjectScene(this.previewMap())){
       this.rebuildSurface();return;
     }
     const profile=new BuildProfile(),previousSurface=this.compiledScene?.generated?.terrain;
@@ -1786,16 +1745,16 @@ export class WorldEditor {
       this.tool === "spawn",
     );
     this.renderer?.setSelected(this.tool === "select" ? this.select.id : null);
-    const changed=this.paintedMap!==this.map;
-    if(changed)this.entityViews = editorEntities(this.map);
-    const selected = this.selectedEntity===null?-1:expandMap(this.map, content).findIndex(
+    const displayMap=this.previewMap(),changed=this.paintedMap!==displayMap;
+    if(changed)this.entityViews = editorEntities(displayMap);
+    const selected = this.selectedEntity===null?-1:expandMap(this.previewMap(), content).findIndex(
       (p) => p.id === this.selectedEntity,
     );
     this.renderer?.gameSelect(selected >= 0 ? [selected + 1] : []);
     const selectedLayer=this.layers.scene.layers.find(l=>l.id===this.layers.selection?.id);
     if(selectedLayer)this.previewLayerShape(selectedLayer.shape);else this.renderer?.previewCurve([]);
     if(!changed)return;
-    this.paintedMap=this.map;
+    this.paintedMap=displayMap;
     const stamps = [...compiled.stamps, ...resourceStamps(this.entityViews)];
     const settlement=authoredScene(this.entityViews,this.map.size);
     profile.mark('Editor entity and scenery projection');
@@ -1821,25 +1780,15 @@ export class WorldEditor {
   private loadHeight(map: UtcMap): void {
     if(this.height.size!==map.size){this.height=new HeightField(map.size);this.brush.resize(map.size);this.sculpt.mask.resize(map.size);}
     this.renderer?.camera.setGame(this.gameCam,map.size);
-    const samples = map.height ? decodeHeight(map.height,map.size) : null;
-    if (samples) this.height.load(samples, map.waterLevel ?? 0, map.landscape?.importedTerrain);
-    else {
-      this.height.clear();
-      this.height.waterLevel = map.waterLevel ?? 0;
-    }
+    this.height.clear();
+    if(!map.authoring?.terrain)throw Error('Map has no committed terrain');
+    restoreTerrain(this.height,map.authoring.terrain);
   }
 
   private commitHeight(): void {
-    const height = encodeHeight(this.height.samples,this.map.size);
-    const waterLevel = this.height.waterLevel;
-    this.map = {
-      ...this.map,
-      v: this.map.v,
-      name: this.map.name,
-      stamps: this.map.stamps,
-      ...(waterLevel !== 0 ? { waterLevel } : {}),
-      ...(height ? { height } : {}),
-    };
+    this.layers.decorations={stamps:this.map.stamps,decals:this.map.landscape?.decals??[]};
+    this.layers.setTerrain(captureTerrain(this.height));
+    this.commitLayers(undefined,false);
   }
 
   private draw(): void {

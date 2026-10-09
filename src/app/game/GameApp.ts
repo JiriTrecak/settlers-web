@@ -292,6 +292,7 @@ export class GameApp {
       host,
       player,
       onHero: hero => channel.send({type:'selectHero',hero}),
+      onRace: race => channel.send({type:'selectRace',race}),
       mapName: getMap(room.mapId).name,
       onBack: () => {
         channel.destroy();

@@ -3,7 +3,7 @@
   "id": "asset.placeholder.missing-model",
   "name": "Missing model",
   "kind": "prop",
-  "revision": 18,
+  "revision": 20,
   "status": "published",
   "tags": [
     "placeholder",
@@ -385,6 +385,27 @@
           "distance": 7
         },
         "castContact": 0.68,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.placeholder.missing-model",
+        "scale": 1,
+        "healthHeight": 2.8,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.placeholder.missing-model"
+        }
+      },
+      {
+        "id": "asset.beetles.stone-slinger",
+        "scale": 1,
+        "healthHeight": 2.8,
+        "projectile": "stone",
         "geometry": {
           "role": "geometry",
           "index": 1,

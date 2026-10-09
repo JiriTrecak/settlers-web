@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "effect.marshal.rally.ward",
-  "name": "Rally · amber ward",
+  "name": "Crownfall · allied royal ward",
   "description": "Marshal spell presentation; gameplay is supplied by the linked ability.",
   "durationTicks": 80,
   "loop": true,

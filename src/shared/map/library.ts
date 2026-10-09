@@ -1,4 +1,4 @@
-import { parseUtcMap, type UtcMap } from "./utcmap";
+import { UTCMAP_VERSION, stringifyUtcMap, parseUtcMap, type UtcMap } from "./utcmap";
 import { mapRevision, type PlayableMap } from "./playable";
 import {mapOverview,mapSourceHash,hasPlayableSlots,type MapOverview} from './overview';
 import generated from '../../../assets/maps/previews/index.json';
@@ -32,7 +32,11 @@ function entry(id: string, map: UtcMap, source: MapEntry["source"]): MapEntry {
     overview:mapOverview(map),
   };
 }
-const project:MapEntry[] = Object.entries(sources).map(([path, raw]) => {
+const project:MapEntry[] = Object.entries(sources).filter(([,raw])=>{
+ // Retired procedural documents are not playable maps. New maps contain only
+ // committed cells and placements; there is deliberately no migration path.
+ return JSON.parse(raw).v===UTCMAP_VERSION;
+}).map(([path, raw]) => {
   const id=path.split('/').pop()!.replace('.utcmap','').toLowerCase();
   let parsed:UtcMap|undefined,revision:string|undefined;
   const load=()=>{if(!parsed){parsed=parseUtcMap(JSON.parse(raw))??undefined;if(!parsed)throw Error(`Invalid authored map: ${path}`);}return parsed;};
@@ -81,7 +85,7 @@ export function rememberAuthoredMap(map: UtcMap): string {
   maps.push(entry(id, map, "local"));
   localStorage.setItem(
     LOCAL_MAPS_KEY,
-    JSON.stringify(maps.map(({ id, map }) => ({ id, map }))),
+    JSON.stringify(maps.map(({ id, map }) => ({ id, map:JSON.parse(stringifyUtcMap(map)) }))),
   );
   return id;
 }

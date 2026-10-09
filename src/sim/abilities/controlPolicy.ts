@@ -24,7 +24,7 @@ export const controlImmune=(e:Holder,registry:ContentRegistry,kind:ControlKind)=
  for(const s of e.spellStatuses??[]){const d=registry.findStatus(s.ability,s.status);if(d?.modifiers.controlImmune||d?.controlImmunity?.includes(kind))return true;}
  return false;
 };
-export function statusModifiersRaw(d:StatusEffect,a:AbilityDefinition,rank:number){return {...d.modifiers,...Object.fromEntries(Object.entries(d.rankedModifiers??{}).map(([key,n])=>[key,value(n,a.ranks[rank-1])]))};}
+export function statusModifiersRaw(d:StatusEffect,a:AbilityDefinition,rank:number,stacks=1){const m={...d.modifiers,...Object.fromEntries(Object.entries(d.rankedModifiers??{}).map(([key,n])=>[key,value(n,a.ranks[rank-1])]))};if(d.stacking)for(const k of Object.keys(m))if(typeof m[k as keyof typeof m]==='number')(m as Record<string,unknown>)[k]=Number(m[k as keyof typeof m])*stacks;return m;}
 export function statusControls(d:StatusEffect,a:AbilityDefinition,rank:number):ControlKind[]{
  const m=statusModifiersRaw(d,a,rank),k:ControlKind[]=[];
  for(const kind of ['stun','disarm','silence','itemBlocked'] as const)if(d[kind])k.push(kind);
@@ -36,5 +36,5 @@ export function statusHasPayload(d:StatusEffect,a:AbilityDefinition,rank:number,
  if(statusControls(d,a,rank).some(k=>!blocked.has(k)))return true;
  const m=statusModifiersRaw(d,a,rank);delete m.rooted;
  if((m.moveSpeedPermille??0)<0)delete m.moveSpeedPermille;if((m.attackSpeedPermille??0)<0)delete m.attackSpeedPermille;
- return Object.values(m).some(Boolean)||!!(d.ethereal||d.damageTakenPermille||d.periodic||d.shield||d.manaShield||d.concealment||d.detectionRadius||d.form||d.immunity||d.spellImmunity||d.controlImmunity?.length||d.combatModifiers||a.triggers?.some(t=>t.whileStatus===d.id));
+ return Object.values(m).some(Boolean)||!!(d.ethereal||d.damageTakenPermille||d.periodic||d.shield||d.manaShield||d.concealment||d.detectionRadius||d.form||d.immunity||d.spellImmunity||d.controlImmunity?.length||d.combatModifiers||d.sourceAttackBonus||a.triggers?.some(t=>t.whileStatus===d.id));
 }

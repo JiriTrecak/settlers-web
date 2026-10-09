@@ -4996,6 +4996,118 @@
     },
     {
       "version": 1,
+      "id": "asset.effects.marshal.cadence-wheel",
+      "name": "Colony cadence wheel",
+      "kind": "texture",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "9b0767fe5c121eb86e6a774a86d2c3b88935f3cd4f5db610375304dfa5071b79",
+          "bytes": 907
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "dc8d2cc652bdd359a1deddb522609f0156227e44311e24120f8b15da662aca8e",
+          "bytes": 299306
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "58a9739bb6ab70d00a32767816aad4fa027030036bb72bf4d32e211fa68ddef8",
+          "bytes": 1400126
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.effects.marshal.carapace-shell",
+      "name": "Living chitin shell",
+      "kind": "texture",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "483b22300bbad642ea7b22d3415971eb8f56c43f81c1ae4be2c529406404b16a",
+          "bytes": 923
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "d6ef710f96fe96f8350ffe954dc66c3c046cba0e11ac20acb04ca0d7934055df",
+          "bytes": 319902
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "90c6c502d0905e2f92d0a938b21955885932c0630e612cf450fc73a7f1a9ae59",
+          "bytes": 1304718
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+      }
+    },
+    {
+      "version": 1,
       "id": "asset.effects.marshal.chitin-ward",
       "name": "Marshal chitin ward glyph",
       "kind": "texture",
@@ -5082,6 +5194,62 @@
           "format": "png",
           "sha256": "22f71941367a0cb6f808076f057a043b4cdda044f681f751daa9d708d523127b",
           "bytes": 1446478
+        }
+      ],
+      "usesGeometry": false,
+      "transform": {
+        "scale": 1,
+        "pivot": [
+          0,
+          0,
+          0
+        ],
+        "up": "Y",
+        "forward": "+Z"
+      },
+      "materials": [],
+      "bindings": {
+        "render": [],
+        "scenery": []
+      },
+      "capabilities": {},
+      "provenance": {
+        "method": "generated",
+        "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+      }
+    },
+    {
+      "version": 1,
+      "id": "asset.effects.marshal.crown-sigil",
+      "name": "Royal crown sigil",
+      "kind": "texture",
+      "revision": 5,
+      "status": "published",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "resources": [
+        {
+          "role": "generation",
+          "index": 1,
+          "format": "json",
+          "sha256": "4545c62d690b673c02f63e31bd0e3e400ed26756a86410898bb76c6d22726a39",
+          "bytes": 845
+        },
+        {
+          "role": "image",
+          "index": 1,
+          "format": "png",
+          "sha256": "6c18c3daa3b39738a8799b8e255f9f968556cdb6ff74ff96f60b5b71da320cfd",
+          "bytes": 270745
+        },
+        {
+          "role": "source",
+          "index": 1,
+          "format": "png",
+          "sha256": "32d9b29979237728ba96ba9ed6aac283956c3873afcd9db109e20cef10d09708",
+          "bytes": 1269416
         }
       ],
       "usesGeometry": false,
@@ -33213,7 +33381,7 @@
       "id": "asset.placeholder.missing-model",
       "name": "Missing model",
       "kind": "prop",
-      "revision": 18,
+      "revision": 20,
       "status": "published",
       "tags": [
         "placeholder",
@@ -33595,6 +33763,27 @@
               "distance": 7
             },
             "castContact": 0.68,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.placeholder.missing-model"
+            }
+          },
+          {
+            "id": "asset.placeholder.missing-model",
+            "scale": 1,
+            "healthHeight": 2.8,
+            "geometry": {
+              "role": "geometry",
+              "index": 1,
+              "asset": "asset.placeholder.missing-model"
+            }
+          },
+          {
+            "id": "asset.beetles.stone-slinger",
+            "scale": 1,
+            "healthHeight": 2.8,
+            "projectile": "stone",
             "geometry": {
               "role": "geometry",
               "index": 1,

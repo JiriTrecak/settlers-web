@@ -1,3 +1,5 @@
+import {raceSelect} from './raceSelect';
+import {raceDefinition} from '../../content/races';
 import {BUILDING_CELL_SIZE} from '../../shared/spatial/footprint';
 import {content} from '../../content/builtin';
 import {heroSelect} from './heroSelect';
@@ -161,7 +163,9 @@ export class SkirmishScreen extends GameScreen {
           refresh();
         };
         const controls=el('div','skirmish-player-controls');controls.append(select);
-        const heroes=content.rules.startingSetup.hero;
+        slot.race??=content.rules.defaultRace;
+        if(!overviewOf(selected).sandbox)controls.append(raceSelect(content.rules.races,slot.race,id=>{slot.race=id;slot.hero=raceDefinition(content.rules,id).startingSetup.hero?.default;refresh();},`Player ${slot.player+1} race`));
+        const heroes=raceDefinition(content.rules,slot.race).startingSetup.hero;
         if(heroes&&!overviewOf(selected).sandbox){
           slot.hero=heroes.choices.includes(slot.hero??'')?slot.hero:heroes.default;
           controls.append(heroSelect(heroes,slot.hero!,id=>{slot.hero=id;},`Player ${slot.player+1} starting hero`));

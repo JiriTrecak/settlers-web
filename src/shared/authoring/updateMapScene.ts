@@ -1,7 +1,7 @@
 import type {UtcMap} from '../map/utcmap';
 import type {LandscapeAsset} from './catalogue';
 import {authoringSceneSchema,type AuthoredObject} from './layers';
-import {compileMapScene,projectMapObjects,inheritSceneSource,reusableMapSurface,type CompiledMapScene} from './mapScene';
+import {previewLayers,compileMapScene,projectMapObjects,inheritSceneSource,reusableMapSurface,type CompiledMapScene} from './mapScene';
 import {BuildProfile} from './buildProfile';
 
 // Whitelist only fields that neither reserve vegetation space nor tint ground.
@@ -17,10 +17,8 @@ export function updateMapScene(before:UtcMap,map:UtcMap,previous:CompiledMapScen
  if(!a||!b||!previous.generated||!reusableMapSurface(map,catalogue,previous)||before.stamps!==map.stamps||a.objects.length!==b.objects.length)return compileMapScene(map,catalogue,previous);
  // Validate the fast path too: duplicate IDs and invalid poses must never bypass
  // the compiler's normal document validation.
- const next=authoringSceneSchema.parse(b),oldObjects=new Map(a.objects.map(o=>[o.id,o]));
+ const next=authoringSceneSchema.parse({...b,layers:previewLayers(map)}),oldObjects=new Map(a.objects.map(o=>[o.id,o]));
  if(next.objects.some(o=>{const old=oldObjects.get(o.id);return !old||surfaceInputs(old)!==surfaceInputs(o);}))return compileMapScene(map,catalogue,previous);
- // Baked placements have ordered vegetation reservations; retain that ordering.
- if(JSON.stringify(a.objects.filter(o=>o.bakedPlacement).map(o=>o.id))!==JSON.stringify(next.objects.filter(o=>o.bakedPlacement).map(o=>o.id)))return compileMapScene(map,catalogue,previous);
  const waterIssues=new Map(previous.generated.issues.filter(i=>i.code==='object-water-conflict').map(i=>[i.id,i]));
  const issues=[...previous.generated.issues.filter(i=>i.code!=='object-water-conflict'),
   ...next.objects.flatMap(o=>waterIssues.has(o.id)?[waterIssues.get(o.id)!]:[]),

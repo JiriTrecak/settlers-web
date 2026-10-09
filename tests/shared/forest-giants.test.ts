@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {applySceneryBlockers} from '../../src/shared/map/sceneryCollision';
 import {createBiomeMap} from '../../src/shared/map/newMap';
 import {authoredObjectSchema,proceduralLayerSchema} from '../../src/shared/authoring/layers';
-import {compileMapScene} from '../../src/shared/authoring/mapScene';
+import {compileMapScene,type PreviewMap} from '../../src/shared/authoring/mapScene';
 import {biomeById} from '../../src/content/biomes';
 import {assetDefinitionSchema} from '../../src/shared/authoring/asset';
 import type {LandscapeAsset} from '../../src/shared/authoring/catalogue';
@@ -33,7 +33,7 @@ describe('original forest-scale landmarks',()=>{
  it('compiles giant landmarks and a live mushroom brush without missing assets',()=>{
   expect(biomeById('vibrant-forest').foliage.some(r=>r.id==='recipe.foliage.mushroom-patches')).toBe(true);
   const catalogue=read('assets/authoring/catalogue.json') as LandscapeAsset[];
-  const map=createBiomeMap('Landmark authoring fixture',256,'vibrant-forest');
+  const base=createBiomeMap('Landmark authoring fixture',256,'vibrant-forest');const map:PreviewMap={...base,authoring:{...base.authoring!,layers:[]}};
   map.authoring!.objects=names.map((slug,i)=>authoredObjectSchema.parse({id:'landmark.'+i,asset:'asset.models.environment.'+slug,x:30+i*25,z:70,scale:1,yaw:0}));
   map.authoring!.layers=[proceduralLayerSchema.parse({id:'mushrooms',name:'Mushroom brush',recipe:'recipe.foliage.mushroom-patches',seed:19027,shape:{type:'mask',strokes:[{operation:'add',radius:12,points:[{x:110,z:140}]}]}})];
   const scene=compileMapScene(map,catalogue);expect(scene.generated!.issues).toEqual([]);

@@ -104,6 +104,7 @@ export class World {
               (index * this.settlement.registry.rules.ai.decisionTicks) /
                 aiSlots.length,
             ),
+            slot.race,
           ),
         );
       for(const brain of this.brains.values())brain.prepareNavigation(this.settlement.view(brain.owner));

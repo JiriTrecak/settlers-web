@@ -138,3 +138,22 @@ Trails follow actual observed 3D flight paths, including homing and returning sw
 For a proof, save/publish the effect, reload the encounter, inspect an active flight and its return/turn, then seek after delivery removal to confirm cleanup. Rewind to the same tick and compare. Keep gameplay unchanged when revising presentation only.
 
 Preview entities expose `stats` from the same resolved-stat path as gameplay (armor, damage, maxHp/maxMana, cooldownTicks and modifiers). Compare these before, during and after buffs; a saved modifier declaration alone does not prove that it affected the actor. Compact preview replies retain these values.
+
+## Charges and stacking marks
+
+`delivery.kind: charge` moves the actual grounded caster toward a grounded unit at `speed`
+world units per second, bounded by `maxTicks`. Body/terrain collision, target visibility,
+controller, stun/silence/root, death and new orders can stop it. `onRelease` executes only
+on contact, not when the charge begins. Use projectile/impact events for travel/contact VFX.
+It is not teleportation and cannot cross blocked terrain. Horn Rush is the published example.
+
+Duration statuses can declare `stacking: {max, scope: source | ability}`. Each successful
+application increments to the cap and refreshes the whole duration. Numeric modifiers scale
+per stack; source scope keeps each caster's count separate. Copies from multiple sources
+use the strongest magnitude for each named modifier, rather than multiplying one named slow.
+Stacking does not accept forms, shields, periodic damage, aura or instance lifetimes.
+`sourceAttackBonus` is a ranked flat bonus per stack to subsequent primary basic attacks from
+that mark's source and controller only, before armor. It excludes spells and cleave damage.
+Combine with a passive `combatModifiers.attackBonus` with amount 0 and a status template to
+apply the mark only on a damaging primary weapon hit. Overwhelm is the example; test first
+hit, fourth hit, expiry, switching targets, allies, misses, dispel and save continuation.

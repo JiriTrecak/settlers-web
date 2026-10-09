@@ -23,6 +23,13 @@
       "event": "damaged",
       "anchor": "target",
       "lifetime": "finite"
+    },
+    {
+      "id": "gather",
+      "effect": "effect.marshal.faultline.prepare",
+      "event": "accepted",
+      "anchor": "caster",
+      "lifetime": "finite"
     }
   ]
 }

@@ -2,29 +2,24 @@
   "schemaVersion": 1,
   "id": "ability.marshal.rally",
   "name": "Rally the Colony",
-  "description": "Protect up to sixteen nearby allies for eight seconds: absorb 50/80/110 damage and increase attack damage by 10/15/20%. The attack bonus remains if the shield breaks.",
-  "activation": "targeted",
+  "description": "Persistent aura: nearby allies and the Marshal gain 8/12/16% movement speed and 10/15/20% attack speed within 4 grid cells. Requires learning, costs no mana. Only the strongest copy applies; ends outside the aura or when the Marshal dies.",
+  "activation": "passive",
+  "aura": {
+    "radius": 16,
+    "meleeOnly": false
+  },
   "ranks": [
     {
-      "shield": 50,
-      "bonus": 100,
-      "mana": 45,
-      "cooldown": 560,
-      "duration": 320
+      "movement": 80,
+      "attack": 100
     },
     {
-      "shield": 80,
-      "bonus": 150,
-      "mana": 45,
-      "cooldown": 560,
-      "duration": 320
+      "movement": 120,
+      "attack": 150
     },
     {
-      "shield": 110,
-      "bonus": 200,
-      "mana": 45,
-      "cooldown": 560,
-      "duration": 320
+      "movement": 160,
+      "attack": 200
     }
   ],
   "targeting": {
@@ -39,19 +34,15 @@
     "outOfRange": "reject"
   },
   "cast": {
-    "prepareTicks": 12,
-    "recoverTicks": 10,
+    "prepareTicks": 0,
+    "recoverTicks": 0,
     "cost": {
       "resource": "mana",
-      "amount": {
-        "rankParameter": "mana"
-      },
+      "amount": 0,
       "commit": "release"
     },
     "cooldown": {
-      "ticks": {
-        "rankParameter": "cooldown"
-      },
+      "ticks": 0,
       "start": "release",
       "scope": "ability"
     },
@@ -67,35 +58,30 @@
   "onRelease": [
     {
       "op": "status",
-      "target": "caster",
-      "query": {
-        "center": "caster",
-        "radius": 12,
-        "relations": [
-          "ally"
-        ],
-        "allowSelf": true,
-        "includeBuildings": false,
-        "excludePrimary": false,
-        "maxTargets": 16,
-        "order": "nearest"
-      },
-      "id": "rally",
-      "amount": {
-        "rankParameter": "duration"
-      },
+      "target": "target",
+      "id": "cadence",
+      "amount": 1,
       "polarity": "positive",
-      "dispel": true,
+      "dispel": false,
       "modifiers": {},
       "rankedModifiers": {
-        "damagePermille": {
-          "rankParameter": "bonus"
+        "moveSpeedPermille": {
+          "rankParameter": "movement"
+        },
+        "attackSpeedPermille": {
+          "rankParameter": "attack"
         }
       },
-      "shield": {
-        "rankParameter": "shield"
-      },
-      "onShieldDepleted": "retain",
+      "lifetime": "duration"
+    },
+    {
+      "op": "status",
+      "target": "caster",
+      "id": "standard",
+      "amount": 1,
+      "polarity": "positive",
+      "dispel": false,
+      "modifiers": {},
       "lifetime": "duration"
     }
   ],

@@ -1,6 +1,6 @@
 import raw from '../../../assets/authoring/catalogue.json';
 import type {LandscapeAsset} from './catalogue';
-import {compileMapScene,type CompiledMapScene} from './mapScene';
+import {previewLayers,compileMapScene,type CompiledMapScene} from './mapScene';
 import type {UtcMap} from '../map/utcmap';
 export const landscapeAssets=raw as LandscapeAsset[];
 const scenes=new WeakMap<UtcMap,CompiledMapScene>();
@@ -13,6 +13,7 @@ export function rememberProjectScene(map:UtcMap,scene:CompiledMapScene):void{
 export function projectScene(map:UtcMap):CompiledMapScene|undefined{
  if(!map.authoring)return undefined;
  const cached=cachedProjectScene(map);if(cached)return cached;
+ if(previewLayers(map).length)throw Error('Generator previews can only be evaluated by the editor.');
  const scene=compileMapScene(map,landscapeAssets);
  rememberProjectScene(map,scene);return scene;
 }

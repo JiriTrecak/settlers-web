@@ -34,7 +34,7 @@ describe("generated game wiki", () => {
       "1 supply",
     );
     expect(result.files.get("units/unit-ants-marshal.md")).toContain(
-      "| 10 | 3200 | 1375 | 58 | 6 |",
+      "| 10 | 4320 | 1375 | 58 | 6 |",
     );
     const revival=result.files.get("buildings/building-ants-sanctuary.md")!;
     expect(revival).toContain('200 [Amber]');expect(revival).toContain('**30 s**');

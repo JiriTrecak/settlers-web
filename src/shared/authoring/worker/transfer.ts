@@ -107,9 +107,9 @@ class RecordDecoder {
   this.result=result;return result;
  }
 }
-export type Packet={sequence:number;meta:Wire;buffers:{id:number;values:Float32Array}[];liveBuffers:number[];objects:Records;stamps:Records;resources:Records;owners:Records};
+export type Packet={sequence:number;meta:Wire;buffers:{id:number;values:Float32Array|Uint8Array}[];liveBuffers:number[];objects:Records;stamps:Records;resources:Records;owners:Records};
 export class AuthoringTransferEncoder {
- private sequence=0;private nextBuffer=0;private ids=new WeakMap<Float32Array,number>();private sent=new Set<number>();
+ private sequence=0;private nextBuffer=0;private ids=new WeakMap<Float32Array|Uint8Array,number>();private sent=new Set<number>();
  private objects=new RecordEncoder();private stamps=new RecordEncoder();private owners=new RecordEncoder();private resources=new RecordEncoder();
  private ownerRecords=new Map<string,{id:string;owner:string}>();
  private ownerValues:{id:string;owner:string}[]=[];
@@ -129,7 +129,7 @@ export class AuthoringTransferEncoder {
   const live=new Set(packet.liveBuffers);
   if(live.size!==packet.buffers.length)throw Error('Incomplete cached terrain buffers');
   for(const {id,values} of packet.buffers){
-   if(!Number.isSafeInteger(id)||id<=0||!live.delete(id)||!(values instanceof Float32Array))throw Error('Invalid cached terrain buffer');
+   if(!Number.isSafeInteger(id)||id<=0||!live.delete(id)||!(values instanceof Float32Array||values instanceof Uint8Array))throw Error('Invalid cached terrain buffer');
    this.ids.set(values,id);this.sent.add(id);this.nextBuffer=Math.max(this.nextBuffer,id);
    const copy=values.slice();buffers.push({id,values:copy});transfer.push(copy.buffer);
   }
@@ -144,7 +144,7 @@ export class AuthoringTransferEncoder {
  encode(value:any){
   const transfer:ArrayBuffer[]=[],buffers:Packet['buffers']=[],live=new Set<number>();
   const visit=(item:any):any=>{
-   if(item instanceof Float32Array){
+   if(item instanceof Float32Array||item instanceof Uint8Array){
     let id=this.ids.get(item);if(id===undefined){id=++this.nextBuffer;this.ids.set(item,id);}live.add(id);
     if(!this.sent.has(id)){const values=item.slice();buffers.push({id,values});transfer.push(values.buffer);this.sent.add(id);}
     return {bufferId:id} satisfies BufferRef;
@@ -176,7 +176,7 @@ export class AuthoringTransferEncoder {
  }
 }
 export class AuthoringTransferDecoder {
- private sequence=0;private buffers=new Map<number,Float32Array>();private objects=new RecordDecoder();private stamps=new RecordDecoder();private owners=new RecordDecoder();private resources=new RecordDecoder();
+ private sequence=0;private buffers=new Map<number,Float32Array|Uint8Array>();private objects=new RecordDecoder();private stamps=new RecordDecoder();private owners=new RecordDecoder();private resources=new RecordDecoder();
  private ownerRows:readonly {id:string}[]|undefined;private ownerMap=new Map<string,string>();
  async decode(packet:Packet,yieldTask:()=>Promise<void>):Promise<any>{
   if(packet.sequence!==this.sequence+1)throw Error('Out-of-order authoring snapshot');this.sequence=packet.sequence;

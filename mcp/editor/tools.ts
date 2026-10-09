@@ -54,7 +54,7 @@ export function editorTools(hub: EditorHub) {
   return {
     editor_preview:createTool({id:'editor_preview',description:'Read or set local editor viewport previews. Canopy defaults off to avoid constructing the forest backdrop during editing. This does not edit the map, biome, undo history or in-game visuals. Empty input reads current settings.',inputSchema:editorPreviewSchema,execute:async(input)=>call('preview',input)}),
     editor_performance:createTool({id:'editor_performance',description:'Map generation/presentation stages and CPU/GPU frame timings, draw calls and instance counters. get reads; reset clears rolling timings; capture records 10 seconds; census attributes the next rendered frame to scene branches; trace returns Chrome trace JSON. enabled controls sampling. Capture/census enable sampling automatically. Read get later for completed capture/census. benchmark renders the current camera to a fixed-size target (width/height/frames), returning CPU submission, asynchronous GPU timing and draw counts without changing the document. This is renderer throughput, not interactive FPS. Does not regenerate or refresh the editor.',inputSchema:editorPerformanceSchema,execute:async(input)=>call('performance',input)}),
-    editor_scene:createTool({id:'editor_scene',description:'Author live procedural layers and independent objects. Recipes generate in terrain/river/path/forest/grass/meadow order. Batch applies many put/remove edits as one undo step and one regeneration. Pick selects the owner layer; bake converts the complete scatter layer with undo. No detach or per-generated-object edits. Top camera is orthographic.',inputSchema:z.object({command:sceneCommandSchema}).strict(),execute:async(input)=>call('scene',input.command)}),
+    editor_scene:createTool({id:'editor_scene',description:'Edit terrain cells and placed scenery. Terrain action uses absolute levels or shallow/deep water, with rectangle/polygon selections in terrain-cell coordinates (4 world units, origin -0.5); half-cell points allow corner cuts. Layers are editor-only generator previews: action=apply commits terrain, water and individual objects in one undo step and removes the previews. Apply before saving or playing. Cleanup supports brush/rectangle/lasso, category and asset filters, locked-object protection, exact preview counts, and one undo. Batch edits are atomic. Top camera is orthographic.',inputSchema:z.object({command:sceneCommandSchema}).strict(),execute:async(input)=>call('scene',input.command)}),
     editor_mission:createTool({id:"editor_mission",description:"Read or replace mission metadata, Lua source and named circular regions in the loaded map. Mission maps are excluded from Skirmish.",inputSchema:z.object({action:z.enum(["get","set"]),mission:missionSchema.nullable().optional(),camps:z.array(campSchema).optional()}),execute:async(input)=>call("mission",input)}),
     editor_entities: createTool({
       id: "editor_entities",
@@ -89,12 +89,11 @@ export function editorTools(hub: EditorHub) {
     editor_landscape: createTool({
       id: "editor_landscape",
       description:
-        "Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (Catmull-Rom points x/z/radius, mode terrain/river/raise/foliage), cover (instanced meadow patch), biome (biome ID selects the complete artistic profile), environment (hour/playing/weather.kind only; visual overrides are forbidden), base (height), view (grid), export, load (map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
+        "Terrain edits write committed cells directly. Use editor_scene previews and Apply for rivers, forests and ground cover. Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (optional sculpting with Catmull-Rom points x/z/radius, mode raise/smooth/flatten), biome (biome ID selects the complete artistic profile), environment (hour/playing/weather.kind only; visual overrides are forbidden), base (height), view (grid), export, load (map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
       inputSchema: z.object({
         action: z.enum([
           "status",
           "curve",
-          "cover",
           "environment", "biome",
           "base",
           "landform",
@@ -117,7 +116,7 @@ export function editorTools(hub: EditorHub) {
           )
           .optional(),
         mode: z
-          .enum(["terrain", "river", "shallows", "cover", "raise", "foliage", "smooth", "flatten"])
+          .enum(["raise", "smooth", "flatten"])
           .optional(),
         layer: z.enum(["grass", "sand", "road", "mud", "rock", "snow"]).optional(),
         radius: z.number().optional(),

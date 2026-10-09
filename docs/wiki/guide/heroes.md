@@ -17,7 +17,7 @@ Leveling adds the increases in maximum health and mana to current pools, preserv
 Open **Learn Ability** to spend a point. You receive one at creation and one per level. The three regular abilities each have three ranks, unlocked at hero levels **1 / 3 / 5**. The ultimate has two ranks, unlocked at **5 / 8**. Eleven points complete the whole kit; points can be saved for later.
 
 - **Faultline (Q):** a travelling ground fracture deals **70 / 110 / 150** spell damage and briefly stuns each ground enemy it crosses. The stun lasts **0.4 / 0.5 / 0.6 seconds**, halved against heroes. Costs 45 mana; 9-second cooldown.
-- **Rally the Colony (W):** shields up to sixteen nearby allies, including the Marshal, for **50 / 80 / 110** damage and grants **10 / 15 / 20%** attack damage for eight seconds. Breaking the shield leaves the attack bonus until expiry. Costs 45 mana; 14-second cooldown.
+- **Rally the Colony (passive):** grants the Marshal and nearby allied units **8 / 12 / 16%** movement speed and **10 / 15 / 20%** attack speed within **4 C**. Always active once learned, with no mana cost or cooldown. Only the strongest copy applies. The bonus ends outside its radius or when its source dies.
 - **Iron Carapace (E):** reduces incoming damage by **20 / 30 / 40%** after ordinary defenses and reflects **15 / 25 / 35%** of ordinary melee damage actually suffered. Lasts six seconds; movement and casting remain available. Costs 40 mana; 14-second cooldown.
 - **Crownfall (R):** after a visible 0.8-second windup, deals **180 / 260** spell damage and stuns enemies for **1 / 1.4 seconds**, halved against heroes. Allies in the impact area receive **100 / 160** shielding for six seconds. Radius **1.75 / 2.25 C**; up to sixteen targets per side. Costs **110 / 140** mana; **60 / 54-second** cooldown.
 
@@ -25,7 +25,7 @@ These are published spell definitions with separate editable effects and origina
 
 ## Aim before committing
 
-Faultline and Crownfall target ground. Aim the line or circle, then click a valid visible position within **6 C**. Escape or right-click cancels targeting. Rally and Carapace cast immediately on the Marshal. Rally reaches allies within **3 C**; it refreshes its own buff instead of stacking repeated copies.
+Faultline and Crownfall target ground. Aim the line or circle, then click a valid visible position within **6 C**. Escape or right-click cancels targeting. Carapace casts immediately on the Marshal. Rally activates automatically when learned; its rotating marching crest marks the source and subtle rising motes mark allied recipients.
 
 ## Chests and equipment
 

@@ -9,5 +9,5 @@ export function landscapeCatalogue(assets:readonly AssetDefinition[]):LandscapeA
 }
 export function generationAssets(catalogue:readonly LandscapeAsset[]):GenerationAssets{
  const index=new Map(catalogue.map(a=>[a.id,a]));
- return {recipe:id=>index.get(id)?.recipe,clearance:id=>index.get(id)?.clearance??0};
+ return {recipe:id=>index.get(id)?.recipe,clearance:id=>index.get(id)?.clearance??0,isTree:id=>index.get(id)?.kind==='tree'};
 }

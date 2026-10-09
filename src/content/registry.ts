@@ -1,8 +1,9 @@
+import {raceDefinition} from './races.ts';
 import {BUILDING_CELL_SIZE} from '../shared/spatial/footprint.ts';
 import {abilityLibrarySchema,emptyAbilityLibrary,allEffects,type AbilityLibrary,type AbilityDefinition,type StatusEffect} from './abilities/schema.ts';
 import { z } from "zod";
 import {minimumGroundBody} from './unitBody.ts';
-import {resourceCenterSeparation} from '../shared/map/resourceClearance';
+import {resourceCenterSeparation} from '../shared/map/resourceClearance.ts';
 import {
   actionsSchema,
   assetSchema,
@@ -595,7 +596,20 @@ export class ContentRegistry {
         if(effect.op==='summon')for(const id of typeof effect.definition==='string'?[effect.definition]:effect.definition.byRank)if(this.find(id)?.kind!=='unit')throw Error(`${ability.id}: summons require a unit definition (${id})`);
       }
     }
-    const setup = this.rules.startingSetup;
+    if(Object.keys(this.rules.races).length&&!this.rules.races[this.rules.defaultRace])throw Error('Unknown default race');
+    for(const campaign of Object.values(this.rules.campaigns))if(!this.rules.races[campaign.race])throw Error(`Unknown campaign race ${campaign.race}`);
+    const profiles=Object.keys(this.rules.races).map(id=>[id,raceDefinition(this.rules,id)] as const);
+    for(const [race,r] of profiles){
+      const roster=new Set(r.roster);
+      const foreign=(id:string)=>!roster.has(id)&&profiles.some(([other,profile])=>other!==race&&profile.roster.includes(id));if(roster.size!==r.roster.length)throw Error(`${race}: duplicate roster entry`);
+      for(const id of roster){const d=this.get(id);if(d.kind!=='unit'&&d.kind!=='building')throw Error(`${race}: invalid roster member ${id}`);
+        for(const ref of [...d.behaviors.work?.builds??[],...d.behaviors.production?.outputs??[],...d.garrison?.accepts??[],...d.requires??[],...(d.upgrade?[d.upgrade.target]:[])])if(foreign(ref))throw Error(`${race}: ${id} refers outside its roster: ${ref}`);
+        for(const research of d.behaviors.research?.outputs??[])for(const effect of this.rules.research[research].effects)for(const unit of effect.units)if(foreign(unit))throw Error(`${race}: foreign research target ${unit}`);
+      }
+      for(const id of [r.startingSetup.fort,...r.startingSetup.units.map(u=>u.definition),...r.startingSetup.hero?.choices??[],...r.ai.composition.map(u=>u.definition)])if(foreign(id))throw Error(`${race}: setup or AI references foreign unit ${id}`);
+    }
+    for(const [race,profile] of profiles.length?profiles:[['default',{startingSetup:this.rules.startingSetup,ai:this.rules.ai,roster:this.definitions.map(d=>d.id)}]] as const){
+    const setup = profile.startingSetup;
     const fort = expect(setup.fort, "building");
     for (const [id, n] of Object.entries(setup.inventory)) {
       expect(id, "item");
@@ -621,7 +635,7 @@ export class ContentRegistry {
     for (const task of setup.gathering ?? [])
       if (expect(task.item, "item").creation?.method !== "harvest")
         throw new Error("Starting gather requires harvest recipe");
-    const ai = this.rules.ai;
+    const ai = {...this.rules.ai,...profile.ai};
     if (
       ai.workers.minimum > ai.workers.target ||
       ai.workers.target > ai.workers.maximum ||
@@ -642,9 +656,9 @@ export class ContentRegistry {
         d.creation?.method !== "train" ||
         !this.definitions.some(
           (b) =>
-            b.behaviors.production?.outputs.includes(d.id) &&
+            (!profiles.some(([other,p])=>other!==race&&p.roster.includes(b.id))||profile.roster.includes(b.id)) && b.behaviors.production?.outputs.includes(d.id) &&
             this.definitions.some((w) =>
-              w.behaviors.work?.builds.includes(b.id),
+              (!profiles.some(([other,p])=>other!==race&&p.roster.includes(w.id))||profile.roster.includes(w.id)) && w.behaviors.work?.builds.includes(b.id),
             ),
         )
       )
@@ -656,9 +670,10 @@ export class ContentRegistry {
       if (
         !this.abilityLibrary.abilities.some(a=>a.id===id) ||
         !this.definitions.some((d) =>
-          d.behaviors.abilities?.bindings.some(b=>b.ability===id),
+          (!profiles.some(([other,p])=>other!==race&&p.roster.includes(d.id))||profile.roster.includes(d.id)) && d.behaviors.abilities?.bindings.some(b=>b.ability===id),
         )
       )
-        throw new Error(`rules.ai.skillPreference: unlearnable ${id}`);
+        throw new Error(`${race}: rules.ai.skillPreference: unlearnable ${id}`);
+    }
   }
 }

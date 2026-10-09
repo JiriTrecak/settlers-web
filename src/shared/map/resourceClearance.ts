@@ -1,4 +1,4 @@
-import {footprintCellBounds, rotatedFootprint, type Footprint, type SpatialPoint as Point} from '../spatial/footprint';
+import {footprintCellBounds, rotatedFootprint, type Footprint, type SpatialPoint as Point} from '../spatial/footprint.ts';
 /** Extents between outer cell centers, not physical edges. */
 export function footprintHalfExtents(footprint:Footprint={width:1,depth:1},rotation=0):Point {
  const {width,depth}=rotatedFootprint(footprint,rotation);

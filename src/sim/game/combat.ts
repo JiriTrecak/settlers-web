@@ -1,3 +1,5 @@
+import {charging} from '../abilities/charge';
+import {markedWeaponBonus} from '../abilities/combatModifiers';
 import {discardNavigation, finishCombat, releaseCombat, suspendCombat} from './combatIntent';
 import {locomotion,weaponTargets} from './locomotion';
 import {spellSource} from '../abilities/source';
@@ -114,14 +116,14 @@ export class Combat {
         const victim = c.get(u.attack.target);
         if(victim && alive(victim) && this.perceives(e,victim))this.rememberTarget(e,victim);
         if (c.state.tick >= u.attack.ends || !victim || !alive(victim) || !this.weaponEligible(e,victim) || u.target !== victim.id ||
-            (isStunned(e,c.registry)||spellControl(e,c.registry,"disarm")||isEthereal(e,c.registry)) || e.abilities?.pending || !this.perceives(e,victim)) delete u.attack;
+            (isStunned(e,c.registry)||spellControl(e,c.registry,"disarm")||isEthereal(e,c.registry)) || e.abilities?.pending || charging(this.c,e.id) || !this.perceives(e,victim)) delete u.attack;
         else if (!u.attack.released) {
           discardNavigation(u);
           if (u.cooldown > 0) u.cooldown--;
           continue;
         }
       }
-      if(e.abilities?.pending || isStunned(e,this.c.registry))continue;
+      if(e.abilities?.pending || charging(this.c,e.id) || isStunned(e,this.c.registry))continue;
       if(spellControl(e,this.c.registry,"disarm")||isEthereal(e,this.c.registry)){
         suspendCombat(u,c.state.tick);
         if(order?.type!=="move"&&order?.type!=="patrol"&&order?.type!=="follow")continue;
@@ -366,7 +368,7 @@ export class Combat {
       const combat = this.c.def(a).behaviors.combat,
         u = a.unit!,
         b = this.c.get(u.target);
-      if (a.abilities?.pending || (isStunned(a,this.c.registry)||spellControl(a,this.c.registry,"disarm")||isEthereal(a,this.c.registry)) || !combat || !b ||
+      if (a.abilities?.pending || charging(this.c,a.id) || (isStunned(a,this.c.registry)||spellControl(a,this.c.registry,"disarm")||isEthereal(a,this.c.registry)) || !combat || !b ||
           !alive(b) || b.hp === null || !this.weaponEligible(a,b) || !this.perceives(a,b) ||
           (!(u.order?.type === "attack" && u.order.force) && !this.hostile(a,b))) {
         delete u.attack;
@@ -391,7 +393,8 @@ export class Combat {
       const bonus=revealForAction(a,this.c.registry,this.c.state.tick,'attack');this.c.clampPools(a);
       this.planningSight?.clear();
       if (combat.shell) { this.shells.launch(a,b,bonus,profile,baseDamage); continue; }
-      const raw = (baseDamage+bonus+(enhancement?.bonus??0))*(critical?.multiplier??1000)/1000;
+      const marked=markedWeaponBonus(a,b,this.c.registry,this.c.state.tick);
+      const raw = (baseDamage+bonus+marked+(enhancement?.bonus??0))*(critical?.multiplier??1000)/1000;
       if (combat.projectile) {
         const shot=this.missiles.launch(a,b,raw,profile,critical?.ability,enhancement);
         if(enhancement)this.onWeaponEnhancement?.(a.id,b.id,enhancement.ability,enhancement.cast,'projectile',enhancement.bonus,shot.impact-shot.launched);
@@ -408,7 +411,7 @@ export class Combat {
       if(actual>0){
         if(enhancement){this.onWeaponStatus?.(b.id,enhancement);this.onWeaponEnhancement?.(a.id,b.id,enhancement.ability,enhancement.cast,'enhancedHit',actual);}
         if(critical)this.onSpellModifier?.(a.id,b.id,critical.ability,'criticalStrike',actual);
-        extra.push(...this.cleave(a,b,raw,combat.damageType,cleavePolicy));
+        extra.push(...this.cleave(a,b,raw-marked*(critical?.multiplier??1000)/1000,combat.damageType,cleavePolicy));
       }
     }
     for(const hit of extra){

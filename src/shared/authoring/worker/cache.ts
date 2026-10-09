@@ -3,7 +3,7 @@ import type {UtcMap} from '../../map/utcmap';
 import type {SceneSnapshot} from './scene';
 import {AuthoringTransferEncoder,type Packet} from './transfer';
 
-const FORMAT=2;
+const FORMAT=3;
 export interface SceneCache {
  key(map:UtcMap):Promise<string>;
  read(key:string):Promise<unknown>;
@@ -41,6 +41,12 @@ export function validCachedScene(value:unknown,map:UtcMap):value is SceneSnapsho
  if(!value||typeof value!=='object')return false;
  const s=value as SceneSnapshot,f=s.field;
  if(!f||f.size!==map.size||!Number.isInteger(f.verts)||f.verts!==map.size+MAP_HALO*2+1||f.origin!==-MAP_HALO||f.span!==map.size+MAP_HALO*2||!(f.samples instanceof Float32Array)||f.samples.length!==f.verts*f.verts)return false;
+ if(f.cellWater){
+  const w=f.cellWater;
+  if(!(w.heights instanceof Float32Array)||w.heights.length!==f.samples.length||!(w.flow instanceof Uint8Array)||w.flow.length!==f.span*f.span*4||!Array.isArray(w.profiles)||w.profiles.some(p=>typeof p!=='string'))return false;
+  if(w.heights.some(h=>!Number.isFinite(h)))return false;
+  for(let i=3;i<w.flow.length;i+=4)if(w.flow[i]>w.profiles.length)return false;
+ }else if(map.authoring?.terrain)return false;
  if(!Array.isArray(s.stamps)||!Array.isArray(s.resources)||!(s.owners instanceof Map))return false;
  for(const name of ['fieldId','terrainId','riversId','paintId','fieldPaintId'] as const)if(!Number.isSafeInteger(s[name])||s[name]<0)return false;
  for(const name of ['source','sourceWater','courseWater'] as const)if(typeof s[name]!=='boolean')return false;

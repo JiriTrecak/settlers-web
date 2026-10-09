@@ -32,7 +32,7 @@ export function build(
     f.buildings.length >= f.registry.rules.maxBuildings
   )
     return false;
-  const max = f.registry.rules.ai.limits.placementCandidates;
+  const max = f.aiRules.limits.placementCandidates;
   const source = d.placementNear ? f.registry.get(d.placementNear.source) : undefined;
   const clearance = source ? resourceCenterSeparation(d.footprint!, source.footprint!, source.constructionClearance ?? 0) : null;
   const nearRadius = clearance ? Math.max(clearance.x, clearance.y) : 0;
@@ -67,7 +67,7 @@ export function build(
 }
 /** Own physical stocks and declared production recipes; no balance tables in the planner. */
 export function economy(f: Frame, s: AIState, emit: Emit) {
-  const rules = f.registry.rules.ai,
+  const rules = f.aiRules,
     workers = f.workers,
     buildable = new Set(
       workers.flatMap((w) => f.def(w).behaviors.work!.builds),

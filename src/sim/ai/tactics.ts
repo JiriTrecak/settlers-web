@@ -25,11 +25,12 @@ export function abilityActions(f:Frame,emit:Emit){
   const level=caster.stats?.level??1;
   const spent=bindings.reduce((sum,b)=>sum+(state.ranks[b.id]??b.initialRank)-b.initialRank,0);
   // Learn through the ordinary command path. Prefer newly unlocked ranks, then
-  // breadth; no spell names or hero-specific build orders in the AI.
+  // breadth, then the race's declared preference; no spell names in the planner.
+  const preference=(ability:string)=>{const index=f.aiRules.skillPreference.indexOf(ability);return index<0?Infinity:index;};
   const learn=bindings.filter(b=>b.controls.includes('ai')&&b.learning&&
     (b.learning.requiredLevels[state.ranks[b.id]]??Infinity)<=level)
     .sort((a,b)=>b.learning!.requiredLevels[state.ranks[b.id]]-a.learning!.requiredLevels[state.ranks[a.id]]||
-      state.ranks[a.id]-state.ranks[b.id]||bindings.indexOf(a)-bindings.indexOf(b))[0];
+      state.ranks[a.id]-state.ranks[b.id]||preference(a.ability)-preference(b.ability)||bindings.indexOf(a)-bindings.indexOf(b))[0];
   if(spent<level&&learn&&emit({type:'learnAbility',actor:caster.id,ability:learn.id},'Learn an available hero ability'))continue;
   for(const binding of bindings){
    if(!binding.ai||!binding.controls.includes('ai'))continue;
@@ -133,7 +134,7 @@ export function heroActions(f: Frame, s: AIState, emit: Emit) {
   }
 }
 export function reactions(f: Frame, s: AIState, emit: Emit) {
-  const rules = f.registry.rules.ai;
+  const rules = f.aiRules;
   for (const worker of f.workers) {
     const danger = f.hostiles.filter(
       (e) =>

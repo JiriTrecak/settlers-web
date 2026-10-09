@@ -20,6 +20,8 @@ export const missionPresentationSchema=z.object({
 export type MissionPresentation=z.infer<typeof missionPresentationSchema>;
 export const missionSchema=z.object({
   campaign:z.string().min(1).max(80), title:z.string().min(1).max(120), order:z.number().int().min(1).max(100),
+  race:z.string().regex(/^[a-z][a-z0-9-]*$/).optional(),
+  playerRaces:z.record(z.string().regex(/^player\.[1-8]$/),z.string().regex(/^[a-z][a-z0-9-]*$/)).optional(),
   nextMission:z.string().regex(/^[a-z0-9][a-z0-9-]*$/).max(100).optional(),
   company:z.array(z.string().min(1).max(120)).min(1).max(32).refine(ids=>new Set(ids).size===ids.length,'Duplicate company tag').optional(),
   objectives:z.array(objectiveDefinitionSchema).max(64).optional(),

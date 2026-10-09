@@ -30,7 +30,7 @@
     "sourceHash": "e6508281",
     "image": "the-amber-watch.webp",
     "custom": false,
-    "generationHash": "63144e9855644f8d212284f52b8822f8022d98c75d32a53b9fb679cc9fbffd8e"
+    "generationHash": "c40ca1b4f0c24d2b95b0f879e0ad862eeab05699c8f748c0374f1e24e6463ffa"
   },
   "amberwake-basin": {
     "name": "Amberwake Basin",
@@ -60,7 +60,7 @@
     "sourceHash": "142060b9",
     "image": "amberwake-basin.webp",
     "custom": false,
-    "generationHash": "bd055e2671c01a441b9b7964298b2b66c9cd4144ce4ed06157ffd43509734000"
+    "generationHash": "9efc67f3aa51f778959b3d046dfc23969ce5a325bcc8fb7b529ed39e950042e5"
   },
   "amberwake-frost": {
     "name": "Amberwake Frost",
@@ -90,7 +90,7 @@
     "sourceHash": "bf79c185",
     "image": "amberwake-frost.webp",
     "custom": false,
-    "generationHash": "3167401950124a7ba0b94fd14e53a0be711f77634823cacf06461b3af1929a1e"
+    "generationHash": "40fb172702f83ab3cfe0a4e22ad33661802eeeeb163b5809d13f40cf9efb22f1"
   },
   "amberwake-wilds": {
     "name": "Amberwake Wilds",
@@ -120,6 +120,66 @@
     "sourceHash": "d77a9b08",
     "image": "amberwake-wilds.webp",
     "custom": false,
-    "generationHash": "996b3f526a96f6b0fc93569b9604e4d47a4c4f0f0994726d0cd8375043be712c"
+    "generationHash": "fa1e5b20899d454cfe6c4f96f0cbff60efb0a160cd9249298d015983c4f35d75"
+  },
+  "echo-isles": {
+    "name": "Echo Isles",
+    "size": 1024,
+    "description": "Classic Echo Isles 1v1 layout traced from the original Warcraft III terrain, pathing, forest and neutral-site coordinates. Two northern starts, four amber sites, sixteen neutral camps, a central refuge and walkable shallows. Canopy scenery and creatures interpret the original landmarks.",
+    "starts": [
+      {
+        "player": 1,
+        "x": 189.5,
+        "z": 329.5,
+        "rotation": 180,
+        "setup": "setup.ants",
+        "mainFort": "start.player.1/main-fort"
+      },
+      {
+        "player": 2,
+        "x": 805.5,
+        "z": 329.5,
+        "rotation": 180,
+        "setup": "setup.ants",
+        "mainFort": "start.player.2/main-fort"
+      }
+    ],
+    "camps": 16,
+    "sandbox": false,
+    "playable": true,
+    "sourceHash": "8e75c114",
+    "image": "echo-isles.webp",
+    "custom": false,
+    "generationHash": "90bf1c6e57af0a15c4cb8601db25a61ed4b3efa9fbe237cfeb649bccc0561e0f"
+  },
+  "last-refuge": {
+    "name": "Last Refuge",
+    "size": 1024,
+    "description": "Classic Last Refuge 1v1 layout traced from the original Warcraft III terrain, pathing, forest and neutral-site coordinates. Six amber sites, twenty neutral camps, forest choke routes, lakes and a central refuge. Canopy scenery and creatures interpret the original landmarks.",
+    "starts": [
+      {
+        "player": 1,
+        "x": 193.5,
+        "z": 841.5,
+        "rotation": 270,
+        "setup": "setup.ants",
+        "mainFort": "start.player.1/main-fort"
+      },
+      {
+        "player": 2,
+        "x": 833.5,
+        "z": 241.5,
+        "rotation": 90,
+        "setup": "setup.ants",
+        "mainFort": "start.player.2/main-fort"
+      }
+    ],
+    "camps": 20,
+    "sandbox": false,
+    "playable": true,
+    "sourceHash": "e21fd233",
+    "image": "last-refuge.webp",
+    "custom": false,
+    "generationHash": "a52db37da105b5a0ad0cab7de81055b752c5d0107683028d4a304d97893e043e"
   }
 }

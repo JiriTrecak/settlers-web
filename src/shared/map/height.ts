@@ -1,4 +1,5 @@
 import {sourceWater,type SourceWater} from './importedWater';
+import {cellWaterAt,type CellWater} from './terrainData';
 import type {WatercourseIndex,Watercourse} from '../authoring/watercourses';
 import {sourceHeight,type ImportedTerrain,type SourceHeight} from './importedTerrain';
 /**
@@ -36,6 +37,7 @@ export class HeightField {
   surfacePaint?:import('../authoring/generate').MaterialPaint[];
   source?: SourceHeight;
   sourceWater?:SourceWater;
+  cellWater?:CellWater;
   watercourses:Watercourse[]=[];
   courseWater?:WatercourseIndex;
   waterLevel = 0;
@@ -43,6 +45,7 @@ export class HeightField {
   walkSample(x:number,z:number,surface?:string):number {return surface ? this.walkSurface?.(x,z,surface) ?? this.sample(x,z) : this.sample(x,z); }
 
   load(samples: ArrayLike<number>, waterLevel = 0, imported?:ImportedTerrain): void {
+    this.cellWater=undefined;
     this.watercourses=[];this.courseWater=undefined;
     this.source=imported?sourceHeight(imported):undefined;
     this.sourceWater=imported?sourceWater(imported):undefined;
@@ -53,6 +56,7 @@ export class HeightField {
   }
 
   clear(): void {
+    this.cellWater=undefined;
     this.watercourses=[];this.courseWater=undefined;
     this.source=undefined;this.sourceWater=undefined;
     this.samples.fill(0);
@@ -63,7 +67,7 @@ export class HeightField {
     return this.source?.sample(x,z) ?? sampleHeight(this.samples, x, z, this.size);
   }
 
-  waterAt(x:number,z:number):number{return this.courseWater?.sample(x,z)??this.sourceWater?.sample(x,z)??this.waterLevel;}
+  waterAt(x:number,z:number):number{return this.courseWater?.sample(x,z)??cellWaterAt(this,x,z)??this.sourceWater?.sample(x,z)??this.waterLevel;}
 
   wet(x: number, z: number): boolean {
     return this.sample(x, z) < this.waterAt(x,z);

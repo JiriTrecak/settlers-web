@@ -22,6 +22,7 @@ export type AbilityDeliveryView={cast:number;ability:string;position:AbilityVisu
 export type AbilityEvent={id:number;cast:number;tick:number;ability:string;caster:number;target:number;event:'splitStarted'|'splitEnded'|'returned'|'interval'|'accepted'|'released'|'healed'|'damaged'|'cancelled'|'finished'|'waveStarted'|'wave'|'projectile'|'impact'|'statusApplied'|'dispelled'|'summoned'|'drained'|'manaRestored'|'teleported'|'visionCreated'|'criticalStrike'|'evaded'|'cleaved'|'weaponEnhanced'|'enhancedHit'|'death'|'kill'|'weaponRelease'|'weaponOrdered'|'weaponOrderCancelled'|'resurrected'|'revivalStarted'|'revived'|'revivalCancelled'|'converted'|'contained'|'releasedContained'|'digested'|'sacrificed';spawned?:number[];untilDeath?:boolean;amount?:number;statusId?:string;reason?:string;durationTicks?:number;radius?:number;origin:AbilityVisualPoint;point:AbilityVisualPoint;viewers:string[]};
 /** Adapter into the existing game. The interpreter owns no parallel combat, RNG or world. */
 export interface AbilityHost {
+ chargeStep?(source:number,target:number,speed:number):'moving'|'arrived'|'blocked';
  /** Absolute terrain/deck height for point delivery endpoints. Actor height includes flight. */
  height?(point:AbilityPoint):number;
  weaponCastReason?(source:number,target:number,spell:AbilityDefinition,rank:number):string|null;
@@ -124,7 +125,7 @@ export class AbilityRuntime {
   const rank=access.state.ranks[binding.id]??0;
   if(!spell.ranks[rank-1])return 'Learn this ability first';
   if(spell.persistent?.toggle&&this.host.instances?.().some(i=>i.source===casterId&&i.ability===spell.id))return !access.actor.alive?'Caster is unable to cast':null;
-  if(access.state.pending)return 'Caster is busy';
+  if(access.state.pending||this.host.deliveries?.().some(d=>d.source===casterId&&this.host.definition(d.ability)?.delivery?.kind==='charge'))return 'Caster is busy';
   if(spell.weaponCast&&!this.host.orderWeaponCast)return 'Weapon casting is not available';
   if((access.state.cooldowns[spell.id]??0)>this.host.tick())return 'Ability is cooling down';
   if(access.state.mana<value(spell.cast.cost.amount,spell.ranks[rank-1]))return 'Not enough mana';
@@ -153,6 +154,7 @@ export class AbilityRuntime {
  cancel(casterId:number,reason='Interrupted'){
   const access=this.host.caster(casterId),pending=access?.state.pending;if(!access)return;
   const order=access.state.weaponOrder;if(order){delete access.state.weaponOrder;this.emit(access.actor,this.host.get(order.target)??access.actor,order.id,order.ability,'weaponOrderCancelled',{reason});}
+  const deliveries=this.host.deliveries?.();if(deliveries)for(let i=deliveries.length-1;i>=0;i--){const d=deliveries[i];if(d.source===casterId&&this.host.definition(d.ability)?.delivery?.kind==='charge'){deliveries.splice(i,1);this.emit(access.actor,this.host.get(d.target)??access.actor,d.cast,d.ability,'cancelled',{reason});}}
   if(!pending)return;
   if(pending.phase==='preparing')access.state.mana=Math.min(access.maxMana,access.state.mana+pending.escrow);
   access.state.pending=null;
@@ -444,6 +446,15 @@ export class AbilityRuntime {
      this.emit(caster,caster,shot.cast,spell.id,'returned');
     },()=>this.emit(caster,caster,shot.cast,spell.id,'projectile',{durationTicks:shot.swarm!.expires+ d.returnTimeoutTicks-this.host.tick()}));
     if(done)queue.splice(i,1);else i++;continue;
+   }
+   if(spell&&d?.kind==='charge'){
+    const target=this.host.get(shot.target);
+    let result:'moving'|'arrived'|'blocked'='blocked';
+    if(caster.alive&&!caster.blocked&&caster.owner===shot.owner&&target?.alive&&target.targetable&&this.host.tick()-shot.started<=d.maxTicks&&this.host.visible(caster.owner,target,caster)&&matchesSpellTarget(target,spell,caster,this.host.relation(caster,target))&&acceptsSpell(target,spell,this.host.relation(caster,target))&&spell.targeting.relations.includes(this.host.relation(caster,target) as 'ally'|'enemy'))result=this.host.chargeStep?.(caster.id,target.id,d.speed)??'blocked';
+    const moved=this.host.get(caster.id);if(moved)shot.position={x:moved.x,y:moved.y,height:moved.height??0};
+    if(target)shot.point={x:target.x,y:target.y,height:target.height??0};
+    if(result==='arrived'){this.emit(moved??caster,target!,shot.cast,spell.id,'impact',{origin:shot.origin});this.hit(moved??caster,target!,shot.cast,spell,shot.rank);}
+    if(result==='moving')i++;else {if(result==='blocked')this.emit(moved??caster,target??caster,shot.cast,spell.id,'cancelled',{reason:'Charge interrupted or obstructed'});queue.splice(i,1);}continue;
    }
    let done=!caster||caster.owner!==shot.owner||!spell||!d||this.host.tick()-shot.started>4000;
    if(!done&&caster&&spell&&d&&this.host.tick()>=shot.nextTick){

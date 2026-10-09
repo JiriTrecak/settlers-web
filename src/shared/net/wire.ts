@@ -39,8 +39,9 @@ export type RoomView = {
   name: string;
   mapId: string;
   host: string;
-  slots: { player: number; name: string | null; roundTripMs?:number; hero?:string }[];
+  slots: { player: number; name: string | null; roundTripMs?:number; hero?:string; race?:string }[];
   heroes?: {default:string;choices:string[]};
+  races?: Record<string,{name:string;heroes?:{default:string;choices:string[]}}>;
   spectators: number;
   tick?: number;
   inputDelayMs?:number;
@@ -63,6 +64,7 @@ export type ClientMsg =
   | {type:'latencyReply';id:string}
   | { type: "chat"; text: string }
   | { type: "selectHero"; hero: string }
+  | { type: "selectRace"; race:string }
   | { type: "startMatch" }
   | { type: "hello"; token: string }
   | { type: "ready"; content: {abi:string;sha256:string}; build:string }

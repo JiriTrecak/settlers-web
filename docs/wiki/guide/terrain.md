@@ -30,15 +30,10 @@ There is no elevation damage bonus or random uphill miss chance. Existing spell 
 
 ## Authoring terrain
 
-Open **Terrain** in the world editor:
+Open **Terrain** in the world editor. Set an absolute grid level, or paint shallow water, deep water or dry ground using a rectangle or a polygon. Polygon points snap to corners and edge midpoints. Shallow water has a visible submerged bed and remains traversable; deep water blocks ordinary ground units.
 
-1. Select **Plateau · cliff outline**. Set an absolute plateau height, click at least three outline points, and press **Apply curve**. The outline closes automatically. Switching to freehand paints a plateau with a round brush.
-2. Select **Ramp · join two levels**. Click the lower endpoint on level ground, then the upper endpoint on level ground. Additional points curve the route. Press **Apply curve**. The ramp samples both endpoint heights; the radius controls half its width.
-3. Extend a ramp if the editor reports it is too steep. The authoring limit is 0.65 metres of rise per metre of length. Keep tight curves broad enough for the intended army.
-4. Paint ground materials, cover and scenery after shaping the heights. Save the map normally.
+Optional sculpting changes the same terrain data. A ramp samples its endpoint heights; extend it if its grade is too steep. Buildings need dry, level foundations even beside a shallow crossing.
 
-The editor's MCP `editor_landscape` tool exposes the same `plateau` and `ramp` operations. Terrain lives in the saved map heightfield; there is no second gameplay-only elevation layer.
+River, mountain and forest generators are editor tools. Preview, adjust, then **Apply previews** to commit terrain and placed objects. Save contains only this editable result. There is no generator to rerun at map load and no separate publishing bake.
 
-## Try it
-
-Open [Amberwake Basin](/maps/amberwake-basin) in the editor to inspect riverbanks, wooded landforms and its three crossings. Use a local test copy when changing heights or bridge endpoints, then verify movement and fog in gameplay.
+The editor MCP exposes these same operations through `editor_scene`. Verify crossings, cliffs and ramps with unit movement after shaping the terrain; a visual preview alone does not prove traversal.

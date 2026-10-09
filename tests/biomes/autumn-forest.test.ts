@@ -7,7 +7,7 @@ import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {landscapeAssets} from '../../src/shared/authoring/project';
 import {parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
 import {authoredTerrain} from '../../src/render/terrain/authoredTerrain';
-import {bakeLayer} from '../../src/shared/authoring/generate';
+import {AuthoringHistory} from '../../src/shared/authoring/history';
 describe('Original autumn biome',()=>{
  it('round trips and selects original leaf tiles while retaining clean base soil',()=>{
   const map=createBiomeMap('Autumn',256,'autumn-forest');expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))).toEqual(map);
@@ -20,7 +20,7 @@ describe('Original autumn biome',()=>{
   const scene=compileMapScene(doc,landscapeAssets);expect(scene.generated!.issues).toEqual([]);
   expect(scene.resources.length).toBeGreaterThan(50);expect(scene.resources.every(r=>r.appearance!.asset!.includes('autumn-tree'))).toBe(true);
   expect(scene.stamps.some(s=>s.asset==='autumn-leaf-litter')).toBe(true);
-  const baked=bakeLayer(doc.authoring!,'leaves.west',scene.generated!),after=compileMapScene({...doc,authoring:baked},landscapeAssets);
+  const history=new AuthoringHistory(doc.authoring!);history.apply(scene);const baked=history.document,after=compileMapScene({...doc,authoring:baked},landscapeAssets);
   expect(after.field.grassCoverage).toEqual(scene.field.grassCoverage);
   expect(after.resources).toEqual(scene.resources);
  });
