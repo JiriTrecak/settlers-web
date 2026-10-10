@@ -51,10 +51,10 @@ it('refreshes sculpted height and displacement while keeping the biome texture a
  expect(after.uniforms.uSourceHeight.value).not.toBe(previousHeight);
  expect(next.displacement).toBeUndefined();
  expect(after.uniforms.uSourceHasDisplacement.value).toBe(0);
- expect(after.uniforms.uSourceDisplacementMask.value.image.data).toEqual(new Uint8Array(field.samples.length));
+ expect(after.uniforms.uSourceMasks.value.image.data.slice(0,field.samples.length*4).filter((_:number,i:number)=>i%4===3)).toEqual(new Uint8Array(field.samples.length));
  expect(original.displacement!.mask).toBe(originalMask);
  expect(material.update(original)).toBe(true);material.bindUniforms(after,true);
- expect(after.uniforms.uSourceDisplacementMask.value.image.data).toEqual(new Uint8Array(Buffer.from(originalMask,'base64')));
+ expect(after.uniforms.uSourceMasks.value.image.data.slice(0,field.samples.length*4).filter((_:number,i:number)=>i%4===3)).toEqual(new Uint8Array(Buffer.from(originalMask,'base64')));
  expect(terrainTileArray).toHaveBeenCalledTimes(3);material.dispose();
 });
 

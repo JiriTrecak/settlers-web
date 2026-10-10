@@ -4,7 +4,7 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
  const sample=(tex:string,uv:string,layer:string)=>fragment?`textureGrad(${tex},vec3(${uv},${layer}),dFdx(${uv}),dFdy(${uv}))`:`textureLod(${tex},vec3(${uv},${layer}),0.)`;
  return `
  uniform highp sampler2DArray uSourceAR,uSourceNH,uSourceOM,uSourceMasks,uSourceDisplacement;
- uniform sampler2D uSourceSlots,uTerrainUnderlay,uSourceDisplacementMask,uSourceHeight;
+ uniform sampler2D uSourceSlots,uTerrainUnderlay,uSourceHeight;
  uniform vec2 uSourceOrigin,uSourceOffset,uSourceSize,uSourceHeightSize;
  uniform float uSourceHeightScale;
  uniform float uSourceAllLayers;
@@ -48,7 +48,7 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
   vec2 uv=(world-uSourceOrigin)/uSourceSize,size=vec2(textureSize(uTerrainUnderlay,0));
   return textureLod(uTerrainUnderlay,(uv*(size-1.)+.5)/size,0.).r;
  }
- float terrainDisplacementMask(vec2 world){return textureLod(uSourceDisplacementMask,(world-uSourceOrigin)/uSourceSize,0.).r;}
+ float terrainDisplacementMask(vec2 world){return textureLod(uSourceMasks,vec3((world-uSourceOrigin)/uSourceSize,0.),0.).a;}
  vec4 terrainDisplacement(vec2 world){return textureLod(uSourceDisplacement,vec3((world-uSourceOffset)*uSourceDisplacementTiling*.08,0.),0.);}
  void terrainLayers(vec2 world,float normalY,out vec4 ar,out vec4 nh){
   terrainSurfaceOM=vec2(1.,0.);

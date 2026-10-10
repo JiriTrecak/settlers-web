@@ -3,7 +3,7 @@ import {terrainMaskBytes,sameTerrainMask} from './terrainMasks';
 import {terrainTexturePalette,reuseTerrainTexturePalette,type TerrainTexturePalette} from './terrainTexturePalette';
 import {terrainLayerTable} from './terrainLayerTable';
 import {sourceTerrainGLSL} from './sourceTerrainShader';
-import {DataArrayTexture,DataTexture,FloatType,LinearFilter,NearestFilter,RedFormat,RGBAFormat,Vector2,type WebGLProgramParametersWithUniforms} from 'three';
+import {DataArrayTexture,DataTexture,FloatType,LinearFilter,NearestFilter,RGBAFormat,Vector2,type WebGLProgramParametersWithUniforms} from 'three';
 import {groundTextures} from '../../shared/authoring/groundTextures';
 import {unpackSourceBytes,sourceHeight,type ImportedTerrain} from '../../shared/map/importedTerrain';
 import {ReferenceGround} from '../prop/referenceGround';
@@ -16,7 +16,6 @@ export class ImportedTerrainMaterial {
  private nh={value:new DataArrayTexture(new Uint8Array([128,128,255,128]),1,1,1)};
  private om={value:new DataArrayTexture(new Uint8Array([255,0,0,255]),1,1,1)};
  private displacement={value:new DataArrayTexture(new Uint8Array([128,128,255,64]),1,1,1)};
- private displacementMask:DataTexture;
  private readonly displacementAsset:string|undefined;
  private masks:DataArrayTexture;
  private slots:DataTexture;
@@ -29,12 +28,10 @@ export class ImportedTerrainMaterial {
   this.currentSource=source;this.displacementAsset=source.displacement?.texture;
   if(source.layers.some(l=>l.ar.startsWith('asset.terrain.winter-'))){this.macro.dispose();this.macro=referenceTexture(assetUrls['assets/library/asset.texture.winter-macro/albedo.png'],false);}
   this.ground.updateSource(sourceHeight(source));
-  const [dw,dh]=source.maskSize;
-  this.displacementMask=new DataTexture(terrainMaskBytes(source.displacement)?.slice()??new Uint8Array(dw*dh),dw,dh,RedFormat);
-  this.displacementMask.minFilter=this.displacementMask.magFilter=LinearFilter;this.displacementMask.needsUpdate=true;
   this.displacement.value.needsUpdate=true;
   const [w,h]=source.maskSize,maskData=new Uint8Array(w*h*source.layers.length*4);
   source.layers.forEach((_,i)=>this.writeMask(maskData,source,i));
+  this.writeDisplacement(maskData,source);
   this.masks=new DataArrayTexture(maskData,w,h,source.layers.length);this.masks.format=RGBAFormat;this.masks.minFilter=this.masks.magFilter=LinearFilter;this.masks.needsUpdate=true;
   this.palette=terrainTexturePalette(source);
   const table=terrainLayerTable(source,this.palette);
@@ -45,6 +42,12 @@ export class ImportedTerrainMaterial {
    if(this.disposed){ar.dispose();nh.dispose();om?.dispose();displacement?.dispose();return;}this.ar.value.dispose();this.nh.value.dispose();this.om.value.dispose();this.ar.value=ar;this.nh.value=nh;if(om)this.om.value=om;
    if(displacement){this.displacement.value.dispose();this.displacement.value=displacement;}
   });
+ }
+ /** Base-mask alpha shares the exact grid and filtering of displacement coverage.
+  * Packing it here leaves a texture unit for gameplay fog on 16-sampler GPUs. */
+ private writeDisplacement(data:Uint8Array,source:ImportedTerrain){
+  const bytes=terrainMaskBytes(source.displacement),count=source.maskSize[0]*source.maskSize[1];
+  for(let i=0;i<count;i++)data[i*4+3]=bytes?.[i]??0;
  }
  private writeMask(data:Uint8Array,source:ImportedTerrain,layerIndex:number){
   const [w,h]=source.maskSize,layer=source.layers[layerIndex],bytes=terrainMaskBytes(layer),codes=layer.connections?unpackSourceBytes(layer.connections):undefined,cells=source.blocks[0]*4;
@@ -77,10 +80,8 @@ export class ImportedTerrainMaterial {
   });
   if(dirty)this.masks.needsUpdate=true;
   if(!sameTerrainMask(source.displacement,previous.displacement)){
-   const displacement=this.displacementMask.image.data as Uint8Array;
-   const bytes=terrainMaskBytes(source.displacement);
-   if(bytes)displacement.set(bytes);else displacement.fill(0);
-   this.displacementMask.needsUpdate=true;
+   this.writeDisplacement(data,source);
+   this.masks.needsUpdate=true;
   }
   const table=terrainLayerTable(source,palette),slots=this.slots.image.data as Float32Array;
   if(table.data.some((value,i)=>value!==slots[i])){slots.set(table.data);this.slots.needsUpdate=true;}
@@ -94,7 +95,7 @@ export class ImportedTerrainMaterial {
  private uniforms(shader:WebGLProgramParametersWithUniforms){
   const s=this.source;
   Object.assign(shader.uniforms,{uSourceOM:this.om,uSourceAllLayers:{value:s.source==='authored-layered'?1:0},uSourceMetadataOffset:{value:s.blocks[0]*8*s.blocks[1]*4}});
-  Object.assign(shader.uniforms,{uSourceHeightScale:{value:s.heightSamplesPerUnit??3},uSourceAR:this.ar,uSourceNH:this.nh,uSourceMasks:{value:this.masks},uSourceSlots:{value:this.slots},uSourceMacro:{value:this.macro},uTerrainUnderlay:this.ground.underlay,uSourceHeight:this.ground.texture,uSourceHeightSize:{value:new Vector2(...s.heightSize)},uSourceDisplacement:this.displacement,uSourceDisplacementMask:{value:this.displacementMask},uSourceHasDisplacement:{value:s.displacement?1:0},uSourceDisplacementTiling:{value:s.displacement?.tiling??1},uSourceOrigin:{value:new Vector2(...s.origin)},uSourceOffset:{value:new Vector2(s.origin[0]-s.sourceOrigin[0],s.origin[1]-s.sourceOrigin[1])},uSourceSize:{value:new Vector2(s.blocks[0]*16,s.blocks[1]*16)}});
+  Object.assign(shader.uniforms,{uSourceHeightScale:{value:s.heightSamplesPerUnit??3},uSourceAR:this.ar,uSourceNH:this.nh,uSourceMasks:{value:this.masks},uSourceSlots:{value:this.slots},uSourceMacro:{value:this.macro},uTerrainUnderlay:this.ground.underlay,uSourceHeight:this.ground.texture,uSourceHeightSize:{value:new Vector2(...s.heightSize)},uSourceDisplacement:this.displacement,uSourceHasDisplacement:{value:s.displacement?1:0},uSourceDisplacementTiling:{value:s.displacement?.tiling??1},uSourceOrigin:{value:new Vector2(...s.origin)},uSourceOffset:{value:new Vector2(s.origin[0]-s.sourceOrigin[0],s.origin[1]-s.sourceOrigin[1])},uSourceSize:{value:new Vector2(s.blocks[0]*16,s.blocks[1]*16)}});
  }
  /** Rebind existing GPU programs after editable terrain replaces its textures.
   * Three caches programs by shader source, so onBeforeCompile alone is insufficient. */
@@ -128,12 +129,12 @@ export class ImportedTerrainMaterial {
   // Both stages must use the same uniform name. Different vertex/fragment
   // aliases consume two combined texture units even when they bind one image.
   shader.vertexShader=shader.vertexShader.replaceAll('uTerrainUnderlay','uReferenceUnderlay');
-  shader.fragmentShader=shader.fragmentShader.replace('uSourceSlots,uTerrainUnderlay,uSourceDisplacementMask','uSourceSlots,uSourceDisplacementMask')
+  shader.fragmentShader=shader.fragmentShader.replace('uSourceSlots,uTerrainUnderlay,uSourceHeight','uSourceSlots,uSourceHeight')
    .replaceAll('uTerrainUnderlay','uReferenceUnderlay')
    .replace('float baseHeight=texture2D(uReferenceLightHeight,heightUV).r;','float baseHeight=terrainHeight(vReferenceSurfaceXZ);')
    .replaceAll('texture2D(uReferenceLightHeight,heightUV).g','texture2D(uSourceHeight,heightUV).g');
   // Source Terrain.fx applies displacement AO before default ambient lighting.
   shader.fragmentShader=shader.fragmentShader.replace('float sourceAO=1.;',`float sourceAO=mix(1.,.5+clamp(terrainDisplacement(vSourcePosition.xz).a/.6,0.,1.)*.5,terrainDisplacementMask(vSourceDisplaced.xz));`);
  }
- dispose(){this.disposed=true;this.ar.value.dispose();this.nh.value.dispose();this.om.value.dispose();this.masks.dispose();this.slots.dispose();this.displacement.value.dispose();this.displacementMask.dispose();this.macro.dispose();this.ground.dispose();}
+ dispose(){this.disposed=true;this.ar.value.dispose();this.nh.value.dispose();this.om.value.dispose();this.masks.dispose();this.slots.dispose();this.displacement.value.dispose();this.macro.dispose();this.ground.dispose();}
 }
