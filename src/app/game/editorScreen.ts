@@ -1,6 +1,6 @@
 import {browserDraftStorage} from '../../editor/file/draftStorage';
 import {importWarcraft,pickWarcraftFile} from '../../editor/import/warcraft/client';
-import {EditorPerformanceWindow} from '../../editor/chrome/performanceWindow';
+import {PerformanceDebugWindow} from '../../debug/performanceWindow';
 import {LoadingScreen} from '../../ui/loadingScreen';
 import {EditorDraft} from '../../editor/file/draft';
 import {newMapDialog} from '../../editor/chrome/newMapDialog';
@@ -35,7 +35,7 @@ import { McpPrefsStore } from "../../editor/control/mcpPrefs";
 
 export class EditorScreen extends GameScreen {
   private scenePanel?:ScenePanel;
-  private performanceWindow?:EditorPerformanceWindow;
+  private performanceWindow?:PerformanceDebugWindow;
   private loading?:LoadingScreen;
   private readonly draft:EditorDraft;
   private readonly initialMap:UtcMap;
@@ -218,7 +218,7 @@ export class EditorScreen extends GameScreen {
   }
 
   start(): void {
-    this.performanceWindow=new EditorPerformanceWindow(this.root,this.editor);
+    this.performanceWindow=new PerformanceDebugWindow(this.root,{title:'Map editor',buildViews:true,benchmark:true,performanceReport:()=>this.editor.performanceReport(),performanceControl:options=>this.editor.performanceControl(options)});
     const loading=this.loading=new LoadingScreen(this.root,this.onLeave,{title:'Opening map',progress:'Editor loading progress',waiting:'Preparing terrain, scenery and models.',error:'The map could not be loaded'});
     void (async()=>{
       try{

@@ -1,3 +1,5 @@
+import {PerformanceDebugWindow} from '../../debug/performanceWindow';
+import {matchPerformanceSource} from '../../debug/performanceSource';
 import type {CampaignCompany} from '../../shared/scenario/company';
 import {GameMenu} from '../../ui/menu/gameMenu';
 import {getMap} from '../../shared/map/library';
@@ -18,6 +20,7 @@ export class PlayScreen extends GameScreen {
   private readonly loading: LoadingScreen;
   private destroyed = false;
   private ready = false;
+  private performanceWindow?:PerformanceDebugWindow;
   private readonly menu:GameMenu;
   private readonly initialSave?:LocalSave;
 
@@ -59,7 +62,7 @@ export class PlayScreen extends GameScreen {
 
   start(): void {
     void this.session.start(p => this.loading.update(p)).then(async () => {
-      if (!this.destroyed) {if(this.initialSave)await this.session.restoreLocal(this.initialSave);if(!this.destroyed){this.ready=true;this.loading.destroy();}}
+      if (!this.destroyed) {if(this.initialSave)await this.session.restoreLocal(this.initialSave);if(!this.destroyed){this.ready=true;this.loading.destroy();if(document.documentElement.dataset.profiler!=='off')this.performanceWindow=new PerformanceDebugWindow(this.root,matchPerformanceSource(getMap(this.mapId).name),'top-12');}}
     }).catch(error => {
       if (!this.destroyed) {this.session.stop();this.loading.error(error);console.error(error);}
     });
@@ -73,6 +76,7 @@ export class PlayScreen extends GameScreen {
     this.destroyed = true;
     this.loading.destroy();
     this.menu.destroy();
+    this.performanceWindow?.destroy();
     this.session.stop();
     this.hud.destroy();
     super.destroy();

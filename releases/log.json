@@ -67,7 +67,9 @@
       "The editor now has a Decals toolbar tool with visible previews, Apply and Discard. Apply commits the whole batch in one undo step, previews stay out of saved maps, and decal positions support larger maps. MCP exposes the same preview workflow.",
       "Water now blends calm, clear shallows into animated deep-water swells, with stylized foam and editable wave controls in water profiles.",
       "Forest water is calmer, with less crest foam and irregular swells that break up repeating wave rows.",
-      "Forest water uses a darker, more muted blue-green tint while keeping shallow beds visible."
+      "Forest water uses a darker, more muted blue-green tint while keeping shallow beds visible.",
+      "Forest shoreline foam is now barely visible; its water-profile control remains available for stronger foam later.",
+      "Skirmish and campaign matches now share the map editor’s Performance window, with live graphs, captures, draw-call inspection and organized match debug controls."
     ],
     "fixed": [
       "Building placement now checks units’ full collision bodies, preventing foundations from overlapping units whose centers are just outside the footprint.",
@@ -95,7 +97,8 @@
       "Repainting terrain now removes fully erased texture layers while preserving partially painted areas and Undo, avoiding unused material layers in saved maps and rendering.",
       "MCP cleanup now uses its requested area and filters independently of unfinished editor selections, supports all cleanup categories and previews, and shares the editor's lock protection and Undo.",
       "Terrain material settings now use a GPU lookup table, avoiding shader uniform limits when maps use many ground textures.",
-      "Applying forest and foliage previews no longer bakes their ground tint into permanent grass. Cleaning or moving vegetation removes its old tint while preserving painted grass and meadow terrain."
+      "Applying forest and foliage previews no longer bakes their ground tint into permanent grass. Cleaning or moving vegetation removes its old tint while preserving painted grass and meadow terrain.",
+      "Fixed missing terrain textures in skirmish when fog of war exceeded the GPU texture limit. Editor and gameplay now share the corrected terrain shader."
     ],
     "knownIssues": []
   },

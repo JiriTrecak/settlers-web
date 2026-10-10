@@ -1,7 +1,21 @@
 # Performance debug
 
-Debug · Ctrl+F3 toggles the persistent opt-in overlay in game/editor. Copy report
-exports rolling mean/p95/max milliseconds and last-frame counters. GPU timing
+**Performance · Ctrl+F3** opens the same shadcn/Zinc dialog in matches and the
+map editor (`performanceWindow.tsx`). `PerformanceSource` provides optional
+editor opening/build/benchmark reports; frame graphs, timing tables, counters,
+captures, baselines, trace export and draw census have one implementation.
+The sampler in `performance.ts` contains no DOM presentation. MCP and
+`window.utcPerformance` continue to read/control that same sampler.
+
+Opening borrows profiling; closing or destroying the window restores its prior
+state. Report polling stops while closed and during quiet captures (the dialog
+returns after ten seconds). Quiet captures omit trace recording; disable detailed
+simulation timings too when measuring the budget. Match-only controls live in the
+Match tab, with network speed/vision/navmesh restrictions preserved. Explicitly
+enabled navigation overlays stay visible when closing the dialog; switch them off
+in Match to stop that diagnostic work. Editor-specific tabs are absent in matches.
+
+Report exports rolling mean/p95/p99 milliseconds and last-frame counters. GPU timing
 uses asynchronous EXT_disjoint_timer_query_webgl2 queries, bounded to four
 pending queries; unsupported browsers are labeled. CPU scopes overlap.
 Rebuild events have their own sample history and are not per-frame averages.
@@ -17,7 +31,7 @@ Mesh construction runs in a dedicated debug worker. Input is copied only when
 static collision changes; queued revisions coalesce, and unchanged clearance
 tiles reuse their triangulation. Input/mask scanning and display-buffer rebuilds
 are still full-snapshot operations, separate from production incremental navigation.
-Closing debug or disabling the overlay terminates the worker and disposes GPU
+Disabling the overlay or leaving the match terminates the worker and disposes GPU
 buffers. No overlay work runs in ordinary matches. The panel/report includes mesh
 radius, polygon/source-triangle counts, build time, rebuilt tiles and collision revision.
 

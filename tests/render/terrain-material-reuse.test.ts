@@ -58,6 +58,24 @@ it('refreshes sculpted height and displacement while keeping the biome texture a
  expect(terrainTileArray).toHaveBeenCalledTimes(3);material.dispose();
 });
 
+it('preserves independent ground masks when displacement coverage shares base alpha',async()=>{
+ const field=new HeightField(16);field.samples.fill(2);
+ field.grassCoverage=new Float32Array(field.samples.length).fill(.6);
+ field.rockCoverage=Float32Array.from({length:field.samples.length},(_,i)=>(i%5)/4);
+ const source=authoredTerrain(field,[],[]),material=new ImportedTerrainMaterial(source);await material.ready;
+ const view=shader();material.bindUniforms(view);
+ const masks=view.uniforms.uSourceMasks.value,n=field.samples.length;
+ const alpha=()=>masks.image.data.slice(0,n*4).filter((_:number,i:number)=>i%4===3);
+ const coverage=new Uint8Array(Buffer.from(source.displacement!.mask,'base64'));
+ expect(alpha()).toEqual(coverage);
+ const ground=masks.image.data.slice(n*4);
+ const next=structuredClone(source);next.displacement=undefined;
+ expect(material.update(next)).toBe(true);
+ expect(alpha()).toEqual(new Uint8Array(n));expect(masks.image.data.slice(n*4)).toEqual(ground);
+ expect(material.update(source)).toBe(true);expect(alpha()).toEqual(coverage);
+ expect(masks.minFilter).toBe(masks.magFilter);material.dispose();
+});
+
 it('rejects incompatible tiles, dimensions or displacement assets before changing resources',async()=>{
  const source=authoredTerrain(new HeightField(16),[],[]),material=new ImportedTerrainMaterial(source);await material.ready;
  for(const mutate of [

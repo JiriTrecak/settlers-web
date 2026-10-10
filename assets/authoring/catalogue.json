@@ -13367,7 +13367,7 @@
       "clarity": 0.85,
       "rippleScale": 0.15,
       "rippleStrength": 0.055,
-      "foamStrength": 0.48,
+      "foamStrength": 0.02,
       "reflectionStrength": 0.5,
       "causticStrength": 0.18,
       "cloudStrength": 0.03,

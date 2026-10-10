@@ -1,3 +1,6 @@
+import './ui/tw.css';
+import {PerformanceDebugWindow} from './debug/performanceWindow';
+import {matchPerformanceSource} from './debug/performanceSource';
 import {EditorBridge} from './shared/control/editorBridge';
 /** Art-direction fixture: the saved map and the game's renderer, without editor chrome. */
 import { perf } from "./debug/performance";
@@ -14,6 +17,7 @@ import {
 } from "./presentation/scenery";
 async function start() {
   const params = new URLSearchParams(location.search);
+  if(params.has('debug')&&document.documentElement.dataset.profiler!=='off')new PerformanceDebugWindow(document.body,matchPerformanceSource('Reference stage'),'top-12');
   const mapId=params.get('map') ?? 'echo-isles';
   const raw=Object.entries(mapSources).find(([path])=>path.endsWith('/'+mapId+'.utcmap'))?.[1];
   if(!raw)throw Error('Unknown authored map: '+mapId);

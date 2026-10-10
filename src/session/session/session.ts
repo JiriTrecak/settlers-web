@@ -95,14 +95,14 @@ export class Session {
   private workerProfiling=false;
   private workerProfilingDetails=true;
   /** Debug navigation overlay: panel toggles, the grid revision the renderer holds, and a
-   * single in-flight worker request. With both toggles off (or the profiler closed) the
+   * single in-flight worker request. With the overlay toggles off the
    * worker is never asked and the renderer owns no overlay. */
   private navDebug={worldGrid:false,paths:false,walkability:false,navmesh:false,revision:-1,meshRevision:-1,epoch:0,pending:false,next:0,shown:false};
   private pollNavigation(){
     const d=this.navDebug,worker=this.worker,renderer=this.renderer;
-    const gridMode=perf.enabled&&d.worldGrid?'full':'none';
+    const gridMode=d.worldGrid?'full':'none';
     if(renderer&&renderer.gridMode!==gridMode)renderer.setGridMode(gridMode);
-    if(!perf.enabled||!(d.paths||d.walkability||d.navmesh)){
+    if(!(d.paths||d.walkability||d.navmesh)){
       if(d.shown){renderer?.gameNavigation(null);d.shown=false;d.revision=d.meshRevision=-1;}
       return;
     }
@@ -114,7 +114,7 @@ export class Session {
       if(epoch!==d.epoch)return;
       d.pending=false;
       // A stale reply may carry a grid the renderer no longer expects; the next poll corrects it.
-      if(!perf.enabled||worker!==this.worker||renderer!==this.renderer||grid!==d.walkability||paths!==d.paths||mesh!==d.navmesh)return;
+      if(worker!==this.worker||renderer!==this.renderer||grid!==d.walkability||paths!==d.paths||mesh!==d.navmesh)return;
       renderer.gameNavigation({grid,size:state.size,cells:state.cells,paths:state.paths,mesh,meshInput:state.mesh});
       d.shown=true;
       if(grid)d.revision=state.revision;
