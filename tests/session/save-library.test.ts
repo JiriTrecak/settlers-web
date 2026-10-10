@@ -1,3 +1,4 @@
+import {mapOverview} from '../../src/shared/map/overview';
 import {missionFixture} from '../sim/mission-fixture';
 import {PresentationView} from '../../src/session/session/presentationView';
 import {describe,it,expect} from 'vitest';
@@ -8,7 +9,7 @@ import {World} from '../../src/sim/world/world';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import {localMatch} from '../../src/shared/match/match';
 import {emptyPipeline} from '../../src/shared/save/save';
-import type {MapEntry} from '../../src/shared/map/library';
+import type {LoadedMapEntry} from '../../src/shared/map/library';
 function fixture(campaign=false){
  const source=campaign?missionFixture():emptyUtcMap();
  const map={...source,entities:source.entities.filter(e=>!campaign||!e.id.startsWith('tree.'))};
@@ -16,7 +17,7 @@ function fixture(campaign=false){
  const world=new World({map,slots:match.slots,seed:match.seed});for(let i=0;i<15;i++)world.tick();
  if(campaign)for(let i=0;i<600&&!world.settlement.state.mission?.dialogue?.remaining;i++)world.tick();
  const tick=world.clock.tickIndex;
- const entry:MapEntry={id:match.mapId,name:map.name,map,revision:'rev',players:match.slots.length,source:'project'};
+ const entry:LoadedMapEntry={id:match.mapId,name:map.name,map,revision:'rev',players:match.slots.length,source:'project',overview:mapOverview(map)};
  const save:LocalSave={v:4,remote:false,mode:campaign?'campaign':'skirmish',player:0,match,mapId:match.mapId,mapRevision:'rev',seed:19,world:world.snapshot(),pipeline:emptyPipeline(tick,match.slots),clients:match.slots.map(s=>({player:s.player,sentThrough:tick+1,outbox:[]}))};
  return {entry,save,world};
 }

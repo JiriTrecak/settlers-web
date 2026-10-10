@@ -2,7 +2,10 @@ import {HeightField,type HeightDirty} from '../../shared/map/height';
 import {sourceHeight,unpackSourceBytes,type ImportedTerrain} from '../../shared/map/importedTerrain';
 import {sourceWater} from '../../shared/map/importedWater';
 import {riverPoint} from '../../shared/authoring/generate';
+import {biomeById} from '../../content/biomes';
+import {DEFAULT_WATER_WAVES,type WaterProfile} from '../../shared/authoring/recipes';
 import {landscapeAssets} from '../../shared/authoring/project';
+export const WATER_PROFILE_ROWS=6;
 export type WaterSurfaceData={origin:[number,number];offset:[number,number];size:[number,number];heightOffset:number;ground:Float32Array;groundSize:[number,number];groundScale:number;flow:Uint8Array;profiles?:Float32Array;color?:{bytes:Uint8Array;size:[number,number]};tiles:{x:number;z:number;positions:Float32Array;indices:number[]}[]};
 /** Both imported maps and editable rivers feed the same source water renderer. */
 export function waterSurface(input:ImportedTerrain|HeightField):WaterSurfaceData{
@@ -17,13 +20,22 @@ export function waterSurface(input:ImportedTerrain|HeightField):WaterSurfaceData
  // Keep the cache local to this build so mutable sculpted terrain cannot go stale.
  const centers=new Uint8Array(span*span),stride=Math.ceil(span/16)*16+1,corners=new Uint8Array(stride*stride);
  const cornerHeights=new Float32Array(stride*stride);
- const profiles=new Float32Array(256*4*4),profileIds=new Map<string,number>();
+ const profiles=new Float32Array(256*WATER_PROFILE_ROWS*4),profileIds=new Map<string,number>();
  const linear=(hex:string)=>[1,3,5].map(i=>{const v=parseInt(hex.slice(i,i+2),16)/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
  const styles=[...(field.cellWater?.profiles??[]).map(profile=>{const style=landscapeAssets.find(a=>a.id===profile)?.water;if(!style)throw Error('Missing water profile '+profile);return {profile,style};}),...field.watercourses];
- for(const river of styles){if(profileIds.has(river.profile))continue;const id=profileIds.size+1;if(id>255)throw Error('A map supports at most 255 distinct water profiles');profileIds.set(river.profile,id);const p=river.style;
+ const writeProfile=(id:number,p:WaterProfile)=>{
   profiles.set([...linear(p.shallowColor),p.clarity],id*4);profiles.set([...linear(p.deepColor),p.reflectionStrength],(256+id)*4);
   profiles.set([p.rippleScale,p.rippleStrength,p.causticStrength,p.foamStrength],(512+id)*4);profiles.set([p.cloudStrength,p.flowSpeed,0,0],(768+id)*4);
- }
+  const w=p.waves??DEFAULT_WATER_WAVES;
+  profiles.set([w.height,w.length,w.speed,w.depthEnd],(1024+id)*4);
+  profiles.set([w.depthStart,w.shallowStrength,w.shoreWidth,w.crestStrength],(1280+id)*4);
+ };
+ // Slot zero is deliberately separate from saved local profiles (1..255).
+ // Painting one river must never recolor every unassigned lake in the map.
+ const defaultId=biomeById(field.biome).waterProfile,defaultStyle=landscapeAssets.find(a=>a.id===defaultId)?.water;
+ if(!defaultStyle)throw Error('Missing biome water profile '+defaultId);
+ writeProfile(0,defaultStyle);
+ for(const river of styles){if(profileIds.has(river.profile))continue;const id=profileIds.size+1;if(id>255)throw Error('A map supports at most 255 distinct water profiles');profileIds.set(river.profile,id);writeProfile(id,river.style);}
  const surface=(x:number,z:number)=>field.waterAt(x,z);
  // Shoreline triangles include dry vertices. Extend the local level a single cell
  // beyond the wet mask so those corners do not plunge to the global ocean height.
@@ -48,7 +60,7 @@ export function waterSurface(input:ImportedTerrain|HeightField):WaterSurfaceData
    flow[i+2]=Math.round(255*river.style.foamStrength*Math.min(1,river.flow/2)*.35);break;
   }
  }
- return {origin,offset:[0,0],size:[span,span],heightOffset:0,ground:field.samples.slice(),groundSize:[field.verts,field.verts],groundScale:1,flow,profiles:profileIds.size?profiles:undefined,tiles:[...wet].map(key=>{const [x,z]=key.split(':').map(Number);return tile(x!,z!,origin,vertexSurface,isWet);})};
+ return {origin,offset:[0,0],size:[span,span],heightOffset:0,ground:field.samples.slice(),groundSize:[field.verts,field.verts],groundScale:1,flow,profiles,tiles:[...wet].map(key=>{const [x,z]=key.split(':').map(Number);return tile(x!,z!,origin,vertexSurface,isWet);})};
 }
 function tile(bx:number,bz:number,origin:[number,number],height:(x:number,z:number)=>number,wet:(x:number,z:number)=>boolean){
  const positions=new Float32Array(17*17*3),indices:number[]=[];

@@ -1,3 +1,5 @@
+import {browserDraftStorage} from '../../editor/file/draftStorage';
+import {importWarcraft,pickWarcraftFile} from '../../editor/import/warcraft/client';
 import {EditorPerformanceWindow} from '../../editor/chrome/performanceWindow';
 import {LoadingScreen} from '../../ui/loadingScreen';
 import {EditorDraft} from '../../editor/file/draft';
@@ -35,7 +37,10 @@ export class EditorScreen extends GameScreen {
   private scenePanel?:ScenePanel;
   private performanceWindow?:EditorPerformanceWindow;
   private loading?:LoadingScreen;
-  private draft:EditorDraft;
+  private readonly draft:EditorDraft;
+  private readonly initialMap:UtcMap;
+  private restoringDraft=true;
+  private draftNotice?:HTMLDivElement;
   private readonly editor: WorldEditor;
   private readonly files: MapStore;
   private readonly library = new CatalogueStore();
@@ -65,12 +70,9 @@ export class EditorScreen extends GameScreen {
     super("screen");
     this.enableHudToggle();
     const initial = hooks.map ?? emptyUtcMap();
+    this.initialMap=initial;
     const mapId = hooks.mapId ?? 'new';
-    this.draft = new EditorDraft(sessionStorage,mapId,initial);
-    const restored = this.draft.restore([
-      'utc-editor-threewater-draft:'+mapId,
-      'utc-editor-threewater-draft:'+(new URLSearchParams(location.search).get('map')??'new'),
-    ]);
+    this.draft = new EditorDraft(browserDraftStorage(),mapId,initial);
     this.onLeave = hooks.onLeave;
     this.editor = new WorldEditor(canvas, {
       host: this.root,
@@ -94,11 +96,14 @@ export class EditorScreen extends GameScreen {
       onSave: () => void this.save(),
       onSaveAs: () => void this.save(true),
       onLoad: () => void this.askLoad(),
+      onImportWarcraft:()=>void this.askImportWarcraft(),
       onLeave: () => void this.askLeave(),
-      onMission:()=>{this.missionEditor?.destroy();this.missionEditor=new MissionEditor(this.root,this.editor,()=>{
+      onMission:()=>{this.missionEditor?.destroy();this.missionEditor=new MissionEditor(this.root,this.editor,async()=>{
         const error=playableMapError(this.editor.map);if(error)throw new Error(error);
-        const id=rememberAuthoredMap(this.editor.map);
-        window.open(`/?map=${encodeURIComponent(id)}`,"_blank");
+        const preview=window.open('about:blank',"_blank");
+        if(!preview)throw Error('Allow popups to test this mission.');
+        try{const id=await rememberAuthoredMap(this.editor.map);preview.location.href=`/?map=${encodeURIComponent(id)}`;}
+        catch(error){preview.close();throw error;}
       });},
       onSelect: () => this.armSelect(),
       onStamp: () => this.stamp(),
@@ -181,7 +186,7 @@ export class EditorScreen extends GameScreen {
     this.syncAsset();
     this.chrome.setName(this.editor.map.name);
     this.bridge = new EditorBridge(
-      new EditorControl(this.editor, this.library, () => this.syncRemote()),
+      new EditorControl(this.editor, this.library, () => this.syncRemote(),()=>{this.files.clearFile();this.saved='';}),
       () => this.syncMcp(),
     );
     this.syncMcp();
@@ -206,31 +211,28 @@ export class EditorScreen extends GameScreen {
     });
     this.onKey = (e) => this.shortcut(e);
     window.addEventListener("keydown", this.onKey);
-    {
-      this.saved = stringifyUtcMap(initial);
-      this.editor.replace(restored.map ?? initial);
-    }
+    this.saved = stringifyUtcMap(initial);
     this.spawnDock = new SpawnDock(this.root, this.editor);
     this.entityDock = new EntityDock(this.root, this.editor);
     this.scenePanel=new ScenePanel(this.root,this.editor, () => {this.mcpOpen=false;this.skyOpen=false;this.syncMcp();this.syncSky();this.syncRemote();}, () => this.toggleMcp(), () => this.toggleSky());
-    if(restored.recovery){
-      const notice=document.createElement('div');notice.className='editor-draft-recovery';notice.setAttribute('role','status');
-      const text=document.createElement('span');text.textContent='Updated map loaded. Your earlier browser draft is preserved.';
-      const button=document.createElement('button');button.textContent='Open earlier draft';button.type='button';
-      button.onclick=()=>{void (async()=>{if(!await this.ifClean('Save your current changes before opening the earlier draft?'))return;this.editor.replace(restored.recovery!);notice.remove();})();};
-      notice.append(text,button);this.root.append(notice);
-    }
-
-
   }
 
   start(): void {
     this.performanceWindow=new EditorPerformanceWindow(this.root,this.editor);
     const loading=this.loading=new LoadingScreen(this.root,this.onLeave,{title:'Opening map',progress:'Editor loading progress',waiting:'Preparing terrain, scenery and models.',error:'The map could not be loaded'});
-    void this.editor.start().then(()=>{
-      if(this.loading===loading){loading.destroy();this.loading=undefined;this.syncRemote();}
+    void (async()=>{
+      try{
+        const restored=await this.draft.restore();
+        if(this.loading!==loading)return;
+        this.editor.replace(restored.map??this.initialMap);
+        if(restored.recovery)this.offerDraftRecovery(restored.recovery);
+      }catch(error){if(this.loading===loading){this.showDraftError(error);this.editor.replace(this.initialMap);}}
+      if(this.loading!==loading)return;
+      this.restoringDraft=false;
+      await this.editor.start();
+    })().then(()=>{
+      if(this.loading===loading){loading.destroy();this.loading=undefined;this.syncRemote();this.applyMcp();}
     }).catch(error=>{if(this.loading===loading)loading.error(error);});
-    this.applyMcp();
     this.syncSky();
   }
 
@@ -568,11 +570,24 @@ export class EditorScreen extends GameScreen {
     this.chrome.setName(this.editor.map.name);
     this.chrome.setDirty(this.dirty());
     this.environmentDock?.sync();
-    this.draft.write(this.editor.map,this.dirty());
+    if(!this.restoringDraft)void this.draft.write(this.editor.map,this.dirty()).then(()=>{this.draftNotice?.remove();this.draftNotice=undefined;},error=>this.showDraftError(error));
   }
 
-  private markClean(): void {
-    this.saved = stringifyUtcMap(this.editor.map);
+  private showDraftError(error:unknown):void {
+    if(!this.draftNotice){this.draftNotice=document.createElement('div');this.draftNotice.className='editor-draft-recovery';this.draftNotice.setAttribute('role','status');this.root.append(this.draftNotice);}
+    this.draftNotice.textContent=`Browser recovery could not be saved. Save or export your map. ${error instanceof Error?error.message:String(error)}`;
+  }
+
+  private offerDraftRecovery(map:UtcMap):void {
+    const notice=document.createElement('div');notice.className='editor-draft-recovery';notice.setAttribute('role','status');
+    const text=document.createElement('span');text.textContent='Updated map loaded. Your earlier browser draft is preserved.';
+    const button=document.createElement('button');button.textContent='Open earlier draft';button.type='button';
+    button.onclick=()=>{void (async()=>{if(!await this.ifClean('Save your current changes before opening the earlier draft?'))return;this.files.clearFile();this.saved='';this.editor.replace(map);notice.remove();})();};
+    notice.append(text,button);this.root.append(notice);
+  }
+
+  private markClean(map=this.editor.map): void {
+    this.saved = stringifyUtcMap(map);
     this.syncDoc();
   }
 
@@ -633,28 +648,33 @@ export class EditorScreen extends GameScreen {
     }
   }
 
-  private async save(asNew = false): Promise<boolean> {
+  private saving?:Promise<boolean>;
+  private save(asNew = false): Promise<boolean> {
+    if(this.saving)return this.saving;
+    return this.saving=this.writeMap(asNew).finally(()=>{this.saving=undefined;});
+  }
+  private async writeMap(asNew: boolean): Promise<boolean> {
     if (document.activeElement instanceof HTMLElement)
       document.activeElement.blur();
     await this.editor.editsReady();
-    const error = playableMapError(this.editor.map);
+    const map=this.editor.map,error = playableMapError(map);
     if (error) {
       await this.alert("Player starts", error);
       return false;
     }
     if(!asNew){
-      try{rememberAuthoredMap(this.editor.map);this.markClean();return true;}
+      try{await rememberAuthoredMap(map);this.markClean(map);return !this.dirty();}
       catch{await this.alert("Couldn't save",'The local map library is full or unavailable. Use Export to save a map file.');return false;}
     }
-    const result = await this.files.save(this.editor.map, asNew);
+    const result = await this.files.save(map, asNew);
     if (result === "ok") {
       try {
-        rememberAuthoredMap(this.editor.map);
+        await rememberAuthoredMap(map);
       } catch {
         /* Disk file was saved even if browser storage is full. */
       }
-      this.markClean();
-      return true;
+      this.markClean(map);
+      return !this.dirty();
     }
     if (result === "fail")
       await this.alert("Couldn't save", "The map file could not be written.");
@@ -685,12 +705,29 @@ export class EditorScreen extends GameScreen {
     const map = await newMapDialog(this.root);
     if (!map) return;
     this.files.clearFile();
-    this.draft = new EditorDraft(sessionStorage, "new", map);
     this.saved = "";
     this.editor.replace(map);
     this.editor.lookAt(map.size/2,map.size/2);
     this.saved = "";
     this.syncDoc();
+  }
+
+  private importingWarcraft=false;
+  private async askImportWarcraft():Promise<void>{
+    if(this.importingWarcraft)return;
+    if(!(await this.ifClean('Save this map before importing a Warcraft map?')))return;
+    const file=await pickWarcraftFile();if(!file)return;
+    this.importingWarcraft=true;
+    const status=document.createElement('div');status.setAttribute('role','status');status.textContent='Importing Warcraft map…';
+    status.className='absolute bottom-16 left-1/2 z-50 -translate-x-1/2 rounded-lg bg-background px-5 py-3 text-foreground shadow-xl';this.root.append(status);
+    try{
+      if(file.size>128*1024*1024)throw Error('Warcraft map exceeds the 128 MB import limit');
+      const {map,report}=await importWarcraft(new Uint8Array(await file.arrayBuffer()));
+      this.files.clearFile();this.saved='';
+      await this.editor.replace(map);await this.editor.editsReady();this.editor.lookAt(map.size/2,map.size/2);this.syncDoc();
+      await this.alert('Warcraft map imported',`${report.starts} starts · ${report.trees} trees · ${report.mines} amber sites\n${report.campCounts.small} easy, ${report.campCounts.medium} medium and ${report.campCounts.hard} hard camps.\nTerrain, water and ${report.textures.length} ground textures are editable. Save as a .utcmap file.\n${report.startingPads.length} starting areas leveled; ${report.placementAdjustments.length} substitute placements adjusted for clearance.${report.warnings.length?'\n\n'+report.warnings.join('\n'):''}`);
+    }catch(error){await this.alert('Couldn’t import Warcraft map',error instanceof Error?error.message:String(error));}
+    finally{status.remove();this.importingWarcraft=false;}
   }
 
   private async askLoad(): Promise<void> {
@@ -701,17 +738,16 @@ export class EditorScreen extends GameScreen {
       await this.alert("Couldn't load", `That file isn't a valid .utcmap: ${result.reason}`);
       return;
     }
-    this.draft = new EditorDraft(sessionStorage, "file:" + result.map.name, result.map);
     this.saved = stringifyUtcMap(result.map);
     this.editor.replace(result.map);
     if (!playableMapError(result.map)) {
       try {
-        rememberAuthoredMap(result.map);
+        await rememberAuthoredMap(result.map);
       } catch {
         /* Disk file remains loaded. */
       }
     }
-    this.markClean();
+    this.markClean(result.map);
   }
 
   private async ifClean(body: string): Promise<boolean> {

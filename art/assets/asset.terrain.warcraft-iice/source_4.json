@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Iice",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/icecrown/ice_ice_diffuse.dds",
+      "sha256": "8570750a70612e2486cd9ae8b85cf2ab7812406a46e1c25fd33c3a0ccf6281e3"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/icecrown/ice_ice_normal.dds",
+      "sha256": "0d2fae126bf49602ac03a0d60816a011b9c37eb1da8c349bdca6b4a098dd70bc"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\icecrown\\ice_ice_orm.dds",
+      "sha256": "1f61e21b59ea438631ef3d657531577b9e6d17becdeec09d4f7ad454594f8c40"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Iice",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Icecrown",
+    "file": "Ice_Ice",
+    "comment": "Ice",
+    "name": "WESTRING_TILE_ICE",
+    "buildable": "1",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "3",
+    "convertTo": "Lgrd,Fgrd,Wgrs,Bdsr,Avin,Cpos,Nice,Yhdg,Vgrs,Qgrs,Xhdg,Dlav,Glav,Zsan,Ofst",
+    "InBeta": "0",
+    "version": "1"
+  }
+}

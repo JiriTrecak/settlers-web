@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "id": "asset.terrain.warcraft-qstp",
+  "name": "Stone Path · VillageFall",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "warcraft",
+    "ground",
+    "Qstp"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "73aff99a0a068f86a66104a104f6b3f7611605e34d450171b8125e59fb7b806b",
+      "bytes": 1889713
+    },
+    {
+      "role": "data",
+      "index": 2,
+      "format": "bin",
+      "sha256": "f070c95bf926d1e77bd02cf0dc8a158c006c62ef65f40c9068f8e1fc4a17e665",
+      "bytes": 160172
+    },
+    {
+      "role": "data",
+      "index": 3,
+      "format": "bin",
+      "sha256": "166d4a38ac79b76523c1ca17a826027c2ff2e1abb0b85a19af7a56fcd8937f17",
+      "bytes": 500543
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "704345e2bc0f8c39c4611fa0e6bb9f9bd634a962365a92c3a38ddd33b26282d9",
+      "bytes": 1185538,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "432c8b67cdc49cc9f16862287a25acde6cd8715aa06e61ccf0770edd6cae1879",
+      "bytes": 86480,
+      "colorSpace": "none"
+    },
+    {
+      "role": "occlusion",
+      "index": 1,
+      "format": "png",
+      "sha256": "d664adf089243d03d018634e5622e0a6a69c7ff972db20ab7460ee44640a69e3",
+      "bytes": 462812,
+      "colorSpace": "none"
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "cd50ecbecd0791cd0c8d7c14f0a2969aa0663bd0a1cfab73202b5d10c1ac523a",
+      "bytes": 663802,
+      "colorSpace": "none"
+    },
+    {
+      "role": "metalness",
+      "index": 1,
+      "format": "png",
+      "sha256": "8d20d5bc05109dc3baa20e40069ab1bdc523c00da41b69736e1b4a250103cc59",
+      "bytes": 462742,
+      "colorSpace": "none"
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "81d44068b4c78f2691bd04f8f436b58891ce620aa942c6190b6d48eb863ba243",
+      "bytes": 59168,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "bin",
+      "sha256": "a3ad0a238629d74e3b933a7a59319ee3dabc6b8926405ed264b352808192f127",
+      "bytes": 1398256
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "bin",
+      "sha256": "77c1318eada38b8170054b46aa30b3ba72500119f3b46f17c6884dd182549dda",
+      "bytes": 1398256
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "bin",
+      "sha256": "c3aba4faf02690a0ee7df278a18bd01cb132e485bf4ab4b61a9e068e7feffbaa",
+      "bytes": 1398256
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "e559bf1c1e69b2aea5fed6360ed553a6bf31a804e8fe6de64dd0c50215488a9e",
+      "bytes": 1559
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "import",
+    "licenseNote": "User-supplied Rebirth replacements with missing channels from the local Warcraft III: Reforged installation. Original sources retain their respective rights.",
+    "sourceHash": "34c0cc06a35cbea7c97f22842cd238b37a67a706580f1cd42a672d89c5c01e10"
+  },
+  "terrain": {
+    "tileWorldSize": 4,
+    "reflectance": 0.25,
+    "sourceIds": [
+      "Qstp"
+    ],
+    "atlas": {
+      "columns": 4,
+      "rows": 4,
+      "fullTiles": [
+        0,
+        15
+      ],
+      "corners": [
+        null,
+        8,
+        4,
+        12,
+        2,
+        10,
+        6,
+        14,
+        1,
+        9,
+        5,
+        13,
+        3,
+        11,
+        7,
+        15
+      ]
+    },
+    "albedo": {
+      "role": "albedo",
+      "index": 1
+    },
+    "normal": {
+      "role": "normal",
+      "index": 1
+    },
+    "occlusion": {
+      "role": "occlusion",
+      "index": 1
+    },
+    "roughness": {
+      "role": "roughness",
+      "index": 1
+    },
+    "metalness": {
+      "role": "metalness",
+      "index": 1
+    },
+    "thumbnail": {
+      "role": "image",
+      "index": 1
+    },
+    "runtime": {
+      "albedoRoughness": {
+        "role": "data",
+        "index": 1
+      },
+      "normalOpacity": {
+        "role": "data",
+        "index": 2
+      },
+      "occlusionMetalness": {
+        "role": "data",
+        "index": 3
+      }
+    }
+  }
+}

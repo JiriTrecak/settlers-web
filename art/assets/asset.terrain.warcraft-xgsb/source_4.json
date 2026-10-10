@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Xgsb",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/dalaran/dalaran_grass_diffuse.dds",
+      "sha256": "b2aa3e378acf6ce18f4a7d685398a15d39a646c3398bb2effa8ce27df336bd4f"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/dalaran/dalaran_grass_normal.dds",
+      "sha256": "4704757ce98ea5e4c6abaf6400a4a7fd9e0e48a0df26928e07da4a7747b984ce"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\dalaran\\dalaran_grass_orm.dds",
+      "sha256": "8f099f4a9843eb0bec7d6b98c0e273516e177d9033e1c1ade608b2867c42bc52"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Xgsb",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Dalaran",
+    "file": "Dalaran_Grass",
+    "comment": "Grass",
+    "name": "WESTRING_TILE_GRASS",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "3",
+    "convertTo": "Lgrs,Fgrs,Wgrs,Bgrr,Agrs,Nsnw,Cgrs,Vgrs,Qgrs,Ygsb,Dbrk,Gbrk,Zgrs,Isnw,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Lrok",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronsummer\\lords_rock_diffuse.dds",
+      "sha256": "8888d78e3b3a3472ce4b5172f1f1235b1ed61eba4be6e445f2b0dc8ddfb4fbca"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronsummer/lords_rock_normal.dds",
+      "sha256": "8dd4594692c766e93e4b79e3969f537a9eae549f5182a8d6eb131b8cde4d8ff4"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronsummer\\lords_rock_orm.dds",
+      "sha256": "ab0dca35749fd5a2815975c45bc0f97a63b484845b9cf5e06d4d9cbf461ec6cc"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Lrok",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\LordaeronSummer",
+    "file": "Lords_Rock",
+    "comment": "Rock",
+    "name": "WESTRING_TILE_ROCK",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "6",
+    "convertTo": "Frok,Wrok,Bflr,Arck,Crck,Nrck,Ybtl,Vrck,Qrck,Xbtl,Ddkr,Gdkr,Zbkl,Irbk,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Cdrt",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/felwood/felwood_dirt_diffuse.dds",
+      "sha256": "3f1d9ee778d8475b00b497648df42efec937571f2204d79ab3ea7d382475c36f"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/felwood/felwood_dirt_normal.dds",
+      "sha256": "86fc6fadb95f41445ab23ad8c8adb734b30975aa3266fb2a95f1e56b067ada0d"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\felwood\\felwood_dirt_orm.dds",
+      "sha256": "44a1abd49a8d805adb68bff5f3eeb61c8bf8c22c4f42456aeed784375704ba76"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Cdrt",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Felwood",
+    "file": "Felwood_Dirt",
+    "comment": "Dirt",
+    "name": "WESTRING_TILE_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "2",
+    "convertTo": "Ldrt,Fdrt,Wdrt,Bdsr,Adrt,Ndrt,Ydrt,Vdrt,Qdrt,Xdrt,Ddrt,Gdrt,Zdrt,Idrt,Odrt",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

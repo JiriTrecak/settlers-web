@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "cliffId": "CLdi",
+  "surface": {
+    "surfaceRect": [
+      0,
+      0,
+      0.75,
+      0.25
+    ],
+    "tileWorldSize": 12,
+    "verticalWorldSize": 4,
+    "startSlope": 0.8,
+    "fullSlope": 1.8
+  },
+  "sourceCliffDefinition": {
+    "groundTile": "Ldrt",
+    "texture": "TerrainArt\\LordaeronSummer\\Lords_Cliff0",
+    "overrideTexture": "ReplaceableTextures\\Cliff\\Cliff0"
+  },
+  "sources": [
+    {
+      "channel": "diffuse",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronsummer\\lords_cliff0_diffuse.dds",
+      "origin": "installed-reforged",
+      "sha256": "ce092d0cb83190294629aaed5a9f3cdedb5d1049f4ae9cb7c1fa20d52996e801"
+    },
+    {
+      "channel": "normal",
+      "path": "replaceabletextures/Cliff/cliff0_normal.dds",
+      "origin": "replacement",
+      "sha256": "cac21775067bf851ad5638d81765d43b7dad1457a28fad0c593a06a3a2903836"
+    },
+    {
+      "channel": "orm",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronsummer\\lords_cliff0_orm.dds",
+      "origin": "installed-reforged",
+      "sha256": "8eb10a8b9e950ef6c9b9cb0448c85a4070a8feb9dda0a4db189e143bcde4fbfb"
+    }
+  ],
+  "projection": "Two vertical world-space planes blended by face direction; slope-gated overlay on editable terrain. Original MDX geometry is not imported."
+}

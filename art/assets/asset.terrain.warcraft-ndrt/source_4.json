@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Ndrt",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_dirt_diffuse.dds",
+      "sha256": "cd9bcad3dac5c6f16c6b2ca8fc8e06dc0ffcc4ce66219efea73970b1e6ed7807"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/northrend/north_dirt_normal.dds",
+      "sha256": "6f8bd5595917013c125e2988e55f5fd79b4138363b8f85e64611a3bd5af0220a"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_dirt_orm.dds",
+      "sha256": "2f533e9da7ca350bbfbdf21e3877346a35cbadc0686d2c0b11293c1c0096f8f4"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Ndrt",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Northrend",
+    "file": "North_dirt",
+    "comment": "Dirt",
+    "name": "WESTRING_TILE_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "2",
+    "convertTo": "Ldrt,Fdrt,Wdrt,Bdsr,Adrt,Cdrt,Ydrt,Vdrt,Qdrt,Xdrt,Ddrt,Gdrt,Zdrt,Idrt,Odrt",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

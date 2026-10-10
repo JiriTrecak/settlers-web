@@ -33,7 +33,7 @@ describe("landscape curve strokes", () => {
     expect(c.every((p) => Number.isFinite(p.x + p.z + p.radius))).toBe(true);
     expect(curveDistance(4, 8, sampleCurve([{ x: 4, z: 5 }], 3))).toBe(1);
   });
-  it("roundtrips painted layers, meadow seeds and environment alongside legacy map data", () => {
+  it("keeps procedural stroke previews out of saves while retaining environment and placements", () => {
     const landscape = emptyLandscape();
     landscape.strokes.push({
       points: [
@@ -79,10 +79,12 @@ describe("landscape curve strokes", () => {
       ],
       landscape,
     };
-    expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))).toEqual(map);
+    expect(()=>stringifyUtcMap(map)).toThrow(/Apply generator results/);
+    const committed={...map,landscape:{...emptyLandscape(),environment:landscape.environment}};
+    expect(parseUtcMap(JSON.parse(stringifyUtcMap(committed)))).toEqual(committed);
     expect(
-      parseUtcMap({ ...emptyUtcMap(), name: "Legacy", stamps: [] }),
-    ).toEqual({ ...emptyUtcMap(), name: "Legacy", stamps: [] });
+      parseUtcMap({ ...emptyUtcMap(), name: "Committed", stamps: [] }),
+    ).toEqual({ ...emptyUtcMap(), name: "Committed", stamps: [] });
   });
   it("rejects corrupt persisted geometry and settings", () => {
     expect(

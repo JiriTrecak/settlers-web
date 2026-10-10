@@ -17,6 +17,17 @@ export const cleanupRequestSchema=z.object({
 }).strict();
 export type CleanupRequest=z.infer<typeof cleanupRequestSchema>;
 export type CleanupArea=z.infer<typeof cleanupAreaSchema>;
+export const cleanTypeSchema=z.enum(['objects','foliage','trees','props','decals']);
+export type CleanType=z.infer<typeof cleanTypeSchema>;
+export function cleanupKinds(type:CleanType):CleanupRequest['kinds']{
+ return type==='trees'?['tree']:type==='foliage'?['tree','foliage']:type==='props'?['prop']:type==='decals'?['decal']:['tree','foliage','prop','building','bridge','decal'];
+}
+/** Convenience MCP disc operation. It never borrows an unfinished UI selection. */
+export const cleanDiscSchema=z.object({
+ x:z.number().finite(),z:z.number().finite(),radius:z.number().positive().max(512).default(4),
+ type:cleanTypeSchema.default('objects'),assets:cleanupRequestSchema.shape.assets,
+ preview:z.boolean().default(false),
+}).strict();
 const segmentDistance=(x:number,z:number,a:{x:number;z:number},b:{x:number;z:number})=>{
  const dx=b.x-a.x,dz=b.z-a.z,t=Math.max(0,Math.min(1,((x-a.x)*dx+(z-a.z)*dz)/(dx*dx+dz*dz||1)));
  return Math.hypot(x-a.x-t*dx,z-a.z-t*dz);

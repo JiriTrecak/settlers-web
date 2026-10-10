@@ -1,61 +1,40 @@
-import {sourceWavesGLSL} from './sourceWaves';
+import {stylizedWavesGLSL} from './stylizedWaves';
+import {WATER_PROFILE_ROWS} from './waterSurface';
 
 const common=`
 uniform float uSourceWaterTime;
-uniform sampler2D uSourceWaterFlow,uSourceWaterGround,uSourceWaterWaves;
+uniform sampler2D uSourceWaterFlow,uSourceWaterGround;
 uniform vec2 uSourceWaterOrigin,uSourceWaterSize,uSourceWaterOffset,uSourceWaterGroundSize;
 uniform float uSourceWaterGroundScale;
 uniform sampler2D uWaterProfiles;uniform bool uAuthoredWater;
 vec4 waterProfile(vec2 world,float row){
  ivec2 cell=ivec2(clamp(floor(world-uSourceWaterOrigin),vec2(0.),uSourceWaterSize-1.));
- float index=max(1.,floor(texelFetch(uSourceWaterFlow,cell,0).a*255.+.5));
- return texture2D(uWaterProfiles,vec2((index+.5)/256.,(row+.5)/4.));
+ float index=floor(texelFetch(uSourceWaterFlow,cell,0).a*255.+.5);
+ return texture2D(uWaterProfiles,vec2((index+.5)/256.,(row+.5)/${WATER_PROFILE_ROWS}.));
 }
-${sourceWavesGLSL}
 float sourceGround(vec2 p){
  vec2 size=uSourceWaterGroundSize,q=clamp((p-uSourceWaterOrigin)*uSourceWaterGroundScale,vec2(0.),size-1.),i=floor(q),f=fract(q),uv=(i+.5)/size,d=1./size;
  return mix(mix(texture2D(uSourceWaterGround,uv).r,texture2D(uSourceWaterGround,uv+vec2(d.x,0.)).r,f.x),mix(texture2D(uSourceWaterGround,uv+vec2(0.,d.y)).r,texture2D(uSourceWaterGround,uv+d).r,f.x),f.y);
 }
+${stylizedWavesGLSL}
 uniform samplerCube uReflectionCube;
-uniform sampler2D uSourceWaterGroundColor;
 uniform vec3 uDirectLight,uAmbientLight,uSunDirection;
-uniform bool uUseGroundColor;
-varying vec3 vSourceWater,vSourceDirect,vSourceAmbient;
+varying vec3 vSourceWater;
+varying float vWaterLevel;
 `;
-
 export const sourceWaterVertex=`
 ${common}
 void main(){
- vec3 waveNormal;float foamHeight;
- float displacement=sourceWaves(position,true,waveNormal,foamHeight);
- vec4 flow=texture2D(uSourceWaterFlow,(position.xz-uSourceWaterOrigin)/uSourceWaterSize);
- displacement+=clamp(flow.b*2.-.25,0.,1.)*foamHeight;
- float depth=position.y-sourceGround(position.xz);
- displacement=mix(displacement,max(displacement,-depth+.05),clamp(depth/.05,0.,1.));
- vec3 p=position;p.y+=displacement;p.xz-=waveNormal.xz*.5*(1.-foamHeight);
- // Source samples material maps at the undisplaced XZ coordinates.
- vSourceWater=vec3(position.x,p.y,position.z);
- // Water.fxs evaluates DoDefaultLighting on an upward, white dielectric
- // in the domain stage; the fragment waves only modulate that base lighting.
- vec3 eye=normalize(cameraPosition-p),halfLight=normalize(eye+uSunDirection);
- float f=.04+.96*pow(1.-clamp(dot(halfLight,eye),0.,1.),5.);
- vSourceDirect=uDirectLight*(1.-f); // uDirectLight already contains 1/pi.
- float ndv=abs(eye.y)+1e-5;
- float fresnel=.04+(pow(1.-.001,2.)-.04)*exp2((-5.55473*ndv-6.98316)*ndv);
- vec3 irradiance=sqrt(textureLod(uReflectionCube,vec3(0.,1.,0.),6.).rgb);
- if(uUseGroundColor){
-  vec3 tint=texture2D(uSourceWaterGroundColor,(p.xz-uSourceWaterOrigin)/uSourceWaterSize).rgb*4.8;
-  float fade=1.-clamp((p.y-sourceGround(p.xz))/8.,0.,1.);
-  irradiance*=mix(vec3(1.),mix(vec3(1.),tint,fade),.25);
- }
- vSourceAmbient=uAmbientLight*(1.-fresnel)*irradiance;
+ vec3 p=position;p.y+=surfaceHeight(position.xz,position.y);
+ vSourceWater=p;vWaterLevel=position.y;
  gl_Position=projectionMatrix*viewMatrix*vec4(p,1.);
  // UTC_VISIBILITY_VERTEX
 }
 `;
 
-/** Stylized clear water over the source wave/flow inputs: depth-tinted refraction of the bed,
- * saturated body colour, contact foam from the opaque depth buffer, glints and sky reflection. */
+/** Depth absorption, refraction, swells and broken foam inspired by the approach
+ * in https://gameidea.org/2026/02/01/creating-a-stylized-3d-water-shader/ .
+ * Uses the game's saved local surface levels, lighting and visibility passes. */
 export const sourceWaterFragment=`
 #include <common>
 #include <packing>
@@ -63,10 +42,9 @@ export const sourceWaterFragment=`
 ${common}
 uniform sampler2D uOpaqueColor,uOpaqueDepth,uSourceCaustics,uSourceReflections;
 uniform vec2 uViewport,uShadowSize;
-uniform mat4 uInverseProjection,uCameraWorld,uShadowMatrix,uCausticsView;
-uniform vec3 uViewDirection;
+uniform mat4 uInverseProjection,uCameraWorld,uShadowMatrix,projectionMatrix;
 uniform bool uHasShadow;
-uniform float uShadowBias,uShadowRadius,uSourceHeightOffset;
+uniform float uShadowBias,uShadowRadius;
 #ifdef SHADOWMAP_TYPE_PCF
 uniform highp sampler2DShadow uSunShadow;
 #else
@@ -76,77 +54,89 @@ vec3 worldAt(vec2 uv){
  vec4 p=uInverseProjection*vec4(uv*2.-1.,texture2D(uOpaqueDepth,uv).r*2.-1.,1.);
  return (uCameraWorld*vec4(p.xyz/p.w,1.)).xyz;
 }
-float waterHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-float waterNoise(vec2 p){
- vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);
- return mix(mix(waterHash(i),waterHash(i+vec2(1.,0.)),u.x),mix(waterHash(i+vec2(0.,1.)),waterHash(i+1.),u.x),u.y);
+// Rounded foam islands, not a thin continuous white shoreline or tiny glitter.
+float foamCells(vec2 p){
+ vec2 cell=floor(p),f=fract(p);float nearest=2.;
+ for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++){
+  vec2 q=vec2(float(x),float(y)),seed=cell+q;
+  vec2 point=vec2(waterHash(seed),waterHash(seed+31.7));
+  point=.5+.3*sin(point*6.2831853+uSourceWaterTime*.25);
+  nearest=min(nearest,length(q+point-f));
+ }
+ return nearest;
 }
 void main(){
- vec2 screenUV=gl_FragCoord.xy/uViewport;
- float groundDepth=vSourceWater.y-sourceGround(vSourceWater.xz);
- if(groundDepth<.005)discard;
- vec4 map=texture2D(uSourceWaterFlow,(vSourceWater.xz-uSourceWaterOrigin)/uSourceWaterSize);
- vec3 normal;float foam;float waveAlpha=sourceWaves(vSourceWater,false,normal,foam);
- vec3 original=worldAt(screenUV),toEye=normalize(cameraPosition-vSourceWater);
- vec2 extra=2.*(texture2D(uSourceWaterWaves,(vSourceWater.xz-uSourceWaterOffset)*.05).rg-.50196);
- vec3 distortion=(viewMatrix*vec4(normal.x+extra.x*.15,0.,normal.z+extra.y*.15,0.)).xyz;
- vec2 refrOffset=vec2(distortion.x,distortion.z)*.12;
- // Fade the bend out at the shoreline so the bed never tears against the bank.
- refrOffset*=clamp((vSourceWater.y-original.y)*1.5,0.,1.);
- vec2 refrUV=clamp(screenUV+refrOffset,vec2(.001),vec2(.999));
+ vec2 p=vSourceWater.xz,screenUV=gl_FragCoord.xy/uViewport;
+ float bed=sourceGround(p),depth=max(vWaterLevel-bed,0.);
+ if(vSourceWater.y-bed<.005)discard;
+ vec4 shallow=waterProfile(p,0.),deep=waterProfile(p,1.),effects=waterProfile(p,2.),shore=shoreSettings(p),swell=swellSettings(p);
+ if(!uAuthoredWater){shallow=vec4(.05,.22,.20,1.6);deep=vec4(.006,.045,.07,.45);effects=vec4(.15,.055,.1,.5);}
+ float t=uSourceWaterTime,openness=openWater(depth,swell,shore);
+ float pixel=max(length(dFdx(p)),length(dFdy(p))),crest;
+ vec3 normal=surfaceNormal(p,vWaterLevel,pixel,crest),original=worldAt(screenUV);
+ vec3 toEye=normalize(cameraPosition-vSourceWater);
+ float originalColumn=max(vSourceWater.y-original.y,0.);
+ // Convert a small world-space bend to screen space. It behaves consistently
+ // at gameplay zoom and overview zoom, and cannot pull dry foreground into water.
+ vec3 bend=(viewMatrix*vec4(normal.x,0.,normal.z,0.)).xyz;
+ vec4 viewPos=viewMatrix*vec4(vSourceWater,1.);
+ float perspectiveScale=projectionMatrix[3][3]==0.?1./max(-viewPos.z,.1):1.;
+ vec2 offset=bend.xy*vec2(projectionMatrix[0][0],projectionMatrix[1][1])*perspectiveScale*.7*smoothstep(0.,.65,originalColumn);
+ vec2 refrUV=clamp(screenUV+offset,vec2(.001),vec2(.999));
  vec3 refrWorld=worldAt(refrUV);
- if(refrWorld.y>vSourceWater.y){refrUV=screenUV;refrWorld=original;}
- vec4 shallow=waterProfile(vSourceWater.xz,0.),deep=waterProfile(vSourceWater.xz,1.),effects=waterProfile(vSourceWater.xz,2.);
- if(!uAuthoredWater){shallow=vec4(.05,.42,.40,1.6);deep=vec4(.006,.09,.2,.45);effects=vec4(.15,.055,.3,.5);}
+ float sceneZ=(viewMatrix*vec4(refrWorld,1.)).z;
+ if(sceneZ>viewPos.z-.02||refrWorld.y>vSourceWater.y){refrUV=screenUV;refrWorld=original;}
+ float column=max(vSourceWater.y-refrWorld.y,0.),clarity=max(.2,shallow.a);
  float shadow=1.;
- if(uHasShadow)shadow=getShadow(uSunShadow,uShadowSize,1.,uShadowBias,uShadowRadius,uShadowMatrix*vec4(vSourceWater+vec3(normal.x,0.,normal.z)*.5,1.));
- // Lambert on an up-facing surface: uDirectLight already carries colour*intensity/pi.
- vec3 light=uDirectLight*max(uSunDirection.y,0.)*mix(.45,1.,shadow)+uAmbientLight*.6;
- // Body colour uses light normalised to the unshadowed sun, so a profile colour is what the water
- // shows in full sun (the grade then treats it like any other surface); shade and dusk still dim it.
+ if(uHasShadow)shadow=getShadow(uSunShadow,uShadowSize,1.,uShadowBias,uShadowRadius,uShadowMatrix*vec4(vSourceWater,1.));
+ vec3 light=uDirectLight*max(uSunDirection.y,0.)*mix(.38,1.,shadow)+uAmbientLight*.6;
  vec3 fullSun=uDirectLight*max(uSunDirection.y,0.)+uAmbientLight*.6;
  vec3 bodyLight=light/max(dot(fullSun,vec3(.2126,.7152,.0722)),.001);
- // Water column above whatever is visible below (bed, rock, log). Beer-style falloff turns the
- // column into how much of the body colour replaces the refracted bed.
- float column=max(vSourceWater.y-refrWorld.y,0.),clarity=max(.2,shallow.a);
- float body=1.-exp(-column/clarity);
- vec3 bed=texture2D(uOpaqueColor,refrUV).rgb;
- // Shallows glow teal: the bed keeps its value but takes the shallow hue, like sunlit clear water.
- vec3 tint=shallow.rgb/max(max(shallow.r,max(shallow.g,shallow.b)),.001);
- vec3 seen=bed*mix(vec3(1.),tint*1.25,clamp(column*2.5,0.,1.)*.8);
- vec2 causticsUV=(uCausticsView*vec4(original-vec3(uSourceWaterOffset.x,uSourceHeightOffset,uSourceWaterOffset.y),1.)).xy*.1+normal.xz*.2;
- seen+=textureLod(uSourceCaustics,causticsUV,1.).rgb*tint*light*(1.-body)*clamp(column*3.,0.,1.)*effects.b*1.6*shadow;
- // Shallow hue only owns the first metre or so; deep colour takes over at ~1.3× the clarity depth.
- float t=uSourceWaterTime;
- float drift=waterNoise(vSourceWater.xz*.09+vec2(t*.02,t*.013))*.6+waterNoise(vSourceWater.xz*.23-vec2(t*.03,0.))*.4;
- vec3 waterColor=mix(shallow.rgb,deep.rgb,1.-exp(-column/(clarity*1.3)))*bodyLight*(.88+.24*drift);
- vec3 color=mix(seen,waterColor,body);
- // The source ripples are subtle for refraction; lighting reads them ~3× steeper so sheen and
- // glints break into bands instead of one uniform tone.
- vec3 lit=normalize(normal*vec3(3.,1.,3.));
- vec3 sunHalf=normalize(toEye+uSunDirection);
- float facing=max(dot(lit,sunHalf),0.);
- color+=waterColor*(pow(facing,5.)*.55-.12)*body;
- // Sparkles: thresholded highlight on the steepened normal, gated by fine flickering noise.
- float flicker=waterNoise(vSourceWater.xz*11.+vec2(t*1.3,-t*.9));
- color+=vec3(1.,.98,.92)*bodyLight*shadow*smoothstep(.95,.995,facing)*smoothstep(.72,.92,flicker)*1.4*body;
- float fresnel=.02+.98*pow(1.-clamp(dot(lit,toEye),0.,1.),5.);
- vec3 reflectionDir=-normalize(vec3(normalize(uViewDirection.xz).x,-1.,normalize(uViewDirection.xz).y));
- vec3 reflected=textureCube(uReflectionCube,-reflect(reflectionDir,lit)).rgb;
- vec4 screenReflection=texture2D(uSourceReflections,screenUV+refrOffset*.5);
+ vec3 screenColor=texture2D(uOpaqueColor,refrUV).rgb;
+ // Subtle moving light on the actual bed, attenuated at the shore and at depth.
+ vec2 causticUV=refrWorld.xz*.075;
+ float ca=texture2D(uSourceCaustics,causticUV+vec2(t*.006,0.)).r;
+ float cb=texture2D(uSourceCaustics,causticUV*.83-vec2(0.,t*.005)).g;
+ float causticFade=smoothstep(.08,.5,column)*exp(-column*.7);
+ screenColor+=ca*cb*effects.b*.12*light*causticFade*shadow;
+ vec3 transmittance=exp(-column/clarity*vec3(1.7,.9,.65));
+ vec3 tint=shallow.rgb/max(max(shallow.r,shallow.g),max(shallow.b,.001));
+ screenColor*=mix(vec3(1.),tint,smoothstep(0.,.35,column)*.32);
+ vec3 waterColor=mix(shallow.rgb,deep.rgb,1.-exp(-column/(clarity*1.5)))*bodyLight;
+ vec3 color=screenColor*transmittance+waterColor*(1.-transmittance);
+ // Rounded bands of light on the swells remain visible at an RTS distance.
+ float ndl=max(dot(normal,uSunDirection),0.);
+ color*=mix(1.,.68+ndl*.55,smoothstep(.4,2.,column));
+ vec3 reflected=textureCube(uReflectionCube,reflect(-toEye,normal)).rgb;
+ // Bound the sky contribution so the bright analytic forest sky does not
+ // wash the entire lake into a milky white sheet.
+ reflected=reflected/(1.+reflected)*bodyLight*.45;
+ vec4 screenReflection=texture2D(uSourceReflections,clamp(screenUV+offset*.35,vec2(.001),vec2(.999)));
  reflected=mix(reflected,screenReflection.rgb,screenReflection.a);
- color+=reflected*fresnel*deep.a*.6*body;
- // Contact foam: the opaque depth buffer includes rocks, logs and the bank, so every intersection
- // gets a bright line plus a lace band that pulses outward. Noise scrolls so rings never look stamped.
- float contact=max(vSourceWater.y-original.y,0.);
- float n=waterNoise(vSourceWater.xz*1.4+vec2(t*.21,-t*.13))*.6+waterNoise(vSourceWater.xz*3.3-vec2(t*.17,t*.29))*.4;
- float line=1.-smoothstep(.015,.04+.06*n,contact);
- float lace=(1.-smoothstep(.05,.4,contact))*smoothstep(.42,.6,n+.25*sin(contact*28.-t*1.8));
- float flowFoam=clamp(map.b*foam*4.-(1.-map.b)*.5,0.,1.);
- float foamMask=clamp(max(line,lace*.7)*effects.a*2.+flowFoam*.6,0.,1.);
- // Foam is near-white in sun; the warm key light would otherwise read it as sand.
- color=mix(color,vec3(dot(bodyLight,vec3(.2126,.7152,.0722)))*vec3(.9,.97,1.),foamMask);
- if(uAuthoredWater){float clouds=waterProfile(vSourceWater.xz,3.).r;color*=1.-clouds*(.5+.5*sin(vSourceWater.x*.07+vSourceWater.z*.04+uSourceWaterTime*.04));}
+ float fresnel=.035+.965*pow(1.-clamp(dot(normal,toEye),0.,1.),5.);
+ float reflection=clamp((fresnel+.045*openness)*deep.a,0.,.7);
+ color=mix(color,reflected,reflection);
+ vec3 halfLight=normalize(toEye+uSunDirection);
+ float highlight=pow(max(dot(normal,halfLight),0.),120.);
+ color+=vec3(.65,.86,.94)*bodyLight*highlight*deep.a*.10*shadow;
+ // Use bank distance for shore foam: shallow flat crossings do not become foam.
+ vec2 bedSlope=vec2(sourceGround(p+vec2(.5,0.))-sourceGround(p-vec2(.5,0.)),sourceGround(p+vec2(0.,.5))-sourceGround(p-vec2(0.,.5)));
+ float slope=length(bedSlope),distanceToShore=depth/max(slope,.001);
+ float noise=waterNoise(p*.65+vec2(t*.07,-t*.05));
+ float width=shore.z*(.65+.35*sin(t*.8+noise*4.)),aa=max(fwidth(distanceToShore),.04);
+ float shoreMask=(1.-smoothstep(width-aa,width+aa,distanceToShore))*smoothstep(.025,.14,slope);
+ vec2 foamUV=p*.9+vec2(t*.035,-t*.024)+vec2(noise,waterNoise(p*.4+7.))*.5;
+ float cells=foamCells(foamUV),cellAA=max(fwidth(cells),.025);
+ float islands=1.-smoothstep(.24-cellAA,.24+cellAA,cells);
+ float shoreFoam=shoreMask*mix(.18,islands, .82)*effects.a;
+ vec4 flow=texture2D(uSourceWaterFlow,(p-uSourceWaterOrigin)/uSourceWaterSize);
+ vec2 crestUV=vec2(dot(p,vec2(.93,.37))*2.2,dot(p,vec2(-.37,.93))*.55)+vec2(noise,t*.06);
+ float streaks=smoothstep(.36,.65,waterNoise(crestUV));
+ float crestFoam=crest*shore.w*smoothstep(.3,.64,noise)*streaks;
+ float foam=clamp(shoreFoam+crestFoam+flow.b*islands*effects.a*.35,0.,.85);
+ vec3 foamColor=vec3(.76,.86,.84)*dot(bodyLight,vec3(.2126,.7152,.0722));
+ color=mix(color,foamColor,foam);
+ if(uAuthoredWater)color*=1.-waterProfile(p,3.).r*(.5+.5*sin(p.x*.07+p.y*.04+t*.04));
  gl_FragColor=vec4(color,1.);
  // UTC_VISIBILITY_FRAGMENT
 }

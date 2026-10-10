@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Arck",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_rock_diffuse.dds",
+      "sha256": "7631666c5ea1f2e2dc5e1ea85bfcbf4981ac072ef3332c0046c275a62c36eb64"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ashenvale/ashen_rock_normal.dds",
+      "sha256": "da084aa140d5f611703644fac99b2311d07d33d66fd5432b570d230391afe33b"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_rock_orm.dds",
+      "sha256": "b20820b563c0f814533c25dd6cb776636efac50600a4bdc352957b397b87283b"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Arck",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Ashenvale",
+    "file": "Ashen_Rock",
+    "comment": "Rock",
+    "name": "WESTRING_TILE_ROCK",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "5",
+    "convertTo": "Lrok,Frok,Wrok,Bflr,Crck,Nrck,Ybtl,Vrck,Qrck,Xbtl,Ddkr,Gdkr,Zbkl,Irbk,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

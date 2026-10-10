@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "cAc2",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_dirt_diffuse.dds",
+      "sha256": "8a65b590e9394f41d0e42589a33373a43aa10c438c3f7827c47c019051de66ee"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ashenvale/ashen_dirt_normal.dds",
+      "sha256": "da084aa140d5f611703644fac99b2311d07d33d66fd5432b570d230391afe33b"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_dirt_orm.dds",
+      "sha256": "f0ba250fa4ef65e61e304e23f5827bd6e9ab6962688d3ddea3911e1cef47fcfb"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "cAc2",
+    "cliffSet": "0",
+    "dir": "TerrainArt\\Ashenvale",
+    "file": "Ashen_Dirt",
+    "comment": "Dirt",
+    "name": "WESTRING_TILE_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "1",
+    "convertTo": "Ldrt,Fdrt,Wdrt,Bdsr,Cdrt,Ndrt,Ydrt,Vdrt,Qdrt,Xdrt,Ddrt,Gdrt,Zdrt,Idrt,Odrt",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

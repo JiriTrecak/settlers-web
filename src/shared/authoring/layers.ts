@@ -35,13 +35,14 @@ export const authoredObjectSchema=z.object({
 /** The saved map contains values and placements only. Generator previews have
  * their own editor schema below and cannot pass this strict document schema. */
 export const savedSceneSchema=z.object({
- terrain:terrainDataSchema.optional(),version:z.literal(1),objects:z.array(authoredObjectSchema).max(200000),
+ terrain:terrainDataSchema,version:z.literal(1),objects:z.array(authoredObjectSchema).max(200000),
 }).strict().superRefine((scene,c)=>{
  if(new Set(scene.objects.map(o=>o.id)).size!==scene.objects.length)c.addIssue({code:'custom',message:'Duplicate object ID'});
 });
 export type SavedScene=z.infer<typeof savedSceneSchema>;
 export function savedScene(scene:AuthoringScene):SavedScene{
- return {version:scene.version,objects:scene.objects,...(scene.terrain?{terrain:scene.terrain}:{})};
+ if(!scene.terrain)throw Error('Saved maps require committed terrain cells');
+ return {version:scene.version,objects:scene.objects,terrain:scene.terrain};
 }
 export const authoringSceneSchema=z.object({
  terrain:terrainDataSchema.optional(),
@@ -49,6 +50,8 @@ export const authoringSceneSchema=z.object({
 }).strict().superRefine((scene,c)=>{
  const ids=new Set<string>();for(const item of [...scene.layers,...scene.objects]){if(ids.has(item.id))c.addIssue({code:'custom',message:`Duplicate scene ID ${item.id}`});ids.add(item.id);}
 });
+/** A map preview always edits an existing committed terrain document. */
+export const mapPreviewSceneSchema=authoringSceneSchema.safeExtend({terrain:terrainDataSchema});
 export type LayerShape=z.infer<typeof layerShapeSchema>;
 export type SplineKnot=z.infer<typeof splineKnotSchema>;
 export type ProceduralLayer=z.infer<typeof proceduralLayerSchema>;

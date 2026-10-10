@@ -1,6 +1,6 @@
 # chrome
 
-The top strip owns the map name and file actions. `SceneToolstrip` owns the persistent bottom icon strip: Select, Place, Terrain, Foliage, Water, Spawn, layer undo/redo, Environment and MCP. Place exposes a second compact strip for units/buildings versus scenery/landmarks. Camera presets sit above the viewport.
+The top strip owns the map name and file actions. `SceneToolstrip` owns the persistent bottom icon strip: Select, Place, Terrain, Foliage, Water, Decals, Spawn, Clean, undo/redo, Environment and MCP. Place exposes a second compact strip for units/buildings versus scenery/landmarks. Decals exposes preview, Apply and Discard in a scrollable side panel. Camera presets sit above the viewport.
 
 `ScenePanel` keeps the left side exclusively for `SceneHierarchyView`, a React tree using Headless Tree and TanStack virtualization. The 28-pixel rows group layers by recipe type and objects by asset, with All/Layers/Objects filters and name/ID search. Only visible rows plus overscan are mounted. Selection, keyboard navigation, expansion and search are retained across document notifications; viewport selections reveal their parent groups. Grouping is presentation-only and never changes procedural order or map storage.
 

@@ -1,11 +1,11 @@
 import {localSaveSchema,type LocalSave,type SaveMode} from './localSave';
-import type {MapEntry} from '../map/library';
+import type {LoadedMapEntry} from '../map/library';
 export type SavedGame={id:string;name:string;savedAt:number;mapName:string;data:LocalSave};
 /** Both library filtering and imported files use the same authoritative mode flag. */
 export function savesForMode(saves:readonly SavedGame[],mode:SaveMode):SavedGame[]{
  return saves.filter(s=>s.data.mode===mode).sort((a,b)=>b.savedAt-a.savedAt||a.id.localeCompare(b.id));
 }
-export function validateSaveDestination(raw:unknown,mode:SaveMode,entry:MapEntry):LocalSave{
+export function validateSaveDestination(raw:unknown,mode:SaveMode,entry:LoadedMapEntry):LocalSave{
  const save=localSaveSchema.parse(raw);
  if(save.mode!==mode || (entry.map.mission?'campaign':'skirmish')!==mode)throw new Error(`Only ${mode} saves can be loaded here.`);
  if(save.mapId!==entry.id || save.mapRevision!==entry.revision)throw new Error('This save uses a different map or content revision.');

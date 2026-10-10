@@ -41,12 +41,12 @@ it('discards obsolete results after map replacement and waits for completed edit
 it('retries after a concurrent terrain change without losing it or unrelated name/entity edits',async()=>{
  const {editor,requests,flush,finish,object}=fixture();
  const pending=editor.putAuthoredObject(object('a'));await flush();editor.terrainBase(2);editor.rename('Changed name');
- finish();await flush();expect(requests).toHaveLength(1);expect(editor.map.authoring).toBeUndefined();
- expect(requests[0].map.height).toBe(editor.map.height);finish();await flush();finish();await pending;
+ finish();await flush();expect(requests).toHaveLength(1);expect(editor.map.authoring!.terrain).toBeDefined();
+ expect(requests[0].map.authoring!.terrain).toEqual(editor.map.authoring!.terrain);finish();await flush();finish();await pending;
  expect(editor.map.name).toBe('Changed name');expect(editor.shapeTerrain!.sample(20,20)).toBe(2);expect(editor.map.authoring!.objects[0].id).toBe('a');
 });
 
-it('coalesces legacy terrain rebuilds and publishes only the latest surface',async()=>{
+it('coalesces committed terrain rebuilds and publishes only the latest surface',async()=>{
  const {editor,requests,flush,finish}=fixture(),previous=editor.shapeTerrain;
  editor.terrainBase(2);await flush();editor.terrainBase(3);editor.terrainBase(4);
  expect(requests).toHaveLength(1);expect(editor.shapeTerrain).toBe(previous);
@@ -60,4 +60,17 @@ it('accumulates rapid rotation commands against the queued state',async()=>{
  editor.layers.selection={kind:'object',id:'a'};editor.nudgeSelected(Math.PI/12);editor.nudgeSelected(Math.PI/12);
  await flush();finish();await flush();finish();await editor.editsReady();
  expect(editor.map.authoring!.objects[0].yaw).toBeCloseTo(Math.PI/6);
+});
+
+it('preserves a placed stamp and its undo step when an object compile is already in flight',async()=>{
+ const {editor,requests,flush,finish,object}=fixture();
+ const pending=editor.putAuthoredObject(object('a'));await flush();
+ const stamp=editor.placeAt('woodland-mushroom-cluster',60,60)!;
+ finish();await flush();expect(requests).toHaveLength(1);
+ finish();await flush();finish();await pending;
+ expect(editor.map.stamps).toContainEqual(stamp);expect(editor.map.authoring!.objects[0].id).toBe('a');
+ const undoObject=editor.undoLayers();await flush();finish();await undoObject;
+ expect(editor.map.authoring!.objects).toEqual([]);expect(editor.map.stamps).toContainEqual(stamp);
+ const undoStamp=editor.undoLayers();await flush();finish();await undoStamp;
+ expect(editor.map.stamps).toEqual([]);expect(editor.layers.canUndo).toBe(false);
 });

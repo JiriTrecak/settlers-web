@@ -1,6 +1,6 @@
 import {useEffect,useState} from 'react';
 import {createRoot,type Root} from 'react-dom/client';
-import {FilePlus,Save,Download,FolderOpen,FileCode,LogOut} from 'lucide-react';
+import {FilePlus,Save,Download,FolderOpen,FileCode,LogOut,FileInput} from 'lucide-react';
 import {Button} from '../../components/ui/button';
 import {Input} from '../../components/ui/input';
 import type {FileToolHooks} from './tools';
@@ -8,7 +8,7 @@ import type {FileToolHooks} from './tools';
 type Hooks=FileToolHooks&{onName:(name:string)=>void};
 function FileBar({name,dirty,hooks}:{name:string;dirty:boolean;hooks:Hooks}){
  const [draft,setDraft]=useState(name);useEffect(()=>setDraft(name),[name]);
- const actions=[['New',FilePlus,hooks.onNew],['Save',Save,hooks.onSave],['Export',Download,hooks.onSaveAs],['Load',FolderOpen,hooks.onLoad],['Mission & Lua',FileCode,hooks.onMission],['Exit',LogOut,hooks.onLeave]] as const;
+ const actions=[['New',FilePlus,hooks.onNew],['Save',Save,hooks.onSave],['Export',Download,hooks.onSaveAs],['Load',FolderOpen,hooks.onLoad],['Import WC3',FileInput,hooks.onImportWarcraft],['Mission & Lua',FileCode,hooks.onMission],['Exit',LogOut,hooks.onLeave]] as const;
  return <div className="flex items-center gap-1">
   <div className="relative w-40 shrink-0 md:w-48"><Input aria-label="Map name" placeholder="Untitled" maxLength={80} spellCheck={false} value={draft} className="border-transparent pr-5 font-medium" onChange={e=>setDraft(e.target.value)} onBlur={()=>{if(draft!==name)hooks.onName(draft);}} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();e.currentTarget.blur();}}}/>{dirty&&<span role="status" aria-label="Unsaved changes" title="Unsaved changes" className="absolute right-2 top-3 size-1.5 rounded-full bg-amber-400"/>}</div>
   <nav aria-label="File" className="flex items-center gap-0.5 border-0 border-l border-solid border-border pl-1">

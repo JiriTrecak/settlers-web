@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "id": "asset.terrain.warcraft-zvin",
+  "name": "Dark Grass · Ruins",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "warcraft",
+    "ground",
+    "Zvin"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "ff9b6a4a0e1e4f2988ffa68be119cc0d322c142ca5064efaa4e479c6cbba3316",
+      "bytes": 1586615
+    },
+    {
+      "role": "data",
+      "index": 2,
+      "format": "bin",
+      "sha256": "cb99e9d28812fa9ea1f602ce2253f4dd29221571cb4aae640ec24942d09b14a0",
+      "bytes": 238666
+    },
+    {
+      "role": "data",
+      "index": 3,
+      "format": "bin",
+      "sha256": "ddb406d52f3d6792683abbfcfe7a6ff9fab288f2cbd61cf23e49d4a896e0f96f",
+      "bytes": 4101
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "38eb5bf593d5b4af8703b08964a8d5c996441e2fcd818a07e52e728bb3d507ce",
+      "bytes": 1134747,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "3a35d2d80746a9163c10053267c81440939558bda29dfb810b509d80a7f2ba37",
+      "bytes": 88898,
+      "colorSpace": "none"
+    },
+    {
+      "role": "occlusion",
+      "index": 1,
+      "format": "png",
+      "sha256": "b04e44f8f7123ad9b6a95afeb8c4f75b63c29d58cd896e803f5a4ef282ef96e8",
+      "bytes": 5353,
+      "colorSpace": "none"
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "0251d4656facff9d0ce1e4b3835c1cd68d7f80ac24ac5377b21caf1c1548568f",
+      "bytes": 445864,
+      "colorSpace": "none"
+    },
+    {
+      "role": "metalness",
+      "index": 1,
+      "format": "png",
+      "sha256": "a3acee77059e3c784c727f5bbee93338ed98fdc5e05ba57fcf31220a3511894d",
+      "bytes": 3150,
+      "colorSpace": "none"
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "6d5b344b8cb04b23081b5a15b4ba87c4eb3ca64ff07cd6f1ce18b56a533e066f",
+      "bytes": 53898,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "bin",
+      "sha256": "ab0126156336fec3c79f22642bbe98039c7ac43dca647c9a02bdc8160993285b",
+      "bytes": 1398256
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "bin",
+      "sha256": "41404062e3d6348e5d1ac56e0bb65a69ee8d28caf52736e66a8a1fe9dfc4546d",
+      "bytes": 1398256
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "bin",
+      "sha256": "453e8b94a783baaf941ba955484d07f44b138667bacd05e0f13b479150a0204a",
+      "bytes": 1398256
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "0cd3a82e3b516198a42fd711d4cc5d4174fc8342927116ff8bc031632e9695ed",
+      "bytes": 1481
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "import",
+    "licenseNote": "User-supplied Rebirth replacements with missing channels from the local Warcraft III: Reforged installation. Original sources retain their respective rights.",
+    "sourceHash": "eb5d08f6b83d15ec78c6dd817756fbfe47d9a9fb480a22a6fae0aef4f53403ff"
+  },
+  "terrain": {
+    "tileWorldSize": 4,
+    "reflectance": 0.25,
+    "sourceIds": [
+      "Zvin"
+    ],
+    "atlas": {
+      "columns": 4,
+      "rows": 4,
+      "fullTiles": [
+        0,
+        15
+      ],
+      "corners": [
+        null,
+        8,
+        4,
+        12,
+        2,
+        10,
+        6,
+        14,
+        1,
+        9,
+        5,
+        13,
+        3,
+        11,
+        7,
+        15
+      ]
+    },
+    "albedo": {
+      "role": "albedo",
+      "index": 1
+    },
+    "normal": {
+      "role": "normal",
+      "index": 1
+    },
+    "occlusion": {
+      "role": "occlusion",
+      "index": 1
+    },
+    "roughness": {
+      "role": "roughness",
+      "index": 1
+    },
+    "metalness": {
+      "role": "metalness",
+      "index": 1
+    },
+    "thumbnail": {
+      "role": "image",
+      "index": 1
+    },
+    "runtime": {
+      "albedoRoughness": {
+        "role": "data",
+        "index": 1
+      },
+      "normalOpacity": {
+        "role": "data",
+        "index": 2
+      },
+      "occlusionMetalness": {
+        "role": "data",
+        "index": 3
+      }
+    }
+  }
+}

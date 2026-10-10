@@ -1,0 +1,221 @@
+{
+  "version": 1,
+  "id": "asset.terrain.warcraft-wsng",
+  "name": "Grassy Snow · LordaeronWinter",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "warcraft",
+    "ground",
+    "Wsng"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "e1eb34cdc0585e66e23e21f527860a562fbe2f7c5622832f4cf8047a550a6d64",
+      "bytes": 2389768
+    },
+    {
+      "role": "data",
+      "index": 2,
+      "format": "bin",
+      "sha256": "de1d1806a98426023505d2009c8d4d74443e74b13726a869e792ae3d1be07f5e",
+      "bytes": 375353
+    },
+    {
+      "role": "data",
+      "index": 3,
+      "format": "bin",
+      "sha256": "9d5fd048a3658d4ff9715adfc64eb891b7182fc83bd76e0c060c5771031c34e2",
+      "bytes": 1197915
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "2781fb9f5ff141b8ccdce75edd3f676a4c56b49a64e24f0ba155e1817dda38e7",
+      "bytes": 1253640,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "f7b389f5cc959b2afd928577947348125855f4b364bab6ee974f14dd254bc6f5",
+      "bytes": 335528,
+      "colorSpace": "none"
+    },
+    {
+      "role": "occlusion",
+      "index": 1,
+      "format": "png",
+      "sha256": "7ae979d8a63163de01b5d245e5a651ca74ad7cb05000810b6283cd1c1dc1bc54",
+      "bytes": 1483299,
+      "colorSpace": "none"
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "226a129b94b49faed9296a89584d0700184e3e867690e467095180d91e37dba2",
+      "bytes": 1551024,
+      "colorSpace": "none"
+    },
+    {
+      "role": "metalness",
+      "index": 1,
+      "format": "png",
+      "sha256": "bb2e418aa6161528ea550aabcb885ed8ce6c8c6dc144e20dab289976c68a82b2",
+      "bytes": 6212,
+      "colorSpace": "none"
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "84f8b40a5f2460227e5908ebd13396f22d4482cd784311e3016197077375b795",
+      "bytes": 39606,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "bin",
+      "sha256": "4a2f10a7bc947c3843e36d24a7b76eee20505b7960fa470ee7a34a3a8d733411",
+      "bytes": 2796368
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "bin",
+      "sha256": "ba15fd5268cb2b83ca06909e6f35ec06fbf21c6dc6d272156fb658ad15ce7579",
+      "bytes": 2796368
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "bin",
+      "sha256": "04eb5e694c93c642bb57a013dc2bb887c062ab878eac626366971739fba31cde",
+      "bytes": 2796368
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "5010ded0b5a607195755a24f79af8eeb4898416cde1c019b7bc16d6e92f1b309",
+      "bytes": 1518
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "import",
+    "licenseNote": "User-supplied Rebirth replacements with missing channels from the local Warcraft III: Reforged installation. Original sources retain their respective rights.",
+    "sourceHash": "72899f557d55eb321e15ec8df6aa234dc21a3af37d2c344a0f5411f2295b85bb"
+  },
+  "terrain": {
+    "tileWorldSize": 4,
+    "reflectance": 0.25,
+    "sourceIds": [
+      "Wsng"
+    ],
+    "atlas": {
+      "columns": 8,
+      "rows": 4,
+      "fullTiles": [
+        4,
+        5,
+        6,
+        7,
+        12,
+        13,
+        14,
+        15,
+        20,
+        21,
+        22,
+        23,
+        28,
+        29,
+        30,
+        31,
+        27,
+        0
+      ],
+      "corners": [
+        null,
+        16,
+        8,
+        24,
+        2,
+        18,
+        10,
+        26,
+        1,
+        17,
+        9,
+        25,
+        3,
+        19,
+        11,
+        27
+      ]
+    },
+    "albedo": {
+      "role": "albedo",
+      "index": 1
+    },
+    "normal": {
+      "role": "normal",
+      "index": 1
+    },
+    "occlusion": {
+      "role": "occlusion",
+      "index": 1
+    },
+    "roughness": {
+      "role": "roughness",
+      "index": 1
+    },
+    "metalness": {
+      "role": "metalness",
+      "index": 1
+    },
+    "thumbnail": {
+      "role": "image",
+      "index": 1
+    },
+    "runtime": {
+      "albedoRoughness": {
+        "role": "data",
+        "index": 1
+      },
+      "normalOpacity": {
+        "role": "data",
+        "index": 2
+      },
+      "occlusionMetalness": {
+        "role": "data",
+        "index": 3
+      }
+    }
+  }
+}

@@ -24,9 +24,9 @@ it('shows one centered symbol for neighboring mine nodes, keeping separate depos
  expect(atlasSymbols({...map,entities:[...map.entities].reverse()},map.size)).toBe(svg);
  expect(icons(atlasSymbols(map,map.size/2))).toBe(2);
 });
-it('renders the eight Amberwake deposits once each instead of forty overlapping node icons',()=>{
- const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/amberwake-basin.utcmap','utf8')))!;
- expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(40);
- const svg=atlasSymbols(map);expect(icons(svg)).toBe(8);
+it('renders the imported Echo Isles mine sites once each instead of overlapping node icons',()=>{
+ const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/echo-isles.utcmap','utf8')))!;
+ expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(20);
+ const svg=atlasSymbols(map);expect(icons(svg)).toBe(5);
  expect((svg.match(/stroke-linejoin="round"/g)??[])).toHaveLength(map.camps.length);
 });

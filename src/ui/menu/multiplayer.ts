@@ -234,11 +234,11 @@ class Battlefield {
     const key = `${id}:${name}:${empty}`;
     if (key === this.key) return;
     this.key = key;
-    const entry = authoredMaps().find((m) => m.id === id),map=entry?.map;
+    const entry = authoredMaps().find((m) => m.id === id),map=entry?.overview;
     const preview = el("div", "skirmish-preview mp-preview");
     preview.append(entry ? mapPreview(entry, null) : el("div", "mp-preview-empty", empty ? "Choose your battlefield" : "Preview unavailable"));
     this.root.replaceChildren(preview, el("p", "skirmish-preview-legend", map ? "◆ Player starting positions" : "UNDER THE CANOPY"), el("h2", "skirmish-map-title", name));
-    if (map) this.root.append(el("p", "skirmish-meta", `${map.size / BUILDING_CELL_SIZE} × ${map.size / BUILDING_CELL_SIZE} C · ${map.playerStarts?.length ?? 0} starting positions`));
+    if (map) this.root.append(el("p", "skirmish-meta", `${map.size / BUILDING_CELL_SIZE} × ${map.size / BUILDING_CELL_SIZE} C · ${map.starts.length ?? 0} starting positions`));
     this.root.append(el("p", "skirmish-description", map?.description || (empty ? "Find a gathering of fellow settlers, or create a new lobby and lead the expedition." : "Build your settlement and claim your place beneath the canopy.")));
   }
 }

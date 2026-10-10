@@ -3,6 +3,13 @@ import {z} from 'zod';
 export const authoringId=z.string().min(1).max(160).regex(/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/);
 const finite=z.number().finite();
 const color=z.string().regex(/^#[0-9a-fA-F]{6}$/);
+/** Visual swells fade with physical water-column depth; they never alter navigation. */
+export const DEFAULT_WATER_WAVES={height:.32,length:12,speed:.65,depthStart:.45,depthEnd:2.5,shallowStrength:.025,shoreWidth:.65,crestStrength:.22} as const;
+export const waterWavesSchema=z.object({
+ height:finite.min(0).max(1),length:finite.min(4).max(64),speed:finite.min(0).max(3),
+ depthStart:finite.min(0).max(8),depthEnd:finite.min(.1).max(16),
+ shallowStrength:finite.min(0).max(.3),shoreWidth:finite.min(.05).max(3),crestStrength:finite.min(0).max(1),
+}).strict().refine(w=>w.depthEnd>w.depthStart,'Deep wave depth must exceed shallow wave depth');
 /** Appearance belongs to the reusable profile; course/elevation belong to map instances. */
 export const waterProfileSchema=z.object({
  shallowColor:color,deepColor:color,clarity:finite.min(.2).max(12),
@@ -10,6 +17,7 @@ export const waterProfileSchema=z.object({
  foamStrength:finite.min(0).max(1),reflectionStrength:finite.min(0).max(1),
  causticStrength:finite.min(0).max(1),cloudStrength:finite.min(0).max(.2),
  flowSpeed:finite.min(0).max(3),
+ waves:waterWavesSchema.optional(),
 }).strict();
 const species=z.object({asset:authoringId,weight:finite.positive().max(10000)}).strict();
 const scatter=z.object({

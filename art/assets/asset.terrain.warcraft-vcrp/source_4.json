@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Vcrp",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/village/village_crops_diffuse.dds",
+      "sha256": "01be03e35e7f99e52c6cca297371bacd588fceecee7e4b027f929d13da07a08d"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/village/village_crops_normal.dds",
+      "sha256": "5be031e4683c443db205dfcd8767ff6e9cdb526db74b76641e944ce0f85d391e"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_crops_orm.dds",
+      "sha256": "a62be1f6b272db4a388222d5ea8506e1ab46a1a0586650ab0315e0bd5c305930"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Vcrp",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Village",
+    "file": "Village_Crops",
+    "comment": "Crops",
+    "name": "WESTRING_TILE_CROPS",
+    "buildable": "0",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "6",
+    "convertTo": "Ldrg,Fdrg,Wsng,Bdrr,Adrg,Cvin,Nrck,Yhdg,Qcrp,Xhdg,Dlvc,Glvc,Zsan,Idki,Osqt",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

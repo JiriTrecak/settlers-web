@@ -7,7 +7,7 @@ export function validDecal(raw: unknown): raw is GroundDecal {
   const d = raw as GroundDecal;
   return (d.locked===undefined||typeof d.locked==='boolean') && typeof d.id === 'string' && d.id.length > 0 && d.id.length <= 128 && DECAL_KINDS.includes(d.kind)
     && [d.x,d.z,d.size,d.rotation,d.opacity].every(Number.isFinite)
-    && Math.abs(d.x)<=512 && Math.abs(d.z)<=512 && d.size>=.5 && d.size<=32
+    && Math.abs(d.x)<=2048 && Math.abs(d.z)<=2048 && d.size>=.5 && d.size<=32
     && Math.abs(d.rotation)<=360 && d.opacity>=0 && d.opacity<=1;
 }
 export function decalAt(decals: readonly GroundDecal[], x: number, z: number): GroundDecal | undefined {

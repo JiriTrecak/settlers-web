@@ -23,7 +23,7 @@ export class ScenePanel{
  private creationRecipe='';private drawingMode:'paint'|'line'|'curve'='paint';
  private onKey=(e:KeyboardEvent)=>{
   if((e.target as HTMLElement)?.matches('input,textarea,select'))return;
-  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'&&(this.editor.isPaintingLayer||this.editor.layers.selection||['terrain','clean','decal'].includes(this.editor.tool??''))){
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'&&(this.editor.isPaintingLayer||this.editor.layers.selection||['terrain','clean','decal','stamp','brush'].includes(this.editor.tool??'')||(this.editor.tool==='select'&&!this.editor.selectedEntity))){
    e.preventDefault();e.stopImmediatePropagation();this.action(()=>this.editor.undoLayers(e.shiftKey));return;
   }
   if(e.key==='Escape'&&this.editor.isPaintingLayer){e.preventDefault();e.stopImmediatePropagation();this.action(()=>{this.editor.cancelLayerShape();this.editor.setTool('select');});return;}
@@ -42,7 +42,7 @@ export class ScenePanel{
  private choose(mode:typeof this.mode){
   this.editor.pickStamp(null);
   this.mode=mode;this.creationRecipe='';this.drawingMode=mode==='water'?'curve':'paint';this.editor.cancelLayerShape();this.editor.layers.selection=null;this.editor.selectedEntity=null;
-  this.editor.setTool(mode==='place'?'entity':mode==='terrain'?'terrain':mode==='spawn'?'spawn':mode==='clean'?'clean':'select');
+  this.editor.setTool(mode==='place'?'entity':mode==='terrain'?'terrain':mode==='spawn'?'spawn':mode==='clean'?'clean':mode==='decal'?'decal':'select');
   this.host.dataset.authoringTool=mode;
   if(['terrain','foliage','water'].includes(mode))this.editor.authoringCamera('top');
   this.changed();this.sync();
@@ -62,6 +62,7 @@ export class ScenePanel{
   const biome=biomeById(this.editor.map.biome),allowed=biomeRecipes(biome);
   const recipes=assets.filter(a=>a.recipe&&allowed.some(p=>p.id===a.id));
   if(this.editor.tool==='select'&&(selection||this.editor.selectedEntity||this.editor.selectedStamp())&&!this.editor.isPaintingLayer)this.mode='select';
+  if(this.editor.tool==='decal')this.mode='decal';
   this.host.dataset.authoringTool=this.mode;
   const view=this.editor.view();this.tools.sync(this.mode,this.editor.layers.canUndo,this.editor.layers.canRedo,view.gameCam?'game':view.pitch>1.5?'top':'free',this.editor.tool==='stamp',this.editor.gridMode!=='none');
   const choices=this.mode==='water'?biome.rivers:this.mode==='terrain'?biome.landforms:biome.foliage;
@@ -70,7 +71,7 @@ export class ScenePanel{
   const selected:SceneTreeSelection|undefined=selection??(this.editor.selectedEntity?{kind:'entity',id:this.editor.selectedEntity}:stamp?{kind:'stamp',id:stamp.id}:undefined);
   this.hierarchy.render({scene:state,assets,generated:this.editor.generatedScene?.objects??[],stamps:this.editor.map.stamps,entities:this.editor.map.entities,size:this.editor.map.size,biome:biome.name,selected,onSelect:this.selectHierarchy});
   const layer=state.layers.find(l=>l.id===selection?.id),object=state.objects.find(o=>o.id===selection?.id),item=layer??object;
-  this.right.hidden=!this.editor.isPaintingLayer&&((this.mode==='place'&&this.editor.tool!=='stamp')||['terrain','spawn','clean'].includes(this.mode)||!!this.editor.selectedEntity||!!this.editor.selectedStamp());
+  this.right.hidden=!this.editor.isPaintingLayer&&((this.mode==='place'&&this.editor.tool!=='stamp')||['terrain','spawn','clean','decal'].includes(this.mode)||!!this.editor.selectedEntity||!!this.editor.selectedStamp());
   this.right.classList.toggle('is-empty',this.mode==='select'&&!item);
   const brush=this.editor.isPaintingLayer||(layer?.shape.type==='mask'&&!layer.locked);
   const creation=['foliage','water'].includes(this.mode);

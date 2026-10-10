@@ -40,7 +40,7 @@ export class PlayScreen extends GameScreen {
     this.mapId = hooks.mapId;
     this.initialSave=hooks.save;
     const entry=getMap(hooks.mapId);
-    this.menu=new GameMenu(entry.map.mission?'campaign':'skirmish',entry.name,{
+    this.menu=new GameMenu(entry.overview.mission?'campaign':'skirmish',entry.name,{
       pause:p=>this.session?.setMenuPaused(p),leave:hooks.onLeave,
       ...(!hooks.channel?{snapshot:()=>this.session.snapshotLocal(),restart:hooks.onRestart,load:hooks.onLoadSave}:{}),
     });
@@ -54,7 +54,7 @@ export class PlayScreen extends GameScreen {
       match: hooks.match,
       hooks: { onMissionLeave: hooks.onLeave, onMissionContinue:hooks.onContinue, onHud: (state) => this.hud.update(state) },
     });
-    this.loading = new LoadingScreen(this.root, hooks.onLeave, undefined, entry.map.mission);
+    this.loading = new LoadingScreen(this.root, hooks.onLeave, undefined, entry.overview.mission);
   }
 
   start(): void {

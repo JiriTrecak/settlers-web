@@ -1,3 +1,4 @@
+import {flatTerrainData} from '../../src/shared/map/terrainData';
 import { describe, it, expect } from "vitest";
 import {
   emptyUtcMap,
@@ -32,7 +33,7 @@ describe("authored playable maps", () => {
   it("rejects missing starts, submerged forts, overlap and edge starts", () => {
     const map = emptyUtcMap();
     expect(playableMapError({ ...map, playerStarts: [] })).not.toBeNull();
-    expect(playableMapError({ ...map, waterLevel: 1 })).not.toBeNull();
+    expect(playableMapError({ ...map, authoring:{version:1,objects:[],terrain:flatTerrainData(map.size,0,1)} })).not.toBeNull();
     expect(
       playableMapError({
         ...map,

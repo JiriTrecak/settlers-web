@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Wrok",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronwinter/lordw_rock_diffuse.dds",
+      "sha256": "e0ec75f21b6e8afdc9ef4deaf8fb2001b0d596487ab9e3d3531c5c1a03d44c62"
+    },
+    {
+      "channel": "normal",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronwinter\\lordw_rock_normal.dds",
+      "sha256": "0c9ee6b47c53b854ae47b8cb64f15b486a7aaa107125744b3f09fdad454fb1f6"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronwinter\\lordw_rock_orm.dds",
+      "sha256": "68bbf012dc74462a69d22dab3be50addf5073c9fd810a22cbf604f30b2e76141"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Wrok",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\LordaeronWinter",
+    "file": "Lordw_Rock",
+    "comment": "Rock",
+    "name": "WESTRING_TILE_ROCK",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "6",
+    "convertTo": "Lrok,Frok,Bflr,Arck,Crck,Nrck,Ybtl,Vrck,Qrck,Xbtl,Ddkr,Gdkr,Zbkl,Irbk,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

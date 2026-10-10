@@ -1,3 +1,4 @@
+import {LoadingScreen} from '../../ui/loadingScreen';
 import {validateSavedMatch} from "../../session/worker/client";
 import {validateSaveDestination} from '../../shared/save/saveLibrary';
 import type {LocalSave} from '../../shared/save/localSave';
@@ -10,7 +11,7 @@ import {
   type MatchSetup,
 } from "../../shared/match/skirmish";
 import { perf } from "../../debug/performance";
-import { authoredMaps, playableMaps, getMap } from "../../shared/map/library";
+import { initializeMapLibrary, authoredMaps, playableMaps, getMap, loadMap, type LoadedMapEntry } from "../../shared/map/library";
 import { MapPicker } from "../../ui/menu/mapPicker";
 import { emptyUtcMap, type UtcMap } from "../../shared/map/utcmap";
 /**
@@ -39,6 +40,8 @@ import { PlayScreen } from "./playScreen";
 import { EditorScreen } from "./editorScreen";
 
 export class GameApp {
+  private mapLoading:LoadingScreen|null=null;
+  private startGeneration=0;
   private canvas: HTMLCanvasElement | null = null;
   private screens: ScreenHost | null = null;
   private player = 0;
@@ -56,7 +59,10 @@ export class GameApp {
     private readonly hudRoot: HTMLElement,
   ) {}
 
-  start(): void {
+  async start(): Promise<void> {
+    const generation=++this.startGeneration;
+    try{await initializeMapLibrary();}catch(error){console.warn("Local map library unavailable",error);}
+    if(generation!==this.startGeneration)return;
     const canvas = document.createElement("canvas");
     this.canvas = canvas;
     canvas.style.visibility = "hidden";
@@ -84,14 +90,17 @@ export class GameApp {
         ? authoredMaps().find((m) => m.id === intent.mapId)
         : undefined;
       if (intent.mapId && !selected) this.showMapPicker(true);
-      else this.showEditor(selected?.map, selected?.id);
+      else if(selected)void this.openMap(selected.id,entry=>this.showEditor(entry.map,entry.id));
+      else this.showEditor();
     } else if (intent.kind === "campaign") this.showCampaign();
     else if (intent.kind === "single") this.showMapPicker();
     else this.showMenu();
   }
 
   stop(): void {
+    this.startGeneration++;
     this.playGen++;
+    this.mapLoading?.destroy();this.mapLoading=null;
     this.backgroundTicker?.destroy();
     this.backgroundTicker = null;
     this.stopRaf();
@@ -169,7 +178,7 @@ export class GameApp {
       new MapPicker(edit ? "edit" : "play", {
         onBack: () => this.showMenu(),
         onChoose: (entry) =>
-          edit ? this.showEditor(entry.map, entry.id) : this.play(entry.id),
+          edit ? void this.openMap(entry.id,loaded=>this.showEditor(loaded.map,loaded.id)) : this.play(entry.id),
         ...(edit ? { onNew: () => this.showEditor(emptyUtcMap()) } : {}),
       }),
     );
@@ -195,7 +204,7 @@ export class GameApp {
     this.playGen++;
     this.hideCanvas();
     const screen = new MultiplayerScreen({
-      maps: playableMaps().filter((m) => m.source === "project" && !m.map.sandbox),
+      maps: playableMaps().filter((m) => m.source === "project" && !m.overview.sandbox),
       mapName: (id) => getMap(id).name,
       name: this.guestName === "player" ? "" : this.guestName,
       error,
@@ -241,7 +250,7 @@ export class GameApp {
       const created = await createRoom({
         name: `${this.guestName}'s room`,
         mapId,
-        mapRevision: getMap(mapId).revision,
+        mapRevision: (await loadMap(mapId)).revision,
         slotCount,
         guestName: this.guestName,
       });
@@ -366,35 +375,48 @@ export class GameApp {
     }
   }
 
+  private async openMap(id:string,ready:(entry:LoadedMapEntry)=>void):Promise<void>{
+    const generation=++this.playGen;
+    this.mapLoading?.destroy();
+    const loading=this.mapLoading=new LoadingScreen(this.hudRoot,()=>{loading.destroy();if(this.mapLoading===loading)this.mapLoading=null;this.showMenu();});
+    loading.update({stage:'Loading terrain cells'});
+    try{
+      const entry=await loadMap(id);
+      if(generation!==this.playGen||!this.canvas){loading.destroy();if(this.mapLoading===loading)this.mapLoading=null;return;}
+      ready(entry);loading.destroy();if(this.mapLoading===loading)this.mapLoading=null;
+    }catch(error){if(this.mapLoading===loading&&this.canvas)loading.error(error);else loading.destroy();}
+  }
+
   private play(mapId: string, setup?: MatchSetup): void {
     if (!this.canvas || !this.screens) return;
     const current = this.screens.screen;
     if (current instanceof PlayScreen && current.mapId === mapId) return;
-    this.showCanvas();
-    const entry = getMap(mapId);
-    const initialHuman = entry.map.playerStarts.some(
-      (s) => s.player === this.player + 1,
-    )
-      ? this.player
-      : entry.map.playerStarts[0].player - 1;
-    const chosen = setup ?? {
-      mapId,
-      slots: defaultSlots(entry.map.playerStarts, initialHuman),
-    };
-    const { match, player } = entry.map.mission ? {match:createMissionMatch(mapId,entry.map,entry.revision),player:0} : createSkirmishMatch(
-      chosen,
-      entry.map.playerStarts,
-      entry.revision,
-      this.guestName,
-      1, !!entry.map.sandbox,
-    );
-    this.skirmishSetup = chosen;
-    this.launchLocal(mapId,match,player);
+    void this.openMap(mapId,entry=>{
+      this.showCanvas();
+      const initialHuman = entry.map.playerStarts.some(
+        (s) => s.player === this.player + 1,
+      )
+        ? this.player
+        : entry.map.playerStarts[0].player - 1;
+      const chosen = setup ?? {
+        mapId,
+        slots: defaultSlots(entry.map.playerStarts, initialHuman),
+      };
+      const { match, player } = entry.map.mission ? {match:createMissionMatch(mapId,entry.map,entry.revision),player:0} : createSkirmishMatch(
+        chosen,
+        entry.map.playerStarts,
+        entry.revision,
+        this.guestName,
+        1, !!entry.map.sandbox,
+      );
+      this.skirmishSetup = chosen;
+      this.launchLocal(entry,match,player);
+    });
   }
 
-  private launchLocal(mapId:string,match:MatchConfig,player:number|null,save?:LocalSave):void {
+  private launchLocal(entry:LoadedMapEntry,match:MatchConfig,player:number|null,save?:LocalSave):void {
     if(!this.canvas||!this.screens)return;
-    const entry=getMap(mapId),mode=entry.map.mission?'campaign':'skirmish';
+    const mapId=entry.id,mode=entry.map.mission?'campaign':'skirmish';
     if(entry.revision!==match.mapRevision)throw new Error('The scenario changed since this match began. Open the updated map to start a new match.');
     const address=new URL(location.href);address.searchParams.set("map",mapId);address.searchParams.delete("screen");history.replaceState(null,"",address);
     const gen=++this.playGen;
@@ -403,14 +425,13 @@ export class GameApp {
       player,
       match,
       save,
-      onRestart:()=>this.launchLocal(mapId,structuredClone(match),player),
-      onContinue:(nextId,company)=>{
-        const next=getMap(nextId);
+      onRestart:()=>this.launchLocal(entry,structuredClone(match),player),
+      onContinue:(nextId,company)=>{void this.openMap(nextId,next=>{
         if(!entry.map.mission||next.map.mission?.campaign!==entry.map.mission.campaign)throw new Error('The next chapter must belong to this campaign');
         const nextMatch={...createMissionMatch(nextId,next.map,next.revision),company};
-        this.launchLocal(nextId,nextMatch,0);
-      },
-      onLoadSave:async raw=>{const target=getMap(raw.mapId),loaded=validateSaveDestination(raw,mode,target);await validateSavedMatch(loaded,target.map);if(this.screens?.screen===play)this.launchLocal(loaded.mapId,loaded.match,loaded.player,loaded);},
+        this.launchLocal(next,nextMatch,0);
+      });},
+      onLoadSave:async raw=>{const target=await loadMap(raw.mapId),loaded=validateSaveDestination(raw,mode,target);await validateSavedMatch(loaded,target.map);if(this.screens?.screen===play)this.launchLocal(target,loaded.match,loaded.player,loaded);},
       onLeave: () => entry.map.mission ? this.showCampaign(true) : this.showMapPicker(),
     });
     this.screens.show(play);

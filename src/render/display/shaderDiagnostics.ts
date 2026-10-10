@@ -8,7 +8,7 @@ export class ShaderDiagnostics {
  private readonly checked=new WeakSet<Program>();
  failures=0;
  constructor(private readonly gl:WebGLRenderingContext|WebGL2RenderingContext,
-  private readonly report:(failure:ShaderFailure)=>void=failure=>console.error('Shader link failed',failure)){}
+  private readonly report:(failure:ShaderFailure)=>void=failure=>console.error('Shader link failed',JSON.stringify(failure))){}
  check(programs:readonly Program[]):void {
   if(this.gl.isContextLost())return;
   for(const entry of programs){

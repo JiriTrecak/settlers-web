@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Vstp",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_stonepath_diffuse.dds",
+      "sha256": "a3ad0a238629d74e3b933a7a59319ee3dabc6b8926405ed264b352808192f127"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/village/village_stonepath_normal.dds",
+      "sha256": "9659289050f6195b38e662e86a1402a26fb4de13f331fe95c717a275c4aa7724"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_stonepath_orm.dds",
+      "sha256": "5c85bc370babc910717815acefeafa5e471823bb9f8b5c7dc229aca4637bb193"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Vstp",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Village",
+    "file": "Village_StonePath",
+    "comment": "Stone Path",
+    "name": "WESTRING_TILE_STONE_PATH",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "4",
+    "convertTo": "Lrok,Frok,Wrok,Bflr,Arck,Crck,Nsnw,Ywmb,Qstp,Xwmb,Drds,Grds,Zbkl,Ibsq,Olgb",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

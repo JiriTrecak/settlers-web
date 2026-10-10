@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Fgrd",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronfall/lordf_grassdark_diffuse.dds",
+      "sha256": "8c210f4cfadf596ced01594fc4ffeb7033a4a9ce0341fc34b2b2be437e9d4075"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronfall/lordf_grassdark_normal.dds",
+      "sha256": "4a31e898abe089731e28dabd8cc2b2eda66be4d612cc5b3e7c1f41062d81c67f"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronfall\\lordf_grassdark_orm.dds",
+      "sha256": "7df4fe15872c44549634e430a64925fc8089b6d581d3275326ad80ceffb597b5"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Fgrd",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\LordaeronFall",
+    "file": "Lordf_GrassDark",
+    "comment": "Dark Grass",
+    "name": "WESTRING_TILE_DARK_GRASS",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "5",
+    "convertTo": "Lgrd,Wsnw,Bdrg,Agrd,Clvg,Nice,Ygsb,Vgrt,Qgrt,Xgsb,Dlav,Glav,Zvin,Iice,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

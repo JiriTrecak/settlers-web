@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Nice",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_ice_diffuse.dds",
+      "sha256": "58ce212e4d3d138c7814f1dbfd2d434d4ff03f8dd8abfe977810eda9eaa2f274"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/northrend/north_ice_normal.dds",
+      "sha256": "e8fc1bbf36a48e91e4ace0ab012c8b23d02302eb1c9262d3fb76588032cd3179"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_ice_orm.dds",
+      "sha256": "1bd0c67053019278766d63f80922ef9ed71832a579176e934a6b202bf7c035e8"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Nice",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Northrend",
+    "file": "North_ice",
+    "comment": "Ice",
+    "name": "WESTRING_TILE_ICE",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "3",
+    "convertTo": "Lgrd,Fgrd,Wsnw,Bdrg,Agrd,Cpos,Ygsb,Vgrs,Qgrs,Xgsb,Dgrs,Ggrs,Zvin,Iice,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

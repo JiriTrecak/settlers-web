@@ -17,8 +17,8 @@ function schedule<T>(task:()=>Promise<T>):Promise<T>{
 }
 /** Immutable RGBA channels, without canvas conversion or alpha premultiplication.
  * Callers that edit pixels must copy them. Failed requests are retryable. */
-export function terrainTilePixels(name:string):Promise<Uint8Array>{
- const url=terrainTextureUrl(name),hit=cached.get(url);
+export function terrainTilePixels(name:string,channel:'ar'|'nh'|'om'='ar'):Promise<Uint8Array>{
+ const url=terrainTextureUrl(name,channel),hit=cached.get(url);
  if(hit){cached.delete(url);cached.set(url,hit);return Promise.resolve(hit);}
  const inFlight=pending.get(url);if(inFlight)return inFlight;
  const result=schedule(async()=>{

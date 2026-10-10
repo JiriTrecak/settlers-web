@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Ldro",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronsummer\\lords_dirtrough_diffuse.dds",
+      "sha256": "46f717c45179b432d0dab36fe2a276a747593e93fcd6d4359fe13bbc2fd79de0"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronsummer/lords_dirtrough_normal.dds",
+      "sha256": "542b7a0e0e9cc7c4185b6034ee71d225c99eb7d031d14a2213d5dfb3ce43304a"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronsummer\\lords_dirtrough_orm.dds",
+      "sha256": "aa7afc8f4bdc04c15bcb9fad818f910c407e4124b02cb70ae220474cc2d26416"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Ldro",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\LordaeronSummer",
+    "file": "Lords_DirtRough",
+    "comment": "Rough Dirt",
+    "name": "WESTRING_TILE_ROUGH_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "1",
+    "convertTo": "Fdro,Wdro,Bdsd,Adrd,Cdrd,Ndrd,Ydtr,Vdrr,Qdrr,Xdtr,Dbrk,Gbrk,Zdtr,Idtr,Odtr",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

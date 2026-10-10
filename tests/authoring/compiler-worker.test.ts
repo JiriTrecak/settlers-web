@@ -1,3 +1,4 @@
+import {flatTerrainData} from '../../src/shared/map/terrainData';
 import {Worker} from 'node:worker_threads';
 import {expect,it} from 'vitest';
 import {MapCompilerClient} from '../../src/shared/authoring/worker/client';
@@ -5,7 +6,7 @@ import type {CompilerPort} from '../../src/shared/authoring/worker/protocol';
 import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {landscapeAssets} from '../../src/shared/authoring/project';
 import {proceduralFixture} from './fixture';
-import {authoringSceneSchema} from '../../src/shared/authoring/layers';
+import {mapPreviewSceneSchema} from '../../src/shared/authoring/layers';
 
 function create(){
  const worker=new Worker(new URL('./fixtures/compiler-worker.cjs',import.meta.url));
@@ -18,7 +19,7 @@ function create(){
 it('delivers real compilations with live height/water samplers, queues edits, and recovers from invalid commands',async()=>{
  const {client,worker}=create();
  try{
-  const base=proceduralFixture(),map={...base,authoring:authoringSceneSchema.parse({...base.authoring,objects:[{id:'oak',asset:'asset.models.environment.canopy-oak',x:110,z:120}]})};
+  const base=proceduralFixture(),map={...base,authoring:mapPreviewSceneSchema.parse({...base.authoring,objects:[{id:'oak',asset:'asset.models.environment.canopy-oak',x:110,z:120}]})};
   const first=await client.compile(map),direct=compileMapScene(map,landscapeAssets);
   expect(first.generated).toEqual(direct.generated);expect(first.stamps).toEqual(direct.stamps);expect(first.owners).toEqual(direct.owners);
   for(const [x,z] of [[0,0],[110,120],[127,129],[150,140]]){expect(first.field.sample(x,z)).toBe(direct.field.sample(x,z));expect(first.field.waterAt(x,z)).toBe(direct.field.waterAt(x,z));}
@@ -46,7 +47,7 @@ it('rejects queued requests on disposal and never publishes their scenes',async(
 it('retains dependency provenance for safe edits to worker-decoded scenes',async()=>{
  const {client,worker}=create();
  try{
-  const base=proceduralFixture(),map={...base,authoring:authoringSceneSchema.parse({...base.authoring,objects:[{id:'oak',asset:'asset.models.environment.canopy-oak',x:110,z:120}]})};
+  const base=proceduralFixture(),map={...base,authoring:mapPreviewSceneSchema.parse({...base.authoring,objects:[{id:'oak',asset:'asset.models.environment.canopy-oak',x:110,z:120}]})};
   const received=await client.compile(map);
   const {updateMapScene}=await import('../../src/shared/authoring/updateMapScene');
   const {reusableMapSurface}=await import('../../src/shared/authoring/mapScene');
@@ -54,9 +55,9 @@ it('retains dependency provenance for safe edits to worker-decoded scenes',async
   const edited=updateMapScene(map,pose,received,landscapeAssets);
   expect(edited.field).toBe(received.field);
   expect(edited.generated).toEqual(compileMapScene(pose,landscapeAssets).generated);
-  expect(reusableMapSurface({...pose,waterLevel:(pose.waterLevel??0)+1},landscapeAssets,received)).toBeUndefined();
+  const changed={...pose,authoring:{...pose.authoring,terrain:flatTerrainData(pose.size,0,-7)}};
+  expect(reusableMapSurface(changed,landscapeAssets,received)).toBeUndefined();
   expect(reusableMapSurface(pose,[...landscapeAssets],received)).toBeUndefined();
-  const changed={...pose,waterLevel:(pose.waterLevel??0)+1};
   const rebuilt=updateMapScene(pose,changed,edited,landscapeAssets),fresh=compileMapScene(changed,landscapeAssets);
   expect(rebuilt.field).not.toBe(received.field);expect(rebuilt.field.samples).toEqual(fresh.field.samples);expect(rebuilt.generated).toEqual(fresh.generated);
  }finally{client.dispose();await worker.terminate();}

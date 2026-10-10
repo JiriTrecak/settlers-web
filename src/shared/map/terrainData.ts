@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {HEIGHT_MIN,HEIGHT_MAX,DRY_WATER_HEIGHT} from './terrainLimits';
 import {MAP_HALO} from './map';
 import type {HeightField} from './height';
 
@@ -6,10 +7,10 @@ const packed=z.string();
 /** Editable samples, not generator inputs or a render cache. Arrays are packed
  * only to keep JSON documents small. All floats have explicit little-endian encoding. */
 export const terrainDataSchema=z.object({
- version:z.literal(1),size:z.number().int().min(16).max(2048),
+ version:z.literal(1),size:z.number().int().min(16).max(2048).multipleOf(4),
  heights:packed,waterHeights:packed,waterFlow:packed,waterProfiles:z.array(z.string().min(1)).max(255),
  grass:packed,rock:packed,
- paint:z.array(z.object({material:z.string().min(1),weights:packed}).strict()).max(256),
+ paint:z.array(z.object({material:z.string().min(1),weights:packed,variants:packed.optional()}).strict()).max(256),
 }).strict().superRefine((data,ctx)=>{
  const span=data.size+MAP_HALO*2,n=(span+1)**2;
  for(const [name,value,count,float] of [
@@ -17,11 +18,19 @@ export const terrainDataSchema=z.object({
   ['grass',data.grass,n,true],['rock',data.rock,n,true],['waterFlow',data.waterFlow,span*span*4,false],
   ...data.paint.map((p,i)=>[`paint.${i}`,p.weights,n,true] as const),
  ] as const){
-  try{const bytes=decodeBytes(value);if(bytes.length!==count*(float?4:1))throw Error('Wrong dimensions');
-   if(float){const view=new DataView(bytes.buffer);for(let i=0;i<count;i++)if(!Number.isFinite(view.getFloat32(i*4,true)))throw Error('Non-finite sample');}
+  try{const bytes=decodeBytes(value,count*(float?4:1));
+   if(float){
+    const view=new DataView(bytes.buffer),min=name==='heights'?HEIGHT_MIN:name==='waterHeights'?DRY_WATER_HEIGHT:0,max=name==='heights'||name==='waterHeights'?HEIGHT_MAX:1;
+    for(let i=0;i<count;i++){const sample=view.getFloat32(i*4,true);if(!Number.isFinite(sample))throw Error('Non-finite sample');if(sample<min||sample>max)throw Error(`Sample ${i} outside ${min}..${max}`);}
+   }
    else for(let i=3;i<bytes.length;i+=4)if(bytes[i]>data.waterProfiles.length)throw Error('Unknown water profile');
   }catch(error){ctx.addIssue({code:'custom',path:[name],message:(error as Error).message});}
  }
+ for(let i=0;i<data.paint.length;i++)if(data.paint[i].variants!==undefined){
+  try{decodeBytes(data.paint[i].variants!,(span/4)**2);}
+  catch(error){ctx.addIssue({code:'custom',path:['paint',i,'variants'],message:(error as Error).message});}
+ }
+ if(new Set(data.waterProfiles).size!==data.waterProfiles.length)ctx.addIssue({code:'custom',path:['waterProfiles'],message:'Duplicate water profile'});
  if(new Set(data.paint.map(p=>p.material)).size!==data.paint.length)ctx.addIssue({code:'custom',path:['paint'],message:'Duplicate ground material'});
 });
 export type TerrainData=z.infer<typeof terrainDataSchema>;
@@ -30,7 +39,14 @@ export type CellWater={heights:Float32Array;flow:Uint8Array;profiles:string[]};
 export function encodeBytes(bytes:Uint8Array):string{
  let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(binary);
 }
-export function decodeBytes(text:string):Uint8Array{return Uint8Array.from(atob(text),c=>c.charCodeAt(0));}
+export function decodeBytes(text:string,expectedBytes?:number):Uint8Array{
+ // Check encoded dimensions before allocating a decoded string or typed array.
+ // Saved grids use canonical base64; whitespace and oversized payloads are invalid.
+ if(expectedBytes!==undefined&&text.length!==4*Math.ceil(expectedBytes/3))throw Error('Wrong dimensions');
+ const binary=atob(text);
+ if(expectedBytes!==undefined&&binary.length!==expectedBytes)throw Error('Wrong dimensions');
+ return Uint8Array.from(binary,c=>c.charCodeAt(0));
+}
 export function encodeFloats(values:ArrayLike<number>):string{
  const bytes=new Uint8Array(values.length*4),view=new DataView(bytes.buffer);
  for(let i=0;i<values.length;i++)view.setFloat32(i*4,values[i]!,true);return encodeBytes(bytes);
@@ -50,7 +66,8 @@ export function restoreTerrain(field:HeightField,data:TerrainData):void{
  field.source=undefined;field.sourceWater=undefined;field.courseWater=undefined;field.watercourses=[];
  field.samples.set(decodeFloats(data.heights));
  field.grassCoverage=decodeFloats(data.grass);field.rockCoverage=decodeFloats(data.rock);
- field.surfacePaint=data.paint.map(p=>({owner:'terrain',material:p.material,weights:decodeFloats(p.weights)}));
+ field.terrainGrassCoverage=field.grassCoverage;
+ field.surfacePaint=data.paint.map(p=>({owner:'terrain',material:p.material,weights:decodeFloats(p.weights),...(p.variants?{variants:decodeBytes(p.variants)}:{})}));
  field.cellWater={heights:decodeFloats(data.waterHeights),flow:decodeBytes(data.waterFlow),profiles:[...data.waterProfiles]};
 }
 

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Qstp",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_stonepath_diffuse.dds",
+      "sha256": "a3ad0a238629d74e3b933a7a59319ee3dabc6b8926405ed264b352808192f127"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/villagefall/villagefall_stonepath_normal.dds",
+      "sha256": "77c1318eada38b8170054b46aa30b3ba72500119f3b46f17c6884dd182549dda"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_stonepath_orm.dds",
+      "sha256": "c3aba4faf02690a0ee7df278a18bd01cb132e485bf4ab4b61a9e068e7feffbaa"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Qstp",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\VillageFall",
+    "file": "VillageFall_StonePath",
+    "comment": "Stone Path",
+    "name": "WESTRING_TILE_STONE_PATH",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "4",
+    "convertTo": "Lrok,Frok,Wrok,Bflr,Arck,Crck,Nsnr,Ywmb,Vstp,Xwmb,Drds,Grds,Zbkl,Ibsq,Olgb",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Ztil",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_roundtiles_diffuse.dds",
+      "sha256": "8ec96a6e23c61a9a4306c63f659aad665e3be7e9a859a2716c95ca510afc97ee"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_roundtiles_normal.dds",
+      "sha256": "8d3a10547221c7fdc882c50fdfa1332be1fcef720d693d2950c5d6c4d29eb69b"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_roundtiles_orm.dds",
+      "sha256": "a3bd91d3b6c0df7e77e74557846b0e9b669740f05403c31b5c7317eff416de97"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Ztil",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Ruins",
+    "file": "Ruins_RoundTiles",
+    "comment": "RoundTiles",
+    "name": "WESTRING_TILE_ROUNDTILES",
+    "buildable": "0",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "6",
+    "convertTo": "Lrok,Frok,Wrok,Bflr,Arck,Crck,Nrck,Yrtl,Vstp,Qstp,Xrtl,Dgrs,Ggrs,Itbk,Osqt",
+    "InBeta": "1",
+    "version": "1"
+  }
+}

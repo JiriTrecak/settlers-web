@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Vgrs",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/village/village_grassshort_diffuse.dds",
+      "sha256": "22062ecb7f9ced37180c8e510f035094f317eb4d1c4e75f5c28aac5333c29ca8"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/village/village_grassshort_normal.dds",
+      "sha256": "409f499efe238bb4fc6f707402f45d33e513113b9595905484a49c5e205b98fd"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_grassshort_orm.dds",
+      "sha256": "695556ae9d2e17ffd7add7c8879c84032509bcda1b6ef118f44aed8aff9a6f63"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Vgrs",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Village",
+    "file": "Village_GrassShort",
+    "comment": "Short Grass",
+    "name": "WESTRING_TILE_SHORT_GRASS",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "3",
+    "convertTo": "Lgrs,Fgrs,Wgrs,Bgrr,Agrs,Ngrs,Cgrs,Vgrs,Qgrs,Xhdg,Dbrk,Gbrk,Zdrg,Iice,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

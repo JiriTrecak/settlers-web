@@ -1,0 +1,192 @@
+{
+  "version": 1,
+  "id": "asset.terrain.warcraft-cliff-cldi",
+  "name": "Cliff face · CLdi",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "warcraft",
+    "cliff",
+    "CLdi"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "5a5f3da0fcaa1f9f93e063822b5b158f7474500f820ce5571405e35c0cb1152d",
+      "bytes": 3515177
+    },
+    {
+      "role": "data",
+      "index": 2,
+      "format": "bin",
+      "sha256": "6d89ba5c092e9682fcc2c9325989bb09915993895c3ff33f1db537f0285cc706",
+      "bytes": 101574
+    },
+    {
+      "role": "data",
+      "index": 3,
+      "format": "bin",
+      "sha256": "ddb406d52f3d6792683abbfcfe7a6ff9fab288f2cbd61cf23e49d4a896e0f96f",
+      "bytes": 4101
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "080b6ab83b083beffcdbb446c4961c440bf69f75b5b1f368d4d295adf4efed17",
+      "bytes": 232774,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "14397c1cb13ba1ad68e30d56700a018e19a9e6ecb2e2a463f7e2a831dba78389",
+      "bytes": 23110,
+      "colorSpace": "none"
+    },
+    {
+      "role": "occlusion",
+      "index": 1,
+      "format": "png",
+      "sha256": "b30e5f5feda85a1609c9abb521cf706a2fa185b1d49dff8347bc80eb5603df99",
+      "bytes": 1225,
+      "colorSpace": "none"
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "4aa76d73034a191c224038e3c66ee707645cc2575313e9a0b08857fa28197f22",
+      "bytes": 146942,
+      "colorSpace": "none"
+    },
+    {
+      "role": "metalness",
+      "index": 1,
+      "format": "png",
+      "sha256": "d49548a73bf55db1363061f137d6cb7ec2ed362a68428ce5e2a31cf8bbca45ee",
+      "bytes": 673,
+      "colorSpace": "none"
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "d102704921535c92a3691138b0ccddc3d7798f7a33d825075c9dacb3ede29c60",
+      "bytes": 62197,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "bin",
+      "sha256": "ce092d0cb83190294629aaed5a9f3cdedb5d1049f4ae9cb7c1fa20d52996e801",
+      "bytes": 699192
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "bin",
+      "sha256": "cac21775067bf851ad5638d81765d43b7dad1457a28fad0c593a06a3a2903836",
+      "bytes": 1398256
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "bin",
+      "sha256": "8eb10a8b9e950ef6c9b9cb0448c85a4070a8feb9dda0a4db189e143bcde4fbfb",
+      "bytes": 1398256
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "093ec83f00d1c27f35cca0a6c9f40b64f1c21778be70d9e6342e2e2b39e760bd",
+      "bytes": 1298
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "import",
+    "licenseNote": "User-supplied Rebirth replacements with missing channels from the local Warcraft III: Reforged installation. Original sources retain their respective rights.",
+    "sourceHash": "d487e0b04ab1871f281fa2fda045f89e05a80ccf6c0d05da371e265444a5878e"
+  },
+  "terrain": {
+    "tileWorldSize": 12,
+    "projection": {
+      "type": "cliff",
+      "verticalWorldSize": 4,
+      "startSlope": 0.8,
+      "fullSlope": 1.8
+    },
+    "reflectance": 0.25,
+    "sourceIds": [
+      "CLdi"
+    ],
+    "atlas": {
+      "columns": 1,
+      "rows": 1,
+      "fullTiles": [
+        0
+      ]
+    },
+    "albedo": {
+      "role": "albedo",
+      "index": 1
+    },
+    "normal": {
+      "role": "normal",
+      "index": 1
+    },
+    "occlusion": {
+      "role": "occlusion",
+      "index": 1
+    },
+    "roughness": {
+      "role": "roughness",
+      "index": 1
+    },
+    "metalness": {
+      "role": "metalness",
+      "index": 1
+    },
+    "thumbnail": {
+      "role": "image",
+      "index": 1
+    },
+    "runtime": {
+      "albedoRoughness": {
+        "role": "data",
+        "index": 1
+      },
+      "normalOpacity": {
+        "role": "data",
+        "index": 2
+      },
+      "occlusionMetalness": {
+        "role": "data",
+        "index": 3
+      }
+    }
+  }
+}

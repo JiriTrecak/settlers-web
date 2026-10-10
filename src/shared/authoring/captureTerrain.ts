@@ -23,6 +23,11 @@ export function captureTerrain(field:HeightField):TerrainData{
  const paint=new Map<string,Float32Array>();
  for(const p of field.surfacePaint??[]){const values=paint.get(p.material)??new Float32Array(n);for(let i=0;i<n;i++)values[i]=Math.max(values[i],p.weights[i]);paint.set(p.material,values);}
  return {version:1,size:field.size,heights:encodeFloats(heights),waterHeights:encodeFloats(water),waterFlow:encodeBytes(flow),waterProfiles:profiles,
-  grass:encodeFloats(field.grassCoverage??new Float32Array(n)),rock:encodeFloats(field.rockCoverage??new Float32Array(n)),
-  paint:[...paint].map(([material,weights])=>({material,weights:encodeFloats(weights)}))};
+  grass:encodeFloats(field.terrainGrassCoverage??field.grassCoverage??new Float32Array(n)),rock:encodeFloats(field.rockCoverage??new Float32Array(n)),
+  // Repainting can erase the last sample of a material. Keep only materials
+  // still present on the map so editing does not accumulate empty GPU layers.
+  paint:[...paint].filter(([,weights])=>weights.some(weight=>weight>0)).map(([material,weights])=>{
+   const variants=field.surfacePaint?.find(p=>p.material===material&&p.variants)?.variants;
+   return {material,weights:encodeFloats(weights),...(variants?{variants:encodeBytes(variants)}:{})};
+  })};
 }

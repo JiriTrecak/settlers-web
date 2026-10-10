@@ -1,3 +1,5 @@
+import {captureTerrain} from '../../src/shared/authoring/captureTerrain';
+import {restoreTerrain} from '../../src/shared/map/terrainData';
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { describe, expect, it } from "vitest";
 import {
@@ -59,18 +61,14 @@ describe("height field", () => {
       ...emptyUtcMap(),
       name: "Basin",
       stamps: [],
-      waterLevel: -0.5,
-      height: encodeHeight(h.samples),
+      authoring:{version:1 as const,objects:[],terrain:captureTerrain(h)},
     };
     const raw = JSON.parse(stringifyUtcMap(map)) as unknown;
     const next = parseUtcMap(raw);
     expect(next?.name).toBe("Basin");
-    expect(next?.waterLevel).toBe(-0.5);
-    expect(next?.height).toBeTruthy();
-    const decoded = decodeHeight(next!.height!);
-    expect(decoded).not.toBeNull();
-    const i = (8 - HEIGHT_ORIGIN) * HEIGHT_VERTS + (8 - HEIGHT_ORIGIN);
-    expect(decoded![i]).toBeGreaterThan(0.5);
+    const decoded=new HeightField();restoreTerrain(decoded,next!.authoring!.terrain!);
+    expect(decoded.waterAt(8,8)).toBe(-.5);
+    expect(decoded.sample(8,8)).toBeGreaterThan(.5);
   });
 
   it("rejects a bad height blob", () => {

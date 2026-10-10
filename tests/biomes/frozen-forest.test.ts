@@ -33,7 +33,7 @@ describe('Frozen Forest and living woodland',()=>{
  });
  it('compiles both authored maps with distinct biome-bound species and no missing dependencies',()=>{
   for(const slug of ['vibrant-forest','frozen-forest'] as const){
-   const doc=map(slug),scene=compileMapScene(doc,landscapeAssets);expect(scene.generated!.issues).toEqual([]);expect(scene.resources.length).toBeGreaterThan(150);
+   const preview=map(slug),compiled=compileMapScene(preview,landscapeAssets),history=new AuthoringHistory(preview.authoring);history.apply(compiled);const doc={...preview,authoring:history.document},scene=compileMapScene(doc,landscapeAssets);expect(scene.generated!.issues).toEqual([]);expect(scene.resources.length).toBeGreaterThan(150);
    expect(scene.field.forestCoverage!.some(n=>n>0)).toBe(true);expect(scene.field.grassCoverage!.some(n=>n>0)).toBe(true);
    expect(()=>validatePlacements(doc,content)).not.toThrow();
    expect(expandMap(doc,content).filter(e=>e.definition==='resource.forest.tree')).toEqual(scene.resources.sort((a,b)=>a.id.localeCompare(b.id)));
@@ -42,7 +42,7 @@ describe('Frozen Forest and living woodland',()=>{
   }
  });
  it('instantiates generated trees as live harvestable game resources',()=>{
-  const doc=map('vibrant-forest'),scene=compileMapScene(doc,landscapeAssets),game=new Game(doc,[{player:0,kind:'human'}]);
+  const preview=map('vibrant-forest'),scene=compileMapScene(preview,landscapeAssets),history=new AuthoringHistory(preview.authoring);history.apply(scene);const doc={...preview,authoring:history.document},game=new Game(doc,[{player:0,kind:'human'}]);
   const trees=game.entities.filter(e=>e.definition==='resource.forest.tree');
   expect(trees).toHaveLength(scene.resources.length);
   expect(trees.every(e=>e.resource!.amount>0&&e.resource!.felling!.hp>0)).toBe(true);
@@ -64,9 +64,9 @@ describe('Frozen Forest and living woodland',()=>{
   const wet=terrainPixel([200,200,200],-2,-.6,0,0,0,0),dry=terrainPixel([200,200,200],0,-1,0,0,0,0);
   expect(wet[2]).toBeGreaterThan(wet[0]);expect(dry[0]).toBeGreaterThan(wet[0]);
  });
- it('preserves source-style water defaults when a map has no authored water profiles',()=>{
+ it('uses the declared biome profile when a map has no local water profiles',()=>{
   const scene=compileMapScene(createBiomeMap('Empty',256,'vibrant-forest'),landscapeAssets);
-  expect(waterSurface(scene.field).profiles).toBeUndefined();
+  expect(waterSurface(scene.field).profiles![3]).toBeCloseTo(landscapeAssets.find(a=>a.id===biomeById(scene.field.biome).waterProfile)!.water!.clarity);
  });
  it('holds the winter day look and never accumulates cloud dimming',()=>{
   expect(sampleDaytime(12,'winter').look.sunColor.multiplier).toBe(10);expect(sampleDaytime(12,'winter').look.textureColorLUT).toContain('winter');

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Qdrr",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_dirtrough_diffuse.dds",
+      "sha256": "9a7d731f0b552935810b70d15195aaefbff8a051deae2a16e272cc36917a634b"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/villagefall/villagefall_dirtrough_normal.dds",
+      "sha256": "f03f47f4c6bef70351760f55f82d368c8727c832a3dd29536b460b00c0d92b87"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_dirtrough_orm.dds",
+      "sha256": "4670a47f685157421b0a6db57c01486bd03cf03cca5ae6624208fa3c8a10842d"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Qdrr",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\VillageFall",
+    "file": "VillageFall_DirtRough",
+    "comment": "Rough Dirt",
+    "name": "WESTRING_TILE_ROUGH_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "1",
+    "convertTo": "Ldro,Fdro,Wdro,Bdsd,Adrd,Cdrd,Ndrd,Ydtr,Vdrr,Xdtr,Dbrk,Gbrk,Zdtr,Idtr,Odtr",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

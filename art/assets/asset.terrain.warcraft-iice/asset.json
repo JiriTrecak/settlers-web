@@ -1,0 +1,221 @@
+{
+  "version": 1,
+  "id": "asset.terrain.warcraft-iice",
+  "name": "Ice · Icecrown",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "warcraft",
+    "ground",
+    "Iice"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "daceda6e79a35276621e4796bb2ec476d5944ac177336f34e18f8b7d67fcffa8",
+      "bytes": 2376089
+    },
+    {
+      "role": "data",
+      "index": 2,
+      "format": "bin",
+      "sha256": "8be8e9281da6075eee859b39f202d8e3a41d4ef44cb0cb417f63fccb746f0a55",
+      "bytes": 314927
+    },
+    {
+      "role": "data",
+      "index": 3,
+      "format": "bin",
+      "sha256": "ddb406d52f3d6792683abbfcfe7a6ff9fab288f2cbd61cf23e49d4a896e0f96f",
+      "bytes": 4101
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "95b7b276270dfbd7c844f7b9657b26b3c01e96d7d3586f4e80f97091b4817423",
+      "bytes": 1894327,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "75df7df7f75fd93b72183286844c16fafaf79d4606386aed6141d81d0c119feb",
+      "bytes": 285300,
+      "colorSpace": "none"
+    },
+    {
+      "role": "occlusion",
+      "index": 1,
+      "format": "png",
+      "sha256": "b50c7a4ae38a89827e53957af4a6e02ef91b3510c630fc1cb49e7ba8cba10e1c",
+      "bytes": 8539,
+      "colorSpace": "none"
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "c1b724b5297ab317798ae7cd33af128c06de1f417eaca52781e892f661c38725",
+      "bytes": 970296,
+      "colorSpace": "none"
+    },
+    {
+      "role": "metalness",
+      "index": 1,
+      "format": "png",
+      "sha256": "bb2e418aa6161528ea550aabcb885ed8ce6c8c6dc144e20dab289976c68a82b2",
+      "bytes": 6212,
+      "colorSpace": "none"
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "0582e6ac467a34d753c3f8e2b7c1044d5570c268fc840ecd3b77c470d4f7e30e",
+      "bytes": 74372,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "bin",
+      "sha256": "8570750a70612e2486cd9ae8b85cf2ab7812406a46e1c25fd33c3a0ccf6281e3",
+      "bytes": 2796368
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "bin",
+      "sha256": "0d2fae126bf49602ac03a0d60816a011b9c37eb1da8c349bdca6b4a098dd70bc",
+      "bytes": 2796368
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "bin",
+      "sha256": "1f61e21b59ea438631ef3d657531577b9e6d17becdeec09d4f7ad454594f8c40",
+      "bytes": 2796368
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "e6a307bb159b0f758b94f91a904da641d9b034b896601aca9c9f9a5d3ff82926",
+      "bytes": 1447
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "import",
+    "licenseNote": "User-supplied Rebirth replacements with missing channels from the local Warcraft III: Reforged installation. Original sources retain their respective rights.",
+    "sourceHash": "2019e1849a3e5d6581eff97f4b8f0a493f8557ce4b2f00ecfbe6e48770d78d68"
+  },
+  "terrain": {
+    "tileWorldSize": 4,
+    "reflectance": 0.25,
+    "sourceIds": [
+      "Iice"
+    ],
+    "atlas": {
+      "columns": 8,
+      "rows": 4,
+      "fullTiles": [
+        4,
+        5,
+        6,
+        7,
+        12,
+        13,
+        14,
+        15,
+        20,
+        21,
+        22,
+        23,
+        28,
+        29,
+        30,
+        31,
+        27,
+        0
+      ],
+      "corners": [
+        null,
+        16,
+        8,
+        24,
+        2,
+        18,
+        10,
+        26,
+        1,
+        17,
+        9,
+        25,
+        3,
+        19,
+        11,
+        27
+      ]
+    },
+    "albedo": {
+      "role": "albedo",
+      "index": 1
+    },
+    "normal": {
+      "role": "normal",
+      "index": 1
+    },
+    "occlusion": {
+      "role": "occlusion",
+      "index": 1
+    },
+    "roughness": {
+      "role": "roughness",
+      "index": 1
+    },
+    "metalness": {
+      "role": "metalness",
+      "index": 1
+    },
+    "thumbnail": {
+      "role": "image",
+      "index": 1
+    },
+    "runtime": {
+      "albedoRoughness": {
+        "role": "data",
+        "index": 1
+      },
+      "normalOpacity": {
+        "role": "data",
+        "index": 2
+      },
+      "occlusionMetalness": {
+        "role": "data",
+        "index": 3
+      }
+    }
+  }
+}

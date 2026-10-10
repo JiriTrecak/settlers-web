@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Bdrr",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/barrens/barrens_pebbles_diffuse.dds",
+      "sha256": "b7ea817c9f250ba672cb150714997a7ce22fbf0c133f6ba8dc16f3325a1731f1"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/barrens/barrens_pebbles_normal.dds",
+      "sha256": "43aadf1c9a18988214adf2fe1b2b7c84ac3ab2f6e8be30e63aa82fc702a401dd"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_pebbles_orm.dds",
+      "sha256": "fa5f887286408680d5aad155b9ef88d2ccf480f75043fef93351a1cb775086e4"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Bdrr",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Barrens",
+    "file": "Barrens_Pebbles",
+    "comment": "Pebbles",
+    "name": "WESTRING_TILE_PEBBLES",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "6",
+    "convertTo": "Lrok,Frok,Wrok,Avin,Cvin,Nsnr,Ybtl,Vcbp,Qcbp,Xbtl,Drds,Grds,Zbks,Ibkb,Osmb",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

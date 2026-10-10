@@ -9,12 +9,11 @@ import {projectScene} from '../shared/authoring/project';
 import type { ContentRegistry } from "./registry";
 import { placementSchema, campSchema, type Placement } from "./schema";
 import type { UtcMap } from "../shared/map/utcmap";
-import {HeightField,decodeHeight} from '../shared/map/height';
 import {bridgeSurfaces,surfaceHeight} from '../shared/map/bridgeSurface';
 
 function placementFloors(map:UtcMap){
- const compiled=projectScene(map),field=compiled?.field??new HeightField(map.size);if(!compiled&&map.height)field.load(decodeHeight(map.height,map.size)??[],map.waterLevel??0,map.landscape?.importedTerrain);
- const decks=new Map(bridgeSurfaces(compiled?.stamps??map.stamps,(x,z)=>field.sample(x,z)).map(d=>[d.id,d]));
+ const compiled=projectScene(map),field=compiled.field;
+ const decks=new Map(bridgeSurfaces(compiled.stamps,(x,z)=>field.sample(x,z)).map(d=>[d.id,d]));
  return (p:Placement['position'])=>{
   if(!p.surface)return field.sample(p.x,p.y);
   const deck=decks.get(p.surface);return deck?surfaceHeight(deck,p.x,p.y):undefined;
@@ -22,9 +21,9 @@ function placementFloors(map:UtcMap){
 }
 
 /** Expansion is pure author data → explicit placements, never a separate simulation constructor. */
-export function expandMap(map: UtcMap, registry: ContentRegistry, slots: readonly Slot[] = []): Placement[] {
+export function expandDeclaredMap(map: UtcMap, registry: ContentRegistry, slots: readonly Slot[] = []): Placement[] {
   for(const slot of slots)raceDefinition(registry.rules,slot.race);
-  const result = [...map.entities,...(projectScene(map)?.resources??[])];
+  const result = [...map.entities];
   for (const s of map.mission || map.sandbox ? [] : map.playerStarts) {
     const setup = raceDefinition(registry.rules,slots.find(slot=>slot.player===s.player-1)?.race).startingSetup;
     if (s.setup !== registry.rules.startingSetup.id && !Object.values(registry.rules.races).some(r=>r.startingSetup?.id===s.setup))
@@ -54,6 +53,10 @@ export function expandMap(map: UtcMap, registry: ContentRegistry, slots: readonl
     );
   }
   return result.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+}
+/** Include resource placements projected from ordinary authored scenery. */
+export function expandMap(map:UtcMap,registry:ContentRegistry,slots:readonly Slot[]=[]):Placement[]{
+ return [...expandDeclaredMap(map,registry,slots),...projectScene(map).resources].sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
 }
 export function validatePlacements(
   map: UtcMap,
@@ -263,7 +266,7 @@ export function placementOccupancyError(
 export function startingResourceClearanceError(map:UtcMap,registry:ContentRegistry):string|null {
  if(map.mission||map.sandbox)return null;
  const hall=registry.get(registry.rules.startingSetup.fort);
- const resources=[...map.entities,...(projectScene(map)?.resources??[])];
+ const resources=[...map.entities,...projectScene(map).resources];
  for(const s of map.playerStarts)for(const resource of resources){
   const definition=registry.get(resource.definition),clearance=definition.constructionClearance;
   if(clearance===undefined||resource.activation==='script'||(resource.initialState?.amount??definition.yield??0)<=0)continue;

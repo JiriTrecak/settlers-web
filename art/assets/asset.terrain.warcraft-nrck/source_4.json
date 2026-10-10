@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Nrck",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_rock_diffuse.dds",
+      "sha256": "9f5380cc3e1067f5fa9a8622cd6bc79c79a94d5c7ade7edb210b00816661138c"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/northrend/north_rock_normal.dds",
+      "sha256": "306183245c0fb9b4a55acf2d4b0875ea216fb40969c34047805e5520f4ce4891"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_rock_orm.dds",
+      "sha256": "a9f7112ce6f03d9a8569658e978ebe31fb9aa0f276b08ad3f5aabf11befdb860"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Nrck",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Northrend",
+    "file": "North_rock",
+    "comment": "Rock",
+    "name": "WESTRING_TILE_ROCK",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "6",
+    "convertTo": "Lrok,Frok,Wrok,Bflr,Arck,Crck,Ybtl,Vrck,Qrck,Xbtl,Ddkr,Gdkr,Zbkl,Irbk,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

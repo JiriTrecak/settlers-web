@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Zdtr",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_dirtrough_diffuse.dds",
+      "sha256": "e4e6da2caf06bc4f58c1edc074ca97c4aaa2b148314d55eb5554266c09931820"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_dirtrough_normal.dds",
+      "sha256": "a6193f461e906311959028cedb1722e540a628c1fb1c4e4afa82ad498f36eb0a"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_dirtrough_orm.dds",
+      "sha256": "46b2b18320e9bdfafad181662cd82ab2fbdb1d6980a3a91445b19b411c08e3a2"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Zdtr",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Ruins",
+    "file": "Ruins_DirtRough",
+    "comment": "Rough Dirt",
+    "name": "WESTRING_TILE_ROUGH_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "1",
+    "convertTo": "Ldro,Fdro,Wdro,Bdsd,Adrd,Cdrd,Ndrd,Ydtr,Vdrr,Qdrr,Xdtr,Dbrk,Gbrk,Idtr,Odtr",
+    "InBeta": "1",
+    "version": "1"
+  }
+}

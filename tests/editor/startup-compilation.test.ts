@@ -2,7 +2,7 @@ import {afterEach,expect,it,vi} from 'vitest';
 import {MapCompilerRuntime} from '../../src/shared/authoring/worker/runtime';
 import type {CompileRequest} from '../../src/shared/authoring/worker/protocol';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
-import {authoringSceneSchema} from '../../src/shared/authoring/layers';
+import {mapPreviewSceneSchema} from '../../src/shared/authoring/layers';
 const state=vi.hoisted(()=>({renderers:[] as any[],assets:Promise.resolve()}));
 vi.mock('../../src/render',async importOriginal=>({
  ...await importOriginal<typeof import('../../src/render')>(),
@@ -29,10 +29,17 @@ class CompilerWorker {
  finish(){const {reply,transfer}=this.runtime.compile(this.requests.shift()!);this.onmessage?.({data:structuredClone(reply,{transfer})} as MessageEvent);}
 }
 const flush=async()=>{for(let i=0;i<30;i++)await Promise.resolve();};
+it('has committed terrain before the screen installs its asset library',()=>{
+ const editor=new WorldEditor({} as HTMLCanvasElement,{host:{} as HTMLElement});
+ expect(()=>editor.setLibrary(new Map(),new Map())).not.toThrow();
+ expect(editor.layers.mapInput.terrain).toEqual(editor.map.authoring.terrain);
+ expect(editor.height.waterAt(100,100)).toBe(-1);
+ editor.stop();
+});
 function setup(){
  vi.stubGlobal('Worker',CompilerWorker);
  const editor=new WorldEditor({} as HTMLCanvasElement,{host:{} as HTMLElement});
- const map={...emptyUtcMap(),authoring:authoringSceneSchema.parse({version:1,layers:[],objects:[{id:'oak',asset:'asset.models.environment.canopy-oak',x:20,z:20}]})};
+ const map={...emptyUtcMap(),authoring:mapPreviewSceneSchema.parse({version:1,terrain:emptyUtcMap().authoring!.terrain,layers:[],objects:[{id:'oak',asset:'asset.models.environment.canopy-oak',x:20,z:20}]})};
  editor.replace(map);return {editor,map,worker:CompilerWorker.all[0]!};
 }
 afterEach(()=>{vi.unstubAllGlobals();CompilerWorker.all=[];state.renderers=[];state.assets=Promise.resolve();});

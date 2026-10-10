@@ -1,0 +1,221 @@
+{
+  "version": 1,
+  "id": "asset.terrain.warcraft-wrok",
+  "name": "Rock · LordaeronWinter",
+  "kind": "terrain-material",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "warcraft",
+    "ground",
+    "Wrok"
+  ],
+  "resources": [
+    {
+      "role": "data",
+      "index": 1,
+      "format": "bin",
+      "sha256": "a494c256f84ddcbcb31654f2da8c5cd201827c88a97f2bf0d4d33fa2f7d94105",
+      "bytes": 2282267
+    },
+    {
+      "role": "data",
+      "index": 2,
+      "format": "bin",
+      "sha256": "70c9fe1e9436224941e1721990003fb1eaa7fc4d58e2fb01c520b7ee0eefac60",
+      "bytes": 3155071
+    },
+    {
+      "role": "data",
+      "index": 3,
+      "format": "bin",
+      "sha256": "4adbfa4833e519171ccfbbd231ca772394e1e6202b7f0076c79ddb476ccc10f2",
+      "bytes": 91649
+    },
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "1c948912970e56a2311527a3872ccb61ab8f685c6816f87fb06f09fb2c1813ea",
+      "bytes": 1507845,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "e571583b6d78db3ac7297d91fe3c4b7569ec06177c678d3f008a757810a53628",
+      "bytes": 5463073,
+      "colorSpace": "none"
+    },
+    {
+      "role": "occlusion",
+      "index": 1,
+      "format": "png",
+      "sha256": "e8d55299ff1aab529ca31fc61e55c65146b7b23c8e396b247e0ae6f702d9f02d",
+      "bytes": 113190,
+      "colorSpace": "none"
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "597b37a93f111c431ace9f8889bb03c46781c9da6e1f35ba9de83ba7d23d4e44",
+      "bytes": 1265096,
+      "colorSpace": "none"
+    },
+    {
+      "role": "metalness",
+      "index": 1,
+      "format": "png",
+      "sha256": "bb2e418aa6161528ea550aabcb885ed8ce6c8c6dc144e20dab289976c68a82b2",
+      "bytes": 6212,
+      "colorSpace": "none"
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "7ca112340c47adcabfc9ed1b82ad9c4b01ab16d0bb6bff5d198edb9d9eb7f47d",
+      "bytes": 37715,
+      "colorSpace": "srgb"
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "bin",
+      "sha256": "e0ec75f21b6e8afdc9ef4deaf8fb2001b0d596487ab9e3d3531c5c1a03d44c62",
+      "bytes": 2796368
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "bin",
+      "sha256": "0c9ee6b47c53b854ae47b8cb64f15b486a7aaa107125744b3f09fdad454fb1f6",
+      "bytes": 2796368
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "bin",
+      "sha256": "68bbf012dc74462a69d22dab3be50addf5073c9fd810a22cbf604f30b2e76141",
+      "bytes": 2796368
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "302ee2eae31b5aa3a51ff0db1ddc4715f04a523c512d1584ad773763e3735e7f",
+      "bytes": 1519
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "import",
+    "licenseNote": "User-supplied Rebirth replacements with missing channels from the local Warcraft III: Reforged installation. Original sources retain their respective rights.",
+    "sourceHash": "66879417283899084599afe35d69c7653d48bfcb94872678ebd8083922b39b22"
+  },
+  "terrain": {
+    "tileWorldSize": 4,
+    "reflectance": 0.25,
+    "sourceIds": [
+      "Wrok"
+    ],
+    "atlas": {
+      "columns": 8,
+      "rows": 4,
+      "fullTiles": [
+        4,
+        5,
+        6,
+        7,
+        12,
+        13,
+        14,
+        15,
+        20,
+        21,
+        22,
+        23,
+        28,
+        29,
+        30,
+        31,
+        27,
+        0
+      ],
+      "corners": [
+        null,
+        16,
+        8,
+        24,
+        2,
+        18,
+        10,
+        26,
+        1,
+        17,
+        9,
+        25,
+        3,
+        19,
+        11,
+        27
+      ]
+    },
+    "albedo": {
+      "role": "albedo",
+      "index": 1
+    },
+    "normal": {
+      "role": "normal",
+      "index": 1
+    },
+    "occlusion": {
+      "role": "occlusion",
+      "index": 1
+    },
+    "roughness": {
+      "role": "roughness",
+      "index": 1
+    },
+    "metalness": {
+      "role": "metalness",
+      "index": 1
+    },
+    "thumbnail": {
+      "role": "image",
+      "index": 1
+    },
+    "runtime": {
+      "albedoRoughness": {
+        "role": "data",
+        "index": 1
+      },
+      "normalOpacity": {
+        "role": "data",
+        "index": 2
+      },
+      "occlusionMetalness": {
+        "role": "data",
+        "index": 3
+      }
+    }
+  }
+}

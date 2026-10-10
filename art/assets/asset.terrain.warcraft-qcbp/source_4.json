@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Qcbp",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_cobblepath_diffuse.dds",
+      "sha256": "1b12a811401e1d5c97cf539bc495bd4dec685d6983cccbf8a11d920d8cab7e71"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/villagefall/villagefall_cobblepath_normal.dds",
+      "sha256": "8195aad746e7f9ef4d51fb603fdf7583c9efc1c3fd2ca42950668f0893ba2f1a"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_cobblepath_orm.dds",
+      "sha256": "e23484fe94b6d6f87d151373c2bf37a78b6d89dbfa626aa580422fe727dadc26"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Qcbp",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\VillageFall",
+    "file": "VillageFall_CobblePath",
+    "comment": "Cobble Path",
+    "name": "WESTRING_TILE_COBBLE_PATH",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "5",
+    "convertTo": "Ldro,Fdro,Wdro,Bdsd,Adrd,Cdrd,Ndrd,Ydtr,Vcbp,Xdtr,Dbrk,Gbrk,Zbks,Ibkb,Osmb",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

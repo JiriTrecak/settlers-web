@@ -9,7 +9,7 @@ import {hitLayer,hitLayers} from '../select/layerHit';
 import {walkStampSchema} from '../../shared/map/utcmap';
 import {AuthoringHistory,type SceneSelection} from '../../shared/authoring/history';
 import type {SceneEdit} from '../../shared/authoring/sceneCommands';
-import {cleanupPreview,type CleanupRequest} from '../../shared/authoring/cleanup';
+import {cleanupPreview,cleanupKinds,type CleanupRequest} from '../../shared/authoring/cleanup';
 import {captureTerrain} from '../../shared/authoring/captureTerrain';
 import {restoreTerrain} from '../../shared/map/terrainData';
 import {editTerrainGrid,type GridTerrainEdit} from '../../shared/authoring/gridTerrain';
@@ -27,7 +27,7 @@ import {renameEntity} from "./entityAuthoring";
 import {validatePlacements} from "../../content/map";
 import {sculptPlateau,sculptRamp} from '../../shared/landscape/tacticalAuthoring';
 import { content } from "../../content/builtin";
-import { expandMap } from "../../content/map";
+import { expandMap, expandDeclaredMap } from "../../content/map";
 import { type Owner } from "../../content/schema";
 import {
   editorEntities,
@@ -136,11 +136,11 @@ export type EditorShotOpts = {
 export class WorldEditor {
   map: UtcMap = emptyUtcMap();
   readonly authoringAssets=landscapeAssets;
-  layers=new AuthoringHistory({version:1,layers:[],objects:[]});
+  layers=new AuthoringHistory({...this.map.authoring,layers:[]});
   private previewInput?:{map:UtcMap;revision:number;value:PreviewMap};
   private previewMap():PreviewMap{
     if(this.previewInput?.map===this.map&&this.previewInput.revision===this.layers.revision)return this.previewInput.value;
-    const value={...this.map,authoring:this.layers.input};this.previewInput={map:this.map,revision:this.layers.revision,value};return value;
+    const value={...this.map,authoring:this.layers.mapInput};this.previewInput={map:this.map,revision:this.layers.revision,value};return value;
   }
   private compiledScene:CompiledMapScene|null=null;
   private compiledInputs:unknown[]=[];
@@ -202,7 +202,7 @@ export class WorldEditor {
     if(!compiler){
       this.layers.decorations={stamps:this.map.stamps,decals:this.map.landscape?.decals??[]};
       const next=this.layers.fork();change(next);
-      const compiled=updateMapScene(this.map,{...this.map,stamps:next.decorations.stamps,authoring:next.input},this.compiledMap(),this.authoringAssets);
+      const compiled=updateMapScene(this.previewMap(),{...this.map,stamps:next.decorations.stamps,authoring:next.mapInput},this.compiledMap(),this.authoringAssets);
       this.layers=next;this.commitLayers(compiled);after?.();return;
     }
     const epoch=this.compileEpoch;
@@ -213,7 +213,7 @@ export class WorldEditor {
         if(epoch!==this.compileEpoch)throw new Error('Map changed before edit completed');
         const history=this.layers;history.decorations={stamps:this.map.stamps,decals:this.map.landscape?.decals??[]};
         const next=history.fork(),selection=history.selection,inputs=sceneInputs(this.map);change(next);
-        const map={...this.map,stamps:next.decorations.stamps,authoring:next.input},compiled=await compiler.compile(map);
+        const map={...this.map,stamps:next.decorations.stamps,authoring:next.mapInput},compiled=await compiler.compile(map);
         if(epoch!==this.compileEpoch)throw new Error('Map changed before edit completed');
         if(history!==this.layers||sceneInputs(this.map).some((v,i)=>v!==inputs[i]))continue;
         const previous=this.compiledScene;
@@ -299,15 +299,14 @@ export class WorldEditor {
   async editGridTerrain(edit:GridTerrainEdit){
     await this.editsReady();
     if(this.layers.scene.layers.length)throw Error('Apply or remove generator previews before editing terrain cells');
-    const initial=captureTerrain(this.compiledMap().field);
     await this.editScene(history=>{
       if(history.scene.layers.length)throw Error('Apply or remove generator previews before editing terrain cells');
-      const result=editTerrainGrid(history.scene.terrain??initial,edit);
+      const result=editTerrainGrid(history.document.terrain,edit);
       if(result.samples)history.setTerrain(result.terrain);
     });
   }
   undoLayers(redo=false){return this.editScene(history=>{if(redo)history.redo();else history.undo();},()=>{if(this.paintingLayer){const l=this.layers.scene.layers.find(l=>l.id===this.paintingLayer!.id);this.paintingLayer=l?structuredClone(l):{...this.paintingLayer,shape:{type:'mask',elevation:-.6,strokes:[]}};}});}
-  private commitLayers(compiled?:CompiledMapScene,notify=true){const {height:_,waterLevel:__,...document}=this.map;this.map={...document,stamps:this.layers.decorations.stamps,landscape:{...(this.map.landscape??emptyLandscape()),decals:[...this.layers.decorations.decals]},authoring:this.layers.document};this.renderer?.setLandscape(this.map.landscape!);if(this.map.authoring?.terrain)restoreTerrain(this.height,this.map.authoring.terrain);if(compiled)rememberProjectScene(this.previewMap(),compiled);if(notify){this.paint();this.hooks.onChange?.();this.hooks.onSelect?.();}}
+  private commitLayers(compiled?:CompiledMapScene,notify=true){this.map={...this.map,stamps:this.layers.decorations.stamps,landscape:{...(this.map.landscape??emptyLandscape()),decals:[...this.layers.decorations.decals]},authoring:this.layers.document};this.renderer?.setLandscape(this.decalLandscape());restoreTerrain(this.height,this.map.authoring.terrain);if(compiled)rememberProjectScene(this.previewMap(),compiled);if(notify){this.paint();this.hooks.onChange?.();this.hooks.onSelect?.();}}
   authoringCamera(mode:'top'|'free'|'game'){
     const camera=this.renderer?.camera;if(!camera)return;this.gameCam=mode==='game';camera.setGame(this.gameCam,this.map.size);
     if(mode==='top')camera.setTopDown();else if(mode==='free')camera.pose({pitch:ISO_PITCH,yaw:ISO_YAW});
@@ -420,7 +419,7 @@ export class WorldEditor {
   tool: EditorTool | null = "select";
   asset: string | null = null;
   terrainMode:
-    | 'grid-level' | 'grid-shallow' | 'grid-deep' | 'grid-dry' | 'grid-material'
+    | 'grid-level' | 'grid-shallow' | 'grid-deep' | 'grid-dry' | 'grid-material' | 'grid-ramp'
     | "terrain"
     | "river"
     | "shallows"
@@ -435,6 +434,14 @@ export class WorldEditor {
     | "basin" = "grid-level";
   terrainGridLevel=0;
   terrainGridMaterial='';
+  terrainGridErase=false;
+  terrainGridEdge:'cliff'|'bank'='cliff';
+  terrainGridBankCells=1;
+  terrainRampFromLevel=0;
+  terrainRampToLevel=1;
+  terrainRampDirection:'north'|'east'|'south'|'west'='north';
+  private terrainApplication:Promise<void>|undefined;
+  get applyingTerrain(){return !!this.terrainApplication;}
   terrainLayer: TerrainLayer = "sand";
   private terrainSize = readBrushSize("terrain", 64);
   get terrainRadius(): number {
@@ -451,6 +458,10 @@ export class WorldEditor {
   decalRotation = 0;
   decalOpacity = 1;
   decalMode: "place" | "select" | "erase" = "place";
+  private decalDraft:GroundDecal[]=[];
+  private decalApplying=false;
+  get decalPreview():readonly GroundDecal[]{return this.decalDraft;}
+  get applyingDecals(){return this.decalApplying;}
   selectedDecal: string | null = null;
   private lastDecalPoint: { x: number; z: number } | null = null;
   terrainAspect = 1;
@@ -473,7 +484,7 @@ export class WorldEditor {
     const points=this.cleanPoints;if(!points.length)return null;
     const area=this.cleanShape==='brush'?{type:'brush' as const,points,radius:this.clean.radius}:this.cleanShape==='rectangle'?{type:'rectangle' as const,from:points[0],to:points.at(-1)!}:points.length>=3?{type:'lasso' as const,points}:null;
     if(!area)return null;
-    return {area,kinds:this.clean.type==='trees'?['tree']:this.clean.type==='foliage'?['tree','foliage']:this.clean.type==='props'?['prop']:this.clean.type==='decals'?['decal']:['tree','foliage','prop','building','bridge','decal'],...(this.cleanAsset?{assets:[this.cleanAsset]}:{})};
+    return {area,kinds:cleanupKinds(this.clean.type),...(this.cleanAsset?{assets:[this.cleanAsset]}:{})};
   }
   refreshCleanPreview(){const request=this.cleanRequest();this.cleanPreview=request?cleanupPreview(this.layers.scene,request,this.authoringAssets,{stamps:this.map.stamps,decals:this.map.landscape?.decals??[]}):null;
     if(request){const a=request.area;let outline:{x:number;z:number}[]=[];
@@ -511,6 +522,7 @@ export class WorldEditor {
       onSelect?: () => void;
     },
   ) {
+    restoreTerrain(this.height,this.map.authoring.terrain);
     this.brush.setRadius(readBrushSize("brush"));
     this.clean.setRadius(readBrushSize("clean"));
     this.sculpt.setRadius(readBrushSize("sculpt"));
@@ -531,8 +543,9 @@ export class WorldEditor {
     this.selectedEntity = null;
     this.select.clear();
     this.selectedDecal = null;
+    this.decalDraft=[];this.lastDecalPoint=null;
     this.loadHeight(map);
-    this.renderer?.setLandscape(this.map.landscape ?? emptyLandscape());
+    this.renderer?.setLandscape(this.decalLandscape());
     this.restartCompiler();
     if(this.compiler)this.rebuildSurface();else this.paint();
     if(!this.renderer)this.startupProfile?.mark('Prepare map document');
@@ -623,25 +636,18 @@ export class WorldEditor {
       return;
     }
     const id = this.select.id;
-    if (!id) return;
-    this.map = {
-      ...this.map,
-      stamps: this.map.stamps.filter((s) => s.id !== id),
-    };
-    this.select.clear();
-    this.paint();
-    this.hooks.onChange?.();
-    this.hooks.onSelect?.();
+    if (id) this.removeStamp(id);
   }
 
   setStampWalk(id:string,raw:unknown):void {
     const walk=raw===null?undefined:walkStampSchema.parse(raw);
-    if(!this.map.stamps.some(s=>s.id===id))throw new Error('Unknown walk surface stamp');
-    this.map={...this.map,stamps:this.map.stamps.map(s=>{
+    const stamp=this.map.stamps.find(s=>s.id===id);
+    if(!stamp)throw new Error('Unknown walk surface stamp');
+    if(stamp.locked)throw new Error('Stamp is locked');
+    this.commitStamps(this.map.stamps.map(s=>{
       if(s.id!==id)return s;
       const {walk:previous,...base}=s;return {...base,...(walk?{walk}:{})};
-    })};
-    this.paint();this.hooks.onChange?.();this.hooks.onSelect?.();
+    }));
   }
   selectedStamp(): MapStamp | null {
     const id = this.select.id;
@@ -746,24 +752,10 @@ export class WorldEditor {
       },
     );
     if (!poses.length) return;
-    this.map = {
-      ...this.map,
-      stamps: [
-        ...this.map.stamps,
-        ...poses.map((p) => ({
-          id: crypto.randomUUID(),
-          asset: p.asset,
-          x: p.x,
-          y: p.y,
-          yaw: p.yaw,
-          ...(p.scale !== 1 ? { scale: p.scale } : {}),
-        })),
-      ],
-    };
+    const stamps=poses.map(p=>({id:crypto.randomUUID(),asset:p.asset,x:p.x,y:p.y,yaw:p.yaw,...(p.scale!==1?{scale:p.scale}:{})}));
+    this.commitStamps([...this.map.stamps,...stamps]);
     this.brush.clear();
     this.syncPaintView();
-    this.paint();
-    this.hooks.onChange?.();
     this.hooks.onBrush?.();
   }
 
@@ -793,9 +785,7 @@ export class WorldEditor {
       ...(elevation !== undefined ? { elevation } : {}),
       ...(variant ? { variant } : {}),
     };
-    this.map = { ...this.map, stamps: [...this.map.stamps, stamp] };
-    this.paint();
-    this.hooks.onChange?.();
+    this.commitStamps([...this.map.stamps,stamp]);
     return stamp;
   }
 
@@ -803,30 +793,43 @@ export class WorldEditor {
     this.terrainPoints = [];
     this.renderer?.previewCurve([]);
   }
-  applyTerrainCurve(): void {
+  applyTerrainCurve(): Promise<void> {
+    if(this.terrainApplication)return this.terrainApplication;
+    const pending=this.applyTerrainSelection().finally(()=>{if(this.terrainApplication===pending)this.terrainApplication=undefined;});
+    this.terrainApplication=pending;return pending;
+  }
+  private async applyTerrainSelection():Promise<void> {
     if (!this.terrainPoints.length) return;
+    const selectionPoints=this.terrainPoints,pointsSnapshot=selectionPoints.slice();
+    // A worker may finish after the user has started a different selection.
+    const clearAppliedSelection=()=>{if(this.terrainPoints===selectionPoints&&selectionPoints.length===pointsSnapshot.length&&selectionPoints.every((p,i)=>p===pointsSnapshot[i]))this.clearTerrainCurve();};
     if(this.terrainMode.startsWith('grid-')){
       const {cellSize,origin}=TERRAIN_AUTHORING;
-      const points=this.terrainPoints.map(p=>({x:Math.round((p.x-origin)/cellSize*2)/2,z:Math.round((p.z-origin)/cellSize*2)/2}));
-      const a=this.terrainPoints[0],b=this.terrainPoints.at(-1)!;
+      const points=pointsSnapshot.map(p=>({x:Math.round((p.x-origin)/cellSize*2)/2,z:Math.round((p.z-origin)/cellSize*2)/2}));
+      const a=pointsSnapshot[0],b=pointsSnapshot.at(-1)!;
       const selection:GridTerrainEdit['selection']=this.terrainCurve?{type:'polygon',points}:{type:'rectangle',from:{x:Math.floor((Math.min(a.x,b.x)-origin)/cellSize),z:Math.floor((Math.min(a.z,b.z)-origin)/cellSize)},to:{x:Math.floor((Math.max(a.x,b.x)-origin)/cellSize)+1,z:Math.floor((Math.max(a.z,b.z)-origin)/cellSize)+1}};
       const type=this.terrainMode,level=this.terrainGridLevel;
-      const operation:GridTerrainEdit['operation']=type==='grid-shallow'||type==='grid-deep'?{type:'water',surfaceLevel:level,depth:type==='grid-shallow'?'shallow':'deep'}:type==='grid-material'?{type:'material',material:this.terrainGridMaterial}:{type:type==='grid-dry'?'dry':'level',level};
-      void this.editGridTerrain({selection,operation}).catch(error=>{this.entityMessage=(error as Error).message;this.hooks.onSelect?.();});
-      this.clearTerrainCurve();return;
+      const operation:GridTerrainEdit['operation']=type==='grid-shallow'||type==='grid-deep'
+        ?{type:'water',surfaceLevel:level,depth:type==='grid-shallow'?'shallow':'deep',bankCells:this.terrainGridBankCells}
+        :type==='grid-material'?{type:'material',material:this.terrainGridMaterial,...(this.terrainGridErase?{erase:true}:{})}
+        :type==='grid-ramp'?{type:'ramp',fromLevel:this.terrainRampFromLevel,toLevel:this.terrainRampToLevel,direction:this.terrainRampDirection}
+        :type==='grid-dry'?{type:'dry',level}
+        :{type:'level',level,edge:this.terrainGridEdge,bankCells:this.terrainGridBankCells};
+      await this.editGridTerrain({selection,operation});
+      clearAppliedSelection();return;
     }
     if(this.terrainMode === "plateau"){
-      if(this.terrainCurve)this.tacticalTerrain("plateau",this.terrainPoints,this.terrainDepth,this.terrainRadius);
-      else for(const p of this.terrainPoints){
+      if(this.terrainCurve)this.tacticalTerrain("plateau",pointsSnapshot,this.terrainDepth,this.terrainRadius);
+      else for(const p of pointsSnapshot){
         const outline=Array.from({length:32},(_,i)=>({x:p.x+Math.cos(i*Math.PI/16)*this.terrainRadius,z:p.z+Math.sin(i*Math.PI/16)*this.terrainRadius}));
         this.tacticalTerrain("plateau",outline,this.terrainDepth,this.terrainRadius);
       }
-    } else if(this.terrainMode === "ramp")this.tacticalTerrain("ramp",this.terrainPoints,this.terrainDepth,this.terrainRadius);
+    } else if(this.terrainMode === "ramp")this.tacticalTerrain("ramp",pointsSnapshot,this.terrainDepth,this.terrainRadius);
     else if (
       this.terrainMode === "hill" ||
       this.terrainMode === "basin"
     ) {
-      const p = this.terrainPoints[0]!;
+      const p = pointsSnapshot[0]!;
       this.landform({
         x: p.x,
         z: p.z,
@@ -840,13 +843,13 @@ export class WorldEditor {
       });
     } else
       this.curveStroke({
-        points: this.terrainPoints,
+        points: pointsSnapshot,
         radius: this.terrainRadius,
         depth: this.terrainDepth,
         mode: this.terrainMode as 'raise'|'smooth'|'flatten',
         layer: this.terrainLayer,
       });
-    this.clearTerrainCurve();
+    clearAppliedSelection();
   }
   private addTerrainPoint(x: number, z: number): void {
     const prev = this.terrainPoints.at(-1);
@@ -909,7 +912,7 @@ export class WorldEditor {
         }
       this.commitHeight();
     }
-    this.renderer?.setLandscape(this.map.landscape ?? emptyLandscape());
+    this.renderer?.setLandscape(this.decalLandscape());
     this.paint();
     this.hooks.onChange?.();
   }
@@ -930,9 +933,40 @@ export class WorldEditor {
     const landscape=this.map.landscape??emptyLandscape();
     const environment=environmentConditions({...landscape.environment,hour:this.sky?.hour??landscape.environment.hour,...settings});
     this.map={...this.map,landscape:{...landscape,environment}};
-    this.renderer?.setLandscape(this.map.landscape!);this.hooks.onChange?.();this.paint();
+    this.renderer?.setLandscape(this.decalLandscape());this.hooks.onChange?.();this.paint();
   }
 
+  private decalLandscape(){
+    const landscape=this.map.landscape??emptyLandscape();
+    const ids=new Set(landscape.decals?.map(d=>d.id));
+    return this.decalDraft.length?{...landscape,decals:[...(landscape.decals??[]),...this.decalDraft.filter(d=>!ids.has(d.id))]}:landscape;
+  }
+  private refreshDecalPreview(){this.renderer?.setLandscape(this.decalLandscape());this.draw();this.hooks.onView?.();}
+  previewDecal(decal:GroundDecal){
+    if(this.decalApplying)throw Error('Wait for decal Apply to finish');
+    if(!validDecal(decal)||decal.x<0||decal.z<0||decal.x>=this.map.size||decal.z>=this.map.size)throw Error('Invalid decal or position outside the map');
+    const existing=this.map.landscape?.decals??[];
+    if(existing.some(d=>d.id===decal.id)||this.decalDraft.some(d=>d.id===decal.id))throw Error('Decal id already exists');
+    if(existing.length+this.decalDraft.length>=2048)throw Error('Decal limit reached');
+    this.decalDraft=[...this.decalDraft,{...decal}];this.refreshDecalPreview();
+  }
+  discardDecalPreview(){
+    if(this.decalApplying)throw Error('Wait for decal Apply to finish');
+    this.decalDraft=[];this.lastDecalPoint=null;this.refreshDecalPreview();
+  }
+  async applyDecalPreview(){
+    if(this.decalApplying)throw Error('Decals are already being applied');
+    if(!this.decalDraft.length)return;
+    const draft=this.decalDraft;this.decalApplying=true;this.hooks.onView?.();
+    try{
+      await this.editScene(history=>{
+        const existing=history.decorations.decals,ids=new Set(existing.map(d=>d.id));
+        if(existing.length+draft.length>2048)throw Error('Decal limit reached');
+        if(draft.some(d=>ids.has(d.id)))throw Error('Decal id already exists');
+        history.setDecorations({...history.decorations,decals:[...existing,...draft]});
+      },()=>{if(this.decalDraft===draft){this.decalDraft=[];this.lastDecalPoint=null;}this.refreshDecalPreview();});
+    }finally{this.decalApplying=false;this.hooks.onView?.();}
+  }
   putDecal(decal: GroundDecal):void|Promise<void> {
     if(!validDecal(decal))throw Error('Invalid decal');
     return this.editScene(history=>{
@@ -978,6 +1012,8 @@ export class WorldEditor {
   }
   private decalStroke(x: number, z: number, erase: boolean): void {
     if (erase || this.decalMode === "erase") {
+      const draft=decalAt(this.decalDraft,x,z);
+      if(draft){if(!this.decalApplying){this.decalDraft=this.decalDraft.filter(d=>d.id!==draft.id);this.refreshDecalPreview();}return;}
       const d = decalAt(this.map.landscape?.decals ?? [], x, z);
       if (d) this.removeDecal(d.id);
       return;
@@ -1001,7 +1037,7 @@ export class WorldEditor {
     )
       return;
     this.lastDecalPoint = { x, z };
-    this.putDecal({
+    this.previewDecal({
       id: crypto.randomUUID(),
       x,
       z,
@@ -1185,15 +1221,10 @@ export class WorldEditor {
   }
 
   removeStamp(id: string): boolean {
-    if (!this.map.stamps.some((s) => s.id === id)) return false;
-    this.map = {
-      ...this.map,
-      stamps: this.map.stamps.filter((s) => s.id !== id),
-    };
-    if (this.select.id === id) this.select.clear();
-    this.paint();
-    this.hooks.onChange?.();
-    this.hooks.onSelect?.();
+    const stamp=this.map.stamps.find(s=>s.id===id);
+    if(!stamp||stamp.locked)return false;
+    if(this.select.id===id)this.select.clear();
+    this.commitStamps(this.map.stamps.filter(s=>s.id!==id));
     return true;
   }
 
@@ -1205,7 +1236,6 @@ export class WorldEditor {
   }
 
   dabClean(wx: number, wz: number): void {
-    this.clean.beginStroke();
     this.cleanAt(wx, wz);
   }
 
@@ -1240,10 +1270,9 @@ export class WorldEditor {
     this.renderer = renderer;this.paintedMap=null;
     if(!this.compiler)this.restartCompiler();
     renderer.setKinds(this.kinds);
-    // Authored entities and starting setups are known before the procedural scene.
-    // Omit authoring here so expandMap cannot trigger a second synchronous compile.
-    renderer.prefetchWorldAssets(new Set(expandMap({...this.map,authoring:undefined},content).map(p=>p.appearance?.asset??content.get(p.definition).asset)),
-      {biome:this.map.biome,source:this.map.landscape?.importedTerrain});
+    // Prefetch declared entities and starting setups while the terrain worker runs.
+    renderer.prefetchWorldAssets(new Set(expandDeclaredMap(this.map,content).map(p=>p.appearance?.asset??content.get(p.definition).asset)),
+      {biome:this.map.biome});
     startup.mark('Start model and terrain prefetch');
     renderer.camera.locked = false;
     renderer.camera.lookAt(this.map.size / 2, this.map.size / 2);
@@ -1275,7 +1304,6 @@ export class WorldEditor {
           if(this.isPaintingLayer){this.paintStrokeStarted=false;return;}
           this.lastDecalPoint = null;
           if (this.tool === "terrain") this.clearTerrainCurve();
-          if (this.tool === "clean") this.clean.beginStroke();
           else if (this.tool === "sculpt") this.sculpt.beginStroke();
           else this.brush.beginStroke();
         },
@@ -1326,7 +1354,7 @@ export class WorldEditor {
     // A fresh renderer needs one upload. The worker can already be compiling
     // from replace(); never restart it or run a duplicate main-thread compile.
     this.compiledInputs=[];
-    renderer.setLandscape(this.map.landscape ?? emptyLandscape());
+    renderer.setLandscape(this.decalLandscape());
     startup.mark('Apply environment');
     this.paint();
     this.syncPaintView();
@@ -1458,7 +1486,7 @@ export class WorldEditor {
 
   private endStroke(): void {
     if (this.tool === "terrain" && !this.terrainCurve) {
-      this.applyTerrainCurve();
+      void this.applyTerrainCurve().catch(error=>{this.entityMessage=error instanceof Error?error.message:String(error);this.hooks.onSelect?.();});
       return;
     }
     if (this.tool !== "sculpt" || this.sculpt.mode !== "live") return;
@@ -1539,6 +1567,7 @@ export class WorldEditor {
     const hit = this.renderer?.pickGround(clientX, clientY);
     if (!hit) return false;
     this.layers.selection=null;
+    if(stamp.locked){this.select.select(stamp.id);this.paint();this.hooks.onSelect?.();return true;}
     this.select.begin(stamp, hit, rotate);
     this.stampDrag={original:stamp,pending:stamp};
     this.paint();
@@ -1607,19 +1636,20 @@ export class WorldEditor {
   }
 
   private applyPose(stamp: MapStamp, x: number, y: number, yaw: number): void {
-    if (
-      !this.sceneryAllowed(stamp.asset,x+.5,y+.5)
-    )
-      return;
-    const next = withPose(stamp, x, y, yaw,this.map.size);
-    if (!next) return;
-    this.map = {
-      ...this.map,
-      stamps: this.map.stamps.map((s) => (s.id === stamp.id ? next : s)),
-    };
-    this.paint();
-    this.hooks.onChange?.();
-    this.hooks.onSelect?.();
+    const current=this.map.stamps.find(s=>s.id===stamp.id);
+    if(!current||current.locked||!this.sceneryAllowed(stamp.asset,x+.5,y+.5))return;
+    const next=withPose(stamp,x,y,yaw,this.map.size);
+    if(!next)return;
+    this.commitStamps(this.map.stamps.map(s=>s.id===stamp.id?next:s));
+  }
+
+  /** Scenery edits share terrain/Apply/cleanup history, including single stamps. */
+  private commitStamps(stamps:readonly MapStamp[]):void {
+    const nextById=new Map(stamps.map(s=>[s.id,s]));
+    for(const stamp of this.map.stamps)if(stamp.locked&&nextById.get(stamp.id)!==stamp)throw Error('Stamp is locked');
+    this.layers.decorations={stamps:this.map.stamps,decals:this.map.landscape?.decals??[]};
+    this.layers.setDecorations({...this.layers.decorations,stamps});
+    this.commitLayers();
   }
 
   setSpawnPoint(player: number, x: number, z: number, rotation: number = this.map.playerStarts.find(s=>s.player===player)?.rotation ?? 0): boolean {
@@ -1714,21 +1744,7 @@ export class WorldEditor {
     if (!inStamp(x, y,this.map.size)) return;
     if (!this.sceneryAllowed(this.asset,hit.x,hit.z))
       return;
-    this.map = {
-      ...this.map,
-      stamps: [
-        ...this.map.stamps,
-        {
-          id: crypto.randomUUID(),
-          asset: this.asset,
-          x,
-          y,
-          ...(this.stampYaw ? { yaw: this.stampYaw } : {}),
-        },
-      ],
-    };
-    this.paint();
-    this.hooks.onChange?.();
+    this.placeAt(this.asset,x,y,this.stampYaw);
   }
 
   private paint(): void {

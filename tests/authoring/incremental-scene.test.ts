@@ -1,3 +1,4 @@
+import {flatTerrainData} from '../../src/shared/map/terrainData';
 import {describe,expect,it} from 'vitest';
 import {compileMapScene,projectMapObjects,type CompiledMapScene} from '../../src/shared/authoring/mapScene';
 import {updateMapScene} from '../../src/shared/authoring/updateMapScene';
@@ -39,7 +40,7 @@ describe('pose-only scene compilation',()=>{
  });
  it('invalidates reused terrain when layers or map water change',()=>{
   const before=fixture(),compiled=compileMapScene(before,landscapeAssets);
-  const maps=[{...before,waterLevel:-3},{...before,authoring:{...before.authoring!,layers:before.authoring!.layers.filter(l=>l.id!=='stream')}}];
+  const maps=[{...before,authoring:{...before.authoring,terrain:flatTerrainData(before.size,0,-3)}},{...before,authoring:{...before.authoring!,layers:before.authoring!.layers.filter(l=>l.id!=='stream')}}];
   for(const map of maps){const next=updateMapScene(before,map,compiled,landscapeAssets);expect(next.field).not.toBe(compiled.field);sameResult(next,compileMapScene(map,landscapeAssets));}
  });
 });

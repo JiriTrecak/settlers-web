@@ -2,7 +2,7 @@ import type {UtcMap} from '../../map/utcmap';
 import type {CompiledMapScene} from '../mapScene';
 import {AuthoringTransferDecoder} from './transfer';
 import {SceneSnapshotReader,type SceneSnapshot} from './scene';
-import type {CompilerPort,CompileReply,CompileCacheReport} from './protocol';
+import type {CompilerPort,CompileReply} from './protocol';
 import {TaskYield} from './taskYield';
 import {landscapeAssets} from '../project';
 
@@ -13,7 +13,7 @@ export class MapCompilerClient {
  private tail:Promise<unknown>=Promise.resolve();private id=0;private stopped:Error|undefined;
  private accepted:UtcMap|undefined;private decoder=new AuthoringTransferDecoder();private snapshots=new SceneSnapshotReader(landscapeAssets);
  private pending:{id:number;resolve:(reply:CompileReply)=>void;reject:(error:Error)=>void}|undefined;
- timings:{compileMs:number;encodeMs:number;decodeMs:number;decodeMaxTaskMs:number;roundTripMs:number;cache?:CompileCacheReport}|undefined;
+ timings:{compileMs:number;encodeMs:number;decodeMs:number;decodeMaxTaskMs:number;roundTripMs:number}|undefined;
  constructor(private port:CompilerPort){
   port.onmessage=({data})=>{const pending=this.pending;if(data.id!==pending?.id)return;this.pending=undefined;pending.resolve(data);};
   port.onerror=event=>this.dispose(new Error(event.message));port.onmessageerror=()=>this.dispose(new Error('Cannot read compiler worker message'));
@@ -44,7 +44,7 @@ export class MapCompilerClient {
   }catch(error){this.dispose(error instanceof Error?error:new Error(String(error)));throw error;}
   this.accepted=map;
   decodeMaxTaskMs=Math.max(decodeMaxTaskMs,performance.now()-yielded);
-  this.timings={cache:reply.cache??this.timings?.cache,compileMs:reply.compileMs,encodeMs:reply.encodeMs,decodeMs:performance.now()-begin,decodeMaxTaskMs,roundTripMs:performance.now()-started};
+  this.timings={compileMs:reply.compileMs,encodeMs:reply.encodeMs,decodeMs:performance.now()-begin,decodeMaxTaskMs,roundTripMs:performance.now()-started};
   return scene;
  }
  async ready(){await this.tail;if(this.stopped)throw this.stopped;}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Vcbp",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_cobblepath_diffuse.dds",
+      "sha256": "9946f55d733f466d0acdcdbb9b65b1fde1fc2c8e2242c85401c4e1d5f5ad9a18"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/village/village_cobblepath_normal.dds",
+      "sha256": "f91d88f0e0be8aeae264ffb8cf862ee4b293f3a9183b74174e5e5740e531d03f"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_cobblepath_orm.dds",
+      "sha256": "0f4bfe77a850d88b2cd429b17fe6dfea787289f8cbb3448979c246891bfb2145"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Vcbp",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Village",
+    "file": "Village_CobblePath",
+    "comment": "Cobble Path",
+    "name": "WESTRING_TILE_COBBLE_PATH",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "5",
+    "convertTo": "Ldro,Fdro,Wdro,Bdsd,Adrd,Cdrd,Ndrd,Ydtr,Qcbp,Xdtr,Dbrk,Gbrk,Zbks,Ibkb,Osmb",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

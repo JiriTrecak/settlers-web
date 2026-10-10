@@ -57,10 +57,22 @@ describe('canonical runtime publication',()=>{
   await expect(planPublication(root,[recipe('water'),river],new Set())).rejects.toThrow('water-profile');
   await store.dispatch({op:'asset.archive',id:'river',expectedRevision:1});await store.dispatch({op:'asset.archive',id:'water',expectedRevision:1});expect(await readPublished(root)).toEqual([]);expect((await store.get('river')).status).toBe('archived');
  });
- it('refuses to archive recipes still referenced by authored maps',async()=>{
-  const {root,store}=await fixture();await saveJson(path.join(root,'assets/maps/showcase/used.utcmap'),{stamps:[],authoring:{layers:[{recipe:'hill'}],objects:[]}});
+ it('refuses to archive assets still referenced by committed map objects',async()=>{
+  const {root,store}=await fixture();await saveJson(path.join(root,'assets/maps/showcase/used.utcmap'),{stamps:[],authoring:{terrain:{waterProfiles:[],paint:[]},objects:[{asset:'hill'}]}});
   await expect(store.dispatch({op:'asset.archive',id:'hill',expectedRevision:1})).rejects.toThrow('used.utcmap still uses hill');
   expect((await readPublished(root))![0]!.id).toBe('hill');
+ });
+ it.each(['waterProfiles','paint'] as const)('protects committed terrain %s references without generator layers',async(channel)=>{
+  const {root,store}=await fixture();
+  await saveJson(path.join(root,'assets/maps/showcase/used.utcmap'),{authoring:{objects:[],terrain:{waterProfiles:channel==='waterProfiles'?['hill']:[],paint:channel==='paint'?[{material:'hill'}]:[]}}});
+  await expect(store.dispatch({op:'asset.archive',id:'hill',expectedRevision:1})).rejects.toThrow('used.utcmap still uses hill');
+  expect((await readPublished(root))![0]!.id).toBe('hill');
+ });
+ it('protects a biome default water profile even when no map assigns a local profile',async()=>{
+  const water=assetDefinitionSchema.parse({...recipe('water.clear-forest'),kind:'water-profile',recipe:undefined,water:{shallowColor:'#456789',deepColor:'#123456',clarity:1,rippleScale:.1,rippleStrength:.1,foamStrength:.1,reflectionStrength:.1,causticStrength:.1,cloudStrength:.1,flowSpeed:1}});
+  const {root,store}=await fixture([water]);
+  await expect(store.dispatch({op:'asset.archive',id:water.id,expectedRevision:1})).rejects.toThrow('Biome vibrant-forest requires published water profile');
+  expect((await readPublished(root))![0]!.id).toBe(water.id);
  });
  it('serializes competing editor instances before optimistic revision checks',async()=>{
   const {root,store}=await fixture(),other=new AuthoringStore(root);

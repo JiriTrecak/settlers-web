@@ -9,39 +9,10 @@ import {
 } from "../../src/shared";
 
 describe("utcmap", () => {
-  it("preserves forest understory and building exclusions when saving a map", () => {
-    const landscape = {
-      strokes: [],
-      cover: [
-        {
-          x: 129,
-          z: 125,
-          radius: 34,
-          density: 10,
-          seed: 7123,
-          flowers: 0.005,
-          grassScale: 0.65,
-          broadRatio: 1,
-          palette: "forest",
-          exclusions: [{ x: 125.7, z: 117, radius: 5.94 }],
-        },
-      ],
-      environment: { hour: 10, playing: false },
-    };
-    const parsed = parseUtcMap({ ...emptyUtcMap(), landscape });
-    expect(parsed?.landscape).toEqual(landscape);
-    expect(
-      parseUtcMap(JSON.parse(stringifyUtcMap(parsed!)))?.landscape,
-    ).toEqual(landscape);
-    expect(
-      parseUtcMap({
-        ...emptyUtcMap(),
-        landscape: {
-          ...landscape,
-          cover: [{ ...landscape.cover[0], palette: "unknown" }],
-        },
-      }),
-    ).toBeNull();
+  it("rejects procedural forest cover instead of persisting generation inputs", () => {
+    const landscape={strokes:[],cover:[{x:129,z:125,radius:34,density:10,seed:7123,flowers:.005,grassScale:.65,broadRatio:1,palette:'forest' as const,exclusions:[{x:125.7,z:117,radius:5.94}]}],environment:{hour:10,playing:false}};
+    expect(parseUtcMap({...emptyUtcMap(),landscape})).toBeNull();
+    expect(()=>stringifyUtcMap({...emptyUtcMap(),landscape})).toThrow(/Apply generator results/);
   });
   it("roundtrips an empty map", () => {
     const map = emptyUtcMap();

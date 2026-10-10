@@ -1,13 +1,13 @@
 import {rememberHeightChange} from '../map/heightChanges';
 import type {Placement} from '../../content/schema';
 import {biomeById} from '../../content/biomes';
-import {HeightField,decodeHeight} from '../map/height';
+import {HeightField} from '../map/height';
 import type {MapStamp,UtcMap} from '../map/utcmap';
 import {generateScene,type GeneratedScene,type TerrainGrid} from './generate';
 import {generationAssets,type LandscapeAsset} from './catalogue';
 import type {AuthoredObject,AuthoringScene} from './layers';
 /** Only the editor constructs this transient preview input. It is never saved. */
-export type PreviewMap=Omit<UtcMap,'authoring'>&{authoring?:AuthoringScene};
+export type PreviewMap=Omit<UtcMap,'authoring'>&{authoring:AuthoringScene & {terrain:UtcMap['authoring']['terrain']}};
 export const previewLayers=(map:UtcMap)=>(map as PreviewMap).authoring?.layers??[];
 import {WatercourseIndex} from './watercourses';
 import {BuildProfile} from './buildProfile';
@@ -28,7 +28,7 @@ const wetSurfaces=new WeakMap<TerrainGrid,{waterLevel:number;values:Uint8Array}>
 export function reusableMapSurface(map:UtcMap,catalogue:readonly LandscapeAsset[],previous?:CompiledMapScene,vegetationEdits=false):GeneratedScene|undefined{
  const source=previous?compiledSources.get(previous):undefined;if(!source||source.catalogue!==catalogue)return undefined;
  const before=source.map;
- if(before.biome!==map.biome||before.size!==map.size||before.height!==map.height||before.waterLevel!==map.waterLevel||before.landscape?.importedTerrain!==map.landscape?.importedTerrain||
+ if(before.biome!==map.biome||before.size!==map.size||
   before.authoring?.version!==map.authoring?.version||before.authoring?.terrain!==map.authoring?.terrain)return undefined;
  // Only known vegetation recipes can change without carving a new surface.
  // Unknown/future recipe types conservatively participate in invalidation.
@@ -41,11 +41,9 @@ export function reusableMapSurface(map:UtcMap,catalogue:readonly LandscapeAsset[
 export function compileMapScene(map:UtcMap,catalogue:readonly LandscapeAsset[],previous?:CompiledMapScene):CompiledMapScene{
  const profile=new BuildProfile();
  const field=new HeightField(map.size);field.biome=biomeById(map.biome).id;field.baseMaterial=biomeById(map.biome).ground;
- field.load(map.height?decodeHeight(map.height,map.size)??[]:[],map.waterLevel??0,map.landscape?.importedTerrain);
- if(map.authoring?.terrain)restoreTerrain(field,map.authoring.terrain);
- if(!map.authoring)return {field,stamps:[...map.stamps],resources:[],owners:new Map()};
- // Imported high-resolution terrain is sampled before procedural edits. Keep the original document untouched.
- const samples=field.source?Float32Array.from(field.samples,(_,i)=>field.sample(field.origin+i%field.verts,field.origin+Math.floor(i/field.verts))):field.samples;
+ if(!map.authoring?.terrain)throw Error('Map has no committed terrain cells');
+ restoreTerrain(field,map.authoring.terrain);
+ const samples=field.samples;
  const index=new Map(catalogue.map(a=>[a.id,a]));
  const sceneryIndex=new Map(catalogue.map(a=>[a.scenery,a.id]));
  const external=map.stamps.map((s,i):AuthoredObject=>({id:'external.'+i,asset:sceneryIndex.get(s.asset)??s.asset,x:s.x,z:s.y,scale:s.scale??1,elevation:s.elevation??0,yaw:s.yaw??0,heightMode:'absolute',visible:true,locked:true}));
@@ -65,6 +63,10 @@ export function compileMapScene(map:UtcMap,catalogue:readonly LandscapeAsset[],p
  field.grassCoverage=generated.landformSurface?.grass.slice()??new Float32Array(field.samples.length);
  if(savedGrass)for(let i=0;i<savedGrass.length;i++)field.grassCoverage[i]=Math.max(field.grassCoverage[i],savedGrass[i]);
  if(generated.meadow)for(let i=0;i<generated.meadow.length;i++)field.grassCoverage[i]=Math.max(field.grassCoverage[i]!,generated.meadow[i]!);
+ // Apply saves deliberate terrain coverage, not the tint derived from object
+ // positions below. Removing or moving an applied tree must remove its tint.
+ field.terrainGrassCoverage=field.grassCoverage;
+ field.grassCoverage=field.grassCoverage.slice();
  field.rockCoverage=generated.landformSurface?.rock?.slice()??savedRock;
  if(savedRock&&field.rockCoverage)for(let i=0;i<savedRock.length;i++)field.rockCoverage[i]=Math.max(field.rockCoverage[i],savedRock[i]);
  field.surfacePaint=savedPaint?.length?[...savedPaint,...generated.paint]:generated.paint;

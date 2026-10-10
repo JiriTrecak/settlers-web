@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Qrck",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_rocks_diffuse.dds",
+      "sha256": "ea05790893726138abbfc9bf67d0719d1de3f79661cee683bb60171559b38fd9"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/villagefall/villagefall_rocks_normal.dds",
+      "sha256": "0d0cf2253ae60a90212fbe22709495f2cb15909799cd4dae61a84ef45cdb2c34"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_rocks_orm.dds",
+      "sha256": "1606a313b5410356dc0ef08293e48d22eb4e2750a719c4a081e7c1f3539bc985"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Qrck",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\VillageFall",
+    "file": "VillageFall_Rocks",
+    "comment": "Rocks",
+    "name": "WESTRING_TILE_ROCKS",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "7",
+    "convertTo": "Lrok,Frok,Wrok,Bflr,Arck,Crck,Nrck,Ybtl,Vrck,Xbtl,Ddkr,Gdkr,Zbkl,Irbk,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

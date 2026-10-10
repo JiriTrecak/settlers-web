@@ -1,3 +1,4 @@
+import {flatTerrainData} from '../../../src/shared/map/terrainData';
 import {previewModelScale} from './modelScale';
 import {InspectionSubject,type SubjectControls,type SubjectInfo} from './subject';
 import {biomeById} from '../../../src/content/biomes';
@@ -10,7 +11,7 @@ import {projectCatalogue,projectMeshUrl} from '../../../src/shared/assets/projec
 import type {AssetDefinition} from '../../../src/shared/authoring/asset';
 import {compileMapScene} from '../../../src/shared/authoring/mapScene';
 import {landscapeCatalogue} from '../../../src/shared/authoring/catalogue';
-import {authoringSceneSchema} from '../../../src/shared/authoring/layers';
+import {mapPreviewSceneSchema} from '../../../src/shared/authoring/layers';
 import {emptyUtcMap} from '../../../src/shared/map/utcmap';
 import {frameModel} from './framing';
 const maps=import.meta.glob('../../../assets/maps/{campaign,skirmish,showcase}/**/*.utcmap',{query:'?raw',import:'default'}) as Record<string,()=>Promise<string>>;
@@ -44,12 +45,12 @@ export class ProductionPreview{
   if(asset.usesGeometry)urls.set(previewId,resourceUrl(asset,'geometry'));
   let definitions=[...this.library.filter(a=>a.id!==asset.id),{...asset,status:'published' as const}];
   if(asset.recipe||asset.water){
-   map??={...emptyUtcMap(),waterLevel:-8};const x=settings.x,z=settings.z;
+   map??={...emptyUtcMap(),authoring:{version:1,terrain:flatTerrainData(256,0,-8),objects:[]}};const x=settings.x,z=settings.z;
    if(asset.water)definitions.push({...asset,id:'preview.river',kind:'landscape-recipe',water:undefined,recipe:{type:'river',water:asset.id,width:10,depth:2,bankWidth:3,flow:1,maxUphillGrade:0}});
    const recipe=asset.recipe??definitions.at(-1)!.recipe!,spline={type:'spline',knots:[{x:x-20,z:z-10,elevation:-.2,outgoing:{x:x-7,z:z-17}},{x:x+20,z:z+10,elevation:-.2,incoming:{x:x+6,z:z+17}}]};
    const region={type:'region',points:[{x:x-16,z:z-16},{x:x+16,z:z-16},{x:x+16,z:z+16},{x:x-16,z:z+16}]};
    const needsRiver='riverBank'in recipe&&recipe.riverBank;
-   map={...map,authoring:authoringSceneSchema.parse({version:1,objects:map.authoring?.objects??[],layers:[...([]),...(needsRiver?[{id:'preview.bank-stream',name:'Preview stream',seed:1,recipe:'recipe.river.gentle',shape:spline}]:[]),{id:'preview.asset-layer',name:asset.name,seed:1,recipe:asset.recipe?asset.id:'preview.river',shape:['river','path'].includes(recipe.type)?spline:region}]})};
+   map={...map,authoring:mapPreviewSceneSchema.parse({version:1,terrain:map.authoring.terrain,objects:map.authoring.objects,layers:[...([]),...(needsRiver?[{id:'preview.bank-stream',name:'Preview stream',seed:1,recipe:'recipe.river.gentle',shape:spline}]:[]),{id:'preview.asset-layer',name:asset.name,seed:1,recipe:asset.recipe?asset.id:'preview.river',shape:['river','path'].includes(recipe.type)?spline:region}]})};
   }
   const isSubject=asset.usesGeometry&&['unit','creature','building'].includes(asset.kind);
   const sceneKey=JSON.stringify([settings.mode,settings.map,settings.environment,asset,asset.recipe||asset.water?[settings.x,settings.z]:null]);

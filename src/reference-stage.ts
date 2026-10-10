@@ -1,10 +1,9 @@
-import {liveSourceOcclusion} from './render/prop/liveSourceOcclusion';
 import {EditorBridge} from './shared/control/editorBridge';
 /** Art-direction fixture: the saved map and the game's renderer, without editor chrome. */
 import { perf } from "./debug/performance";
 import { GRAPHICS_CHANGED, readResolutionScale, readShadowMode, setShadowMode } from "./shared/settings/graphics";
 const mapSources = import.meta.glob('../assets/maps/{campaign,skirmish,showcase}/**/*.utcmap', {query:'?raw', import:'default', eager:true}) as Record<string,string>;
-import { parseUtcMap, decodeHeight, HeightField } from "./shared";
+import { parseUtcMap } from "./shared";
 import { emptyLandscape } from "./shared/landscape/curve";
 import { projectCatalogue, projectMeshUrl } from "./shared/assets/project";
 import { Renderer } from "./render";
@@ -15,7 +14,7 @@ import {
 } from "./presentation/scenery";
 async function start() {
   const params = new URLSearchParams(location.search);
-  const mapId=params.get('map') ?? 'amberwake-basin';
+  const mapId=params.get('map') ?? 'echo-isles';
   const raw=Object.entries(mapSources).find(([path])=>path.endsWith('/'+mapId+'.utcmap'))?.[1];
   if(!raw)throw Error('Unknown authored map: '+mapId);
   const x = Number(params.get("x") ?? 128),
@@ -28,7 +27,7 @@ async function start() {
   };
   const yaw=angle('yaw',-45,-360,360),pitch=angle('pitch',45,15,89);
   const sites=document.createElement('details');sites.style.cssText='position:fixed;z-index:10;right:12px;top:12px;background:#101820ee;color:white;padding:10px;font:14px system-ui;max-height:80vh;overflow:auto';
-  const label=document.createElement('summary');label.textContent=map.landscape?.importedTerrain?'Reference comparison':'Inspect Root sites';sites.append(label);
+  const label=document.createElement('summary');label.textContent='Inspect Root sites';sites.append(label);
   const seenMaps=new Set<string>();
   for(const [path,raw] of Object.entries(mapSources)){
     const id=path.split('/').at(-1)!.replace('.utcmap','');
@@ -52,8 +51,7 @@ async function start() {
     urls,
   );
   renderer.setKinds(new Map(catalog.assets.map((a) => [a.id, a.type])));
-  const authored=projectScene(map),field = authored?.field??new HeightField(map.size);
-  if(!authored)field.load(map.height ? decodeHeight(map.height,map.size)! : [], map.waterLevel ?? 0, map.landscape?.importedTerrain);
+  const authored=projectScene(map),field = authored.field;
   renderer.setTerrain(field);
   renderer.setLandscape(map.landscape ?? emptyLandscape());
   renderer.setGridMode("none");
@@ -67,7 +65,7 @@ async function start() {
   });
   const entities = editorEntities(map),
     snapshot = { tick: 0, size: map.size, settlement: authoredScene(entities) },
-    stamps = [...(authored?.stamps??map.stamps), ...resourceStamps(entities)];
+    stamps = [...authored.stamps, ...resourceStamps(entities)];
   if(params.has('hour')){
     const hour=Number(params.get('hour'));if(Number.isFinite(hour)){renderer.sky.setPlaying(false);renderer.sky.setHour(hour);}
     const controls=document.createElement('nav');controls.setAttribute('aria-label','Lighting reference');controls.style.cssText='position:fixed;z-index:10;bottom:56px;left:12px;display:flex;gap:8px;background:#101820ee;color:white;padding:10px;font:14px system-ui';
@@ -153,35 +151,12 @@ async function start() {
         renderer.camera.pose({x:typeof options.x==='number'?options.x:undefined,z:typeof options.z==='number'?options.z:undefined,gameZoom:typeof options.gameZoom==='number'?options.gameZoom:undefined});
         renderer.present(performance.now());return {x:renderer.camera.targetX,z:renderer.camera.targetZ};
       }
-      if(op==='occlusionProbe'){
-        const source=map.landscape?.importedTerrain;
-        if(!source?.occlusion?.dynamic)throw Error('No dynamic source occlusion');
-        const state=liveSourceOcclusion(source);
-        const nearby=source.occlusion.dynamic.plants.filter(p=>Math.hypot(p.x-renderer.camera.targetX,p.z-renderer.camera.targetZ)<65);
-        const visible=renderer.landmarks(16/9,nearby.map(p=>p.id)).filter(p=>p.anchor.u>.15&&p.anchor.u<.85&&p.anchor.v>.15&&p.anchor.v<.8);
-        visible.sort((a,b)=>Math.hypot(a.anchor.u-.5,a.anchor.v-.5)-Math.hypot(b.anchor.u-.5,b.anchor.v-.5));
-        const plant=source.occlusion.dynamic.plants.find(p=>p.id===(visible[0]?.id??options.id));
-        if(!plant)throw Error('Unknown source occlusion caster');
-        const before=state.rgba.slice(),maxWidth=960;
-        const baseline=renderer.capture(maxWidth,16/9,12).toDataURL('image/png').split(',')[1];
-        let changedPixels=0,updateMs=0,update=state.lastUpdate,without='';
-        try{
-          const radius=Math.max(0,Math.min(32,Number(options.radius)||0));
-          const hidden=new Set(source.occlusion.dynamic.plants.filter(p=>p.id===plant.id||Math.hypot(p.x-plant.x,p.z-plant.z)<=radius).map(p=>p.id));
-          const filtered=stamps.filter(s=>!hidden.has(s.id)),start=performance.now();state.sync(filtered);updateMs=performance.now()-start;update={...state.lastUpdate};
-          for(let i=0;i<before.length;i+=4)if(before[i]!==state.rgba[i]||before[i+1]!==state.rgba[i+1]||before[i+2]!==state.rgba[i+2]||before[i+3]!==state.rgba[i+3])changedPixels++;
-          without=renderer.capture(maxWidth,16/9,12).toDataURL('image/png').split(',')[1]!;
-        }finally{state.sync(stamps);}
-        const restored=renderer.capture(maxWidth,16/9,12).toDataURL('image/png').split(',')[1];
-        let restoredBytes=true;for(let i=0;i<before.length;i++)if(before[i]!==state.rgba[i]){restoredBytes=false;break;}
-        return {id:plant.id,landmark:renderer.landmarks(16/9,[plant.id]),subscribers:state.subscriberCount,changedPixels,updateMs,update,restoredBytes,baseline,without,restored};
-      }
       if(op==='waterDiagnostics')return renderer.referenceWaterDiagnostics();
       if(op==='gamePerformance'){
         if(options.action!==undefined&&options.action!=='get')throw Error('Performance capture requires an active match');
         return perf.report();
       }
-      throw Error('Reference preview exposes screenshot, gameView, waterDiagnostics, occlusionProbe and gamePerformance only');
+      throw Error('Reference preview exposes screenshot, gameView, waterDiagnostics and gamePerformance only');
     }});
     const inspectPort=Number(params.get('inspectPort')??7380);
     if(!Number.isInteger(inspectPort)||inspectPort<1024||inspectPort>65535)throw Error('Invalid inspection port');

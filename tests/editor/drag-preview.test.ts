@@ -1,16 +1,17 @@
+import {flatTerrainData} from '../../src/shared/map/terrainData';
 import {bridgeSurfaces} from '../../src/shared/map/bridgeSurface';
 import {expect,it,vi} from 'vitest';
 import {WorldEditor} from '../../src/editor/world/worldEditor';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
-import {authoringSceneSchema} from '../../src/shared/authoring/layers';
+import {mapPreviewSceneSchema} from '../../src/shared/authoring/layers';
 import {landscapeAssets,projectScene} from '../../src/shared/authoring/project';
 function fixture(authored=false){
  const changed=vi.fn(),selected=vi.fn(),editor=new WorldEditor({} as HTMLCanvasElement,{host:{} as HTMLElement,onChange:changed,onSelect:selected});
  const asset=landscapeAssets.find(a=>a.scenery==='woodland-mushroom-cluster')!;
- editor.replace({...emptyUtcMap(),waterLevel:-8,authoring:authoringSceneSchema.parse({version:1,layers:[],objects:authored?[{id:'prop',asset:asset.id,x:50,z:50}]:[]}),stamps:authored?[]:[{id:'prop',asset:'woodland-mushroom-cluster',x:50,y:50}]});
+ editor.replace({...emptyUtcMap(),authoring:mapPreviewSceneSchema.parse({version:1,terrain:flatTerrainData(256,0,-8),layers:[],objects:authored?[{id:'prop',asset:asset.id,x:50,z:50}]:[]}),stamps:authored?[]:[{id:'prop',asset:'woodland-mushroom-cluster',x:50,y:50}]});
  // Exercise the same callbacks MapInput dispatches, with a render-only test double.
  const internal=editor as any;
- const renderer={pickGround:vi.fn((x:number,z:number)=>({x,z})),pickStamp:():string|null=> 'prop',pickGameEntity:():number|null=>null,previewEditorStamp:vi.fn(),previewEditorEntities:vi.fn(),setSelected:vi.fn(),setSpawnPoints:vi.fn(),gameSelect:vi.fn(),previewCurve:vi.fn(),draw:vi.fn(),setTerrain:vi.fn()};
+ const renderer={pickGround:vi.fn((x:number,z:number)=>({x,z})),pickStamp:():string|null=> 'prop',pickGameEntity:():number|null=>null,previewEditorStamp:vi.fn(),previewEditorEntities:vi.fn(),setSelected:vi.fn(),setSpawnPoints:vi.fn(),gameSelect:vi.fn(),previewCurve:vi.fn(),draw:vi.fn(),setTerrain:vi.fn(),setLandscape:vi.fn()};
  internal.renderer=renderer;changed.mockClear();selected.mockClear();
  return {editor,internal,renderer,changed};
 }
@@ -22,7 +23,7 @@ for(const authored of [false,true])it(`previews ${authored?'authored objects':'s
  expect(editor.map).toBe(original);expect(projectScene(editor.map)).toBe(compiled);expect(changed).not.toHaveBeenCalled();expect(renderer.draw).not.toHaveBeenCalled();expect(renderer.setTerrain).not.toHaveBeenCalled();expect(renderer.previewEditorStamp).toHaveBeenCalledTimes(60);
  internal.finishGrab();expect(changed).toHaveBeenCalledTimes(1);
  expect(authored?editor.map.authoring!.objects[0]!.x:editor.map.stamps[0]!.x).toBe(56);
- if(authored){editor.undoLayers();expect(editor.map.authoring!.objects[0]!.x).toBe(50);}
+ editor.undoLayers();expect(authored?editor.map.authoring!.objects[0]!.x:editor.map.stamps[0]!.x).toBe(50);
 });
 it('cancel restores the rendered pose without dirtying the document',()=>{
  const {editor,internal,renderer,changed}=fixture(),original=editor.map;

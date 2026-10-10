@@ -1,3 +1,4 @@
+import {BIOMES} from '../../../../src/content/biomes';
 import {readEffectLibrary} from '../../../content/effects';
 import {validateCommandIcon} from '../../../content/icon';
 import {presentationResources,layerResources} from '../../../../src/content/abilities/resources';
@@ -53,11 +54,16 @@ export async function planPublication(root:string,assets:AssetDefinition[],chang
 
  const prior=await readPublished(root),ids=new Set(sorted.map(a=>a.id)),scenery=new Set(manifest.records.flatMap(a=>a.scenery.map(s=>s.id)));
  const removedAssets=new Set((prior??[]).filter(a=>!ids.has(a.id)).map(a=>a.id));
+ for(const biome of BIOMES){
+  const profile=sorted.find(a=>a.id===biome.waterProfile);
+  if(removedAssets.has(biome.waterProfile))throw Error(`Biome ${biome.id} requires published water profile ${biome.waterProfile}`);
+  if(profile&&profile.kind!=='water-profile')throw Error(`Biome ${biome.id} requires ${biome.waterProfile} to be water-profile`);
+ }
  const removedScenery=new Set((prior??[]).flatMap(a=>a.bindings.scenery.map(s=>s.id)).filter(id=>!scenery.has(id)));
  if(removedAssets.size||removedScenery.size)for(const file of await filesIn(path.join(root,'assets/maps'))){
   if(!file.endsWith('.utcmap'))continue;
-  const map=await json<{stamps?:{asset:string}[];authoring?:{layers:{recipe:string}[];objects:{asset:string}[]}}>(file);
-  const missing=map.stamps?.find(s=>removedScenery.has(s.asset))?.asset??map.authoring?.layers.find(l=>removedAssets.has(l.recipe))?.recipe??map.authoring?.objects.find(o=>removedAssets.has(o.asset))?.asset;
+  const map=await json<{stamps?:{asset:string}[];authoring?:{terrain:{waterProfiles:string[];paint:{material:string}[]};objects:{asset:string}[]}}>(file);
+  const missing=map.stamps?.find(s=>removedScenery.has(s.asset))?.asset??map.authoring?.objects.find(o=>removedAssets.has(o.asset))?.asset??map.authoring?.terrain.waterProfiles.find(id=>removedAssets.has(id))??map.authoring?.terrain.paint.find(p=>removedAssets.has(p.material))?.material;
   if(missing)throw Error(`Map ${path.basename(file)} still uses ${missing}`);
  }
 

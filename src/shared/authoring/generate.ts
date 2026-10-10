@@ -1,3 +1,4 @@
+import {HEIGHT_MIN,HEIGHT_MAX,DRY_WATER_HEIGHT} from '../map/terrainLimits';
 import {Footprints} from './footprints';
 import {indexedPaints} from './sparseWeights';
 import {updateNearestTrees,type NearestTreeSnapshot} from './nearestTrees';
@@ -10,8 +11,8 @@ import type {BuildProfile} from './buildProfile';
 export type TerrainGrid={originX:number;originZ:number;step:number;width:number;height:number;samples:Float32Array};
 export type GenerationAssets={recipe:(id:string)=>LandscapeRecipe|undefined;clearance:(id:string)=>number;isTree?:(id:string)=>boolean};
 export type GeneratedObject=AuthoredObject&{owner:string;blocksVegetation?:boolean};
-export type GenerationIssue={code:'missing-recipe'|'shape-mismatch'|'uphill-river'|'object-water-conflict';id:string;message:string};
-export type MaterialPaint={owner:string;material:string;weights:Float32Array};
+export type GenerationIssue={code:'missing-recipe'|'shape-mismatch'|'uphill-river'|'object-water-conflict'|'terrain-range';id:string;message:string};
+export type MaterialPaint={owner:string;material:string;weights:Float32Array;variants?:Uint8Array};
 export type CompiledRiver={owner:string;profile:string;samples:SplineSample[];width:number;depth:number;flow:number;area?:Extract<LayerShape,{type:'mask'}>};
 // Compiled river masks are immutable and shared by generation, ground picking and water meshes.
 const riverMasks=new WeakMap<NonNullable<CompiledRiver['area']>,(x:number,z:number)=>number>();
@@ -152,6 +153,8 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
    if(weights)paint.push({owner:layer.id,material:recipe.material,weights});
   }
  }
+ if(terrain.samples.some(h=>h<HEIGHT_MIN||h>HEIGHT_MAX))issues.push({code:'terrain-range',id:'terrain',message:`Terrain exceeds ${HEIGHT_MIN}..${HEIGHT_MAX} metres. Reduce the generator height or depth before applying.`});
+ for(const river of rivers){const elevations=river.area?[river.area.elevation]:river.samples.map(p=>p.elevation);if(elevations.some(h=>h<DRY_WATER_HEIGHT||h>HEIGHT_MAX))issues.push({code:'terrain-range',id:river.owner,message:`Water exceeds ${DRY_WATER_HEIGHT}..${HEIGHT_MAX} metres. Adjust its elevation before applying.`});}
  profile?.mark('Terrain, river and path carving');
  // Surface masks follow the final carved terrain, not the original heightfield.
  const landforms=prepared.filter(p=>p.recipe.type==='terrain'&&p.recipe.surface);
@@ -172,7 +175,7 @@ export function generateScene(input:AuthoringScene,base:TerrainGrid,assets:Gener
   },slopePad);
  }
  profile?.mark('Landform surface masks');
- }else{issues.push(...surface.issues.filter(i=>i.code==='uphill-river'));profile?.mark('Reuse terrain, courses and mask indexes');}
+ }else{issues.push(...surface.issues.filter(i=>i.code==='uphill-river'||i.code==='terrain-range'));profile?.mark('Reuse terrain, courses and mask indexes');}
  const exclusionLayers=(items:Prepared[])=>items.filter(p=>p.recipe.type==='river'||p.recipe.type==='path').map(p=>({layer:p.layer,recipe:p.recipe}));
  const sameExclusions=!!prior&&JSON.stringify(exclusionLayers(prior.prepared))===JSON.stringify(exclusionLayers(prepared));
  // Keep one current plan per carved surface. Changed/deleted layer caches are

@@ -1,6 +1,8 @@
+import {importWarcraft} from '../import/warcraft/client';
 import {inspectionShotSchema} from '../../shared/camera/inspectionShot';
 import {biomeById,biomeRecipes} from '../../content/biomes';
 import {sceneCommandSchema} from '../../shared/authoring/sceneCommands';
+import {cleanDiscSchema,cleanupKinds} from '../../shared/authoring/cleanup';
 import {editorPreviewSchema} from '../../shared/authoring/editorPreview';
 import {editorPerformanceSchema} from '../../shared/authoring/editorPerformance';
 import {campSchema} from '../../content/schema';
@@ -46,6 +48,7 @@ export class EditorControl {
     private readonly editor: WorldEditor,
     private readonly library: CatalogueStore,
     private readonly after: () => void,
+    private readonly beforeReplace: () => void = () => {},
   ) {}
 
   dispatch(op: string, params: unknown): unknown {
@@ -80,8 +83,24 @@ export class EditorControl {
         case 'undo':pending=e.undoLayers();break;case 'redo':pending=e.undoLayers(true);break;
         case 'camera':e.authoringCamera(p.mode);break;
       }
-      const response=()=>({scene:e.layers.scene,selection:e.layers.selection,generated:{objects:e.generatedScene?.objects.length??0,rivers:e.generatedScene?.rivers.length??0,issues:e.generatedScene?.issues??[]}});
+      const response=()=>{
+        const scene=e.layers.input,offset=p.action==='get'?p.offset:0,limit=p.action==='get'?p.limit:200;
+        const selected=e.layers.selection;
+        return {scene:{version:scene.version,layers:scene.layers,objects:scene.objects.slice(offset,offset+limit),
+          terrain:scene.terrain?{version:scene.terrain.version,size:scene.terrain.size,materials:scene.terrain.paint.map(layer=>layer.material)}:undefined},
+          objectPage:{offset,total:scene.objects.length,nextOffset:offset+limit<scene.objects.length?offset+limit:null},
+          selection:selected,selectedObject:selected?.kind==='object'?scene.objects.find(o=>o.id===selected.id):undefined,
+          generated:{objects:e.generatedScene?.objects.length??0,rivers:e.generatedScene?.rivers.length??0,issues:e.generatedScene?.issues??[]}};
+      };
       return pending?pending.then(response):response();
+    },
+    importWarcraft:async params=>{
+      const p=obj(params),data=str(p.data);if(!data)throw Error('Missing Warcraft file data');if(data.length>180*1024*1024)throw Error('Warcraft map is too large');
+      const bytes=Uint8Array.from(atob(data),c=>c.charCodeAt(0));
+      const textures=p.textures===undefined?{}:obj(p.textures);if(Object.values(textures).some(v=>typeof v!=='string'))throw Error('Invalid texture substitutions');
+      const {map,report}=await importWarcraft(bytes,textures as Record<string,string>);
+      if(p.preview!==true){this.beforeReplace();await this.editor.replace(map);await this.editor.editsReady();this.editor.lookAt(map.size/2,map.size/2);}
+      return {report,loaded:p.preview!==true};
     },
     status: () => this.status(),
     performance:params=>this.editor.performanceControl(editorPerformanceSchema.parse(params??{})),
@@ -164,7 +183,7 @@ export class EditorControl {
     const o = obj(params),
       action = String(o.action ?? "list");
     const list = () => this.editor.map.landscape?.decals ?? [];
-    if (action === "place") {
+    if (action === "place" || action === "preview") {
       const d = {
         id: typeof o.id === "string" ? o.id : crypto.randomUUID(),
         kind: o.kind ?? "leaf-litter",
@@ -177,7 +196,8 @@ export class EditorControl {
       if (!validDecal(d)) throw new Error("Invalid decal");
       if (list().some((item) => item.id === d.id))
         throw new Error("Decal id already exists");
-      await this.editor.putDecal(d);
+      if(action==='preview')this.editor.previewDecal(d);
+      else await this.editor.putDecal(d);
     } else if (action === "update") {
       const current = list().find((d) => d.id === o.id);
       if (!current) throw new Error("Unknown decal id");
@@ -204,8 +224,10 @@ export class EditorControl {
         if (o[key] !== undefined) (d as Record<string, unknown>)[key] = o[key];
       this.editor.configureDecal(d);
       this.editor.setTool("decal");
-    } else if (action !== "list") throw new Error("Unknown decal action");
-    return { patterns: DECAL_KINDS, decals: list() };
+    } else if(action==='apply')await this.editor.applyDecalPreview();
+    else if(action==='discard')this.editor.discardDecalPreview();
+    else if (action !== "list") throw new Error("Unknown decal action");
+    return { patterns: DECAL_KINDS, decals: list(),preview:this.editor.decalPreview };
   }
 
   private landscape(raw: unknown): unknown {
@@ -224,7 +246,7 @@ export class EditorControl {
     if (action === "load") {
       const read = readUtcMap(o.map);
       if ("error" in read) throw new Error(`Invalid map — ${read.error}`);
-      this.editor.replace(read.map);
+      this.beforeReplace();this.editor.replace(read.map);
     } else if (action === "base") {
       const height = num(o.height);
       if (height === undefined || height < -16 || height > 24)
@@ -556,22 +578,9 @@ export class EditorControl {
   }
 
   private async clean(raw: unknown): Promise<unknown> {
-    const o = obj(raw);
-    const r = num(o.radius);
-    if (r !== undefined) this.editor.setCleanRadius(r);
-    const x = num(o.x);
-    const z = num(o.z) ?? num(o.y);
-    if (x === undefined || z === undefined) throw new Error("clean needs x, z");
-    if (o.type !== undefined && o.type !== "objects" && o.type !== "foliage")
-      throw new Error("clean type must be objects or foliage");
-    this.editor.setCleanType(o.type === "foliage" ? "foliage" : "objects");
-    this.editor.setTool("clean");
-    this.editor.dabClean(x, z);
-    await this.editor.applyClean();
-    return {
-      stamps: this.editor.map.stamps.length,
-      radius: this.editor.clean.radius,
-    };
+    const p=cleanDiscSchema.parse(raw);
+    const result=await this.editor.cleanupObjects({area:{type:'brush',points:[{x:p.x,z:p.z}],radius:p.radius},kinds:cleanupKinds(p.type),assets:p.assets},p.preview);
+    return {...result,stamps:this.editor.map.stamps.length,radius:p.radius};
   }
 
   private sculpt(raw: unknown): unknown {

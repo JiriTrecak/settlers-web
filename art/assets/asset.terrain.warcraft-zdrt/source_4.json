@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Zdrt",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_dirt_diffuse.dds",
+      "sha256": "e2b39c6c18dba54d90f673390ed717c167108e1d4d723084bce6dc0b6154bf7c"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_dirt_normal.dds",
+      "sha256": "1518604619899a372beeb084c8c2c381aeffbab7fc7206128c75738175b6d6e4"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_dirt_orm.dds",
+      "sha256": "19fbdb5b072ce68f5cf40b7bc28e98255f86b04175cfc30afa223ef9f860b140"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Zdrt",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Ruins",
+    "file": "Ruins_Dirt",
+    "comment": "Dirt",
+    "name": "WESTRING_TILE_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "2",
+    "convertTo": "Ldrt,Fdrt,Wdrt,Bdsr,Adrt,Cdrt,Ndrt,Vdrt,Qdrt,Ydrt,Xdrt,Ddrt,Gdrt,Idrt,Odrt",
+    "InBeta": "1",
+    "version": "1"
+  }
+}

@@ -37,7 +37,7 @@ export class HeightMesh {
    this.patches.push({mesh,loX:x,loZ:z,width,depth});
   }
   this.sourceDepth.onBeforeCompile=shader=>this.material.compileImportedDepth(shader);
-  this.sourceDepth.customProgramCacheKey=()=>`source-terrain-depth-${this.source?.source.sha256??'none'}`;
+  this.sourceDepth.customProgramCacheKey=()=>`source-terrain-depth-${this.material.customProgramCacheKey()}`;
   scene.add(this.mesh);
  }
  setFrom(field:HeightField,dirty?:HeightDirty|null):void {

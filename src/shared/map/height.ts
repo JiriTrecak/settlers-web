@@ -10,8 +10,8 @@ import { MAP_HALO, MAP_SIZE } from "./map";
 
 /** Maximum water depth a ground unit can wade through. Buildings still need dry land. */
 export const WADING_DEPTH_CM = 60;
-export const HEIGHT_MIN = -16;
-export const HEIGHT_MAX = 24;
+import {HEIGHT_MIN,HEIGHT_MAX} from './terrainLimits';
+export {HEIGHT_MIN,HEIGHT_MAX} from './terrainLimits';
 export const HEIGHT_SPAN = MAP_SIZE + MAP_HALO * 2;
 export const HEIGHT_VERTS = HEIGHT_SPAN + 1;
 export const HEIGHT_ORIGIN = -MAP_HALO;
@@ -33,6 +33,8 @@ export class HeightField {
   forestCoverage?:Float32Array;
   baseMaterial:'soil'|'dirt'='soil';
   grassCoverage?:Float32Array;
+  /** Editable grass before vegetation adds its derived display tint. */
+  terrainGrassCoverage?:Float32Array;
   rockCoverage?:Float32Array;
   surfacePaint?:import('../authoring/generate').MaterialPaint[];
   source?: SourceHeight;

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Bdsd",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_desertdark_diffuse.dds",
+      "sha256": "184e160d085371b15bdc9ff2dde1176183c2cd8b440755f41070f14ce31d9ee6"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/barrens/barrens_desertdark_normal.dds",
+      "sha256": "c4762726533027efd3823d0e1808ebcf2f9e557bf116ec7fabc75d91322bf973"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_desertdark_orm.dds",
+      "sha256": "860db1905ef3b9caeecac9eb433ac171037784604f9af42ef64086f9f7efa59c"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Bdsd",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Barrens",
+    "file": "Barrens_DesertDark",
+    "comment": "Dark Desert",
+    "name": "WESTRING_TILE_DARK_DESERT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "4",
+    "convertTo": "Ldro,Fdro,Wdro,Adrd,Cdrd,Ndrd,Ydtr,Vdrr,Qdrr,Xdtr,Dlav,Glav,Zsan,Idki,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

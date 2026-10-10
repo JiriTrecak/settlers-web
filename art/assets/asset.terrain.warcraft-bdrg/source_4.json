@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Bdrg",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/barrens/barrens_dirtgrass_diffuse.dds",
+      "sha256": "415f360a584f09cd36ad1ce9c6eeb10015505f951bbde017b7048c9ea76aa1fe"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/barrens/barrens_dirtgrass_normal.dds",
+      "sha256": "43aadf1c9a18988214adf2fe1b2b7c84ac3ab2f6e8be30e63aa82fc702a401dd"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_dirtgrass_orm.dds",
+      "sha256": "5478359e08cd8e82fb7ea99ce5c0857975f760320d68f39dacadd6b7b563c278"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Bdrg",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Barrens",
+    "file": "Barrens_DirtGrass",
+    "comment": "Grassy Dirt",
+    "name": "WESTRING_TILE_GRASSY_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "8",
+    "convertTo": "Ldrg,Fdrg,Wsng,Adrg,Clvg,Nice,Ygsb,Vgrt,Qgrt,Xgsb,Dgrs,Ggrs,Zdrg,Idtr,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

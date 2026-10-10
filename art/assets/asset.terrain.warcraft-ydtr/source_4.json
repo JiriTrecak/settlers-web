@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Ydtr",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\cityscape\\city_dirtrough_diffuse.dds",
+      "sha256": "d06ea4505babd0883e5b8579da70a1ee3c44dae8f4bedb98e861312a77d44f6a"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/cityscape/city_dirtrough_normal.dds",
+      "sha256": "d74fa6baf2e0403e3f807148aaceef79c9a7228520a1851f51d9ee61f7d40834"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\cityscape\\city_dirtrough_orm.dds",
+      "sha256": "79660896a9c1e1715630e893e9ef00b7d6ba43b83c07ea5a99b542a230d2cd5a"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Ydtr",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Cityscape",
+    "file": "City_DirtRough",
+    "comment": "Rough Dirt",
+    "name": "WESTRING_TILE_ROUGH_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "2",
+    "convertTo": "Ldro,Fdro,Wdro,Bdsd,Adrd,Cdrd,Ndrd,Vdrr,Qdrr,Xdtr,Dbrk,Gbrk,Zdtr,Idtr,Odtr",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

@@ -34,6 +34,29 @@ const materialSchema=z.object({
 }).strict();
 const attachment=z.object({name:authoringId,node:z.string().min(1).max(160),offset:vector.default([0,0,0])}).strict();
 const linkedResource=refSchema.extend({asset:authoringId}).strict();
+/** Ground images remain independent assets. Atlas coordinates are row-major, from
+ * the top-left image pixel; corner bits are NW=1, NE=2, SW=4, SE=8. */
+export const groundTextureSchema=z.object({
+ tileWorldSize:finite.positive().max(256),
+ /** Cliff overlays use vertical world-space projection and never replace top paint. */
+ projection:z.object({type:z.literal('cliff'),verticalWorldSize:finite.positive().max(256),startSlope:finite.nonnegative().max(32),fullSlope:finite.positive().max(64)}).strict().optional(),
+ /** Linear reflectance calibration for the scene's physical lighting. */
+ reflectance:finite.positive().max(2).default(1),
+ sourceIds:z.array(z.string().regex(/^[A-Za-z0-9]{4}$/)).max(64).default([]),
+ albedo:refSchema,normal:refSchema,occlusion:refSchema,roughness:refSchema,metalness:refSchema,
+ thumbnail:refSchema,
+ runtime:z.object({albedoRoughness:refSchema,normalOpacity:refSchema,occlusionMetalness:refSchema}).strict().optional(),
+ atlas:z.object({columns:z.number().int().min(1).max(16),rows:z.number().int().min(1).max(16),
+  fullTiles:z.array(z.number().int().nonnegative()).min(1).max(256),
+  corners:z.array(z.number().int().nonnegative().nullable()).length(16).optional(),
+ }).strict(),
+}).strict().superRefine((value,ctx)=>{
+ if(value.projection&&value.projection.fullSlope<=value.projection.startSlope)ctx.addIssue({code:'custom',path:['projection'],message:'Cliff full slope must exceed start slope'});
+ if(value.projection&&(value.atlas.columns!==1||value.atlas.rows!==1))ctx.addIssue({code:'custom',path:['projection'],message:'Cliff projection requires a single surface image'});
+ const count=value.atlas.columns*value.atlas.rows;
+ if([...value.atlas.fullTiles,...(value.atlas.corners??[])].some(i=>i!==null&&i>=count))ctx.addIssue({code:'custom',path:['atlas'],message:'Atlas tile is outside the image'});
+});
+export type GroundTexture=z.infer<typeof groundTextureSchema>;
 const renderBinding=runtimeRenderSchema.omit({file:true,image:true,harvestAnimation:true,sockets:true}).extend({geometry:linkedResource.optional(),image:linkedResource.optional(),harvestAnimation:linkedResource.optional()}).strict();
 const blocker=z.object({width:finite.positive(),depth:finite.positive(),shape:z.literal('ellipse').optional(),x:finite.optional(),z:finite.optional(),yaw:finite.optional()}).strict();
 const sceneryBinding=z.object({
@@ -63,7 +86,7 @@ export const assetDefinitionSchema=z.object({
   walkable:z.object({surface:refSchema,connectors:z.array(z.object({name:authoringId,position:vector,width:finite.positive()}).strict()).min(2).max(16)}).strict().optional(),
   harvesting:z.object({replacement:authoringId,definition:authoringId.optional()}).strict().optional(),
  }).strict().default({}),
- water:waterProfileSchema.optional(),recipe:landscapeRecipeSchema.optional(),
+ water:waterProfileSchema.optional(),recipe:landscapeRecipeSchema.optional(),terrain:groundTextureSchema.optional(),
  provenance:z.object({method:z.enum(['import','migration','generated','authored']),licenseNote:z.string().max(4000).optional(),sourceHash:z.string().regex(/^[a-f0-9]{64}$/).optional(),generation:refSchema.optional()}).strict(),
 }).strict().superRefine((asset,ctx)=>{
  const keys=new Set<string>(),roles=new Map<string,number[]>();
@@ -79,6 +102,12 @@ export const assetDefinitionSchema=z.object({
  if(new Set(asset.materials.map(m=>m.slot)).size!==asset.materials.length)ctx.addIssue({code:'custom',path:['materials'],message:'Material slots must be unique'});
  for(const [i,s]of asset.bindings.scenery.entries())check(s.geometry,['bindings','scenery',i,'geometry'],'geometry');
  check(asset.provenance.generation,['provenance','generation'],'generation');
+ if(asset.terrain){
+  if(asset.kind!=='terrain-material')ctx.addIssue({code:'custom',path:['terrain'],message:'Ground texture declarations require a terrain-material asset'});
+  for(const role of ['albedo','normal','occlusion','roughness','metalness'] as const)check(asset.terrain[role],['terrain',role],role);
+  check(asset.terrain.thumbnail,['terrain','thumbnail'],'image');
+  for(const [name,ref] of Object.entries(asset.terrain.runtime??{}))check(ref,['terrain','runtime',name],'data');
+ }
  const c=asset.capabilities;
  check(c.teamColor?.mask,['capabilities','teamColor','mask'],'team_mask');
  if(c.teamColor?.mode==='mask'&&!c.teamColor.mask)ctx.addIssue({code:'custom',path:['capabilities','teamColor'],message:'Mask team coloring requires a mask resource'});

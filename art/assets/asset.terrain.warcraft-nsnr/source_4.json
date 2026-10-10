@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Nsnr",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_snowrock_diffuse.dds",
+      "sha256": "08ee984558c0275f51cb48a264a531019b08c1525fe649074bf233fd94301153"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/northrend/north_snowrock_normal.dds",
+      "sha256": "b1f9f4ff1d22b606061f1621195b5208e9136a46bdcdb1afb3c8745046da6318"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_snowrock_orm.dds",
+      "sha256": "976fb8ac799c2c1b2cd814d6cc6bb8b77302f0a7423852579c647fe0134599e4"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Nsnr",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Northrend",
+    "file": "North_SnowRock",
+    "comment": "Rocky Snow",
+    "name": "WESTRING_TILE_ROCKY_SNOW",
+    "buildable": "0",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "7",
+    "convertTo": "Lrok,Frok,Wrok,Bdrr,Avin,Cvin,Ysqd,Vstp,Qstp,Xsqd,Dlvc,Glvc,Zdrg,Idki,Osmb",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

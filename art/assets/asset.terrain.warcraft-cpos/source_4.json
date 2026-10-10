@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Cpos",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/felwood/felwood_poison_diffuse.dds",
+      "sha256": "6901afc59eab90ac57407c5cf58b75c09db5f8fc4906f9e46d80cfbca706b1f6"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/felwood/felwood_poison_normal.dds",
+      "sha256": "86fc6fadb95f41445ab23ad8c8adb734b30975aa3266fb2a95f1e56b067ada0d"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\felwood\\felwood_poison_orm.dds",
+      "sha256": "850e5ea56ec07a3d0bd8f6cea16380e856f095d9ae77d55199c9b3d94d6ecc36"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Cpos",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Felwood",
+    "file": "Felwood_Poison",
+    "comment": "Poison",
+    "name": "WESTRING_TILE_POISON",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "6",
+    "convertTo": "Ldrg,Fdrg,Wsng,Bdrg,Adrg,Nice,Ygsb,Vgrt,Qgrt,Xgsb,Drds,Grds,Zsan,Iice,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

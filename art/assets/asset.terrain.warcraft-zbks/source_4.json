@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Zbks",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_smallbricks_diffuse.dds",
+      "sha256": "4188a56c2efe31a5dd5bbe2370587391b85badcfb97e8716cad3968128372643"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_smallbricks_normal.dds",
+      "sha256": "4197f7993bfa2f45e00d78567ba1ed0e77aa70431a1caab302cc1b949884c319"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_smallbricks_orm.dds",
+      "sha256": "401577138f7c00c7936fc953c931eb6f71955cfd0fc73cbfa8b30d6f91ee1efc"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Zbks",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Ruins",
+    "file": "Ruins_SmallBricks",
+    "comment": "Small Bricks",
+    "name": "WESTRING_TILE_SMALL_BRICKS",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "4",
+    "convertTo": "Lrok,Frok,Wrok,Bdrr,Arck,Crck,Nrck,Ybtl,Vcbp,Qcbp,Xbtl,Dbrk,Gbrk,Ibkb,Osmb",
+    "InBeta": "1",
+    "version": "1"
+  }
+}

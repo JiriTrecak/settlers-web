@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {paintedMaskSchema,authoringSceneSchema,shapeBounds} from '../../src/shared/authoring/layers';
+import {paintedMaskSchema,mapPreviewSceneSchema,shapeBounds} from '../../src/shared/authoring/layers';
 import {regionDistance} from '../../src/shared/authoring/shapes';
 import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {landscapeAssets} from '../../src/shared/authoring/project';
@@ -13,7 +13,7 @@ const mask=()=>paintedMaskSchema.parse({type:'mask',elevation:-.6,strokes:[
  {operation:'add',radius:18,points:[{x:110,z:128},{x:146,z:128}]},
  {operation:'subtract',radius:6,points:[{x:128,z:128}]},
 ]});
-const map=()=>({...createBiomeMap('Paint test',256,'vibrant-forest'),authoring:authoringSceneSchema.parse({version:1,terrain:flatTerrainData(256,0,-8),objects:[],layers:[
+const map=()=>({...createBiomeMap('Paint test',256,'vibrant-forest'),authoring:mapPreviewSceneSchema.parse({version:1,terrain:flatTerrainData(256,0,-8),objects:[],layers:[
  {id:'lake',name:'Painted lake',recipe:'recipe.river.gentle',seed:9,shape:mask()},
  {id:'forest',name:'Painted pines',recipe:'recipe.forest.conifer-edge',seed:3,shape:{type:'mask',strokes:[{operation:'add',radius:35,points:[{x:128,z:128}]}]}},
 ]})});

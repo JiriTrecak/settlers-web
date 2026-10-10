@@ -69,11 +69,9 @@ export type UtcMap = {
   /** Local, fully revealed testbed: authored entities only, no opponents or victory rules. */
   readonly sandbox?: boolean;
   readonly stamps: readonly MapStamp[];
-  readonly waterLevel?: number;
-  readonly height?: string;
   readonly landscape?: Landscape;
   /** Committed editable terrain and placed objects. Generator previews are editor-only. */
-  readonly authoring?: SavedScene;
+  readonly authoring: SavedScene;
 };
 
 export function emptyUtcMap(size: MapSize = 256): UtcMap {
@@ -140,7 +138,7 @@ export function readUtcMap(raw: unknown): { map: UtcMap } | { error: string } {
   const size = o.size;
   const mission = missionSchema.optional().safeParse(o.mission);
   if (!mission.success) return fail(issue("mission", mission.error));
-  const authoring=savedSceneSchema.refine(s=>!!s.terrain,"Saved maps require committed terrain cells").safeParse(o.authoring);
+  const authoring=savedSceneSchema.safeParse(o.authoring);
   if(!authoring.success)return fail(issue("authoring", authoring.error));
   if(authoring.data?.terrain&&authoring.data.terrain.size!==size)return fail('authoring.terrain.size: must match map size');
   if (o.sandbox !== undefined && typeof o.sandbox !== "boolean") return fail("sandbox: must be a boolean");
@@ -192,13 +190,14 @@ export function readUtcMap(raw: unknown): { map: UtcMap } | { error: string } {
     entities: placements.data,
     camps: camps.data,
     ...(landscape ? { landscape } : {}),
-    ...(authoring.data?{authoring:authoring.data}:{}),
+    authoring:authoring.data,
   } };
 }
 
 export function stringifyUtcMap(map: UtcMap): string {
   if(!map.authoring?.terrain)throw Error('Map has no committed terrain cells');
-  if(map.height!==undefined||map.waterLevel!==undefined)throw Error('Legacy terrain fields cannot be saved');
+  if(map.authoring.terrain.size!==map.size)throw Error('Committed terrain dimensions must match map size');
+  if('height' in map||'waterLevel' in map)throw Error('Legacy terrain fields cannot be saved');
   const landscape=map.landscape;
   if(landscape&&(landscape.strokes.length||landscape.cover.length||landscape.rivers?.length||landscape.importedTerrain))throw Error('Apply generator results before saving the map');
   return `${JSON.stringify(

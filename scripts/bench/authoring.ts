@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {landscapeAssets,projectScene} from '../../src/shared/authoring/project';
 import {parseUtcMap} from '../../src/shared/map/utcmap';
-const path=process.argv[2]??'assets/maps/skirmish/amberwake-basin.utcmap';
+const path=process.argv[2]??'assets/maps/skirmish/echo-isles.utcmap';
 const map=parseUtcMap(JSON.parse(readFileSync(path,'utf8')));if(!map)throw Error('Invalid map');
 const runs=Number(process.env.BENCH_RUNS??6);if(!Number.isInteger(runs)||runs<1)throw Error('BENCH_RUNS must be a positive integer');
 const samples:number[]=[];let compiled:ReturnType<typeof compileMapScene>;

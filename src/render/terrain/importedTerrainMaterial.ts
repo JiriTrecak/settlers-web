@@ -1,7 +1,10 @@
 import {terrainTileArray as tileArray} from './terrainTileArray';
 import {terrainMaskBytes,sameTerrainMask} from './terrainMasks';
+import {terrainTexturePalette,reuseTerrainTexturePalette,type TerrainTexturePalette} from './terrainTexturePalette';
+import {terrainLayerTable} from './terrainLayerTable';
 import {sourceTerrainGLSL} from './sourceTerrainShader';
-import {Color,DataArrayTexture,DataTexture,LinearFilter,NearestFilter,RedFormat,Vector2,Vector4,type WebGLProgramParametersWithUniforms} from 'three';
+import {DataArrayTexture,DataTexture,FloatType,LinearFilter,NearestFilter,RedFormat,RGBAFormat,Vector2,type WebGLProgramParametersWithUniforms} from 'three';
+import {groundTextures} from '../../shared/authoring/groundTextures';
 import {unpackSourceBytes,sourceHeight,type ImportedTerrain} from '../../shared/map/importedTerrain';
 import {ReferenceGround} from '../prop/referenceGround';
 import {referenceTexture,macroUrl} from './referenceTerrain';
@@ -11,36 +14,48 @@ export class ImportedTerrainMaterial {
  private disposed=false;
  private ar={value:new DataArrayTexture(new Uint8Array([128,128,128,255]),1,1,1)};
  private nh={value:new DataArrayTexture(new Uint8Array([128,128,255,128]),1,1,1)};
+ private om={value:new DataArrayTexture(new Uint8Array([255,0,0,255]),1,1,1)};
  private displacement={value:new DataArrayTexture(new Uint8Array([128,128,255,64]),1,1,1)};
  private displacementMask:DataTexture;
+ private readonly displacementAsset:string|undefined;
  private masks:DataArrayTexture;
  private slots:DataTexture;
+ private palette:TerrainTexturePalette;
  private macro=referenceTexture(macroUrl,false);
  private ground=new ReferenceGround();
  private currentSource:ImportedTerrain;
  get source(){return this.currentSource;}
  constructor(source:ImportedTerrain){
-  this.currentSource=source;
+  this.currentSource=source;this.displacementAsset=source.displacement?.texture;
   if(source.layers.some(l=>l.ar.startsWith('asset.terrain.winter-'))){this.macro.dispose();this.macro=referenceTexture(assetUrls['assets/library/asset.texture.winter-macro/albedo.png'],false);}
   this.ground.updateSource(sourceHeight(source));
   const [dw,dh]=source.maskSize;
   this.displacementMask=new DataTexture(terrainMaskBytes(source.displacement)?.slice()??new Uint8Array(dw*dh),dw,dh,RedFormat);
   this.displacementMask.minFilter=this.displacementMask.magFilter=LinearFilter;this.displacementMask.needsUpdate=true;
   this.displacement.value.needsUpdate=true;
-  const [w,h]=source.maskSize,maskData=new Uint8Array(w*h*source.layers.length);maskData.fill(255,0,w*h);
-  source.layers.forEach((layer,i)=>{const bytes=terrainMaskBytes(layer);if(bytes)maskData.set(bytes,w*h*i);});
-  this.masks=new DataArrayTexture(maskData,w,h,source.layers.length);this.masks.format=RedFormat;this.masks.minFilter=this.masks.magFilter=LinearFilter;this.masks.needsUpdate=true;
-  const sw=source.blocks[0]*4,sh=source.blocks[1]*4,slotData=new Uint8Array(sw*sh*8).fill(255),raw=unpackSourceBytes(source.layerSlots);
-  for(let bz=0;bz<source.blocks[1];bz++)for(let bx=0;bx<source.blocks[0];bx++)for(let j=0;j<16;j++){
-   const offset=((bz*source.blocks[0]+bx)*16+j)*6,to=((bz*4+Math.floor(j/4))*sw+bx*4+j%4)*8;
-   slotData.set(raw.subarray(offset,offset+6),to);
-  }
-  this.slots=new DataTexture(slotData,sw*2,sh);this.slots.minFilter=this.slots.magFilter=NearestFilter;this.slots.needsUpdate=true;
-  this.ar.value.needsUpdate=this.nh.value.needsUpdate=true;
-  this.ready=Promise.all([tileArray(source.layers.map(l=>l.ar),true),tileArray(source.layers.map(l=>l.nh),false),this.ground.ready,source.displacement?tileArray([source.displacement.texture],false):Promise.resolve(undefined),this.macro.referenceReady]).then(([ar,nh,,displacement])=>{
-   if(this.disposed){ar.dispose();nh.dispose();displacement?.dispose();return;}this.ar.value.dispose();this.nh.value.dispose();this.ar.value=ar;this.nh.value=nh;
+  const [w,h]=source.maskSize,maskData=new Uint8Array(w*h*source.layers.length*4);
+  source.layers.forEach((_,i)=>this.writeMask(maskData,source,i));
+  this.masks=new DataArrayTexture(maskData,w,h,source.layers.length);this.masks.format=RGBAFormat;this.masks.minFilter=this.masks.magFilter=LinearFilter;this.masks.needsUpdate=true;
+  this.palette=terrainTexturePalette(source);
+  const table=terrainLayerTable(source,this.palette);
+  this.slots=new DataTexture(table.data,table.width,table.height,RGBAFormat,FloatType);
+  this.slots.minFilter=this.slots.magFilter=NearestFilter;this.slots.needsUpdate=true;
+  this.ar.value.needsUpdate=this.nh.value.needsUpdate=this.om.value.needsUpdate=true;
+  this.ready=Promise.all([tileArray(this.palette.names.ar,true),tileArray(this.palette.names.nh,false),this.ground.ready,source.displacement?tileArray([source.displacement.texture],false):Promise.resolve(undefined),this.macro.referenceReady,this.palette.names.om.length?tileArray(this.palette.names.om,false,'om'):Promise.resolve(undefined)]).then(([ar,nh,,displacement,,om])=>{
+   if(this.disposed){ar.dispose();nh.dispose();om?.dispose();displacement?.dispose();return;}this.ar.value.dispose();this.nh.value.dispose();this.om.value.dispose();this.ar.value=ar;this.nh.value=nh;if(om)this.om.value=om;
    if(displacement){this.displacement.value.dispose();this.displacement.value=displacement;}
   });
+ }
+ private writeMask(data:Uint8Array,source:ImportedTerrain,layerIndex:number){
+  const [w,h]=source.maskSize,layer=source.layers[layerIndex],bytes=terrainMaskBytes(layer),codes=layer.connections?unpackSourceBytes(layer.connections):undefined,cells=source.blocks[0]*4;
+  const variants=layer.variants?unpackSourceBytes(layer.variants):undefined,fullTiles=groundTextures.get(layer.ar)?.terrain?.atlas.fullTiles;
+  for(let z=0;z<h;z++)for(let x=0;x<w;x++){
+   const i=z*w+x,to=(layerIndex*w*h+i)*4;
+   data[to]=bytes?.[i]??(layerIndex===0?255:0);
+   const cx=Math.max(0,Math.min(cells-1,Math.floor((x+.5)/4))),cz=Math.max(0,Math.min(source.blocks[1]*4-1,Math.floor((z+.5)/4)));
+   data[to+1]=codes?.[cz*cells+cx]??0;
+   data[to+2]=fullTiles?.[(variants?.[cz*cells+cx]??0)%(fullTiles?.length??1)]??0;
+  }
  }
  /** Editable terrain changes masks far more often than its biome tiles. Keep the
   * loaded arrays (and pending loads) alive across compatible edits. Different
@@ -50,14 +65,14 @@ export class ImportedTerrainMaterial {
   const pair=(a:readonly number[],b:readonly number[])=>a[0]===b[0]&&a[1]===b[1];
   if(this.disposed||!pair(previous.maskSize,source.maskSize)||!pair(previous.blocks,source.blocks)||
    previous.layers.length!==source.layers.length||previous.layers.some((l,i)=>l.ar!==source.layers[i]!.ar||l.nh!==source.layers[i]!.nh)||
-   previous.displacement?.texture!==source.displacement?.texture)return false;
-  const [w,h]=source.maskSize,data=this.masks.image.data as Uint8Array;
+   (source.displacement&&source.displacement.texture!==this.displacementAsset))return false;
+  const palette=reuseTerrainTexturePalette(terrainTexturePalette(source),this.palette);
+  if(!palette)return false;
+  const data=this.masks.image.data as Uint8Array;
   let dirty=false;
   source.layers.forEach((layer,i)=>{
-   if(sameTerrainMask(layer,previous.layers[i]))return;
-   const bytes=terrainMaskBytes(layer);
-   if(bytes)data.set(bytes,w*h*i);
-   else data.fill(i===0?255:0,w*h*i,w*h*(i+1));
+   if(sameTerrainMask(layer,previous.layers[i])&&layer.connections===previous.layers[i]?.connections&&layer.variants===previous.layers[i]?.variants)return;
+   this.writeMask(data,source,i);
    dirty=true;
   });
   if(dirty)this.masks.needsUpdate=true;
@@ -67,25 +82,19 @@ export class ImportedTerrainMaterial {
    if(bytes)displacement.set(bytes);else displacement.fill(0);
    this.displacementMask.needsUpdate=true;
   }
-  if(source.layerSlots!==previous.layerSlots){
-   const sw=source.blocks[0]*4,slots=this.slots.image.data as Uint8Array,raw=unpackSourceBytes(source.layerSlots);
-   slots.fill(255);
-   for(let bz=0;bz<source.blocks[1];bz++)for(let bx=0;bx<source.blocks[0];bx++)for(let j=0;j<16;j++){
-    const offset=((bz*source.blocks[0]+bx)*16+j)*6,to=((bz*4+Math.floor(j/4))*sw+bx*4+j%4)*8;
-    slots.set(raw.subarray(offset,offset+6),to);
-   }
-   this.slots.needsUpdate=true;
-  }
+  const table=terrainLayerTable(source,palette),slots=this.slots.image.data as Float32Array;
+  if(table.data.some((value,i)=>value!==slots[i])){slots.set(table.data);this.slots.needsUpdate=true;}
   if(source.height!==previous.height||source.heightOffset!==previous.heightOffset||source.heightSamplesPerUnit!==previous.heightSamplesPerUnit||
    !pair(source.heightSize,previous.heightSize)||!pair(source.origin,previous.origin)||!pair(source.sourceOrigin,previous.sourceOrigin)||
    source.source!==previous.source||source.groundColor!==previous.groundColor||source.underlayMask!==previous.underlayMask||source.occlusion!==previous.occlusion)
    this.ground.updateSource(sourceHeight(source));
-  this.currentSource=source;
+  this.palette=palette;this.currentSource=source;
   return true;
  }
  private uniforms(shader:WebGLProgramParametersWithUniforms){
   const s=this.source;
-  Object.assign(shader.uniforms,{uSourceHeightScale:{value:s.heightSamplesPerUnit??3},uSourceAR:this.ar,uSourceNH:this.nh,uSourceMasks:{value:this.masks},uSourceSlots:{value:this.slots},uSourceMacro:{value:this.macro},uTerrainUnderlay:this.ground.underlay,uSourceHeight:this.ground.texture,uSourceHeightSize:{value:new Vector2(...s.heightSize)},uSourceDisplacement:this.displacement,uSourceDisplacementMask:{value:this.displacementMask},uSourceHasDisplacement:{value:s.displacement?1:0},uSourceDisplacementTiling:{value:s.displacement?.tiling??1},uSourceOrigin:{value:new Vector2(...s.origin)},uSourceOffset:{value:new Vector2(s.origin[0]-s.sourceOrigin[0],s.origin[1]-s.sourceOrigin[1])},uSourceSize:{value:new Vector2(s.blocks[0]*16,s.blocks[1]*16)},uSourceTints:{value:s.layers.map(l=>new Color(l.tint??'#ffffff'))},uSourceParams:{value:s.layers.map(l=>new Vector4(l.tiling,l.blend,l.verticality,l.edge))},uSourceDesaturation:{value:s.layers.map(l=>l.desaturation)},uSourceBreakup:{value:s.layers.map(l=>l.breakup??0)}});
+  Object.assign(shader.uniforms,{uSourceOM:this.om,uSourceAllLayers:{value:s.source==='authored-layered'?1:0},uSourceMetadataOffset:{value:s.blocks[0]*8*s.blocks[1]*4}});
+  Object.assign(shader.uniforms,{uSourceHeightScale:{value:s.heightSamplesPerUnit??3},uSourceAR:this.ar,uSourceNH:this.nh,uSourceMasks:{value:this.masks},uSourceSlots:{value:this.slots},uSourceMacro:{value:this.macro},uTerrainUnderlay:this.ground.underlay,uSourceHeight:this.ground.texture,uSourceHeightSize:{value:new Vector2(...s.heightSize)},uSourceDisplacement:this.displacement,uSourceDisplacementMask:{value:this.displacementMask},uSourceHasDisplacement:{value:s.displacement?1:0},uSourceDisplacementTiling:{value:s.displacement?.tiling??1},uSourceOrigin:{value:new Vector2(...s.origin)},uSourceOffset:{value:new Vector2(s.origin[0]-s.sourceOrigin[0],s.origin[1]-s.sourceOrigin[1])},uSourceSize:{value:new Vector2(s.blocks[0]*16,s.blocks[1]*16)}});
  }
  /** Rebind existing GPU programs after editable terrain replaces its textures.
   * Three caches programs by shader source, so onBeforeCompile alone is insufficient. */
@@ -109,6 +118,8 @@ export class ImportedTerrainMaterial {
     vec4 sourceAR,sourceNH;terrainLayers(vSourcePosition.xz,sourceBaseNormal.y,sourceAR,sourceNH);
     diffuseColor.rgb*=sourceAR.rgb*texture2D(uSourceMacro,(vSourcePosition.xz-uSourceOffset)*.01).rgb*2.;
    `).replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=sourceAR.a;')
+   .replace('#include <metalnessmap_fragment>','#include <metalnessmap_fragment>\nmetalnessFactor=terrainSurfaceOM.y;')
+   .replace('#include <aomap_fragment>','#include <aomap_fragment>\nreflectedLight.indirectDiffuse*=terrainSurfaceOM.x;')
    .replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
     normal=normalize(mat3(viewMatrix)*terrainBasis(sourceBaseNormal)*(2.*(sourceNH.rgb-.50196)*vec3(1.,1.,.55)));
    `);
@@ -124,5 +135,5 @@ export class ImportedTerrainMaterial {
   // Source Terrain.fx applies displacement AO before default ambient lighting.
   shader.fragmentShader=shader.fragmentShader.replace('float sourceAO=1.;',`float sourceAO=mix(1.,.5+clamp(terrainDisplacement(vSourcePosition.xz).a/.6,0.,1.)*.5,terrainDisplacementMask(vSourceDisplaced.xz));`);
  }
- dispose(){this.disposed=true;this.ar.value.dispose();this.nh.value.dispose();this.masks.dispose();this.slots.dispose();this.displacement.value.dispose();this.displacementMask.dispose();this.macro.dispose();this.ground.dispose();}
+ dispose(){this.disposed=true;this.ar.value.dispose();this.nh.value.dispose();this.om.value.dispose();this.masks.dispose();this.slots.dispose();this.displacement.value.dispose();this.displacementMask.dispose();this.macro.dispose();this.ground.dispose();}
 }

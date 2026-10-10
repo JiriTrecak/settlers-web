@@ -2,7 +2,7 @@ import {graphicsControls} from './graphicsControls';
 import {shortcuts} from '../../shared/input/shortcuts';
 import {SaveLibrary,validateSaveDestination,type SavedGame} from '../../shared/save/saveLibrary';
 import {localSaveSchema,type LocalSave,type SaveMode} from '../../shared/save/localSave';
-import {getMap} from '../../shared/map/library';
+import {getMap,loadMap} from '../../shared/map/library';
 import './gameMenu.css';
 type MenuHooks={pause:(paused:boolean)=>void;leave:()=>void;snapshot?:()=>LocalSave|Promise<LocalSave>;restart?:()=>void;load?:(save:LocalSave)=>void};
 export class GameMenu {
@@ -50,12 +50,12 @@ export class GameMenu {
  private async loadPage(){
   this.page(`Load ${this.mode} save`,'Only saves from this game mode appear here. Loading restores the saved map and player setup.');
   const list=document.createElement('div');list.className='match-save-list';this.dialog!.append(list);
-  this.button('Import save…',()=>{const input=document.createElement('input');input.type='file';input.accept='.utcsave,application/json';input.onchange=()=>{if(input.files?.[0])void this.run(async()=>{const file=input.files![0],save=localSaveSchema.parse(JSON.parse(await file.text()));validateSaveDestination(save,this.mode,getMap(save.mapId));await this.library.save(file.name.replace(/\.utcsave$/i,''),getMap(save.mapId).name,save);await this.loadPage();});};input.click();});
+  this.button('Import save…',()=>{const input=document.createElement('input');input.type='file';input.accept='.utcsave,application/json';input.onchange=()=>{if(input.files?.[0])void this.run(async()=>{const file=input.files![0],save=localSaveSchema.parse(JSON.parse(await file.text()));validateSaveDestination(save,this.mode,await loadMap(save.mapId));await this.library.save(file.name.replace(/\.utcsave$/i,''),getMap(save.mapId).name,save);await this.loadPage();});};input.click();});
   this.button('Back',()=>this.main());
   const saves=await this.library.list(this.mode);if(!this.dialog||!list.isConnected)return;
   if(!saves.length){list.textContent='No saves yet.';return;}
   for(const record of saves){const row=document.createElement('article'),name=document.createElement('strong'),detail=document.createElement('small');name.textContent=record.name;detail.textContent=`${record.mapName} · ${new Date(record.savedAt).toLocaleString()}`;row.append(name,detail);list.append(row);
-   this.button('Load',()=>{const save=validateSaveDestination(record.data,this.mode,getMap(record.data.mapId));return this.hooks.load!(save);},row);
+   this.button('Load',async()=>{const save=validateSaveDestination(record.data,this.mode,await loadMap(record.data.mapId));return this.hooks.load!(save);},row);
    this.button('Export',()=>this.export(record),row);
   }
  }

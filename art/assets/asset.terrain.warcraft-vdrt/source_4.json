@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Vdrt",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_dirt_diffuse.dds",
+      "sha256": "305870bc25625e3f240786e2b3b7cb92c215c5a6bb33c2175e47e9ad068cf87c"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/village/village_dirt_normal.dds",
+      "sha256": "ed38eb94a465f4a361424a0c90b7a428e592fd6a0ec3c50218f0771d86de39d9"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_dirt_orm.dds",
+      "sha256": "7d246716407035786238d710f245030d0d51dcba5bf1eeacb0b6ad2ac52399f1"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Vdrt",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Village",
+    "file": "Village_Dirt",
+    "comment": "Dirt",
+    "name": "WESTRING_TILE_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "2",
+    "convertTo": "Ldrt,Fdrt,Wdrt,Bdsr,Adrt,Cdrt,Ndrt,Ydrt,Qdrt,Xdrt,Ddrt,Gdrt,Zdrt,Idrt,Odrt",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

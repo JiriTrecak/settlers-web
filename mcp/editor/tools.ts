@@ -1,6 +1,8 @@
+import {readMapFile,writeMapFile} from './mapFiles';
 import {inspectionShotSchema} from '../../src/shared/camera/inspectionShot';
 import {UNIT_CAMERA_MODES} from '../../src/shared/camera/modes';
 import {sceneCommandSchema} from '../../src/shared/authoring/sceneCommands';
+import {cleanDiscSchema} from '../../src/shared/authoring/cleanup';
 import {editorPreviewSchema} from '../../src/shared/authoring/editorPreview';
 import {editorPerformanceSchema} from '../../src/shared/authoring/editorPerformance';
 import {walkStampSchema} from '../../src/shared/map/utcmap';
@@ -13,7 +15,7 @@ import { placementSchema } from "../../src/content/schema";
 /**
  * Mastra tools → EditorHub ops. Add a createTool here when you add an EditorControl op.
  */
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync,readFileSync,statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createTool } from "@mastra/core/tools";
@@ -49,12 +51,17 @@ const cellY = z.number().describe("Cell Y / Z. Same range as X");
 export function editorTools(hub: EditorHub) {
   // Loading or regenerating a forested 512² map runs well past the 8 s default.
   const call = (op: string, params?: unknown) =>
-    hub.call(op, params, op === "landscape" || op === "scene" ? 120_000 : op === "performance" && (params as {action?:string}|undefined)?.action === "benchmark" ? 30_000 : undefined);
+    hub.call(op, params, op === "landscape" || op === "scene" || op === "importWarcraft" ? 120_000 : op === "performance" && (params as {action?:string}|undefined)?.action === "benchmark" ? 30_000 : undefined);
 
   return {
+    editor_import_warcraft:createTool({id:'editor_import_warcraft',description:'Import a local .w3x/.w3m into ordinary editable terrain, water, textures, trees, starts, amber mine sites and difficulty-matched neutral camps. Generators and source archives are not saved. preview returns the report without replacing the active map. Export the current map before replacing it. Optional textures maps source four-character IDs to declared ground asset IDs.',inputSchema:z.object({path:z.string().min(1),preview:z.boolean().default(false),textures:z.record(z.string(),z.string()).optional()}).strict(),execute:async input=>{
+      if(!/\.w3[xm]$/i.test(input.path))throw Error('Choose a .w3x or .w3m file');
+      if(statSync(input.path).size>128*1024*1024)throw Error('Warcraft map exceeds the 128 MB import limit');
+      return call('importWarcraft',{data:readFileSync(input.path).toString('base64'),preview:input.preview,textures:input.textures});
+    }}),
     editor_preview:createTool({id:'editor_preview',description:'Read or set local editor viewport previews. Canopy defaults off to avoid constructing the forest backdrop during editing. This does not edit the map, biome, undo history or in-game visuals. Empty input reads current settings.',inputSchema:editorPreviewSchema,execute:async(input)=>call('preview',input)}),
     editor_performance:createTool({id:'editor_performance',description:'Map generation/presentation stages and CPU/GPU frame timings, draw calls and instance counters. get reads; reset clears rolling timings; capture records 10 seconds; census attributes the next rendered frame to scene branches; trace returns Chrome trace JSON. enabled controls sampling. Capture/census enable sampling automatically. Read get later for completed capture/census. benchmark renders the current camera to a fixed-size target (width/height/frames), returning CPU submission, asynchronous GPU timing and draw counts without changing the document. This is renderer throughput, not interactive FPS. Does not regenerate or refresh the editor.',inputSchema:editorPerformanceSchema,execute:async(input)=>call('performance',input)}),
-    editor_scene:createTool({id:'editor_scene',description:'Edit terrain cells and placed scenery. Terrain action uses absolute levels or shallow/deep water, with rectangle/polygon selections in terrain-cell coordinates (4 world units, origin -0.5); half-cell points allow corner cuts. Layers are editor-only generator previews: action=apply commits terrain, water and individual objects in one undo step and removes the previews. Apply before saving or playing. Cleanup supports brush/rectangle/lasso, category and asset filters, locked-object protection, exact preview counts, and one undo. Batch edits are atomic. Top camera is orthographic.',inputSchema:z.object({command:sceneCommandSchema}).strict(),execute:async(input)=>call('scene',input.command)}),
+    editor_scene:createTool({id:'editor_scene',description:'Edit terrain cells and placed scenery. Terrain action uses absolute levels or shallow/deep water, with rectangle/polygon selections in terrain-cell coordinates (4 world units, origin -0.5); half-cell points allow corner cuts. Selected cells reach the exact target; bankCells controls slopes outside the selection. Layers are editor-only generator previews: action=apply commits terrain, water and individual objects in one undo step and removes the previews. Apply before saving or playing. Cleanup supports brush/rectangle/lasso, category and asset filters, locked-object protection, exact preview counts, and one undo. Batch edits are atomic. Get returns ground-material metadata and paginated objects (offset, limit up to 500); terrain arrays are available through editor_landscape file export. Top camera is orthographic.',inputSchema:z.object({command:sceneCommandSchema}).strict(),execute:async(input)=>call('scene',input.command)}),
     editor_mission:createTool({id:"editor_mission",description:"Read or replace mission metadata, Lua source and named circular regions in the loaded map. Mission maps are excluded from Skirmish.",inputSchema:z.object({action:z.enum(["get","set"]),mission:missionSchema.nullable().optional(),camps:z.array(campSchema).optional()}),execute:async(input)=>call("mission",input)}),
     editor_entities: createTool({
       id: "editor_entities",
@@ -89,7 +96,7 @@ export function editorTools(hub: EditorHub) {
     editor_landscape: createTool({
       id: "editor_landscape",
       description:
-        "Terrain edits write committed cells directly. Use editor_scene previews and Apply for rivers, forests and ground cover. Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (optional sculpting with Catmull-Rom points x/z/radius, mode raise/smooth/flatten), biome (biome ID selects the complete artistic profile), environment (hour/playing/weather.kind only; visual overrides are forbidden), base (height), view (grid), export, load (map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
+        "Terrain edits write committed cells directly. Use editor_scene previews and Apply for rivers, forests and ground cover. Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (optional sculpting with Catmull-Rom points x/z/radius, mode raise/smooth/flatten), biome (biome ID selects the complete artistic profile), environment (hour/playing/weather.kind only; visual overrides are forbidden), base (height), view (grid), export (path writes a new project .utcmap file without returning its large contents), load (path or map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
       inputSchema: z.object({
         action: z.enum([
           "status",
@@ -156,15 +163,27 @@ export function editorTools(hub: EditorHub) {
         height: z.number().optional(),
         grid: z.boolean().optional(),
         map: z.unknown().optional(),
+        path:z.string().min(1).optional(),
       }),
-      execute: async (input) => call("landscape", input),
+      execute: async (input) => {
+        if(input.path){
+          if(input.action==='export'){
+            const result=await call('landscape',{action:'export'}) as {map:unknown};
+            return writeMapFile(input.path,result.map);
+          }
+          if(input.action!=='load')throw Error('File paths are only supported for export and load');
+          if(input.map!==undefined)throw Error('Choose either path or map');
+          return call('landscape',{action:'load',map:readMapFile(input.path)});
+        }
+        return call('landscape',input);
+      },
     }),
     editor_decals: createTool({
       id: "editor_decals",
       description:
-        "Edit terrain-following ground decals. List patterns and decals; place a patch at world x/z; update or delete by id; config selects the editor decal tool. Size is full width in metres, rotation in degrees, opacity 0..1. Saved in landscape.decals and follows sculpted terrain.",
+        "Edit terrain-following ground decals. preview stages a patch at world x/z without changing the saved map; apply commits all preview patches in one undo step; discard removes the preview. list returns saved decals and previews. place, update and delete edit ordinary saved patches directly; config selects the editor decal tool. Size is full width in metres, rotation in degrees, opacity 0..1. Patches follow sculpted terrain.",
       inputSchema: z.object({
-        action: z.enum(["list", "place", "update", "delete", "config"]),
+        action: z.enum(["list", "place", "preview", "apply", "discard", "update", "delete", "config"]),
         id: z.string().optional(),
         kind: z.enum(DECAL_KINDS).optional(),
         x: z.number().optional(),
@@ -423,13 +442,8 @@ export function editorTools(hub: EditorHub) {
     editor_clean: createTool({
       id: "editor_clean",
       description:
-        "Clean a disc at x,z: objects wipes stamps; foliage removes plants and grass/flower cover, preserving rocks and structures.",
-      inputSchema: z.object({
-        x: z.number(),
-        z: z.number(),
-        radius: z.number().optional(),
-        type: z.enum(["objects", "foliage"]).optional(),
-      }),
+        "Clean a disc of placed scenery or decals, with category/asset filters and locked-object protection. preview=true returns the exact removal count without deleting. Use editor_scene cleanup for rectangles and lassos. Terrain textures are unchanged.",
+      inputSchema: cleanDiscSchema,
       execute: async (input) => call("clean", input),
     }),
 

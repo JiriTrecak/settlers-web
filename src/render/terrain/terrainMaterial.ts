@@ -32,7 +32,7 @@ export class TerrainMaterial extends MeshStandardMaterial {
       this.refreshNative();this.colorPrograms.add(shader);
       (this.imported??this.native)?.compile(shader);
     };
-    this.customProgramCacheKey=()=> `landscape-terrain-reference-v3-${this.imported?.source.sha256??"native"}`;
+    this.customProgramCacheKey=()=> `landscape-terrain-atlas-v1-${this.imported?.source.sha256??"native"}-${(this.imported??this.native)?.source.layers.length??0}`;
   }
   setCover(patches:readonly CoverPatch[]):void {
     if(this.cover===patches)return;

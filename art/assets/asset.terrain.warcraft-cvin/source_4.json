@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Cvin",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/felwood/felwood_vines_diffuse.dds",
+      "sha256": "5d4923a4227c564ea25844cc6bc92294d61ed72820c94f8a81b8bac706a8cdeb"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/felwood/felwood_vines_normal.dds",
+      "sha256": "a0fe7d730c727c13e36bb3920292338dc0c1794788b97650447c1abbaec934d8"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\felwood\\felwood_vines_orm.dds",
+      "sha256": "1ae14fd3c1531f526dcdcc9b96b7444c0b2e8cd0c3b9f255b7cbb806503d2a38"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Cvin",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Felwood",
+    "file": "Felwood_Vines",
+    "comment": "Vines",
+    "name": "WESTRING_TILE_VINES",
+    "buildable": "0",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "3",
+    "convertTo": "Lrok,Frok,Wrok,Bdrr,Avin,Nsnr,Yrtl,Vcrp,Qcrp,Xrtl,Dlav,Glav,Zvin,Idki,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

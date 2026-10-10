@@ -1,11 +1,13 @@
+import {captureTerrain} from '../../src/shared/authoring/captureTerrain';
+import {restoreTerrain} from '../../src/shared/map/terrainData';
 import {it,expect} from 'vitest';
 import {Game} from '../../src/sim/game/game';
 import {emptyUtcMap,parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
-import {HeightField,encodeHeight,decodeHeight} from '../../src/shared/map/height';
+import {HeightField} from '../../src/shared/map/height';
 import {slots,run} from './helpers';
 it('runs a 512 map alongside a 256 map with independent path, fog and snapshot strides',()=>{
  const small=new Game(emptyUtcMap(),slots);
- const map={...emptyUtcMap(),size:512 as const,playerStarts:emptyUtcMap().playerStarts.map((p,i)=>({...p,x:i?37.5:401.5,z:i?37.5:401.5}))};
+ const map={...emptyUtcMap(512),playerStarts:emptyUtcMap().playerStarts.map((p,i)=>({...p,x:i?37.5:401.5,z:i?37.5:401.5}))};
  const large=new Game(map,slots),a=large.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.marshal')!;
  expect(large.spatial.terrain.length).toBe(512**2);expect(small.spatial.terrain.length).toBe(256**2);
  expect(large.command('player.1',{type:'move',actors:[a.id],destination:{x:425,y:417}}).accepted).toBe(true);
@@ -17,9 +19,9 @@ it('runs a 512 map alongside a 256 map with independent path, fog and snapshot s
 });
 it('persists dimensions and rejects out-of-bounds placements and mismatched height encodings',()=>{
  const h=new HeightField(512);h.raise(400,400,4,2);
- const m={...emptyUtcMap(),size:512 as const,height:encodeHeight(h.samples,512)};
+ const m={...emptyUtcMap(512),authoring:{version:1 as const,objects:[],terrain:captureTerrain(h)}};
  const parsed=parseUtcMap(JSON.parse(stringifyUtcMap(m)))!;
- expect(parsed.size).toBe(512);expect(decodeHeight(parsed.height!,512)).not.toBeNull();
+ expect(parsed.size).toBe(512);const restored=new HeightField(512);restoreTerrain(restored,parsed.authoring!.terrain!);expect(restored.samples).toEqual(h.samples);
  expect(parseUtcMap({...m,size:256})).toBeNull();
  expect(parseUtcMap({...emptyUtcMap(),playerStarts:[{...emptyUtcMap().playerStarts[0],x:400},emptyUtcMap().playerStarts[1]]})).toBeNull();
 });

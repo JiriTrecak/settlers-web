@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Lgrd",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronsummer/lords_grassdark_diffuse.dds",
+      "sha256": "50bd5545b4854e7177315b31749de56932ccbc0024c5afb2c065ad58392b09d6"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronsummer/lords_grassdark_normal.dds",
+      "sha256": "542b7a0e0e9cc7c4185b6034ee71d225c99eb7d031d14a2213d5dfb3ce43304a"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronsummer\\lords_grassdark_orm.dds",
+      "sha256": "d1cabc730942874e028260b16e4766ab92d100b3b3207f6282ce7e7eb0c56931"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Lgrd",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\LordaeronSummer",
+    "file": "Lords_GrassDark",
+    "comment": "Dark Grass",
+    "name": "WESTRING_TILE_DARK_GRASS",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "5",
+    "convertTo": "Fgrd,Wsnw,Bdrg,Agrd,Clvg,Nice,Ygsb,Vgrt,Qgrt,Xgsb,Dlav,Glav,Zvin,Iice,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

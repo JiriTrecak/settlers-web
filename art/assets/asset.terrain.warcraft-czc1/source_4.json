@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "cZc1",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_largebricks_diffuse.dds",
+      "sha256": "c14c51a1b1e4b609ddf015e71eb175b6b2d5160429cd14223a924726c0f3b5b8"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_largebricks_normal.dds",
+      "sha256": "8473f42436b40e7c6f7da159806ad4aa9845d7345cd477521675b7a75e6a2b2f"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_largebricks_orm.dds",
+      "sha256": "55ba90a75ced949cb94bbfa6c289dc9a57df92898a1fdeae62dcca51ff30302b"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "cZc1",
+    "cliffSet": "2",
+    "dir": "TerrainArt\\Ruins",
+    "file": "Ruins_LargeBricks",
+    "comment": "Large Bricks",
+    "name": "WESTRING_TILE_LARGE_BRICKS",
+    "buildable": "0",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "5",
+    "convertTo": "Lrok,Frok,Wrok,Bflr,Arck,Crck,Nrck,Ysqd,Vrck,Qrck,Xsqd,Drds,Grds,Irbk,Olgb",
+    "InBeta": "1",
+    "version": "1"
+  }
+}

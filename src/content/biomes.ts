@@ -15,6 +15,8 @@ export type Biome = {
   ground: 'soil' | 'dirt';
   lightingProfile: 'temperate' | 'winter';
   terrainSet: 'temperate' | 'winter';
+  /** Published appearance for grid water with no explicit local profile. */
+  waterProfile: string;
   /** breakup: 0..1 noise that frays a layer's coverage into bald and lush patches (see sourceTerrainShader). */
   terrainTiles?: Partial<Record<'soil'|'dirt'|'grass'|'waterbed'|'stones'|'rock', {ar:string; nh:string; tiling?:number; blend?:number; tint?:string; breakup?:number}>>;
   surroundings?: ForestSurroundings;
@@ -65,7 +67,7 @@ const BASE_BIOMES: readonly Biome[] = [{
   name: 'Vibrant Forest',
   description: 'Warm exposed soil, patchy meadow grass, dense pines and clear woodland streams.',
   ground: 'soil',
-  lightingProfile:'temperate', terrainSet: 'temperate',
+  lightingProfile:'temperate', terrainSet: 'temperate', waterProfile:'water.clear-forest',
   terrainTiles:{soil:{ar:'asset.terrain.woodland-soil',nh:'asset.terrain.woodland-soil-normal',tiling:.8},dirt:{ar:'asset.terrain.woodland-dirt',nh:'asset.terrain.woodland-dirt-normal',tiling:.8},grass:{ar:'asset.terrain.woodland-grass',nh:'asset.terrain.woodland-grass-normal',tiling:.9,blend:.35,breakup:.35},stones:{ar:'asset.terrain.pebble-trail',nh:'asset.terrain.pebble-normal',tiling:1.2,blend:.65}},
   paths:[{id:'recipe.path.pebbles',name:'Pebble forest trail'},{id:'recipe.path.grass',name:'Grass ground'},{id:'recipe.path.soil',name:'Exposed earth'}],
   minimap: {ground: '#ad956d', grass: '#829151', forest: '#344c2a', crown: '#687a40'},
@@ -90,7 +92,7 @@ const BASE_BIOMES: readonly Biome[] = [{
   surroundings:{...FOREST_SURROUNDINGS,floorTexture:'asset.terrain.winter-soil',floorColor:'#d1dbdb',leafColors:['#729c98','#9ebbb7','#e0e6dd','#4b746d'],hazeColor:'#c4d9e4'},
   id: 'frozen-forest', name: 'Frozen Forest',
   description: 'Snow-covered earth, frosted pines, winter undergrowth and cold meltwater channels.',
-  ground: 'soil', lightingProfile:'winter', terrainSet: 'winter',
+  ground: 'soil', lightingProfile:'winter', terrainSet: 'winter', waterProfile:'recipe.river.meltwater.water',
   terrainTiles:{soil:{ar:'asset.terrain.winter-dirt',nh:'asset.terrain.winter-dirt-normal',tiling:.65},grass:{ar:'asset.terrain.winter-soil',nh:'asset.terrain.winter-soil-normal',tiling:.6,blend:.65}},
   minimap: {ground: '#ced4d8', grass: '#a8b7ad', forest: '#4f6869', crown: '#b8d0ce'},
   environment: {postProcessing:WINTER_FINISH,light:{...FOREST.light,ambientTint:'#c4dcf5',ambientStrength:.7,skyTint:'#c5ddff',fillStrength:.85,sunTint:'#dceaff',sunStrength:.72,shadowSoftness:3},atmosphere:{...DEFAULT_ATMOSPHERE,enabled:false,density:0,shaftDensity:0,regions:[]},hour: 12, season: 'summer', playing: false, canopy: {...DEFAULT_CANOPY,enabled:true,height:150,scale:320,coverage:.45,softness:.22,strength:.12,cloudShadow:0}, weather: {kind: 'clear', intensity: 0, windX: .7, windZ: .25}},
@@ -103,7 +105,7 @@ const BASE_BIOMES: readonly Biome[] = [{
   surroundings:{...FOREST_SURROUNDINGS,leafColors:['#ad6128','#ce952e','#7c8131','#7a4226'],hazeColor:'#d7c3a2'},
   id: 'autumn-forest', name: 'Amberleaf Forest',
   description: 'Golden broadleaf crowns, copper leaf litter, dry woodland grass and warm earthen paths.',
-  ground: 'soil', lightingProfile:'temperate', terrainSet: 'temperate',
+  ground: 'soil', lightingProfile:'temperate', terrainSet: 'temperate', waterProfile:'water.clear-forest',
   terrainTiles: {grass:{ar:'asset.terrain.autumn-leaf-litter',nh:'asset.terrain.autumn-leaf-normal',tiling:.6,blend:.7}},
   groundCover:{radius:2.6,strength:.8},
   minimap: {ground:'#ad8960',grass:'#89834a',forest:'#99622f',crown:'#d69b37'},

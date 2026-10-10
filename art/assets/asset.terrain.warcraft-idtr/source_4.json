@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Idtr",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\icecrown\\ice_dirtrough_diffuse.dds",
+      "sha256": "ef94ef69d00586418be0140d7b1e5d9e9f2223bfca9e274719ee79cb04598d84"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/icecrown/ice_dirtrough_normal.dds",
+      "sha256": "80db6a457f1537694743a23cc7fd0eca58f837cdc0be668434ae15b1dd22917a"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\icecrown\\ice_dirtrough_orm.dds",
+      "sha256": "79586860120518adf3f69e5eea747ddf06f479be00e05d4c2752a8a12105cb02"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Idtr",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Icecrown",
+    "file": "Ice_DirtRough",
+    "comment": "Rough Dirt",
+    "name": "WESTRING_TILE_ROUGH_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "1",
+    "convertTo": "Ldro,Fdro,Wdro,Bdrh,Adrd,Cdrd,Ndrd,Ydtr,Vdrr,Qdrr,Xdtr,Drds,Grds,Zdtr,Odtr",
+    "InBeta": "0",
+    "version": "1"
+  }
+}

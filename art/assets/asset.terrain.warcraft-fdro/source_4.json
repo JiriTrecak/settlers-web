@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Fdro",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronfall\\lordf_dirtrough_diffuse.dds",
+      "sha256": "864bc72eee6cc7c5a4029ac180f076700b08a34a5dba95db68424cbebc682804"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronfall/lordf_dirtrough_normal.dds",
+      "sha256": "37000dcc2c2545124b81a0ac08584cd81dca92ebeeccf25b87695e2bc9dc811f"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronfall\\lordf_dirtrough_orm.dds",
+      "sha256": "6f9d1f86084dfe8a70129d9c0a4184edcc501aedf5aa39b9667ba26ae1b214b1"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Fdro",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\LordaeronFall",
+    "file": "Lordf_DirtRough",
+    "comment": "Rough Dirt",
+    "name": "WESTRING_TILE_ROUGH_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "1",
+    "convertTo": "Ldro,Wdro,Bdsd,Adrd,Cdrd,Ndrd,Ydtr,Vdrr,Qdrr,Xdtr,Dbrk,Gbrk,Zdtr,Idtr,Odtr",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

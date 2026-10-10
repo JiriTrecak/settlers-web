@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "cBc2",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_desert_diffuse.dds",
+      "sha256": "c05552f43bfb99027be6365bdd73530a21febd710ac15a64ba874f80dd987902"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/barrens/barrens_desert_normal.dds",
+      "sha256": "c4762726533027efd3823d0e1808ebcf2f9e557bf116ec7fabc75d91322bf973"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_desert_orm.dds",
+      "sha256": "c080fbba765bfd8aa0cfbe2b5286732cc59abc08bd87f58db2ceb9f59124f7f4"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "cBc2",
+    "cliffSet": "0",
+    "dir": "TerrainArt\\Barrens",
+    "file": "Barrens_Desert",
+    "comment": "Desert",
+    "name": "WESTRING_TILE_DESERT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "3",
+    "convertTo": "Ldrt,Fdrt,Wdrt,Adrt,Cdrt,Ndrt,Ydrt,Vdrt,Qdrt,Xdrt,Ddrt,Gdrt,Zsan,Idrt,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

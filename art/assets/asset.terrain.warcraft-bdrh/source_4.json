@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Bdrh",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/barrens/barrens_dirtrough_diffuse.dds",
+      "sha256": "19a08706d1de34944bd03f5c3ca649b82f1202d3745248432754961bdbcc907a"
+    },
+    {
+      "channel": "normal",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_dirtrough_normal.dds",
+      "sha256": "e495b330f1a87318c1e326f9eafbb5e2628393005139cbd88f8a1feb49167b1d"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_dirtrough_orm.dds",
+      "sha256": "fe3712c8852cc625a55d9fa4aac6665e0c166735310cb193296da7d70fdccb8e"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Bdrh",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Barrens",
+    "file": "Barrens_DirtRough",
+    "comment": "Rough Dirt",
+    "name": "WESTRING_TILE_ROUGH_DIRT",
+    "buildable": "1",
+    "footprints": "0",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "1",
+    "convertTo": "Ldro,Fdro,Wdro,Adrd,Cdrd,Ndrd,Ydtr,Vdrr,Qdrr,Xdtr,Dbrk,Gbrk,Zdtr,Idtr,Odtr",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

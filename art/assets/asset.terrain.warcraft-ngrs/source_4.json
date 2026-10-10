@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Ngrs",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/northrend/north_grass_diffuse.dds",
+      "sha256": "3031065741698e77400bf4914857634b58cebd80ad27699366afb0d1d72ec1db"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/northrend/north_grass_normal.dds",
+      "sha256": "542b7a0e0e9cc7c4185b6034ee71d225c99eb7d031d14a2213d5dfb3ce43304a"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_grass_orm.dds",
+      "sha256": "3c9b6fe863f646a18ee33730ae0c314ac820766626c5a44edbc59c52a08ef56a"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Ngrs",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Northrend",
+    "file": "North_Grass",
+    "comment": "Grass",
+    "name": "WESTRING_TILE_GRASS",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "5",
+    "convertTo": "Lgrs,Fgrs,Wgrs,Bgrr,Agrs,Cgrs,Yhdg,Vgrs,Qgrs,Xhdg,Dbrk,Gbrk,Zgrs,Idki,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "cFc1",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronfall/lordf_grass_diffuse.dds",
+      "sha256": "549ee77e8418bbf5bd0465a08292d890832513fd126ff6c58126705017a541ed"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronfall/lordf_grass_normal.dds",
+      "sha256": "f06ee96a91dfff1f21c2d0d5d857978358a033bda0e474a03fe88f11ffb5d611"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronfall\\lordf_grass_orm.dds",
+      "sha256": "2fb05aa1a110b2b0d176fe9b42c97ff42e9c84a74174afae8b70607ec857e35b"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "cFc1",
+    "cliffSet": "1",
+    "dir": "TerrainArt\\LordaeronFall",
+    "file": "Lordf_Grass",
+    "comment": "Grass",
+    "name": "WESTRING_TILE_GRASS",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "4",
+    "convertTo": "Lgrs,Wgrs,Bgrr,Agrs,Cgrs,Nsnw,Ygsb,Vgrs,Qgrs,Xhdg,Dsqd,Gsqd,Zgrs,Isnw,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

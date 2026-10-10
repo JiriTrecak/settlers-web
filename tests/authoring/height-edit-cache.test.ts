@@ -1,8 +1,10 @@
+import {captureTerrain} from '../../src/shared/authoring/captureTerrain';
+import {flatTerrainData} from '../../src/shared/map/terrainData';
 import {isDeepStrictEqual} from 'node:util';
 import {expect,it} from 'vitest';
 import {compileMapScene,type CompiledMapScene} from '../../src/shared/authoring/mapScene';
 import {landscapeAssets} from '../../src/shared/authoring/project';
-import {HeightField,encodeHeight} from '../../src/shared/map/height';
+import {HeightField} from '../../src/shared/map/height';
 import {proceduralLayerSchema} from '../../src/shared/authoring/layers';
 import {proceduralFixture} from './fixture';
 function equivalent(a:CompiledMapScene,b:CompiledMapScene){
@@ -17,7 +19,7 @@ it('rechecks slopes, water depth, embedded rocks and meadow bands across height 
  const counts=new Set<number>();
  for(const lift of [5,-6,0,12,-12,2]){
   const field=new HeightField(map.size);field.raise(129,126,24,lift);field.raise(142,135,5,-lift*2);
-  const next={...map,height:encodeHeight(field.samples,map.size)};
+  const next={...map,authoring:{...map.authoring!,terrain:captureTerrain(field)}};
   const incremental=compileMapScene(next,landscapeAssets,previous);equivalent(incremental,compileMapScene(next,landscapeAssets));
   expect(incremental.generated!.terrain).not.toBe(previous.generated!.terrain);counts.add(incremental.generated!.objects.length);previous=incremental;
  }
@@ -35,7 +37,7 @@ it('invalidates geometric exclusions when paths, rivers, recipes or the grid cha
   {...map,authoring:{...map.authoring!,layers:[...layers,pathLayer]}},
   {...map,authoring:{...map.authoring!,layers:layers.filter(l=>l.id!=='stream')}},
   {...map,authoring:{...map.authoring!,layers:layers.map(l=>l.id==='stream'?proceduralLayerSchema.parse({...l,shape:{type:'mask',elevation:-2,strokes:[{operation:'add',radius:8,points:[{x:125,z:122},{x:140,z:140}]}]}}):l)}},
-  {...map,size:512 as const},
+  {...map,size:512 as const,authoring:{...map.authoring!,terrain:flatTerrainData(512,0,-8)}},
   {...map,authoring:{...map.authoring!,layers:layers.map(l=>l.id==='forest'?proceduralLayerSchema.parse({...l,shape:region,overrides:{type:'forest',maxSlope:.1,probability:.7}}):l)}},
  ])equivalent(compileMapScene(next,landscapeAssets,original),compileMapScene(next,landscapeAssets));
  const revisedCatalogue=landscapeAssets.map(a=>a.recipe?.type==='forest'?{...a,recipe:{...a.recipe,maxSlope:.05}}:a);

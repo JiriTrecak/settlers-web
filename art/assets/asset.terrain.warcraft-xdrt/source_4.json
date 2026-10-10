@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Xdrt",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\dalaran\\dalaran_dirt_diffuse.dds",
+      "sha256": "5ae7db841dbcf68aa0258163571477b2717a6ebb738abbf36e4d8267bfb64f4b"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/dalaran/dalaran_dirt_normal.dds",
+      "sha256": "29e36a338b67f7e44a9f87757a32f94b00a0a1ceaaf598b7a9bf30467a903a38"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\dalaran\\dalaran_dirt_orm.dds",
+      "sha256": "5eed7175ffd8b185a147d98387dfa8b51ba3b11b489829abb14e5d05c48d0b1b"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Xdrt",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Dalaran",
+    "file": "Dalaran_Dirt",
+    "comment": "Dirt",
+    "name": "WESTRING_TILE_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "1",
+    "convertTo": "Ldrt,Fdrt,Wdrt,Bdsr,Adrt,Cdrt,Ndrt,Vdrt,Qdrt,Ydrt,Ddrt,Gdrt,Zdrt,Idrt,Odrt",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

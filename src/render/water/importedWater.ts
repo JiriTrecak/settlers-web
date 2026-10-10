@@ -1,17 +1,15 @@
 import {heightChange} from '../../shared/map/heightChanges';
-import {waterSurface,unchangedWaterTopology} from './waterSurface';
+import {waterSurface,unchangedWaterTopology,WATER_PROFILE_ROWS} from './waterSurface';
 import {HeightField} from '../../shared/map/height';
 import {BufferAttribute,BufferGeometry,Color,DataTexture,DepthTexture,FloatType,Frustum,Group,HalfFloatType,LinearFilter,Matrix4,Mesh,PCFShadowMap,RedFormat,RGBAFormat,NearestFilter,Scene,ShaderMaterial,SRGBColorSpace,UnsignedIntType,Vector2,Vector3,WebGLRenderTarget,type Camera,type DirectionalLight,type WebGLRenderer} from 'three';
 import type {DaytimeSample} from '../../shared/environment/dayCycle';
 import type {ImportedTerrain} from '../../shared/map/importedTerrain';
-import {referenceTexture} from '../terrain/referenceTerrain';
 import {sourceReflection} from '../terrain/sourceReflection';
 import {sourceWaterFragment,sourceWaterVertex} from './sourceWaterShaders';
 import {SourceWaterReflections} from './sourceWaterReflections';
 import {SourceCaustics} from './sourceCaustics';
-import wavesUrl from '../../../assets/library/asset.texture.woodland-waves/albedo.png?url';
 
-/** Original block topology, height/flow maps and water shader in a separate pass.
+/** Saved local surfaces with depth-blended stylized waves in a separate pass.
  * The opaque scene is drawn once; water reads a color/depth copy, never its own target. */
 export class ImportedWater {
  readonly group=new Group();
@@ -20,39 +18,32 @@ export class ImportedWater {
  private readonly screenReflections=new SourceWaterReflections();
  private readonly frustum=new Frustum();
  private readonly viewProjection=new Matrix4();
- private readonly causticsView=new Matrix4();
  private readonly sunDirection=new Vector3();
  private readonly sunTarget=new Vector3();
- private readonly up=new Vector3(0,1,0);
- private readonly zero=new Vector3();
  private readonly reflection=sourceReflection();
- get ready(){return Promise.all([this.reflection.ready,this.waves.referenceReady,this.caustics.ready]).then(()=>{}); }
+ get ready(){return Promise.all([this.reflection.ready,this.caustics.ready]).then(()=>{}); }
  private readonly opaque=new WebGLRenderTarget(1,1,{type:HalfFloatType,depthBuffer:true});
  private readonly material:ShaderMaterial;
  private readonly time={value:0};
  private readonly flow:DataTexture;
  private readonly ground:DataTexture;
  private readonly profiles:DataTexture;
- private readonly groundColor:DataTexture;
- private readonly waves=referenceTexture(wavesUrl,false);
  private groundUploadPending=true;
  private currentSource:ImportedTerrain|HeightField;
  get source(){return this.currentSource;}
  constructor(_scene:Scene,source:ImportedTerrain|HeightField){
   this.currentSource=source;
   const water=waterSurface(source);
-  this.profiles=new DataTexture(water.profiles??new Float32Array(256*4*4),256,4,RGBAFormat,FloatType);this.profiles.minFilter=this.profiles.magFilter=NearestFilter;this.profiles.needsUpdate=true;
+  this.profiles=new DataTexture(water.profiles??new Float32Array(256*WATER_PROFILE_ROWS*4),256,WATER_PROFILE_ROWS,RGBAFormat,FloatType);this.profiles.minFilter=this.profiles.magFilter=NearestFilter;this.profiles.needsUpdate=true;
   this.flow=new DataTexture(water.flow,...water.size);this.flow.minFilter=this.flow.magFilter=LinearFilter;this.flow.needsUpdate=true;
   this.ground=new DataTexture(water.ground,...water.groundSize,RedFormat,FloatType);this.ground.needsUpdate=true;this.ground.onUpdate=()=>{this.groundUploadPending=false;};
-  this.groundColor=water.color?new DataTexture(water.color.bytes,...water.color.size):new DataTexture(new Uint8Array([128,128,128,255]),1,1);
-  this.groundColor.minFilter=this.groundColor.magFilter=LinearFilter;this.groundColor.needsUpdate=true;
   this.opaque.depthTexture=new DepthTexture(1,1,UnsignedIntType);
   this.material=new ShaderMaterial({vertexShader:sourceWaterVertex,fragmentShader:sourceWaterFragment,toneMapped:false,
    defines:{USE_SHADOWMAP:1,SHADOWMAP_TYPE_VSM:1},uniforms:{
-    uWaterProfiles:{value:this.profiles},uAuthoredWater:{value:!!water.profiles},uSourceWaterGroundColor:{value:this.groundColor},uUseGroundColor:{value:!!water.color},uSunDirection:{value:this.sunDirection},uSourceWaterTime:this.time,uSourceWaterFlow:{value:this.flow},uSourceWaterGround:{value:this.ground},uSourceWaterWaves:{value:this.waves},
+    uWaterProfiles:{value:this.profiles},uAuthoredWater:{value:!!water.profiles},uSunDirection:{value:this.sunDirection},uSourceWaterTime:this.time,uSourceWaterFlow:{value:this.flow},uSourceWaterGround:{value:this.ground},
     uSourceWaterGroundSize:{value:new Vector2(...water.groundSize)},uSourceWaterGroundScale:{value:water.groundScale},uSourceWaterOrigin:{value:new Vector2(...water.origin)},uSourceWaterSize:{value:new Vector2(...water.size)},uSourceWaterOffset:{value:new Vector2(...water.offset)},
     uOpaqueColor:{value:this.opaque.texture},uOpaqueDepth:{value:this.opaque.depthTexture},uViewport:{value:new Vector2()},uInverseProjection:{value:new Matrix4()},uCameraWorld:{value:new Matrix4()},
-    uSourceReflections:{value:this.screenReflections.target.texture},uSourceHeightOffset:{value:water.heightOffset},uSourceCaustics:{value:this.caustics.target.texture},uCausticsView:{value:this.causticsView},uReflectionCube:{value:this.reflection.texture},uDirectLight:{value:new Color()},uAmbientLight:{value:new Color()},uViewDirection:{value:new Vector3()},
+    uSourceReflections:{value:this.screenReflections.target.texture},uSourceCaustics:{value:this.caustics.target.texture},uReflectionCube:{value:this.reflection.texture},uDirectLight:{value:new Color()},uAmbientLight:{value:new Color()},
     uSunShadow:{value:null},uShadowSize:{value:new Vector2()},uShadowMatrix:{value:new Matrix4()},uHasShadow:{value:false},uShadowBias:{value:0},uShadowRadius:{value:1},
    }});
   for(const block of water.tiles){
@@ -84,11 +75,8 @@ export class ImportedWater {
   this.frustum.setFromProjectionMatrix(this.viewProjection);
   if(!this.group.children.some(object=>this.frustum.intersectsObject(object)))return;
   this.caustics.render(gl,this.time.value);
-  // The original caustics-view matrix is an engine uniform, absent from the pack.
-  // Use a translation-invariant sun-aligned basis until an original frame verifies it.
   sun.getWorldPosition(this.sunDirection);sun.target.getWorldPosition(this.sunTarget);
   this.sunDirection.sub(this.sunTarget).normalize();
-  this.causticsView.lookAt(this.sunDirection,this.zero,this.up).transpose();
   const u=this.material.uniforms,filtered=gl.shadowMap.type===PCFShadowMap;
   if(!!this.material.defines.SHADOWMAP_TYPE_PCF!==filtered){this.material.defines={USE_SHADOWMAP:1,[filtered?'SHADOWMAP_TYPE_PCF':'SHADOWMAP_TYPE_VSM']:1};this.material.needsUpdate=true;}
   if(this.opaque.width!==target.width||this.opaque.height!==target.height)this.opaque.setSize(target.width,target.height);
@@ -99,7 +87,6 @@ export class ImportedWater {
   gl.setRenderTarget(target);
   this.screenReflections.render(gl,camera,this.opaque.texture,this.opaque.depthTexture!,target.width,target.height);
   u.uViewport.value.set(target.width,target.height);u.uInverseProjection.value.copy(camera.projectionMatrix).invert();u.uCameraWorld.value.copy(camera.matrixWorld);
-  camera.getWorldDirection(u.uViewDirection.value);
   u.uDirectLight.value.copy(sun.color).multiplyScalar(sun.intensity/Math.PI);
   const ambient=daytime?.look.ambient;
   if(ambient)u.uAmbientLight.value.setRGB(ambient.rgb[0]/255,ambient.rgb[1]/255,ambient.rgb[2]/255,SRGBColorSpace).multiplyScalar(ambient.multiplier);
@@ -113,5 +100,5 @@ export class ImportedWater {
  }
  diagnostics(gl:WebGLRenderer){return this.screenReflections.diagnostics(gl);}
  tick(now:number){this.time.value=now*.001;}
- dispose(){this.group.traverse(o=>{if(o instanceof Mesh)o.geometry.dispose();});this.material.dispose();this.flow.dispose();this.profiles.dispose();this.ground.dispose();this.groundColor.dispose();this.waves.dispose();this.opaque.dispose();this.reflection.dispose();this.caustics.dispose();this.screenReflections.dispose();}
+ dispose(){this.group.traverse(o=>{if(o instanceof Mesh)o.geometry.dispose();});this.material.dispose();this.flow.dispose();this.profiles.dispose();this.ground.dispose();this.opaque.dispose();this.reflection.dispose();this.caustics.dispose();this.screenReflections.dispose();}
 }

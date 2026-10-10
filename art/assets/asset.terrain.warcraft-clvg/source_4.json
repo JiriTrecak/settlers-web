@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Clvg",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/felwood/felwood_leaves_diffuse.dds",
+      "sha256": "1ec3c79f41db1ebfbaa8f4abb9171a07537b54112d1c0e3f040725b531282f14"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/felwood/felwood_leaves_normal.dds",
+      "sha256": "59f5cb960dba29059018a206b9722aa405337e064da561b379ffd1421d752927"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\felwood\\felwood_leaves_orm.dds",
+      "sha256": "c246ecfb8b50c5ef702d469c21b8fc53edbfc6116c680500f89288c321d35fb4"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Clvg",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Felwood",
+    "file": "Felwood_Leaves",
+    "comment": "Leaves",
+    "name": "WESTRING_TILE_LEAVES",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "7",
+    "convertTo": "Lgrd,Fgrd,Wsnw,Bdrg,Alvd,Nsnw,Ygsb,Vgrt,Qgrt,Xgsb,Dlvc,Glvc,Zvin,Idki,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

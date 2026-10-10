@@ -1,6 +1,4 @@
 import {HeightField} from '../../map/height';
-import {sourceHeight} from '../../map/importedTerrain';
-import {sourceWater} from '../../map/importedWater';
 import type {UtcMap} from '../../map/utcmap';
 import {rememberHeightChange} from '../../map/heightChanges';
 import {rememberCompiledSource,type CompiledMapScene} from '../mapScene';
@@ -8,22 +6,16 @@ import type {LandscapeAsset} from '../catalogue';
 import {WatercourseIndex} from '../watercourses';
 
 export type SceneSnapshot=Omit<CompiledMapScene,'field'>&{
- field:Pick<HeightField,'size'|'origin'|'span'|'verts'|'samples'|'biome'|'forestCoverage'|'baseMaterial'|'grassCoverage'|'rockCoverage'|'surfacePaint'|'watercourses'|'waterLevel'|'cellWater'>;
- fieldId:number;terrainId:number;riversId:number;paintId:number;fieldPaintId:number;source:boolean;sourceWater:boolean;courseWater:boolean;
+ field:Pick<HeightField,'size'|'origin'|'span'|'verts'|'samples'|'biome'|'forestCoverage'|'baseMaterial'|'grassCoverage'|'terrainGrassCoverage'|'rockCoverage'|'surfacePaint'|'watercourses'|'waterLevel'|'cellWater'>;
+ fieldId:number;terrainId:number;riversId:number;paintId:number;fieldPaintId:number;courseWater:boolean;
 };
 /** Identity is scoped to one worker, not persisted or exposed as asset versions. */
 export class SceneSnapshotWriter {
  private ids=new WeakMap<object,number>();private next=0;
  private id(value:object|undefined){if(!value)return 0;let id=this.ids.get(value);if(id===undefined){id=++this.next;this.ids.set(value,id);}return id;}
- restore(scene:CompiledMapScene,snapshot:SceneSnapshot):void{
-  for(const [value,id] of [[scene.field,snapshot.fieldId],[scene.generated?.terrain,snapshot.terrainId],[scene.generated?.rivers,snapshot.riversId],[scene.generated?.paint,snapshot.paintId],[scene.field.surfacePaint,snapshot.fieldPaintId]] as const){
-   if(value){if(id<=0)throw Error('Invalid cached scene identity');this.ids.set(value,id);}
-   this.next=Math.max(this.next,id);
-  }
- }
  write(scene:CompiledMapScene):SceneSnapshot{
   const {source,sourceWater,courseWater,walkSurface:_,...field}=scene.field;
-  return {...scene,field,fieldId:this.id(scene.field),terrainId:this.id(scene.generated?.terrain),riversId:this.id(scene.generated?.rivers),paintId:this.id(scene.generated?.paint),fieldPaintId:this.id(scene.field.surfacePaint),source:!!source,sourceWater:!!sourceWater,courseWater:!!courseWater};
+  return {...scene,field,fieldId:this.id(scene.field),terrainId:this.id(scene.generated?.terrain),riversId:this.id(scene.generated?.rivers),paintId:this.id(scene.generated?.paint),fieldPaintId:this.id(scene.field.surfacePaint),courseWater:!!courseWater};
  }
 }
 export class SceneSnapshotReader {
@@ -43,9 +35,6 @@ export class SceneSnapshotReader {
    field=Object.assign(new HeightField(snapshot.field.size),snapshot.field);
    if(generated&&snapshot.fieldPaintId===snapshot.paintId)field.surfacePaint=generated.paint;
    else if(prior&&snapshot.fieldPaintId===prior.snapshot.fieldPaintId)field.surfacePaint=prior.scene.field.surfacePaint;
-   const imported=map.landscape?.importedTerrain;
-   if(snapshot.source){if(!imported)throw Error('Missing source terrain');field.source=sourceHeight(imported);}
-   if(snapshot.sourceWater){if(!imported)throw Error('Missing source water');field.sourceWater=sourceWater(imported);}
    if(snapshot.courseWater){
     if(!generated)throw Error('Missing generated rivers');
     field.courseWater=prior&&snapshot.riversId===prior.snapshot.riversId?prior.scene.field.courseWater:new WatercourseIndex(generated.rivers);

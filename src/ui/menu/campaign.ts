@@ -84,7 +84,7 @@ export class CampaignScreen extends GameScreen {
     const detail=document.createElement('section');detail.className='mission-selection-detail';detail.id='campaign-mission-detail';
     const buttons:HTMLButtonElement[]=[];
     const select=(index:number)=>{
-      const entry=entries[index],mission=entry.map.mission!,presentation=mission.presentation;
+      const entry=entries[index],mission=entry.overview.mission!,presentation=mission.presentation;
       this.selectedMission=entry.id;
       buttons.forEach((button,i)=>{button.classList.toggle('is-selected',i===index);button.setAttribute('aria-pressed',String(i===index));});
       detail.replaceChildren();
@@ -93,15 +93,15 @@ export class CampaignScreen extends GameScreen {
       art.onerror=()=>{art.onerror=null;art.src=campaignArtFallback;};
       const chapter=document.createElement('p');chapter.className='mission-selection-chapter';chapter.textContent=presentation?.chapter??`Chapter ${mission.order}`;
       const title=document.createElement('h2');title.textContent=mission.title;
-      const description=document.createElement('p');description.className='mission-selection-description';description.textContent=presentation?.briefing??entry.map.description??'';
+      const description=document.createElement('p');description.className='mission-selection-description';description.textContent=presentation?.briefing??entry.overview.description??'';
       const features=document.createElement('ul');features.className='mission-selection-features';
       for(const text of presentation?.features??[]){const item=document.createElement('li');item.textContent=text;features.append(item);}
       detail.append(art,chapter,title,description,features);
     };
     entries.forEach((entry,index)=>{
       const button=document.createElement('button');button.type='button';button.className='campaign-chapter mission-selection-row';button.setAttribute('aria-controls',detail.id);
-      const number=document.createElement('span');number.textContent=String(entry.map.mission!.order).padStart(2,'0');
-      const title=document.createElement('strong');title.textContent=entry.map.mission!.title;button.append(number,title);button.onclick=()=>select(index);
+      const number=document.createElement('span');number.textContent=String(entry.overview.mission!.order).padStart(2,'0');
+      const title=document.createElement('strong');title.textContent=entry.overview.mission!.title;button.append(number,title);button.onclick=()=>select(index);
       button.onkeydown=event=>{if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?entries.length-1:(index+(event.key==='ArrowDown'?1:-1)+entries.length)%entries.length;select(next);buttons[next].focus();};
       buttons.push(button);list.append(button);
     });

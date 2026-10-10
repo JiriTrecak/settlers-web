@@ -27,6 +27,7 @@ export type FileToolHooks = {
   onSave(): void;
   onSaveAs(): void;
   onLoad(): void;
+  onImportWarcraft(): void;
   onLeave(): void;
   onMission(): void;
 };

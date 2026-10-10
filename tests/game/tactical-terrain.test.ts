@@ -1,3 +1,4 @@
+import {captureTerrain} from '../../src/shared/authoring/captureTerrain';
 import {describe,it,expect} from 'vitest';
 import {HeightField,encodeHeight,decodeHeight} from '../../src/shared/map/height';
 import {TacticalTerrain,SIGHT_HEIGHT_CM,type TerrainPoint} from '../../src/shared/map/tacticalTerrain';
@@ -15,7 +16,7 @@ function terrain(){
 }
 function scenario(f=terrain()){
  const src=source();(src.rules as Rules).startingSetup.gathering=[];
- return new Game({...emptyUtcMap(),waterLevel:0,height:encodeHeight(f.samples),entities:[
+ return new Game({...emptyUtcMap(),authoring:{version:1,objects:[],terrain:captureTerrain(f)},entities:[
   placed('low','unit.ants.archer',108,110),{...placed('high','unit.ants.warrior',110,110),owner:'player.2'},
   placed('scout','unit.ants.warrior',112,116)
  ]},slots,new ContentRegistry(src));
@@ -98,7 +99,7 @@ describe('tactical heights',()=>{
  });
 });
 it('shares allied cliff-top vision without granting it to another team',()=>{
- const map={...emptyUtcMap(),waterLevel:0,height:encodeHeight(terrain().samples),playerStarts:[
+ const map={...emptyUtcMap(),authoring:{version:1 as const,objects:[],terrain:captureTerrain(terrain())},playerStarts:[
   {player:1,x:37.5,z:37.5,setup:'setup.ants',mainFort:'start.player.1/main-fort'},
   {player:2,x:217.5,z:217.5,setup:'setup.ants',mainFort:'start.player.2/main-fort'},
   {player:3,x:37.5,z:217.5,setup:'setup.ants',mainFort:'start.player.3/main-fort'}],entities:[

@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Zsan",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_sand_diffuse.dds",
+      "sha256": "c7500f25c85cfb0f17d303807b0afb7738fd13ece7d963efedadfa9d6adb1526"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_sand_normal.dds",
+      "sha256": "085e5da929d8da2cf936bfd7966276d2e30c9801f19fe7334e90ad95592f903c"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_sand_orm.dds",
+      "sha256": "6cb5a08ce9105455761c54839ca426503dcf794dcede21fd175d59a2707b3258"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Zsan",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Ruins",
+    "file": "Ruins_Sand",
+    "comment": "Sand",
+    "name": "WESTRING_TILE_SAND",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "9",
+    "convertTo": "Ldrt,Fdrt,Wsnw,Bdsr,Adrt,Cpos,Nice,Yhdg,Vcrp,Qcrp,Xhdg,Dlav,Glav,Iice,Odtr",
+    "InBeta": "1",
+    "version": "1"
+  }
+}

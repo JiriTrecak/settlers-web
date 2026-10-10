@@ -1,8 +1,9 @@
 import {afterEach,describe,expect,it,vi} from 'vitest';
 import {mapOverview,mapSourceHash,hasPlayableSlots} from '../../src/shared/map/overview';
-import {emptyUtcMap} from '../../src/shared/map/utcmap';
-import {authoredMaps,playableMaps,missionMaps,overviewOf} from '../../src/shared/map/library';
+import {emptyUtcMap,parseUtcMap} from '../../src/shared/map/utcmap';
+import {authoredMaps,loadMap,playableMaps,missionMaps,overviewOf} from '../../src/shared/map/library';
 import {projectScene} from '../../src/shared/authoring/project';
+vi.mock('../../src/shared/map/utcmap',async original=>({...await original<object>(),parseUtcMap:vi.fn((await original<typeof import('../../src/shared/map/utcmap')>()).parseUtcMap)}));
 vi.mock('../../src/shared/authoring/project',async importOriginal=>({...await importOriginal<object>(),projectScene:vi.fn(()=>{throw Error('Browsing must not generate a world');})}));
 afterEach(()=>{vi.clearAllMocks();vi.unstubAllGlobals();});
 describe('published map browsing',()=>{
@@ -13,7 +14,15 @@ describe('published map browsing',()=>{
   expect(maps.every(m=>m.previewUrl&&overviewOf(m).playable)).toBe(true);
   for(const m of authoredMaps())expect(overviewOf(m).size).toBeGreaterThan(0);
   missionMaps();
-  expect(projectScene).not.toHaveBeenCalled();
+  expect(projectScene).not.toHaveBeenCalled();expect(parseUtcMap).not.toHaveBeenCalled();
+ });
+ it('opens only the selected map and shares concurrent terrain loads',async()=>{
+  const selections=authoredMaps().filter(m=>m.source==='project');
+  expect(selections.every(m=>!('map' in m))).toBe(true);
+  const [first,second]=await Promise.all([loadMap(selections[0].id),loadMap(selections[0].id)]);
+  expect(first).toBe(second);expect(first.map.name).toBe(selections[0].name);
+  expect(parseUtcMap).toHaveBeenCalledTimes(1);expect(projectScene).not.toHaveBeenCalled();
+  await loadMap(selections[0].id);expect(parseUtcMap).toHaveBeenCalledTimes(1);
  });
  it('checks source freshness without a simulation fingerprint',()=>{
   const map=emptyUtcMap(),raw=JSON.stringify(map);

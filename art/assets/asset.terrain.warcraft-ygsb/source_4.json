@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Ygsb",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/cityscape/city_grass_diffuse.dds",
+      "sha256": "c8d4946b5b1c64ba44fe39e92330d7a8e13125c95dee2531132b69011c085b17"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/cityscape/city_grass_normal.dds",
+      "sha256": "d74fa6baf2e0403e3f807148aaceef79c9a7228520a1851f51d9ee61f7d40834"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\cityscape\\city_grass_orm.dds",
+      "sha256": "a43d853d001ea5278a2db6d9c4d00f76088fc18e4e5aae5e100d75d02949144d"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Ygsb",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Cityscape",
+    "file": "City_Grass",
+    "comment": "Grass",
+    "name": "WESTRING_TILE_GRASS",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "3",
+    "convertTo": "Lgrs,Fgrs,Wgrs,Bgrr,Agrs,Ngrs,Cgrs,Vgrs,Qgrs,Xgsb,Dbrk,Gbrk,Zgrs,Isnw,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

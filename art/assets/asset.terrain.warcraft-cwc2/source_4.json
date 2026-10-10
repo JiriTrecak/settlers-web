@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "cWc2",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronwinter/lordw_grass_diffuse.dds",
+      "sha256": "d24247f8360b4371fb43fa3ed008fdc3f0bbac34db2ec8f805c237db88643550"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronwinter/lordw_grass_normal.dds",
+      "sha256": "2a4471a51c65fccc74e69490bd3e27b6763f7979d8745414ac90f83bae481c97"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronwinter\\lordw_grass_orm.dds",
+      "sha256": "ec2a482b19131e70fc3472bbe583ae7f783fcdd4495b9c2f616b4e814da7177f"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "cWc2",
+    "cliffSet": "1",
+    "dir": "TerrainArt\\LordaeronWinter",
+    "file": "Lordw_Grass",
+    "comment": "Grass",
+    "name": "WESTRING_TILE_GRASS",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "3",
+    "convertTo": "Lgrs,Fgrs,Bgrr,Agrs,Cgrs,Nsnw,Ygsb,Vgrs,Qgrs,Xhdg,Dsqd,Gsqd,Zgrs,Isnw,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

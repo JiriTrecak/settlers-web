@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Agrd",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/ashenvale/ashen_grasslumpy_diffuse.dds",
+      "sha256": "a844c4835de59c1676944fe2b5cf286ef149d0f6723d11f423fd8b09725edf85"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ashenvale/ashen_grasslumpy_normal.dds",
+      "sha256": "da084aa140d5f611703644fac99b2311d07d33d66fd5432b570d230391afe33b"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_grasslumpy_orm.dds",
+      "sha256": "4425d178a8036e227f473ece72d2d1573e02395a19833ca7e5c0a468bdeb2b1e"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Agrd",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Ashenvale",
+    "file": "Ashen_GrassLumpy",
+    "comment": "Lumpy Grass",
+    "name": "WESTRING_TILE_LUMPY_GRASS",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "6",
+    "convertTo": "Lgrd,Fgrd,Wsnw,Bdrg,Cpos,Ngrs,Ygsb,Vgrs,Qgrs,Xgsb,Dgrs,Ggrs,Zvin,Isnw,Ofst",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

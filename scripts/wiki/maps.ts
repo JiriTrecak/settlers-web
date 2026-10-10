@@ -1,4 +1,5 @@
-import { HeightField, decodeHeight } from "../../src/shared/map/height";
+import { HeightField } from "../../src/shared/map/height";
+import {restoreTerrain} from "../../src/shared/map/terrainData";
 import { sampleCurve } from "../../src/shared/landscape/curve";
 import type { UtcMap } from "../../src/shared/map/utcmap";
 import { escape } from "./catalog";
@@ -6,10 +7,7 @@ import { escape } from "./catalog";
 /** North-up vector atlas, sampled from the game's decoded height field. No WebGL or browser needed. */
 export function mapSvg(map: UtcMap): string {
   const field = new HeightField(map.size);
-  field.load(
-    map.height ? decodeHeight(map.height, map.size)! : [],
-    map.waterLevel ?? 0,
-  );
+  restoreTerrain(field,map.authoring.terrain);
   const elements: string[] = [],
     water: string[] = [];
   const step = map.size / 128;
@@ -26,7 +24,7 @@ export function mapSvg(map: UtcMap): string {
       row.push(
         `rgb(${[70, 83, 51].map((v) => Math.round(v * light)).join(",")})`,
       );
-      wet.push(h < field.waterLevel);
+      wet.push(h < field.waterAt(x*step,y*step));
     }
     for (let x = 0; x < 128;) {
       const start = x,

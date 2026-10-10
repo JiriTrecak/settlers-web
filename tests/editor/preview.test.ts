@@ -87,14 +87,16 @@ it('does not rebuild panels for scene inspections but refreshes after scene edit
 
 it('commits a brush stroke once through the reusable surface compiler and undoes it exactly',()=>{
  const changed=vi.fn(),editor=new WorldEditor({} as HTMLCanvasElement,{host:{} as HTMLElement,onChange:changed});
- editor.replace(proceduralFixture());const internal=editor as any,original=editor.map,terrain=editor.generatedScene!.terrain;
+ const fixture=proceduralFixture(),{layers,...saved}=fixture.authoring!;editor.replace({...fixture,authoring:saved});
+ editor.applySceneEdits(layers.map(layer=>({action:'put-layer',layer})));
+ const internal=editor as any,original=editor.map,terrain=editor.generatedScene!.terrain;
  vi.spyOn(editor,'shapeWorldPoint').mockImplementation((x,z)=>({x,z,y:0}));
  editor.beginLayerPaint('recipe.foliage.riverbank','Brush test');changed.mockClear();
  for(let i=0;i<60;i++)internal.paintLayerAt(110+i/4,137,false);
  expect(editor.map).toBe(original);expect(changed).not.toHaveBeenCalled();
  internal.finishPaintStroke();
  expect(changed).toHaveBeenCalledOnce();expect(editor.generatedScene!.terrain).toBe(terrain);
- expect(editor.generatedScene).toEqual(compileMapScene(editor.map,landscapeAssets).generated);
+ expect(editor.generatedScene).toEqual(compileMapScene({...editor.map,authoring:editor.layers.mapInput},landscapeAssets).generated);
  editor.undoLayers();expect(editor.map.authoring).toEqual(original.authoring);expect(editor.generatedScene!.terrain).toBe(terrain);
 });
 

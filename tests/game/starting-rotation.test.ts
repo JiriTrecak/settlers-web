@@ -1,3 +1,4 @@
+import {captureTerrain} from '../../src/shared/authoring/captureTerrain';
 import {expect,it} from 'vitest';
 import {content} from '../../src/content/builtin';
 import {expandMap} from '../../src/content/map';
@@ -5,7 +6,7 @@ import {startingUnitPosition} from '../../src/content/startingHero';
 import {emptyUtcMap,parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
 import {mapRevision,playableMapError} from '../../src/shared/map/playable';
 import {World} from '../../src/sim/world/world';
-import {HeightField,encodeHeight} from '../../src/shared/map/height';
+import {HeightField} from '../../src/shared/map/height';
 import {slots} from './helpers';
 
 it.each([0,90,180,270] as const)('keeps the complete formation point-symmetric on navigation centres at %i degrees',rotation=>{
@@ -36,9 +37,9 @@ it('rotates clockwise and rejects arbitrary formation angles',()=>{
 
 it('validates clearance for the rotated units, not just the Hall footprint',()=>{
  const blank=emptyUtcMap(),map={...blank,playerStarts:[{...blank.playerStarts[0],x:21.5,z:81.5,rotation:90 as 0|90|180|270},blank.playerStarts[1]]};
- const field=new HeightField(map.size);
+ const field=new HeightField(map.size);field.waterLevel=-1;
  for(let z=0;z<field.verts;z++)for(let x=0;x<field.verts;x++)if(x+field.origin<=2)field.samples[z*field.verts+x]=-2;
- map.height=encodeHeight(field.samples);
+ map.authoring={version:1,objects:[],terrain:captureTerrain(field)};
  expect(playableMapError(map)).toBeNull();
  map.playerStarts[0].rotation=270;
  expect(playableMapError(map)).not.toBeNull();

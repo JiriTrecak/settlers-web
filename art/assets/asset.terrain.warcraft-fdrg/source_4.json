@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Fdrg",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronfall/lordf_dirtgrass_diffuse.dds",
+      "sha256": "25862e2f8d1c17f872cc026f1e60314efc944a2d28930fb91cf34a6d61fb23c9"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/lordaeronfall/lordf_dirtgrass_normal.dds",
+      "sha256": "ea3d8caa240d7b8c801fa2487a7e92e0db06295a3e62b289ebcb41ca0b014cf4"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronfall\\lordf_dirtgrass_orm.dds",
+      "sha256": "aa9709736c4f17c017cd32439a28e1736c589581c643b36afc9463e989a5ec73"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Fdrg",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\LordaeronFall",
+    "file": "Lordf_DirtGrass",
+    "comment": "Grassy Dirt",
+    "name": "WESTRING_TILE_GRASSY_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "3",
+    "convertTo": "Ldrg,Wsng,Bdrr,Cpos,Ngrs,Ygsb,Vgrs,Qgrs,Xgsb,Dgrs,Ggrs,Zdrg,Idki,Ofsl",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

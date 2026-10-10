@@ -3,7 +3,7 @@
   "id": "water.clear-forest",
   "name": "Clear forest water",
   "kind": "water-profile",
-  "revision": 9,
+  "revision": 13,
   "status": "published",
   "tags": [
     "authoring",
@@ -28,16 +28,26 @@
   },
   "capabilities": {},
   "water": {
-    "shallowColor": "#35a39b",
-    "deepColor": "#033e7a",
-    "clarity": 1.1,
+    "shallowColor": "#2b5c60",
+    "deepColor": "#102832",
+    "clarity": 0.85,
     "rippleScale": 0.15,
     "rippleStrength": 0.055,
-    "foamStrength": 0.5,
-    "reflectionStrength": 0.45,
-    "causticStrength": 0.5,
+    "foamStrength": 0.48,
+    "reflectionStrength": 0.5,
+    "causticStrength": 0.18,
     "cloudStrength": 0.03,
-    "flowSpeed": 1
+    "flowSpeed": 1,
+    "waves": {
+      "height": 0.36,
+      "length": 11,
+      "speed": 0.58,
+      "depthStart": 0.45,
+      "depthEnd": 2.5,
+      "shallowStrength": 0.025,
+      "shoreWidth": 0.65,
+      "crestStrength": 0.24
+    }
   },
   "provenance": {
     "method": "authored",

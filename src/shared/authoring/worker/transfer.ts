@@ -30,16 +30,6 @@ class RecordEncoder {
  private rows=new Map<string,{value:unknown;handle:number}>();private nextHandle=0;
  private order:string[]=[];
  private values:readonly {id:string}[]|undefined;
- restore(values:{id:string}[],packet:Records):void{
-  const handles=packet.order??new Uint32Array();
-  if(handles.length!==values.length||packet.removed.length||new Set(handles).size!==handles.length)throw Error('Invalid initial record handles');
-  let order=values.map(v=>v.id);if(new Set(order).size!==order.length)order=values.map((_,i)=>String(i));
-  for(let i=0;i<values.length;i++){
-   const handle=handles[i]!;if(!handle)throw Error('Invalid initial record handle');
-   this.rows.set(order[i]!,{value:values[i],handle});this.nextHandle=Math.max(this.nextHandle,handle);
-  }
-  this.order=order;this.values=values;
- }
  encode(values:{id:string}[],transfer:ArrayBuffer[]):Records{
   // Compiler snapshots are immutable; pose-only edits retain the entire generated
   // collection. Do not reindex a hundred thousand unchanged records in that case.
@@ -114,33 +104,6 @@ export class AuthoringTransferEncoder {
  private ownerRecords=new Map<string,{id:string;owner:string}>();
  private ownerValues:{id:string;owner:string}[]=[];
  private sourceOwners:Map<string,string>|undefined;
- /** Bootstrap a fresh delta stream from an already decoded, complete cache
-  * packet. Reuse its encoded rows instead of scanning/stringifying them again.
-  * Only transport buffers are detached; compiler-owned Float32 arrays are copied. */
- restore(value:any,packet:Packet){
-  if(this.sequence!==0||packet.sequence!==1)throw Error('Expected a fresh snapshot stream');
-  this.objects.restore(value.generated?.objects??[],packet.objects);
-  this.stamps.restore(value.stamps,packet.stamps);this.resources.restore(value.resources,packet.resources);
-  this.sourceOwners=value.owners;
-  this.ownerValues=Array.from(value.owners as Map<string,string>,([id,owner])=>({id,owner}));
-  this.ownerRecords=new Map(this.ownerValues.map(row=>[row.id,row]));
-  this.owners.restore(this.ownerValues,packet.owners);
-  const transfer:ArrayBuffer[]=[],buffers:Packet['buffers']=[];
-  const live=new Set(packet.liveBuffers);
-  if(live.size!==packet.buffers.length)throw Error('Incomplete cached terrain buffers');
-  for(const {id,values} of packet.buffers){
-   if(!Number.isSafeInteger(id)||id<=0||!live.delete(id)||!(values instanceof Float32Array||values instanceof Uint8Array))throw Error('Invalid cached terrain buffer');
-   this.ids.set(values,id);this.sent.add(id);this.nextBuffer=Math.max(this.nextBuffer,id);
-   const copy=values.slice();buffers.push({id,values:copy});transfer.push(copy.buffer);
-  }
-  for(const records of [packet.objects,packet.stamps,packet.resources,packet.owners]){
-   for(const chunk of records.rows)transfer.push(chunk.buffer as ArrayBuffer);
-   if(records.order)transfer.push(records.order.buffer as ArrayBuffer);
-   transfer.push(records.removed.buffer as ArrayBuffer);
-  }
-  this.sequence=1;
-  return {packet:{...packet,buffers},transfer:[...new Set(transfer)]};
- }
  encode(value:any){
   const transfer:ArrayBuffer[]=[],buffers:Packet['buffers']=[],live=new Set<number>();
   const visit=(item:any):any=>{

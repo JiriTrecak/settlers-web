@@ -10,7 +10,7 @@ const remove=z.object({action:z.literal('remove'),kind:z.enum(['layer','object']
 export const sceneEditSchema=z.discriminatedUnion('action',[putLayer,putObject,remove]);
 export type SceneEdit=z.infer<typeof sceneEditSchema>;
 export const sceneCommandSchema=z.discriminatedUnion('action',[
- z.object({action:z.literal('get')}).strict(),z.object({action:z.literal('recipes')}).strict(),
+ z.object({action:z.literal('get'),offset:z.number().int().min(0).max(200000).default(0),limit:z.number().int().min(1).max(500).default(200)}).strict(),z.object({action:z.literal('recipes')}).strict(),
  putLayer,putObject,
  z.object({action:z.literal('select'),kind:z.enum(['layer','object']),id:authoringId}).strict(),
  remove,

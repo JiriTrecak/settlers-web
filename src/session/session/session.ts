@@ -27,12 +27,11 @@ import { ownerSlot, slotOwner, type Owner } from "../../content/schema";
 import { perf } from "../../debug/performance";
 import { EditorBridge } from "../../shared/control/editorBridge";
 import { validAction } from "../../shared/types/types";
-import { getMap, type MapEntry } from "../../shared/map/library";
+import { getMap, loadMap, type LoadedMapEntry } from "../../shared/map/library";
 import { requirePlayableMap } from "../../shared/map/playable";
 import { emptyLandscape } from "../../shared/landscape/curve";
 import {
   HeightField,
-  decodeHeight,
   type MapStamp,
   type Action,
 } from "../../shared";
@@ -66,7 +65,7 @@ export class Session {
   private unitCameraMode:UnitCameraMode='rts';
   private cinematicFocus:{x:number;z:number}|null=null;
   private chat: GameChat | null = null;
-  private loadedMap: MapEntry | null = null;
+  private loadedMap: LoadedMapEntry | null = null;
   private worker: SimulationClient | null = null;
   private renderer: Renderer | null = null;
   private input: MapInput | null = null;
@@ -162,7 +161,7 @@ export class Session {
   private updateResourceStamps(entities: Parameters<typeof resourceStamps>[0]) {
     // Observation owns immutable per-update arrays. Reuse them between simulation
     // ticks, but never key by tick alone: reveal/restore can change the same tick.
-    const mapStamps=projectScene(this.loadedMap!.map)?.stamps??this.loadedMap!.map.stamps;
+    const mapStamps=projectScene(this.loadedMap!.map).stamps;
     if (this.resourceEntities === entities && this.resourceMapStamps===mapStamps) return;
     this.resourceEntities = entities;
     const started=perf.start();
@@ -270,7 +269,7 @@ export class Session {
     this.me =
       config.player ??
       config.match?.slots[0]?.player ??
-      getMap(config.mapId).map.playerStarts[0].player - 1;
+      getMap(config.mapId).overview.starts[0].player - 1;
     this.visionPlayer = this.me;
     this.reveal = this.observing;
   }
@@ -282,9 +281,10 @@ export class Session {
   async start(report: (progress: LoadProgress) => void = () => {}): Promise<void> {
     const generation = ++this.loadGeneration;
     const check = () => {if (generation !== this.loadGeneration) throw new DOMException("Match loading cancelled", "AbortError");};
-    const loaded = (this.loadedMap = getMap(
+    const loaded = (this.loadedMap = await loadMap(
       this.config.match?.mapId ?? this.config.mapId,
     ));
+    check();
     const map = requirePlayableMap(loaded.map);
     this.reveal = this.observing || !!map.sandbox;
     const match =
@@ -339,18 +339,13 @@ export class Session {
     const renderer = this.renderer = new Renderer(this.canvas, urls);
     renderer.setKinds(new Map(catalog.assets.map((a) => [a.id, a.type])));
     const authored=projectScene(map);
-    this.terrain = authored?.field??new HeightField(map.size);
-    if(!authored)this.terrain.load(
-      map.height ? decodeHeight(map.height, map.size)! : [],
-      map.waterLevel ?? 0,
-      map.landscape?.importedTerrain,
-    );
+    this.terrain = authored.field;
     renderer.setTerrain(this.terrain);
     renderer.setLandscape(map.landscape ?? emptyLandscape());
     renderer.sky.setPlaying(false);
     renderer.setGridMode("none");
     this.stamps = [
-      ...(authored?.stamps??map.stamps),
+      ...authored.stamps,
       ...resourceStamps(this.visualView().settlement!.entities),
     ];
     this.renderer = renderer;
@@ -450,7 +445,7 @@ export class Session {
     if(map.mission || map.sandbox)this.economyHud.setSelection(initialView.settlement.entities.filter(e=>e.owner===slotOwner(this.me)&&e.unit).map(e=>e.id));
     renderer.draw(initialView, this.stamps);
     // Include scenery variants outside current fog, without revealing entities.
-    await Promise.all([renderer.preload([...(authored?.stamps??map.stamps), ...resourceStamps(initial.resources)]), preloadCommandArt(), document.fonts.ready]); check();
+    await Promise.all([renderer.preload([...authored.stamps, ...resourceStamps(initial.resources)]), preloadCommandArt(), document.fonts.ready]); check();
     await assets.ready(); check();
     report({stage:"Preparing graphics and shaders"});
     await loadingPaint(); check();

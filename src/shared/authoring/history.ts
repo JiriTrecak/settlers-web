@@ -17,6 +17,7 @@ export class AuthoringHistory{
  revision=0;
  constructor(scene:AuthoringScene){this.current=authoringSceneSchema.parse(scene);}
  get input():AuthoringScene{return this.current;}
+ get mapInput():AuthoringScene & {terrain:TerrainData}{return {...this.current,terrain:this.document.terrain};}
  get document(){return savedScene(this.current);}
  get scene():AuthoringScene{return structuredClone(this.current);}
  get canUndo(){return this.past.length>0;}
@@ -55,7 +56,7 @@ export class AuthoringHistory{
   * There are no remaining recipe dependencies in the resulting document. */
  apply(compiled:CompiledMapScene){
   if(this.current.layers.some(l=>l.locked))throw Error('Unlock generator previews before applying');
-  if(compiled.generated?.issues.some(i=>i.code==='missing-recipe'||i.code==='shape-mismatch'||i.code==='uphill-river'))throw Error('Resolve generator errors before applying');
+  if(compiled.generated?.issues.some(i=>i.code==='missing-recipe'||i.code==='shape-mismatch'||i.code==='uphill-river'||i.code==='terrain-range'))throw Error('Resolve generator errors before applying');
   const objects=(compiled.generated?.objects??[]).map(({owner:_,blocksVegetation:__,...object})=>object);
   this.commit({...this.current,terrain:captureTerrain(compiled.field),layers:[],objects:[...this.current.objects,...objects]},null);
  }

@@ -1,13 +1,13 @@
 import {createRoot,type Root} from 'react-dom/client';
-import {MousePointer2,Plus,Mountain,Eraser,TreePine,Waves,Flag,Undo2,Redo2,Sun,Cable,Grid2x2,Gamepad2,Orbit,type LucideIcon} from 'lucide-react';
+import {MousePointer2,Plus,Mountain,Eraser,TreePine,Waves,Flag,Sticker,Undo2,Redo2,Sun,Cable,Grid2x2,Gamepad2,Orbit,type LucideIcon} from 'lucide-react';
 import {Button} from '../../components/ui/button';
 import {cn} from '../../ui/cn';
 
-export type AuthoringMode='select'|'place'|'terrain'|'foliage'|'water'|'spawn'|'clean';
+export type AuthoringMode='select'|'place'|'terrain'|'foliage'|'water'|'spawn'|'clean'|'decal';
 export type AuthoringCamera='top'|'game'|'free';
 type Hooks={mode:(mode:AuthoringMode)=>void;camera:(mode:AuthoringCamera)=>void;undo:(redo:boolean)=>void;placement:(scenery:boolean)=>void;environment:()=>void;mcp:()=>void;grid:()=>void};
 type State={mode:AuthoringMode;undo:boolean;redo:boolean;camera:AuthoringCamera;scenery:boolean;mcp:boolean;environment:boolean;grid:boolean};
-const modes:[AuthoringMode,string,LucideIcon][]=[['select','Select',MousePointer2],['place','Place',Plus],['terrain','Terrain',Mountain],['foliage','Foliage',TreePine],['water','Water',Waves],['spawn','Spawn',Flag],['clean','Clean',Eraser]];
+const modes:[AuthoringMode,string,LucideIcon][]=[['select','Select',MousePointer2],['place','Place',Plus],['terrain','Terrain',Mountain],['foliage','Foliage',TreePine],['water','Water',Waves],['decal','Decals',Sticker],['spawn','Spawn',Flag],['clean','Clean',Eraser]];
 const cameras:[AuthoringCamera,string,LucideIcon][]=[['top','Top down',Grid2x2],['game','Game',Gamepad2],['free','Free',Orbit]];
 const surface='pointer-events-auto absolute flex items-center rounded-xl border border-solid border-border bg-background/95 p-1.5 text-foreground shadow-xl';
 function ToolButton({label,icon:Icon,active,onClick,disabled=false,compact=false}:{label:string;icon:LucideIcon;active?:boolean;onClick:()=>void;disabled?:boolean;compact?:boolean}){

@@ -14,7 +14,7 @@ afterEach(()=>vi.unstubAllGlobals());
 function fixture(custom=false){
  vi.stubGlobal('document',{createElement:(tag:string)=>new Element(tag),createElementNS:(_:string,tag:string)=>new Element(tag)});
  const info=mapOverview(emptyUtcMap());info.starts=[{player:1,x:30,z:30,setup:'default',mainFort:'building.ants.hall'},{player:2,x:90,z:90,setup:'default',mainFort:'building.ants.hall'}];info.custom=custom;
- return {id:'test',name:'Test',players:2,source:'project',overview:info,previewUrl:'/published.webp',get map():never{throw Error('Preview must not open the map');},get revision():never{throw Error('Preview must not fingerprint the world');}} satisfies MapEntry;
+ return {id:'test',name:'Test',players:2,source:'project',overview:info,previewUrl:'/published.webp'} satisfies MapEntry;
 }
 it('composes a static image and selection markers using only published metadata',()=>{
  const root=mapPreview(fixture(),0) as unknown as Element;

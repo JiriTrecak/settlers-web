@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Zdrg",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_dirtgrass_diffuse.dds",
+      "sha256": "557f4a911c1072c72137bdfc1933832029c70e7859c409cea411dc88c0c57089"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ruins/ruins_dirtgrass_normal.dds",
+      "sha256": "257b864722c78f2839a9d53d28e3cf23b6496080de7f8cdc64d57641d95f68ac"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_dirtgrass_orm.dds",
+      "sha256": "2f55ba15604f0e4c5521f97e94723a611278e0f4e907703c37c040b3043feddf"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Zdrg",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Ruins",
+    "file": "Ruins_DirtGrass",
+    "comment": "Grassy  Dirt",
+    "name": "WESTRING_TILE_GRASSY_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "3",
+    "convertTo": "Ldrg,Fdrg,Wsng,Bdrg,Adrg,Clvg,Nice,Ygsb,Vgrt,Qgrt,Xgsb,Dgrs,Ggrs,Idtr,Ofsl",
+    "InBeta": "1",
+    "version": "1"
+  }
+}

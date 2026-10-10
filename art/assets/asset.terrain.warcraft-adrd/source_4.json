@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Adrd",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_dirtrough_diffuse.dds",
+      "sha256": "e7631c440a9a09a3e5f97fb5afae284895ade3a334d02b27620a134fa19ac501"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/ashenvale/ashen_dirtrough_normal.dds",
+      "sha256": "c109586a0e90aaa197b86294069703b175d7834777cbd375a992c72f78769233"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_dirtrough_orm.dds",
+      "sha256": "f76e9b18078a763c5a13f18fd06cdf370ee8aaca691e1c56f43a04a226d3bdc8"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Adrd",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Ashenvale",
+    "file": "Ashen_DirtRough",
+    "comment": "Rough Dirt",
+    "name": "WESTRING_TILE_ROUGH_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "2",
+    "convertTo": "Ldro,Fdro,Wdro,Bdsd,Cdrd,Ndrd,Ydtr,Vdrr,Qdrr,Xdtr,Dbrk,Gbrk,Zdtr,Idtr,Odtr",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

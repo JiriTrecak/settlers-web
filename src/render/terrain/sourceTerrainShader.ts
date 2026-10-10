@@ -3,12 +3,20 @@
 export function sourceTerrainGLSL(layerCount:number,fragment=false){
  const sample=(tex:string,uv:string,layer:string)=>fragment?`textureGrad(${tex},vec3(${uv},${layer}),dFdx(${uv}),dFdy(${uv}))`:`textureLod(${tex},vec3(${uv},${layer}),0.)`;
  return `
- uniform highp sampler2DArray uSourceAR,uSourceNH,uSourceMasks,uSourceDisplacement;
+ uniform highp sampler2DArray uSourceAR,uSourceNH,uSourceOM,uSourceMasks,uSourceDisplacement;
  uniform sampler2D uSourceSlots,uTerrainUnderlay,uSourceDisplacementMask,uSourceHeight;
  uniform vec2 uSourceOrigin,uSourceOffset,uSourceSize,uSourceHeightSize;
  uniform float uSourceHeightScale;
+ uniform float uSourceAllLayers;
+ uniform int uSourceMetadataOffset;
+ vec4 terrainLayerData(int layer,int column){
+  int index=uSourceMetadataOffset+layer*8+column,width=textureSize(uSourceSlots,0).x;
+  return texelFetch(uSourceSlots,ivec2(index%width,index/width),0);
+ }
+ int terrainCorner(int layer,int corner){return int(terrainLayerData(layer,4+corner/4)[corner%4]+.5);}
+ vec2 terrainSurfaceOM=vec2(1.,0.);
  uniform float uSourceDisplacementTiling,uSourceHasDisplacement;
- uniform vec4 uSourceParams[${layerCount}];uniform vec3 uSourceTints[${layerCount}];uniform float uSourceDesaturation[${layerCount}];uniform float uSourceBreakup[${layerCount}];
+
  float terrainHash(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
  float terrainValueNoise(vec2 p){
   vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
@@ -43,37 +51,86 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
  float terrainDisplacementMask(vec2 world){return textureLod(uSourceDisplacementMask,(world-uSourceOrigin)/uSourceSize,0.).r;}
  vec4 terrainDisplacement(vec2 world){return textureLod(uSourceDisplacement,vec3((world-uSourceOffset)*uSourceDisplacementTiling*.08,0.),0.);}
  void terrainLayers(vec2 world,float normalY,out vec4 ar,out vec4 nh){
+  terrainSurfaceOM=vec2(1.,0.);
   vec2 sourceXZ=world-uSourceOffset,uv=(world-uSourceOrigin)/uSourceSize;
   float underlay=terrainUnderlay(world);
   ivec2 sub=ivec2(clamp(floor((world-uSourceOrigin)/4.),vec2(0.),uSourceSize/4.-1.));
-  vec4 ids0=texelFetch(uSourceSlots,ivec2(sub.x*2,sub.y),0)*255.,ids1=texelFetch(uSourceSlots,ivec2(sub.x*2+1,sub.y),0)*255.;
+  vec4 ids0=texelFetch(uSourceSlots,ivec2(sub.x*2,sub.y),0),ids1=texelFetch(uSourceSlots,ivec2(sub.x*2+1,sub.y),0);
   int ids[6];ids[0]=int(ids0.x+.5);ids[1]=int(ids0.y+.5);ids[2]=int(ids0.z+.5);ids[3]=int(ids0.w+.5);ids[4]=int(ids1.x+.5);ids[5]=int(ids1.y+.5);
-  int base=clamp(ids[0],0,${layerCount-1});vec2 tile=sourceXZ*uSourceParams[base].x*.08;
-  ar=${sample('uSourceAR','tile','float(base)')};nh=${sample('uSourceNH','tile','float(base)')};
-  ar.rgb*=uSourceTints[base]*(1.-max(underlay-.75,0.));
-  for(int j=1;j<6;j++){
-   int id=ids[j];if(id<=0||id>=${layerCount})continue;
-   vec4 param=uSourceParams[id];vec2 tileUV=sourceXZ*param.x*.08;
-   vec4 layerAR=${sample('uSourceAR','tileUV','float(id)')},layerNH=${sample('uSourceNH','tileUV','float(id)')};
-   layerAR.rgb*=uSourceTints[id];
+  int base=clamp(ids[0],0,${layerCount-1});vec2 tile=sourceXZ*terrainLayerData(base,0).x*.08;
+  vec4 baseChannels=terrainLayerData(base,3);
+  ar=${sample('uSourceAR','tile','baseChannels.y')};nh=${sample('uSourceNH','tile','baseChannels.z')};
+  ar.rgb*=terrainLayerData(base,1).rgb*(1.-max(underlay-.75,0.));
+  for(int j=1;j<${Math.max(6,layerCount)};j++){
+   if(uSourceAllLayers<.5&&j>=6)break;
+   int id=uSourceAllLayers>.5?j:ids[min(j,5)];if(id<=0||id>=${layerCount})continue;
+   vec4 channels=terrainLayerData(id,3);if(channels.y<0.)continue;
    float weight=textureLod(uSourceMasks,vec3(uv,float(id)),0.).r;
-   if(uSourceBreakup[id]>0.)weight=terrainBreakup(weight,world,uSourceBreakup[id]);
+   vec4 param=terrainLayerData(id,0),tint=terrainLayerData(id,1),groundLayout=terrainLayerData(id,2);
+   float breakup=channels.x;
+   if(groundLayout.x<0.){
+    if(weight<=0.)continue;
+    vec3 n=terrainNormal(world);vec2 limits=terrainLayerData(id,4).xy;
+    float slope=length(n.xz)/max(n.y,.0001),alpha=weight*smoothstep(limits.x,limits.y,slope);
+    if(alpha<=0.)continue;
+    vec2 signs=mix(vec2(-1.),vec2(1.),step(vec2(0.),n.xz));
+    float y=terrainHeight(world),blendX=abs(n.x)/max(abs(n.x)+abs(n.z),.0001);
+    vec2 uvX=vec2(-world.y*signs.x/groundLayout.z,y/groundLayout.y),uvZ=vec2(world.x*signs.y/groundLayout.z,y/groundLayout.y);
+    vec4 ax=${sample('uSourceAR','uvX','channels.y')},az=${sample('uSourceAR','uvZ','channels.y')};
+    vec3 nx=${sample('uSourceNH','uvX','channels.z')}.rgb*2.-1.,nz=${sample('uSourceNH','uvZ','channels.z')}.rgb*2.-1.;
+    vec3 worldNormal=normalize(mix(vec3(nz.x*signs.y,nz.y,nz.z*signs.y),vec3(nx.z*signs.x,nx.y,-nx.x*signs.x),blendX));
+    vec3 localNormal=transpose(terrainBasis(n))*worldNormal;
+    vec4 wall=mix(az,ax,blendX);wall.rgb*=tint.rgb;
+    ar=mix(ar,wall,alpha);nh=mix(nh,vec4(localNormal*.5+.5,.5),alpha);
+    vec2 ox=${sample('uSourceOM','uvX','channels.w')}.rg,oz=${sample('uSourceOM','uvZ','channels.w')}.rg;
+    terrainSurfaceOM=mix(terrainSurfaceOM,mix(oz,ox,blendX),alpha);
+    continue;
+   }
+   if(groundLayout.x>0.){
+    vec2 grid=(world+vec2(.5))/groundLayout.z,cell=floor(grid),local=fract(grid);
+    vec2 center=(cell+.5)*groundLayout.z-vec2(.5);
+    vec2 maskSize=vec2(textureSize(uSourceMasks,0).xy),codeUV=(center-uSourceOrigin+.5)/maskSize;
+    vec4 cellData=textureLod(uSourceMasks,vec3(codeUV,float(id)),0.);
+    int code=int(cellData.g*255.+.5),corners=code&15;
+    bool full=(code&16)!=0||corners==15;
+    if(corners==0&&weight<=0.)continue;
+    int atlasCell=full||corners==0?int(cellData.b*255.+.5):terrainCorner(id,corners);
+    vec2 imageCell=vec2(float(atlasCell%int(groundLayout.x)),floor(float(atlasCell)/groundLayout.x));
+    vec2 atlasSize=vec2(textureSize(uSourceAR,0).xy);
+    ${fragment?'vec2 dx=dFdx(grid)/groundLayout.xy,dy=dFdy(grid)/groundLayout.xy;float footprint=max(length(dx*atlasSize),length(dy*atlasSize));':'float footprint=1.;'}
+    vec2 inset=min(vec2(max(.5,ceil(footprint)))/atlasSize,.4/groundLayout.xy);
+    vec2 lo=imageCell/groundLayout.xy+inset,hi=(imageCell+1.)/groundLayout.xy-inset;
+    vec2 atlasUV=clamp((imageCell+local)/groundLayout.xy,lo,hi);
+    vec4 groundAR=${fragment?'textureGrad(uSourceAR,vec3(atlasUV,channels.y),dx,dy)':'textureLod(uSourceAR,vec3(atlasUV,channels.y),0.)'};
+    groundAR.rgb*=tint.rgb;
+    vec4 groundNH=${fragment?'textureGrad(uSourceNH,vec3(atlasUV,channels.z),dx,dy)':'textureLod(uSourceNH,vec3(atlasUV,channels.z),0.)'};
+    vec2 groundOM=${fragment?'textureGrad(uSourceOM,vec3(atlasUV,channels.w),dx,dy)':'textureLod(uSourceOM,vec3(atlasUV,channels.w),0.)'}.rg;
+    float alpha=full?1.:corners==0?weight:groundNH.a;
+    ar=mix(ar,groundAR,alpha);nh=mix(nh,vec4(groundNH.rgb,.5),alpha);terrainSurfaceOM=mix(terrainSurfaceOM,groundOM,alpha);
+    continue;
+   }
+   if(weight<=0.)continue;
+   vec2 tileUV=sourceXZ*param.x*.08;
+   vec4 layerAR=${sample('uSourceAR','tileUV','channels.y')},layerNH=${sample('uSourceNH','tileUV','channels.z')};
+   layerAR.rgb*=tint.rgb;
+   if(breakup>0.)weight=terrainBreakup(weight,world,breakup);
    weight*=1.-underlay*(1.-nh.a*.5);
    if(param.z>=0.)weight*=mix(1.,clamp(normalY,0.,1.),param.z);else weight=clamp(weight+(1.-normalY)*-param.z,0.,1.);
    layerAR.rgb*=mix(1.,clamp((weight-.25)/.75,0.,1.),param.w);
-   if(uSourceDesaturation[id]>0.)ar.rgb=mix(ar.rgb,vec3(dot(layerAR.rgb,vec3(uSourceDesaturation[id]))),clamp((weight-.5)/.5,0.,1.));
+   if(tint.a>0.)ar.rgb=mix(ar.rgb,vec3(dot(layerAR.rgb,vec3(tint.a))),clamp((weight-.5)/.5,0.,1.));
    float k=param.y>=0.?clamp(((layerNH.a+.5)*weight-nh.a+.25)/max(param.y,.00001),0.,1.):clamp((1.-layerNH.a)+(weight-(1.-layerNH.a))*(1.-param.y),0.,1.);
-   if(uSourceBreakup[id]>0.)k=terrainDensity(weight,layerNH.a,param.y);
+   if(breakup>0.)k=terrainDensity(weight,layerNH.a,param.y);
    ar=mix(ar,layerAR,k);nh=mix(nh,vec4(layerNH.rgb,param.y>=0.?layerNH.a:.5),k);
+   terrainSurfaceOM=mix(terrainSurfaceOM,vec2(1.,0.),k);
   }
  }
  vec3 terrainDisplace(vec3 p){
   if(uSourceHasDisplacement<.5)return p;
   vec3 baseNormal=terrainNormal(p.xz);float mask=terrainDisplacementMask(p.xz);
+  if(mask<=0.)return p;
   vec4 ar,nh;terrainLayers(p.xz,1.,ar,nh);
   vec4 d=terrainDisplacement(p.xz);
   vec3 n=normalize(terrainBasis(baseNormal)*(2.*(d.rgb-.50196)));
-  p.y+=(nh.a-.5)*.5*(1.-mask)*(1.-terrainUnderlay(p.xz));
   p.xz-=n.xz*.5*mask;
   p+=baseNormal*(d.a-.25)*mask;
   return p;

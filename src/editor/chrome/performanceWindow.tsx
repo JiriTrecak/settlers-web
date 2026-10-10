@@ -96,7 +96,6 @@ function PerformanceWindow({editor}:{editor:WorldEditor}){
       {name:'Create and place instances',durationMs:report.sceneryConstruction.placement.placeMs},
       {name:'Build render batches',durationMs:report.sceneryConstruction.batchMs},
      ]:undefined}/>
-     {report.compiler.cache&&<p className="m-0 text-xs text-muted-foreground">Initial compiled-world cache: {report.compiler.cache.status} · {milliseconds(report.compiler.cache.lookupMs)} ms lookup. On a cache hit, generation stages describe the original build.</p>}
      <details className="rounded-lg border border-solid border-border p-3"><summary className="cursor-pointer text-sm font-medium">Model loading · {report.sceneryConstruction.models.length} assets</summary>
       <table className="mt-3 w-full border-collapse text-left text-xs"><thead><tr>{['Asset','Load / parse','Preparation'].map(name=><th key={name} className="px-2 py-2 font-medium text-muted-foreground">{name}</th>)}</tr></thead><tbody>{report.sceneryConstruction.models.map(model=><tr key={model.asset+'#'+model.variant} className="border-0 border-t border-solid border-border/50"><td className="px-2 py-2">{model.asset}{model.variant?' · '+model.variant:''}</td><td className="px-2 py-2 font-mono">{milliseconds(model.fetchParseMs)} ms</td><td className="px-2 py-2 font-mono">{milliseconds(model.prepareMs)} ms</td></tr>)}</tbody></table>
      </details>

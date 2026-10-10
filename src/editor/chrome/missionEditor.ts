@@ -6,7 +6,7 @@ import './missionEditor.css';
 /** Edits the map document. No engine objects or browser APIs are exposed to Lua. */
 export class MissionEditor {
   private readonly root=document.createElement('dialog');
-  constructor(host:HTMLElement,editor:WorldEditor,onTest:()=>void){
+  constructor(host:HTMLElement,editor:WorldEditor,onTest:()=>void|Promise<void>){
     this.root.className='mission-editor';this.root.setAttribute('aria-label','Mission Lua editor');
     this.root.innerHTML=`<header><div><small>MAP SCRIPTING</small><h2>Mission &amp; Lua</h2></div><button data-close aria-label="Close mission editor">×</button></header>
     <label class="mission-toggle"><input type="checkbox" data-enabled> Campaign mission (hidden from Skirmish)</label>
@@ -35,11 +35,11 @@ mission.end_scene()</pre></details><strong>Entity references</strong><pre data-e
     const presentation=()=>Object.fromEntries(Object.entries({loadingBackground:loadingArt.value.trim(),selectionBackground:selectionArt.value.trim(),chapter:chapter.value.trim(),briefing:briefing.value.trim(),tips:tips.value.split('\n').map(s=>s.trim()).filter(Boolean),features:features.value.split('\n').map(s=>s.trim()).filter(Boolean)}).filter(([,v])=>v.length));
     script.value=m?.script??'function on_start()\n  mission.objective("Explore the forest.")\nend\n\nfunction on_tick()\n  -- Use mission.get/set for persistent state.\nend\n';
     regions.value=JSON.stringify(m?.regions??[],null,2);field<HTMLElement>('[data-entities]').textContent=editor.map.entities.filter(p=>!p.id.startsWith('tree.')).slice(0,160).map(p=>`${p.id}${p.activation?' [spawn]':''}\n  ${p.definition}`).join('\n');
-    const run=(fn:()=>void)=>{try{fn();status.style.color='#c4d9b9';}catch(e){status.textContent=(e as Error).message;status.style.color='#ff9c8f';}};
+    const run=async(fn:()=>void|Promise<void>)=>{try{await fn();status.style.color='#c4d9b9';}catch(e){status.textContent=(e as Error).message;status.style.color='#ff9c8f';}};
     const apply=()=>{const definition=enabled.checked?missionSchema.parse({...(race.value?{race:race.value}:{}),playerRaces:JSON.parse(playerRaces.value),campaign:campaign.value,title:title.value,order:Number(order.value),presentation:presentation(),...(next.value.trim()?{nextMission:next.value.trim()}:{}),...(company.value.trim()?{company:company.value.split(',').map(s=>s.trim()).filter(Boolean)}:{}),objectives:JSON.parse(objectives.value),...(levelCap.value?{heroLevelCap:Number(levelCap.value)}:{}),script:script.value,regions:JSON.parse(regions.value)}):undefined;if(definition)validateMissionLua(definition.script);editor.setMission(definition,JSON.parse(camps.value));status.textContent='Applied. Save the map to keep these changes.';};
     field<HTMLButtonElement>('[data-validate]').onclick=()=>run(()=>{validateMissionLua(script.value);status.textContent='Lua syntax is valid. Play to check entity references and runtime behavior.';});
     field<HTMLButtonElement>('[data-save]').onclick=()=>run(apply);
-    field<HTMLButtonElement>('[data-test]').onclick=()=>run(()=>{if(!enabled.checked)throw new Error('Enable Campaign mission to test a script.');apply();onTest();});
+    field<HTMLButtonElement>('[data-test]').onclick=()=>run(async()=>{if(!enabled.checked)throw new Error('Enable Campaign mission to test a script.');apply();await onTest();});
     field<HTMLButtonElement>('[data-close]').onclick=()=>this.destroy();
     this.root.addEventListener('keydown',e=>e.stopPropagation());
     this.root.addEventListener('cancel',e=>{e.preventDefault();this.destroy();});host.append(this.root);this.root.showModal();

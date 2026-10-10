@@ -17,7 +17,7 @@ export class LoadingScreen {
     if(event.key!=='Tab'&&!(event.target instanceof HTMLElement&&this.root.contains(event.target)))event.preventDefault();
     event.stopImmediatePropagation();
   };
-  constructor(host:HTMLElement,onLeave:()=>void,private readonly labels=defaultLabels,mission?:MissionDefinition){
+  constructor(host:HTMLElement,onLeave:()=>void,private readonly labels=defaultLabels,mission?:Pick<MissionDefinition,'order'|'title'|'presentation'>){
     window.addEventListener('keydown',this.blockKeys,true);window.addEventListener('keyup',this.blockKeys,true);
     this.root.className='match-loading';
     const panel=document.createElement('section'),title=document.createElement('h1'),leave=document.createElement('button');

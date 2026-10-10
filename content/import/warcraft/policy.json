@@ -1,0 +1,64 @@
+{
+  "sourceUnitsPerWorldUnit": 32,
+  "defaultBiome": "vibrant-forest",
+  "playerSetup": "setup.ants",
+  "treeAssets": [
+    "asset.models.environment.woodland-pine-a",
+    "asset.models.environment.woodland-pine-b"
+  ],
+  "treeScale": 0.7,
+  "campLinkDistance": 384,
+  "campMaxDiameter": 1024,
+  "campTiers": [
+    {
+      "maxLevel": 9,
+      "difficulty": "small",
+      "compositions": [
+        "thornback-foragers",
+        "dewdrop-sprites",
+        "hungry-weblings",
+        "mushroom-circle"
+      ]
+    },
+    {
+      "maxLevel": 19,
+      "difficulty": "medium",
+      "compositions": [
+        "rootbound-guardians",
+        "hornet-raiders",
+        "bog-toad-hunters",
+        "briar-covenant"
+      ]
+    },
+    {
+      "maxLevel": 999999,
+      "difficulty": "hard",
+      "compositions": [
+        "hollow-stag",
+        "rotwood-court"
+      ]
+    }
+  ],
+  "mineDefinition": "building.neutral.amber-mine",
+  "mineOffsets": [
+    [
+      -4,
+      -4
+    ],
+    [
+      4,
+      -4
+    ],
+    [
+      -4,
+      4
+    ],
+    [
+      4,
+      4
+    ]
+  ],
+  "campClassificationSource": "https://classic.battle.net/mod/dev/melee.shtml",
+  "startPadBlend": 8,
+  "placementSearchRadius": 12
+}

@@ -120,27 +120,12 @@ it('sends only changed stable-order records, including duplicate IDs and excepti
  await send([...changed].reverse());await send(rows);
 });
 
-it('replays a cached packet without detaching compiler buffers and continues exact deltas',async()=>{
- const heights=new Float32Array([1,2,3]),rows=[{id:'duplicate',x:1},{id:'duplicate',x:-0}];
- const value={field:{samples:heights},generated:{objects:rows,terrain:{samples:heights}},stamps:rows,resources:[],owners:new Map([['duplicate','forest']])};
- const stored=structuredClone(new AuthoringTransferEncoder().encode(value).packet);
- const snapshot=await new AuthoringTransferDecoder().decode(stored,async()=>{});
- const encoder=new AuthoringTransferEncoder(),receiver=new AuthoringTransferDecoder();
- const replay=encoder.restore(snapshot,stored);
- // JSON chunks are reused; only compiler-owned terrain arrays require copying.
- expect(replay.packet.stamps.rows[0]).toBe(stored.stamps.rows[0]);
- expect(replay.packet.buffers[0].values).not.toBe(snapshot.field.samples);
- const first=await receiver.decode(structuredClone(replay.packet,{transfer:replay.transfer}),async()=>{});
- expect(first).toStrictEqual(value);expect([...snapshot.field.samples]).toEqual([1,2,3]);
- const send=async(next:typeof snapshot)=>{
-  const encoded=encoder.encode(next),result=await receiver.decode(structuredClone(encoded.packet,{transfer:encoded.transfer}),async()=>{});
-  expect(result).toStrictEqual(next);return {packet:encoded.packet,result};
- };
- const pose=await send({...snapshot,stamps:[snapshot.stamps[0],{id:'duplicate',x:4}]});
- expect(pose.packet.buffers).toHaveLength(0);expect(pose.packet.objects.rows).toHaveLength(0);
- expect(pose.result.field.samples).toBe(first.field.samples);expect(pose.result.generated.objects).toBe(first.generated.objects);
- const replacement=new Float32Array([4,5,6]);
- await send({...snapshot,field:{samples:replacement},generated:{objects:[],terrain:{samples:replacement}},stamps:[{id:'new',x:7}],owners:new Map([['new','rocks']])});
- await send(snapshot);expect(first).toStrictEqual(value);expect([...snapshot.field.samples]).toEqual([1,2,3]);
- expect(()=>encoder.restore(snapshot,stored)).toThrow('fresh snapshot stream');
+it('starts a fresh stream from map values without a saved compiler packet',async()=>{
+ const values={field:{samples:new Float32Array([1,2,3])},stamps:[{id:'tree',x:1}],resources:[],owners:new Map<string,string>()};
+ const first=new AuthoringTransferEncoder().encode(values),second=new AuthoringTransferEncoder().encode(values);
+ expect(first.packet.sequence).toBe(1);expect(second.packet.sequence).toBe(1);
+ const decoder=new AuthoringTransferDecoder();
+ const decoded=await decoder.decode(structuredClone(second.packet,{transfer:second.transfer}),async()=>{});
+ expect(decoded).toStrictEqual(values);
+ expect([...values.field.samples]).toEqual([1,2,3]);
 });

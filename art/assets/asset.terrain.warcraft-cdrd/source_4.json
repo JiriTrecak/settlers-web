@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "tileId": "Cdrd",
+  "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
+  "sources": [
+    {
+      "channel": "diffuse",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\felwood\\felwood_dirtrough_diffuse.dds",
+      "sha256": "2c7c35bbf4c363d510d0470f5d357c808343eed0e4864ae21ec3a5a8d3c4f8c3"
+    },
+    {
+      "channel": "normal",
+      "origin": "replacement",
+      "path": "terrainart/felwood/felwood_dirtrough_normal.dds",
+      "sha256": "86fc6fadb95f41445ab23ad8c8adb734b30975aa3266fb2a95f1e56b067ada0d"
+    },
+    {
+      "channel": "orm",
+      "origin": "installed-reforged",
+      "path": "war3.w3mod:_hd.w3mod:terrainart\\felwood\\felwood_dirtrough_orm.dds",
+      "sha256": "e5a5bd79df5fc03d47852232d922512fb431f9f6d7802960eff44b548297efc0"
+    }
+  ],
+  "packing": {
+    "atlas": "Uncropped original layout and diffuse alpha",
+    "normal": "BC5 XY expanded to positive Z; RGBA normal sources retained",
+    "orm": "R = occlusion, G = roughness, B = metalness"
+  },
+  "sourceTerrainDefinition": {
+    "tileID": "Cdrd",
+    "cliffSet": "-1",
+    "dir": "TerrainArt\\Felwood",
+    "file": "Felwood_DirtRough",
+    "comment": "Rough Dirt",
+    "name": "WESTRING_TILE_ROUGH_DIRT",
+    "buildable": "1",
+    "footprints": "1",
+    "walkable": "1",
+    "flyable": "1",
+    "blightPri": "1",
+    "convertTo": "Ldro,Fdro,Wdro,Bdsd,Adrd,Ndrd,Ydtr,Vdrr,Qdrr,Xdtr,Dbrk,Gbrk,Zdtr,Idtr,Odtr",
+    "InBeta": "1",
+    "version": "0"
+  }
+}

@@ -1,11 +1,9 @@
-import {startingUnits,startingUnitPosition} from '../../content/startingHero';
+import {startingArea} from './startingArea';
 import {placementGeometryError} from '../spatial/placement';
-import {footprintHalfExtents} from './resourceClearance';
 import {validateMissionLua} from "../scenario/lua";
 import {projectScene,landscapeAssets} from '../authoring/project';
 import {MAX_FOUNDATION_RELIEF_CM} from './tacticalTerrain';
 import {sceneryRules} from './sceneryCollision';
-import { decodeHeight, HeightField } from "./height";
 import type { PlayerStart, UtcMap } from "./utcmap";
 import { content } from "../../content/builtin";
 import { validatePlacements, placementOccupancyError, startingResourceClearanceError } from "../../content/map";
@@ -39,22 +37,10 @@ export function playableMapError(
   )
     return "Player slots must be consecutive, starting at Player 1.";
   let compiled:ReturnType<typeof projectScene>;try{compiled=projectScene(map);}catch(e){return (e as Error).message;}
-  const field = compiled?.field??new HeightField(map.size);
-  if (!compiled&&map.height)
-    field.load(decodeHeight(map.height,map.size) ?? [], map.waterLevel ?? 0);
-  else if(!compiled)field.waterLevel = map.waterLevel ?? 0;
+  const field = compiled.field;
   const setup=content.rules.startingSetup;
-  const radius=(id:string)=>content.get(id).dimensions!.radius;
-  const formation=setup.hero?setup.hero.choices.flatMap(hero=>startingUnits(setup,hero)):setup.units;
   for (const s of starts) {
-    const half=footprintHalfExtents(content.get(setup.fort).footprint,s.rotation??0);
-    const positions=formation.map(u=>({...startingUnitPosition(s,u.offset),radius:radius(u.definition)}));
-    const startEnvelope={
-     minX:Math.floor(Math.min(-half.x,...positions.map(p=>p.x-s.x-p.radius))),
-     maxX:Math.ceil(Math.max(half.x,...positions.map(p=>p.x-s.x+p.radius))),
-     minZ:Math.floor(Math.min(-half.y,...positions.map(p=>p.y-s.z-p.radius))),
-     maxZ:Math.ceil(Math.max(half.y,...positions.map(p=>p.y-s.z+p.radius))),
-    };
+    const startEnvelope=startingArea(s);
     if (
       placementGeometryError(content.get(setup.fort), {x:s.x,y:s.z},s.rotation??0) !== null ||
       s.x < 8 ||
@@ -63,12 +49,12 @@ export function playableMapError(
       s.z > map.size - 9
     )
       return `Player ${s.player} needs a building-grid-aligned start at least 8 navigation cells inside the map.`;
-    if(s.x+startEnvelope.minX<0||s.x+startEnvelope.maxX>=map.size||s.z+startEnvelope.minZ<0||s.z+startEnvelope.maxZ>=map.size)
+    if(startEnvelope.minX<0||startEnvelope.maxX>=map.size||startEnvelope.minZ<0||startEnvelope.maxZ>=map.size)
       return `Player ${s.player} needs room for the complete fort and worker formation.`;
     let dry=true,lo = Infinity,
       hi = -Infinity;
-    for (let z = Math.floor(s.z + startEnvelope.minZ); z <= Math.ceil(s.z + startEnvelope.maxZ); z++)
-      for (let x = Math.floor(s.x + startEnvelope.minX); x <= Math.ceil(s.x + startEnvelope.maxX); x++) {
+    for (let z = Math.floor(startEnvelope.minZ); z <= Math.ceil(startEnvelope.maxZ); z++)
+      for (let x = Math.floor(startEnvelope.minX); x <= Math.ceil(startEnvelope.maxX); x++) {
         const h = field.sample(x, z);
         if(h<=field.waterAt(x,z)+.1)dry=false;
         lo = Math.min(lo, h);

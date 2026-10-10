@@ -11,7 +11,7 @@ it('reuses unchanged observations but removes falling trees and refreshes same-t
  const game=new Game(emptyUtcMap(),[{player:0,kind:'human'},{player:1,kind:'human'}]);
  const tree=game.context.create({id:'tree',definition:'resource.forest.tree',owner:'none',position:{x:100,y:100},rotation:0});
  game.observation.update();
- const session=Object.assign(Object.create(Session.prototype),{loadedMap:{map:{stamps:[]}},mini:{setStamps:vi.fn()},resourceScenery:new ResourceScenery(),sceneryComposition:new SceneryComposition()});
+ const session=Object.assign(Object.create(Session.prototype),{loadedMap:{map:emptyUtcMap()},mini:{setStamps:vi.fn()},resourceScenery:new ResourceScenery(),sceneryComposition:new SceneryComposition()});
  const entities=game.view().entities;
  session.updateResourceStamps(entities);
  expect(session.stamps.some((s:{id:string})=>s.id===`resource-${tree.id}`)).toBe(true);
@@ -28,7 +28,7 @@ it('reuses unchanged observations but removes falling trees and refreshes same-t
  game.observation.update();session.updateResourceStamps(game.view().entities);
  expect(session.stamps).toEqual([]);
  // Restored/authored map stamps invalidate the projection independently of trees.
- session.loadedMap.map.stamps=[{id:'new-map-prop'}];
+ session.loadedMap.map={...session.loadedMap.map,stamps:[{id:'new-map-prop'}]};
  session.updateResourceStamps(game.view().entities);
  expect(session.stamps).toEqual([{id:'new-map-prop'}]);
 });

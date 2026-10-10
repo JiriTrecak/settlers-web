@@ -15,7 +15,11 @@
       "Choose Ants or Beetles in skirmish and multiplayer. Race-specific starting armies, building and unit rosters, hero choices, research, AI and campaign settings now share one configuration system.",
       "Added the playable Beetle baseline with matching worker economics, Horn Guards, Stone Slingers with visible projectiles, colony buildings and Hornbreaker. His kit includes Horn Rush, stacking Overwhelm, Steadfast Aura and Colossus; Beetle models remain placeholders until their art is ready.",
       "Spell authoring now supports terrain-aware caster charges and capped, source-specific stacking statuses with per-stack modifiers and primary-attack damage bonuses.",
-      "Added Echo Isles and Last Refuge 1v1 maps traced from classic Warcraft III layouts, with dense woodland, resource sites, neutral camps and labeled previews."
+      "Added Echo Isles and Last Refuge 1v1 maps traced from classic Warcraft III layouts, with dense woodland, resource sites, neutral camps and labeled previews.",
+      "Added Warcraft ground texture source assets with preserved transition atlases, material channels, and preview images.",
+      "Added Warcraft map import for editable terrain, ground textures, trees, player starts, amber sites and difficulty-matched neutral camps.",
+      "Expanded the editor terrain palette to all ground definitions covered by the supplied Rebirth replacements, with missing texture channels supplied by the local Reforged installation and visual previews for each material.",
+      "Cliff-face terrain textures can be painted and erased independently of ground textures, with thumbnails, undo and editable Warcraft import coverage. Echo Isles and Turtle Rock now include their source cliff material."
     ],
     "improved": [
       "Reduced unnecessary collision-index preparation during combat planning while preserving movement and combat behavior.",
@@ -52,7 +56,18 @@
       "Heroes now progress through 11 levels on a consistent combat-level XP curve. Neutral creeps can reach level 6; regular skills unlock ranks at 1/3/5 and ultimates at 5/8. Kill credit, allied sharing, AI learning, and save validation follow the same rules.",
       "Map previews show one gold resource icon per nearby mine cluster instead of overlapping icons for every node.",
       "Reworked the Marshal's spell visuals with amber leaf auras, a living chitin barrier, stronger Faultline impacts, and Crownfall's crown apparition and ground fractures.",
-      "Rally the Colony is now a persistent learned aura granting nearby allies 8/12/16% movement speed and 10/15/20% attack speed, with no mana cost or cooldown."
+      "Rally the Colony is now a persistent learned aura granting nearby allies 8/12/16% movement speed and 10/15/20% attack speed, with no mana cost or cooldown.",
+      "Terrain painting now displays imported ground atlases with automatic corner transitions and visual texture choices in the terrain panel.",
+      "Terrain editing now exposes cliff and bank edges, bank widths, and directional grid ramps. Failed edits retain their selection, while scenery placement, movement and deletion share terrain undo history and respect locks.",
+      "Echo Isles and Turtle Rock are now editable imported maps with difficulty-matched camps and usable starting areas. Local map saves support large terrain documents, and import reports show clearance adjustments.",
+      "Grid and imported-map water now use biome water profiles, with clearer shallow crossings, softer shoreline foam and distance-filtered caustics. Asset archival protects water profiles and ground materials used by saved maps.",
+      "Project maps now load their terrain only when opened or played, keeping large map documents out of the initial menu bundle. Map loading shows progress and safely handles cancellation or changing selections.",
+      "Warcraft imports now resolve ground materials around cliffs from the source cliff definitions, preserving those surfaces as editable texture layers. Echo Isles and Turtle Rock have been refreshed.",
+      "Terrain rendering uses less texture memory by sharing identical image channels and skipping unpainted materials, while preserving independently editable ground layers.",
+      "The editor now has a Decals toolbar tool with visible previews, Apply and Discard. Apply commits the whole batch in one undo step, previews stay out of saved maps, and decal positions support larger maps. MCP exposes the same preview workflow.",
+      "Water now blends calm, clear shallows into animated deep-water swells, with stylized foam and editable wave controls in water profiles.",
+      "Forest water is calmer, with less crest foam and irregular swells that break up repeating wave rows.",
+      "Forest water uses a darker, more muted blue-green tint while keeping shallow beds visible."
     ],
     "fixed": [
       "Building placement now checks units’ full collision bodies, preventing foundations from overlapping units whose centers are just outside the footprint.",
@@ -70,7 +85,17 @@
       "Large units can cross bridge entrances with their full body footprint without getting stuck on the ramp.",
       "HUD portraits now use a unit's map-authored appearance, matching its model on the battlefield.",
       "Spell Studio now resolves preview-clone model scales correctly, so grouped targets and the caster remain visible while inspecting effects.",
-      "Saved games now accept moving-unit positions on large maps instead of retaining the old 512-cell coordinate limit."
+      "Saved games now accept moving-unit positions on large maps instead of retaining the old 512-cell coordinate limit.",
+      "Large imported maps now recover after editor reloads without the session-storage size limit. Recovery failures are visible, MCP supports direct map-file export/load, and importing detaches the previous file so Save cannot overwrite it.",
+      "Empty terrain no longer enables rock displacement, and erasing the final rock patch preserves loaded ground textures for undo.",
+      "Edits made while a map save is in progress remain marked unsaved instead of being incorrectly reported as saved.",
+      "Grid terrain selections now reach their exact height or water depth, with banks outside the selection. Adjacent regions join without ridges, and repeated edits preserve concave shorelines.",
+      "Editor startup, rendering, AI and navigation now consistently use committed terrain cells. Maps missing terrain or containing mismatched terrain dimensions are rejected instead of loading with fallback ground.",
+      "Terrain edits and map files now enforce valid height, water-depth and paint-coverage ranges. Invalid generator results cannot be applied, and Warcraft imports can use the full supported elevation span without clipping.",
+      "Repainting terrain now removes fully erased texture layers while preserving partially painted areas and Undo, avoiding unused material layers in saved maps and rendering.",
+      "MCP cleanup now uses its requested area and filters independently of unfinished editor selections, supports all cleanup categories and previews, and shares the editor's lock protection and Undo.",
+      "Terrain material settings now use a GPU lookup table, avoiding shader uniform limits when maps use many ground textures.",
+      "Applying forest and foliage previews no longer bakes their ground tint into permanent grass. Cleaning or moving vegetation removes its old tint while preserving painted grass and meadow terrain."
     ],
     "knownIssues": []
   },
