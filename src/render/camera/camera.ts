@@ -21,15 +21,12 @@ export const GAME_ASPECT = 16 / 9;
  * viewport uses 70 / sqrt(1 + aspect²); retain that reference lens at 16:9.
  * Source and viewport differences are documented in camera.md. */
 export const GAME_FOV = 70 / Math.hypot(1, GAME_ASPECT);
-/** Horizontal ground coverage through the focus at the standard RTS aspect.
- * A 24-C base shelf fits with room for its harvest lanes and nearby approaches.
- * Define framing in the same cells as gameplay, rather than resizing units to
- * compensate for an unrelated camera distance. */
-export const GAME_VIEW_WIDTH_C = 32;
-/** Play eye ↔ target distance; `gameZoom` is relative to this calibrated default. */
-export const GAME_DISTANCE = GAME_VIEW_WIDTH_C * BUILDING_CELL_SIZE / (2 * Math.tan(GAME_FOV * Math.PI / 360) * GAME_ASPECT);
-export const GAME_DISTANCE_MIN = 52;
-export const GAME_DISTANCE_MAX = GAME_DISTANCE * 1.5;
+/** RTS eye-to-target distance: start at 60, zoom between 40 and 80. */
+export const GAME_DISTANCE = 60;
+export const GAME_DISTANCE_MIN = 40;
+export const GAME_DISTANCE_MAX = 80;
+/** Derived horizontal footprint at the standard aspect, in building cells. */
+export const GAME_VIEW_WIDTH_C = 2 * GAME_DISTANCE * Math.tan(GAME_FOV * Math.PI / 360) * GAME_ASPECT / BUILDING_CELL_SIZE;
 /** Extra view-axis distance so the near-side ground stays in front of the ortho near plane. */
 const SLACK = 32;
 const PITCH_MIN = 0.12;

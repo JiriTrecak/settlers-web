@@ -41,6 +41,7 @@ export const sourceWaterFragment=`
 #include <shadowmap_pars_fragment>
 ${common}
 uniform sampler2D uOpaqueColor,uOpaqueDepth,uSourceCaustics,uSourceReflections;
+uniform sampler2D uInteraction;uniform vec4 uInteractionBounds;
 uniform vec2 uViewport,uShadowSize;
 uniform mat4 uInverseProjection,uCameraWorld,uShadowMatrix,projectionMatrix;
 uniform bool uHasShadow;
@@ -74,6 +75,13 @@ void main(){
  float t=uSourceWaterTime,openness=openWater(depth,swell,shore);
  float pixel=max(length(dFdx(p)),length(dFdy(p))),crest;
  vec3 normal=surfaceNormal(p,vWaterLevel,pixel,crest),original=worldAt(screenUV);
+ vec2 interactionUV=(p-uInteractionBounds.xy)/uInteractionBounds.zw;
+ vec4 disturbance=texture2D(uInteraction,clamp(interactionUV,vec2(0.),vec2(1.)));
+ float edge=min(min(interactionUV.x,interactionUV.y),min(1.-interactionUV.x,1.-interactionUV.y));
+ float sameLevel=1.-smoothstep(.08,.25,abs(vWaterLevel-disturbance.b/max(disturbance.a,.00001)));
+ vec2 rippleSlope=disturbance.rg/(1.+length(disturbance.rg)*3.);
+ rippleSlope*=sameLevel*smoothstep(0.,.06,edge)*smoothstep(.01,.12,depth);
+ normal=normalize(normal+vec3(-rippleSlope.x,0.,-rippleSlope.y));
  vec3 toEye=normalize(cameraPosition-vSourceWater);
  float originalColumn=max(vSourceWater.y-original.y,0.);
  // Convert a small world-space bend to screen space. It behaves consistently
@@ -104,6 +112,9 @@ void main(){
  screenColor*=mix(vec3(1.),tint,smoothstep(0.,.35,column)*.32);
  vec3 waterColor=mix(shallow.rgb,deep.rgb,1.-exp(-column/(clarity*1.5)))*bodyLight;
  vec3 color=screenColor*transmittance+waterColor*(1.-transmittance);
+ // Let small ripples catch light even in transparent shallows, where the broad
+ // offshore-wave shading below is intentionally suppressed. No white foam.
+ color*=clamp(1.+dot(rippleSlope,normalize(uSunDirection.xz+vec2(.001)))*5.,.7,1.3);
  // Rounded bands of light on the swells remain visible at an RTS distance.
  float ndl=max(dot(normal,uSunDirection),0.);
  color*=mix(1.,.68+ndl*.55,smoothstep(.4,2.,column));

@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { OrthographicCamera, PerspectiveCamera, Vector3 } from "three";
-import { Camera, GAME_ASPECT, GAME_DISTANCE, GAME_DISTANCE_MAX, GAME_DISTANCE_MIN, GAME_FOV, GAME_PITCH, GAME_YAW, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
+import { Camera, GAME_ASPECT, GAME_VIEW_WIDTH_C, GAME_DISTANCE, GAME_DISTANCE_MAX, GAME_DISTANCE_MIN, GAME_FOV, GAME_PITCH, GAME_YAW, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
 import {BUILDING_CELL_SIZE} from '../../src/shared/spatial/footprint';
 
 describe("iso camera", () => {
-  it('frames 32 building cells at default game distance, with readable infantry and base context',()=>{
+  it('starts at distance 60 with readable infantry and a matching ground footprint',()=>{
     const camera=new Camera();camera.setGame(true,512);camera.lookAt(256,256);
     const left=camera.groundAt(-1,0,GAME_ASPECT),right=camera.groundAt(1,0,GAME_ASPECT);
-    expect(Math.hypot(right[0]-left[0],right[1]-left[1])/BUILDING_CELL_SIZE).toBeCloseTo(32,4);
+    expect(Math.hypot(right[0]-left[0],right[1]-left[1])/BUILDING_CELL_SIZE).toBeCloseTo(GAME_VIEW_WIDTH_C,4);
     const view=new PerspectiveCamera();camera.applyTo(view,1920,1080);view.updateMatrixWorld();
     const feet=new Vector3(256,0,256).project(view),head=new Vector3(256,4.8,256).project(view);
     const heightPx=Math.abs(head.y-feet.y)*540;
-    expect(heightPx).toBeGreaterThan(40);expect(heightPx).toBeLessThan(60);
+    expect(camera.distance).toBe(60);expect(heightPx).toBeGreaterThan(80);expect(heightPx).toBeLessThan(120);
   });
   it('retains authored map dimensions through game, free and top-down mode changes',()=>{
     const cam=new Camera();
@@ -128,11 +128,11 @@ describe("iso camera", () => {
     cam.applyTo(three, 1280, 720);
     expect(three.fov).toBe(GAME_FOV);
     expect(cam.distance).toBe(GAME_DISTANCE);
-    const dist = cam.distance;
     const yaw = cam.yaw;
     cam.zoomBy(1.5);
     cam.orbitScreen(80, 40);
-    expect(cam.distance).toBeCloseTo(dist * 1.5);
+    expect(cam.distance).toBe(80);
+    cam.zoomBy(.1);expect(cam.distance).toBe(40);
     expect(cam.yaw).toBe(yaw);
   });
 

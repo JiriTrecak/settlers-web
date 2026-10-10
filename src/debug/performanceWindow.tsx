@@ -59,9 +59,9 @@ function PerformanceWindow({source:editor}:{source:PerformanceSource}){
  const frames=useCapture&&report.capture?report.capture:report.frames,recording=report.frames.capturedMs!==undefined;
  const stages=Object.entries(frames.timings).sort((a,b)=>b[1].p95-a[1].p95);
  return <Dialog open={open&&!quiet&&!perf.quietCapture} onOpenChange={changeOpen}>
-  <DialogTrigger render={<Button variant="outline" size="sm" className={cn("pointer-events-auto shadow-lg",perf.quietCapture&&"invisible")}/>} title="Performance · Ctrl+F3"><Activity className="size-4"/>Performance</DialogTrigger>
+  <DialogTrigger render={<Button variant="outline" size="sm" className={cn("pointer-events-auto shadow-lg",perf.quietCapture&&"invisible")}/>} title="Debug · Ctrl+F3"><Activity className="size-4"/>Debug</DialogTrigger>
   <DialogContent className="editor-theme flex max-h-[90vh] max-w-[1080px] flex-col gap-4 overflow-hidden p-5 font-sans" onKeyDown={event=>{event.stopPropagation();if(!event.repeat&&shortcuts.matches('debug.toggle',event.nativeEvent)){event.preventDefault();changeOpen(false);}}}>
-   <DialogHeader className="pr-10"><DialogTitle>Performance</DialogTitle><DialogDescription>{editor.title}{report.map&&` · ${report.map.name} · ${report.map.size} × ${report.map.size} · ${report.map.objects.toLocaleString()} generated objects`}</DialogDescription></DialogHeader>
+   <DialogHeader className="pr-10"><DialogTitle>Debug</DialogTitle><DialogDescription>{editor.title}{report.map&&` · ${report.map.name} · ${report.map.size} × ${report.map.size} · ${report.map.objects.toLocaleString()} generated objects`}</DialogDescription></DialogHeader>
    <div className="flex flex-wrap items-center gap-2">
     <Button size="sm" disabled={recording} onClick={()=>command('capture')}><Play className="size-3.5"/>{recording?`Recording ${Math.min(10,(report.frames.capturedMs??0)/1000).toFixed(1)} / 10 s`:'Capture 10 seconds'}</Button>
     <Button variant="outline" size="sm" onClick={()=>command('reset')} disabled={recording}><RotateCcw className="size-3.5"/>Reset timings</Button>
@@ -77,6 +77,7 @@ function PerformanceWindow({source:editor}:{source:PerformanceSource}){
    </Tabs.List>
    <Tabs.Content value={tab} className="min-h-0 overflow-auto overscroll-contain pr-1 outline-none">
     {tab==='overview'&&<div className="space-y-4">
+     <div className="flex items-center gap-6 rounded-lg border border-solid border-border px-4 py-3 text-sm"><span>FPS <strong className="ml-2 font-mono">{frames.values.FPS??'—'}</strong></span><span>Zoom <strong className="ml-2 font-mono">{frames.values['Camera distance']??'—'}</strong></span></div>
      {report.renderBenchmark&&<section className="space-y-3 rounded-lg border border-solid border-border p-4">
       <h3 className="m-0 text-sm font-semibold">World render benchmark · {report.renderBenchmark.width} × {report.renderBenchmark.height}</h3>
       <p className="m-0 text-xs text-muted-foreground">{report.renderBenchmark.completedFrames} / {report.renderBenchmark.frames} measured frames · CPU {milliseconds(report.renderBenchmark.cpu.mean)} ms mean · GPU {report.renderBenchmark.gpu?.samples?milliseconds(report.renderBenchmark.gpu.mean)+' ms mean':'unavailable'} · {report.renderBenchmark.rejectedGpuSamples} discarded GPU samples. Excludes UI, simulation and browser presentation; this is not interactive FPS.</p>

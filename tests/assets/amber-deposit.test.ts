@@ -2,7 +2,7 @@ import {readFileSync} from 'node:fs';
 import {expect,it} from 'vitest';
 import {content} from '../../src/content/builtin';
 
-const id='asset.models.resources.amber-deposit';
+const id='asset.models.resources.amber-crystal-1';
 const bytes=readFileSync(`assets/library/${id}/geometry.glb`);
 const gltf=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12)).toString());
 const manifest=JSON.parse(readFileSync(`art/assets/${id}/asset.json`,'utf8'));

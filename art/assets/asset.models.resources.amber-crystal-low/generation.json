@@ -1,0 +1,30 @@
+{
+  "provider": "tripo-studio",
+  "uuid": "f108e4b3-e364-451e-8f9e-980aaeaf058d",
+  "url": "https://studio.tripo3d.ai/workspace/generate/f108e4b3-e364-451e-8f9e-980aaeaf058d",
+  "date": "2026-10-10T17:36:58.245Z",
+  "settings": {
+    "settings": {
+      "Ultra Mesh Quality": true,
+      "AI Complete": false,
+      "Texture": true,
+      "Remove Lighting": true,
+      "PBR": true,
+      "Texture Quality": "4K",
+      "Topology": "Triangle",
+      "Polycount": 4500
+    },
+    "model": "H3.1 – Best Quality",
+    "credits": 790
+  },
+  "credits": 55,
+  "triangles": 4290,
+  "dimensions": [
+    6.600000381469727,
+    5.0328545570373535,
+    2.250821113586426
+  ],
+  "materials": 1,
+  "textureSize": 1024,
+  "description": "Five full variants share one-third remaining and empty stages."
+}

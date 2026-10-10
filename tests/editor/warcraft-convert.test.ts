@@ -15,7 +15,7 @@ it.each([
  const source=load(name),{map,report}=convertWarcraftMap(source);
  expect(report).toMatchObject({trees,starts,mines,campCounts:tiers,warnings:[]});
  expect(map.authoring!.objects).toHaveLength(trees);expect(map.playerStarts).toHaveLength(starts);
- expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(mines*4);
+ expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(mines*5);
  const sourceTree=source.doodads.find(d=>d.id==='LTlt')!,tree=map.authoring!.objects.find(o=>o.id===`warcraft.tree.${source.doodads.indexOf(sourceTree)}`)!;
  expect(tree.x).toBe((sourceTree.location[0]-source.terrain.offsetX)/32-.5);
  expect(tree.z).toBe(512-(sourceTree.location[1]-source.terrain.offsetY)/32-.5);

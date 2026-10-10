@@ -38,6 +38,23 @@ export class SelectionPortrait {
     const light=new DirectionalLight(0xffe2b3,3.2);light.position.set(-4,7,6);this.scene.add(light);
     const rim=new DirectionalLight(0x93afcf,1.3);rim.position.set(4,3,-3);this.scene.add(rim);
   }
+  private readonly prepared:PortraitInstance[]=[];
+  /** Compile against the portrait's own lights, HDR target and canvas blit.
+   * Keep materials alive so switching selection reuses these programs. */
+  async warmup(gl:WebGLRenderer,models:PortraitInstance[]){
+    const previous=gl.getRenderTarget(),shadows=gl.shadowMap.enabled;
+    this.prepared.push(...models);
+    try{
+      for(const model of models)this.scene.add(model.root);
+      gl.shadowMap.enabled=false;gl.initTexture(this.backdrop);gl.setRenderTarget(this.target);
+      const compile=gl.compileAsync(this.scene,this.camera);gl.setRenderTarget(previous);gl.shadowMap.enabled=shadows;
+      await compile;
+      gl.setRenderTarget(null);const blits=gl.compileAsync(this.blitScene,this.blitCamera);gl.setRenderTarget(previous);await blits;
+    }finally{
+      for(const model of models)model.root.removeFromParent();
+      gl.setRenderTarget(previous);gl.shadowMap.enabled=shadows;
+    }
+  }
   set(host:HTMLElement, key:string, create:()=>PortraitInstance|null){
     this.host=host;
     if(this.key===key&&this.instance)return;
@@ -84,5 +101,5 @@ export class SelectionPortrait {
       gl.setRenderTarget(previous);gl.setViewport(this.viewport);gl.setScissor(this.scissor);gl.setScissorTest(scissorTest);gl.autoClear=auto;gl.shadowMap.enabled=shadows;gl.setClearColor(this.clear,alpha);
     }
   }
-  destroy(){this.instance?.dispose();this.instance=null;this.host=null;this.scene.clear();this.backdrop.dispose();this.target.dispose();this.quad.dispose();this.blits.forEach(mesh=>mesh.material.dispose());}
+  destroy(){for(const model of this.prepared)model.dispose();this.prepared.length=0;this.instance?.dispose();this.instance=null;this.host=null;this.scene.clear();this.backdrop.dispose();this.target.dispose();this.quad.dispose();this.blits.forEach(mesh=>mesh.material.dispose());}
 }

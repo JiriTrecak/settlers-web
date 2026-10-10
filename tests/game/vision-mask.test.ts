@@ -68,8 +68,8 @@ it('terrain work diagnostics preserve sight and identify cold versus cached foot
  const measured=new TacticalTerrain(size,heights),plain=new TacticalTerrain(size,heights);measured.diagnostics=p;
  const origin={x:13,y:16};expect(measured.visibleSpans(origin,8)).toEqual(plain.visibleSpans(origin,8));
  expect(p.workSnapshot().find(x=>x.path==='Footprint cache misses')?.value).toBe(1);
- expect(p.workSnapshot().find(x=>x.path==='Terrain rays')!.value).toBeGreaterThan(0);
+ expect(p.workSnapshot().find(x=>x.path==='Height rejected cells')!.value).toBeGreaterThan(0);
  p.reset();measured.visibleSpans(origin,8);
  expect(p.workSnapshot().find(x=>x.path==='Footprint cache hits')?.value).toBe(1);
- expect(p.workSnapshot().find(x=>x.path==='Terrain rays')?.value).toBe(0);
+ expect(p.workSnapshot().find(x=>x.path==='Height rejected cells')?.value).toBe(0);
 });

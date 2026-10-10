@@ -13,3 +13,11 @@ Refraction scales with camera projection and falls back to the original scene sa
 Original imported source assets still have their own adapter into this renderer. Editable maps always use committed terrain and the declared biome/local profiles. There is no map-load terrain generator or persisted render cache.
 
 Verify appearance at both gameplay and overview camera distances. CPU tests cover profile assignment, topology, depth updates and unchanged saved data; live editor screenshots are needed for shader compilation and visual quality.
+
+## Unit wakes
+
+`WaterDisturbances` samples observed ground-unit travel by distance (one ring per 1.7 world units), with an entry ripple at the wet boundary. Stationary, flying, contained, remembered and dead units emit nothing. The emitter compares the local water level with the actual walking surface, including bridges and elevation. Teleports and off-camera re-entry reset tracks. Existing rings can fade across a fog boundary; there is no extra fog query.
+
+`WaterInteraction` draws a bounded pool of 1,536 expanding, fading rings in one instanced pass into a 768×768 half-float texture covering 160×160 world units around the camera. It caps new rings at 256 per frame, rotates unit processing order for fairness, reuses upload buffers, and skips the pass after idle history is cleared. Rings stay anchored in world space when the camera moves. The shader adds signed slopes to surface normals/refraction and subtle light modulation, clips dry ground, rejects a different local water height, and bounds overlapping wake intensity. This adds no simulation, network or map-save data.
+
+The shared renderer receives the current settlement observations in gameplay; editor water uses the same shader with an empty disturbance field. Constants live in `waterDisturbances.ts`. `scripts/bench/water-interaction/` provides small-group and 1,000-unit synthetic crossings through the actual water renderer, including a debug view of the interaction texture and separate pass timings. CPU regression tests cover frame-rate-independent spacing, lifecycle, excluded units, raised lakes, teleports and crowd limits.

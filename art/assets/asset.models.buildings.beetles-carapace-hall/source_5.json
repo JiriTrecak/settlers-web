@@ -1,0 +1,29 @@
+{
+  "name": "Carapace Bastion",
+  "recipe": "model.py",
+  "blend": "source.blend",
+  "preserve_textures": true,
+  "runtime_texture_size": 2048,
+  "camera": {
+    "azimuth": 36,
+    "elevation": 35,
+    "target": [
+      0,
+      0,
+      4.3363807678222654
+    ],
+    "scale": 25,
+    "distance": 40
+  },
+  "light": {
+    "key_energy": 500,
+    "fill_energy": 250,
+    "rim_energy": 350,
+    "scale": 2
+  },
+  "render": {
+    "width": 1200,
+    "height": 1200,
+    "samples": 64
+  }
+}

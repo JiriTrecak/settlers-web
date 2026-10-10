@@ -21,10 +21,14 @@ Use the editor Grid toggle and match Debug → Show world grid to inspect the sa
 
 ## Bases, routes and timing
 
-Each main needs a flat, dry **24 × 22 C construction shelf**, excluding its harvest
+Each main needs a gently graded, dry **24 × 22 C construction shelf**, excluding its harvest
 corridors. Prove that the full intended building roster fits, with worker access
 between buildings. A Hall is 5 × 5 C, production/research 3 × 3 C, Mound/tower 2 × 2 C.
 Leave additional room for actual unit bodies; touching footprints can seal a lane.
+Construction allows up to 2 world units of total relief across a footprint and
+0.4 world units between adjacent navigation cells. Small terrain bumps are legal;
+sharp ledges and substantial rises are not. Keep bases comfortably inside these
+limits, especially where the larger Hall may be rebuilt.
 
 Initial travel targets, measured along navigable paths rather than straight lines:
 
@@ -59,8 +63,8 @@ mining. Five active nodes have a 1,500 amber/minute extraction ceiling, 25% abov
 the previous four-node layout; a full site holds 22,500 amber. Measured Amberwake
 home deliveries are 1,410–1,420/minute with ten workers and approximately 1,500
 with fifteen after warm-up. Measure 5/10/15-worker throughput after authoring;
-longer travel can justify extra workers. The initial match still starts with six
-workers; ten is the mining recommendation, not a starting-unit count or hard cap.
+longer travel can justify extra workers. The initial match starts with five
+workers in one row along the Hall, automatically assigned to Amber; ten is the mining recommendation, not a starting-unit count or hard cap.
 
 Keep each node's approach and Hall return lane open. Use the same tested node/Hall
 arrangement at symmetric sites; allow room for a future snapped Hall at expansions.

@@ -60,7 +60,7 @@ Every unit consumes its declared supply. Workers, Warriors and Archers cost 1 ea
 
 {{stats:recruitment}}
 
-Train workers at the Main Hall and soldiers at their production buildings. Training reserves the complete price and supply immediately; no existing worker is consumed or needs to approach the building. A fresh colony begins with six workers and a hero at 10/15 supply; Mounds add eight capacity each.
+Train workers at the Main Hall and soldiers at their production buildings. Training reserves the complete price and supply immediately; no existing worker is consumed or needs to approach the building. A fresh colony begins with five workers and a hero at 9/15 supply; Mounds add eight capacity each.
 
 Supply is checked again when a waiting unit starts training. **Losing a Mound does not pause units already in training.** They finish normally, even over capacity. Waiting entries keep their money and resume when enough supply is available. Existing units are never killed by capacity loss.
 

@@ -150,16 +150,19 @@ export class SettlementHud {
     const signature=JSON.stringify([Array.from({length:10},(_,i)=>this.controlGroups.members((i+1)%10)),this.selectedIds]);
     if(signature===this.groupSignature)return;this.groupSignature=signature;this.groupBar.replaceChildren();
     for(let i=0;i<10;i++){
-      const slot=(i+1)%10,ids=this.controlGroups.members(slot),button=document.createElement("button");button.type="button";
+      const slot=(i+1)%10,ids=this.controlGroups.members(slot);
+      if(!ids.length)continue;
+      const button=document.createElement("button");button.type="button";
+      button.style.gridColumn=String(i+1);button.style.gridRow="1";
       const label=keyLabel(shortcuts.key(`group.${slot}.recall`));
       button.setAttribute("aria-label",`Control group ${slot}, ${ids.length} members`);
       button.setAttribute("aria-pressed",String(ids.length>0&&ids.length===this.selectedIds.length&&ids.every(id=>this.selectedIds.includes(id))));
       const key=document.createElement("kbd");key.textContent=label||"—";
-      const count=document.createElement("span");count.textContent=ids.length?String(ids.length):"·";button.append(key,count);
+      const count=document.createElement("span");count.textContent=String(ids.length);button.append(key,count);
       Object.assign(button.dataset,{tipName:`Control group ${slot}`,tipDescription:`${ids.length} members. ${keyLabel(shortcuts.key(`group.${slot}.assign`))}: assign. ${keyLabel(shortcuts.key(`group.${slot}.add`))}: add selection. Double press or double click to focus.`,tipKey:label});
       button.onclick=e=>this.groupInput(slot,e.ctrlKey?"assign":e.shiftKey?"add":"recall");this.groupBar.append(button);
     }
-    this.groupBar.hidden=this.readOnly;
+    this.groupBar.hidden=this.readOnly||!this.groupBar.childElementCount;
   }
   private alerts:{x:number;y:number;tick:number}[]=[];
   private alertCursor=0;
@@ -280,15 +283,15 @@ export class SettlementHud {
     copy.append(this.heading,this.info,vitals);
     selection.append(this.level,this.experience,this.inventory,this.queues,this.workplaceSummary,this.orders,this.cards,this.hint);
     this.clockHost.className = "rts-clock-slot";
-    selection.append(this.portrait, copy, this.clockHost);
+    selection.append(this.portrait, copy);
     const actions = document.createElement("section");
     actions.className = "rts-actions";
     this.grid.className = "rts-command-grid declarative-commands";
     this.pages.className = "rts-command-pages";
-    actions.append(this.grid, this.pages);
+    actions.append(this.stock,this.grid, this.pages);
     this.groupBar.className="rts-control-groups";this.groupBar.setAttribute("aria-label","Army control groups");
     dock.append(map, selection, actions,this.groupBar);
-    this.root.append(this.heroes.root, dock, this.stock);
+    this.root.append(this.heroes.root, this.clockHost, dock);
     this.syncLayout();
     window.addEventListener(HUD_CHANGED,this.syncLayout);
     host.append(this.root);

@@ -10,7 +10,7 @@ import published from '../../assets/authoring/published.json';
 // stage. An unchanged collider must not hide a much larger render footprint.
 for(const definition of content.definitions.filter(d=>d.kind==='building'&&d.modelScale)){
  it(`${definition.id} fits its declared construction footprint in every visual state`,()=>{
-  for(const id of resourceDepositAssets(definition.id,definition.asset)){
+  for(const id of resourceDepositAssets(definition)){
    const asset=content.asset(id),bytes=readFileSync(asset.file!);
    const gltf=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12)).toString());
    const scale=(asset.scale??1)*definition.modelScale!;

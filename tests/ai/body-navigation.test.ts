@@ -1,4 +1,5 @@
-import {expect,it} from 'vitest';
+import {Navigation} from '../../src/sim/game/navigation';
+import {expect,it,vi} from 'vitest';
 import {game,placed} from '../game/helpers';
 import {Frame,Geography,ObservedBlockers} from '../../src/sim/ai/frame';
 import {createMapBriefing} from '../../src/sim/ai/briefing';
@@ -61,4 +62,20 @@ it.each([0,90,180,270])('reserves future large-unit service lanes when placing a
  expect(f.army.some(e=>e.definition==='unit.ants.bombardier')).toBe(false);
  expect(f.placeable(mound,rotate(147.5,131.5),rotation)).toBe(false);
  expect(f.placeable(mound,rotate(155.5,131.5),rotation)).toBe(true);
+});
+
+it('bounds repeated destination probing from an isolated origin and reopens it after blockers change',()=>{
+ const map=flat(96),routes=new ObservedNavigation(map,undefined),wall=new Set(Array.from({length:96},(_,y)=>y*96+32));
+ wall.delete(48*96+32); // point-sized opening; the real body still cannot pass
+ routes.update(wall);const mover={x:12,y:48,radius:1.5,height:4.8,air:false};routes.prepare([mover]);
+ const spy=vi.spyOn(Navigation.prototype,'path');
+ try{
+  for(let y=35;y<55;y++)for(let x=60;x<80;x++)expect(routes.reachable(mover,{x,y})).toBe(false);
+  // The first unrestricted failure proves the entire origin side. No repeated A* floods.
+  expect(spy.mock.calls.length).toBe(2);
+  const opened=new Set(wall);for(let y=40;y<=56;y++)opened.delete(y*96+32);routes.update(opened);
+  expect(routes.reachable(mover,{x:70,y:48})).toBe(true);
+  const cold=new ObservedNavigation(map,undefined);cold.update(opened);
+  expect(cold.reachable(mover,{x:70,y:48})).toBe(true);
+ }finally{spy.mockRestore();}
 });

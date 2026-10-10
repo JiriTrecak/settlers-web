@@ -266,6 +266,51 @@
     "scenery": []
   },
   {
+    "id": "asset.models.buildings.ants-queensguard-hall",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          20,
+          20
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 10,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.ants-queensguard-hall/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
     "id": "asset.models.buildings.ants-rootworks",
     "transform": {
       "scale": 1,
@@ -352,6 +397,51 @@
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.buildings.ants-watchtower/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.beetles-carapace-hall",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          20,
+          20
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 10,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.beetles-carapace-hall/geometry.glb"
     ],
     "scenery": []
   },
@@ -3383,6 +3473,251 @@
     "scenery": [
       "woodland-woodpile"
     ]
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-1",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          4,
+          4
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-crystal-1/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-2",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          4,
+          4
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-crystal-2/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-3",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          4,
+          4
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-crystal-3/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-4",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          4,
+          4
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-crystal-4/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-5",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          4,
+          4
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-crystal-5/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-empty",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          4,
+          4
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-crystal-empty/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-low",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "blocker": {
+        "shape": "box",
+        "size": [
+          4,
+          4
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 2,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.resources.amber-crystal-low/geometry.glb"
+    ],
+    "scenery": []
   },
   {
     "id": "asset.models.resources.amber-deposit",

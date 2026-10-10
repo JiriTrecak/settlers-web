@@ -20,7 +20,7 @@ Delivered currency lives in an authoritative player wallet, independent of build
 
 ## Supply and training
 
-Each player starts with six workers (four gathering amber and two wood) and a hero: **10/15 supply**. Workers are purchased at the Main Hall for 100 amber and take 600 ticks (15 seconds). There are no automatic births or worker-to-soldier conversions.
+Each player starts with five workers (automatically distributed across nearby amber nodes) and a hero: **9/15 supply**. Workers are purchased at the Main Hall for 100 amber and take 600 ticks (15 seconds). There are no automatic births or worker-to-soldier conversions.
 
 Every unit definition explicitly declares `supplyCost`; buildings can declare `supplyProvided`. Main Halls and Great Acorn Halls provide 15; completed Mounds provide 8. Worker, Warrior and Archer cost 1 each; Hunter costs 2, Bombardier 3, Marshal 4. `rules.maxSupply` caps colony capacity at 100. These are capacity costs, not periodically consumed resources. Engine unit/building safety limits remain separate.
 
@@ -53,3 +53,9 @@ AI reads the same public definitions and owner observations: it trains workers, 
 Sanctuaries charge **200 + 50 × (level − 1) amber**, taking **30 + 5 × (level − 1) seconds**. Definitions declare both base values and per-level increments; simulation, UI, AI and the wiki consume the same terms. Acceptance pays the full price and stores the accepted level. Money held by a revival is included in reserved goods. Cancellation refunds it once; destruction loses the paid cost without touching the remaining wallet or removing the fallen hero.
 
 Revival rechecks supply when work starts, then completes even if capacity falls. A finished revival waits for a body-sized exit and the unit limit, preserving its funds and reservation. Identity, items, XP and learned abilities survive. Ability-driven returns such as Reincarnation retain their own explicit ability costs and do not incur Sanctuary fees. AI saves for the next fallen veteran while allowing gathering and emergency worker replacement.
+
+Amber deposit presentation is declared on the resource definition through `resourceVisuals`.
+Map entity `appearance.asset` selects one of five full crystal shapes. The shared renderer
+switches to the low model at one third of the site's starting amount, and to the empty
+model at zero. `resource.initialAmount` preserves that authored starting amount in
+observations and saved matches. All variants and stages preload with the match.

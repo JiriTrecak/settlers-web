@@ -31,6 +31,8 @@ export class SelectionCircles {
     }
     return m;
   }
+  /** Same vertex-alpha layout and material as the first selected unit. */
+  warmModel(){return new Mesh(ringGeometry(),this.material('own',false));}
   update(circles: readonly SelectionCircle[], field: HeightField) {
     const live = new Set<number>();
     for (const c of circles) {

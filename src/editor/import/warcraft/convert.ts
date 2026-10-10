@@ -1,7 +1,7 @@
 import {fitImportedPlacements} from './placements';
 import {warcraftCornerGround,warcraftCliffCells,type WarcraftCliffDefinitions} from './ground';
 import {startingArea} from '../../../shared/map/startingArea';
-import {MAX_FOUNDATION_RELIEF_CM} from '../../../shared/map/tacticalTerrain';
+import {foundationTerrainFits} from '../../../shared/spatial/foundation';
 import {z} from 'zod';
 import policyJson from '../../../../content/import/warcraft/policy.json';
 import sourceJson from '../../../../content/import/warcraft/source.json';
@@ -114,7 +114,7 @@ export function convertWarcraftMap(input:WarcraftMap,textureOverrides:Record<str
   for(let z=area.minZ;z<=area.maxZ;z++)for(let x=area.minX;x<=area.maxX;x++){
    const i=(z-field.origin)*field.verts+x-field.origin;hs.push(field.samples[i]);waters.push(water[i]);
   }
-  if(Math.max(...hs)-Math.min(...hs)<=MAX_FOUNDATION_RELIEF_CM/100)continue;
+  if(foundationTerrainFits({minX:area.minX,maxX:area.maxX,minY:area.minZ,maxY:area.maxZ},(x,z)=>Math.round(field.samples[(z-field.origin)*field.verts+x-field.origin]*100)))continue;
   if(hs.some((h,i)=>h<=waters[i]+.1)){report.warnings.push(`Player ${start.player}: starting formation touches water. Review its placement.`);continue;}
   const target=hs.reduce((a,b)=>a+b,0)/hs.length,blend=policy.startPadBlend;
   let maxAdjustment=0;
@@ -136,7 +136,7 @@ export function convertWarcraftMap(input:WarcraftMap,textureOverrides:Record<str
   if(remaining>capacity*policy.mineOffsets.length)report.warnings.push(`Gold mine ${report.mines}: source amount ${remaining} exceeds the substitute site's ${capacity*policy.mineOffsets.length} capacity.`);
   for(const [j,[dx,dz]] of policy.mineOffsets.entries()){
    const amount=Math.min(capacity,Math.ceil(remaining/(policy.mineOffsets.length-j)));remaining-=amount;
-   entities.push({id:`warcraft.mine.${i}.${j}`,definition:mine.id,position:snapPlacement(mine,{x:p.x+dx,y:p.y+dz}),rotation:0,owner:'none',initialState:{construction:'complete',amount}});
+   entities.push({id:`warcraft.mine.${i}.${j}`,definition:mine.id,position:snapPlacement(mine,{x:p.x+dx,y:p.y+dz}),rotation:0,owner:'none',appearance:{asset:mine.resourceVisuals?.variants[j % mine.resourceVisuals.variants.length]??mine.asset},initialState:{construction:'complete',amount}});
   }
  }
  const neutralOwner=input.info.build>=132?24:12;

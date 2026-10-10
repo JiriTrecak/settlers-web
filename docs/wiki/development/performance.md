@@ -1,10 +1,10 @@
 # Performance and match loading
 
 > Earlier measurements below used retired Heartroot/Threewater maps and remain
-> historical records. For current runs, use `--map amberwake-basin` (or
-> `amberwake-frost`). The lockstep harness is now
+> historical records. For current runs, use `--map echo-isles` (or
+> `turtle-rock`). The lockstep harness is now
 > `scripts/bench/multiplayer-match.ts`; it creates one replica per player slot.
-> `node scripts/bench/run-match-budget.mjs --multiplayer --map amberwake-basin`
+> `node scripts/bench/run-match-budget.mjs --multiplayer --map echo-isles`
 > runs the current two-player benchmark; four-player maps still support four peers.
 
 
@@ -12,6 +12,40 @@ A smooth RTS needs predictable frame times as well as a high average frame rate.
 A half-second work-assignment search is visible even when the surrounding frames
 are fast. Measure simulation, presentation, and the GPU separately, and keep
 commands and combat authoritative while optimizing them.
+
+## Early-match simulation stalls
+
+Camera movement can remain smooth while units freeze: rendering and camera input
+run independently of the simulation worker. Profile worker and AI timings before
+assuming this symptom is shader compilation or a GPU stall.
+
+On Echo Isles, an AI safe-position search tested 2,401 destinations from an
+isolated origin, causing 4,802 grid searches per decision. Navigation now retains
+one exact exhausted origin region per body profile. Both AI destination probes
+and ground-unit retries reuse that proof. It only applies to the same origin,
+preserves directed reachability, and is cleared by static-obstacle invalidation.
+Cost-limited, corridor-restricted, and temporary-blocker searches cannot populate
+it. No path choices or simulation state are changed.
+
+Repeatable CPU checks (all players AI, seed 731942):
+
+```sh
+node --import tsx scripts/bench/simulation.ts --map echo-isles --ticks 800 --trace-slow --trace-navigation --output /tmp/echo-opening.json
+node --import tsx scripts/bench/simulation.ts --map turtle-rock --ticks 800 --trace-slow --trace-navigation --output /tmp/turtle-opening.json
+node --import tsx scripts/bench/worker-isolation.ts --map echo-isles --ticks 800 --output /tmp/opening-worker.json
+```
+
+In the October 2026 investigation, Echo Isles' recurring maximum tick fell from
+599.3 to 16.7 ms (p99 596.4 to 12.6 ms), with checksum 305672982 unchanged.
+Turtle Rock's repeated unreachable combat approaches fell from 49.3 to 15.1 ms
+maximum (p99 46.9 to 4.3 ms), with checksum 3886000039 unchanged. These aggregate
+CPU samples exclude the first 200 warmup ticks; cold initialization can still
+cost more. The production worker/protocol check had p99 14.4 ms and maximum
+36.7 ms after warmup. These are local measurements, not browser FPS guarantees.
+
+Regression tests cover repeated AI destination probes, obstacle removal,
+directed paths, and exclusion of restricted searches. Keep lockstep and occupancy
+invalidation checks alongside these tests when changing reachability caching.
 
 ## Before the match starts
 
@@ -373,17 +407,18 @@ The production edit test reduced combined panel/React render work from roughly
 90 ms (five full panel refreshes) to 11 ms (one panel refresh plus React commits).
 The React render-and-commit scope is separate from the synchronous panel scope.
 
-The map editor's **Performance** button (Ctrl+F3) opens a shadcn/Zinc window with
-frame graphs, latest procedural-build and presentation stages, and a one-frame
-draw census. It supports ten-second captures, JSON reports and Chrome trace export.
-The UI polls at 500 ms only while open; it uses `WorldEditor.performanceControl`
-and `performanceReport`, the same operations exposed by `editor_performance` MCP.
+The **Performance** button (Ctrl+F3) opens the shared shadcn/Zinc diagnostics
+window in matches and the map editor. Both use the same frame graphs, timing
+tables, counters, ten-second captures, JSON reports, trace export and draw census.
+Editor-only views include opening, procedural-build and presentation stages;
+match-only controls cover navigation overlays, vision and speed.
+The UI polls at 500 ms only while open, skipping report construction during quiet
+captures. Editor reports use `WorldEditor.performanceControl` and
+`performanceReport`, the operations exposed by `editor_performance` MCP.
 `frames.series` contains the latest 120 independent CPU, GPU and interval samples;
-capture aggregates still cover the complete recording. The editor suppresses the
-legacy profiler panel; game diagnostics keep their existing presentation. Closing
-the window restores the sampling state from before it opened. This UI is a
-diagnostic aid: opening it adds UI work, so compare runtime captures under matching
-conditions.
+capture aggregates still cover the complete recording. Closing or destroying the
+window restores the sampling state from before it opened. This UI is a diagnostic
+aid: opening it adds UI work, so compare runtime captures under matching conditions.
 
 A production Heartroot game-camera capture at (112,112), zoom 1, 1280×720 at 1 DPR,
 soft shadows and canopy preview off recorded mean CPU frame work of 4.38 ms,
@@ -400,9 +435,9 @@ need migration. The environment panel defaults canopy preview off, and a playing
 day cycle updates its React controls only when the displayed minute changes.
 Spell and Effect Studio changes are a separate workstream.
 
-Enable **Debug** in a match. The overlay includes CPU timings, asynchronous GPU
+Open **Performance** in a match. The window includes CPU timings, asynchronous GPU
 queries where supported, resolution, draw calls, geometry, and instance counters.
-**Copy report** exports the rolling measurements. The editor MCP's
+**Report** downloads the live report and any completed capture as JSON. The editor MCP's
 `game_performance` operation reads the same report plus renderer diagnostics.
 
 A 120 FPS frame has an 8.33 ms budget. Simulation ticks remain 25 ms apart (40 Hz);

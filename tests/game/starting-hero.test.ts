@@ -22,7 +22,7 @@ function catalogue(){
 const selected=[{...slots[0],hero:'unit.test.warden'},{...slots[1],hero:'unit.ants.marshal'}];
 it('declares a default hero separately from fixed workers and rejects invalid choice catalogues',()=>{
  const {src,rules,registry}=catalogue();
- expect(startingUnits(registry.rules.startingSetup)).toHaveLength(7);
+ expect(startingUnits(registry.rules.startingSetup)).toHaveLength(6);
  expect(registry.rules.startingSetup.units.every(u=>u.definition==='unit.ants.settler')).toBe(true);
  expect(chosenHero(rules.startingSetup.hero)).toBe('unit.ants.marshal');
  for(const hero of [{...rules.startingSetup.hero!,default:'unit.test.missing'},
@@ -36,9 +36,9 @@ it('spawns the selected hero once per owner without changing workers, funds or s
  const heroes=g.entities.filter(e=>registry.get(e.definition).hero);
  expect(heroes.map(e=>[e.owner,e.definition])).toEqual([['player.1','unit.test.warden'],['player.2','unit.ants.marshal']]);
  for(const owner of ['player.1','player.2'] as const){
-  expect(g.entities.filter(e=>e.owner===owner&&registry.get(e.definition).behaviors.work)).toHaveLength(6);
+  expect(g.entities.filter(e=>e.owner===owner&&registry.get(e.definition).behaviors.work)).toHaveLength(5);
   expect(g.state.wallets[owner]).toEqual({'item.amber':500,'item.wood':150});
-  expect(g.view(owner).supply).toMatchObject({used:10,capacity:15});
+  expect(g.view(owner).supply).toMatchObject({used:9,capacity:15});
  }
  expect(expandMap(map,registry).filter(p=>registry.get(p.definition).hero).every(p=>p.definition==='unit.ants.marshal')).toBe(true);
  expect(()=>new Game(map,[{...slots[0],hero:'unit.ants.settler'},slots[1]],registry)).toThrow(/Unavailable starting hero/);

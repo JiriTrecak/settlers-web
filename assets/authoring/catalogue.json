@@ -42,6 +42,13 @@
     "clearance": 3.5
   },
   {
+    "id": "asset.models.buildings.ants-queensguard-hall",
+    "name": "Queensguard Hall",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 10
+  },
+  {
     "id": "asset.models.buildings.ants-rootworks",
     "name": "Rootworks",
     "kind": "building",
@@ -54,6 +61,13 @@
     "kind": "building",
     "scale": 1,
     "clearance": 3.5
+  },
+  {
+    "id": "asset.models.buildings.beetles-carapace-hall",
+    "name": "Carapace Bastion",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 10
   },
   {
     "id": "asset.models.environment.autumn-grass",
@@ -922,6 +936,55 @@
     "scenery": "woodland-woodpile",
     "scale": 1,
     "clearance": 0.25
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-1",
+    "name": "Amber Crystals 1",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 2
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-2",
+    "name": "Amber Crystals 2",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 2
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-3",
+    "name": "Amber Crystals 3",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 2
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-4",
+    "name": "Amber Crystals 4",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 2
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-5",
+    "name": "Amber Crystals 5",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 2
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-empty",
+    "name": "Amber Crystals — Empty",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 2
+  },
+  {
+    "id": "asset.models.resources.amber-crystal-low",
+    "name": "Amber Crystals — One Third Remaining",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 2
   },
   {
     "id": "asset.models.resources.amber-deposit",
@@ -13378,7 +13441,7 @@
         "speed": 0.58,
         "depthStart": 0.45,
         "depthEnd": 2.5,
-        "shallowStrength": 0.025,
+        "shallowStrength": 0.12,
         "shoreWidth": 0.65,
         "crestStrength": 0.24
       }

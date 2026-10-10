@@ -70,7 +70,7 @@ import type { EntityView, SettlementView } from "../../sim/game/observation";
 import { PLAYER_COLORS, clampPlayer } from "../../shared/player/player";
 import { TEAM_COLOR_MATERIAL, applyPlayerMaterials } from "./playerMaterials";
 import { placementGrid } from "./placementGrid";
-import {resourceDepositVisual} from './resourceDepositVisual';
+import {resourceDepositAssets,resourceDepositVisual} from './resourceDepositVisual';
 
 const UNIT_CULL_MARGIN = 6;
 /** A live rig (CharacterPlayer + SkinnedMesh) or a baked crowd member; `pose` syncs baked sockets. */
@@ -350,7 +350,7 @@ export class SettlementLayer {
     const factions = new Set(["neutral", ...this.modelEntities.map((e) => e.definition.split(".")[1]!)]);
     for (const d of this.registry.definitions)
       if (d.kind === "item" || ((d.kind === "unit" || d.kind === "building") && factions.has(d.id.split(".")[1]!)))
-        this.requestModel(d.asset);
+        for(const asset of resourceDepositAssets(d))this.requestModel(asset);
   }
   preloadAssets(assets:Iterable<string>){for(const asset of assets)this.requestModel(asset);}
   /** Keep prepared material variants alive so the GPU program cache survives warm-up. */
@@ -358,6 +358,7 @@ export class SettlementLayer {
   private warmDisposers: Array<() => void> = [];
   prepareModels(): readonly Object3D[] {
     if (this.warmModels.length) return this.warmModels;
+    const circle=this.circles.warmModel();this.warmModels.push(circle);this.warmDisposers.push(()=>circle.geometry.dispose());
     for (const model of this.harvestTrees.prepareModels()) this.warmModels.push(model);
     const effects = effectWarmModels(this.mineLabels.material(0, 1));
     this.warmModels.push(...effects.models); this.warmDisposers.push(effects.dispose);
@@ -379,6 +380,15 @@ export class SettlementLayer {
       }
     }
     return this.warmModels;
+  }
+  /** Portraits use different lighting and shadow flags from world models. */
+  preparePortraits(){
+    const assets=new Set<string>(),portraits=[];
+    for(const d of this.registry.definitions){
+      if(!['unit','building'].includes(d.kind)||assets.has(d.asset)||!this.prototypes.has(d.asset))continue;
+      assets.add(d.asset);const portrait=this.createPortrait(d.id,0);if(portrait)portraits.push(portrait);
+    }
+    return portraits;
   }
   /** HUD previews share loaded geometry/textures, but own their skeleton and materials. */
   createPortrait(definition: string, owner: number, appearanceAsset?: string) {
@@ -407,7 +417,7 @@ export class SettlementLayer {
         ).map((m) => {
           const copy = m.clone();
           copy.onBeforeCompile=m.onBeforeCompile;copy.customProgramCacheKey=m.customProgramCacheKey;
-          if(asset==='asset.resource.corrupted-root'||(asset.startsWith('asset.resource.amber-seam')&&asset!=='asset.resource.amber-seam-empty')){
+          if(asset==='asset.resource.corrupted-root'||(asset.startsWith('asset.resource.amber-crystal-')&&asset!=='asset.resource.amber-crystal-empty')){
             const sourceCompile=copy.onBeforeCompile,sourceKey=copy.customProgramCacheKey;
             copy.onBeforeCompile=(shader:WebGLProgramParametersWithUniforms,renderer:WebGLRenderer)=>{
               sourceCompile.call(copy,shader,renderer);
@@ -427,7 +437,7 @@ export class SettlementLayer {
   }
   private make(e: EntityView) {
     const d = this.registry.get(e.definition),
-      assetId = e.appearance?.asset ?? resourceDepositVisual(e.definition,e.resource?.amount,d.yield,d.asset);
+      assetId = resourceDepositVisual(d,e.resource?.amount,e.resource?.initialAmount,e.appearance?.asset);
     const visualScale = d.modelScale ?? 1;
     const modelScale = (this.registry.asset(assetId).scale ?? 1) * (e.appearance?.scale ?? 1) * visualScale;
     let o = this.entities.get(e.id);
@@ -508,13 +518,13 @@ export class SettlementLayer {
     hp.position.set(0, o.userData.pickHeight + .25, 0);
     o.add(hp);
     let mine: Sprite | undefined;
-    if (e.gathering) {
+    if (d.behaviors.storage?.gathering) {
       mine = new Sprite(
-        this.mineLabels.material(e.gathering.workers, e.gathering.recommendedWorkers),
+        this.mineLabels.material(e.baseGathering?.workers??0, e.baseGathering?.recommendedWorkers??0),
       );
-      mine.name = "Mine occupancy";
-      mine.position.set(0, (asset.healthHeight ?? 3) * visualScale + 0.55, 0);
-      mine.scale.set(4.4, 1.1, 1);
+      mine.name = "Base workforce";
+      mine.position.set(0, o.userData.pickHeight + 1.4, 0);
+      mine.scale.set(7.2, 1.8, 1);
       mine.renderOrder = 22;
       mine.raycast = () => {};
       o.add(mine);
@@ -596,11 +606,11 @@ export class SettlementLayer {
       const parts = this.parts.get(o)!;
       this.concealment.set(parts.body,e.concealmentOpacity??1);
       o.userData.concealmentOpacity=e.concealmentOpacity??1;
-      if (parts.mine && e.gathering) {
-        parts.mine.visible = !e.remembered;
+      if (parts.mine) {
+        parts.mine.visible = !!e.baseGathering && !e.remembered;
         parts.mine.material = this.mineLabels.material(
-          e.gathering.workers,
-          e.gathering.recommendedWorkers,
+          e.baseGathering?.workers??0,
+          e.baseGathering?.recommendedWorkers??0,
         );
       }
       const target = this.targetPosition.set(e.x, field.walkSample(e.x,e.y,e.surface)+(e.elevation??0)+(e.unit?.garrison?.height??0), e.y);

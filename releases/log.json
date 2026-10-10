@@ -19,7 +19,8 @@
       "Added Warcraft ground texture source assets with preserved transition atlases, material channels, and preview images.",
       "Added Warcraft map import for editable terrain, ground textures, trees, player starts, amber sites and difficulty-matched neutral camps.",
       "Expanded the editor terrain palette to all ground definitions covered by the supplied Rebirth replacements, with missing texture channels supplied by the local Reforged installation and visual previews for each material.",
-      "Cliff-face terrain textures can be painted and erased independently of ground textures, with thumbnails, undo and editable Warcraft import coverage. Echo Isles and Turtle Rock now include their source cliff material."
+      "Cliff-face terrain textures can be painted and erased independently of ground textures, with thumbnails, undo and editable Warcraft import coverage. Echo Isles and Turtle Rock now include their source cliff material.",
+      "Moving ground units leave fading water ripples and wakes, with bounded rendering for large groups and a relaxed walking cadence."
     ],
     "improved": [
       "Reduced unnecessary collision-index preparation during combat planning while preserving movement and combat behavior.",
@@ -69,7 +70,16 @@
       "Forest water is calmer, with less crest foam and irregular swells that break up repeating wave rows.",
       "Forest water uses a darker, more muted blue-green tint while keeping shallow beds visible.",
       "Forest shoreline foam is now barely visible; its water-profile control remains available for stronger foam later.",
-      "Skirmish and campaign matches now share the map editor’s Performance window, with live graphs, captures, draw-call inspection and organized match debug controls."
+      "Skirmish and campaign matches now share the map editor’s Performance window, with live graphs, captures, draw-call inspection and organized match debug controls.",
+      "Shallow forest water has more visible gentle motion. The RTS camera starts at distance 60 and zooms between 40 and 80.",
+      "Reorganized the match HUD with a centered clock, top hero shortcuts, four resource tiles above commands, and FPS/zoom inside Debug beside Menu.",
+      "Units see downhill and across small hills within their vision radius, with a 2-metre uphill allowance while higher plateaus and solid bridge floors remain concealed.",
+      "Control group buttons appear only while populated, show their member count, and use a semi-transparent appearance.",
+      "Bound control groups keep fixed numbered positions, leaving empty space for unbound slots.",
+      "Larger control-group counts with dark gray borders, plus a borderless animated sun-and-moon sky dial with gradual dawn and dusk transitions and no numeric time.",
+      "Halls now show assigned Amber workers versus nearby mining capacity. Colonies begin with five workers in one row, automatically distributed across nearby deposits.",
+      "Amber sites now use five distinct crystal models, with shared one-third-remaining and empty appearances. The sun and moon HUD indicator is temporarily hidden.",
+      "New Queensguard Hall and Carapace Bastion models bring distinct ant and beetle materials, detailed textures, square building footprints, and player-colored roof and armor panels."
     ],
     "fixed": [
       "Building placement now checks units’ full collision bodies, preventing foundations from overlapping units whose centers are just outside the footprint.",
@@ -98,7 +108,12 @@
       "MCP cleanup now uses its requested area and filters independently of unfinished editor selections, supports all cleanup categories and previews, and shares the editor's lock protection and Undo.",
       "Terrain material settings now use a GPU lookup table, avoiding shader uniform limits when maps use many ground textures.",
       "Applying forest and foliage previews no longer bakes their ground tint into permanent grass. Cleaning or moving vegetation removes its old tint while preserving painted grass and meadow terrain.",
-      "Fixed missing terrain textures in skirmish when fog of war exceeded the GPU texture limit. Editor and gameplay now share the corrected terrain shader."
+      "Fixed missing terrain textures in skirmish when fog of war exceeded the GPU texture limit. Editor and gameplay now share the corrected terrain shader.",
+      "Prewarm portrait and selection shaders during loading to reduce first-use match stutter.",
+      "Load amber depletion models before play so mining does not compile their shaders on first use.",
+      "Aligned Amber deposits into compact five-node mining lines beside the starting halls on Echo Isles and Turtle Rock, with clear worker approaches.",
+      "Buildings can now be placed on gently uneven ground; shared placement rules still reject sharp ledges, substantial slopes, water and blocked sites.",
+      "Fixed repeated early-match freezes caused by AI and units retrying unreachable paths."
     ],
     "knownIssues": []
   },

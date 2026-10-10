@@ -39,6 +39,15 @@ describe('overlapping walk surfaces',()=>{
   expect(g.visible({x:26,y:16},upper)).toBe(false);
   expect(g.shotClear({x:6,y:16},{x:26,y:16})).toBe(true);
  });
+ it('keeps gentle uphill and downhill vision beside bridges without seeing through floors',()=>{
+  const h=new Int16Array(1024);for(let y=0;y<32;y++)h[y*32+10]=250;
+  h[16*32+26]=180;
+  const g=new WalkSurfaces(32,h,new Uint8Array(1024).fill(1),[arch]);
+  expect(g.visible({x:6,y:16},{x:26,y:16})).toBe(true);
+  expect(g.shotClear({x:6,y:16},{x:26,y:16})).toBe(false);
+  expect(g.visible({x:16,y:16,surface:'arch'},{x:16,y:16})).toBe(false);
+  expect(g.visible({x:6,y:16},{x:16,y:16,surface:'arch'})).toBe(false);
+ });
  it('assigns deterministic IDs and routes regardless of stamp ordering',()=>{
   const second={...arch,id:'second',x:6,width:3,depth:14,arch:3};
   const a=make([arch,second]),b=make([second,arch]);expect(a.nodes).toEqual(b.nodes);

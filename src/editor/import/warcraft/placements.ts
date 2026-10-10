@@ -28,7 +28,7 @@ export function fitImportedPlacements(map:UtcMap,searchRadius:number){
   return true;
  };
  const mines=placements.filter(p=>solid(p));
- // Move each four-node site together so its authored shape remains intact.
+ // Move each mineral site together so its authored shape remains intact.
  const groups=new Map<string,Placement[]>();
  for(const mine of mines){const key=mine.id.slice(0,mine.id.lastIndexOf('.'));groups.set(key,[...(groups.get(key)??[]),mine]);}
  for(const group of groups.values()){

@@ -283,7 +283,14 @@
         {
           "definition": "unit.ants.settler",
           "offset": {
-            "x": -4,
+            "x": -6,
+            "y": 14
+          }
+        },
+        {
+          "definition": "unit.ants.settler",
+          "offset": {
+            "x": -3,
             "y": 14
           }
         },
@@ -297,29 +304,15 @@
         {
           "definition": "unit.ants.settler",
           "offset": {
-            "x": 4,
+            "x": 3,
             "y": 14
           }
         },
         {
           "definition": "unit.ants.settler",
           "offset": {
-            "x": -4,
-            "y": 18
-          }
-        },
-        {
-          "definition": "unit.ants.settler",
-          "offset": {
-            "x": 0,
-            "y": 18
-          }
-        },
-        {
-          "definition": "unit.ants.settler",
-          "offset": {
-            "x": 4,
-            "y": 18
+            "x": 6,
+            "y": 14
           }
         }
       ],
@@ -327,12 +320,7 @@
       "gathering": [
         {
           "item": "item.amber",
-          "workers": 4,
-          "radius": 40
-        },
-        {
-          "item": "item.wood",
-          "workers": 2,
+          "workers": 5,
           "radius": 40
         }
       ],
@@ -992,7 +980,14 @@
             {
               "definition": "unit.beetles.worker",
               "offset": {
-                "x": -4,
+                "x": -6,
+                "y": 14
+              }
+            },
+            {
+              "definition": "unit.beetles.worker",
+              "offset": {
+                "x": -3,
                 "y": 14
               }
             },
@@ -1006,29 +1001,15 @@
             {
               "definition": "unit.beetles.worker",
               "offset": {
-                "x": 4,
+                "x": 3,
                 "y": 14
               }
             },
             {
               "definition": "unit.beetles.worker",
               "offset": {
-                "x": -4,
-                "y": 18
-              }
-            },
-            {
-              "definition": "unit.beetles.worker",
-              "offset": {
-                "x": 0,
-                "y": 18
-              }
-            },
-            {
-              "definition": "unit.beetles.worker",
-              "offset": {
-                "x": 4,
-                "y": 18
+                "x": 6,
+                "y": 14
               }
             }
           ],
@@ -1036,12 +1017,7 @@
           "gathering": [
             {
               "item": "item.amber",
-              "workers": 4,
-              "radius": 40
-            },
-            {
-              "item": "item.wood",
-              "workers": 2,
+              "workers": 5,
               "radius": 40
             }
           ],
@@ -1274,10 +1250,10 @@
     {
       "id": "building.ants.fort",
       "kind": "building",
-      "name": "Acorn Main Hall",
+      "name": "Queensguard Hall",
       "description": "The colony main hall stores resources, trains workers and provides 15 supply.",
-      "asset": "asset.ants.fort",
-      "icon": "icon.ants.fort",
+      "asset": "asset.ants.queensguard-hall",
+      "icon": "icon.ants.queensguard-hall",
       "body": {
         "maxHp": 1800,
         "armor": 5,
@@ -1317,7 +1293,11 @@
             "item.wood",
             "item.amber"
           ],
-          "dropoff": true
+          "dropoff": true,
+          "gathering": {
+            "item": "item.amber",
+            "radius": 40
+          }
         },
         "production": {
           "mode": "queued",
@@ -1352,8 +1332,8 @@
       "kind": "building",
       "name": "Great Acorn Hall",
       "description": "The colony main hall stores resources, trains workers and provides 15 supply.",
-      "asset": "asset.ants.great-mound",
-      "icon": "icon.ants.great-mound",
+      "asset": "asset.ants.queensguard-hall",
+      "icon": "icon.ants.queensguard-hall",
       "body": {
         "maxHp": 2400,
         "armor": 6,
@@ -1378,7 +1358,11 @@
             "item.wood",
             "item.amber"
           ],
-          "dropoff": true
+          "dropoff": true,
+          "gathering": {
+            "item": "item.amber",
+            "radius": 40
+          }
         },
         "production": {
           "mode": "queued",
@@ -1413,8 +1397,8 @@
       "kind": "building",
       "name": "Elder Hall",
       "description": "Tier 3 Acorn Hall. Supports a roster of three distinct heroes.",
-      "asset": "asset.ants.great-mound",
-      "icon": "icon.ants.great-mound",
+      "asset": "asset.ants.queensguard-hall",
+      "icon": "icon.ants.queensguard-hall",
       "body": {
         "maxHp": 3000,
         "armor": 6,
@@ -1439,7 +1423,11 @@
             "item.wood",
             "item.amber"
           ],
-          "dropoff": true
+          "dropoff": true,
+          "gathering": {
+            "item": "item.amber",
+            "radius": 40
+          }
         },
         "production": {
           "mode": "queued",
@@ -2115,7 +2103,7 @@
       "kind": "building",
       "name": "Amber Node",
       "description": "One miner extracts ten amber at a time; other workers queue. Five nodes form a standard amber site.",
-      "asset": "asset.resource.amber-seam",
+      "asset": "asset.resource.amber-crystal-1",
       "icon": "icon.neutral.amber-deposit",
       "footprint": {
         "width": 4,
@@ -2139,7 +2127,26 @@
         "recommendedWorkers": 2,
         "searchRadius": 24
       },
-      "modelScale": 0.28
+      "modelScale": 0.28,
+      "resourceVisuals": {
+        "variants": [
+          "asset.resource.amber-crystal-1",
+          "asset.resource.amber-crystal-2",
+          "asset.resource.amber-crystal-3",
+          "asset.resource.amber-crystal-4",
+          "asset.resource.amber-crystal-5"
+        ],
+        "stages": [
+          {
+            "remaining": 0,
+            "asset": "asset.resource.amber-crystal-empty"
+          },
+          {
+            "remaining": 0.3333333333333333,
+            "asset": "asset.resource.amber-crystal-low"
+          }
+        ]
+      }
     },
     {
       "id": "building.ants.sanctuary",
@@ -5752,9 +5759,9 @@
       "id": "building.beetles.bastion",
       "kind": "building",
       "name": "Bastion",
-      "description": "Bastion of the beetle colony. Model pending.",
-      "asset": "asset.placeholder.missing-model",
-      "icon": "icon.item.root",
+      "description": "The beetle colony\u2019s iron-clad main hall stores resources, trains workers and provides supply.",
+      "asset": "asset.beetles.carapace-hall",
+      "icon": "icon.beetles.carapace-hall",
       "body": {
         "maxHp": 1800,
         "armor": 5,
@@ -5794,7 +5801,11 @@
             "item.wood",
             "item.amber"
           ],
-          "dropoff": true
+          "dropoff": true,
+          "gathering": {
+            "item": "item.amber",
+            "radius": 40
+          }
         },
         "production": {
           "mode": "queued",
@@ -5822,7 +5833,7 @@
       },
       "supplyProvided": 15,
       "heroCapacity": 1,
-      "modelScale": 1
+      "modelScale": 1.25
     },
     {
       "id": "building.beetles.great-bastion",
@@ -5855,7 +5866,11 @@
             "item.wood",
             "item.amber"
           ],
-          "dropoff": true
+          "dropoff": true,
+          "gathering": {
+            "item": "item.amber",
+            "radius": 40
+          }
         },
         "production": {
           "mode": "queued",
@@ -5916,7 +5931,11 @@
             "item.wood",
             "item.amber"
           ],
-          "dropoff": true
+          "dropoff": true,
+          "gathering": {
+            "item": "item.amber",
+            "radius": 40
+          }
         },
         "production": {
           "mode": "queued",

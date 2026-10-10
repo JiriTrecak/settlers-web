@@ -7,6 +7,6 @@ import {resourceDepositAssets} from '../../../src/render/settlement/resourceDepo
  * with an actual entity use that entity's definition instead. */
 export function previewModelScale(asset:AssetDefinition,registry=content) {
  const binding=asset.bindings.render.find(b=>b.geometry);
- const definition=binding&&registry.definitions.find(d=>resourceDepositAssets(d.id,d.asset).includes(binding.id));
+ const definition=binding&&registry.definitions.find(d=>resourceDepositAssets(d).includes(binding.id));
  return (binding?.scale??1)*(definition?.modelScale??1);
 }

@@ -38,16 +38,6 @@ body {
   pointer-events: auto;
 }
 
-.hud-stats {
-  position: absolute;
-  top: 12px;
-  left: 52px;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  white-space: pre;
-  line-height: 1.45;
-}
-
 .hud-debug-toggle {
   pointer-events: auto;
   position: absolute;
@@ -831,8 +821,7 @@ body {
 
 /* Hide presentation controls without hiding dialogs or stopping the scene.
    display:none also removes hit targets, keyboard focus and the live portrait. */
-.screen.hud-hidden > :not(dialog):not([role="dialog"]):not(.mission-cinematic):not(.mission-outcome):not(.load-status),
-body:has(.screen.hud-hidden) > .performance-debug {
+.screen.hud-hidden > :not(dialog):not([role="dialog"]):not(.mission-cinematic):not(.mission-outcome):not(.load-status) {
   display: none !important;
 }
 
@@ -1111,3 +1100,8 @@ body:has(.screen.hud-hidden) > .performance-debug {
   opacity: 0.65;
   padding: 8px 0;
 }
+
+.hud-nav{align-items:center;z-index:40;top:12px;right:16px;gap:8px}
+.hud-nav .performance-debug{position:static;display:flex;align-items:center}
+.hud-nav .hud-exit{height:32px;box-sizing:border-box;border-radius:6px;background:#151b18ed;color:#e5e7df;border-color:#69736655;padding:0 14px;font-size:12px}
+.hud-nav .performance-debug button{height:32px;background:#151b18ed;color:#e5e7df;border-color:#69736655}

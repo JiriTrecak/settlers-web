@@ -1,3 +1,4 @@
+import {foundationTerrainFits} from '../../shared/spatial/foundation';
 import {raceAI} from '../../content/races';
 import {clearLayeredSweep} from '../game/layeredSweep';
 import {fixed} from '../game/motion';
@@ -11,7 +12,7 @@ import {SimulationProfiler} from '../profiling';
 import {PlacementSearch} from './placementSearch';
 import {resourceBlocksCell,resourceCollisionCells} from '../../shared/map/resourceClearance';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
-import {MAX_GROUND_STEP_CM,MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
+import {MAX_GROUND_STEP_CM} from '../../shared/map/tacticalTerrain';
 import {prerequisiteReason} from "../../content/prerequisites";
 import { armorMultiplier, resolveDamage } from "../game/damage";
 import type { ContentRegistry } from "../../content/registry";
@@ -389,8 +390,7 @@ export class Frame {
       )
     )
       return false;
-    const hs = cells.map((q) => heights[this.geo.index(q)]!);
-    if (Math.max(...hs) - Math.min(...hs) > MAX_FOUNDATION_RELIEF_CM) return false;
+    if (!foundationTerrainFits(footprintCellBounds(p,d.footprint,r),(x,y)=>heights[y*this.geo.map.size+x]!)) return false;
     const bounds = footprintBounds(p, d.footprint, r);
     if (this.view.entities.some(e => e.unit && !e.unit.contained && !e.remembered &&
       locomotion(this.def(e)) === 'ground' &&

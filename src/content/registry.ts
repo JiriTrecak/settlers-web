@@ -331,6 +331,15 @@ export class ContentRegistry {
       if(d.unitNature&&d.kind!=="unit")fail("unit nature requires a unit");
       if (!d.id.startsWith(d.kind + ".")) fail("ID prefix must match kind");
       if (!this.asset(d.asset).file) fail("asset must reference a model");
+      if (d.resourceVisuals) {
+        if (!d.yield) fail('resource visuals require a yield');
+        if (!d.resourceVisuals.variants.includes(d.asset)) fail('default asset must be a full resource variant');
+        for (const id of [...d.resourceVisuals.variants, ...d.resourceVisuals.stages.map(s => s.asset)])
+          if (!this.asset(id).file) fail('resource visuals must reference models');
+        const thresholds = d.resourceVisuals.stages.map(s => s.remaining);
+        if (thresholds[0] !== 0 || thresholds.some((value, i) => i > 0 && value <= thresholds[i - 1]))
+          fail('resource stages must start empty and have increasing remaining fractions');
+      }
       if (!this.asset(d.icon).image) fail("icon must reference an image");
       if (d.kind !== "resource" && this.asset(d.asset).sceneryAsset)
         fail("batched scenery models require a resource definition");
@@ -454,6 +463,12 @@ export class ContentRegistry {
         if (expect(id, "building").creation?.method !== "construct")
           fail(`unconstructable ${id}`);
       for (const id of d.behaviors.storage?.accepts ?? []) expect(id, "item");
+      const gathering = d.behaviors.storage?.gathering;
+      if (gathering) {
+        const recipe = expect(gathering.item, "item").creation;
+        if (!d.behaviors.storage?.dropoff || !d.behaviors.storage.accepts.includes(gathering.item) || recipe?.method !== "harvest" || this.get(recipe.source).kind !== "building" || !this.get(recipe.source).harvesting)
+          fail("base gathering requires a compatible drop-off and a staffed harvest source");
+      }
       for (const id of d.behaviors.work?.harvests ?? []) {
         if (expect(id, "item").creation?.method !== "harvest")
           fail(`worker harvest ${id} requires a harvest recipe`);

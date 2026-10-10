@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "category": "resources",
+  "slug": "amber-crystal-2",
+  "entry": "model.py",
+  "files": {
+    "model.glb": {
+      "asset": "asset.models.resources.amber-crystal-2",
+      "role": "geometry",
+      "index": 1
+    },
+    "source.blend": {
+      "asset": "asset.models.resources.amber-crystal-2",
+      "role": "source",
+      "index": 1
+    },
+    "source.glb": {
+      "asset": "asset.models.resources.amber-crystal-2",
+      "role": "source",
+      "index": 2
+    },
+    "reference.png": {
+      "asset": "asset.models.resources.amber-crystal-2",
+      "role": "reference",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.resources.amber-crystal-2",
+      "role": "preview",
+      "index": 1
+    },
+    "rear.png": {
+      "asset": "asset.models.resources.amber-crystal-2",
+      "role": "preview",
+      "index": 2
+    },
+    "model.py": {
+      "asset": "asset.models.resources.amber-crystal-2",
+      "role": "recipe",
+      "index": 1
+    },
+    "asset.json": {
+      "asset": "asset.models.resources.amber-crystal-2",
+      "role": "source",
+      "index": 3
+    }
+  }
+}

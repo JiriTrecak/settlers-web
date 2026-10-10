@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "category": "buildings",
+  "slug": "beetles-carapace-hall",
+  "entry": "model.py",
+  "files": {
+    "model.glb": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "geometry",
+      "index": 1
+    },
+    "source.blend": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "source",
+      "index": 1
+    },
+    "source.glb": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "source",
+      "index": 2
+    },
+    "albedo-team.png": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "source",
+      "index": 3
+    },
+    "ownership.json": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "source",
+      "index": 4
+    },
+    "reference.png": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "reference",
+      "index": 1
+    },
+    "render.png": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "preview",
+      "index": 1
+    },
+    "team-blue.png": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "preview",
+      "index": 2
+    },
+    "team-green.png": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "preview",
+      "index": 3
+    },
+    "team-white.png": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "preview",
+      "index": 4
+    },
+    "rear.png": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "preview",
+      "index": 5
+    },
+    "model.py": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "recipe",
+      "index": 1
+    },
+    "prepare_texture.py": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "recipe",
+      "index": 2
+    },
+    "asset.json": {
+      "asset": "asset.models.buildings.beetles-carapace-hall",
+      "role": "source",
+      "index": 5
+    }
+  }
+}

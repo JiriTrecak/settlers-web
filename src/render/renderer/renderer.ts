@@ -542,6 +542,8 @@ export class Renderer {
       try {gl.shadowMap.autoUpdate=false;gl.shadowMap.needsUpdate=true;gl.setRenderTarget(destination);gl.render(this.scene,cam);}
       finally {gl.setRenderTarget(previous);gl.shadowMap.autoUpdate=shadowUpdates;}
     }finally{group.removeFromParent();group.clear();target.dispose();}
+    await this.portrait.warmup(gl,this.settlement?.preparePortraits()??[]);
+    if(this.destroyed)return;
     this.present();
     this.pinPrograms();this.warmed=true;
     this.visualLast = null;
@@ -689,6 +691,7 @@ export class Renderer {
         this.gameTimeScale,
       );
     }
+    if(this.height)this.importedWater?.setActors(snapshot.settlement?.entities??[],this.height);
     perf.end("Settlers / buildings", entities);
     const props = perf.start();
     if(this.height?.source)liveSourceOcclusion(this.height.source.source).sync(stamps);
@@ -799,7 +802,7 @@ export class Renderer {
     const total = perf.start(),
       environment = perf.start();
     this.sky.tick(now);
-    this.importedWater?.tick(now);
+    this.importedWater?.tick(now,this.camera.targetX,this.camera.targetZ);
     if(this.landscape.environment.interior)this.scene.background=this.indoorBackground;
     this.canopy.tick(now);
     this.sky.setSunTransmission(this.canopy.sunTransmission);

@@ -1,4 +1,5 @@
 import {gatherAssignments} from './population';
+import {baseGathering, type BaseWorkforce} from '../../shared/baseGathering';
 import {placementGeometryError} from '../../shared/spatial/placement';
 import {SpellCorpses,type CorpseView} from '../abilities/corpses';
 import {allEffects} from '../../content/abilities/schema';
@@ -72,6 +73,7 @@ export type EntityView = {
   research?: Entity["research"];
   resource?: Entity["resource"];
   gathering?: { workers: number; recommendedWorkers: number };
+  baseGathering?: BaseWorkforce;
   item?: Entity["item"];
   unit?: {
     flight?:{height:number};
@@ -165,6 +167,7 @@ const memoryEntity = z
     resource: z
       .object({
         amount: z.number().int().nonnegative(),
+        initialAmount: z.number().int().nonnegative().optional(),
         growingUntil: z.number().int().nullable(),
         felling: fellingStateSchema.optional(),
       })
@@ -176,6 +179,7 @@ const memoryEntity = z
       })
       .strict()
       .optional(),
+    baseGathering: z.object({workers:z.number().int().nonnegative(),recommendedWorkers:z.number().int().nonnegative()}).strict().optional(),
     item: z.object({ quantity: z.number().int().positive() }).optional(),
   })
   .strict();
@@ -231,10 +235,13 @@ export class Observation {
   private stationary:Entity[]=[];
   private structureRevision=-1;
   private readonly gatherers=new Map<number,number>();
+  private baseWorkers=new Map<number,BaseWorkforce>();
   private projectWork(){
     this.gatherers.clear();
-    for (const source of gatherAssignments(this.c.state, this.c.liveUnits()).values())
+    const assignments=gatherAssignments(this.c.state, this.c.liveUnits());
+    for (const source of assignments.values())
       this.gatherers.set(source, (this.gatherers.get(source) ?? 0) + 1);
+    this.baseWorkers=baseGathering([...this.c.liveBuildings(),...this.c.liveUnits()],this.c.registry,assignments);
   }
   private job(id:number|null|undefined){return this.c.job(id);}
   private readonly forestIds=new Set<number>();
@@ -470,6 +477,7 @@ export class Observation {
     if(privateData&&e.research)result.research=structuredClone(e.research);
     if(e.resource)result.resource=structuredClone(e.resource);
     if(definition.kind==="building"&&definition.harvesting)result.gathering={workers:this.gatherers.get(e.id)??0,recommendedWorkers:definition.harvesting.recommendedWorkers};
+    if(privateData&&this.baseWorkers.has(e.id))result.baseGathering={...this.baseWorkers.get(e.id)!};
     if(e.item)result.item={...e.item};
     if(e.unit){
       const u=e.unit,unit:NonNullable<EntityView['unit']>={

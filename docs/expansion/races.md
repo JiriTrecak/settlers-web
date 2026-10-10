@@ -32,7 +32,7 @@ capabilities. There is no hardcoded switch on `ants` or `beetles` in commands or
 ## Beetle baseline
 
 Worker training, speed, body radius, carrying, harvesting, building work and economic research
-match ants. Starting funds, six workers, starting gathering assignments, hall footprint/entrance,
+match ants. Starting funds, five workers, starting gathering assignments, hall footprint/entrance,
 drop-off and supply also match. This preserves equal income on equal geometry and orders.
 
 Horn Guard uses one supply, costs 195 amber, trains in 28 seconds, and has 440 HP, 3 heavy armor,

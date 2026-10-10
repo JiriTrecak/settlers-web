@@ -1,0 +1,31 @@
+{
+  "provider": "tripo-studio",
+  "uuid": "f764d086-0155-438d-9480-713f15c6fa29",
+  "url": "https://studio.tripo3d.ai/workspace/generate/f764d086-0155-438d-9480-713f15c6fa29",
+  "date": "2026-10-10T17:55:58.162Z",
+  "settings": {
+    "settings": {
+      "Ultra Mesh Quality": true,
+      "AI Complete": false,
+      "Texture": true,
+      "Remove Lighting": true,
+      "PBR": true,
+      "Texture Quality": "4K",
+      "Topology": "Triangle",
+      "Polycount": 9000
+    },
+    "model": "H3.1 – Best Quality",
+    "credits": 625
+  },
+  "credits": 55,
+  "triangles": 8477,
+  "dimensions": [
+    15,
+    15,
+    10.840951919555664
+  ],
+  "materials": 1,
+  "textureSize": 2048,
+  "teamMaskCoverage": 0.05893582105636597,
+  "description": "Square main hall; red reference regions are per-pixel team color. Natural materials retain authored colors."
+}

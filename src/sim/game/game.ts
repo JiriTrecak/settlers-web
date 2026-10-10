@@ -3,7 +3,7 @@ import {workplaceHead, workplaceQueueSize} from '../../content/workplaceQueue';
 import {revivalTerms} from '../../content/revival';
 import {hasColonyBuildings} from './colony';
 import {placementGeometryError} from '../../shared/spatial/placement';
-import {footprintBounds, navigationBodyOverlapsBounds} from '../../shared/spatial/footprint';
+import {footprintBounds, footprintCellBounds, navigationBodyOverlapsBounds} from '../../shared/spatial/footprint';
 import {validateFlight} from './flight';
 import {SpellCorpses} from '../abilities/corpses';
 import {formDefinition} from '../abilities/forms';
@@ -15,7 +15,7 @@ import {resourceBlocksCell} from '../../shared/map/resourceClearance';
 import type {CampaignCompany} from '../../shared/scenario/company';
 import {companyForMap,restoreCompanyMember} from '../scenario/company';
 import {Mission} from "../scenario/mission";
-import {MAX_FOUNDATION_RELIEF_CM} from '../../shared/map/tacticalTerrain';
+import {foundationTerrainFits} from '../../shared/spatial/foundation';
 import {attackTiming} from './attackTiming';
 import { formationDestinations } from "./formation";
 import { precise } from "./motion";
@@ -231,10 +231,9 @@ export class Game {
       )))
         return "Leave access around the resource deposit";
     }
-    const elevations = cells.map((i) => this.spatial.heights[i]);
     if (cells.some(i => this.spatial.heights[i]! <= this.spatial.waterHeights[i]! + 10))
       return "Build on dry ground";
-    if (Math.max(...elevations) - Math.min(...elevations) > MAX_FOUNDATION_RELIEF_CM)
+    if (!foundationTerrainFits(footprintCellBounds(position,d.footprint,rotation),(x,y)=>this.spatial.heights[y*this.spatial.size+x]!))
       return "Choose flatter ground";
     const entrance = this.spatial.entrance(candidate);
     if (

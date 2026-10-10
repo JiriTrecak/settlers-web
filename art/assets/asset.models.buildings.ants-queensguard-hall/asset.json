@@ -1,0 +1,276 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.ants-queensguard-hall",
+  "name": "Queensguard Hall",
+  "kind": "building",
+  "revision": 25,
+  "status": "published",
+  "tags": [
+    "original",
+    "ants",
+    "main-building",
+    "tripo",
+    "team-mask"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "0e6244dfb6a4a2c4122a334db387a517e5a96d4a14783330e9cee291d80080f9",
+      "bytes": 7704598
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "5eadcd372c76050d2fdd5030d754d97c2f22bb3012c6c8ca94c53d38b5039387",
+      "bytes": 1993
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "ae1f2ca1c1f13dbb3868a1ab542bfae5dfe1e531f8e75dc0602e783cd9e5ca83",
+      "bytes": 849
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "0beb8f62d6073e9583e7efd4f5537ce47ac3b7fc8adc484d82c3f438bc39d3e1",
+      "bytes": 10540824
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "3d9bd9eb3069d3ed1394a5b24eb4249fdd6f03ba7aaf58ae0c02e19c016fae5f",
+      "bytes": 27843
+    },
+    {
+      "role": "metalness",
+      "index": 1,
+      "format": "png",
+      "sha256": "d779824c6f3e7dc6cadee680587d26659061cbe83f15edd0aff51b13e15317bd",
+      "bytes": 8575
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "2639e434bad4711d2f52a3e3b35deb590680303ebc408f110c37e443ae35a0cb",
+      "bytes": 1504810
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "6662e218ed3023cee4c3582088df2dd7cb7eb4540dac7575d099e61d78d4523d",
+      "bytes": 1148409
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "5c5785b4ad447b7179856d82be27b9714786c98bea89e47c7815994ead061f1a",
+      "bytes": 1159213
+    },
+    {
+      "role": "preview",
+      "index": 3,
+      "format": "png",
+      "sha256": "1db1fe731c5d49abaf3e914f22b057aa40a8a6ccbef599c79604fcefa1b8053d",
+      "bytes": 1154634
+    },
+    {
+      "role": "preview",
+      "index": 4,
+      "format": "png",
+      "sha256": "18cadd5c3f0c812b67a503a414bb2ee4ea7b89b5e22e6d7380f18df58145b3cd",
+      "bytes": 1110123
+    },
+    {
+      "role": "preview",
+      "index": 5,
+      "format": "png",
+      "sha256": "dba490e55a40ca7e7d7e1904f2ae06b61b3bd2b65edb3c3115fbcf22f20ae74d",
+      "bytes": 1119894
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "8c8ff5ee60f21ff90cdd4c00e4438ab2aa193b22d2a9431464e045bd8c9bf224",
+      "bytes": 6766
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "1abc252ac4c7cc127d8d9c2eb94acd3fe56fc004d04b4aa03899a582048f63ab",
+      "bytes": 1721
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "98314314288540a88905414652ecba630ffefdec1e46fadedf7d307cf213236f",
+      "bytes": 1769125
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "923aac8ae90944bbe2a5f8736155a57ab3628b9785afa51fd04f2c518ae3a496",
+      "bytes": 1565257
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "8385f67d92af45aae52d7365c1c599e798fb17dc9569949914117578f8b07dab",
+      "bytes": 26391872
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "419df222d818f29f75a8004345bc7f273443d70f9440a833e211bfd6bd2b0407",
+      "bytes": 8444960
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "6fa780afaa7bde54526b660e0a05d5375f01b1ea8b7d6a09a2bfe492005231e0",
+      "bytes": 15077920
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "bdaa3f54eb28cab8caea9c990f4040a27a4b4d5a5ca7a24738b3f36d8f57ef9b",
+      "bytes": 165
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "json",
+      "sha256": "f593b3a1c8aa54cb98b41da064024f3417c569c898826855e7282a32e1a22420",
+      "bytes": 483
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "3eedf81e0709d45226582b39cdba47327d0d024f8e1a614134a03ceaf7cdd33f",
+      "bytes": 223780
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [
+    {
+      "slot": "TC_TeamColor",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 1,
+      "metalness": 0,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": false,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 1
+        },
+        "normal": {
+          "role": "normal",
+          "index": 1
+        },
+        "roughness": {
+          "role": "roughness",
+          "index": 1
+        },
+        "metalness": {
+          "role": "metalness",
+          "index": 1
+        },
+        "teamMask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      }
+    }
+  ],
+  "bindings": {
+    "faction": "ants",
+    "profile": "building",
+    "render": [
+      {
+        "id": "asset.ants.queensguard-hall",
+        "scale": 1,
+        "healthHeight": 9.677464485168457,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-queensguard-hall"
+        }
+      },
+      {
+        "id": "icon.ants.queensguard-hall",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.buildings.ants-queensguard-hall"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "blocker": {
+      "shape": "box",
+      "size": [
+        20,
+        20
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 10,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

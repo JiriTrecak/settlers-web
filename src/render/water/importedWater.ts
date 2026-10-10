@@ -8,6 +8,8 @@ import {sourceReflection} from '../terrain/sourceReflection';
 import {sourceWaterFragment,sourceWaterVertex} from './sourceWaterShaders';
 import {SourceWaterReflections} from './sourceWaterReflections';
 import {SourceCaustics} from './sourceCaustics';
+import {WaterInteraction} from './waterInteraction';
+import type {EntityView} from '../../sim/game/observation';
 
 /** Saved local surfaces with depth-blended stylized waves in a separate pass.
  * The opaque scene is drawn once; water reads a color/depth copy, never its own target. */
@@ -15,6 +17,9 @@ export class ImportedWater {
  readonly group=new Group();
  private readonly scene=new Scene();
  private readonly caustics=new SourceCaustics();
+ private readonly interaction=new WaterInteraction();
+ private actors:readonly EntityView[]=[];private actorField?:HeightField;private focusX=0;private focusZ=0;
+ setActors(actors:readonly EntityView[],field:HeightField){this.actors=actors;this.actorField=field;}
  private readonly screenReflections=new SourceWaterReflections();
  private readonly frustum=new Frustum();
  private readonly viewProjection=new Matrix4();
@@ -40,6 +45,7 @@ export class ImportedWater {
   this.opaque.depthTexture=new DepthTexture(1,1,UnsignedIntType);
   this.material=new ShaderMaterial({vertexShader:sourceWaterVertex,fragmentShader:sourceWaterFragment,toneMapped:false,
    defines:{USE_SHADOWMAP:1,SHADOWMAP_TYPE_VSM:1},uniforms:{
+    uInteraction:{value:this.interaction.target.texture},uInteractionBounds:this.interaction.bounds,
     uWaterProfiles:{value:this.profiles},uAuthoredWater:{value:!!water.profiles},uSunDirection:{value:this.sunDirection},uSourceWaterTime:this.time,uSourceWaterFlow:{value:this.flow},uSourceWaterGround:{value:this.ground},
     uSourceWaterGroundSize:{value:new Vector2(...water.groundSize)},uSourceWaterGroundScale:{value:water.groundScale},uSourceWaterOrigin:{value:new Vector2(...water.origin)},uSourceWaterSize:{value:new Vector2(...water.size)},uSourceWaterOffset:{value:new Vector2(...water.offset)},
     uOpaqueColor:{value:this.opaque.texture},uOpaqueDepth:{value:this.opaque.depthTexture},uViewport:{value:new Vector2()},uInverseProjection:{value:new Matrix4()},uCameraWorld:{value:new Matrix4()},
@@ -75,9 +81,10 @@ export class ImportedWater {
   this.frustum.setFromProjectionMatrix(this.viewProjection);
   if(!this.group.children.some(object=>this.frustum.intersectsObject(object)))return;
   this.caustics.render(gl,this.time.value);
+  this.interaction.render(gl,this.time.value,this.focusX,this.focusZ);
   sun.getWorldPosition(this.sunDirection);sun.target.getWorldPosition(this.sunTarget);
   this.sunDirection.sub(this.sunTarget).normalize();
-  const u=this.material.uniforms,filtered=gl.shadowMap.type===PCFShadowMap;
+  const u=this.material.uniforms,filtered=gl.shadowMap.enabled&&!!sun.shadow.map&&gl.shadowMap.type===PCFShadowMap;
   if(!!this.material.defines.SHADOWMAP_TYPE_PCF!==filtered){this.material.defines={USE_SHADOWMAP:1,[filtered?'SHADOWMAP_TYPE_PCF':'SHADOWMAP_TYPE_VSM']:1};this.material.needsUpdate=true;}
   if(this.opaque.width!==target.width||this.opaque.height!==target.height)this.opaque.setSize(target.width,target.height);
   gl.initRenderTarget(this.opaque);
@@ -99,6 +106,8 @@ export class ImportedWater {
   finally{gl.autoClear=clear;gl.shadowMap.autoUpdate=shadowAuto;}
  }
  diagnostics(gl:WebGLRenderer){return this.screenReflections.diagnostics(gl);}
- tick(now:number){this.time.value=now*.001;}
- dispose(){this.group.traverse(o=>{if(o instanceof Mesh)o.geometry.dispose();});this.material.dispose();this.flow.dispose();this.profiles.dispose();this.ground.dispose();this.opaque.dispose();this.reflection.dispose();this.caustics.dispose();this.screenReflections.dispose();}
+ tick(now:number,focusX=this.focusX,focusZ=this.focusZ){this.time.value=now*.001;this.focusX=focusX;this.focusZ=focusZ;
+  if(this.actorField)this.interaction.events.update(this.actors,this.actorField,this.time.value,focusX,focusZ);
+ }
+ dispose(){this.group.traverse(o=>{if(o instanceof Mesh)o.geometry.dispose();});this.material.dispose();this.flow.dispose();this.profiles.dispose();this.ground.dispose();this.opaque.dispose();this.reflection.dispose();this.caustics.dispose();this.screenReflections.dispose();this.interaction.dispose();}
 }

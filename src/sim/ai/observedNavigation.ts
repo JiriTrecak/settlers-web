@@ -81,7 +81,7 @@ export class ObservedNavigation {
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(dx||dy)joins.push({x:joins[0]!.x+dx,y:joins[0]!.y+dy});
   const origin=joins.find(q=>p.clear(a,fixed(q)));if(!origin)return false;
   const start=origin.y*size+origin.x,pocket=p.pockets.get(goal);
-  if(pocket&&!pocket.has(start))return false;
+  if((pocket&&!pocket.has(start))||p.grid.knownUnreachable(start,goal))return false;
   p.mesh??=new GroundNavigation({size,radius:from.radius,walkable:this.walkable,heights:this.heights},this.profile);
   p.mesh.prepare();
   const coarse=p.mesh.query.computePath({x:origin.x,z:origin.y},{x:to.x,z:to.y});
@@ -94,7 +94,7 @@ export class ObservedNavigation {
   }
   const corridor=this.sectors.corridor(start,goal);if(corridor===null)return false;
   let route=p.grid.path(start,goal,undefined,Infinity,corridor,1000,512);
-  if(route===null&&!p.grid.lastDestinationPocket)route=p.grid.path(start,goal,undefined,Infinity,undefined,1000,512);
+  if(route===null&&!p.grid.lastDestinationPocket)route=p.grid.path(start,goal,undefined,Infinity,undefined,1000,512,true);
   if(route===null&&p.grid.lastDestinationPocket){
    if(p.pockets.size>4096)p.pockets.clear();
    for(const id of p.grid.lastDestinationPocket)p.pockets.set(id,p.grid.lastDestinationPocket);

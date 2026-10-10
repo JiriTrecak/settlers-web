@@ -27,7 +27,7 @@ Trees contain 50 wood and yield five loads of 10. A load targets 8 seconds of pr
 
 ## Supply, production and construction
 
-Start with 500 amber, 150 wood, six workers and the chosen level-one hero: 10/15 supply. No free starting warriors. Hall supplies 15; each Mound adds 8; maximum supply is 100, without upkeep. Worker, Warrior and Archer cost 1 supply; Hunter 2; Bombardier 3; every hero 4.
+Start with 500 amber, 150 wood, five workers and the chosen level-one hero: 9/15 supply. No free starting warriors. Hall supplies 15; each Mound adds 8; maximum supply is 100, without upkeep. Worker, Warrior and Archer cost 1 supply; Hunter 2; Bombardier 3; every hero 4.
 
 Supply is checked at queue admission and at the beginning of training. A started job is never paused by losing supply. A queued job that cannot start waits. Currency is paid once on queue admission; cancellation returns its paid cost once. Ordinary production refunds 100%; voluntary construction cancellation refunds 75%. Destroyed queues lose their paid costs. Construction requires one present builder and pauses without one. Resumption is an explicit worker order. Losing all buildings (foundations included) defeats a standard skirmish colony; losing the original Hall alone does not. Wallets survive defeat. Mission objectives remain separate.
 

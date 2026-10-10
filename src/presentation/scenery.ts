@@ -3,6 +3,7 @@ import type { EntityView, SettlementView } from "../sim/game/observation";
 import type { MapStamp, UtcMap } from "../shared/map/utcmap";
 import { expandMap } from "../content/map";
 import {resourceSceneryRevision} from './resourceSceneryRevision';
+import {baseGathering} from '../shared/baseGathering';
 export function authoredScene(
   entities: EntityView[],
   _size = 256,
@@ -37,7 +38,7 @@ export function resourceStamps(entities: readonly EntityView[]): MapStamp[] {
     }));
 }
 export function editorEntities(map: UtcMap): EntityView[] {
-  return expandMap(map, content).map((p, i) => {
+  const entities:EntityView[] = expandMap(map, content).map((p, i) => {
     const d = content.get(p.definition);
     return {
       id: i + 1,
@@ -78,6 +79,9 @@ export function editorEntities(map: UtcMap): EntityView[] {
         : {}),
     };
   });
+  const workforce=baseGathering(entities,content);
+  for(const e of entities)if(workforce.has(e.id))e.baseGathering=workforce.get(e.id);
+  return entities;
 }
 
 /** Retain stamp identities through unrelated simulation ticks. Most of the map

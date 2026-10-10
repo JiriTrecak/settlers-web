@@ -1,5 +1,5 @@
 import {surfaceHeight,type BridgeSurface} from './bridgeSurface';
-import {MAX_GROUND_STEP_CM,SIGHT_HEIGHT_CM,TacticalTerrain} from './tacticalTerrain';
+import {MAX_GROUND_STEP_CM,SIGHT_HEIGHT_CM,UPHILL_VISIBILITY_CM,TacticalTerrain} from './tacticalTerrain';
 
 /** Stable map stamp identity selects a deck. Omitted surface means the ground. */
 export type SurfacePoint={x:number;y:number;surface?:string;elevation?:number};
@@ -229,7 +229,11 @@ export class WalkSurfaces {
  }
  visible(a:SurfacePoint,b:SurfacePoint):boolean {
   if(!a.surface&&!b.surface&&!this.crossesSurface(a,b))return this.groundTactical.visible(a,b);
-  const ah=this.height(a),bh=this.height(b);return ah!==undefined&&bh!==undefined&&bh+(b.elevation??0)<=ah+(a.elevation??0)+SIGHT_HEIGHT_CM/100&&this.shotClear(a,b);
+  const ah=this.height(a),bh=this.height(b);if(ah===undefined||bh===undefined)return false;
+  const from=ah+(a.elevation??0),to=bh+(b.elevation??0);
+  // Ground follows the RTS height allowance; actual solid floors still occlude
+  // separate layers, without reintroducing terrain ray tests beside bridges.
+  return to<=from+UPHILL_VISIBILITY_CM/100&&!this.intersectsDeck(a,b,from+SIGHT_HEIGHT_CM/100,to+SIGHT_HEIGHT_CM/100);
  }
  meleeClear(a:SurfacePoint,b:SurfacePoint):boolean {
   if(!a.surface&&!b.surface&&!this.crossesSurface(a,b))return this.groundTactical.meleeClear(a,b);

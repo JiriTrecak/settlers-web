@@ -207,7 +207,7 @@ describe("economy delivery receipts", () => {
       expect(totals.get(owner + "/item.amber")).toBe(
         g.state.wallets[hall.owner]["item.amber"] - content.rules.startingSetup.inventory["item.amber"],
       );
-      expect(totals.get(owner + "/item.wood")).toBe(
+      expect(totals.get(owner + "/item.wood") ?? 0).toBe(
         g.state.wallets[hall.owner]["item.wood"] - content.rules.startingSetup.inventory["item.wood"],
       );
     }

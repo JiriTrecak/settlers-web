@@ -110,6 +110,8 @@ const storage = z
     capacity: positive.max(1000000),
     accepts: z.array(idSchema),
     dropoff: z.boolean().optional(),
+    /** Resource-site workforce displayed above this base (not a worker cap). */
+    gathering: z.object({item: idSchema, radius: z.number().positive().max(256)}).strict().optional(),
   })
   .strict();
 const production = z
@@ -240,6 +242,11 @@ const fields = {
     .optional(),
   stackLimit: positive.max(100).optional(),
   yield: positive.optional(),
+  /** Full alternatives and shared depletion models, selected by remaining/initial amount. */
+  resourceVisuals: z.object({
+    variants: z.array(idSchema).min(1),
+    stages: z.array(z.object({remaining: z.number().min(0).max(1), asset: idSchema}).strict()).min(1),
+  }).strict().optional(),
   felling: z.object({ maxHp: positive, fallTicks: positive, decayTicks: positive }).strict().optional(),
   harvesting: z.object({
     activeWorkers: positive.max(100),

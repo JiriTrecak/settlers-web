@@ -1,7 +1,8 @@
 /** Engine rules, in centimetres. Model size never changes tactical sight. */
 export const SIGHT_HEIGHT_CM = 120;
+/** Reveal gentle rises, but not a full four-unit terrain tier. Shots retain their own corridor. */
+export const UPHILL_VISIBILITY_CM = 200;
 export const MAX_GROUND_STEP_CM = 90;
-export const MAX_FOUNDATION_RELIEF_CM = 50;
 /** Sorted non-overlapping half-open intervals of visible cell IDs. Immutable. */
 export type VisibilityFootprint={readonly spans:Uint32Array;readonly cellCount:number};
 type CachedFootprint={key:string;footprint:VisibilityFootprint;dense?:Uint32Array};
@@ -22,22 +23,16 @@ export class TacticalTerrain {
   // Four-cell maxima allow clear portions of an otherwise occluded ray to skip
   // eight original samples at a time. 32 KiB for a 512-square map.
   private readonly fineBlocks:Int16Array;
-  private readonly fineMinimums:Int16Array;
   private readonly fineSize:number;
   private readonly blocks:Int16Array;
-  private readonly blockMinimums:Int16Array;
   private readonly blockSize:number;
   constructor(readonly size:number, readonly heights:Int16Array){
     this.fineSize=Math.ceil(size/4);this.fineBlocks=new Int16Array(this.fineSize**2).fill(-32768);
-    this.fineMinimums=new Int16Array(this.fineSize**2).fill(32767);
     this.flat=heights.every(h=>h===heights[0]);
     this.blockSize=Math.ceil(size/16);this.blocks=new Int16Array(this.blockSize**2).fill(-32768);
-    this.blockMinimums=new Int16Array(this.blockSize**2).fill(32767);
     for(let y=0;y<size;y++)for(let x=0;x<size;x++){
       const f=Math.floor(y/4)*this.fineSize+Math.floor(x/4);this.fineBlocks[f]=Math.max(this.fineBlocks[f],heights[y*size+x]);
-      this.fineMinimums[f]=Math.min(this.fineMinimums[f],heights[y*size+x]);
       const i=Math.floor(y/16)*this.blockSize+Math.floor(x/16);this.blocks[i]=Math.max(this.blocks[i],heights[y*size+x]);
-      this.blockMinimums[i]=Math.min(this.blockMinimums[i],heights[y*size+x]);
     }
   }
   height(p:TerrainPoint):number {
@@ -49,13 +44,11 @@ export class TacticalTerrain {
     const u=x-ix,v=y-iy,h=this.heights,n=this.size;
     return (h[iy*n+ix]*(1-u)+h[iy*n+jx]*u)*(1-v)+(h[jy*n+ix]*(1-u)+h[jy*n+jx]*u)*v;
   }
-  /** A lower observer cannot reveal a plateau above the common sight offset.
-   * The same rule reveals progressively while climbing a ramp. */
+  /** RTS height visibility: lower ground stays visible throughout the sensor's
+   * radius. Small intervening bumps do not behave like walls or bullet blockers. */
   visible(a:TerrainPoint,b:TerrainPoint):boolean {
-    if(this.flat)return true;
-    const from=this.heightAt(a.x,a.y)+(a.elevation??0)*100+SIGHT_HEIGHT_CM,groundTo=this.heightAt(b.x,b.y)+(b.elevation??0)*100;
-    if(groundTo>from)return false;
-    return this.corridorClear(a,b,from,groundTo+SIGHT_HEIGHT_CM);
+    const from=this.heightAt(a.x,a.y)+(a.elevation??0)*100;
+    return this.heightAt(b.x,b.y)+(b.elevation??0)*100<=from+UPHILL_VISIBILITY_CM;
   }
   /** Straight weapon corridor, not a visibility test. Allied scouts can provide
    * vision uphill, but intermediate terrain still intercepts a shot. */
@@ -139,44 +132,28 @@ export class TacticalTerrain {
     const profile=this.diagnostics?.enabled?this.diagnostics:undefined;
     const cached=this.views.get(key);if(cached){profile?.count('Footprint cache hits');this.views.delete(key);this.views.set(key,cached);return cached;}
     profile?.count('Footprint cache misses');
-    const work:SightWork|undefined=profile?{rays:0,coarseClear:0,groups:0,groupsClear:0,samples:0,blocked:0}:undefined;
     let candidates=0,tooHigh=0;
-    const spans:number[]=[],origin={x,y,elevation:a.elevation},target={x:0,y:0};
-    const from=this.heightAt(x,y)+(a.elevation??0)*100+SIGHT_HEIGHT_CM;
-    // A gently varying shelf cannot occlude any ray when its highest point is
-    // below both the observer and the lowest possible target eye height.
-    // Include bilinear interpolation's extra row/column in the conservative box.
-    let low=32767,high=-32768;
+    const spans:number[]=[];
+    const from=this.heightAt(x,y)+(a.elevation??0)*100+UPHILL_VISIBILITY_CM;
+    // One conservative maximum admits a complete circle on low/gentle ground.
+    let high=-32768;
     for(let by=Math.max(0,Math.floor((y-r)/16));by<=Math.min(this.blockSize-1,Math.floor((y+r+1)/16));by++)
-      for(let bx=Math.max(0,Math.floor((x-r)/16));bx<=Math.min(this.blockSize-1,Math.floor((x+r+1)/16));bx++){
-        const i=by*this.blockSize+bx;low=Math.min(low,this.blockMinimums[i]);high=Math.max(high,this.blocks[i]);
-      }
-    let allClear=this.flat||high<=Math.min(from,low+SIGHT_HEIGHT_CM);
-    // Coarse blocks can include a distant cliff outside this sight footprint.
-    // Refine that conservative bound once, before resorting to a ray per cell.
-    if(!allClear){
-      low=32767;high=-32768;
-      for(let by=Math.max(0,Math.floor((y-r)/4));by<=Math.min(this.fineSize-1,Math.floor((y+r+1)/4));by++)
-        for(let bx=Math.max(0,Math.floor((x-r)/4));bx<=Math.min(this.fineSize-1,Math.floor((x+r+1)/4));bx++){
-          const i=by*this.fineSize+bx;low=Math.min(low,this.fineMinimums[i]);high=Math.max(high,this.fineBlocks[i]);
-        }
-      allClear=high<=Math.min(from,low+SIGHT_HEIGHT_CM);
-      if(allClear)profile?.count('Fine shelf footprints');
-    }
-    profile?.count(allClear?'Clear shelf footprints':'Ray tested footprints');
+      for(let bx=Math.max(0,Math.floor((x-r)/16));bx<=Math.min(this.blockSize-1,Math.floor((x+r+1)/16));bx++)
+        high=Math.max(high,this.blocks[by*this.blockSize+bx]);
+    const allClear=high<=from;
+    profile?.count(allClear?'Clear shelf footprints':'Height filtered footprints');
     for(let dy=-r;dy<=r;dy++){
       if(y+dy<0||y+dy>=this.size||dy*dy>radius*radius)continue;
       const span=Math.floor(Math.sqrt(radius*radius-dy*dy));
-      target.y=y+dy;
       const left=Math.max(0,x-span),right=Math.min(this.size-1,x+span),row=(y+dy)*this.size;
       if(left>right)continue;
       if(profile)candidates+=right-left+1;
       if(allClear){spans.push(row+left,row+right+1);continue;}
       let start=-1;
       for(let xx=left;xx<=right;xx++){
-        target.x=xx;const cell=row+xx,ground=this.heights[cell];
+        const cell=row+xx,ground=this.heights[cell];
         if(profile&&ground>from)tooHigh++;
-        const clear=ground<=from&&this.corridorClear(origin,target,from,ground+SIGHT_HEIGHT_CM,work);
+        const clear=ground<=from;
         if(clear){if(start===-1)start=cell;}
         else if(start!==-1){spans.push(start,cell);start=-1;}
       }
@@ -184,11 +161,8 @@ export class TacticalTerrain {
     }
     let cellCount=0;for(let i=0;i<spans.length;i+=2)cellCount+=spans[i+1]!-spans[i]!;
     const result={spans:Uint32Array.from(spans),cellCount};
-    if(profile&&work){
+    if(profile){
       profile.count('Candidate cells',candidates);profile.count('Height rejected cells',tooHigh);
-      profile.count('Terrain rays',work.rays);profile.count('Coarse clear rays',work.coarseClear);
-      profile.count('Fine ray groups',work.groups);profile.count('Fine groups skipped',work.groupsClear);
-      profile.count('Bilinear height samples',work.samples);profile.count('Occluded rays',work.blocked);
       profile.count('Computed visible cells',cellCount);profile.count('Computed spans',spans.length/2);
     }
     const entry:CachedFootprint={key,footprint:result},chargedCells=result.spans.length;

@@ -2,7 +2,7 @@ import {startingArea} from './startingArea';
 import {placementGeometryError} from '../spatial/placement';
 import {validateMissionLua} from "../scenario/lua";
 import {projectScene,landscapeAssets} from '../authoring/project';
-import {MAX_FOUNDATION_RELIEF_CM} from './tacticalTerrain';
+import {foundationTerrainFits} from '../spatial/foundation';
 import {sceneryRules} from './sceneryCollision';
 import type { PlayerStart, UtcMap } from "./utcmap";
 import { content } from "../../content/builtin";
@@ -51,18 +51,15 @@ export function playableMapError(
       return `Player ${s.player} needs a building-grid-aligned start at least 8 navigation cells inside the map.`;
     if(startEnvelope.minX<0||startEnvelope.maxX>=map.size||startEnvelope.minZ<0||startEnvelope.maxZ>=map.size)
       return `Player ${s.player} needs room for the complete fort and worker formation.`;
-    let dry=true,lo = Infinity,
-      hi = -Infinity;
+    let dry=true;
     for (let z = Math.floor(startEnvelope.minZ); z <= Math.ceil(startEnvelope.maxZ); z++)
       for (let x = Math.floor(startEnvelope.minX); x <= Math.ceil(startEnvelope.maxX); x++) {
         const h = field.sample(x, z);
         if(h<=field.waterAt(x,z)+.1)dry=false;
-        lo = Math.min(lo, h);
-        hi = Math.max(hi, h);
       }
     if (!dry)
       return `Player ${s.player} needs dry ground for the fort and workers.`;
-    if (hi - lo > MAX_FOUNDATION_RELIEF_CM/100)
+    if (!foundationTerrainFits({minX:Math.floor(startEnvelope.minX),maxX:Math.ceil(startEnvelope.maxX),minY:Math.floor(startEnvelope.minZ),maxY:Math.ceil(startEnvelope.maxZ)},(x,y)=>Math.round(field.sample(x,y)*100)))
       return `Player ${s.player} needs flatter ground for the fort and workers.`;
     if (
       starts.some(

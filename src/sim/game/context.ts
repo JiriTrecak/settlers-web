@@ -245,6 +245,7 @@ export class GameContext {
       };
     if (d.yield)
       e.resource = { amount: initial?.amount ?? d.yield!, growingUntil: null,
+        ...(d.resourceVisuals ? {initialAmount: initial?.amount ?? d.yield!} : {}),
         ...(d.felling ? { felling: {hp: d.felling.maxHp, lastHitTick: null, fallTick: null, direction: {x: 0, y: 1}} } : {}),
       };
     if (d.kind === "item") e.item = { quantity: initial?.quantity ?? 1 };

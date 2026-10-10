@@ -105,7 +105,7 @@ describe('competitive harvesting',()=>{
    const {g}=site(count);run(g,400);const start=g.state.wallets[owner]['item.amber'];run(g,2400);
    measured.push(g.state.wallets[owner]['item.amber']-start);
   }
-  expect(measured).toEqual([610,1200,1200]);
+  expect(measured).toEqual([640,1200,1200]);
   expect(measured[1]).toBeGreaterThan(measured[0]);
   expect(measured[2]).toBeLessThanOrEqual(1200);
   expect(measured[2]-measured[1]).toBeLessThanOrEqual(60);

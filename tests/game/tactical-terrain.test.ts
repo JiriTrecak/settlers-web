@@ -1,7 +1,7 @@
 import {captureTerrain} from '../../src/shared/authoring/captureTerrain';
 import {describe,it,expect} from 'vitest';
 import {HeightField,encodeHeight,decodeHeight} from '../../src/shared/map/height';
-import {TacticalTerrain,SIGHT_HEIGHT_CM,type TerrainPoint} from '../../src/shared/map/tacticalTerrain';
+import {TacticalTerrain,SIGHT_HEIGHT_CM,UPHILL_VISIBILITY_CM,type TerrainPoint} from '../../src/shared/map/tacticalTerrain';
 import {sculptPlateau,sculptRamp} from '../../src/shared/landscape/tacticalAuthoring';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import {Game} from '../../src/sim/game/game';
@@ -68,13 +68,13 @@ describe('tactical heights',()=>{
   for(let i=0;i<300;i++)t.visibleCells({x:i%32,y:Math.floor(i/32)},3);
   expect(t.visibleCells({x:16,y:16},4)).toEqual(cells);
  });
- it('matches a full unaccelerated sight march on fractional, elevated and boundary rays',()=>{
+ it('matches height visibility and an unaccelerated weapon march on fractional, elevated and boundary rays',()=>{
   const size=64,heights=Int16Array.from({length:size*size},(_,i)=>
    Math.round(280*Math.sin((i%size)/5)+190*Math.cos(Math.floor(i/size)/7)+(i%size>31?240:0)));
   const t=new TacticalTerrain(size,heights);
   const oracle=(a:TerrainPoint,b:TerrainPoint,shot=false)=>{
    const from=t.height(a)+(a.elevation??0)*100+SIGHT_HEIGHT_CM,ground=t.height(b)+(b.elevation??0)*100;
-   if(!shot&&ground>from)return false;
+   if(!shot)return ground<=t.height(a)+(a.elevation??0)*100+UPHILL_VISIBILITY_CM;
    const to=ground+SIGHT_HEIGHT_CM,steps=Math.max(1,Math.ceil(Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y))*4));
    for(let i=1;i<steps;i++){
     const f=i/steps;
@@ -129,4 +129,17 @@ it('keeps remembered trees immutable while visible harvest changes refresh immed
  expect(read().remembered).not.toBe(true);expect(read().resource!.amount).toBe(0);expect(read().resource!.felling!.hp).toBe(0);
  const saved=g.snapshot();g.restore(saved);expect(g.snapshot()).toEqual(saved);
  g.economy.remove(g.context.get(tree.id)!);g.observation.update();expect(read()).toBeUndefined();
+});
+
+it('reveals downhill behind intervening bumps, small uphill rises, but not the next plateau',()=>{
+ const n=32,h=new Int16Array(n*n);
+ for(let y=0;y<n;y++){h[y*n+12]=180;h[y*n+18]=200;h[y*n+24]=400;}
+ const t=new TacticalTerrain(n,h),a={x:8,y:16};
+ expect(t.visible(a,{x:16,y:16})).toBe(true);
+ expect(t.visible(a,{x:18,y:16})).toBe(true);
+ expect(t.visible(a,{x:24,y:16})).toBe(false);
+ expect(t.visible({x:24,y:16},a)).toBe(true);
+ expect(t.shotClear(a,{x:16,y:16})).toBe(false);
+ const cells=t.visibleCells(a,20);
+ expect(cells).toContain(16*n+16);expect(cells).toContain(16*n+18);expect(cells).not.toContain(16*n+24);
 });

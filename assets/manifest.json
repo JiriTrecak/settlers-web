@@ -5276,6 +5276,78 @@
       "scenery": []
     },
     {
+      "id": "asset.models.buildings.ants-queensguard-hall",
+      "name": "Queensguard Hall",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "original",
+        "ants",
+        "main-building",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 25,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-queensguard-hall/albedo.png",
+          "sha256": "0e6244dfb6a4a2c4122a334db387a517e5a96d4a14783330e9cee291d80080f9",
+          "bytes": 7704598
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-queensguard-hall/geometry.glb",
+          "sha256": "0beb8f62d6073e9583e7efd4f5537ce47ac3b7fc8adc484d82c3f438bc39d3e1",
+          "bytes": 10540824
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-queensguard-hall/image.png",
+          "sha256": "3d9bd9eb3069d3ed1394a5b24eb4249fdd6f03ba7aaf58ae0c02e19c016fae5f",
+          "bytes": 27843
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-queensguard-hall/metalness.png",
+          "sha256": "d779824c6f3e7dc6cadee680587d26659061cbe83f15edd0aff51b13e15317bd",
+          "bytes": 8575
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-queensguard-hall/normal.png",
+          "sha256": "2639e434bad4711d2f52a3e3b35deb590680303ebc408f110c37e443ae35a0cb",
+          "bytes": 1504810
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-queensguard-hall/roughness.png",
+          "sha256": "923aac8ae90944bbe2a5f8736155a57ab3628b9785afa51fd04f2c518ae3a496",
+          "bytes": 1565257
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-queensguard-hall/team_mask.png",
+          "sha256": "3eedf81e0709d45226582b39cdba47327d0d024f8e1a614134a03ceaf7cdd33f",
+          "bytes": 223780
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.queensguard-hall",
+          "file": "assets/library/asset.models.buildings.ants-queensguard-hall/geometry.glb",
+          "scale": 1,
+          "healthHeight": 9.677464485168457
+        },
+        {
+          "id": "icon.ants.queensguard-hall",
+          "image": "assets/library/asset.models.buildings.ants-queensguard-hall/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.models.buildings.ants-rootworks",
       "name": "Rootworks",
       "kind": "model",
@@ -5401,6 +5473,78 @@
         {
           "id": "icon.ants.tower",
           "image": "assets/library/asset.models.buildings.ants-watchtower/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.beetles-carapace-hall",
+      "name": "Carapace Bastion",
+      "kind": "model",
+      "faction": "beetles",
+      "tags": [
+        "original",
+        "beetles",
+        "main-building",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 25,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.beetles-carapace-hall/albedo.png",
+          "sha256": "8864de496242d59bb6f1988e41b51052e9d563ed8dca5343d0c09c6f767ca172",
+          "bytes": 6867912
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.beetles-carapace-hall/geometry.glb",
+          "sha256": "e7497e7c07f691c8950742bcd672011a820cf1ea09dc5aa96788730f4369d4ed",
+          "bytes": 12896092
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.beetles-carapace-hall/image.png",
+          "sha256": "3f369096a99d8133b89e1696494a74fb8eb9ab5cf4b16d8bfbc4aa75ba47df35",
+          "bytes": 21638
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.beetles-carapace-hall/metalness.png",
+          "sha256": "ef383904bc00113c8450d84ba3f6dc76c2a0f686cc198ae80310ac019a9d46c0",
+          "bytes": 1877185
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.beetles-carapace-hall/normal.png",
+          "sha256": "43c0b3481324263975af9022c6437a192181183cff74e211a848b8ad041652da",
+          "bytes": 2544479
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.beetles-carapace-hall/roughness.png",
+          "sha256": "011aeb931a402d7a58ce2876d62fcaeaee32f6b1632e7e3ace1c5e86362cb402",
+          "bytes": 1987301
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.beetles-carapace-hall/team_mask.png",
+          "sha256": "28e1788a4db07e32a135b78bc906e324c05701a4563070ca11a199b89899275f",
+          "bytes": 117874
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.beetles.carapace-hall",
+          "file": "assets/library/asset.models.buildings.beetles-carapace-hall/geometry.glb",
+          "scale": 1,
+          "healthHeight": 10.840951919555664
+        },
+        {
+          "id": "icon.beetles.carapace-hall",
+          "image": "assets/library/asset.models.buildings.beetles-carapace-hall/image.png"
         }
       ],
       "scenery": []
@@ -9935,6 +10079,223 @@
           "file": "library/asset.models.environment.woodland-woodpile/geometry.glb"
         }
       ]
+    },
+    {
+      "id": "asset.models.resources.amber-crystal-1",
+      "name": "Amber Crystals 1",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "resource",
+        "amber",
+        "tripo"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-crystal-1/geometry.glb",
+          "sha256": "afcd2dc16fd0373ab5420e5f09ff31d2bf2efa686f8e3aabf8d8b971206bba1f",
+          "bytes": 3352304
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-crystal-1",
+          "file": "assets/library/asset.models.resources.amber-crystal-1/geometry.glb",
+          "scale": 2,
+          "healthHeight": 9.96568775177002
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.resources.amber-crystal-2",
+      "name": "Amber Crystals 2",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "resource",
+        "amber",
+        "tripo"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-crystal-2/geometry.glb",
+          "sha256": "7135e4f65ae578d782f3101d498c69ab33a8d1b899ab75f7e4587b8906503b12",
+          "bytes": 3152988
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-crystal-2",
+          "file": "assets/library/asset.models.resources.amber-crystal-2/geometry.glb",
+          "scale": 2,
+          "healthHeight": 11.645654678344727
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.resources.amber-crystal-3",
+      "name": "Amber Crystals 3",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "resource",
+        "amber",
+        "tripo"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-crystal-3/geometry.glb",
+          "sha256": "c3116f1d24fe7449beb97ffd57c6e6ec48b82df2ea169dd32ee865d7102ca9d5",
+          "bytes": 3370192
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-crystal-3",
+          "file": "assets/library/asset.models.resources.amber-crystal-3/geometry.glb",
+          "scale": 2,
+          "healthHeight": 14.322617530822754
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.resources.amber-crystal-4",
+      "name": "Amber Crystals 4",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "resource",
+        "amber",
+        "tripo"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-crystal-4/geometry.glb",
+          "sha256": "673529ed717d07aadec430c5544430afc193b6bf28871c5452f663c9fa5ccef3",
+          "bytes": 3487652
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-crystal-4",
+          "file": "assets/library/asset.models.resources.amber-crystal-4/geometry.glb",
+          "scale": 2,
+          "healthHeight": 11.883901596069336
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.resources.amber-crystal-5",
+      "name": "Amber Crystals 5",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "resource",
+        "amber",
+        "tripo"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-crystal-5/geometry.glb",
+          "sha256": "4fce147164ff3111cd65b89a826b7bc59320c298a33e0f9509162434075d1ee5",
+          "bytes": 3376640
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-crystal-5",
+          "file": "assets/library/asset.models.resources.amber-crystal-5/geometry.glb",
+          "scale": 2,
+          "healthHeight": 8.587546348571777
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.resources.amber-crystal-empty",
+      "name": "Amber Crystals — Empty",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "resource",
+        "amber",
+        "tripo"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-crystal-empty/geometry.glb",
+          "sha256": "03b430f462d5b1b5d72f2c6ac908af6ba44800b81cd44951d9fe17bc7b393c37",
+          "bytes": 3113500
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-crystal-empty",
+          "file": "assets/library/asset.models.resources.amber-crystal-empty/geometry.glb",
+          "scale": 2,
+          "healthHeight": 2.311389446258545
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.resources.amber-crystal-low",
+      "name": "Amber Crystals — One Third Remaining",
+      "kind": "model",
+      "tags": [
+        "original",
+        "neutral",
+        "resource",
+        "amber",
+        "tripo"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.resources.amber-crystal-low/geometry.glb",
+          "sha256": "367b968138d6f9f43094e76010f2f70b6bbdc45a1fbb02c0066fc5a88c7d713d",
+          "bytes": 3462512
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.resource.amber-crystal-low",
+          "file": "assets/library/asset.models.resources.amber-crystal-low/geometry.glb",
+          "scale": 2,
+          "healthHeight": 4.501642227172852
+        }
+      ],
+      "scenery": []
     },
     {
       "id": "asset.models.resources.amber-deposit",
@@ -21391,14 +21752,14 @@
         "authoring",
         "source-informed"
       ],
-      "revision": 14,
+      "revision": 16,
       "profile": "water-profile",
       "outputs": [
         {
           "role": "data",
           "path": "assets/library/water.clear-forest/definition.json",
-          "sha256": "47d28373582b52cfa37a3c16dce75057de4961f4570c469e0e699721045aad13",
-          "bytes": 1167
+          "sha256": "1f201195845a112a6afcf8989a82c3ed4aa54b13e44c7634aab5e14302d126e7",
+          "bytes": 1166
         }
       ],
       "render": [],

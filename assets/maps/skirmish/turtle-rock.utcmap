@@ -40,32 +40,21 @@
       "id": "warcraft.mine.5.0",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 261.5,
-        "y": 345.5
+        "x": 257.5,
+        "y": 349.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3750
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-1"
       }
     },
     {
       "id": "warcraft.mine.5.1",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 269.5,
-        "y": 345.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3750
-      }
-    },
-    {
-      "id": "warcraft.mine.5.2",
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 261.5,
@@ -75,7 +64,27 @@
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3750
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-2"
+      }
+    },
+    {
+      "id": "warcraft.mine.5.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 265.5,
+        "y": 353.5
+      },
+      "rotation": 0,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-3"
       }
     },
     {
@@ -89,105 +98,129 @@
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3750
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-4"
       }
     },
     {
       "id": "warcraft.mine.10.0",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 349.5,
-        "y": 437.5
+        "x": 329.5,
+        "y": 445.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-1"
       }
     },
     {
       "id": "warcraft.mine.10.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 357.5,
-        "y": 437.5
+        "x": 333.5,
+        "y": 449.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-2"
       }
     },
     {
       "id": "warcraft.mine.10.2",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 349.5,
-        "y": 445.5
+        "x": 337.5,
+        "y": 449.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-3"
       }
     },
     {
       "id": "warcraft.mine.10.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 357.5,
-        "y": 445.5
+        "x": 341.5,
+        "y": 449.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-4"
       }
     },
     {
       "id": "warcraft.mine.13.0",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 117.5,
+        "x": 113.5,
         "y": 405.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 2500
+        "amount": 2000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-1"
       }
     },
     {
       "id": "warcraft.mine.13.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 125.5,
-        "y": 405.5
+        "x": 117.5,
+        "y": 409.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 2500
+        "amount": 2000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-2"
       }
     },
     {
       "id": "warcraft.mine.13.2",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 117.5,
-        "y": 413.5
+        "x": 121.5,
+        "y": 409.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 2500
+        "amount": 2000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-3"
       }
     },
     {
@@ -195,41 +228,50 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 125.5,
-        "y": 413.5
+        "y": 409.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 2500
+        "amount": 2000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-4"
       }
     },
     {
       "id": "warcraft.mine.28.0",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 257.5,
-        "y": 181.5
+        "x": 249.5,
+        "y": 189.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3750
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-1"
       }
     },
     {
       "id": "warcraft.mine.28.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 265.5,
-        "y": 181.5
+        "x": 253.5,
+        "y": 185.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3750
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-2"
       }
     },
     {
@@ -237,27 +279,33 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 257.5,
-        "y": 189.5
+        "y": 185.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3750
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-3"
       }
     },
     {
       "id": "warcraft.mine.28.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 265.5,
-        "y": 189.5
+        "x": 261.5,
+        "y": 185.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3750
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-4"
       }
     },
     {
@@ -265,55 +313,67 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 401.5,
-        "y": 109.5
+        "y": 117.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 2500
+        "amount": 2000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-1"
       }
     },
     {
       "id": "warcraft.mine.35.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 409.5,
-        "y": 109.5
+        "x": 405.5,
+        "y": 113.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 2500
+        "amount": 2000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-2"
       }
     },
     {
       "id": "warcraft.mine.35.2",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 401.5,
-        "y": 117.5
+        "x": 409.5,
+        "y": 113.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 2500
+        "amount": 2000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-3"
       }
     },
     {
       "id": "warcraft.mine.35.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 409.5,
-        "y": 117.5
+        "x": 413.5,
+        "y": 113.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 2500
+        "amount": 2000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-4"
       }
     },
     {
@@ -321,153 +381,186 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 173.5,
-        "y": 273.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3750
-      }
-    },
-    {
-      "id": "warcraft.mine.42.1",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 181.5,
-        "y": 273.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3750
-      }
-    },
-    {
-      "id": "warcraft.mine.42.2",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 173.5,
-        "y": 281.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3750
-      }
-    },
-    {
-      "id": "warcraft.mine.42.3",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 181.5,
-        "y": 281.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3750
-      }
-    },
-    {
-      "id": "warcraft.mine.49.0",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 173.5,
-        "y": 89.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3125
-      }
-    },
-    {
-      "id": "warcraft.mine.49.1",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 181.5,
-        "y": 89.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3125
-      }
-    },
-    {
-      "id": "warcraft.mine.49.2",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 173.5,
-        "y": 97.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3125
-      }
-    },
-    {
-      "id": "warcraft.mine.49.3",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 181.5,
-        "y": 97.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3125
-      }
-    },
-    {
-      "id": "warcraft.mine.55.0",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 349.5,
-        "y": 261.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3750
-      }
-    },
-    {
-      "id": "warcraft.mine.55.1",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 357.5,
-        "y": 261.5
-      },
-      "rotation": 0,
-      "owner": "none",
-      "initialState": {
-        "construction": "complete",
-        "amount": 3750
-      }
-    },
-    {
-      "id": "warcraft.mine.55.2",
-      "definition": "building.neutral.amber-mine",
-      "position": {
-        "x": 349.5,
         "y": 269.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3750
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-1"
+      }
+    },
+    {
+      "id": "warcraft.mine.42.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 177.5,
+        "y": 273.5
+      },
+      "rotation": 0,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-2"
+      }
+    },
+    {
+      "id": "warcraft.mine.42.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 181.5,
+        "y": 273.5
+      },
+      "rotation": 0,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-3"
+      }
+    },
+    {
+      "id": "warcraft.mine.42.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 185.5,
+        "y": 273.5
+      },
+      "rotation": 0,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-4"
+      }
+    },
+    {
+      "id": "warcraft.mine.49.0",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 181.5,
+        "y": 89.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-1"
+      }
+    },
+    {
+      "id": "warcraft.mine.49.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 185.5,
+        "y": 85.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-2"
+      }
+    },
+    {
+      "id": "warcraft.mine.49.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 189.5,
+        "y": 85.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-3"
+      }
+    },
+    {
+      "id": "warcraft.mine.49.3",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 193.5,
+        "y": 85.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-4"
+      }
+    },
+    {
+      "id": "warcraft.mine.55.0",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 345.5,
+        "y": 269.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-1"
+      }
+    },
+    {
+      "id": "warcraft.mine.55.1",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 349.5,
+        "y": 265.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-2"
+      }
+    },
+    {
+      "id": "warcraft.mine.55.2",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 353.5,
+        "y": 265.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-3"
       }
     },
     {
@@ -475,125 +568,152 @@
       "definition": "building.neutral.amber-mine",
       "position": {
         "x": 357.5,
-        "y": 269.5
+        "y": 265.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3750
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-4"
       }
     },
     {
       "id": "warcraft.mine.56.0",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 437.5,
-        "y": 337.5
+        "x": 417.5,
+        "y": 345.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-1"
       }
     },
     {
       "id": "warcraft.mine.56.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 445.5,
-        "y": 337.5
+        "x": 421.5,
+        "y": 349.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-2"
       }
     },
     {
       "id": "warcraft.mine.56.2",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 437.5,
-        "y": 345.5
+        "x": 425.5,
+        "y": 349.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-3"
       }
     },
     {
       "id": "warcraft.mine.56.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 445.5,
-        "y": 345.5
+        "x": 429.5,
+        "y": 349.5
       },
       "rotation": 0,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-4"
       }
     },
     {
       "id": "warcraft.mine.107.0",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 73.5,
+        "x": 85.5,
         "y": 181.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-1"
       }
     },
     {
       "id": "warcraft.mine.107.1",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 81.5,
-        "y": 181.5
+        "x": 89.5,
+        "y": 177.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-2"
       }
     },
     {
       "id": "warcraft.mine.107.2",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 73.5,
-        "y": 189.5
+        "x": 93.5,
+        "y": 177.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-3"
       }
     },
     {
       "id": "warcraft.mine.107.3",
       "definition": "building.neutral.amber-mine",
       "position": {
-        "x": 81.5,
-        "y": 189.5
+        "x": 97.5,
+        "y": 177.5
       },
-      "rotation": 0,
+      "rotation": 180,
       "owner": "none",
       "initialState": {
         "construction": "complete",
-        "amount": 3125
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-4"
       }
     },
     {
@@ -1655,6 +1775,176 @@
       },
       "rotation": 0,
       "owner": "none"
+    },
+    {
+      "id": "warcraft.mine.56.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 433.5,
+        "y": 345.5
+      },
+      "rotation": 0,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-5"
+      }
+    },
+    {
+      "id": "warcraft.mine.10.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 345.5,
+        "y": 445.5
+      },
+      "rotation": 0,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-5"
+      }
+    },
+    {
+      "id": "warcraft.mine.107.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 101.5,
+        "y": 181.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-5"
+      }
+    },
+    {
+      "id": "warcraft.mine.49.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 197.5,
+        "y": 89.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 2500
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-5"
+      }
+    },
+    {
+      "id": "warcraft.mine.5.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 273.5,
+        "y": 349.5
+      },
+      "rotation": 0,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-5"
+      }
+    },
+    {
+      "id": "warcraft.mine.13.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 129.5,
+        "y": 405.5
+      },
+      "rotation": 0,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 2000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-5"
+      }
+    },
+    {
+      "id": "warcraft.mine.28.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 265.5,
+        "y": 189.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-5"
+      }
+    },
+    {
+      "id": "warcraft.mine.35.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 417.5,
+        "y": 117.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 2000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-5"
+      }
+    },
+    {
+      "id": "warcraft.mine.42.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 189.5,
+        "y": 269.5
+      },
+      "rotation": 0,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-5"
+      }
+    },
+    {
+      "id": "warcraft.mine.55.4",
+      "definition": "building.neutral.amber-mine",
+      "position": {
+        "x": 361.5,
+        "y": 269.5
+      },
+      "rotation": 180,
+      "owner": "none",
+      "initialState": {
+        "construction": "complete",
+        "amount": 3000
+      },
+      "appearance": {
+        "asset": "asset.resource.amber-crystal-5"
+      }
     }
   ],
   "camps": [
@@ -2051,6 +2341,12 @@
       "lootPool": "loot.camp.medium"
     }
   ],
+  "landscape": {
+    "environment": {
+      "hour": 10,
+      "playing": false
+    }
+  },
   "authoring": {
     "terrain": {
       "version": 1,
@@ -6244,8 +6540,8 @@
       {
         "id": "warcraft.tree.845",
         "asset": "asset.models.environment.woodland-pine-b",
-        "x": 193.5,
-        "z": 83.5,
+        "x": 190,
+        "z": 80,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5600000083446502,
@@ -7264,8 +7560,8 @@
       {
         "id": "warcraft.tree.931",
         "asset": "asset.models.environment.woodland-pine-b",
-        "x": 197.5,
-        "z": 89.5,
+        "x": 194,
+        "z": 82,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5600000083446502,
@@ -14560,8 +14856,8 @@
       {
         "id": "warcraft.tree.1549",
         "asset": "asset.models.environment.woodland-pine-a",
-        "x": 421.5,
-        "z": 349.5,
+        "x": 426,
+        "z": 354,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5600000083446502,
@@ -15520,8 +15816,8 @@
       {
         "id": "warcraft.tree.1629",
         "asset": "asset.models.environment.woodland-pine-a",
-        "x": 333.5,
-        "z": 447.5,
+        "x": 330,
+        "z": 452,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5600000083446502,
@@ -17356,8 +17652,8 @@
       {
         "id": "warcraft.tree.1783",
         "asset": "asset.models.environment.woodland-pine-b",
-        "x": 329.5,
-        "z": 445.5,
+        "x": 322,
+        "z": 438,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5600000083446502,
@@ -19936,8 +20232,8 @@
       {
         "id": "warcraft.tree.2002",
         "asset": "asset.models.environment.woodland-pine-a",
-        "x": 415.5,
-        "z": 345.5,
+        "x": 412,
+        "z": 342,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5600000083446502,
@@ -21772,8 +22068,8 @@
       {
         "id": "warcraft.tree.2156",
         "asset": "asset.models.environment.woodland-pine-a",
-        "x": 101.5,
-        "z": 181.5,
+        "x": 106,
+        "z": 178,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5950000166893005,
@@ -21784,8 +22080,8 @@
       {
         "id": "warcraft.tree.2157",
         "asset": "asset.models.environment.woodland-pine-a",
-        "x": 95.5,
-        "z": 177.5,
+        "x": 92,
+        "z": 174,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5600000083446502,
@@ -21832,8 +22128,8 @@
       {
         "id": "warcraft.tree.2161",
         "asset": "asset.models.environment.woodland-pine-a",
-        "x": 101.5,
-        "z": 185.5,
+        "x": 106,
+        "z": 194,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5600000083446502,
@@ -21856,8 +22152,8 @@
       {
         "id": "warcraft.tree.2163",
         "asset": "asset.models.environment.woodland-pine-a",
-        "x": 91.5,
-        "z": 175.5,
+        "x": 88,
+        "z": 172,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5600000083446502,
@@ -21952,8 +22248,8 @@
       {
         "id": "warcraft.tree.2171",
         "asset": "asset.models.environment.woodland-pine-a",
-        "x": 97.5,
-        "z": 185.5,
+        "x": 106,
+        "z": 198,
         "elevation": 0,
         "yaw": -4.71238899230957,
         "scale": 0.5600000083446502,

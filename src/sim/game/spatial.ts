@@ -224,6 +224,7 @@ export class Spatial {
     if(!this.validNode(start)||!this.validNode(goal))return null;
     if(!this.unitWalkable(this.point(goal),actor))return null;
     if(this.airborne(actor)){if(start>=this.size*this.size||goal>=this.size*this.size)return null;this.airNavigation??=new Navigation(this.size,()=>true,()=>true,true,this.profile);return this.airNavigation.path(start,goal,blocked,maxCost);}
+    if(!this.layers&&this.navigationFor(actor).knownUnreachable(start,goal))return null;
     // Bridge portals retain their specialized solver.
     // Long terrain routes use the mesh; all accepted grid steps still obey the
     // very same footprint/corner rules as movement and the reference solver.
@@ -263,6 +264,7 @@ export class Spatial {
     if(this.airborne(actor)){if(start>=this.size*this.size||goal>=this.size*this.size)return null;this.airNavigation??=new Navigation(this.size,()=>true,()=>true,true,this.profile);return this.airNavigation.path(start,goal,blocked,maxCost);}
     const navigation=this.navigationFor(actor);
     if(!this.layers){
+      if(navigation.knownUnreachable(start,goal))return null;
       const dx=Math.abs(start%this.size-goal%this.size),dy=Math.abs(Math.floor(start/this.size)-Math.floor(goal/this.size));
       const corridor=Math.max(dx,dy)>=32?this.sectors.corridor(start,goal):undefined;
       this.routing.coarseExpanded+=corridor?this.sectors.diagnostics.expandedRegions:0;
@@ -278,14 +280,14 @@ export class Spatial {
       const convoy=Math.max(dx,dy)>=64&&nearbyTraffic>3&&!!actor&&'id' in actor&&'owner' in actor&&!this.opposingTraffic(actor as Entity,this.point(goal));
       const heuristicPermille=blocked?.size&&Math.max(dx,dy)>=64&&(nearbyTraffic<=3||convoy)?1200:1000;
       if(heuristicPermille>1000)this.routing.trafficBiasedSearches++;
-      const route=navigation.path(start,goal,blocked,maxCost,corridor,heuristicPermille,destinationProbeLimit);
+      const route=navigation.path(start,goal,blocked,maxCost,corridor,heuristicPermille,destinationProbeLimit,true);
       this.routing.expanded+=navigation.lastExpanded;
       if(route!==null||!corridor)return route;
       // Temporary traffic may block every portal on the preferred corridor.
       // Preserve reachability with a full search instead of reporting failure.
       this.routing.fallbacks++;this.routing.searches++;
       if(heuristicPermille>1000)this.routing.trafficBiasedSearches++;
-      const fallback=navigation.path(start,goal,blocked,maxCost,undefined,heuristicPermille,destinationProbeLimit);
+      const fallback=navigation.path(start,goal,blocked,maxCost,undefined,heuristicPermille,destinationProbeLimit,true);
       this.routing.expanded+=navigation.lastExpanded;return fallback;
     }
     const from=this.point(start),to=this.point(goal),corridor=Math.max(Math.abs(from.x-to.x),Math.abs(from.y-to.y))>=32?this.sectors.corridor(start,goal):undefined;

@@ -19,7 +19,7 @@ function foundation() {
  expect(project.construction!.progress).toBeGreaterThan(0);
  return {g,builder,helper,project};
 }
-function production(extra=5) {
+function production(extra=6) {
  const g=game([placed('mound','building.ants.house',245,240),placed('b','building.ants.barracks',160,180),placed('c','building.ants.barracks',184,180),
   ...Array.from({length:extra},(_,i)=>placed('extra.'+i,'unit.ants.warrior',140+i*4,200))]);
  g.state.wallets[owner]={'item.amber':10000,'item.wood':10000};
@@ -112,7 +112,7 @@ it('completes started training after supply loss but holds subsequent work until
 });
 
 it('rechecks supply for simultaneous starts and preserves the result across a cold restore',()=>{
- const {g,b,c,mound,train}=production(4);train();train(c.id);g.economy.remove(mound);
+ const {g,b,c,mound,train}=production(5);train();train(c.id);g.economy.remove(mound);
  const restored=new Game(g.map,slots,g.registry);restored.restore(g.snapshot());
  g.tick();restored.tick();expect([b,c].filter(e=>e.production!.active)).toHaveLength(1);expect(pool(g)).toMatchObject({used:14,training:1});
  run(g,1000);run(restored,1000);expect(b.production!.produced+c.production!.produced).toBe(1);expect(restored.snapshot()).toEqual(g.snapshot());

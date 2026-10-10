@@ -7,7 +7,7 @@ import { game, placed, run, slots, source } from './helpers';
 
 const pool=(g:Game,owner='player.1')=>colonySupply(g.entities,owner,g.registry);
 function fillInitialSupply(g:Game){
- for(let i=0;i<5;i++)g.context.create(placed(`fill-${i}`,'unit.ants.warrior',140+i*4,200));
+ for(let i=0,missing=15-pool(g).used;i<missing;i++)g.context.create(placed(`fill-${i}`,'unit.ants.warrior',140+i*4,200));
 }
 function setup(){
  const g=game([placed('mound','building.ants.house',245,240),placed('b','building.ants.barracks',160,180),placed('c','building.ants.barracks',184,180)]);
@@ -18,9 +18,9 @@ function setup(){
 }
 
 describe('definition-driven colony supply and direct training',()=>{
- it('starts at 10/15 and has no automatic births; mounds only add capacity',()=>{
-  const g=game();expect(pool(g)).toMatchObject({used:10,reserved:0,capacity:15,available:5,limit:100});
-  run(g,1000);expect(pool(g).used).toBe(10);
+ it('starts at 9/15 and has no automatic births; mounds only add capacity',()=>{
+  const g=game();expect(pool(g)).toMatchObject({used:9,reserved:0,capacity:15,available:6,limit:100});
+  run(g,1000);expect(pool(g).used).toBe(9);
   const h=g.context.create(placed('mound','building.ants.house',245,240));
   expect(h.production).toBeUndefined();expect(pool(g).capacity).toBe(23);
   expect(pool(g,'player.2').capacity).toBe(15);
@@ -49,7 +49,7 @@ describe('definition-driven colony supply and direct training',()=>{
   expect(g.entities.filter(e=>!ids.has(e.id))).toMatchObject([{definition:'unit.ants.warrior',owner:'player.1'}]);
   expect(workers.every(w=>w.definition==='unit.ants.settler'&&w.unit!.order?.type==='hold')).toBe(true);
   expect(g.state.jobs.some(j=>j.target===b.id)).toBe(false);
-  expect(pool(g)).toMatchObject({used:11,reserved:0});
+  expect(pool(g)).toMatchObject({used:10,reserved:0});
  });
  it('finishes active training after capacity loss but blocks the next unit until supply is restored',()=>{
   const {g,b,mound,train}=setup();fillInitialSupply(g);train();train();run(g,10);expect(b.production!.active?.progress).toBe(10);
@@ -73,7 +73,7 @@ describe('definition-driven colony supply and direct training',()=>{
   const {g,b,train}=setup();train();train();expect(pool(g).reserved).toBe(2);
   g.economy.remove(b);expect(pool(g).reserved).toBe(0);
   const w=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.settler')!;g.economy.remove(w);
-  expect(pool(g).used).toBe(9);expect(pool(g,'player.2')).toMatchObject({used:10,reserved:0});
+  expect(pool(g).used).toBe(8);expect(pool(g,'player.2')).toMatchObject({used:9,reserved:0});
  });
  it('hall worker escrow cannot be spent twice and cancel makes it available exactly once',()=>{
   const {g,b,hall,train}=setup();g.state.wallets[hall.owner]={'item.amber':150};
@@ -100,16 +100,16 @@ describe('definition-driven colony supply and direct training',()=>{
  });
  it('counts garrisoned units and reserves fallen hero revival once; started revival survives supply loss',()=>{
   const {g,mound}=setup();const hero=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.marshal')!;
-  hero.hp=0;hero.fallen=true;expect(pool(g).used).toBe(6);
+  hero.hp=0;hero.fallen=true;expect(pool(g).used).toBe(5);
   const altar=g.context.create(placed('altar','building.ants.sanctuary',200,240));altar.readyTick=0;
-  expect(g.revival.enqueue(altar,hero.id)).toBeNull();expect(pool(g)).toMatchObject({used:6,reserved:4});
+  expect(g.revival.enqueue(altar,hero.id)).toBeNull();expect(pool(g)).toMatchObject({used:5,reserved:4});
   expect(g.revival.enqueue(altar,hero.id)).toContain('already');
   g.revival.tick();expect(pool(g).training).toBe(4);g.economy.remove(mound);
   const fort=g.context.get(g.state.objectives['player.1'])!;fort.construction={progress:0,supportedHp:1};
   const ticks=g.registry.get(altar.definition).behaviors.revival!.workTicks;
   for(let i=0;i<ticks;i++)g.revival.tick();
-  expect(hero.fallen).toBeUndefined();expect(pool(g)).toMatchObject({used:10,reserved:0,capacity:0});
-  hero.unit!.contained=altar.id;expect(pool(g).used).toBe(10);
+  expect(hero.fallen).toBeUndefined();expect(pool(g)).toMatchObject({used:9,reserved:0,capacity:0});
+  hero.unit!.contained=altar.id;expect(pool(g).used).toBe(9);
  });
  it('restores ongoing over-capacity training and pending reservations deterministically',()=>{
   const {g,b,mound,train}=setup();fillInitialSupply(g);train();train();run(g,10);g.economy.remove(mound);

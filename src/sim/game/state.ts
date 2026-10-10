@@ -173,7 +173,7 @@ export const entitySchema = z
       .strict()
       .optional(),
     resource: z
-      .object({ amount: natural, growingUntil: natural.nullable(), felling: fellingStateSchema.optional() })
+      .object({ amount: natural, initialAmount: natural.optional(), growingUntil: natural.nullable(), felling: fellingStateSchema.optional() })
       .strict()
       .optional(),
     item: z.object({ quantity: positive, runtime: itemRuntimeSchema.optional() }).strict().optional(),

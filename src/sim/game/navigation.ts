@@ -27,6 +27,12 @@ export class Navigation {
   lastExpanded=0;
   /** Exact closed reverse region from the latest query, for candidate reuse. */
   lastDestinationPocket:ReadonlySet<number>|null=null;
+  // One exact exhausted origin region, reused across destination probes and retries.
+  // A byte per map cell bounds memory regardless of the number of candidates.
+  private originRegion: {start:number;cells:Uint8Array}|undefined;
+  knownUnreachable(start:number,goal:number):boolean {
+    return this.originRegion?.start===start && this.originRegion.cells[goal]===0;
+  }
   private readonly edges: Uint8Array;
   private readonly knownEdges: Uint8Array;
   private readonly queue=new MonotonicNavigationQueue();
@@ -49,6 +55,7 @@ export class Navigation {
   /** Terrain changes affect outgoing edges in the surrounding 3×3 cells,
    * including diagonal corner checks. Moving bodies never enter this cache. */
   invalidate(cells?:Iterable<number>,padding=1):void {
+    this.originRegion=undefined;
     if(!this.cacheTerrain)return;
     if(!cells){this.knownEdges.fill(0);return;}
     for(const cell of cells){
@@ -93,7 +100,7 @@ export class Navigation {
     }
     return seen;
   }
-  path(start: number, goal: number, blocked?: ReadonlySet<number>, maxCost = Infinity, corridor?:Uint8Array,heuristicPermille=1000,destinationProbeLimit=128): number[] | null {
+  path(start: number, goal: number, blocked?: ReadonlySet<number>, maxCost = Infinity, corridor?:Uint8Array,heuristicPermille=1000,destinationProbeLimit=128,rememberOrigin=false): number[] | null {
     this.lastExpanded=0;this.lastDestinationPocket=null;
     const sectorWidth=Math.ceil(this.size/SECTOR_SIZE);
     if (!Number.isInteger(start) || !Number.isInteger(goal) || start < 0 || goal < 0 || start >= this.size ** 2 || goal >= this.size ** 2) return null;
@@ -221,6 +228,13 @@ export class Navigation {
         prev[next] = id;
         queue.push(next, g, priority(h));
       }
+    }
+    // Only exhaustive, unrestricted searches prove the complete reachable set.
+    // Corridor failures, cost limits and temporary blockers are not reusable.
+    if(rememberOrigin&&!corridor&&!blocked?.size&&maxCost===Infinity){
+      const cells=this.originRegion?.cells??new Uint8Array(this.size*this.size);
+      for(let i=0;i<cells.length;i++)cells[i]=+(closed[i]===epoch);
+      this.originRegion={start,cells};
     }
     return null;
     });

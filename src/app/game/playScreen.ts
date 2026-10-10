@@ -62,7 +62,7 @@ export class PlayScreen extends GameScreen {
 
   start(): void {
     void this.session.start(p => this.loading.update(p)).then(async () => {
-      if (!this.destroyed) {if(this.initialSave)await this.session.restoreLocal(this.initialSave);if(!this.destroyed){this.ready=true;this.loading.destroy();if(document.documentElement.dataset.profiler!=='off')this.performanceWindow=new PerformanceDebugWindow(this.root,matchPerformanceSource(getMap(this.mapId).name),'top-12');}}
+      if (!this.destroyed) {if(this.initialSave)await this.session.restoreLocal(this.initialSave);if(!this.destroyed){this.ready=true;this.loading.destroy();if(document.documentElement.dataset.profiler!=='off')this.performanceWindow=new PerformanceDebugWindow(this.hud.navigationHost,matchPerformanceSource(getMap(this.mapId).name),'hud-debug-inline');}}
     }).catch(error => {
       if (!this.destroyed) {this.session.stop();this.loading.error(error);console.error(error);}
     });

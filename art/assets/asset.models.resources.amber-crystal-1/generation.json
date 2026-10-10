@@ -1,0 +1,24 @@
+{
+  "provider": "tripo-studio",
+  "uuid": "0cb78d1f-5ebd-4762-b5df-efcc0366dfec",
+  "url": "https://studio.tripo3d.ai/workspace/generate/0cb78d1f-5ebd-4762-b5df-efcc0366dfec",
+  "settings": {
+    "model": "H3.1",
+    "polycount": 4500,
+    "topology": "Triangle",
+    "texture": "4K",
+    "ultraMesh": true,
+    "pbr": true,
+    "removeLighting": true
+  },
+  "credits": 55,
+  "triangles": 4266,
+  "dimensions": [
+    6.599999904632568,
+    4.361270904541016,
+    4.98284387588501
+  ],
+  "materials": 1,
+  "textureSize": 1024,
+  "description": "Five full variants share one-third remaining and empty stages."
+}

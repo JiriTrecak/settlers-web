@@ -27,7 +27,7 @@ export class MineLabels {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#f2dfb1";
-    ctx.fillText(`Workers ${workers}`, 128, 32);
+    ctx.fillText(`Workers ${workers}/${recommendedWorkers}`, 128, 32);
     const texture = new CanvasTexture(canvas);
     texture.colorSpace = SRGBColorSpace;
     texture.minFilter = LinearFilter;

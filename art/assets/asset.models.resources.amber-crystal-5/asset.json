@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "id": "asset.models.resources.amber-crystal-5",
+  "name": "Amber Crystals 5",
+  "kind": "prop",
+  "revision": 23,
+  "status": "published",
+  "tags": [
+    "original",
+    "neutral",
+    "resource",
+    "amber",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "cad81797c7b8655a0ce214f9d389eb909a6944f38aec34f447f96190f74dc21e",
+      "bytes": 1122
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "a41f66efe497f148501449902e4f569116c1f4855a3c8f8e21d7bb0e2321930f",
+      "bytes": 791
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "4fce147164ff3111cd65b89a826b7bc59320c298a33e0f9509162434075d1ee5",
+      "bytes": 3376640
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "3a0a466b8391a94017ae8ecb45cca298c26c2a859e100bff4586dcbd164f23f2",
+      "bytes": 1153615
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "566c3dd1bc72c6c8a0e6154b9ca591e77550949e785467ba5c42c95bf4d99c31",
+      "bytes": 1078292
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "3d8e3491f5674300f3c8db93cc91527089df6115da7001e94d284aff7b7f3712",
+      "bytes": 6641
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "fc1880aa5187d0f5d42180f3bbb8ac128053a5a59098704a19e7ef326fafc068",
+      "bytes": 1851261
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "94868bf533e99cf3fe9103649d51a92b63f06df811e2a0e741b22f8daf186164",
+      "bytes": 10166113
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "186d4b0e7e7c9026461e99c6fd67683248d6a3245a30151c322ccc6fc38ce391",
+      "bytes": 7504052
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "101ddf2274a519c76a1b59378805eb21ea745a836f406e9d3554fd945f7a5da3",
+      "bytes": 381
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "model",
+    "render": [
+      {
+        "id": "asset.resource.amber-crystal-5",
+        "scale": 2,
+        "healthHeight": 8.587546348571777,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.resources.amber-crystal-5"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "blocker": {
+      "shape": "box",
+      "size": [
+        4,
+        4
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 2,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

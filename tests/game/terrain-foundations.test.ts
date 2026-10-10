@@ -22,6 +22,6 @@ it('uses saved shallow, deep, dry and ramp terrain consistently for movement and
  current=game();expect(current.g.spatial.walkable(cell)).toBe(false);expect(current.reason()).toBe('Placement blocked');
  map.authoring.terrain=editTerrainGrid(map.authoring.terrain,{selection,operation:{type:'dry',level:0}}).terrain;
  current=game();expect(current.g.spatial.walkable(cell)).toBe(true);expect(current.reason()).toBeNull();
- map.authoring.terrain=editTerrainGrid(map.authoring.terrain,{selection,operation:{type:'ramp',fromLevel:0,toLevel:1,direction:'east'}}).terrain;
+ map.authoring.terrain=editTerrainGrid(map.authoring.terrain,{selection,operation:{type:'ramp',fromLevel:0,toLevel:2,direction:'east'}}).terrain;
  current=game();expect(current.g.spatial.walkable(cell)).toBe(true);expect(current.reason()).toBe('Choose flatter ground');
 });

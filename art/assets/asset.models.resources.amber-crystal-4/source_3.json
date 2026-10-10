@@ -1,0 +1,23 @@
+{
+  "name": "Amber Crystals 4",
+  "recipe": "model.py",
+  "blend": "source.blend",
+  "preserve_textures": true,
+  "runtime_texture_size": 1024,
+  "camera": {
+    "azimuth": 42,
+    "elevation": 35,
+    "target": [
+      0,
+      0,
+      2.3767803192138675
+    ],
+    "scale": 11,
+    "distance": 20
+  },
+  "render": {
+    "width": 1024,
+    "height": 1024,
+    "samples": 64
+  }
+}

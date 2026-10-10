@@ -14,14 +14,14 @@ Use the optional final `actorTag` in `mission.say` to name the speaker. Heartwoo
 
 ## Capture a slowdown
 
-1. Open **Debug** while the slowdown is visible. Keep the same map, camera, viewport and graphics settings when comparing changes.
-2. Choose **Capture 10 seconds**. Play through the problematic situation. Wait for **Capture complete**.
-3. Use **Copy report** to copy the finished capture as JSON. **Set baseline** stores that capture for comparison with the next one. **Download trace** exports measured CPU spans and sampled simulation, AI, frame-interval and GPU counters as trace-event JSON.
+1. Open **Performance** (Ctrl+F3) while the slowdown is visible. Keep the same map, camera, viewport and graphics settings when comparing changes.
+2. Choose **Capture 10 seconds**. Play through the problematic situation. Wait for recording to finish; **Last capture** then becomes available.
+3. Use **Report** to download JSON containing the live report and finished capture. **Set baseline** stores that capture for comparison with the next one. **Download trace** exports measured CPU spans and sampled simulation, AI, frame-interval and GPU counters as trace-event JSON.
 4. Repeat after changing one variable. Compare GPU frame/atmosphere, CPU scopes and frame intervals separately. Negative baseline percentages mean less time.
 
 The overlay reports the fraction of presented frame intervals over the 120 Hz budget, mean, p95 and p99 latency, a recent-frame graph, and counters for render calls, geometry, effects and simulation work. Captures retain up to 4,096 samples per scope and the 40 worst frames exceeding the 8.33 ms budget. GPU frame, scene, atmosphere and portrait queries rotate without nesting and only run while profiling is enabled. Unsupported GPU timer extensions leave GPU timings unavailable rather than estimating them from CPU submission time.
 
-CPU scopes overlap and must not be added together. GPU timings arrive asynchronously. A spike record contains the latest sampled scopes, not a causal per-frame trace. The downloadable trace records CPU scopes at their actual start/duration, while simulation/AI/GPU counters are timestamped when delivered. These counters are not execution spans; GPU results in particular arrive late. Trace storage is capped at 64,000 events, with any dropped events reported in the download button and file metadata. Starting another capture replaces the previous trace. Counters in the summary report are the last frame, not capture averages. Close other GPU-heavy tools before comparisons, and repeat runs before making a performance claim.
+CPU scopes overlap and must not be added together. GPU timings arrive asynchronously. A spike record contains the latest sampled scopes, not a causal per-frame trace. The downloadable trace records CPU scopes at their actual start/duration, while simulation/AI/GPU counters are timestamped when delivered. These counters are not execution spans; GPU results in particular arrive late. Trace storage is capped at 64,000 events, with any dropped events reported in the file metadata. Starting another capture replaces the previous trace. Counters in the summary report are the last frame, not capture averages. Close other GPU-heavy tools before comparisons, and repeat runs before making a performance claim.
 
 ## Changes made from profiling
 

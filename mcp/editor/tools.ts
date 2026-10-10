@@ -504,7 +504,7 @@ export function editorTools(hub: EditorHub) {
           .max(1.5)
           .optional()
           .describe(
-            "Perspective distance relative to the default Play camera (1). 1.5 is maximum zoom out; closest distance is 52 world units. Small maps may limit zoom out.",
+            "Perspective distance relative to the default Play camera (1 = 60 world units), clamped to 40–80 world units. Small maps may limit zoom out.",
           ),
         gameCam: z
           .boolean()

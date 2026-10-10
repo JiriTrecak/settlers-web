@@ -42,7 +42,15 @@
   "mineDefinition": "building.neutral.amber-mine",
   "mineOffsets": [
     [
+      -8,
+      0
+    ],
+    [
       -4,
+      -4
+    ],
+    [
+      0,
       -4
     ],
     [
@@ -50,12 +58,8 @@
       -4
     ],
     [
-      -4,
-      4
-    ],
-    [
-      4,
-      4
+      8,
+      0
     ]
   ],
   "campClassificationSource": "https://classic.battle.net/mod/dev/melee.shtml",

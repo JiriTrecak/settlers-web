@@ -1,0 +1,276 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.beetles-carapace-hall",
+  "name": "Carapace Bastion",
+  "kind": "building",
+  "revision": 25,
+  "status": "published",
+  "tags": [
+    "original",
+    "beetles",
+    "main-building",
+    "tripo",
+    "team-mask"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "8864de496242d59bb6f1988e41b51052e9d563ed8dca5343d0c09c6f767ca172",
+      "bytes": 6867912
+    },
+    {
+      "role": "build",
+      "index": 1,
+      "format": "json",
+      "sha256": "fac99df78848001b0f7cb6129c56aeabbf6b3347b56a4456953d298d59d81e6e",
+      "bytes": 1993
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "9e5e1cde94eb3ced766c4cb158cff7c9086bdce46de478c7bde78d9514d63aa3",
+      "bytes": 850
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "e7497e7c07f691c8950742bcd672011a820cf1ea09dc5aa96788730f4369d4ed",
+      "bytes": 12896092
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "3f369096a99d8133b89e1696494a74fb8eb9ab5cf4b16d8bfbc4aa75ba47df35",
+      "bytes": 21638
+    },
+    {
+      "role": "metalness",
+      "index": 1,
+      "format": "png",
+      "sha256": "ef383904bc00113c8450d84ba3f6dc76c2a0f686cc198ae80310ac019a9d46c0",
+      "bytes": 1877185
+    },
+    {
+      "role": "normal",
+      "index": 1,
+      "format": "png",
+      "sha256": "43c0b3481324263975af9022c6437a192181183cff74e211a848b8ad041652da",
+      "bytes": 2544479
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "7f54dc511710b583d2b07485ae11a5c4989c1fc9e212fcb69f2eacb76a9a2a9f",
+      "bytes": 1271672
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "96cd3a559bea27b604e6a17ae9db78351af3e1ee19b91339d6221cfa96055bcf",
+      "bytes": 1273709
+    },
+    {
+      "role": "preview",
+      "index": 3,
+      "format": "png",
+      "sha256": "b8017852c2852381fe0c0e3704dd56f68a199162017d1c452a46bab891bfa16d",
+      "bytes": 1272889
+    },
+    {
+      "role": "preview",
+      "index": 4,
+      "format": "png",
+      "sha256": "3e75b50c3434c9e7ca958ff3f66e0dd07de4e14948115a42334835e62c22cca0",
+      "bytes": 1262310
+    },
+    {
+      "role": "preview",
+      "index": 5,
+      "format": "png",
+      "sha256": "c4aa4737246f74251da143ee55bf2c37e1be8b30c529fab7962fa4c2692263a1",
+      "bytes": 1217637
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "8c8ff5ee60f21ff90cdd4c00e4438ab2aa193b22d2a9431464e045bd8c9bf224",
+      "bytes": 6766
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "1abc252ac4c7cc127d8d9c2eb94acd3fe56fc004d04b4aa03899a582048f63ab",
+      "bytes": 1721
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "a825589210b6b971e06fa97c859a812a53c2e2e38003afea87599f283b4d1545",
+      "bytes": 1916945
+    },
+    {
+      "role": "roughness",
+      "index": 1,
+      "format": "png",
+      "sha256": "011aeb931a402d7a58ce2876d62fcaeaee32f6b1632e7e3ace1c5e86362cb402",
+      "bytes": 1987301
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "e6fc97a057ca437d8ccfbce654457242393e85c4c5806e0be670b6f2a73257f1",
+      "bytes": 27956773
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "e0e1fb41d2821cca1f6342c90dd329ea66eafcbcd6c0f92974d373ec402c7ef4",
+      "bytes": 11086804
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "png",
+      "sha256": "92bbdaa8e8de3b09abf0592d27961927371e77f13f30945eae113a89bb75ec0f",
+      "bytes": 13844835
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "51273f3c29efcd170375beea6474d755b0a1f301886e3f57267c01d71a41636d",
+      "bytes": 167
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "json",
+      "sha256": "19fed70f0d028c04cf8b833ba892eb331a4050fb18283f6b29a3ab40139b61b2",
+      "bytes": 484
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "28e1788a4db07e32a135b78bc906e324c05701a4563070ca11a199b89899275f",
+      "bytes": 117874
+    }
+  ],
+  "usesGeometry": true,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [
+    {
+      "slot": "TC_TeamColor",
+      "shader": "standard",
+      "color": "#ffffff",
+      "roughness": 1,
+      "metalness": 1,
+      "alphaMode": "opaque",
+      "alphaCutoff": 0.4,
+      "doubleSided": false,
+      "textures": {
+        "albedo": {
+          "role": "albedo",
+          "index": 1
+        },
+        "normal": {
+          "role": "normal",
+          "index": 1
+        },
+        "roughness": {
+          "role": "roughness",
+          "index": 1
+        },
+        "metalness": {
+          "role": "metalness",
+          "index": 1
+        },
+        "teamMask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      }
+    }
+  ],
+  "bindings": {
+    "faction": "beetles",
+    "profile": "building",
+    "render": [
+      {
+        "id": "asset.beetles.carapace-hall",
+        "scale": 1,
+        "healthHeight": 10.840951919555664,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.beetles-carapace-hall"
+        }
+      },
+      {
+        "id": "icon.beetles.carapace-hall",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.buildings.beetles-carapace-hall"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "blocker": {
+      "shape": "box",
+      "size": [
+        20,
+        20
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 10,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork created for Under the Canopy.",
+    "generation": {
+      "role": "generation",
+      "index": 1
+    }
+  }
+}

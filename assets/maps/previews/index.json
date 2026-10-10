@@ -22,10 +22,10 @@
     "camps": 19,
     "sandbox": false,
     "playable": true,
-    "sourceHash": "5a0d2f6e",
+    "sourceHash": "b1b080d5",
     "image": "echo-isles.webp",
     "custom": false,
-    "generationHash": "cee923f71d21f3ab0f55283f32f2c32fe082773f315a9ec3bb1897f4b2eb556d"
+    "generationHash": "698e43fa8cd65efd1c16d1eac6a4436a9207750cb7bc7e10495ef0e7f3e42ee8"
   },
   "turtle-rock": {
     "name": "Turtle Rock v2.0",
@@ -64,9 +64,9 @@
     "camps": 22,
     "sandbox": false,
     "playable": true,
-    "sourceHash": "56fa3c9f",
+    "sourceHash": "e13fe740",
     "image": "turtle-rock.webp",
     "custom": false,
-    "generationHash": "dab08e7c669af37d0cc1d87c6be7fee919a72c283a94b1c35ac12c161b8ff1dd"
+    "generationHash": "51144f3b58f2ee92c3962979057ab02cd8a1117ed5d221fef9ad7f32d891b11b"
   }
 }

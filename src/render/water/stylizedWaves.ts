@@ -45,7 +45,7 @@ vec3 surfaceNormal(vec2 p,float level,float pixelSize,out float crest){
  // through the shallow/deep blend rather than lighting a phantom seam.
  vec2 slope=vec2(surfaceHeight(p+vec2(e,0.),level)-surfaceHeight(p-vec2(e,0.),level),surfaceHeight(p+vec2(0.,e),level)-surfaceHeight(p-vec2(0.,e),level))/(2.*e);
  vec4 effects=uAuthoredWater?waterProfile(p,2.):vec4(.15,.055,.1,.5);
- float ripple=effects.g*mix(.1,.65,openWater(depth,swell,shore))*(1.-smoothstep(.15,.75,pixelSize))*smoothstep(0.,.2,depth);
+ float ripple=effects.g*mix(.3,.65,openWater(depth,swell,shore))*(1.-smoothstep(.15,.75,pixelSize))*smoothstep(0.,.2,depth);
  vec2 q=p*effects.r*5.+vec2(uSourceWaterTime*.14,-uSourceWaterTime*.09);
  slope+=vec2(cos(q.x+sin(q.y)),cos(q.y*.87+sin(q.x)))*ripple;
  crest=smoothstep(.48,.88,h)*openWater(depth,swell,shore)*smoothstep(.005,.12,amplitude);

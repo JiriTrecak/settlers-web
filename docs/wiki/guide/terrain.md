@@ -10,11 +10,11 @@ Buildings need dry, level foundations. The maximum height difference across a fo
 
 ## Seeing uphill
 
-Every observer uses the same **1.2-metre sight offset** above its ground level. This is an engine rule; a taller model does not see farther uphill.
+Every observer can see ground up to **2 metres above its own ground level**, within its normal vision radius. This is an engine rule; a taller model does not see farther uphill.
 
 - Terrain higher than that offset stays hidden from an observer below.
 - Climbing a ramp gradually raises the observer's viewpoint and reveals the upper ground.
-- Intervening ridges block sight. Standing back from a cliff rim can also conceal the ground immediately below it.
+- Lower ground remains visible throughout the vision radius, including past small intervening hills. Solid bridge floors still conceal the space beneath them.
 - Allied players share vision. A scout on the plateau can reveal enemies to an allied army below.
 - Leaving the area preserves explored terrain, but enemy units disappear from current view. Previously seen static structures retain their last known appearance.
 

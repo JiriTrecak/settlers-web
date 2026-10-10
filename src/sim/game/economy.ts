@@ -328,7 +328,7 @@ export class Economy {
       for (const task of raceDefinition(this.c.registry.rules,this.c.slots.find(s=>`player.${s.player+1}`===owner)?.race).startingSetup.gathering ?? []) {
         const recipe = this.c.registry.get(task.item).creation!;
         if (recipe.method !== "harvest") continue;
-        const resource = this.c
+        const resources = this.c
           .live()
           .filter(
             (e) =>
@@ -338,14 +338,18 @@ export class Economy {
           )
           .sort(
             (a, b) => distance2(a, hall) - distance2(b, hall) || a.id - b.id,
-          )[0];
-        if (!resource) continue;
+          );
+        if (!resources.length) continue;
         const selected = workers
-          .filter((w) => !used.has(w.id) && this.harvestItem(w, resource))
+          .filter((w) => !used.has(w.id) && resources.some(resource=>this.canAssignGather(w,resource)))
           .slice(0, task.workers);
+        const assigned=new Map<number,number>();
+        for(const source of gatherAssignments(this.s,this.c.liveUnits()).values())assigned.set(source,(assigned.get(source)??0)+1);
         for (const w of selected) {
-          if (!this.canAssignGather(w, resource)) continue;
+          const resource=resources.filter(r=>this.canAssignGather(w,r)).sort((a,b)=>(assigned.get(a.id)??0)-(assigned.get(b.id)??0)||distance2(a,hall)-distance2(b,hall)||a.id-b.id)[0];
+          if (!resource) continue;
           w.unit!.order = { type: "gather", target: resource.id };
+          assigned.set(resource.id,(assigned.get(resource.id)??0)+1);
           used.add(w.id);
         }
       }

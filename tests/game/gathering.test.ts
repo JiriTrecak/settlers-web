@@ -16,7 +16,12 @@ function setup(){
 describe('hall gathering economy',()=>{
  it('auto-starts declared worker groups, depletes trees and deposits both resources into each hall',()=>{
   const g=setup();
-  expect(g.entities.filter(e=>e.unit?.order?.type==='gather')).toHaveLength(12);
+  expect(g.entities.filter(e=>e.unit?.order?.type==='gather')).toHaveLength(10);
+  for(const owner of ['player.1','player.2'] as const){
+   const w=g.entities.find(e=>e.owner===owner&&content.get(e.definition).behaviors.work)!;
+   const t=g.entities.find(e=>e.placement===`tree.${owner.slice(-1)}`)!;
+   g.command(owner,{type:'gather',actors:[w.id],target:t.id});
+  }
   run(g,2400);
   for(const id of Object.values(g.state.objectives)){
    const hall=g.context.get(id)!;

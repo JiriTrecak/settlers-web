@@ -16,7 +16,7 @@ it('freezes race and matching hero and spawns each declared starting army',()=>{
  expect(match.slots.map(s=>[s.race,s.hero])).toEqual([['ants','unit.ants.marshal'],['beetles','unit.beetles.hornbreaker']]);
  for(const [i,race] of ['ants','beetles'].entries()){
   const d=raceDefinition(content.rules,race),owner=`player.${i+1}`,own=w.settlement.entities.filter(e=>e.owner===owner);
-  expect(own.filter(e=>e.definition===d.startingSetup.units[0].definition)).toHaveLength(6);expect(own.some(e=>e.definition===d.startingSetup.fort)).toBe(true);expect(own.some(e=>e.definition===d.startingSetup.hero!.default)).toBe(true);
+  expect(own.filter(e=>e.definition===d.startingSetup.units[0].definition)).toHaveLength(5);expect(own.some(e=>e.definition===d.startingSetup.fort)).toBe(true);expect(own.some(e=>e.definition===d.startingSetup.hero!.default)).toBe(true);
  }
  expect(parseMatchConfig(match)).toEqual(match);
  expect(()=>createSkirmishMatch({mapId:'bad',slots:[{player:0,kind:'human',race:'beetles',hero:'unit.ants.marshal'},{player:1,kind:'ai'}]},map.playerStarts,'r')).toThrow();
