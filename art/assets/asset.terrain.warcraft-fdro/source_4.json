@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Fdro",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronfall\\lordf_dirtrough_diffuse.dds",
-      "sha256": "864bc72eee6cc7c5a4029ac180f076700b08a34a5dba95db68424cbebc682804"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/lordaeronfall/lordf_dirtrough.dds",
+      "sha256": "7ec99d22b188616951c3abc8cf6a71609923d90b693f5d87520f159e5be6a3e7"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/lordaeronfall/lordf_dirtrough_normal.dds",
-      "sha256": "37000dcc2c2545124b81a0ac08584cd81dca92ebeeccf25b87695e2bc9dc811f"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronfall\\lordf_dirtrough_orm.dds",
-      "sha256": "6f9d1f86084dfe8a70129d9c0a4184edcc501aedf5aa39b9667ba26ae1b214b1"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

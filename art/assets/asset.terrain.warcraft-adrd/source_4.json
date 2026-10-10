@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Adrd",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_dirtrough_diffuse.dds",
-      "sha256": "e7631c440a9a09a3e5f97fb5afae284895ade3a334d02b27620a134fa19ac501"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/ashenvale/ashen_dirtrough.dds",
+      "sha256": "99c2996d68c1fbc01ee504eaf83b5d82bbacb1089e2c3835a2d6b535f5dd21ab"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/ashenvale/ashen_dirtrough_normal.dds",
-      "sha256": "c109586a0e90aaa197b86294069703b175d7834777cbd375a992c72f78769233"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_dirtrough_orm.dds",
-      "sha256": "f76e9b18078a763c5a13f18fd06cdf370ee8aaca691e1c56f43a04a226d3bdc8"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "cAc2",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_dirt_diffuse.dds",
-      "sha256": "8a65b590e9394f41d0e42589a33373a43aa10c438c3f7827c47c019051de66ee"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/ashenvale/ashen_dirt.dds",
+      "sha256": "cc911f4ec3e8cbdd80af5420f510b14a94098025c93389e01d68a88ec0c4eff9"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/ashenvale/ashen_dirt_normal.dds",
-      "sha256": "da084aa140d5f611703644fac99b2311d07d33d66fd5432b570d230391afe33b"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_dirt_orm.dds",
-      "sha256": "f0ba250fa4ef65e61e304e23f5827bd6e9ab6962688d3ddea3911e1cef47fcfb"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

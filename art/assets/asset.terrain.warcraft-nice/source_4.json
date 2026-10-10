@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Nice",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_ice_diffuse.dds",
-      "sha256": "58ce212e4d3d138c7814f1dbfd2d434d4ff03f8dd8abfe977810eda9eaa2f274"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/northrend/north_ice.dds",
+      "sha256": "2638e37b5b5d92cc9f350a71661f26856aeb0947c5d4162282425812cc7dd7ef"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/northrend/north_ice_normal.dds",
-      "sha256": "e8fc1bbf36a48e91e4ace0ab012c8b23d02302eb1c9262d3fb76588032cd3179"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_ice_orm.dds",
-      "sha256": "1bd0c67053019278766d63f80922ef9ed71832a579176e934a6b202bf7c035e8"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

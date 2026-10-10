@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Fdrg",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/lordaeronfall/lordf_dirtgrass_diffuse.dds",
-      "sha256": "25862e2f8d1c17f872cc026f1e60314efc944a2d28930fb91cf34a6d61fb23c9"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/lordaeronfall/lordf_dirtgrass.dds",
+      "sha256": "7f7a2454b1e67b4ec6912abf10b0553f88435bbe73279ea4a593bcbc6b33c222"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/lordaeronfall/lordf_dirtgrass_normal.dds",
-      "sha256": "ea3d8caa240d7b8c801fa2487a7e92e0db06295a3e62b289ebcb41ca0b014cf4"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronfall\\lordf_dirtgrass_orm.dds",
-      "sha256": "aa9709736c4f17c017cd32439a28e1736c589581c643b36afc9463e989a5ec73"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

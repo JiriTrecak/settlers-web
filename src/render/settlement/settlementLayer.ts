@@ -871,7 +871,6 @@ export class SettlementLayer {
       this.placementModel = this.clone(d.asset);
       this.placementAsset = d.asset;
       if (this.placementModel) {
-        this.placementModel.scale.setScalar(this.registry.asset(d.asset).scale ?? 1);
         this.placementModel.traverse((child) => {
           if (!(child instanceof Mesh)) return;
           child.castShadow = false;
@@ -890,6 +889,9 @@ export class SettlementLayer {
       }
     }
     if (this.placementModel) {
+      // Definitions may share an asset while using different presentation sizes.
+      // Match the completed Body transform on every preview, not only on clone.
+      this.placementModel.scale.setScalar((this.registry.asset(d.asset).scale ?? 1) * (d.modelScale ?? 1));
       this.placementModel.position.set(x, field.sample(x, y), y);
       this.placementModel.rotation.y = (rotation * Math.PI) / 180;
       this.placementModel.traverse((child) => {

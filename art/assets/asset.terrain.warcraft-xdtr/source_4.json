@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Xdtr",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\dalaran\\dalaran_dirtrough_diffuse.dds",
-      "sha256": "932907acd8aeb70824f967058e57b868bf8bd43efca039dde5ceb4339f2e544a"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/dalaran/dalaran_dirtrough.dds",
+      "sha256": "8e9c06a0536787fcf72bab093d58584badfb21587fa31affa685e5becadd2b3e"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/dalaran/dalaran_dirtrough_normal.dds",
-      "sha256": "8ab4e09c9c754da60c6bf5173859eaf4e970ed32de0f5d255f21bad9915d67a2"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\dalaran\\dalaran_dirtrough_orm.dds",
-      "sha256": "aaa1dd38edfc99a8929335153895188d01cb8ffa068c30b8bbcd49cd6fda0bd0"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

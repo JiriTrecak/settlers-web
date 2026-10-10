@@ -21,12 +21,13 @@ export const GAME_ASPECT = 16 / 9;
  * viewport uses 70 / sqrt(1 + aspect²); retain that reference lens at 16:9.
  * Source and viewport differences are documented in camera.md. */
 export const GAME_FOV = 70 / Math.hypot(1, GAME_ASPECT);
-/** RTS eye-to-target distance: start at 60, zoom between 40 and 80. */
-export const GAME_DISTANCE = 60;
-export const GAME_DISTANCE_MIN = 40;
-export const GAME_DISTANCE_MAX = 80;
-/** Derived horizontal footprint at the standard aspect, in building cells. */
-export const GAME_VIEW_WIDTH_C = 2 * GAME_DISTANCE * Math.tan(GAME_FOV * Math.PI / 360) * GAME_ASPECT / BUILDING_CELL_SIZE;
+/** Default battlefield coverage at the focus plane: a five-cell Hall occupies
+ * 5/32 of its width. Derive distance from the lens instead of tuning it in isolation. */
+export const GAME_VIEW_WIDTH_C = 32;
+export const GAME_DISTANCE = GAME_VIEW_WIDTH_C * BUILDING_CELL_SIZE / (2 * Math.tan(GAME_FOV * Math.PI / 360) * GAME_ASPECT);
+/** Keep close inspection available; the far limit shows 40 building cells. */
+export const GAME_DISTANCE_MIN = 60;
+export const GAME_DISTANCE_MAX = GAME_DISTANCE * 40 / GAME_VIEW_WIDTH_C;
 /** Extra view-axis distance so the near-side ground stays in front of the ortho near plane. */
 const SLACK = 32;
 const PITCH_MIN = 0.12;

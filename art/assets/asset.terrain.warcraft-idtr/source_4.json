@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Idtr",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\icecrown\\ice_dirtrough_diffuse.dds",
-      "sha256": "ef94ef69d00586418be0140d7b1e5d9e9f2223bfca9e274719ee79cb04598d84"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/icecrown/ice_dirtrough.dds",
+      "sha256": "22cd55c2f5db38bfd03c86a092b0f6d65d7957939668a47b6ee9025bbb51b86d"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/icecrown/ice_dirtrough_normal.dds",
-      "sha256": "80db6a457f1537694743a23cc7fd0eca58f837cdc0be668434ae15b1dd22917a"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\icecrown\\ice_dirtrough_orm.dds",
-      "sha256": "79586860120518adf3f69e5eea747ddf06f479be00e05d4c2752a8a12105cb02"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

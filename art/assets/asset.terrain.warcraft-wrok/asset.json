@@ -3,7 +3,7 @@
   "id": "asset.terrain.warcraft-wrok",
   "name": "Rock · LordaeronWinter",
   "kind": "terrain-material",
-  "revision": 1,
+  "revision": 2,
   "status": "published",
   "tags": [
     "warcraft",
@@ -15,98 +15,98 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "a494c256f84ddcbcb31654f2da8c5cd201827c88a97f2bf0d4d33fa2f7d94105",
-      "bytes": 2282267
+      "sha256": "042d43a20fe0686cd9b83d173abc63d7ff975aa0451d18839593112dcc031aa2",
+      "bytes": 2340758
     },
     {
       "role": "data",
       "index": 2,
       "format": "bin",
-      "sha256": "70c9fe1e9436224941e1721990003fb1eaa7fc4d58e2fb01c520b7ee0eefac60",
-      "bytes": 3155071
+      "sha256": "75c60b1968f54cd405f1af4d056496eb22aa4e896b03969c0be3258ff1344bd1",
+      "bytes": 60526
     },
     {
       "role": "data",
       "index": 3,
       "format": "bin",
-      "sha256": "4adbfa4833e519171ccfbbd231ca772394e1e6202b7f0076c79ddb476ccc10f2",
-      "bytes": 91649
+      "sha256": "ddb406d52f3d6792683abbfcfe7a6ff9fab288f2cbd61cf23e49d4a896e0f96f",
+      "bytes": 4101
     },
     {
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "1c948912970e56a2311527a3872ccb61ab8f685c6816f87fb06f09fb2c1813ea",
-      "bytes": 1507845,
+      "sha256": "ee86975c58dfadb2714184156a40215088b2658b9f1723bce0c47c72052acf05",
+      "bytes": 190767,
       "colorSpace": "srgb"
     },
     {
       "role": "normal",
       "index": 1,
       "format": "png",
-      "sha256": "e571583b6d78db3ac7297d91fe3c4b7569ec06177c678d3f008a757810a53628",
-      "bytes": 5463073,
+      "sha256": "a357c0687458b93c02ce334f4deaffb9cac2d7f5129046c2c8631b8a5f6d56b9",
+      "bytes": 3186,
       "colorSpace": "none"
     },
     {
       "role": "occlusion",
       "index": 1,
       "format": "png",
-      "sha256": "e8d55299ff1aab529ca31fc61e55c65146b7b23c8e396b247e0ae6f702d9f02d",
-      "bytes": 113190,
+      "sha256": "518764aac1c34be2391ae9edf627e920d6d909812780bd77a5baed2a7a1541fc",
+      "bytes": 1000,
       "colorSpace": "none"
     },
     {
       "role": "roughness",
       "index": 1,
       "format": "png",
-      "sha256": "597b37a93f111c431ace9f8889bb03c46781c9da6e1f35ba9de83ba7d23d4e44",
-      "bytes": 1265096,
+      "sha256": "518764aac1c34be2391ae9edf627e920d6d909812780bd77a5baed2a7a1541fc",
+      "bytes": 1000,
       "colorSpace": "none"
     },
     {
       "role": "metalness",
       "index": 1,
       "format": "png",
-      "sha256": "bb2e418aa6161528ea550aabcb885ed8ce6c8c6dc144e20dab289976c68a82b2",
-      "bytes": 6212,
+      "sha256": "8dc7d93f6d682a6595d4edb518dee547ea56b5f9ee1701506bf3bed64a481455",
+      "bytes": 482,
       "colorSpace": "none"
     },
     {
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "7ca112340c47adcabfc9ed1b82ad9c4b01ab16d0bb6bff5d198edb9d9eb7f47d",
-      "bytes": 37715,
+      "sha256": "db8c1ea6092f36e41c2899c00bfc34a5c7ae388c008f2d0b60ba18ccebd700f2",
+      "bytes": 69533,
       "colorSpace": "srgb"
     },
     {
       "role": "source",
       "index": 1,
       "format": "bin",
-      "sha256": "e0ec75f21b6e8afdc9ef4deaf8fb2001b0d596487ab9e3d3531c5c1a03d44c62",
-      "bytes": 2796368
+      "sha256": "2542568be96b6a6490f98a388bfdc27296b254799d8025c726dd83280fec4d49",
+      "bytes": 174928
     },
     {
       "role": "source",
       "index": 2,
       "format": "bin",
-      "sha256": "0c9ee6b47c53b854ae47b8cb64f15b486a7aaa107125744b3f09fdad454fb1f6",
-      "bytes": 2796368
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c",
+      "bytes": 524288
     },
     {
       "role": "source",
       "index": 3,
       "format": "bin",
-      "sha256": "68bbf012dc74462a69d22dab3be50addf5073c9fd810a22cbf604f30b2e76141",
-      "bytes": 2796368
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006",
+      "bytes": 524288
     },
     {
       "role": "source",
       "index": 4,
       "format": "json",
-      "sha256": "302ee2eae31b5aa3a51ff0db1ddc4715f04a523c512d1584ad773763e3735e7f",
-      "bytes": 1519
+      "sha256": "5f060ba1b2189507b697376dfe8f5d7074e103d33e0885ae94997d2888db91fe",
+      "bytes": 1435
     }
   ],
   "usesGeometry": false,
@@ -128,8 +128,8 @@
   "capabilities": {},
   "provenance": {
     "method": "import",
-    "licenseNote": "User-supplied Rebirth replacements with missing channels from the local Warcraft III: Reforged installation. Original sources retain their respective rights.",
-    "sourceHash": "66879417283899084599afe35d69c7653d48bfcb94872678ebd8083922b39b22"
+    "licenseNote": "Imported from the local Warcraft III installation (classic). Original sources retain their respective rights.",
+    "sourceHash": "22a9cc49d60f2a4b735701e7488fec1efed70eab7abde4c6651025daf5d15379"
   },
   "terrain": {
     "tileWorldSize": 4,

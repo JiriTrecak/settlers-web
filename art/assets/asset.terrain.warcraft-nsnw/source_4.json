@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Nsnw",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_snow_diffuse.dds",
-      "sha256": "03deafb2c431d1d04ff7af013e07d371703558e19c2dcdb0d781f99a77d9fedd"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/northrend/north_snow.dds",
+      "sha256": "29f6426d08e018221d8e6ed7c435ee9ee89e83562dc2ae854512ccb35c00ba67"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/northrend/north_snow_normal.dds",
-      "sha256": "bdf49beb378db52c9efbaa99bca80a38919ea82157a3253fe076b15c6f5099f3"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_snow_orm.dds",
-      "sha256": "c06d1840fbf1db975b9a2d719f5955830af8fb18f8c7611401c5f5c3c8852c88"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Xhdg",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/dalaran/dalaran_grasstrim_diffuse.dds",
-      "sha256": "1c9b64cafff5133d2c4e8438aa6b3b6fd3234dc0bf49435917e3099089f90856"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/dalaran/dalaran_grasstrim.dds",
+      "sha256": "7c8b6156db89bf9b8cafc6c6808be891d433f3c19efc7b5e475198cc605e6e4f"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/dalaran/dalaran_grasstrim_normal.dds",
-      "sha256": "346a5b6d5211557ce47f12bd06cbfdd660ecb90f96e7a8f30b02764d9d272655"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\dalaran\\dalaran_grasstrim_orm.dds",
-      "sha256": "e8e315fcb89fbd4ca6237f3034b8eff302ebbaed461ca35e86d0987b016f9ff5"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

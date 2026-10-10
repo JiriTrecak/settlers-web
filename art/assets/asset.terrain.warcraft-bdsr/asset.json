@@ -3,7 +3,7 @@
   "id": "asset.terrain.warcraft-bdsr",
   "name": "Desert · Barrens",
   "kind": "terrain-material",
-  "revision": 1,
+  "revision": 2,
   "status": "published",
   "tags": [
     "warcraft",
@@ -15,15 +15,15 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "83573dbce67298f80896db86e56da4a8537ce01d2aac5590f5ac962959192652",
-      "bytes": 2655224
+      "sha256": "f21d179cb4b8900c8d2ee2a07960a39065b77f2175df96c72598263c8dc65e2f",
+      "bytes": 2036884
     },
     {
       "role": "data",
       "index": 2,
       "format": "bin",
-      "sha256": "d318b17bbbcd66deacf7f94cb80369c2fa332ed247e61054803c21934dfcb29c",
-      "bytes": 246112
+      "sha256": "45a30a66c35070000dd57a5c21dd77ab238887258b9429a1d997cbff0517eb8b",
+      "bytes": 109993
     },
     {
       "role": "data",
@@ -36,77 +36,77 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "a3a0925e4810ead82a577163c1e6d6d2982df16e42d258c21abf17a18f12f8de",
-      "bytes": 2213311,
+      "sha256": "2be4a6b770f27c1d7a2be3ab92d58d77a7cee2d496ba6ff0cbebc8aecdcc02c9",
+      "bytes": 201159,
       "colorSpace": "srgb"
     },
     {
       "role": "normal",
       "index": 1,
       "format": "png",
-      "sha256": "8e5aa43b9599656c1fe337b9451cccf3775d0e1452fa406f8edd42152bdb2662",
-      "bytes": 294323,
+      "sha256": "a357c0687458b93c02ce334f4deaffb9cac2d7f5129046c2c8631b8a5f6d56b9",
+      "bytes": 3186,
       "colorSpace": "none"
     },
     {
       "role": "occlusion",
       "index": 1,
       "format": "png",
-      "sha256": "b50c7a4ae38a89827e53957af4a6e02ef91b3510c630fc1cb49e7ba8cba10e1c",
-      "bytes": 8539,
+      "sha256": "518764aac1c34be2391ae9edf627e920d6d909812780bd77a5baed2a7a1541fc",
+      "bytes": 1000,
       "colorSpace": "none"
     },
     {
       "role": "roughness",
       "index": 1,
       "format": "png",
-      "sha256": "1fa47681f84fbb5d64d3561cadd572bf4d7bb994f4237de2d3f1a68941b208b5",
-      "bytes": 971958,
+      "sha256": "518764aac1c34be2391ae9edf627e920d6d909812780bd77a5baed2a7a1541fc",
+      "bytes": 1000,
       "colorSpace": "none"
     },
     {
       "role": "metalness",
       "index": 1,
       "format": "png",
-      "sha256": "bb2e418aa6161528ea550aabcb885ed8ce6c8c6dc144e20dab289976c68a82b2",
-      "bytes": 6212,
+      "sha256": "8dc7d93f6d682a6595d4edb518dee547ea56b5f9ee1701506bf3bed64a481455",
+      "bytes": 482,
       "colorSpace": "none"
     },
     {
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "a0cff8dee432db0b756c1f65378284be6cf3047f2a1ef76540d8c2a6f1c05b12",
-      "bytes": 52925,
+      "sha256": "7941e2d8b425d8349e6b1bc103f1feb05096df00bec2b08f29e4ae917324c140",
+      "bytes": 54414,
       "colorSpace": "srgb"
     },
     {
       "role": "source",
       "index": 1,
       "format": "bin",
-      "sha256": "c05552f43bfb99027be6365bdd73530a21febd710ac15a64ba874f80dd987902",
-      "bytes": 2796368
+      "sha256": "5e3f3921ceae44a5a79d523c26ef5bd33fe7bc55a3e736ddd2ec0b541a8b911d",
+      "bytes": 174928
     },
     {
       "role": "source",
       "index": 2,
       "format": "bin",
-      "sha256": "c4762726533027efd3823d0e1808ebcf2f9e557bf116ec7fabc75d91322bf973",
-      "bytes": 2796368
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c",
+      "bytes": 524288
     },
     {
       "role": "source",
       "index": 3,
       "format": "bin",
-      "sha256": "c080fbba765bfd8aa0cfbe2b5286732cc59abc08bd87f58db2ceb9f59124f7f4",
-      "bytes": 2796368
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006",
+      "bytes": 524288
     },
     {
       "role": "source",
       "index": 4,
       "format": "json",
-      "sha256": "0f570bc4e46eac01ee319d176b6a0d3cfa197932d8042d1e2d572f73aca4ef25",
-      "bytes": 1507
+      "sha256": "42fd33445e0c098f172ee22514350d16c1da2b8dc0466c2c12dc328fdd7791fe",
+      "bytes": 1431
     }
   ],
   "usesGeometry": false,
@@ -128,8 +128,8 @@
   "capabilities": {},
   "provenance": {
     "method": "import",
-    "licenseNote": "User-supplied Rebirth replacements with missing channels from the local Warcraft III: Reforged installation. Original sources retain their respective rights.",
-    "sourceHash": "ea38777cac8e90672d0602c62217205fb1e2d27c580b059e54837eb13a2a0124"
+    "licenseNote": "Imported from the local Warcraft III installation (classic). Original sources retain their respective rights.",
+    "sourceHash": "6699b15322eb0ff1539521d19301b9f359d4316de6490347852769a323636116"
   },
   "terrain": {
     "tileWorldSize": 4,

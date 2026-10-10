@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Bdrg",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/barrens/barrens_dirtgrass_diffuse.dds",
-      "sha256": "415f360a584f09cd36ad1ce9c6eeb10015505f951bbde017b7048c9ea76aa1fe"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/barrens/barrens_dirtgrass.dds",
+      "sha256": "6d6867cb2133de6e12ded3c1ac4140aa0833c875cd27a2172db81c107894ee02"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/barrens/barrens_dirtgrass_normal.dds",
-      "sha256": "43aadf1c9a18988214adf2fe1b2b7c84ac3ab2f6e8be30e63aa82fc702a401dd"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_dirtgrass_orm.dds",
-      "sha256": "5478359e08cd8e82fb7ea99ce5c0857975f760320d68f39dacadd6b7b563c278"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

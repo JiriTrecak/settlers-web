@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Vstp",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_stonepath_diffuse.dds",
-      "sha256": "a3ad0a238629d74e3b933a7a59319ee3dabc6b8926405ed264b352808192f127"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/village/village_stonepath.dds",
+      "sha256": "17c1a9d51e2e7a787442c44ade01d59e521184366be063ce1de160521cf375d7"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/village/village_stonepath_normal.dds",
-      "sha256": "9659289050f6195b38e662e86a1402a26fb4de13f331fe95c717a275c4aa7724"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_stonepath_orm.dds",
-      "sha256": "5c85bc370babc910717815acefeafa5e471823bb9f8b5c7dc229aca4637bb193"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

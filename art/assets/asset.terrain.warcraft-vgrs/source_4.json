@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Vgrs",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/village/village_grassshort_diffuse.dds",
-      "sha256": "22062ecb7f9ced37180c8e510f035094f317eb4d1c4e75f5c28aac5333c29ca8"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/village/village_grassshort.dds",
+      "sha256": "750c5065a970d592f8bf5113ff0d6f1171df62ca4ca623c2eba84faf8083080b"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/village/village_grassshort_normal.dds",
-      "sha256": "409f499efe238bb4fc6f707402f45d33e513113b9595905484a49c5e205b98fd"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_grassshort_orm.dds",
-      "sha256": "695556ae9d2e17ffd7add7c8879c84032509bcda1b6ef118f44aed8aff9a6f63"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

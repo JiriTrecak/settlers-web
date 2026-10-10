@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Nrck",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_rock_diffuse.dds",
-      "sha256": "9f5380cc3e1067f5fa9a8622cd6bc79c79a94d5c7ade7edb210b00816661138c"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/northrend/north_rock.dds",
+      "sha256": "2f1dcfbbfb926ac3454e7d30d0a8c314229464aeff9a7b6cb6f9c347a54ed206"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/northrend/north_rock_normal.dds",
-      "sha256": "306183245c0fb9b4a55acf2d4b0875ea216fb40969c34047805e5520f4ce4891"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\northrend\\north_rock_orm.dds",
-      "sha256": "a9f7112ce6f03d9a8569658e978ebe31fb9aa0f276b08ad3f5aabf11befdb860"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

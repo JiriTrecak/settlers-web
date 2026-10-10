@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Bdrr",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/barrens/barrens_pebbles_diffuse.dds",
-      "sha256": "b7ea817c9f250ba672cb150714997a7ce22fbf0c133f6ba8dc16f3325a1731f1"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/barrens/barrens_pebbles.dds",
+      "sha256": "5441f618d4bf6c3205393168f84968b343ff7350c90dd3b4987ca315edf73fda"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/barrens/barrens_pebbles_normal.dds",
-      "sha256": "43aadf1c9a18988214adf2fe1b2b7c84ac3ab2f6e8be30e63aa82fc702a401dd"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_pebbles_orm.dds",
-      "sha256": "fa5f887286408680d5aad155b9ef88d2ccf480f75043fef93351a1cb775086e4"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

@@ -1,10 +1,10 @@
-import {sampleDaytime,daytimeLabel,wrap24,DAY_CYCLE_SECONDS,type DaytimeColor,type DaytimeSample} from '../../shared/environment/dayCycle';
+import {sampleDaytime,daytimeDirection,daytimeLabel,wrap24,DAY_CYCLE_SECONDS,type DaytimeColor,type DaytimeSample} from '../../shared/environment/dayCycle';
 export {DAY_CYCLE_SECONDS} from '../../shared/environment/dayCycle';
 import { FOREST, type GlobalLight } from '../../shared/environment/presets';
 /**
- * Four held/authored lighting looks over a 24h clock.
+ * Two held lighting palettes over a 24h clock.
  * Hour is authored (editor dock); play just ticks whatever is set.
- * Sun direction blends during dawn/dusk; stable phases reuse their lighting.
+ * Colours blend briefly at dawn/dusk; the shadow direction moves continuously.
  */
 import {
   AmbientLight,
@@ -181,10 +181,18 @@ export class Sky {
     };
   }
 
-  /** Held looks never drift with the clock. Directions interpolate only during transitions. */
+  private updateDirection():void {
+    const light=this.light;
+    this.direction.fromArray(daytimeDirection(this.hour)).applyAxisAngle(UP,light.sunDirection*Math.PI/180);
+    const elevation=Math.asin(this.direction.y),az=Math.atan2(this.direction.x,this.direction.z),e=Math.min(1.48,elevation*light.sunHeight/60);
+    this.direction.set(Math.cos(e)*Math.sin(az),Math.sin(e),Math.cos(e)*Math.cos(az));
+    this.sun.position.copy(this.direction).multiplyScalar(this.size*.85).add(this.sun.target.position);
+  }
+
+  /** Cache held colours, while updating the sun/moon orbit on every clock change. */
   private apply(): void {
     const sample=sampleDaytime(this.hour,this.profile);this.current=sample;
-    if(sample===this.applied)return;
+    if(sample===this.applied){if(!this.interior)this.updateDirection();return;}
     this.applied=sample;
     const look=sample.look,light=this.light,tint=this.tint;
     this.updateAtmosphere();
@@ -200,12 +208,11 @@ export class Sky {
       color(this.ambient.color,look.ambient).multiply(tint.set(light.ambientTint));this.ambient.intensity=look.ambient.multiplier*light.ambientStrength;
       color(this.hemi.color,look.skyColor).multiply(tint.set(light.skyTint));this.hemi.groundColor.set(light.bounceTint).multiplyScalar(.15);this.hemi.intensity=look.skyColor.multiplier*light.fillStrength;
       color(this.bg,look.skyColor).multiplyScalar(look.skyColor.multiplier);
-      // XML direction describes travelling light rays; Three positions the light toward their source.
-      this.direction.fromArray(look.sunDirection).negate().normalize().applyAxisAngle(UP,light.sunDirection*Math.PI/180);
-      if(light.sunHeight!==60){const elevation=Math.asin(this.direction.y),az=Math.atan2(this.direction.x,this.direction.z),e=Math.min(1.48,elevation*light.sunHeight/60);this.direction.set(Math.cos(e)*Math.sin(az),Math.sin(e),Math.cos(e)*Math.cos(az));}
+
     }
     this.baseSunIntensity=this.sun.intensity;
     this.scene.background=this.bg;this.sun.shadow.radius=light.shadowSoftness;
+    if(!this.interior)this.updateDirection();
     this.sun.position.copy(this.direction).multiplyScalar(this.size*.85).add(this.sun.target.position);
     this.sun.target.updateMatrixWorld();
   }

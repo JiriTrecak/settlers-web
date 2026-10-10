@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Zdtr",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/ruins/ruins_dirtrough_diffuse.dds",
-      "sha256": "e4e6da2caf06bc4f58c1edc074ca97c4aaa2b148314d55eb5554266c09931820"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/ruins/ruins_dirtrough.dds",
+      "sha256": "440ed54cb2b381071e1ae4103d92cc5ebf025948da0568fe3a64364515bd0fdf"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/ruins/ruins_dirtrough_normal.dds",
-      "sha256": "a6193f461e906311959028cedb1722e540a628c1fb1c4e4afa82ad498f36eb0a"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_dirtrough_orm.dds",
-      "sha256": "46b2b18320e9bdfafad181662cd82ab2fbdb1d6980a3a91445b19b411c08e3a2"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Vcrp",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/village/village_crops_diffuse.dds",
-      "sha256": "01be03e35e7f99e52c6cca297371bacd588fceecee7e4b027f929d13da07a08d"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/village/village_crops.dds",
+      "sha256": "5394f22b68e0053d1c2e1acde091ba0f7d1340f938d475ecf105931d60969d3f"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/village/village_crops_normal.dds",
-      "sha256": "5be031e4683c443db205dfcd8767ff6e9cdb526db74b76641e944ce0f85d391e"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_crops_orm.dds",
-      "sha256": "a62be1f6b272db4a388222d5ea8506e1ab46a1a0586650ab0315e0bd5c305930"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Ztil",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/ruins/ruins_roundtiles_diffuse.dds",
-      "sha256": "8ec96a6e23c61a9a4306c63f659aad665e3be7e9a859a2716c95ca510afc97ee"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/ruins/ruins_roundtiles.dds",
+      "sha256": "3212a1098d07c970f807d22737b4b9c1cfb902270f84ff7c8f96238af7e2eedc"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/ruins/ruins_roundtiles_normal.dds",
-      "sha256": "8d3a10547221c7fdc882c50fdfa1332be1fcef720d693d2950c5d6c4d29eb69b"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_roundtiles_orm.dds",
-      "sha256": "a3bd91d3b6c0df7e77e74557846b0e9b669740f05403c31b5c7317eff416de97"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

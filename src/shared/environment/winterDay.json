@@ -19,12 +19,12 @@
   },
   "sunColor": {
     "rgb": [
-      247,
-      224,
-      174
+      239,
+      246,
+      255
     ],
     "alpha": 1,
-    "multiplier": 10
+    "multiplier": 8
   },
   "sunDirection": [
     0.5,

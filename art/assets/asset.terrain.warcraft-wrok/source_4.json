@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Wrok",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/lordaeronwinter/lordw_rock_diffuse.dds",
-      "sha256": "e0ec75f21b6e8afdc9ef4deaf8fb2001b0d596487ab9e3d3531c5c1a03d44c62"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/lordaeronwinter/lordw_rock.dds",
+      "sha256": "2542568be96b6a6490f98a388bfdc27296b254799d8025c726dd83280fec4d49"
     },
     {
       "channel": "normal",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronwinter\\lordw_rock_normal.dds",
-      "sha256": "0c9ee6b47c53b854ae47b8cb64f15b486a7aaa107125744b3f09fdad454fb1f6"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronwinter\\lordw_rock_orm.dds",
-      "sha256": "68bbf012dc74462a69d22dab3be50addf5073c9fd810a22cbf604f30b2e76141"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

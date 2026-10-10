@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "cZc1",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_largebricks_diffuse.dds",
-      "sha256": "c14c51a1b1e4b609ddf015e71eb175b6b2d5160429cd14223a924726c0f3b5b8"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/ruins/ruins_largebricks.dds",
+      "sha256": "77c13eb56ae1524c72f90ea98da1001ee905672595e663c573d881886c7ad0b1"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/ruins/ruins_largebricks_normal.dds",
-      "sha256": "8473f42436b40e7c6f7da159806ad4aa9845d7345cd477521675b7a75e6a2b2f"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\ruins\\ruins_largebricks_orm.dds",
-      "sha256": "55ba90a75ced949cb94bbfa6c289dc9a57df92898a1fdeae62dcca51ff30302b"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

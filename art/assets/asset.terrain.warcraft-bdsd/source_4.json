@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Bdsd",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_desertdark_diffuse.dds",
-      "sha256": "184e160d085371b15bdc9ff2dde1176183c2cd8b440755f41070f14ce31d9ee6"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/barrens/barrens_desertdark.dds",
+      "sha256": "2fc7eb2871185ca16a60649177970dd1b08b81074c6f99567e7bcc275513cb05"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/barrens/barrens_desertdark_normal.dds",
-      "sha256": "c4762726533027efd3823d0e1808ebcf2f9e557bf116ec7fabc75d91322bf973"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\barrens\\barrens_desertdark_orm.dds",
-      "sha256": "860db1905ef3b9caeecac9eb433ac171037784604f9af42ef64086f9f7efa59c"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

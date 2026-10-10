@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Vrck",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_rocks_diffuse.dds",
-      "sha256": "dc8659633ac76f85a9ad3d324f8e4eb222212c94c828864d694f0993cab813db"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/village/village_rocks.dds",
+      "sha256": "affa80734368310dafce9896236ca2d8ceb218a46f2256d4ee820db49d0ac5ec"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/village/village_rocks_normal.dds",
-      "sha256": "73f1e130cc606f1072fec91c65fed60b92c13a8cf08eac8b947df482f47f25f4"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\village\\village_rocks_orm.dds",
-      "sha256": "c6a64681adbd5600528fc527ce84af5119d9c7cfd99a6e7a7cdc9ef600eacee5"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

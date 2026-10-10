@@ -4,14 +4,17 @@ import { Camera, GAME_ASPECT, GAME_VIEW_WIDTH_C, GAME_DISTANCE, GAME_DISTANCE_MA
 import {BUILDING_CELL_SIZE} from '../../src/shared/spatial/footprint';
 
 describe("iso camera", () => {
-  it('starts at distance 60 with readable infantry and a matching ground footprint',()=>{
+  it('shows 32 building cells with a five-cell Hall using less than a fifth of the view',()=>{
     const camera=new Camera();camera.setGame(true,512);camera.lookAt(256,256);
     const left=camera.groundAt(-1,0,GAME_ASPECT),right=camera.groundAt(1,0,GAME_ASPECT);
     expect(Math.hypot(right[0]-left[0],right[1]-left[1])/BUILDING_CELL_SIZE).toBeCloseTo(GAME_VIEW_WIDTH_C,4);
     const view=new PerspectiveCamera();camera.applyTo(view,1920,1080);view.updateMatrixWorld();
     const feet=new Vector3(256,0,256).project(view),head=new Vector3(256,4.8,256).project(view);
     const heightPx=Math.abs(head.y-feet.y)*540;
-    expect(camera.distance).toBe(60);expect(heightPx).toBeGreaterThan(80);expect(heightPx).toBeLessThan(120);
+    expect(GAME_VIEW_WIDTH_C).toBe(32);
+    expect(camera.distance).toBe(GAME_DISTANCE);expect(heightPx).toBeGreaterThan(35);expect(heightPx).toBeLessThan(65);
+    const hallLeft=new Vector3(246,0,256).project(view),hallRight=new Vector3(266,0,256).project(view);
+    expect((hallRight.x-hallLeft.x)/2).toBeCloseTo(5/32,6);
   });
   it('retains authored map dimensions through game, free and top-down mode changes',()=>{
     const cam=new Camera();
@@ -131,8 +134,8 @@ describe("iso camera", () => {
     const yaw = cam.yaw;
     cam.zoomBy(1.5);
     cam.orbitScreen(80, 40);
-    expect(cam.distance).toBe(80);
-    cam.zoomBy(.1);expect(cam.distance).toBe(40);
+    expect(cam.distance).toBe(GAME_DISTANCE_MAX);
+    cam.zoomBy(.1);expect(cam.distance).toBe(GAME_DISTANCE_MIN);
     expect(cam.yaw).toBe(yaw);
   });
 

@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "cXc2",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\dalaran\\dalaran_dirt_diffuse.dds",
-      "sha256": "5ae7db841dbcf68aa0258163571477b2717a6ebb738abbf36e4d8267bfb64f4b"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/dalaran/dalaran_dirt.dds",
+      "sha256": "9de097a617a897e4bfac8699e84671c2fc965ef1d11ff8a354b8d45e43dd01cc"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/dalaran/dalaran_dirt_normal.dds",
-      "sha256": "29e36a338b67f7e44a9f87757a32f94b00a0a1ceaaf598b7a9bf30467a903a38"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\dalaran\\dalaran_dirt_orm.dds",
-      "sha256": "5eed7175ffd8b185a147d98387dfa8b51ba3b11b489829abb14e5d05c48d0b1b"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

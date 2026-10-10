@@ -51,7 +51,7 @@ it.each([1,1.7,2])('renders unit bodies and indicators at the definition model s
   expect(body.scale.x).toBeCloseTo((asset.scale??1)*multiplier);
   expect(body.scale.y).toBeCloseTo(body.scale.x);expect(body.scale.z).toBeCloseTo(body.scale.x);
   expect(root.getObjectByName('Health')!.position.y).toBeCloseTo((registry.get(e.definition).dimensions?.height??(asset.healthHeight??2.5)*multiplier)+.25);
-  if(e.gathering)expect(root.getObjectByName('Mine occupancy')!.position.y).toBeCloseTo((asset.healthHeight??3)*multiplier+.55);
+  if(e.gathering)expect(root.getObjectByName('Mine occupancy')).toBeUndefined();
   expect(root.position.x).toBe(e.x);expect(root.position.z).toBe(e.y);expect(root.scale.x).toBe(1);
   if(unit){
    expect(root.getObjectByName('Cargo')!.position.y).toBeCloseTo(1.04*scale);
@@ -76,4 +76,26 @@ it('loads entity models on demand and shares one prototype for aliases',async()=
  const first=layer.createPortrait('building.ants.forester',0)!,second=layer.createPortrait('building.ants.sanctuary',0)!;
  expect(first).not.toBeNull();expect(second).not.toBeNull();expect(first.root).not.toBe(second.root);
  first.dispose();second.dispose();layer.destroy(scene);
+});
+
+it('keeps placement ghosts at completed-building scale, including definitions sharing one asset',async()=>{
+ vi.spyOn(MineLabels.prototype,'material').mockReturnValue(new SpriteMaterial());
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockResolvedValue({scene:new Group(),animations:[]} as any);
+ const raw=source(),base=raw.definitions.find(d=>d.id==='building.ants.house')!;
+ const shared=raw.definitions.find(d=>d.id==='building.ants.barracks')!;
+ base.modelScale=1.6;shared.asset=base.asset;shared.modelScale=.7;
+ const registry=new ContentRegistry(raw),scene=new Scene(),layer=new SettlementLayer(scene,registry),field=new HeightField();
+ await layer.ready;
+ const g=game([placed('house',base.id,205,210)],draft=>{draft.definitions.find(d=>d.id===base.id)!.modelScale=base.modelScale;}),state=g.view();
+ const entity=state.entities.find(e=>e.definition===base.id)!;
+ layer.update({...state,entities:[entity]},field,0);await layer.ready;layer.update({...state,entities:[entity]},field,0);
+ const body=scene.getObjectByName('game-entities')!.children.find(o=>o.userData.entityId===entity.id)!.getObjectByName('Body')!;
+ layer.preview(base.id,210,215,true,field);
+ const ghost=(layer as unknown as {placementModel:Group}).placementModel;
+ expect(ghost.scale.toArray()).toEqual(body.scale.toArray());
+ layer.preview(shared.id,210,215,true,field);
+ expect((layer as unknown as {placementModel:Group}).placementModel).toBe(ghost);
+ expect(ghost.scale.x).toBeCloseTo((registry.asset(shared.asset).scale??1)*.7);
+ layer.preview(null,0,0,true,field);expect(ghost.visible).toBe(false);
+ layer.destroy(scene);
 });

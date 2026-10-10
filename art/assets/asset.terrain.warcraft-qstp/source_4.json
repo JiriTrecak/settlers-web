@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Qstp",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_stonepath_diffuse.dds",
-      "sha256": "a3ad0a238629d74e3b933a7a59319ee3dabc6b8926405ed264b352808192f127"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/villagefall/villagefall_stonepath.dds",
+      "sha256": "d668afd2cdf4b683ca5594049657c7734863047fe17396379c74a5a25e18f5e7"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/villagefall/villagefall_stonepath_normal.dds",
-      "sha256": "77c1318eada38b8170054b46aa30b3ba72500119f3b46f17c6884dd182549dda"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_stonepath_orm.dds",
-      "sha256": "c3aba4faf02690a0ee7df278a18bd01cb132e485bf4ab4b61a9e068e7feffbaa"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

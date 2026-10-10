@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Idki",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/icecrown/ice_darkice_diffuse.dds",
-      "sha256": "ff5381c0da62ada5c52ebce76af1365be3136b1f83a3cc6541f26be3dacc6986"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/icecrown/ice_darkice.dds",
+      "sha256": "7655983e801778d4600c07bc16618918ad3d4db2236b70c0caaf997a7f722d66"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/icecrown/ice_darkice_normal.dds",
-      "sha256": "33477a0684d0292eebc118bca05364091d1b7728a043ced6a5d9fe2d3018c12e"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\icecrown\\ice_darkice_orm.dds",
-      "sha256": "4be60c70b011f97ca937f3fc62db54c092ca70439effb3d4650fda8b7f3c30c8"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {

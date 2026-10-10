@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Qrck",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_rocks_diffuse.dds",
-      "sha256": "ea05790893726138abbfc9bf67d0719d1de3f79661cee683bb60171559b38fd9"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/villagefall/villagefall_rocks.dds",
+      "sha256": "9b9d177d90db2c71db107fcc9ae7f9f6f73601606bb4ec3c5c226180cbfa2619"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/villagefall/villagefall_rocks_normal.dds",
-      "sha256": "0d0cf2253ae60a90212fbe22709495f2cb15909799cd4dae61a84ef45cdb2c34"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\villagefall\\villagefall_rocks_orm.dds",
-      "sha256": "1606a313b5410356dc0ef08293e48d22eb4e2750a719c4a081e7c1f3539bc985"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
     }
   ],
   "packing": {

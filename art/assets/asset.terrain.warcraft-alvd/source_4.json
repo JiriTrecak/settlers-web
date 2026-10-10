@@ -1,25 +1,26 @@
 {
   "version": 1,
+  "graphics": "classic",
   "tileId": "Alvd",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "replacement",
-      "path": "terrainart/ashenvale/ashen_leaves_diffuse.dds",
-      "sha256": "3c8b2611bc5e51f2916fe5733756133e6d244fc46a3e438d5ae3c68b8c6b81ab"
+      "origin": "installed-classic",
+      "path": "war3.w3mod:terrainart/ashenvale/ashen_leaves.dds",
+      "sha256": "9735ea52d3cb3157838bc7ea2e85b778ddb8ab6d0151790102dc845a4f9ab25c"
     },
     {
       "channel": "normal",
-      "origin": "replacement",
-      "path": "terrainart/ashenvale/ashen_leaves_normal.dds",
-      "sha256": "c109586a0e90aaa197b86294069703b175d7834777cbd375a992c72f78769233"
+      "origin": "neutral-material",
+      "path": "neutral:normal",
+      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
     },
     {
       "channel": "orm",
-      "origin": "installed-reforged",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\ashenvale\\ashen_leaves_orm.dds",
-      "sha256": "5aa129ade817447421becca2fa965d5ff46828d019d2107c45aa6caa9b2a37be"
+      "origin": "neutral-material",
+      "path": "neutral:orm",
+      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
     }
   ],
   "packing": {
