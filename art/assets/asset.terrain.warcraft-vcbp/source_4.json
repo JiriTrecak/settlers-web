@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Vcbp",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/village/village_cobblepath.dds",
-      "sha256": "6bfee7590f0f01b7e65a3886fd459f24e24f093a5ef458b78ab58d43dca5ccfe"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/village/village_cobblepath_diffuse.dds",
+      "sha256": "c17951c62fa761ff61807cc48e8db3d2c93bdb17bc3592f757742d430c423a67"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/village/village_cobblepath_normal.dds",
+      "sha256": "3f2260f9c5c229901c5d6d73017e11a502cd3f89277fc4bb749225ba8acc4f74"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/village/village_cobblepath_orm.dds",
+      "sha256": "1e66c7d11206b4b76b864dd0e068664d99b4a92916d3027b16d4696efa0e2b3d"
     }
   ],
   "packing": {

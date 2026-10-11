@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "graphics": "definitive",
   "cliffId": "CLgr",
   "surface": {
     "surfaceRect": [
@@ -21,21 +22,21 @@
   "sources": [
     {
       "channel": "diffuse",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronsummer\\lords_cliff1_diffuse.dds",
-      "origin": "installed-reforged",
-      "sha256": "9810d34802332e34b5986fe086a89d83d7478b4f6ccd90227d0642c036b6fedb"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronsummer/lords_cliff1_diffuse.dds",
+      "sha256": "3fae18e46db2dda77ed379b7e3831461295defe0ae3592408f40a1f0aa5aee59"
     },
     {
       "channel": "normal",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronsummer\\lords_cliff1_normal.dds",
-      "origin": "installed-reforged",
-      "sha256": "3ca01185b2cfb411caa250c92b8ea43205bffe547b6095774b674f65b21df266"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronsummer/lords_cliff1_normal.dds",
+      "sha256": "748259e2015cc4330cd4333e9a109271961b5218cab97112db7786805bc9f86c"
     },
     {
       "channel": "orm",
-      "path": "war3.w3mod:_hd.w3mod:terrainart\\lordaeronsummer\\lords_cliff1_orm.dds",
-      "origin": "installed-reforged",
-      "sha256": "7dddd378b79aa3c4e150b445a8cb4c26a710d828486ee538efc7283a70f9996b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronsummer/lords_cliff1_orm.dds",
+      "sha256": "46c73010d022ca1264f440b8b99041a12d5cd031992cc03acee83ebcd77453ed"
     }
   ],
   "projection": "Two vertical world-space planes blended by face direction; slope-gated overlay on editable terrain. Original MDX geometry is not imported."

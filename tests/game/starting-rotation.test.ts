@@ -14,7 +14,7 @@ it.each([0,90,180,270] as const)('keeps the complete formation point-symmetric o
   rotation:(i?(rotation+180)%360:rotation) as 0|90|180|270}))};
  expect(playableMapError(map)).toBeNull();
  const placements=expandMap(map,content),a=placements.filter(p=>p.owner==='player.1'),b=placements.filter(p=>p.owner==='player.2');
- expect(a).toHaveLength(8);expect(b).toHaveLength(8);
+ expect(a).toHaveLength(7);expect(b).toHaveLength(7);
  for(let i=0;i<a.length;i++){
   expect(b[i].position).toEqual({x:511-a[i].position.x,y:511-a[i].position.y});
   expect(b[i].rotation).toBe((a[i].rotation+180)%360);
@@ -36,12 +36,12 @@ it('rotates clockwise and rejects arbitrary formation angles',()=>{
 });
 
 it('validates clearance for the rotated units, not just the Hall footprint',()=>{
- const blank=emptyUtcMap(),map={...blank,playerStarts:[{...blank.playerStarts[0],x:21.5,z:81.5,rotation:90 as 0|90|180|270},blank.playerStarts[1]]};
+ const blank=emptyUtcMap(),map={...blank,playerStarts:[{...blank.playerStarts[0],x:21.5,z:81.5,rotation:0 as 0|90|180|270},blank.playerStarts[1]]};
  const field=new HeightField(map.size);field.waterLevel=-1;
- for(let z=0;z<field.verts;z++)for(let x=0;x<field.verts;x++)if(x+field.origin<=2)field.samples[z*field.verts+x]=-2;
+ for(let z=0;z<field.verts;z++)for(let x=0;x<field.verts;x++)if(x+field.origin<=8)field.samples[z*field.verts+x]=-2;
  map.authoring={version:1,objects:[],terrain:captureTerrain(field)};
  expect(playableMapError(map)).toBeNull();
- map.playerStarts[0].rotation=270;
+ map.playerStarts[0].rotation=90;
  expect(playableMapError(map)).not.toBeNull();
 });
 

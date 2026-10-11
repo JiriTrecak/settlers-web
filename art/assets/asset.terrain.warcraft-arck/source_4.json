@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Arck",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/ashenvale/ashen_rock.dds",
-      "sha256": "a913080ad1734eeed5e379dfd3dcd1a68307dacb9029e74856725d5ccaeefb52"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ashenvale/ashen_rock_diffuse.dds",
+      "sha256": "c1c72b344d6a3f5a70ec2d4353e7d0604eb01642aa01567c970786f885680814"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ashenvale/ashen_rock_normal.dds",
+      "sha256": "a64813dde630340106b1e58bc18dbac658ca36440ab3b00ce12b44be88465287"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ashenvale/ashen_rock_orm.dds",
+      "sha256": "084c20329de69abeab8cbf50f46126c7586e51fac8d8d52b23249e58778d2fed"
     }
   ],
   "packing": {

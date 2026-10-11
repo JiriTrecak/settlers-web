@@ -1,48 +1,27 @@
-import {beforeEach,describe,expect,it,vi} from 'vitest';
-import {authoredMaps,getMap,loadMap,rememberAuthoredMap,initializeMapLibrary} from '../../src/shared/map/library';
-import {localMapStorage,type StoredMap} from '../../src/shared/map/localMapStorage';
+import {afterEach,describe,expect,it,vi} from 'vitest';
+import {authoredMaps,getMap,loadMap,registerMapPreview,releaseMapPreview} from '../../src/shared/map/library';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
-vi.mock('../../src/shared/map/localMapStorage',()=>({localMapStorage:{read:vi.fn(),write:vi.fn()}}));
-let rows:Map<string,StoredMap>;
-beforeEach(async()=>{
- rows=new Map();vi.mocked(localMapStorage.read).mockImplementation(async()=>[...rows.values()]);
- vi.mocked(localMapStorage.write).mockImplementation(async row=>{rows.set(row.id,structuredClone(row));});
- await initializeMapLibrary();
-});
-describe('project and local map identity',()=>{
- it('keeps project maps separate from same-name editable local copies',async()=>{
-  const project=getMap('echo-isles'),map={...emptyUtcMap(),name:project.name,description:'Local editing copy'};
-  const id=await rememberAuthoredMap(map);
-  expect(id).toBe('local:echo-isles-v2-2');expect(getMap('echo-isles')).toBe(project);
-  expect((await loadMap(id)).map).toEqual(map);expect(getMap(id).name).toContain('local copy');
+afterEach(()=>vi.unstubAllGlobals());
+describe('explicit project maps and temporary previews',()=>{
+ it('never reads or writes browser map storage, including when previewing',async()=>{
+  const forbidden=()=>{throw Error('Map persistence must be explicit');};
+  vi.stubGlobal('indexedDB',{open:forbidden});vi.stubGlobal('localStorage',{getItem:forbidden,setItem:forbidden});
+  const before=authoredMaps(),project=getMap('echo-isles');
+  const map={...emptyUtcMap(),name:project.name,description:'Unsaved edit'};
+  const id=registerMapPreview(map);
+  try{
+   map.description='Changed after preview started';
+   expect((await loadMap(id)).map.description).toBe('Unsaved edit');
+   expect(getMap(id).source).toBe('preview');
+   expect(authoredMaps()).toEqual(before);expect(getMap('echo-isles')).toBe(project);
+   expect(authoredMaps().every(m=>m.source==='project')).toBe(true);
+  }finally{releaseMapPreview(id);}
+  expect(()=>getMap(id)).toThrow('Map not found');
  });
- it('persists large terrain documents and hydrates them without web-storage quotas',async()=>{
-  const map=(await loadMap('echo-isles')).map,id=await rememberAuthoredMap(map);
-  expect(rows.get(id)!.json.length).toBeGreaterThan(10*1024*1024);
-  await initializeMapLibrary();expect((await loadMap(id)).map).toEqual(map);
-  expect(JSON.parse(rows.get(id)!.json).authoring.layers).toBeUndefined();
+ it('keeps separate test snapshots independent and releases them individually',async()=>{
+  const first=registerMapPreview(emptyUtcMap()),second=registerMapPreview(emptyUtcMap());
+  expect(first).not.toBe(second);releaseMapPreview(first);
+  try{expect((await loadMap(second)).map.name).toBe(emptyUtcMap().name);}finally{releaseMapPreview(second);}
  });
- it('saving updates one local copy and preserves other maps',async()=>{
-  const map=emptyUtcMap();await rememberAuthoredMap({...map,name:'My river'});
-  const id=await rememberAuthoredMap({...map,description:'First'});
-  await rememberAuthoredMap({...map,description:'Edited again'});
-  expect((await loadMap(id)).map.description).toBe('Edited again');
-  expect(authoredMaps().filter(m=>m.source==='local')).toHaveLength(2);
-  expect(rows.size).toBe(2);
- });
- it('does not acknowledge a failed write or replace the last saved map',async()=>{
-  const map=emptyUtcMap(),id=await rememberAuthoredMap(map);
-  vi.mocked(localMapStorage.write).mockRejectedValueOnce(Error('Storage unavailable'));
-  await expect(rememberAuthoredMap({...map,name:map.name,description:'Not saved'})).rejects.toThrow('Storage unavailable');
-  expect((await loadMap(id)).map.description).toBe(map.description);
-  await initializeMapLibrary();expect((await loadMap(id)).map.description).toBe(map.description);
- });
- it('isolates damaged entries and never allows a local record to shadow a project id',async()=>{
-  const map=emptyUtcMap(),id=await rememberAuthoredMap(map);
-  rows.set('local:broken',{id:'local:broken',json:'not json'});
-  rows.set('echo-isles',{id:'echo-isles',json:JSON.stringify({...map,name:'Impostor'})});
-  await initializeMapLibrary();expect((await loadMap(id)).map).toEqual(map);
-  expect(getMap('echo-isles').source).toBe('project');
-  expect(authoredMaps().filter(m=>m.source==='local')).toHaveLength(1);
- });
+ it('does not accept old local-copy URLs',()=>{expect(()=>getMap('local:echo-isles-v2-2')).toThrow('Map not found');});
 });

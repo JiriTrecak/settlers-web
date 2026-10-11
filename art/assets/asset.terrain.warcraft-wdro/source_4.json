@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Wdro",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/lordaeronwinter/lordw_dirtrough.dds",
-      "sha256": "ca4481ddc9ad82875b8022f5def494abbfb240c6dbb458a98426829b404e1b07"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronwinter/lordw_dirtrough_diffuse.dds",
+      "sha256": "79ebee0243bcd5549e8e62b3eeb78dc96e234d624f435cd9973769dda29c94c3"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronwinter/lordw_dirtrough_normal.dds",
+      "sha256": "7cc038e747d82b2c9697cc45fd5af2d333b2e9eb393d1c6de4e83c52aaed29ee"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronwinter/lordw_dirtrough_orm.dds",
+      "sha256": "ed89dacdea070a2ce62b41892953f11e5d8a605d4cd29125adbb7b0a7a6dbb74"
     }
   ],
   "packing": {

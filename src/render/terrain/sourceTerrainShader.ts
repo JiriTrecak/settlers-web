@@ -5,7 +5,7 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
  return `
  uniform highp sampler2DArray uSourceAR,uSourceNH,uSourceOM,uSourceMasks,uSourceDisplacement;
  uniform sampler2D uSourceSlots,uTerrainUnderlay,uSourceHeight;
- uniform vec2 uSourceOrigin,uSourceOffset,uSourceSize,uSourceHeightSize;
+ uniform vec2 uSourceAtlasOrigin,uSourceOrigin,uSourceOffset,uSourceSize,uSourceHeightSize;
  uniform float uSourceHeightScale;
  uniform float uSourceAllLayers;
  uniform int uSourceMetadataOffset;
@@ -15,6 +15,7 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
  }
  int terrainCorner(int layer,int corner){return int(terrainLayerData(layer,4+corner/4)[corner%4]+.5);}
  vec2 terrainSurfaceOM=vec2(1.,0.);
+ float terrainPainted=0.;
  uniform float uSourceDisplacementTiling,uSourceHasDisplacement;
 
  float terrainHash(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
@@ -52,6 +53,7 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
  vec4 terrainDisplacement(vec2 world){return textureLod(uSourceDisplacement,vec3((world-uSourceOffset)*uSourceDisplacementTiling*.08,0.),0.);}
  void terrainLayers(vec2 world,float normalY,out vec4 ar,out vec4 nh){
   terrainSurfaceOM=vec2(1.,0.);
+  terrainPainted=0.;
   vec2 sourceXZ=world-uSourceOffset,uv=(world-uSourceOrigin)/uSourceSize;
   float underlay=terrainUnderlay(world);
   ivec2 sub=ivec2(clamp(floor((world-uSourceOrigin)/4.),vec2(0.),uSourceSize/4.-1.));
@@ -84,11 +86,12 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
     ar=mix(ar,wall,alpha);nh=mix(nh,vec4(localNormal*.5+.5,.5),alpha);
     vec2 ox=${sample('uSourceOM','uvX','channels.w')}.rg,oz=${sample('uSourceOM','uvZ','channels.w')}.rg;
     terrainSurfaceOM=mix(terrainSurfaceOM,mix(oz,ox,blendX),alpha);
+    terrainPainted=mix(terrainPainted,groundLayout.w,alpha);
     continue;
    }
    if(groundLayout.x>0.){
-    vec2 grid=(world+vec2(.5))/groundLayout.z,cell=floor(grid),local=fract(grid);
-    vec2 center=(cell+.5)*groundLayout.z-vec2(.5);
+    vec2 grid=(world-uSourceAtlasOrigin)/groundLayout.z,cell=floor(grid),local=fract(grid);
+    vec2 center=(cell+.5)*groundLayout.z+uSourceAtlasOrigin;
     vec2 maskSize=vec2(textureSize(uSourceMasks,0).xy),codeUV=(center-uSourceOrigin+.5)/maskSize;
     vec4 cellData=textureLod(uSourceMasks,vec3(codeUV,float(id)),0.);
     int code=int(cellData.g*255.+.5),corners=code&15;
@@ -106,7 +109,7 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
     vec4 groundNH=${fragment?'textureGrad(uSourceNH,vec3(atlasUV,channels.z),dx,dy)':'textureLod(uSourceNH,vec3(atlasUV,channels.z),0.)'};
     vec2 groundOM=${fragment?'textureGrad(uSourceOM,vec3(atlasUV,channels.w),dx,dy)':'textureLod(uSourceOM,vec3(atlasUV,channels.w),0.)'}.rg;
     float alpha=full?1.:corners==0?weight:groundNH.a;
-    ar=mix(ar,groundAR,alpha);nh=mix(nh,vec4(groundNH.rgb,.5),alpha);terrainSurfaceOM=mix(terrainSurfaceOM,groundOM,alpha);
+    ar=mix(ar,groundAR,alpha);nh=mix(nh,vec4(groundNH.rgb,.5),alpha);terrainSurfaceOM=mix(terrainSurfaceOM,groundOM,alpha);terrainPainted=mix(terrainPainted,groundLayout.w,alpha);
     continue;
    }
    if(weight<=0.)continue;
@@ -122,6 +125,7 @@ export function sourceTerrainGLSL(layerCount:number,fragment=false){
    if(breakup>0.)k=terrainDensity(weight,layerNH.a,param.y);
    ar=mix(ar,layerAR,k);nh=mix(nh,vec4(layerNH.rgb,param.y>=0.?layerNH.a:.5),k);
    terrainSurfaceOM=mix(terrainSurfaceOM,vec2(1.,0.),k);
+   terrainPainted=mix(terrainPainted,0.,k);
   }
  }
  vec3 terrainDisplace(vec3 p){

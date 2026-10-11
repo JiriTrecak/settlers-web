@@ -1,60 +1,79 @@
 # Warcraft ground texture source import
 
-The supplied Rebirth replacement directory is an overlay. Missing diffuse,
-normal, or ORM channels resolve independently against the locally installed
-Reforged `_hd.w3mod` archive. The import does not modify Warcraft or read its
-account settings. No installed game or source directory is needed at runtime.
+The installed game is the sole source. Mod directories and mixed-source channel
+fallbacks are not supported. Definitive Edition is the default reference baseline; Classic and Reforged remain
+explicit import options. Each import replaces a complete material set, retaining
+its stable asset IDs. The import does not modify Warcraft or read account data.
+No game installation is needed at runtime.
 
-Build the optional offline reader with:
+Build the optional offline reader:
 
 ```sh
 python3 scripts/assets/warcraft/build-extractor.py
 ```
 
-It builds pinned MIT [CascLib](https://github.com/ladislav-zezula/CascLib) in
-`.asset-work/tools/casc-reader`, enforcing read-only local stream access.
-Alternatively supply an executable implementing the three-argument interface
-in `casc-extract.cpp`.
+This builds pinned MIT CascLib in `.asset-work/tools/casc-reader` with read-only
+local stream access. Alternatively supply an executable implementing the
+three-argument interface in `casc-extract.cpp`.
 
-Import the materials used by the supplied test maps:
+Refresh all existing ground materials from the installed Definitive Edition set:
 
 ```sh
 node --import tsx scripts/assets/import-warcraft-terrain.ts \
-  --replacement '/path/to/HOTS MODE' \
   --installed '/Applications/Warcraft III/.build.info' \
   --extractor .asset-work/tools/casc-reader/casc-extract \
-  --tiles Ldrt,Ldro,Ldrg,Lrok,Lgrs,Lgrd,Zsan
+  --graphics definitive
+node --import tsx scripts/assets/import-warcraft-cliffs.ts \
+  --installed '/Applications/Warcraft III/.build.info' \
+  --extractor .asset-work/tools/casc-reader/casc-extract \
+  --graphics definitive --cliffs CLdi,CLgr
 ```
 
-Omit `--tiles` to import all ground definitions touched by the replacement
-directory. Names and source paths come from the installed `terrain.slk`.
-Missing channels, differing atlas dimensions and unsupported formats fail
-before publication. Publication uses the existing asset transaction and write
-lock; it preserves unrelated definitions.
+Use `--tiles Ldrt,Ldro,Ldrg,Lrok,Lgrs,Lgrd,Zsan` for a deliberate subset. With
+no subset, terrain import refreshes the existing catalogue. Names and paths
+come from the installed `terrain.slk`. Unknown IDs, unavailable files, incompatible
+channel atlas proportions and unsupported formats fail before publication. Publication
+uses the asset transaction and write lock and preserves unrelated definitions.
 
-Each ground texture is one `terrain-material` asset. Its definition declares
-the image references, world tile size, full-tile variants, and sixteen corner
-transitions. Atlas coordinates use row-major top-left image coordinates and
-corner bits NW=1, NE=2, SW=4, SE=8. Source tile IDs are import lookup metadata.
-The full diffuse atlas and alpha are retained, normals retain their directions,
-and ORM is separated into occlusion, roughness and metalness images. BC5 XY
-normal maps reconstruct the positive Z component. No height is invented from
-color. The thumbnail shows a complete ground tile, not the transition atlas.
+Classic reads `war3.w3mod:<terrain path>.dds`. Its painted lighting belongs to
+the diffuse artwork. The material uses a neutral flat normal, full roughness,
+full occlusion visibility and zero metalness; these channels are explicitly
+recorded as `neutral-material`, not passed off as extracted textures. The asset
+declares `shading: painted`, which suppresses physical specular reflections
+without disabling diffuse lighting or shadows. This is a generic material
+capability, also available to original painted artwork. Reforged
+reads all three channels from `_hd.w3mod:<terrain path>_{diffuse,normal,orm}.dds`.
+Definitive Edition reads the same three channels from `_de.w3mod:` instead.
+Never borrow channels between sets. Missing files fail the import.
+
+To inspect the installed archive without guessing names:
+
+```sh
+.asset-work/tools/casc-reader/casc-extract \
+  '/Applications/Warcraft III/.build.info' --list '*lords_grass*'
+```
+
+Each texture is a `terrain-material` asset with declared tile dimensions,
+full-tile variants and sixteen corner transitions. Coordinates are row-major,
+top-left; corner bits are NW=1, NE=2, SW=4, SE=8. Source tile IDs are lookup
+metadata. Full-size diffuse pixels and alpha are retained without recoloring.
+BC5 normal XY reconstructs positive Z. No height is inferred from diffuse color.
 
 Three compressed RGBA resources supply uniform-resolution GPU arrays: albedo
 with roughness, normal with transition opacity, and occlusion with metalness.
-Channels are resized independently to avoid alpha premultiplication. Full-size
-PNG and DDS sources remain intact. The declared linear reflectance scale (.25
-for these imports) matches the existing scene lighting without recoloring source
-pixels. Terrain rendering uses the declared atlas corners; the editor shows the
-declared thumbnail beside the texture name.
+Source channels retain their native resolutions (Definitive normals can be twice
+the diffuse resolution). Channels are resized independently to avoid alpha premultiplication. Original
+source bytes and full-size PNGs remain available; the scalar reflectance is
+lighting calibration, not a hue adjustment. The renderer does not multiply
+these atlases by an unrelated macro color texture.
 
-Source DDS files are retained as numbered `source.bin` resources; `source_4.json`
-records per-channel origin, content hashes, packing and the source terrain
-definition. PNG runtime resources and thumbnails use the normal asset manifest.
-There is no runtime pack object or dependency on generator output caches.
+Numbered `source.bin` resources contain the extracted DDS or declared neutral
+channel bytes. `source_4.json` records graphics set, per-channel origin, paths,
+hashes, packing and source definition. Existing aliases and map material IDs
+survive refresh. Imported images retain their respective ownership.
 
-Atlas numbering follows the source implementation in
-[mdx-m3-viewer](https://github.com/flowtsohg/mdx-m3-viewer/blob/master/src/viewer/handlers/w3x/map.ts)
-(`getVariation`) and its ground vertex shader. The original images retain their
-respective ownership; they are imported sources, not generated original art.
+For visual acceptance, compare source atlas pixels and the live editor first,
+then inspect both imported maps at the same camera framing and hour. Keep the
+forest post-processing neutral (no LUT, split tint, saturation boost or bloom)
+while establishing this baseline. Texture-source fidelity does not by itself
+prove equivalence with Warcraft's complete renderer.

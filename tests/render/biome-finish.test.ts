@@ -16,7 +16,7 @@ describe('biome finish',()=>{
    const parsed=parseUtcMap(JSON.parse(stringifyUtcMap(legacy)))!;
    expect(parsed.landscape!.environment).not.toHaveProperty('postProcessing');
    const look=biomeEnvironment(b.id,parsed.landscape!.environment).postProcessing!;
-   expect(look.bloom.strength).toBeGreaterThan(0);
+   expect(look.bloom.strength).toBeGreaterThanOrEqual(0);
    expect(look.contact.strength).toBeGreaterThan(0);
    look.bloom.strength=99;
    expect(biomeEnvironment(b.id).postProcessing!.bloom.strength).toBeLessThan(1);
@@ -37,7 +37,7 @@ describe('biome finish',()=>{
   const gl={getRenderTarget:()=>destination,setRenderTarget:vi.fn(),render:(scene:any)=>{const m=scene.children[0].material;renders.push({uniforms:Object.fromEntries(Object.entries(m.uniforms).map(([k,v]:[string,any])=>[k,v.value])),material:m});}} as unknown as WebGLRenderer;
   const camera=new PerspectiveCamera(45,1.6,.1,500);camera.updateMatrixWorld();
   pass.render(gl,source,camera,-1,NEUTRAL_POST_PROCESSING);expect(renders).toHaveLength(0);
-  const look=biomeEnvironment('vibrant-forest').postProcessing!;
+  const look=biomeEnvironment('vibrant-forest').postProcessing!;look.bloom.strength=.2;
   pass.render(gl,source,camera,-1,look);
   expect(renders).toHaveLength(4);expect(renders[0].uniforms.perspectiveCamera).toBe(true);
   expect(renders[1].uniforms.prefilter).toBe(true);expect(renders[2].uniforms.prefilter).toBe(false);

@@ -1,3 +1,4 @@
+import {textureGridLayout} from '../../shared/map/textureGrid';
 import {terrainTileArray as tileArray} from './terrainTileArray';
 import {terrainMaskBytes,sameTerrainMask} from './terrainMasks';
 import {terrainTexturePalette,reuseTerrainTexturePalette,type TerrainTexturePalette} from './terrainTexturePalette';
@@ -50,14 +51,15 @@ export class ImportedTerrainMaterial {
   for(let i=0;i<count;i++)data[i*4+3]=bytes?.[i]??0;
  }
  private writeMask(data:Uint8Array,source:ImportedTerrain,layerIndex:number){
-  const [w,h]=source.maskSize,layer=source.layers[layerIndex],bytes=terrainMaskBytes(layer),codes=layer.connections?unpackSourceBytes(layer.connections):undefined,cells=source.blocks[0]*4;
+  const [w,h]=source.maskSize,layer=source.layers[layerIndex],bytes=terrainMaskBytes(layer),codes=layer.connections?unpackSourceBytes(layer.connections):undefined;
+  const grid=textureGridLayout(source.origin,[source.blocks[0]*16,source.blocks[1]*16],source.textureGrid),[columns,rows]=grid.cells;
   const variants=layer.variants?unpackSourceBytes(layer.variants):undefined,fullTiles=groundTextures.get(layer.ar)?.terrain?.atlas.fullTiles;
   for(let z=0;z<h;z++)for(let x=0;x<w;x++){
    const i=z*w+x,to=(layerIndex*w*h+i)*4;
    data[to]=bytes?.[i]??(layerIndex===0?255:0);
-   const cx=Math.max(0,Math.min(cells-1,Math.floor((x+.5)/4))),cz=Math.max(0,Math.min(source.blocks[1]*4-1,Math.floor((z+.5)/4)));
-   data[to+1]=codes?.[cz*cells+cx]??0;
-   data[to+2]=fullTiles?.[(variants?.[cz*cells+cx]??0)%(fullTiles?.length??1)]??0;
+   const cx=Math.max(0,Math.min(columns-1,Math.floor((source.origin[0]+x/(source.maskSamplesPerUnit??1.5)-grid.start[0])/grid.cellSize))),cz=Math.max(0,Math.min(rows-1,Math.floor((source.origin[1]+z/(source.maskSamplesPerUnit??1.5)-grid.start[1])/grid.cellSize)));
+   data[to+1]=codes?.[cz*columns+cx]??0;
+   data[to+2]=fullTiles?.[(variants?.[cz*columns+cx]??0)%(fullTiles?.length??1)]??0;
   }
  }
  /** Editable terrain changes masks far more often than its biome tiles. Keep the
@@ -67,7 +69,7 @@ export class ImportedTerrainMaterial {
   const previous=this.source;
   const pair=(a:readonly number[],b:readonly number[])=>a[0]===b[0]&&a[1]===b[1];
   if(this.disposed||!pair(previous.maskSize,source.maskSize)||!pair(previous.blocks,source.blocks)||
-   previous.layers.length!==source.layers.length||previous.layers.some((l,i)=>l.ar!==source.layers[i]!.ar||l.nh!==source.layers[i]!.nh)||
+   JSON.stringify(previous.textureGrid)!==JSON.stringify(source.textureGrid)||previous.layers.length!==source.layers.length||previous.layers.some((l,i)=>l.ar!==source.layers[i]!.ar||l.nh!==source.layers[i]!.nh)||
    (source.displacement&&source.displacement.texture!==this.displacementAsset))return false;
   const palette=reuseTerrainTexturePalette(terrainTexturePalette(source),this.palette);
   if(!palette)return false;
@@ -94,7 +96,7 @@ export class ImportedTerrainMaterial {
  }
  private uniforms(shader:WebGLProgramParametersWithUniforms){
   const s=this.source;
-  Object.assign(shader.uniforms,{uSourceOM:this.om,uSourceAllLayers:{value:s.source==='authored-layered'?1:0},uSourceMetadataOffset:{value:s.blocks[0]*8*s.blocks[1]*4}});
+  Object.assign(shader.uniforms,{uSourceAtlasOrigin:{value:new Vector2(...(s.textureGrid?.origin??[-.5,-.5]))},uSourceOM:this.om,uSourceAllLayers:{value:s.source==='authored-layered'?1:0},uSourceMetadataOffset:{value:s.blocks[0]*8*s.blocks[1]*4}});
   Object.assign(shader.uniforms,{uSourceHeightScale:{value:s.heightSamplesPerUnit??3},uSourceAR:this.ar,uSourceNH:this.nh,uSourceMasks:{value:this.masks},uSourceSlots:{value:this.slots},uSourceMacro:{value:this.macro},uTerrainUnderlay:this.ground.underlay,uSourceHeight:this.ground.texture,uSourceHeightSize:{value:new Vector2(...s.heightSize)},uSourceDisplacement:this.displacement,uSourceHasDisplacement:{value:s.displacement?1:0},uSourceDisplacementTiling:{value:s.displacement?.tiling??1},uSourceOrigin:{value:new Vector2(...s.origin)},uSourceOffset:{value:new Vector2(s.origin[0]-s.sourceOrigin[0],s.origin[1]-s.sourceOrigin[1])},uSourceSize:{value:new Vector2(s.blocks[0]*16,s.blocks[1]*16)}});
  }
  /** Rebind existing GPU programs after editable terrain replaces its textures.
@@ -117,7 +119,9 @@ export class ImportedTerrainMaterial {
    .replace('#include <map_fragment>',`
     vec3 sourceBaseNormal=terrainNormal(vSourceDisplaced.xz);
     vec4 sourceAR,sourceNH;terrainLayers(vSourcePosition.xz,sourceBaseNormal.y,sourceAR,sourceNH);
-    diffuseColor.rgb*=sourceAR.rgb*texture2D(uSourceMacro,(vSourcePosition.xz-uSourceOffset)*.01).rgb*2.;
+    // Preserve the authored atlas palette. An unrelated woodland macro used to
+    // multiply every imported surface by a warm, spatially varying color.
+    diffuseColor.rgb*=sourceAR.rgb;
    `).replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=sourceAR.a;')
    .replace('#include <metalnessmap_fragment>','#include <metalnessmap_fragment>\nmetalnessFactor=terrainSurfaceOM.y;')
    .replace('#include <aomap_fragment>','#include <aomap_fragment>\nreflectedLight.indirectDiffuse*=terrainSurfaceOM.x;')
@@ -126,6 +130,23 @@ export class ImportedTerrainMaterial {
    `);
   // Terrain.fx defines FORCE_LIGHTMAP_OCCLUSION_LEVEL0: no ground-color bounce.
   this.ground.compileSurface(shader,this.macro,false,false,false);
+  // Terrain reflections use the actual scene environment shared with models,
+  // not the legacy analytic woodland cube, whose grey sheen obscured source colors.
+  // Painted atlases contain their own small-scale shading. Use the same ambient
+  // and hemisphere lighting as ordinary game models, rather than applying the
+  // unrelated source scene's reflection cube on top of that painting. Retain the
+  // source response for PBR layers and blend at mixed-material borders.
+  shader.fragmentShader=shader.fragmentShader
+   .replace('#include <lights_fragment_end>', '#include <lights_fragment_end>\nvec3 paintedIndirectDiffuse=reflectedLight.indirectDiffuse;vec3 sceneIndirectSpecular=reflectedLight.indirectSpecular;')
+   .replace('#include <aomap_fragment>', '#include <aomap_fragment>\nreflectedLight.indirectDiffuse=mix(reflectedLight.indirectDiffuse,paintedIndirectDiffuse,terrainPainted);reflectedLight.indirectSpecular=sceneIndirectSpecular;');
+  // Painted materials retain their source contrast instead of receiving a grey
+  // GGX/environment sheen. Blend by surface coverage, including atlas borders.
+  shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',`
+    reflectedLight.directSpecular*=1.-terrainPainted;
+    reflectedLight.indirectSpecular*=1.-terrainPainted;
+    outgoingLight=reflectedLight.directDiffuse+reflectedLight.indirectDiffuse+reflectedLight.directSpecular+reflectedLight.indirectSpecular+totalEmissiveRadiance;
+    #include <opaque_fragment>
+  `);
   // Both stages must use the same uniform name. Different vertex/fragment
   // aliases consume two combined texture units even when they bind one image.
   shader.vertexShader=shader.vertexShader.replaceAll('uTerrainUnderlay','uReferenceUnderlay');

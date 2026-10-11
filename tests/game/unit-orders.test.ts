@@ -95,6 +95,6 @@ describe("per-unit order queues", () => {
     expect(g.view("player.2").entities.find(e => e.id === w.id)!.control).toBeUndefined();
     w.unit!.order = null;
     g.observation.update();
-    expect(g.view("player.1").population!.available).toBe(5);
+    expect(g.view("player.1").population!.available).toBe(4);
   });
 });

@@ -853,6 +853,7 @@ export class Renderer {
       // Other paths (editor captures, warmup) render this scene with their own cameras.
       this.props.cull(null);
     }
+    this.settlement?.presentLabels(cam,this.display.canvas);
     perf.end("Present total (CPU)", total);
   }
 

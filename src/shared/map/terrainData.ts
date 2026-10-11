@@ -2,12 +2,14 @@ import {z} from 'zod';
 import {HEIGHT_MIN,HEIGHT_MAX,DRY_WATER_HEIGHT} from './terrainLimits';
 import {MAP_HALO} from './map';
 import type {HeightField} from './height';
+import {textureGridSchema,textureGridLayout} from './textureGrid';
 
 const packed=z.string();
 /** Editable samples, not generator inputs or a render cache. Arrays are packed
  * only to keep JSON documents small. All floats have explicit little-endian encoding. */
 export const terrainDataSchema=z.object({
  version:z.literal(1),size:z.number().int().min(16).max(2048).multipleOf(4),
+ textureGrid:textureGridSchema.optional(),
  heights:packed,waterHeights:packed,waterFlow:packed,waterProfiles:z.array(z.string().min(1)).max(255),
  grass:packed,rock:packed,
  paint:z.array(z.object({material:z.string().min(1),weights:packed,variants:packed.optional()}).strict()).max(256),
@@ -27,7 +29,7 @@ export const terrainDataSchema=z.object({
   }catch(error){ctx.addIssue({code:'custom',path:[name],message:(error as Error).message});}
  }
  for(let i=0;i<data.paint.length;i++)if(data.paint[i].variants!==undefined){
-  try{decodeBytes(data.paint[i].variants!,(span/4)**2);}
+  try{decodeBytes(data.paint[i].variants!,textureGridLayout([-MAP_HALO,-MAP_HALO],[span,span],data.textureGrid).count);}
   catch(error){ctx.addIssue({code:'custom',path:['paint',i,'variants'],message:(error as Error).message});}
  }
  if(new Set(data.waterProfiles).size!==data.waterProfiles.length)ctx.addIssue({code:'custom',path:['waterProfiles'],message:'Duplicate water profile'});
@@ -65,6 +67,7 @@ export function restoreTerrain(field:HeightField,data:TerrainData):void{
  if(data.size!==field.size)throw Error('Terrain dimensions disagree with map');
  field.source=undefined;field.sourceWater=undefined;field.courseWater=undefined;field.watercourses=[];
  field.samples.set(decodeFloats(data.heights));
+ field.textureGrid=data.textureGrid;
  field.grassCoverage=decodeFloats(data.grass);field.rockCoverage=decodeFloats(data.rock);
  field.terrainGrassCoverage=field.grassCoverage;
  field.surfacePaint=data.paint.map(p=>({owner:'terrain',material:p.material,weights:decodeFloats(p.weights),...(p.variants?{variants:decodeBytes(p.variants)}:{})}));

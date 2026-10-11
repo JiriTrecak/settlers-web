@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Idrt",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/icecrown/ice_dirt.dds",
-      "sha256": "c99ca2dce1c359da0d011df714cfeeaa20874e0a9d87d239b96954500dd38fb7"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/icecrown/ice_dirt_diffuse.dds",
+      "sha256": "ba807eb8c66c25af80468c7d4c46931b3014672e7ff9b139ad681d6cc9c6c61e"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/icecrown/ice_dirt_normal.dds",
+      "sha256": "78ee1629f1fbfb42efe478c43c49c7d0bd9ecca472cac15cab8eec490ddb3836"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/icecrown/ice_dirt_orm.dds",
+      "sha256": "97218a00b66be26eea86bf383bc78170c05cfa6c3111de89963c652ec7fbc235"
     }
   ],
   "packing": {

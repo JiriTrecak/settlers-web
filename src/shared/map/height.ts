@@ -37,6 +37,7 @@ export class HeightField {
   terrainGrassCoverage?:Float32Array;
   rockCoverage?:Float32Array;
   surfacePaint?:import('../authoring/generate').MaterialPaint[];
+  textureGrid?:import('./textureGrid').TextureGrid;
   source?: SourceHeight;
   sourceWater?:SourceWater;
   cellWater?:CellWater;
@@ -47,6 +48,7 @@ export class HeightField {
   walkSample(x:number,z:number,surface?:string):number {return surface ? this.walkSurface?.(x,z,surface) ?? this.sample(x,z) : this.sample(x,z); }
 
   load(samples: ArrayLike<number>, waterLevel = 0, imported?:ImportedTerrain): void {
+    this.textureGrid=imported?.textureGrid;
     this.cellWater=undefined;
     this.watercourses=[];this.courseWater=undefined;
     this.source=imported?sourceHeight(imported):undefined;
@@ -58,6 +60,7 @@ export class HeightField {
   }
 
   clear(): void {
+    this.textureGrid=undefined;
     this.cellWater=undefined;
     this.watercourses=[];this.courseWater=undefined;
     this.source=undefined;this.sourceWater=undefined;

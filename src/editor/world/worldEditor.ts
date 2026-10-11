@@ -357,6 +357,11 @@ export class WorldEditor {
   private paintedMap: UtcMap | null = null;
   private entityOffset = { x: 0, y: 0 };
   private entityViews = editorEntities(this.map);
+  setInitialExploration(value:UtcMap['initialExploration']) {
+    if(value!==undefined&&value!=='explored'&&value!=='hidden')throw Error('Initial exploration must be explored or hidden');
+    if(this.map.initialExploration===value)return;
+    this.commitEntities({...this.map,initialExploration:value});
+  }
   setMission(mission:MissionDefinition|undefined,camps=this.map.camps){
     if(mission && this.map.sandbox) throw new Error("A testbed cannot also be a campaign mission.");
     const next={...this.map,camps,mission:mission ? missionSchema.parse(mission):undefined};

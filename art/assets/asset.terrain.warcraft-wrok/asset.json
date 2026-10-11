@@ -3,7 +3,7 @@
   "id": "asset.terrain.warcraft-wrok",
   "name": "Rock · LordaeronWinter",
   "kind": "terrain-material",
-  "revision": 2,
+  "revision": 8,
   "status": "published",
   "tags": [
     "warcraft",
@@ -15,15 +15,15 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "042d43a20fe0686cd9b83d173abc63d7ff975aa0451d18839593112dcc031aa2",
-      "bytes": 2340758
+      "sha256": "a10c3e1dd42cbd5c39fda85fa6e9c3fcf28ca33da2834d9a3dc3c114b31301ba",
+      "bytes": 3121844
     },
     {
       "role": "data",
       "index": 2,
       "format": "bin",
-      "sha256": "75c60b1968f54cd405f1af4d056496eb22aa4e896b03969c0be3258ff1344bd1",
-      "bytes": 60526
+      "sha256": "fbd9cdeb5e828717afcaec8d328dae2b34010631a3411c1cc51fd8b4cd45342b",
+      "bytes": 2648194
     },
     {
       "role": "data",
@@ -36,77 +36,77 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "ee86975c58dfadb2714184156a40215088b2658b9f1723bce0c47c72052acf05",
-      "bytes": 190767,
+      "sha256": "a2bf38601967da39c5574bf8a7762e325b1aef5233ebf97a3b455f2c1990bb51",
+      "bytes": 2649106,
       "colorSpace": "srgb"
     },
     {
       "role": "normal",
       "index": 1,
       "format": "png",
-      "sha256": "a357c0687458b93c02ce334f4deaffb9cac2d7f5129046c2c8631b8a5f6d56b9",
-      "bytes": 3186,
+      "sha256": "bde63a9717ed7802866341a2b4151643b5bd9a56893bf8f0ba2a7c300be91b6b",
+      "bytes": 4244965,
       "colorSpace": "none"
     },
     {
       "role": "occlusion",
       "index": 1,
       "format": "png",
-      "sha256": "518764aac1c34be2391ae9edf627e920d6d909812780bd77a5baed2a7a1541fc",
-      "bytes": 1000,
+      "sha256": "b50c7a4ae38a89827e53957af4a6e02ef91b3510c630fc1cb49e7ba8cba10e1c",
+      "bytes": 8539,
       "colorSpace": "none"
     },
     {
       "role": "roughness",
       "index": 1,
       "format": "png",
-      "sha256": "518764aac1c34be2391ae9edf627e920d6d909812780bd77a5baed2a7a1541fc",
-      "bytes": 1000,
+      "sha256": "3879fb6543b6bf025972c51f0f88415b623d2fa1fa7a158fd1a4e867a64a3db1",
+      "bytes": 1675336,
       "colorSpace": "none"
     },
     {
       "role": "metalness",
       "index": 1,
       "format": "png",
-      "sha256": "8dc7d93f6d682a6595d4edb518dee547ea56b5f9ee1701506bf3bed64a481455",
-      "bytes": 482,
+      "sha256": "bb2e418aa6161528ea550aabcb885ed8ce6c8c6dc144e20dab289976c68a82b2",
+      "bytes": 6212,
       "colorSpace": "none"
     },
     {
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "db8c1ea6092f36e41c2899c00bfc34a5c7ae388c008f2d0b60ba18ccebd700f2",
-      "bytes": 69533,
+      "sha256": "e427abf510ac05f0a3dff8f35c73312764a10d1cea4c8953c2d9265b46f2a5de",
+      "bytes": 58486,
       "colorSpace": "srgb"
     },
     {
       "role": "source",
       "index": 1,
       "format": "bin",
-      "sha256": "2542568be96b6a6490f98a388bfdc27296b254799d8025c726dd83280fec4d49",
-      "bytes": 174928
+      "sha256": "8ca03191a89f70b572aeed8ff8c580ff5a60329c1091c4acc5eef372d592e5c2",
+      "bytes": 2796368
     },
     {
       "role": "source",
       "index": 2,
       "format": "bin",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c",
-      "bytes": 524288
+      "sha256": "334f4d42da2b8e8c203fb0355de0b35f8e9159fee0eb43022e13cfcd46ff1aff",
+      "bytes": 2796368
     },
     {
       "role": "source",
       "index": 3,
       "format": "bin",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006",
-      "bytes": 524288
+      "sha256": "981724053cd15afbaf870523fb3070050b65ba14c5a62270291590eca66ede5e",
+      "bytes": 2796368
     },
     {
       "role": "source",
       "index": 4,
       "format": "json",
-      "sha256": "5f060ba1b2189507b697376dfe8f5d7074e103d33e0885ae94997d2888db91fe",
-      "bytes": 1435
+      "sha256": "8525f3d74834aef5d9c506800b4075b451cdce03e021884c5c4cfb63957d585e",
+      "bytes": 1577
     }
   ],
   "usesGeometry": false,
@@ -128,12 +128,13 @@
   "capabilities": {},
   "provenance": {
     "method": "import",
-    "licenseNote": "Imported from the local Warcraft III installation (classic). Original sources retain their respective rights.",
-    "sourceHash": "22a9cc49d60f2a4b735701e7488fec1efed70eab7abde4c6651025daf5d15379"
+    "licenseNote": "Imported from the local Warcraft III installation (definitive). Original sources retain their respective rights.",
+    "sourceHash": "3744ed805ec3fc079cfa72396b4bae06d495eae6f1f2e8541bac9a56c637643a"
   },
   "terrain": {
     "tileWorldSize": 4,
-    "reflectance": 0.25,
+    "reflectance": 1,
+    "shading": "physical",
     "sourceIds": [
       "Wrok"
     ],

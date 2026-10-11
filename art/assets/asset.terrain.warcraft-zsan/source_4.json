@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Zsan",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/ruins/ruins_sand.dds",
-      "sha256": "6174f6688474f5f75bba3092e89193139bf45d91aec3130f8d3feac055f15c5a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_sand_diffuse.dds",
+      "sha256": "3b974423f0f71c9e90d629499c691a3952263886c94b890233457102f1658fa0"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_sand_normal.dds",
+      "sha256": "4e710766f59610229203ecaca2bc3a714254ceb6a486d72ae9cf75a8f76fa6eb"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_sand_orm.dds",
+      "sha256": "ff9997ce22e75ff73594a41786ec74c09897d5912feb9df024b85e2887e51438"
     }
   ],
   "packing": {

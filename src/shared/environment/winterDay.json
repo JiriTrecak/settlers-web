@@ -1,21 +1,21 @@
 {
   "ambient": {
     "rgb": [
-      183,
-      193,
-      229
+      232,
+      240,
+      250
     ],
     "alpha": 1,
-    "multiplier": 4.0
+    "multiplier": 3
   },
   "skyColor": {
     "rgb": [
-      51,
-      114,
-      243
+      203,
+      223,
+      247
     ],
     "alpha": 1,
-    "multiplier": 4.0
+    "multiplier": 1.5
   },
   "sunColor": {
     "rgb": [
@@ -24,7 +24,7 @@
       255
     ],
     "alpha": 1,
-    "multiplier": 8
+    "multiplier": 3.2
   },
   "sunDirection": [
     0.5,

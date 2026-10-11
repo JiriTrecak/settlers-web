@@ -1,3 +1,4 @@
+import {portraitViewport} from './viewport';
 import connectedHudUrl from '../../../assets/library/image.woodland-connected-hud/image.png?url';
 import { AmbientLight, TextureLoader, SRGBColorSpace, LinearFilter, Box3, Color, DirectionalLight, HalfFloatType, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, Scene, Vector3, Vector4, WebGLRenderTarget, type Object3D, type Texture, type WebGLRenderer } from 'three';
 export type PortraitInstance = {root:Object3D;update:(dt:number)=>void;dispose:()=>void};
@@ -88,14 +89,15 @@ export class SelectionPortrait {
     }
     gl.getViewport(this.viewport);gl.getScissor(this.scissor);const scissorTest=gl.getScissorTest(),auto=gl.autoClear,shadows=gl.shadowMap.enabled,previous=gl.getRenderTarget();
     gl.getClearColor(this.clear);const alpha=gl.getClearAlpha();
-    const ratio=gl.getPixelRatio(),w=Math.max(1,Math.round(rect.width*ratio)),h=Math.max(1,Math.round(rect.height*ratio));
+    const area=portraitViewport(rect,canvas,gl.domElement.width,gl.domElement.height,gl.getPixelRatio());
+    const w=area.pixelWidth,h=area.pixelHeight;
     if(this.target.width!==w||this.target.height!==h)this.target.setSize(w,h);
     try{
       gl.autoClear=true;gl.shadowMap.enabled=false;
       gl.setClearColor(0x000000,0);gl.setRenderTarget(this.target);gl.render(this.scene,this.camera);
       gl.setRenderTarget(previous);
-      gl.setViewport(rect.left-canvas.left,canvas.bottom-rect.bottom,rect.width,rect.height);
-      gl.setScissor(rect.left-canvas.left,canvas.bottom-rect.bottom,rect.width,rect.height);gl.setScissorTest(true);
+      gl.setViewport(area.x,area.y,area.width,area.height);
+      gl.setScissor(area.x,area.y,area.width,area.height);gl.setScissorTest(true);
       gl.autoClear=false;gl.render(this.blitScene,this.blitCamera);
     }finally{
       gl.setRenderTarget(previous);gl.setViewport(this.viewport);gl.setScissor(this.scissor);gl.setScissorTest(scissorTest);gl.autoClear=auto;gl.shadowMap.enabled=shadows;gl.setClearColor(this.clear,alpha);

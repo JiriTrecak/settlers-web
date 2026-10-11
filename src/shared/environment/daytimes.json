@@ -2,18 +2,18 @@
   "day": {
     "ambient": {
       "rgb": [
-        225,
-        235,
-        230
+        245,
+        248,
+        245
       ],
       "alpha": 1,
-      "multiplier": 4
+      "multiplier": 3
     },
     "skyColor": {
       "rgb": [
-        174,
-        207,
-        245
+        222,
+        233,
+        249
       ],
       "alpha": 1,
       "multiplier": 1.5
@@ -25,7 +25,7 @@
         255
       ],
       "alpha": 1,
-      "multiplier": 8
+      "multiplier": 3.2
     },
     "sunDirection": [
       0.5,
@@ -73,30 +73,30 @@
   "night": {
     "ambient": {
       "rgb": [
-        183,
-        203,
-        238
+        208,
+        220,
+        243
       ],
       "alpha": 1,
-      "multiplier": 3.5
+      "multiplier": 2.8
     },
     "skyColor": {
       "rgb": [
-        132,
-        168,
-        222
+        182,
+        205,
+        236
       ],
       "alpha": 1,
       "multiplier": 1.2
     },
     "sunColor": {
       "rgb": [
-        188,
-        211,
-        255
+        213,
+        225,
+        250
       ],
       "alpha": 1,
-      "multiplier": 5
+      "multiplier": 2.2
     },
     "sunDirection": [
       -0.5,

@@ -1,3 +1,4 @@
+import {initialExploration} from '../../shared/map/utcmap';
 import {gatherAssignments} from './population';
 import {baseGathering, type BaseWorkforce} from '../../shared/baseGathering';
 import {placementGeometryError} from '../../shared/spatial/placement';
@@ -265,11 +266,15 @@ export class Observation {
     this.nearbySensors=this.c.profile.wrap('Nearby sensor index',this.nearbySensors.bind(this));
     this.sightFootprint=this.c.profile.wrap('Terrain sight footprint',this.sightFootprint.bind(this));
     this.deckNodes=this.c.spatial.layers?.nodes.slice(this.c.spatial.size**2).map(n=>({cell:n.cell,height:n.height}))??[];
+    const explored=initialExploration(this.c.map)==='explored';
+    // Survey the initial neutral resource layout once. Later harvesting/removal
+    // stays last-known until actual sight; units and enemy buildings are not seeded.
+    const surveyed=explored?this.c.state.entities.filter(e=>e.owner==='none'&&e.resource&&!e.unit&&alive(e)).map(e=>this.describe(e,false)):[];
     this.memories = owners.map((owner) => ({
       owner,
-      cells: new Uint8Array(this.c.spatial.layers?.nodes.length??this.c.spatial.size ** 2),
+      cells: new Uint8Array(this.c.spatial.layers?.nodes.length??this.c.spatial.size ** 2).fill(explored?1:0),
       visibleCells: new Set(),
-      entities: new Map(),
+      entities: new Map(surveyed.map(e=>[e.id,e])),
       observedDeaths: [],
     }));
   }

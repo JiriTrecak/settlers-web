@@ -1,21 +1,36 @@
 {
   "version": 1,
   "id": "asset.icons.resource-root",
-  "name": "Corrupted Root",
+  "name": "Root",
   "kind": "icon",
-  "revision": 1,
+  "revision": 6,
   "status": "published",
   "tags": [
-    "ants-v1",
-    "migrated"
+    "woodland-interface",
+    "resources",
+    "original"
   ],
   "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "ad4317f55cd2e8877eca6188cfc989904abfd1a4af190300d0d0ca11fdd1ec68",
+      "bytes": 1430
+    },
     {
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "9c907c657e73a14786b971155ab7d8bad73a37133599ef369377b62ceb7f3766",
-      "bytes": 12421
+      "sha256": "f70d76c1efd107ac1defaf9d06b8d0e380981570510488e62ebb73fd7fba8924",
+      "bytes": 27996
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "278950f306c57c37317cfd7af133f5f94693206fbf9bccc3177b2d5b6e0ea836",
+      "bytes": 1800618
     }
   ],
   "usesGeometry": false,
@@ -46,7 +61,8 @@
   },
   "capabilities": {},
   "provenance": {
-    "method": "migration",
-    "sourceHash": "9c907c657e73a14786b971155ab7d8bad73a37133599ef369377b62ceb7f3766"
+    "method": "generated",
+    "licenseNote": "Original Under the Canopy resource artwork generated with built-in ImageGen.",
+    "sourceHash": "278950f306c57c37317cfd7af133f5f94693206fbf9bccc3177b2d5b6e0ea836"
   }
 }

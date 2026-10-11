@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Nice",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/northrend/north_ice.dds",
-      "sha256": "2638e37b5b5d92cc9f350a71661f26856aeb0947c5d4162282425812cc7dd7ef"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_ice_diffuse.dds",
+      "sha256": "3786763a1cdfe35dd05d3cfa32096ef374ae0c7f362ade6cabe48fcfceb3ce31"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_ice_normal.dds",
+      "sha256": "047e935fe7db46f9938362ee91d460a428a3c598662029e40196c5e6cdb4647c"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_ice_orm.dds",
+      "sha256": "45b9b5ddbd20112b437076323f8fe48d8d15fbe9dbf64144267197e58c4b2174"
     }
   ],
   "packing": {

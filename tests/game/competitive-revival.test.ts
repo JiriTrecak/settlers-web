@@ -73,7 +73,7 @@ it('validates declared revival prices as unique currencies',()=>{
 });
 it('retains a paid revival after capacity loss once its work has started',()=>{
  const {g,hero,shrine,cast}=setup();
- for(let i=0;i<6;i++)g.context.create(placed('extra-'+i,'unit.ants.warrior',100+i*4,100));
+ for(let i=0;i<7;i++)g.context.create(placed('extra-'+i,'unit.ants.warrior',100+i*4,100));
  expect(cast().accepted).toBe(true);g.tick();expect(shrine.revival!.queue[0].progress).toBe(1);
  g.economy.remove(g.entities.find(e=>e.placement==='supply')!);
  const restored=new Game(g.map,slots,g.registry);restored.restore(g.snapshot());

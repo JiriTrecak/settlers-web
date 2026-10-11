@@ -101,6 +101,7 @@ export class SettlementLayer {
     }
     return distance;
   }
+  presentLabels(camera:Camera,canvas:HTMLCanvasElement):void{this.mineLabels.present(camera,canvas);}
   private overlaysClose=false;
   cameraOverlays(camera:Camera,height:number,close:boolean):void {
     camera.updateMatrixWorld();
@@ -172,7 +173,7 @@ export class SettlementLayer {
       carry: Object3D | undefined;
       cargo: Group;
       hp: VitalBar;
-      mine?: Sprite;
+      mine?: Object3D;
     }
   >();
   private readonly targetPosition = new Vector3();
@@ -360,7 +361,7 @@ export class SettlementLayer {
     if (this.warmModels.length) return this.warmModels;
     const circle=this.circles.warmModel();this.warmModels.push(circle);this.warmDisposers.push(()=>circle.geometry.dispose());
     for (const model of this.harvestTrees.prepareModels()) this.warmModels.push(model);
-    const effects = effectWarmModels(this.mineLabels.material(0, 1));
+    const effects = effectWarmModels();
     this.warmModels.push(...effects.models); this.warmDisposers.push(effects.dispose);
     this.warmModels.push(...this.crowd.warmModels());
     const items = new Set(this.registry.definitions.filter((d) => d.kind === "item").map((d) => d.asset));
@@ -517,15 +518,11 @@ export class SettlementLayer {
       mana:e.abilities?.mana??d.behaviors.abilities?.maxMana,maxMana:e.stats?.maxMana??d.behaviors.abilities?.maxMana??0});
     hp.position.set(0, o.userData.pickHeight + .25, 0);
     o.add(hp);
-    let mine: Sprite | undefined;
+    let mine: Object3D | undefined;
     if (d.behaviors.storage?.gathering) {
-      mine = new Sprite(
-        this.mineLabels.material(e.baseGathering?.workers??0, e.baseGathering?.recommendedWorkers??0),
-      );
+      mine = new Object3D();
       mine.name = "Base workforce";
       mine.position.set(0, o.userData.pickHeight + 1.4, 0);
-      mine.scale.set(7.2, 1.8, 1);
-      mine.renderOrder = 22;
       mine.raycast = () => {};
       o.add(mine);
     }
@@ -607,8 +604,8 @@ export class SettlementLayer {
       this.concealment.set(parts.body,e.concealmentOpacity??1);
       o.userData.concealmentOpacity=e.concealmentOpacity??1;
       if (parts.mine) {
-        parts.mine.visible = !!e.baseGathering && !e.remembered;
-        parts.mine.material = this.mineLabels.material(
+        parts.mine.visible = !!e.baseGathering && !e.remembered && (e.hp??0)>0;
+        this.mineLabels.update(parts.mine,
           e.baseGathering?.workers??0,
           e.baseGathering?.recommendedWorkers??0,
         );
@@ -931,6 +928,7 @@ export class SettlementLayer {
 
   private removeModel(id: number, o: Object3D) {
     this.parts.get(o)?.hp.dispose();
+    const mine=this.parts.get(o)?.mine;if(mine)this.mineLabels.remove(mine);
     const body=this.parts.get(o)?.body;if(body)this.concealment.remove(body);
     // Socket-attached cargo was added after character cloning, so its materials
     // are owned here rather than by the character factory.

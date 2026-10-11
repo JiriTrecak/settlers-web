@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "cBc2",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/barrens/barrens_desert.dds",
-      "sha256": "5e3f3921ceae44a5a79d523c26ef5bd33fe7bc55a3e736ddd2ec0b541a8b911d"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/barrens/barrens_desert_diffuse.dds",
+      "sha256": "51073f6eaf6a0a26fad56f3a72053c30c4294c89d0b58a94370df57a31ae25a5"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/barrens/barrens_desert_normal.dds",
+      "sha256": "96c7656ecdd5f45cf6bacf0342703d4090cf611fa79340b85036fd7b2f864a60"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/barrens/barrens_desert_orm.dds",
+      "sha256": "1c83235269601b8ae2ddbaa61ace26d5cee5ad4ed9afcd78283bf132d922ab8f"
     }
   ],
   "packing": {

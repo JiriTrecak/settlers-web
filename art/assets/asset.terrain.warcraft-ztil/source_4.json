@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Ztil",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/ruins/ruins_roundtiles.dds",
-      "sha256": "3212a1098d07c970f807d22737b4b9c1cfb902270f84ff7c8f96238af7e2eedc"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_roundtiles_diffuse.dds",
+      "sha256": "e60ec8295de3330b21281f69bcfe81e7fb3cf6d84ad1a870c473f7188b41647e"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_roundtiles_normal.dds",
+      "sha256": "a0e9709769de412fec754cc739fd16c3c14996eb8f1b564671524d51148dfa41"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_roundtiles_orm.dds",
+      "sha256": "e4f63e88e8c7cbfe44533caaf56e384d21efd48d63c9eb7ba4f1ab211ef1ab0b"
     }
   ],
   "packing": {

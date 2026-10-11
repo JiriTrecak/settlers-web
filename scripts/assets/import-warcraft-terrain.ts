@@ -17,7 +17,7 @@ const args=process.argv.slice(2),option=(name:string)=>{const i=args.indexOf(nam
 const installed=option('--installed'),extractor=option('--extractor'),tiles=option('--tiles')?.split(',');
 const graphics=graphicsMode(option('--graphics'));
 if(args.includes('--replacement'))throw Error('Mod overlays are no longer supported. Import a coherent installed graphics set.');
-if(!installed||!extractor)throw Error('Usage: import-warcraft-terrain.ts --installed <Warcraft .build.info> --extractor <CASC extractor> [--graphics classic|reforged] [--tiles Ldrt,Lgrs,...]');
+if(!installed||!extractor)throw Error('Usage: import-warcraft-terrain.ts --installed <Warcraft .build.info> --extractor <CASC extractor> [--graphics classic|reforged|definitive] [--tiles Ldrt,Lgrs,...]');
 const cache=path.resolve('.asset-work/imports/warcraft-terrain');await mkdir(cache,{recursive:true});
 const sha=(bytes:Uint8Array)=>createHash('sha256').update(bytes).digest('hex');
 const run=promisify(execFile);
@@ -44,18 +44,18 @@ for(const record of selected){
  const sources=await installedGroundChannels(sourcePath,graphics,extract);
  const [diffuse,normal,orm]=sources as [typeof sources[number],typeof sources[number],typeof sources[number]];
  const {width,height}=diffuse.pixels,atlas=warcraftGroundLayout(width,height);
- if(sources.some(s=>s.pixels.width!==width||s.pixels.height!==height))throw Error('Ground channel atlas dimensions differ: '+sourcePath);
  const id='asset.terrain.warcraft-'+record.tileID!.toLowerCase();
  const asset=originalPackage(id,`${record.comment} · ${record.dir!.split('\\').at(-1)}`,'terrain-material');
  asset.definition.tags=['warcraft','ground',record.tileID!];
  asset.definition.provenance={method:'import',licenseNote:`Imported from the local Warcraft III installation (${graphics}). Original sources retain their respective rights.`,sourceHash:sha(Buffer.concat(sources.map(s=>s.bytes)))};
- asset.definition.terrain={tileWorldSize:4,reflectance:.25,sourceIds:[record.tileID!],atlas,albedo:{role:'albedo',index:1},normal:{role:'normal',index:1},occlusion:{role:'occlusion',index:1},roughness:{role:'roughness',index:1},metalness:{role:'metalness',index:1},thumbnail:{role:'image',index:1},runtime:{albedoRoughness:{role:'data',index:1},normalOpacity:{role:'data',index:2},occlusionMetalness:{role:'data',index:3}}};
- const packed=await packGroundAtlas(width,height,diffuse.pixels.rgba,normal.pixels.rgba,orm.pixels.rgba);
+ asset.definition.terrain={tileWorldSize:4,reflectance:1,shading:graphics==='classic'?'painted':'physical',sourceIds:[record.tileID!],atlas,albedo:{role:'albedo',index:1},normal:{role:'normal',index:1},occlusion:{role:'occlusion',index:1},roughness:{role:'roughness',index:1},metalness:{role:'metalness',index:1},thumbnail:{role:'image',index:1},runtime:{albedoRoughness:{role:'data',index:1},normalOpacity:{role:'data',index:2},occlusionMetalness:{role:'data',index:3}}};
+ const packed=await packGroundAtlas(diffuse.pixels,normal.pixels,orm.pixels);
  for(const [i,bytes] of Object.values(packed).entries())addBytes(asset,'data','bin',gzipSync(bytes),i+1);
- const encode=(rgba:Buffer)=>sharp(rgba,{raw:{width,height,channels:4}}).png().toBuffer();
- addBytes(asset,'albedo','png',await encode(diffuse.pixels.rgba));
- addBytes(asset,'normal','png',await encode(normal.pixels.rgba));
+ const encode=({rgba,width,height}:typeof diffuse.pixels)=>sharp(rgba,{raw:{width,height,channels:4}}).png().toBuffer();
+ addBytes(asset,'albedo','png',await encode(diffuse.pixels));
+ addBytes(asset,'normal','png',await encode(normal.pixels));
  for(const [i,role] of (['occlusion','roughness','metalness'] as const).entries()){
+  const {width,height}=orm.pixels;
   const values=Buffer.alloc(width*height);for(let j=0;j<values.length;j++)values[j]=orm.pixels.rgba[j*4+i]!;
   addBytes(asset,role,'png',await sharp(values,{raw:{width,height,channels:1}}).png().toBuffer());
  }

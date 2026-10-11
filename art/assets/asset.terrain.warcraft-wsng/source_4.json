@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Wsng",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/lordaeronwinter/lordw_snowgrass.dds",
-      "sha256": "8f3d2e199f0d525e194619997ec1c416c150620db21f7255a1bd9ed83316326e"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronwinter/lordw_snowgrass_diffuse.dds",
+      "sha256": "9ce050dcf4e53b4b0c04d213e48cd7a9259cce64b19c6e640ca6880cb81dadd0"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronwinter/lordw_snowgrass_normal.dds",
+      "sha256": "1dbe971fdb4565a4918ded70ec273d138843cd4dbd3bffb54cc66e4220d2485c"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronwinter/lordw_snowgrass_orm.dds",
+      "sha256": "244300ecb034d3fd88a012fca9c4ec40f341e3db1f58d56756509d1ba22bd33a"
     }
   ],
   "packing": {

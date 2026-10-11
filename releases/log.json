@@ -20,7 +20,8 @@
       "Added Warcraft map import for editable terrain, ground textures, trees, player starts, amber sites and difficulty-matched neutral camps.",
       "Expanded the editor terrain palette to all ground definitions covered by the supplied Rebirth replacements, with missing texture channels supplied by the local Reforged installation and visual previews for each material.",
       "Cliff-face terrain textures can be painted and erased independently of ground textures, with thumbnails, undo and editable Warcraft import coverage. Echo Isles and Turtle Rock now include their source cliff material.",
-      "Moving ground units leave fading water ripples and wakes, with bounded rendering for large groups and a relaxed walking cadence."
+      "Moving ground units leave fading water ripples and wakes, with bounded rendering for large groups and a relaxed walking cadence.",
+      "Maps can start explored under fog or fully hidden. Skirmishes default to explored and campaigns to hidden; unseen enemy activity remains concealed."
     ],
     "improved": [
       "Reduced unnecessary collision-index preparation during combat planning while preserving movement and combat behavior.",
@@ -79,7 +80,16 @@
       "Larger control-group counts with dark gray borders, plus a borderless animated sun-and-moon sky dial with gradual dawn and dusk transitions and no numeric time.",
       "Halls now show assigned Amber workers versus nearby mining capacity. Colonies begin with five workers in one row, automatically distributed across nearby deposits.",
       "Amber sites now use five distinct crystal models, with shared one-third-remaining and empty appearances. The sun and moon HUD indicator is temporarily hidden.",
-      "New Queensguard Hall and Carapace Bastion models bring distinct ant and beetle materials, detailed textures, square building footprints, and player-colored roof and armor panels."
+      "New Queensguard Hall and Carapace Bastion models bring distinct ant and beetle materials, detailed textures, square building footprints, and player-colored roof and armor panels.",
+      "Forest lighting now uses neutral daylight and a cooler night look, with brief transitions and continuously moving shadows.",
+      "Starting workers face their nearby amber deposit and begin harvesting, with the hero on the opposite side of the hall, for both races.",
+      "Map editor Save now writes a map file explicitly. Automatic drafts and browser-library copies are removed, and mission tests use temporary previews.",
+      "Woodland trees now use richer painted foliage with diffuse lighting and shadows, without the white specular sheen that washed out their colours.",
+      "Resource counters now sit in one woodland ribbon with transparent amber, wood, root, and supply icons instead of separate framed tiles.",
+      "Woodland trees now have broader painted branch tiers, clearer trunks and roots, and lower mesh costs while preserving harvesting animations.",
+      "Balanced daylight and readable cool nights across painted terrain, foliage and buildings; original Warcraft terrain colors no longer receive a darkening multiplier.",
+      "Imported terrain now uses the installed Warcraft Definitive Edition textures and matching material maps, with native source resolutions preserved and clean texture transitions.",
+      "Choose and remember an explicit game render resolution, with a Native option and full-resolution interface text."
     ],
     "fixed": [
       "Building placement now checks units’ full collision bodies, preventing foundations from overlapping units whose centers are just outside the footprint.",
@@ -113,7 +123,11 @@
       "Load amber depletion models before play so mining does not compile their shaders on first use.",
       "Aligned Amber deposits into compact five-node mining lines beside the starting halls on Echo Isles and Turtle Rock, with clear worker approaches.",
       "Buildings can now be placed on gently uneven ground; shared placement rules still reject sharp ledges, substantial slopes, water and blocked sites.",
-      "Fixed repeated early-match freezes caused by AI and units retrying unreachable paths."
+      "Fixed repeated early-match freezes caused by AI and units retrying unreachable paths.",
+      "Imported Warcraft terrain now uses a consistent installed Classic texture set, preserving painted shading without mod-pack mixing, warm overlays, or artificial specular sheen.",
+      "Warcraft map imports now remove hostile creeps around occupied starts before creating camps, matching the source game’s melee setup.",
+      "Warcraft imports now scale terrain and scenery to our five-cell halls, preserve atlas tiles at the matching scale, and keep starting mineral lines aligned with clear worker access.",
+      "Base worker-count labels stay crisp and consistently sized at every camera zoom and game render resolution."
     ],
     "knownIssues": []
   },

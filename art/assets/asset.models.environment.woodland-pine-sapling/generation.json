@@ -1,7 +1,7 @@
 {
-  "method": "procedural recolour: art/recipes/woodland_pine_atlas.py",
-  "originalPixels": true,
-  "brief": "Saturated conifer ramp over the existing bough silhouettes; bright sprig rims, deep cores.",
-  "source": "pine-atlas.png",
-  "packing": "Periodic normal/height derived from luminance; original colors retained."
+  "tool": "built-in image_gen",
+  "prompt": "Create ONE isolated flat painted game texture: a broad hanging foliage fan, shaped like a triangular cape or wide bell. It is NOT A TREE. Single silhouette on transparent background, no other items. Square canvas. Attachment is a small point at top center (50%,8%), body widens to (8%,80%) and (92%,80%); the bottom hem is a wide row of ragged pointed fringe ending around y=92%. Center bottom is roughly the SAME HEIGHT as the bottom corners. Shape is wide at its BOTTOM. Filled in solid, absolutely no tiers, no layered little boughs, no triangle trees, no sideways branch tips anywhere except along the bottom hem. Hand-painted vegetation material, saturated emerald/leaf green. A dozen large broad gently curving brush strokes run from the top attachment down toward the bottom fringe, like long grouped needles. Broad smooth tonal areas, subtle recessed lines following the strokes. Highlights forest green, shadows deep dark green. This is for one drooping 3D conifer branch panel in a stylized real-time strategy game. Chunky bold simple painting, crisp alpha edges, no feathery hairs, no haze, no lighting halo, no cast shadow, no trunk, no lettering. The silhouette must resemble a fabric cape with a jagged hem, NOT an entire pine tree.\n",
+  "reference": "CleanShot 2026-10-10 at 23.11.43@2x.png",
+  "geometry": "Original curved branch sheets and tapered trunk from art/recipes/woodland_originals.py; no imported Warcraft geometry.",
+  "runtimeTextureSize": 512
 }

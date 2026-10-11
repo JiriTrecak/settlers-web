@@ -1,5 +1,5 @@
 import {raceDefinition} from './races';
-import {startingUnits,startingUnitPosition} from './startingHero';
+import {startingUnits,startingUnitPosition,startingFormationRotation} from './startingHero';
 import type {Slot} from '../shared/match/match';
 import {placementGeometryError} from '../shared/spatial/placement';
 import {footprintCellBounds,navigationBodyOverlapsBounds} from '../shared/spatial/footprint';
@@ -24,6 +24,7 @@ function placementFloors(map:UtcMap){
 export function expandDeclaredMap(map: UtcMap, registry: ContentRegistry, slots: readonly Slot[] = []): Placement[] {
   for(const slot of slots)raceDefinition(registry.rules,slot.race);
   const result = [...map.entities];
+  const resources=map.mission||map.sandbox?[]:[...map.entities,...projectScene(map).resources];
   for (const s of map.mission || map.sandbox ? [] : map.playerStarts) {
     const setup = raceDefinition(registry.rules,slots.find(slot=>slot.player===s.player-1)?.race).startingSetup;
     if (s.setup !== registry.rules.startingSetup.id && !Object.values(registry.rules.races).some(r=>r.startingSetup?.id===s.setup))
@@ -40,13 +41,14 @@ export function expandDeclaredMap(map: UtcMap, registry: ContentRegistry, slots:
         initialState: { construction: "complete", inventory: setup.inventory },
       }),
     );
+    const formation={...s,rotation:startingFormationRotation(s,setup,resources,registry)};
     startingUnits(setup,slots.find(slot=>slot.player===s.player-1)?.hero).forEach((u, i) =>
       result.push(
         placementSchema.parse({
           id: `${prefix}/unit-${String(i + 1).padStart(3, "0")}`,
           definition: u.definition,
-          position: startingUnitPosition(s,u.offset),
-          rotation: s.rotation ?? 0,
+          position: startingUnitPosition(formation,u.offset),
+          rotation: formation.rotation,
           owner,
         }),
       ),

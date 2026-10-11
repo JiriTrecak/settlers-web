@@ -18,9 +18,9 @@ it('declares the agreed C-based unit sizes, speeds, supply and starting company'
  expect(content.get('unit.ants.bombardier').behaviors.combat!.range).toBe(32);
  expect(content.get('unit.ants.warrior').behaviors.combat!.range).toBe(.6);
  const g=game(),company=g.entities.filter(e=>e.owner==='player.1'&&e.unit);
- expect(company.filter(e=>e.definition==='unit.ants.settler')).toHaveLength(6);
+ expect(company.filter(e=>e.definition==='unit.ants.settler')).toHaveLength(5);
  expect(company.filter(e=>content.get(e.definition).hero)).toHaveLength(1);
- expect(company.reduce((s,e)=>s+content.get(e.definition).supplyCost!,0)).toBe(10);
+ expect(company.reduce((s,e)=>s+content.get(e.definition).supplyCost!,0)).toBe(9);
  expect(content.get('building.ants.fort').supplyProvided).toBe(15);
  expect(content.get('building.ants.house').supplyProvided).toBe(8);
  for(let i=0;i<company.length;i++){

@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Qcrp",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/villagefall/villagefall_crops.dds",
-      "sha256": "4cdce7b4edbba9815cefc10fe07f3d85c74d86b90595438d335887d481dd0ef8"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/villagefall/villagefall_crops_diffuse.dds",
+      "sha256": "64e09a7b2bbecdb37e8721b64d8268f4116372fc78e0f67722e4cbf8148425a2"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/villagefall/villagefall_crops_normal.dds",
+      "sha256": "b374f8397c76cb00198f0afa6443570545ab723c4d512b7dd13997965fbfe99d"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/villagefall/villagefall_crops_orm.dds",
+      "sha256": "a2d770ce68f549815b3d28067fe72819d7f5f7bd93a8944a0c5cd969d0e65703"
     }
   ],
   "packing": {

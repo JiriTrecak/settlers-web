@@ -1,55 +1,47 @@
 import {describe,it,expect} from 'vitest';
 import {Scene,Vector3,Color} from 'three';
-import {DAYTIME_LOOKS,DAY_PHASES,sampleDaytime,daytimeLabel} from '../../src/shared/environment/dayCycle';
+import {DAYTIME_LOOKS,DAY_PHASES,sampleDaytime,daytimeLabel,daytimeDirection} from '../../src/shared/environment/dayCycle';
 import {Sky} from '../../src/render/sky/sky';
 import {HEARTWOOD_INTERIOR} from '../../src/shared/environment/presets';
 
-describe('authored four-state cycle',()=>{
- it('uses the authored palette and HDR multipliers',()=>{
-  const day=DAYTIME_LOOKS.day,night=DAYTIME_LOOKS.night;
-  expect(day.ambient).toEqual({rgb:[230,230,230],alpha:1,multiplier:4});
-  expect(day.sunColor).toEqual({rgb:[247,209,128],alpha:1,multiplier:16});
-  expect(night.ambient.rgb).toEqual([132,167,255]);expect(night.sunColor.multiplier).toBe(4);
-  expect(DAYTIME_LOOKS.day_to_night.sunColor.multiplier).toBe(18);
-  expect(DAYTIME_LOOKS.night_to_day.sunColor.multiplier).toBe(22);
-  for(const look of Object.values(DAYTIME_LOOKS)){
-   expect(look.fog.density).toBeGreaterThanOrEqual(0);expect(Number.isFinite(look.fog.startHeight)).toBe(true);
-   expect(look.textureColorLUT).toMatch(/^woodland-/);
-  }
+describe('two-palette cycle with continuously moving shadows',()=>{
+ it('keeps daylight neutral and night cooler without an extra dawn/dusk palette',()=>{
+  expect(Object.keys(DAYTIME_LOOKS).sort()).toEqual(['day','night']);
+  const day=DAYTIME_LOOKS.day.sunColor,night=DAYTIME_LOOKS.night.sunColor;
+  expect(day.rgb[0]).toBe(day.rgb[1]);expect(day.rgb[1]).toBe(day.rgb[2]);
+  expect(night.rgb[2]).toBeGreaterThan(night.rgb[0]);
+  expect(night.multiplier).toBeLessThan(day.multiplier);expect(night.multiplier).toBeGreaterThan(day.multiplier*.5);
  });
- it('holds all attributes constant throughout day and night, including wraparound',()=>{
+ it('holds colors on plateaus, including midnight, but blends directly at dawn and dusk',()=>{
   for(const h of [6.6,8,11,14,17.4])expect(sampleDaytime(h).look).toBe(DAYTIME_LOOKS.day);
   for(const h of [18.6,21,23.9,0,3,5.4,-1,25])expect(sampleDaytime(h).look).toBe(DAYTIME_LOOKS.night);
-  expect(sampleDaytime(6).look).toBe(DAYTIME_LOOKS.night_to_day);
-  expect(sampleDaytime(18).look).toBe(DAYTIME_LOOKS.day_to_night);
- });
- it('uses 30-second transitions and 270-second plateaus in a ten-minute loop',()=>{
-  expect((DAY_PHASES.dawnEnd-DAY_PHASES.dawnStart)/24*600).toBeCloseTo(30);
-  expect((DAY_PHASES.duskEnd-DAY_PHASES.duskStart)/24*600).toBeCloseTo(30);
-  expect((DAY_PHASES.duskStart-DAY_PHASES.dawnEnd)/24*600).toBeCloseTo(270);
- });
- it('interpolates every numeric attribute continuously and keeps both LUT references',()=>{
-  for(const peak of [6,18])for(const h of [peak-.6,peak,peak+.6]){
-   const before=sampleDaytime(h-1e-7).look,after=sampleDaytime(h+1e-7).look;
-   expect(before.sunColor.multiplier).toBeCloseTo(after.sunColor.multiplier,5);
-   expect(before.fog.startHeight).toBeCloseTo(after.fog.startHeight,5);
-   for(let i=0;i<3;i++)expect(before.sunDirection[i]).toBeCloseTo(after.sunDirection[i],5);
+  for(const h of [6,18]){
+   const s=sampleDaytime(h);expect(s.blend).toBeCloseTo(.5);
+   expect(s.look.sunColor.multiplier).toBeCloseTo((DAYTIME_LOOKS.day.sunColor.multiplier+DAYTIME_LOOKS.night.sunColor.multiplier)/2);
+   expect(s.lutWeights.reduce((sum,l)=>sum+l.weight,0)).toBeCloseTo(1);
   }
-  const sample=sampleDaytime(17.7);
-  expect(sample.blend).toBeCloseTo(.5);expect(sample.look.sunColor.multiplier).toBeCloseTo(17);
-  expect(sample.lutWeights.reduce((s,l)=>s+l.weight,0)).toBeCloseTo(1);
-  expect(sample.look.colorize.radialFactorScale).toBe(1);
-  expect(sampleDaytime(18.3).look.colorize.radialFactorScale).toBeCloseTo(1.5);
   expect(daytimeLabel(8)).toBe('Day');expect(daytimeLabel(18)).toBe('Dusk');
  });
- it('applies literal source light values without multiplying by the retired solar curve',()=>{
-  const sky=new Sky(new Scene());sky.setHour(12);
-  expect(sky.sun.intensity).toBe(16);expect(sky.sun.color.getHexString()).toBe('f7d180');
-  expect(sky.lightingDiagnostics().ambientIntensity).toBe(4);
-  const direction=sky.sun.target.position.clone().sub(sky.sun.position).normalize();
-  expect(direction.distanceTo(new Vector3(.5,-1,-.5).normalize())).toBeLessThan(1e-8);
-  sky.setHour(22);expect(sky.sun.intensity).toBe(4);expect(sky.sun.color.getHexString()).toBe('86b9f8');
-  sky.setHour(18);expect(sky.sun.intensity).toBe(18);
+ it('uses ten-second transitions without jumps in colors or light direction',()=>{
+  expect((DAY_PHASES.dawnEnd-DAY_PHASES.dawnStart)/24*600).toBeCloseTo(10);
+  expect((DAY_PHASES.duskEnd-DAY_PHASES.duskStart)/24*600).toBeCloseTo(10);
+  for(const h of [0,DAY_PHASES.dawnStart,6,DAY_PHASES.dawnEnd,DAY_PHASES.duskStart,18,DAY_PHASES.duskEnd,24]){
+   const a=sampleDaytime(h-1e-7).look,b=sampleDaytime(h+1e-7).look;
+   expect(a.sunColor.multiplier).toBeCloseTo(b.sunColor.multiplier,5);
+   for(let i=0;i<3;i++)expect(a.sunColor.rgb[i]).toBeCloseTo(b.sunColor.rgb[i],3);
+   expect(new Vector3(...daytimeDirection(h-1e-7)).distanceTo(new Vector3(...daytimeDirection(h+1e-7)))).toBeLessThan(1e-6);
+  }
+ });
+ it('moves actual shadow light during held palettes and keeps it above the horizon',()=>{
+  const sky=new Sky(new Scene());
+  for(const hour of [9,13,21,1]){
+   sky.setHour(hour);const position=sky.sun.position.clone(),color=sky.sun.color.clone(),intensity=sky.sun.intensity;
+   sky.setHour(hour+.1);
+   expect(sky.sun.position.distanceTo(position)).toBeGreaterThan(.1);
+   expect(sky.sun.position.y).toBeGreaterThan(sky.sun.target.position.y);
+   expect(sky.sun.color.equals(color)).toBe(true);expect(sky.sun.intensity).toBe(intensity);
+  }
+  sky.setHour(0);const midnight=sky.sun.position.clone();sky.setHour(24);expect(sky.sun.position.distanceTo(midnight)).toBeLessThan(1e-9);
  });
  it('keeps interior lighting independent of the outside clock',()=>{
   const sky=new Sky(new Scene());sky.setGlobalLight(HEARTWOOD_INTERIOR.light);sky.setInterior(true);

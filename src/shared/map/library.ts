@@ -1,4 +1,3 @@
-import {localMapStorage} from './localMapStorage';
 import { stringifyUtcMap, parseUtcMap, type UtcMap } from "./utcmap";
 import { mapRevision } from "./playable";
 import {mapOverview,mapSourceHash,hasPlayableSlots,type MapOverview} from './overview';
@@ -13,12 +12,12 @@ export type MapEntry = {
   id: string;
   name: string;
   players: number;
-  source: "project" | "local";
+  source: "project" | "preview";
   overview:MapOverview;
   previewUrl?:string;
 };
 export type LoadedMapEntry=MapEntry & {map:UtcMap;revision:string};
-const localMaps=new Map<string,MapEntry>();
+const previews=new Map<string,MapEntry>();
 const loaders=new WeakMap<MapEntry,()=>Promise<LoadedMapEntry>>();
 function loadedEntry(item:MapEntry,map:UtcMap):LoadedMapEntry{
  let revision:string|undefined;
@@ -47,35 +46,24 @@ const project:MapEntry[]=Object.entries(sources).map(([path,read])=>{
 /** Loading a selection is explicit and shared by editor, local play and network play.
  * Concurrent requests share one parse; failures can be retried. Project browsing loads no terrain. */
 export function loadMap(id:string):Promise<LoadedMapEntry>{const item=getMap(id);return loaders.get(item)!();}
-/** Hydrate once before opening menus. Failed storage does not hide project maps. */
-export async function initializeMapLibrary():Promise<void>{
- const rows=await localMapStorage.read(),loaded=new Map<string,MapEntry>();
- for(const row of rows){
-  try{
-   if(typeof row.id!=='string'||!row.id.startsWith('local:'))continue;
-   const map=parseUtcMap(JSON.parse(row.json));if(!map)continue;
-   const item=entry(row.id,map,'local');item.name=`${map.name} (local copy)`;loaded.set(row.id,item);
-  }catch{/* One damaged local document must not hide other maps. */}
- }
- localMaps.clear();for(const [id,item] of loaded)localMaps.set(id,item);
-}
 export function authoredMaps(): MapEntry[] {
- return [...project,...localMaps.values()].sort((a,b)=>a.name.localeCompare(b.name));
+ return [...project].sort((a,b)=>a.name.localeCompare(b.name));
 }
 export function playableMaps():MapEntry[]{return authoredMaps().filter(m=>!m.overview.mission&&hasPlayableSlots(m.overview));}
 export function getMap(id: string): MapEntry {
-  const found = authoredMaps().find((m) => m.id === id);
+  const found = previews.get(id) ?? project.find((m) => m.id === id);
   if (!found) throw new Error(`Map not found: ${id}`);
   return found;
 }
-export async function rememberAuthoredMap(map: UtcMap): Promise<string> {
- const slug=map.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'untitled',id=`local:${slug}`;
- const json=stringifyUtcMap(map),saved=parseUtcMap(JSON.parse(json));
- if(!saved)throw Error('Cannot save an invalid map');
- await localMapStorage.write({id,json});
- const item=entry(id,saved,'local');item.name=`${saved.name} (local copy)`;localMaps.set(id,item);
+/** A test session is memory-only and never appears in map or campaign pickers. */
+export function registerMapPreview(map:UtcMap):string {
+ const saved=parseUtcMap(JSON.parse(stringifyUtcMap(map)));
+ if(!saved)throw Error('Cannot preview an invalid map');
+ const id=`preview:${crypto.randomUUID()}`;
+ previews.set(id,entry(id,saved,'preview'));
  return id;
 }
+export function releaseMapPreview(id:string):void {previews.delete(id);}
 
 export function overviewOf(entry:MapEntry):MapOverview{return entry.overview;}
 export function missionMaps(campaign?:string):MapEntry[]{return authoredMaps().filter(m=>{const info=overviewOf(m);return info.mission&&(!campaign||info.mission.campaign===campaign)&&hasPlayableSlots(info);}).sort((a,b)=>overviewOf(a).mission!.order-overviewOf(b).mission!.order);}

@@ -40,7 +40,7 @@ export function playableMapError(
   const field = compiled.field;
   const setup=content.rules.startingSetup;
   for (const s of starts) {
-    const startEnvelope=startingArea(s);
+    const startEnvelope=startingArea(s,[...map.entities,...compiled.resources]);
     if (
       placementGeometryError(content.get(setup.fort), {x:s.x,y:s.z},s.rotation??0) !== null ||
       s.x < 8 ||

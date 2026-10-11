@@ -153,3 +153,16 @@ it('rebuilds a sparse palette when first painting a new material and rebinds era
  expect(table.image.data[channelAt]).toBeGreaterThanOrEqual(0);
  expect(depth.uniforms.uSourceAR.value).toBe(resident);expect(terrainTileArray).toHaveBeenCalledTimes(4);material.dispose();
 });
+
+it('uploads atlas variants at their five-unit world positions and keeps the shifted origin in the shader',async()=>{
+ const field=new HeightField(16);field.samples.fill(2);field.textureGrid={cellSize:5,origin:[-.5,-.5]};
+ field.surfacePaint=[{owner:'terrain',material:'asset.terrain.warcraft-lgrs',weights:new Float32Array(field.samples.length).fill(1),variants:Uint8Array.from({length:121},(_,i)=>i%2)}];
+ const source=authoredTerrain(field,[],[]),material=new ImportedTerrainMaterial(source);await material.ready;
+ const view=shader();material.bindUniforms(view);expect(view.uniforms.uSourceAtlasOrigin.value.toArray()).toEqual([-.5,-.5]);
+ const bytes=view.uniforms.uSourceMasks.value.image.data,layer=source.layers.findIndex(l=>l.ar==='asset.terrain.warcraft-lgrs'),n=field.samples.length;
+ const at=(x:number,z:number,c:number)=>bytes[(layer*n+(z-field.origin)*field.verts+x-field.origin)*4+c];
+ // The boundary lies at x=4.5; world x=0 and x=4 share a tile, x=5 does not.
+ expect(at(0,0,1)).toBe(31);expect(at(0,0,2)).toBe(at(4,0,2));expect(at(5,0,2)).not.toBe(at(4,0,2));
+ const moved={...source,textureGrid:{cellSize:5,origin:[4.5,-.5] as [number,number]}};
+ expect(material.update(moved)).toBe(false);material.dispose();
+});

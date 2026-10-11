@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Frok",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/lordaeronfall/lordf_rock.dds",
-      "sha256": "db29c54825c69c7d9a1addda0154ae0a05f8d0f805f8b6c926d7aec6bb6ee085"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronfall/lordf_rock_diffuse.dds",
+      "sha256": "204dca2d612d9cb9bc5635c554c678f008a66c96238f7083efc58bd62d2ac706"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronfall/lordf_rock_normal.dds",
+      "sha256": "334f4d42da2b8e8c203fb0355de0b35f8e9159fee0eb43022e13cfcd46ff1aff"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronfall/lordf_rock_orm.dds",
+      "sha256": "d09827888defc8efabbc388193827c16d5c33103ee09f4737b30e27e2e8a59db"
     }
   ],
   "packing": {

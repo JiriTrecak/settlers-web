@@ -1,4 +1,4 @@
-import {readMapFile,writeMapFile} from './mapFiles';
+import {readMapFile,writeMapFile,mapFileInfo} from './mapFiles';
 import {inspectionShotSchema} from '../../src/shared/camera/inspectionShot';
 import {UNIT_CAMERA_MODES} from '../../src/shared/camera/modes';
 import {sceneCommandSchema} from '../../src/shared/authoring/sceneCommands';
@@ -84,7 +84,7 @@ export function editorTools(hub: EditorHub) {
     editor_spawn: createTool({
       id: "editor_spawn",
       description:
-        "Place, move or rotate a player start. Hall and opening formation rotate together in 90-degree steps; validates grid, dry level terrain and separation.",
+        "Place, move or rotate a player start. Hall rotation uses 90-degree steps. The opening formation faces the nearest active primary resource, with workers on that side and hero opposite; falls back to Hall rotation without a deposit. Validates grid, dry level terrain and separation.",
       inputSchema: z.object({
         rotation: z.union([z.literal(0),z.literal(90),z.literal(180),z.literal(270)]).optional(),
         player: z.number().int().min(1).max(8),
@@ -96,18 +96,19 @@ export function editorTools(hub: EditorHub) {
     editor_landscape: createTool({
       id: "editor_landscape",
       description:
-        "Terrain edits write committed cells directly. Use editor_scene previews and Apply for rivers, forests and ground cover. Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (optional sculpting with Catmull-Rom points x/z/radius, mode raise/smooth/flatten), biome (biome ID selects the complete artistic profile), environment (hour/playing/weather.kind only; visual overrides are forbidden), base (height), view (grid), export (path writes a new project .utcmap file without returning its large contents), load (path or map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
+        "Terrain edits write committed cells directly. Use editor_scene previews and Apply for rivers, forests and ground cover. Landscape authoring: plateau (closed points outline, absolute height -16..24), ramp (points from lower to upper level, radius half-width; samples endpoint heights; keep grade <= .65), landform (elliptical hill/basin: x/z, radiusX/Z, additive height, rotation degrees, plateau 0...9, roughness 0...35, seed), curve (optional sculpting with Catmull-Rom points x/z/radius, mode raise/smooth/flatten), biome (biome ID selects the complete artistic profile), exploration (initialExploration explored/hidden/null for mode default; never reveals enemies), environment (hour/playing/weather.kind only; visual overrides are forbidden), base (height), view (grid), file-info (path inspects a project .utcmap and returns its sha256), export (path creates a new project .utcmap; expectedSha256 explicitly replaces the inspected file if unchanged), load (path or map), landmarks (project stamp anchors and bounds to normalized image coordinates for a given aspect and optional ids), status with renderer diagnostics. Curve radius is half-width in meters.",
       inputSchema: z.object({
         action: z.enum([
           "status",
           "curve",
-          "environment", "biome",
+          "environment", "biome", "exploration",
           "base",
           "landform",
           "plateau",
           "ramp",
           "view",
           "export",
+          "file-info",
           "load",
           "landmarks",
         ]),
@@ -153,6 +154,7 @@ export function editorTools(hub: EditorHub) {
         seed: z.number().optional(),
         weather: environmentConditionsSchema.shape.weather,
         biome:z.string().optional().describe('Biome ID for action biome. All appearance is defined by the biome.'),
+        initialExploration:z.enum(["explored","hidden"]).nullable().optional().describe("For action exploration: initial terrain knowledge without enemy sight. Null restores mode default: explored skirmish, hidden campaign."),
         hour: z.number().optional(),
         playing: z.boolean().optional(),
         radiusX: z.number().optional(),
@@ -164,12 +166,15 @@ export function editorTools(hub: EditorHub) {
         grid: z.boolean().optional(),
         map: z.unknown().optional(),
         path:z.string().min(1).optional(),
+        expectedSha256:z.string().regex(/^[a-f0-9]{64}$/).optional().describe("Only for export with path: explicitly replace the existing file iff it still matches file-info."),
       }),
       execute: async (input) => {
+        if(input.expectedSha256&&(input.action!=='export'||!input.path))throw Error('expectedSha256 requires export with path');
+        if(input.action==='file-info'){if(!input.path)throw Error('file-info requires path');return mapFileInfo(input.path);}
         if(input.path){
           if(input.action==='export'){
             const result=await call('landscape',{action:'export'}) as {map:unknown};
-            return writeMapFile(input.path,result.map);
+            return writeMapFile(input.path,result.map,process.cwd(),input.expectedSha256);
           }
           if(input.action!=='load')throw Error('File paths are only supported for export and load');
           if(input.map!==undefined)throw Error('Choose either path or map');
@@ -504,7 +509,7 @@ export function editorTools(hub: EditorHub) {
           .max(1.5)
           .optional()
           .describe(
-            "Perspective distance relative to the default Play camera (1 = 60 world units), clamped to 40–80 world units. Small maps may limit zoom out.",
+            "Perspective distance relative to the default Play camera (1 frames 32 building cells at 16:9). Clamped to the play-camera zoom limits; small maps may limit zoom out.",
           ),
         gameCam: z
           .boolean()

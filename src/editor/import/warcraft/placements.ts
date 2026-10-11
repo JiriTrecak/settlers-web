@@ -1,19 +1,29 @@
 import {placementGeometryError} from '../../../shared/spatial/placement';
 import {content} from '../../../content/builtin';
 import type {Placement} from '../../../content/schema';
-import {expandMap} from '../../../content/map';
+import {expandDeclaredMap} from '../../../content/map';
 import {projectScene} from '../../../shared/authoring/project';
 import {footprintBounds,navigationBodyOverlapsBounds} from '../../../shared/spatial/footprint';
-import {resourceCenterSeparation} from '../../../shared/map/resourceClearance';
+import {resourceCenterSeparation,resourceCollisionCells} from '../../../shared/map/resourceClearance';
 import {WADING_DEPTH_CM} from '../../../shared/map/height';
 import type {UtcMap} from '../../../shared/map/utcmap';
 
 /** Substitute footprints differ from Warcraft. Resolve only actual conflicts,
  * keeping the source camp home and gold-site centre unless clearance requires it. */
-export function fitImportedPlacements(map:UtcMap,searchRadius:number){
- const scene=projectScene(map)!,field=scene.field,adjusted:{id:string;distance:number}[]=[],warnings:string[]=[];
+export function fitImportedPlacements(map:UtcMap,searchRadius:number,fixedSites:ReadonlySet<string>=new Set()){
+ const originalScene=projectScene(map),clearedTrees:string[]=[];
+ const primary=map.entities.filter(p=>fixedSites.has(p.id.slice(0,p.id.lastIndexOf('.'))));
+ // A five-node line is wider than the source mine. Clear only trees whose
+ // collision cells occupy a node or its two-unit working apron, rather than
+ // shifting that race-independent economy layout sideways into another lane.
+ for(const tree of originalScene.resources){
+  const d=content.get(tree.definition),cells=resourceCollisionCells(tree.position,d.footprint,d.collisionRadius,tree.appearance?.scale??1,tree.rotation);
+  if(primary.some(p=>{const b=footprintBounds(p.position,content.get(p.definition).footprint,p.rotation);return cells.some(c=>c.x>=b.minX-2&&c.x<=b.maxX+2&&c.y>=b.minY-2&&c.y<=b.maxY+2);}))clearedTrees.push(tree.id);
+ }
+ if(clearedTrees.length){const removed=new Set(clearedTrees);map={...map,authoring:{...map.authoring,objects:map.authoring.objects.filter(o=>!removed.has(o.id))}};}
+ const scene=clearedTrees.length?projectScene(map):originalScene,field=scene.field,adjusted:{id:string;distance:number}[]=[],warnings:string[]=[];
  const placements=map.entities.map(p=>({...p,position:{...p.position}}));
- const starts=expandMap({...map,entities:[]},content).filter(p=>p.owner!=='none');
+ const starts=expandDeclaredMap(map,content).filter(p=>p.id.startsWith('start.player.'));
  const trees=scene.resources;
  const solid=(p:Placement)=>content.get(p.definition).kind!=='unit';
  const bounds=(p:Placement)=>footprintBounds(p.position,content.get(p.definition).footprint,p.rotation);
@@ -33,18 +43,22 @@ export function fitImportedPlacements(map:UtcMap,searchRadius:number){
  for(const mine of mines){const key=mine.id.slice(0,mine.id.lastIndexOf('.'));groups.set(key,[...(groups.get(key)??[]),mine]);}
  for(const group of groups.values()){
   const original=group.map(p=>({...p.position}));
-  const fits=()=>group.every(p=>{
+  const fits=()=>{
+   const formation=expandDeclaredMap({...map,entities:placements},content).filter(p=>p.id.startsWith('start.player.')&&!solid(p));
+   return group.every(p=>{
    const d=content.get(p.definition);
-   return !placementGeometryError(d,p.position,p.rotation)&&dry(p)&&[...trees,...starts.filter(solid),...mines.filter(q=>!group.includes(q))].every(q=>!overlaps(p,q))&&map.playerStarts.every(s=>{
+   return !placementGeometryError(d,p.position,p.rotation)&&dry(p)&&formation.every(u=>!navigationBodyOverlapsBounds(u.position,content.get(u.definition).dimensions!.radius,bounds(p)))&&[...trees,...starts.filter(solid),...mines.filter(q=>!group.includes(q))].every(q=>!overlaps(p,q))&&map.playerStarts.every(s=>{
     const minimum=resourceCenterSeparation(content.get(content.rules.startingSetup.fort).footprint!,d.footprint!,d.constructionClearance??0,s.rotation??0);
     return Math.abs(s.x-p.position.x)>=minimum.x||Math.abs(s.z-p.position.y)>=minimum.y;
    });
   });
-  const found=candidates.find(delta=>{group.forEach((p,i)=>p.position={x:original[i].x+delta.x,y:original[i].y+delta.y});return fits();});
+  };
+  const options=fixedSites.has(group[0].id.slice(0,group[0].id.lastIndexOf('.')))?candidates.slice(0,1):candidates;
+  const found=options.find(delta=>{group.forEach((p,i)=>p.position={x:original[i].x+delta.x,y:original[i].y+delta.y});return fits();});
   if(found){if(found.distance)adjusted.push({id:group[0].id.slice(0,group[0].id.lastIndexOf('.')),distance:found.distance});}
   else{group.forEach((p,i)=>p.position=original[i]);warnings.push(`${group[0].id}: no nearby clear position for the substitute amber site.`);}
  }
- const units:Placement[]=[...starts.filter(p=>!solid(p))],solids=[...trees,...mines,...starts.filter(solid)];
+ const units:Placement[]=expandDeclaredMap({...map,entities:placements},content).filter(p=>p.id.startsWith('start.player.')&&!solid(p)),solids=[...trees,...mines,...starts.filter(solid)];
  for(const unit of placements.filter(p=>!solid(p))){
   const d=content.get(unit.definition),radius=d.dimensions!.radius,air=d.behaviors.movement?.locomotion==='air',original={...unit.position};
   const fits=()=>{
@@ -60,5 +74,5 @@ export function fitImportedPlacements(map:UtcMap,searchRadius:number){
   else{unit.position=original;warnings.push(`${unit.id}: no nearby clear position for the substitute neutral.`);}
   units.push(unit);
  }
- return {map:{...map,entities:placements},adjusted,warnings};
+ return {map:{...map,entities:placements},adjusted,warnings,clearedTrees};
 }

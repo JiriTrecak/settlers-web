@@ -1,3 +1,4 @@
+import {textureGridLayout} from '../map/textureGrid';
 import {z} from 'zod';
 import {groundTextures,isCliffMaterial} from './groundTextures';
 import {TERRAIN_AUTHORING as rules} from '../../content/terrain';
@@ -55,15 +56,15 @@ export function editTerrainGrid(data:TerrainData,input:GridTerrainEdit):{terrain
   if(!layer){layer={owner:'terrain',material:operation.material,weights:new Float32Array(field.samples.length)};field.surfacePaint!.push(layer);}paint=layer.weights;
   const ground=groundTextures.get(operation.material)?.terrain;
   if(ground&&!operation.erase){
-   const cells=field.span/rules.cellSize,count=ground.atlas.fullTiles.length;
+   const grid=textureGridLayout([field.origin,field.origin],[field.span,field.span],field.textureGrid),[columns,rows]=grid.cells,count=ground.atlas.fullTiles.length;
    if(operation.variant!==undefined&&operation.variant>=count)throw Error('Ground tile variant is outside this material atlas');
-   layer.variants??=new Uint8Array(cells*cells);
-   for(let z=0;z<cells;z++)for(let x=0;x<cells;x++){
-    const cx=x+field.origin/rules.cellSize+.5,cz=z+field.origin/rules.cellSize+.5;
+   layer.variants??=new Uint8Array(grid.count);
+   for(let z=0;z<rows;z++)for(let x=0;x<columns;x++){
+    const cx=(grid.start[0]+(x+.5)*grid.cellSize-rules.origin)/rules.cellSize,cz=(grid.start[1]+(z+.5)*grid.cellSize-rules.origin)/rules.cellSize;
     if(!areaContains(area,cx,cz))continue;
     // Choose during the editing operation; saved values are never regenerated on load.
     let hash=Math.imul(x+1,73856093)^Math.imul(z+1,19349663);hash=Math.imul(hash^(hash>>>16),2246822519);
-    layer.variants[z*cells+x]=operation.variant??((hash^(hash>>>13))>>>0)%count;
+    layer.variants[z*columns+x]=operation.variant??((hash^(hash>>>13))>>>0)%count;
    }
   }
  }

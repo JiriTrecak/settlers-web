@@ -42,6 +42,8 @@ export const groundTextureSchema=z.object({
  projection:z.object({type:z.literal('cliff'),verticalWorldSize:finite.positive().max(256),startSlope:finite.nonnegative().max(32),fullSlope:finite.positive().max(64)}).strict().optional(),
  /** Linear reflectance calibration for the scene's physical lighting. */
  reflectance:finite.positive().max(2).default(1),
+ /** Painted diffuse art has authored relief and no physical specular sheen. */
+ shading:z.enum(['physical','painted']).optional(),
  sourceIds:z.array(z.string().regex(/^[A-Za-z0-9]{4}$/)).max(64).default([]),
  albedo:refSchema,normal:refSchema,occlusion:refSchema,roughness:refSchema,metalness:refSchema,
  thumbnail:refSchema,

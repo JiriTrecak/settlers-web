@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Ndrd",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/northrend/north_dirtdark.dds",
-      "sha256": "0fec675569eb74900732ae610b4c8806fd940c60a6281fbb166e082b3711dbd4"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_dirtdark_diffuse.dds",
+      "sha256": "701b35faaf7cf56f72f2611b8bc1d683c78cc1c9a462022819b05a45360e6697"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_dirtdark_normal.dds",
+      "sha256": "8b0132a1add7c15c4e36d4ee038e3fa5ecf1554867492212f8e4a1a5c5be605f"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_dirtdark_orm.dds",
+      "sha256": "6c494c7338d46bea863befd5d9d503a05f725be7e8b3ceca9b8d1d93e9fc2983"
     }
   ],
   "packing": {

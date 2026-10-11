@@ -10,4 +10,6 @@ Tool declarations live in `tools.ts` and `assetTools.ts`; browser operations liv
 
 `editor_screenshot` waits for placed models and captures the live renderer. It accepts camera settings and optional aspect ratio; an offscreen target avoids resizing the browser. Camera state restores unless `keep` is requested. Captures belong in ignored `tmp/`, not a tracked comparison gallery.
 
-Version 3 maps contain committed terrain and placements; previous procedural maps are retired. Editor reloads retain a draft in session storage; do not overwrite an active author’s map merely to inspect it. See [map authoring](../../docs/editor.md) and [asset publication](../../docs/asset-pipeline/publication.md).
+Version 3 maps contain committed terrain and placements; previous procedural maps are retired. There is no browser draft or local map library. Only explicit Save persists a map; reload discards unsaved work. Do not replace an active author’s document merely to inspect another map. See [map authoring](../../docs/editor.md) and [asset publication](../../docs/asset-pipeline/publication.md).
+
+`editor_landscape` `file-info` with a project `.utcmap` path returns its current SHA-256 and a small summary. Export with `path` creates a new file exclusively. To explicitly save over an existing project map, supply the inspected `expectedSha256`; a concurrent edit rejects the save. The replacement is atomic, with no retained map copies. Reopen the project map to verify the saved result. Do not work around the check with temporary exported maps or browser autosaves.

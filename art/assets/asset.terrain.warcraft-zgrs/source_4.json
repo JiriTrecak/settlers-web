@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Zgrs",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/ruins/ruins_grass.dds",
-      "sha256": "f8a1dbd13462a6b119ad43de2b3a70c2f0967a903af927f30ab4847ca7e74e12"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_grass_diffuse.dds",
+      "sha256": "5f9a0f1e648bb998b9e5092a650d118bc0800af23680b1962bf8cff64269482d"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_grass_normal.dds",
+      "sha256": "c784c945b7c43059e6dfb2b290c6788f075a39b95dce624b7c9bee02367788f5"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_grass_orm.dds",
+      "sha256": "56ada3564289e0eaeda57febce7f25a503d7bc0c88e33576d2653e60586de480"
     }
   ],
   "packing": {

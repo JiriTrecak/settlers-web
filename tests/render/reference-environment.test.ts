@@ -24,7 +24,7 @@ async function load(_folder:string,id:string){
  const loader=new GLTFLoader().register(referenceMaterialPlugin).register(()=>({name:'geometry-only-test-textures',loadTexture:()=>Promise.resolve(new Texture())}));
  return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
 }
-for(const [id,triangles,parts] of [['woodland-pine-a',760,3],['woodland-pine-b',760,3],['woodland-pine-sapling',336,3],['woodland-pine-stump',210,2]] as const){
+for(const [id,triangles,parts] of [['woodland-pine-a',556,3],['woodland-pine-b',556,3],['woodland-pine-sapling',324,3],['woodland-pine-stump',210,2]] as const){
  it(`imports every ${id} material range with valid UVs, indices and correctly decoded normals`,async()=>{
   const {scene}=await load('trees',id);let count=0,meshes=0,normalCount=0,correct=0;
   scene.traverse(o=>{
@@ -94,7 +94,7 @@ it('keeps source shelter out of vertex tint and shares the source sway with cuto
  wind.dispose();mesh.geometry.dispose();m.dispose();
 });
 
-it('composes source foliage normals after instance transforms without dropping direct-light suppression',async()=>{
+it('composes painted foliage normals with ordinary game lighting and neutral material factors',async()=>{
  const {scene}=await load('trees','woodland-pine-a'),ground=new ReferenceGround(),macro=new Texture();
  expect(prepareReferencePlants(scene,ground,()=>macro)).toBe(true);
  let foliage=0;
@@ -108,10 +108,26 @@ it('composes source foliage normals after instance transforms without dropping d
    expect(shader.vertexShader).not.toContain('objectNormal=mix(objectNormal,crownNormal');
    expect(shader.vertexShader).toContain('transformedTangent=mix(');
    expect(shader.fragmentShader).not.toContain('// SOURCE_SPECULAR_MULTIPLIER');
-   expect(shader.fragmentShader).toContain('float sourceSpecularMultiplier=max(1.-(');
-   expect(shader.fragmentShader).toContain('*sourceSpecularMultiplier;');
-   expect(shader.fragmentShader).toContain('reflectedLight.directDiffuse+=');
+   expect(shader.fragmentShader).not.toContain('sourceIrradiance');
+   expect(shader.fragmentShader).not.toContain('uReferenceMacro');
+   expect(shader.fragmentShader).toContain('reflectedLight.directDiffuse +=');
+   expect(m.color.toArray()).toEqual([1,1,1]);
   }
  });expect(foliage).toBeGreaterThan(0);ground.dispose();macro.dispose();
 });
 
+
+it('suppresses physical glints for painted materials after source reflections, preserving diffuse lighting',()=>{
+ for(const painted of [false,true]){
+  const ground=new ReferenceGround(),macro=new Texture(),root=new Group(),material=new MeshStandardMaterial();
+  material.userData={referenceEnvironment:true,sourceShader:'plant',painted,sourceShaderAttributes:{IsUseGroundColor:'false'}};
+  root.add(new Mesh(new BoxGeometry(),material));prepareReferencePlants(root,ground,()=>macro);
+  const shader={uniforms:{},vertexShader:ShaderLib.standard.vertexShader,fragmentShader:ShaderLib.standard.fragmentShader};
+  material.onBeforeCompile(shader as never,{} as never);
+  const cutoff='reflectedLight.directSpecular=vec3(0.);reflectedLight.indirectSpecular=vec3(0.);';
+  expect(shader.fragmentShader.includes(cutoff)).toBe(painted);
+  expect(shader.fragmentShader.includes('sourceIrradiance')).toBe(!painted);
+  expect(shader.fragmentShader).toMatch(/reflectedLight.directDiffuse\s*\+=/);
+  ground.dispose();macro.dispose();material.dispose();
+ }
+});

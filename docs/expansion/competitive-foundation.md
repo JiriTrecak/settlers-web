@@ -15,7 +15,7 @@ The fixed conversion is **1 C = 4 engine world units = 4 navigation cells**. Nav
 
 Keep the optimized sector routing, ground mesh, body sweeps, shared corridors, spatial indexes and incremental occupancy invalidation. Change their inputs and boundary conversions where necessary, rather than replacing working algorithms. `src/shared/spatial/footprint.ts` owns physical bounds, conservative raster coverage, snapping and navigation-body/rectangle intersection. Simulation, authoring validation, AI blockers and placement rendering share its geometry. Foundation placement tests the same conservative square body footprint used by terrain navigation, at continuous positions; a center outside the footprint does not prove that the body is outside.
 
-Calibrate the Warcraft-inspired camera by visible battlefield coverage and unit/building proportions, not by copying an unverified FOV constant.
+Calibrate the Warcraft-inspired camera by visible battlefield coverage and unit/building proportions, not by copying an unverified FOV constant. Warcraft imports use 25.6 source units per world unit: its 128-unit terrain tile becomes 5 world units, while our building lattice remains 4. This matches the source 512-unit Town Hall foundation to our 5 C Hall. Imported atlas size/origin are saved separately from navigation; native map editing and body dimensions retain their established grid.
 
 ## Money and harvesting
 
@@ -49,7 +49,7 @@ Choose the first hero before the match. Tier 2 allows a second distinct hero; Ti
 
 The user authorized removing the entire old map catalogue. Replace it with newly authored maps instead of adapting incompatible layouts. Update the author-canopy-map skill and editor together: visible building grid, compulsory snapping for gameplay placements, footprint and clearance previews, and measurements expressed in C. Keep scenery variation natural while ensuring generated resource trees and other pathing obstacles respect the competitive layout. The skill must teach the new rules and Warcraft-inspired map-design practices, without preserving outdated numeric guidance.
 
-Matches also expose the same terrain-following world grid through Debug → Show world grid. This is a local visual diagnostic, available in multiplayer without changing simulation, revealing fog or requesting hidden navigation state. Closing Debug hides it and frees its geometry.
+Matches also expose the same terrain-following world grid through Debug → Show world grid. This is a local visual diagnostic, available in multiplayer without changing simulation, revealing fog or requesting hidden navigation state. Disabling Show world grid hides it and frees its geometry; CPU profiling is independent.
 
 Author a 128 × 128 C benchmark 1v1 through the editor command system. Target a 135 C opposing approach (45 seconds for baseline infantry), natural expansion 30–42 C away, center 54–72 C away, first camp 18–27 C away. Give each base a 24 × 22 C building shelf excluding harvesting corridors. Primary lanes: 8–12 C, chokepoints: 6 C, flanks: 3–4 C. Eight resource sites: main/natural/third per player and two contested. Forest and frost variants must have identical competitive topology.
 

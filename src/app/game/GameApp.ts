@@ -1,3 +1,4 @@
+import {receiveMapPreview} from '../../editor/file/preview';
 import {LoadingScreen} from '../../ui/loadingScreen';
 import {validateSavedMatch} from "../../session/worker/client";
 import {validateSaveDestination} from '../../shared/save/saveLibrary';
@@ -11,7 +12,7 @@ import {
   type MatchSetup,
 } from "../../shared/match/skirmish";
 import { perf } from "../../debug/performance";
-import { initializeMapLibrary, authoredMaps, playableMaps, getMap, loadMap, type LoadedMapEntry } from "../../shared/map/library";
+import { registerMapPreview, releaseMapPreview, authoredMaps, playableMaps, getMap, loadMap, type LoadedMapEntry } from "../../shared/map/library";
 import { MapPicker } from "../../ui/menu/mapPicker";
 import { emptyUtcMap, type UtcMap } from "../../shared/map/utcmap";
 /**
@@ -61,7 +62,6 @@ export class GameApp {
 
   async start(): Promise<void> {
     const generation=++this.startGeneration;
-    try{await initializeMapLibrary();}catch(error){console.warn("Local map library unavailable",error);}
     if(generation!==this.startGeneration)return;
     const canvas = document.createElement("canvas");
     this.canvas = canvas;
@@ -78,6 +78,18 @@ export class GameApp {
     });
     this.backgroundTicker.start();
 
+    const previewToken=new URLSearchParams(location.search).get('preview');
+    if(previewToken){
+      const loading=this.mapLoading=new LoadingScreen(this.hudRoot,()=>{loading.destroy();if(this.mapLoading===loading)this.mapLoading=null;this.showMenu();});
+      loading.update({stage:'Receiving editor preview'});
+      try{
+        const map=await receiveMapPreview(previewToken);
+        if(generation!==this.startGeneration||this.mapLoading!==loading)return;
+        loading.destroy();this.mapLoading=null;
+        this.play(registerMapPreview(map));
+      }catch(error){if(this.mapLoading===loading)loading.error(error);}
+      return;
+    }
     const intent = parseBootIntent();
     if (intent.player !== undefined) this.player = intent.player;
     if (
@@ -418,7 +430,7 @@ export class GameApp {
     if(!this.canvas||!this.screens)return;
     const mapId=entry.id,mode=entry.map.mission?'campaign':'skirmish';
     if(entry.revision!==match.mapRevision)throw new Error('The scenario changed since this match began. Open the updated map to start a new match.');
-    const address=new URL(location.href);address.searchParams.set("map",mapId);address.searchParams.delete("screen");history.replaceState(null,"",address);
+    const address=new URL(location.href);address.searchParams.set("map",mapId);address.searchParams.delete("screen");address.searchParams.delete("preview");history.replaceState(null,"",address);
     const gen=++this.playGen;
     const play = new PlayScreen(this.canvas, {
       mapId,
@@ -432,7 +444,10 @@ export class GameApp {
         this.launchLocal(next,nextMatch,0);
       });},
       onLoadSave:async raw=>{const target=await loadMap(raw.mapId),loaded=validateSaveDestination(raw,mode,target);await validateSavedMatch(loaded,target.map);if(this.screens?.screen===play)this.launchLocal(target,loaded.match,loaded.player,loaded);},
-      onLeave: () => entry.map.mission ? this.showCampaign(true) : this.showMapPicker(),
+      onLeave: () => {
+        if(entry.source==='preview'){this.showMenu();releaseMapPreview(entry.id);}
+        else if(entry.map.mission)this.showCampaign(true);else this.showMapPicker();
+      },
     });
     this.screens.show(play);
     try {

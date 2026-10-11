@@ -3,19 +3,34 @@
   "id": "asset.icons.resource-amber",
   "name": "Amber",
   "kind": "icon",
-  "revision": 1,
+  "revision": 6,
   "status": "published",
   "tags": [
-    "ants-v1",
-    "migrated"
+    "woodland-interface",
+    "resources",
+    "original"
   ],
   "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "6514855475e456dcabeaa9a33c2b604bce9b189488a7187233e6cb9c245ebfd5",
+      "bytes": 1428
+    },
     {
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "c02d9530b85c462d0efcf965588222aa06f5a00f877ed8f19a0989b117fe1fed",
-      "bytes": 29391
+      "sha256": "838857cd9b7fe66dd993f27b70e6948186b527e04d8571330a3a38c21d2717c9",
+      "bytes": 23020
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "278950f306c57c37317cfd7af133f5f94693206fbf9bccc3177b2d5b6e0ea836",
+      "bytes": 1800618
     }
   ],
   "usesGeometry": false,
@@ -46,7 +61,8 @@
   },
   "capabilities": {},
   "provenance": {
-    "method": "migration",
-    "sourceHash": "c02d9530b85c462d0efcf965588222aa06f5a00f877ed8f19a0989b117fe1fed"
+    "method": "generated",
+    "licenseNote": "Original Under the Canopy resource artwork generated with built-in ImageGen.",
+    "sourceHash": "278950f306c57c37317cfd7af133f5f94693206fbf9bccc3177b2d5b6e0ea836"
   }
 }

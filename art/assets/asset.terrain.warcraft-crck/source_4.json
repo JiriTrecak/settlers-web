@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Crck",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/felwood/felwood_rock.dds",
-      "sha256": "03b52e37fd27901b3954d599812df1eacdc2043ee5b53c1ba7bfbf9c66e829d3"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/felwood/felwood_rock_diffuse.dds",
+      "sha256": "03e13d64a99866d087b71ac29ab1ce08366098118a3392ec59b8799be3e794fb"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/felwood/felwood_rock_normal.dds",
+      "sha256": "36a6a48041fa1ac65a1dded040c0693ffe021ba02a3fb36760d3a79eaeefeb4a"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/felwood/felwood_rock_orm.dds",
+      "sha256": "043913f80b6f5ac724fd5e0360df957e1aaee1d32696b1ff236d9ecd8d92a6f3"
     }
   ],
   "packing": {

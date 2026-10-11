@@ -39,8 +39,8 @@ it('shares identical published channel pixels across the complete library withou
  const palette=terrainTexturePalette(source),count=[...groundTextures.values()].filter(a=>!a.terrain?.projection).length;
  expect(count).toBe(104);
  expect(palette.names.ar).toHaveLength(84); // 83 unique ground colors + biome base
- expect(palette.names.nh).toHaveLength(81); // 80 unique ground normals + biome base
- expect(palette.names.om).toHaveLength(19);
+ expect(palette.names.nh).toHaveLength(74); // Definitive normal detail and transition opacity share matching channel data.
+ expect(palette.names.om).toHaveLength(54);
  expect(palette.indices).toHaveLength(110);
  const table=terrainLayerTable(source,palette);
  palette.indices.forEach((indices,i)=>expect([...table.data.slice((table.metadataOffset+i*8)*4+13,(table.metadataOffset+i*8)*4+16)]).toEqual(indices));

@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Ldrg",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/lordaeronsummer/lords_dirtgrass.dds",
-      "sha256": "71855a1635a6e113a8110f19f6443bf254c8d8f30c738f388178050e09ca7fc2"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronsummer/lords_dirtgrass_diffuse.dds",
+      "sha256": "1ed5a655843c1b950692e2a7c0d1696921611234191c19c284698c1375dd530e"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronsummer/lords_dirtgrass_normal.dds",
+      "sha256": "900839cefe2ddd9ea61e8afd65889166639848ffdd8fe4037b170f0a0e900d11"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronsummer/lords_dirtgrass_orm.dds",
+      "sha256": "42c0009d3432a7c25031fcd95b3a9070eb07634a206df8701ea116c6c115a970"
     }
   ],
   "packing": {

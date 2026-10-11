@@ -1,17 +1,28 @@
-export const RESOLUTION_SCALES=[.5,.75,1] as const;
-export type ResolutionScale=typeof RESOLUTION_SCALES[number];
-export const RESOLUTION_KEY='utc.graphics.resolution-scale';
+export const RENDER_RESOLUTIONS=['native','1280x720','1280x800','1600x900','1920x1080','1920x1200','2560x1440','2560x1600','3840x2160'] as const;
+export type RenderResolution=typeof RENDER_RESOLUTIONS[number];
+export const RESOLUTION_KEY='utc.graphics.render-resolution';
 export const GRAPHICS_CHANGED='utc-graphics-changed';
-export function readResolutionScale():ResolutionScale {
- try{const value=Number(localStorage.getItem(RESOLUTION_KEY));if(RESOLUTION_SCALES.includes(value as ResolutionScale))return value as ResolutionScale;}catch{}
- return 1;
+export function isRenderResolution(value:unknown):value is RenderResolution {
+ return typeof value==='string'&&(RENDER_RESOLUTIONS as readonly string[]).includes(value);
 }
-export function setResolutionScale(value:ResolutionScale):void {
- if(!RESOLUTION_SCALES.includes(value))return;
- try{localStorage.setItem(RESOLUTION_KEY,String(value));}catch{}
+export function readRenderResolution():RenderResolution {
+ try{const value=localStorage.getItem(RESOLUTION_KEY);if(isRenderResolution(value))return value;}catch{}
+ // Deliberately ignore the obsolete percentage setting: it cannot name a stable resolution.
+ return 'native';
+}
+export function setRenderResolution(value:RenderResolution):void {
+ if(!isRenderResolution(value))return;
+ try{localStorage.setItem(RESOLUTION_KEY,value);}catch{}
  window.dispatchEvent(new CustomEvent(GRAPHICS_CHANGED,{detail:value}));
 }
-export function renderPixelRatio(scale:ResolutionScale,dpr:number):number{return Math.max(.1,Number.isFinite(dpr)&&dpr>0?dpr:1)*scale;}
+export function renderDimensions(resolution:RenderResolution,width:number,height:number,dpr:number):{width:number;height:number}{
+ if(resolution!=='native'){
+  const [w,h]=resolution.split('x').map(Number);return {width:w,height:h};
+ }
+ const ratio=Number.isFinite(dpr)&&dpr>0?dpr:1;
+ const dimension=(v:number)=>Math.max(1,Math.floor((Number.isFinite(v)?v:1)*ratio));
+ return {width:dimension(width),height:dimension(height)};
+}
 
 export const SHADOW_MODES=['soft','filtered','off'] as const;
 export type ShadowMode=typeof SHADOW_MODES[number];

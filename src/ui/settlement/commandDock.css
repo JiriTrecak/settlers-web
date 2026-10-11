@@ -88,10 +88,12 @@
 .rts-command-banner kbd{top:50%;bottom:auto;transform:translateY(-50%);right:6px;font-size:10px}
 .rts-command-pages{position:absolute;top:calc(118% + 4px);width:100%;display:flex;justify-content:center;gap:10px;font:10px system-ui;pointer-events:auto}
 .rts-command-pages:empty{display:none}.rts-command-pages button{cursor:pointer;background:#1c2114;border:1px solid #5e6341;color:#e1dfba}
-.rts-resources{position:absolute;left:0;bottom:calc(100% + 18px);width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;pointer-events:auto;white-space:nowrap}
-.rts-resources>span{position:relative;aspect-ratio:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:help;background:var(--wood-slot) center/100% 100% no-repeat,radial-gradient(ellipse,#30372c,#111610);padding:12% 5% 10%;filter:drop-shadow(0 3px 3px #0009)}
-.rts-resources .rts-art{width:48%;height:auto;aspect-ratio:1;background-size:contain}
-.rts-resources b{font:600 clamp(13px,6.5cqw,23px)/1 Outfit,system-ui;color:#f2ebd3;text-shadow:0 1px 3px #000;font-variant-numeric:tabular-nums;letter-spacing:-.035em}
+.rts-resources{position:absolute;right:-8%;bottom:calc(100% + 8px);width:180%;aspect-ratio:4.8;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0;padding:4% 16%;pointer-events:auto;white-space:nowrap;isolation:isolate;color:#f2ebd3}
+.rts-resources::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('../../../assets/library/asset.interface.woodland.resource-ribbon/image.webp') center/100% 100% no-repeat;filter:drop-shadow(0 3px 3px #0009)}
+.rts-resources>span{position:relative;min-width:0;display:flex;align-items:center;justify-content:center;gap:3cqw;cursor:help;padding:0 2cqw;border-radius:5px}
+.rts-resources>span:focus-visible{outline:2px solid #e2d58c;outline-offset:-2px}
+.rts-resources .rts-art{width:10cqw;height:10cqw;background-size:contain;filter:drop-shadow(0 1px 2px #000b)}
+.rts-resources b{font:600 clamp(16px,7.5cqw,25px)/1 Outfit,system-ui;color:inherit;text-shadow:0 1px 3px #000;font-variant-numeric:tabular-nums;letter-spacing:-.035em}
 .rts-control-groups{position:absolute;left:48%;bottom:84%;transform:translateX(-50%);display:grid;grid-template-columns:repeat(10,32px);gap:3px;pointer-events:none;max-width:45%;overflow:auto;padding:3px}
 .rts-control-groups[hidden]{display:none}
 .rts-control-groups button{pointer-events:auto;opacity:.6;transition:opacity .15s;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:32px;height:42px;padding:3px 2px;background:#101315dd;border:1px solid #414345;border-radius:2px;color:#e2e4e6;cursor:pointer;font:10px system-ui}

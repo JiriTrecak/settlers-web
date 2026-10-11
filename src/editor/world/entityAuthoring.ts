@@ -7,13 +7,14 @@ import type { UtcMap } from "../../shared/map/utcmap";
 
 export type EntityAuthoringState = Pick<
   UtcMap,
-  "entities" | "camps" | "playerStarts" | "mission"
+  "entities" | "camps" | "playerStarts" | "mission" | "initialExploration"
 >;
 
 /** Keep entity/spawn undo independent of later terrain, scenery and lighting edits. */
 export function entityAuthoringState(map: UtcMap): EntityAuthoringState {
   return structuredClone({
     mission: map.mission,
+    initialExploration: map.initialExploration,
     entities: map.entities,
     camps: map.camps,
     playerStarts: map.playerStarts,

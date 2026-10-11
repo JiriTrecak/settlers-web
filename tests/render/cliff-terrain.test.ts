@@ -41,6 +41,6 @@ it('declares slope and vertical projection in the renderer table without modifyi
  const data=editTerrainGrid(flatTerrainData(16),{selection,operation:{type:'material',material:cliff}}).terrain;
  const field=new HeightField(16);restoreTerrain(field,data);const source=authoredTerrain(field,[],[]),table=terrainLayerTable(source);
  const index=source.layers.findIndex(l=>l.ar===cliff),at=(table.metadataOffset+index*8)*4,definition=groundTextures.get(cliff)!.terrain!;
- expect([...table.data.slice(at+8,at+12)]).toEqual([-1,4,12,0]);
+ expect([...table.data.slice(at+8,at+12)]).toEqual([-1,4,12,definition.shading==='painted'?1:0]);
  expect(table.data[at+16]).toBeCloseTo(definition.projection!.startSlope);expect(table.data[at+17]).toBeCloseTo(definition.projection!.fullSlope);
 });

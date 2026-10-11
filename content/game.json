@@ -895,7 +895,7 @@
       }
     },
     "maxSupply": 100,
-    "supplyIcon": "icon.ants.house",
+    "supplyIcon": "icon.resource.supply",
     "constructionRefundPermille": 750,
     "experience": {
       "unitRewards": [

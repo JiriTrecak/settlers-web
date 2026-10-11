@@ -20,7 +20,7 @@ export function terrainLayerTable(source:ImportedTerrain,palette?:TerrainTexture
   const tint=new Color(layer.tint??'#ffffff').multiplyScalar(g?.reflectance??1);
   data.set([layer.tiling,layer.blend,layer.verticality,layer.edge],at);
   data.set([tint.r,tint.g,tint.b,layer.desaturation],at+4);
-  if(g)data.set(g.projection?[-1,g.projection.verticalWorldSize,g.tileWorldSize,0]:[g.atlas.columns,g.atlas.rows,g.tileWorldSize,g.atlas.fullTiles[0]],at+8);
+  if(g)data.set(g.projection?[-1,g.projection.verticalWorldSize,(source.textureGrid?.cellSize??g.tileWorldSize),g.shading==='painted'?1:0]:[g.atlas.columns,g.atlas.rows,(source.textureGrid?.cellSize??g.tileWorldSize),g.shading==='painted'?1:0],at+8);
   data[at+12]=layer.breakup??0;
   data.set(palette?.indices[i]??[i,i,i],at+13);
   for(let c=0;c<16;c++)data[at+16+c]=g?.atlas.corners?.[c]??0;

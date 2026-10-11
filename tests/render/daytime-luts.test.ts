@@ -17,8 +17,8 @@ describe('original color-grading volumes',()=>{
   }luts.dispose();
  });
  it('binds both neighboring looks during transitions and one held look on plateaus',()=>{
-  const luts=createDaytimeLuts(),dusk=luts.pair(sampleDaytime(17.7)),night=luts.pair(sampleDaytime(23));
-  expect(dusk.from).toBe(luts.textures.day);expect(dusk.to).toBe(luts.textures.day_to_night);expect(dusk.blend).toBeCloseTo(.5);
+  const luts=createDaytimeLuts(),dusk=luts.pair(sampleDaytime(18)),night=luts.pair(sampleDaytime(23));
+  expect(dusk.from).toBe(luts.textures.day);expect(dusk.to).toBe(luts.textures.night);expect(dusk.blend).toBeCloseTo(.5);
   expect(night.from).toBe(luts.textures.night);expect(night.to).toBe(night.from);expect(night.blend).toBe(0);
   luts.dispose();
  });

@@ -3,7 +3,7 @@
   "id": "asset.terrain.warcraft-cliff-clgr",
   "name": "Cliff face · CLgr",
   "kind": "terrain-material",
-  "revision": 1,
+  "revision": 8,
   "status": "published",
   "tags": [
     "warcraft",
@@ -15,15 +15,15 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "226cbe11e395ccd6941774c0c75287908360bb509652104f25a0558317e529e9",
-      "bytes": 3803924
+      "sha256": "e8e0e29929f56e867834133cb17ac6e890e8b2ada64c40cea933392e45d6564c",
+      "bytes": 2053438
     },
     {
       "role": "data",
       "index": 2,
       "format": "bin",
-      "sha256": "8bbdb0f8ebd8888bd24c935de585e3925d4101ed6b9ef28505b29a698d01126b",
-      "bytes": 2592596
+      "sha256": "837fbcfa677df32b56949ea7768554053108cc7a089a66089bfbea36d335ea2d",
+      "bytes": 1024275
     },
     {
       "role": "data",
@@ -36,16 +36,16 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "cc4853c9292f13f757576589a2e0553e070908731a1baa473f8d3de384fa72e9",
-      "bytes": 274966,
+      "sha256": "426edf7301df96e698e63ff4ca9548e54be3f719abea89ad9f6a3d73fb020638",
+      "bytes": 152280,
       "colorSpace": "srgb"
     },
     {
       "role": "normal",
       "index": 1,
       "format": "png",
-      "sha256": "b9cdbee85feaaba92320fe31222266bf6ca0903b50b845f53b448c1ecbd5de51",
-      "bytes": 463041,
+      "sha256": "00fe60afd3adaa0d02efa41231b10647254ed5a38045ab994b09a45fa8fce6b2",
+      "bytes": 116860,
       "colorSpace": "none"
     },
     {
@@ -60,8 +60,8 @@
       "role": "roughness",
       "index": 1,
       "format": "png",
-      "sha256": "9c0ac95fa1a1544045ec6d935666cafcc615befdeee64f2da8f747b8a82224fb",
-      "bytes": 156361,
+      "sha256": "89ead348bdcdc509b6954a370134df46ef3ff89385861a92b4fc603b23575018",
+      "bytes": 72680,
       "colorSpace": "none"
     },
     {
@@ -76,37 +76,37 @@
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "f6e3c7ff574e763e157610c2f53225c98032d5a57a132a171ba4838f35cf5da4",
-      "bytes": 71361,
+      "sha256": "ede68d94d280825ea1b1cc04be68f84bdf14522622c00e4dc2f94c70ce665534",
+      "bytes": 61247,
       "colorSpace": "srgb"
     },
     {
       "role": "source",
       "index": 1,
       "format": "bin",
-      "sha256": "9810d34802332e34b5986fe086a89d83d7478b4f6ccd90227d0642c036b6fedb",
+      "sha256": "3fae18e46db2dda77ed379b7e3831461295defe0ae3592408f40a1f0aa5aee59",
       "bytes": 1398256
     },
     {
       "role": "source",
       "index": 2,
       "format": "bin",
-      "sha256": "3ca01185b2cfb411caa250c92b8ea43205bffe547b6095774b674f65b21df266",
+      "sha256": "748259e2015cc4330cd4333e9a109271961b5218cab97112db7786805bc9f86c",
       "bytes": 1398256
     },
     {
       "role": "source",
       "index": 3,
       "format": "bin",
-      "sha256": "7dddd378b79aa3c4e150b445a8cb4c26a710d828486ee538efc7283a70f9996b",
+      "sha256": "46c73010d022ca1264f440b8b99041a12d5cd031992cc03acee83ebcd77453ed",
       "bytes": 1398256
     },
     {
       "role": "source",
       "index": 4,
       "format": "json",
-      "sha256": "800a74af9bae1bb02d61673f3bcbc75d84bdc1546bbbbb3df4bf7f65f947b51c",
-      "bytes": 1335
+      "sha256": "721187929fc83afdc46d22c185905f7a2f78fe6d4a6600d6e63be88116002b0f",
+      "bytes": 1363
     }
   ],
   "usesGeometry": false,
@@ -128,8 +128,8 @@
   "capabilities": {},
   "provenance": {
     "method": "import",
-    "licenseNote": "User-supplied Rebirth replacements with missing channels from the local Warcraft III: Reforged installation. Original sources retain their respective rights.",
-    "sourceHash": "329caa9060688a25c2f51f24a3d6ee5a15144c7fbe54fa28420efb0d3040a319"
+    "licenseNote": "Imported from the local Warcraft III installation (definitive). Original sources retain their respective rights.",
+    "sourceHash": "4681111c65131d88ae855c8890620991c4dd4323db4bd2c1109080b46bc9dea4"
   },
   "terrain": {
     "tileWorldSize": 12,
@@ -139,7 +139,8 @@
       "startSlope": 0.8,
       "fullSlope": 1.8
     },
-    "reflectance": 0.25,
+    "reflectance": 1,
+    "shading": "physical",
     "sourceIds": [
       "CLgr"
     ],

@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "cFc1",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/lordaeronfall/lordf_grass.dds",
-      "sha256": "c034193661257fe1313808de92f01e96e733ceeb0eff56e938bef4e21465bea3"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronfall/lordf_grass_diffuse.dds",
+      "sha256": "f2ba255f1f74776b8f12d21e63aef6daecb90b33d827ac139466928239b4ae3d"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronfall/lordf_grass_normal.dds",
+      "sha256": "eeab79c4cac88310728e5574b8b289369800bcf819732a5465c394a235efe1e0"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronfall/lordf_grass_orm.dds",
+      "sha256": "d0fbcf4198d91c39283d91c5c314c39d1f2498a49f6f9ba21da30f26f845ee51"
     }
   ],
   "packing": {

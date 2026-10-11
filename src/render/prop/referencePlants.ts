@@ -17,7 +17,9 @@ export function prepareReferencePlants(root:Object3D,ground?:ReferenceGround,mac
    if(m.userData.referencePrepared)continue;
    m.userData.referencePrepared=true;
    // Preserve authored base-color factors; source imports already use white.
-   const macroTexture=macro?.();
+   // Original painted foliage shares the game's ordinary diffuse lighting.
+   // Imported PBR foliage still uses its source ground/reflection response.
+   const macroTexture=m.userData.painted?undefined:macro?.();
    if(macroTexture&&ground)ground.attachColor(m,macroTexture,m.userData.sourceShaderAttributes?.IsUseGroundColor==='true',!m.userData.underlay);
    if(m.userData.underlay&&ground)ground.attach(m);
    // Normal.w is ambient occlusion, not a tint. Multiplying the albedo also
@@ -51,6 +53,17 @@ export function prepareReferencePlants(root:Object3D,ground?:ReferenceGround,mac
      .replaceAll('saturate( dot( geometryNormal, directLight.direction ) )',`mix(saturate(dot(geometryNormal,directLight.direction)),1.,${backside})`);
    };
    m.customProgramCacheKey=()=>lightKey()+'/source-mrb-specular-v3-'+!!m.userData.sourceShadingLoaded+'-'+m.userData.sourceShader;
+   if(m.userData.painted){
+    // Painted foliage already contains its highlight shapes. Keep diffuse light
+    // and shadows, but do not add white physical glints over the painted colour.
+    const before=m.onBeforeCompile,key=m.customProgramCacheKey.bind(m);
+    m.onBeforeCompile=(s,r)=>{
+     before.call(m,s,r);
+     s.fragmentShader=s.fragmentShader.replace('#include <aomap_fragment>',
+      '#include <aomap_fragment>\nreflectedLight.directSpecular=vec3(0.);reflectedLight.indirectSpecular=vec3(0.);');
+    };
+    m.customProgramCacheKey=()=>key()+'/painted-diffuse';
+   }
    prepareSnowSurface(m);
    if(m.userData.sourceShader==='grass'&&!m.userData.foliage){
     // Upright alpha cards describe a meadow volume, not six dark vertical walls.

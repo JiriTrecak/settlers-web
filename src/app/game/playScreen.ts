@@ -45,7 +45,7 @@ export class PlayScreen extends GameScreen {
     const entry=getMap(hooks.mapId);
     this.menu=new GameMenu(entry.overview.mission?'campaign':'skirmish',entry.name,{
       pause:p=>this.session?.setMenuPaused(p),leave:hooks.onLeave,
-      ...(!hooks.channel?{snapshot:()=>this.session.snapshotLocal(),restart:hooks.onRestart,load:hooks.onLoadSave}:{}),
+      ...(!hooks.channel?{restart:hooks.onRestart,...(entry.source!=='preview'?{snapshot:()=>this.session.snapshotLocal(),load:hooks.onLoadSave}:{})}:{}),
     });
     this.hud = new Hud(this.root,{onLeave:hooks.onLeave,onMenu:()=>{if(this.ready)this.menu.open();}});
     this.root.classList.toggle("observer-match", hooks.player === null);

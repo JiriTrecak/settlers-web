@@ -32,12 +32,12 @@ export type Biome = {
   landforms: readonly {id: string; name: string}[];
 };
 
-/** Clear-air woodland: golden sunlight, living greens and cool intact shadows. */
+/** Neutral reference finish: let the artwork and lighting establish the palette. */
 const WOODLAND_FINISH:PostProcessingSettings={
  daytimeLutStrength:0,distanceFogStrength:0,
- exposure:1.08,contrast:1.035,saturation:1.16,highlightShoulder:.86,
- shadowTint:'#d6eaf0',highlightTint:'#fff4db',splitStrength:.12,shadowLift:0,vignette:0,
- bloom:{strength:.035,threshold:1.6,knee:.15,radius:1.5},
+ exposure:1,contrast:1,saturation:1,highlightShoulder:0,
+ shadowTint:'#ffffff',highlightTint:'#ffffff',splitStrength:0,shadowLift:0,vignette:0,
+ bloom:{strength:0,threshold:1.6,knee:.15,radius:1.5},
  contact:{strength:.4,radius:1.2,bias:.07},
 };
 const WINTER_FINISH:PostProcessingSettings={
@@ -71,7 +71,7 @@ const BASE_BIOMES: readonly Biome[] = [{
   terrainTiles:{soil:{ar:'asset.terrain.woodland-soil',nh:'asset.terrain.woodland-soil-normal',tiling:.8},dirt:{ar:'asset.terrain.woodland-dirt',nh:'asset.terrain.woodland-dirt-normal',tiling:.8},grass:{ar:'asset.terrain.woodland-grass',nh:'asset.terrain.woodland-grass-normal',tiling:.9,blend:.35,breakup:.35},stones:{ar:'asset.terrain.pebble-trail',nh:'asset.terrain.pebble-normal',tiling:1.2,blend:.65}},
   paths:[{id:'recipe.path.pebbles',name:'Pebble forest trail'},{id:'recipe.path.grass',name:'Grass ground'},{id:'recipe.path.soil',name:'Exposed earth'}],
   minimap: {ground: '#ad956d', grass: '#829151', forest: '#344c2a', crown: '#687a40'},
-  environment: {postProcessing:WOODLAND_FINISH,light:{...FOREST.light,ambientTint:'#e5f3e8',ambientStrength:.3,skyTint:'#e0eeff',fillStrength:.8,sunTint:'#eef0ff',sunStrength:1,sunHeight:45,sunDirection:-100,shadowSoftness:3},atmosphere:{...DEFAULT_ATMOSPHERE,enabled:false,density:0,shaftDensity:0,regions:[]},hour: 12, season: 'summer', playing: false, canopy: {...DEFAULT_CANOPY,enabled:true,height:140,scale:240,coverage:.55,softness:.22,strength:.14,cloudShadow:0}},
+  environment: {postProcessing:WOODLAND_FINISH,light:{...FOREST.light,ambientTint:'#ffffff',ambientStrength:.3,skyTint:'#e0eeff',fillStrength:.8,sunTint:'#ffffff',sunStrength:1,sunHeight:45,sunDirection:-100,shadowSoftness:3},atmosphere:{...DEFAULT_ATMOSPHERE,enabled:false,density:0,shaftDensity:0,regions:[]},hour: 12, season: 'summer', playing: false, canopy: {...DEFAULT_CANOPY,enabled:true,height:140,scale:240,coverage:.55,softness:.22,strength:.14,cloudShadow:0}},
   materials: [{id: 'sand', name: 'Exposed soil'}, {id: 'road', name: 'Dirt path'}, {id: 'grass', name: 'Grass ground'}, {id: 'rock', name: 'Rock'}],
   foliage: [
     {id: 'recipe.meadow.woodland-edge', name: 'Forest-driven grass and undergrowth'},
@@ -130,7 +130,7 @@ export const BIOMES:readonly Biome[]=[...BASE_BIOMES,{
 }];
 
 export const MAP_DIMENSIONS = [
-  {size: 256, name: 'Small'}, {size: 512, name: 'Medium'},
+  {size: 256, name: 'Small'}, {size: 512, name: 'Medium'}, {size: 640, name: 'Expanded'},
   {size: 1024, name: 'Large'}, {size: 2048, name: 'Extra large'},
 ] as const;
 export type MapSize = typeof MAP_DIMENSIONS[number]['size'];

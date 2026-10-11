@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Agrs",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/ashenvale/ashen_grass.dds",
-      "sha256": "391600f6e598886fd9100387dae1c1dbee79bd3a6e4ba06c7534d67f5370f31d"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ashenvale/ashen_grass_diffuse.dds",
+      "sha256": "e3c47968a9a9c8773bcfce9b2a100e04e3f0599989de595f7d2884b665b5dd3d"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ashenvale/ashen_grass_normal.dds",
+      "sha256": "cf65eed50814554d04c6d2a9244e6de988a3ab1b070f90c42bd8e8dfbf82203b"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ashenvale/ashen_grass_orm.dds",
+      "sha256": "d71a2e4782635a4b096ccef85302dd2c20f8fab1d5977830ac0826dc667931d7"
     }
   ],
   "packing": {

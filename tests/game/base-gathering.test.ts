@@ -38,7 +38,7 @@ it('partitions deposits between nearby bases, excludes enemy workers, updates de
  expect(result.get(hall.id)!.recommendedWorkers+result.get(expansion.id)!.recommendedWorkers).toBe(8);
  expansion.hp=0;result=baseGathering(entities,content);expect(result.has(expansion.id)).toBe(false);expect(result.get(hall.id)!.recommendedWorkers).toBe(8);
 });
-it.each(['echo-isles','turtle-rock'])('%s keeps five-node sites and every starting hall has an aligned accessible mining line',name=>{
+it.each(['echo-isles','turtle-rock'].flatMap(name=>['ants','beetles'].map(race=>({name,race}))))('$name ($race) keeps five-node sites and every starting hall has an aligned accessible mining line',({name,race})=>{
  const map=JSON.parse(readFileSync(`assets/maps/skirmish/${name}.utcmap`,'utf8')) as UtcMap;
  expect(playableMapError(map)).toBeNull();
  const nodes=map.entities.filter(e=>e.definition==='building.neutral.amber-mine');
@@ -52,7 +52,7 @@ it.each(['echo-isles','turtle-rock'])('%s keeps five-node sites and every starti
   expect(sorted.slice(1,4).map(e=>e.position.y)).toEqual(Array(3).fill(sorted[2].position.y));
   expect(Math.abs(sorted[0].position.y-sorted[2].position.y)).toBe(4);
  }
- const g=new Game(map,map.playerStarts.map((_,player)=>({player,kind:'human'})));
+ const g=new Game(map,map.playerStarts.map((_,player)=>({player,kind:'human',race})));
  for(const start of map.playerStarts){
   const owner=`player.${start.player}` as const,hall=g.context.get(g.state.objectives[owner])!;
   const nearby=nodes.filter(e=>Math.hypot(e.position.x-start.x,e.position.y-start.z)<40);

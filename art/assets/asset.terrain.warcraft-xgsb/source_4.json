@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Xgsb",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/dalaran/dalaran_grass.dds",
-      "sha256": "7450ffc36f0c4aaed07afa9928f87805b74b892114618de6cf591a8108747444"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/dalaran/dalaran_grass_diffuse.dds",
+      "sha256": "68ed105c8d17d85faaf1e770f4b82d5c3184c22715d22991de54376b03def748"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/dalaran/dalaran_grass_normal.dds",
+      "sha256": "93428da161ea689bd457754e08fbdfcc6fbed3e41ab2ed125ec0afd70ad1cac1"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/dalaran/dalaran_grass_orm.dds",
+      "sha256": "0cacadcff068e864ddf2d922ab9fd1167944aec1b8875a52b1a8ba7dfb97388e"
     }
   ],
   "packing": {

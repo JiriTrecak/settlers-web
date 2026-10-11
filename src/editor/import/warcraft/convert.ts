@@ -1,3 +1,5 @@
+import {startingMines} from './startingMines';
+import {textureGridLayout} from '../../../shared/map/textureGrid';
 import {fitImportedPlacements} from './placements';
 import {warcraftCornerGround,warcraftCliffCells,type WarcraftCliffDefinitions} from './ground';
 import {startingArea} from '../../../shared/map/startingArea';
@@ -18,20 +20,19 @@ import {emptyUtcMap,readUtcMap,type UtcMap} from '../../../shared/map/utcmap';
 import {snapPlacement} from '../../../shared/spatial/placement';
 import type {WarcraftMap} from './read';
 
-const policy=z.object({sourceUnitsPerWorldUnit:z.number().positive(),defaultBiome:z.string(),startPadBlend:z.number().positive(),placementSearchRadius:z.number().int().min(1).max(32),playerSetup:z.string(),treeAssets:z.array(z.string()).min(1),treeScale:z.number().positive(),campLinkDistance:z.number().positive(),campMaxDiameter:z.number().positive(),campTiers:z.array(z.object({maxLevel:z.number().positive(),difficulty:z.enum(['small','medium','hard']),compositions:z.array(z.string()).min(1)})).min(1),mineDefinition:z.string(),mineOffsets:z.array(z.tuple([z.number(),z.number()])).min(1),campClassificationSource:z.string()}).parse(policyJson);
+const policy=z.object({sourceUnitsPerWorldUnit:z.number().positive(),startingMineDistance:z.number().positive(),startingMineSearchRadius:z.number().positive(),defaultBiome:z.string(),startPadBlend:z.number().positive(),placementSearchRadius:z.number().int().min(1).max(32),playerSetup:z.string(),treeAssets:z.array(z.string()).min(1),treeScale:z.number().positive(),campLinkDistance:z.number().positive(),startCreepClearRadius:z.number().positive(),campMaxDiameter:z.number().positive(),campTiers:z.array(z.object({maxLevel:z.number().positive(),difficulty:z.enum(['small','medium','hard']),compositions:z.array(z.string()).min(1)})).min(1),mineDefinition:z.string(),mineOffsets:z.array(z.tuple([z.number(),z.number()])).min(1),campClassificationSource:z.string()}).parse(policyJson);
 const source=sourceJson as {units:Record<string,{level:number;name?:string}>;trees:string[];waterOffsets:Record<string,number>;cliffs:WarcraftCliffDefinitions};
-export type ImportReport={name:string;trees:number;starts:number;mines:number;campCounts:{small:number;medium:number;hard:number};camps:{id:string;sourceLevel:number;sourceMembers:string[];difficulty:string;composition:string;position:{x:number;y:number}}[];textures:{source:string;asset:string}[];warnings:string[];placementAdjustments:{id:string;distance:number}[];startingPads:{player:number;height:number;maxAdjustment:number}[]};
+export type ImportReport={spatial:{sourceUnitsPerWorldUnit:number;terrainTileWorldSize:number;sourceWidth:number;sourceHeight:number};name:string;trees:number;clearedStartingTrees:number;starts:number;mines:number;clearedStartingCreeps:number;campCounts:{small:number;medium:number;hard:number};camps:{id:string;sourceLevel:number;sourceMembers:string[];difficulty:string;composition:string;position:{x:number;y:number}}[];textures:{source:string;asset:string}[];warnings:string[];placementAdjustments:{id:string;distance:number}[];startingPads:{player:number;height:number;maxAdjustment:number}[]};
 export type WarcraftImport={map:UtcMap;report:ImportReport};
 /** All conversion runs once in the editor. The resulting document contains only
  * ordinary editable samples, authored objects, entities, starts and camps. */
 export function convertWarcraftMap(input:WarcraftMap,textureOverrides:Record<string,string>={}):WarcraftImport{
  const t=input.terrain,scale=policy.sourceUnitsPerWorldUnit,cell=128/scale;
- if(cell!==4)throw Error('Warcraft import scale must match the four-unit terrain grid');
  const width=(t.width-1)*cell,height=(t.height-1)*cell,size=MAP_DIMENSIONS.find(d=>d.size>=Math.max(width,height))?.size;
  if(!size)throw Error('Warcraft map exceeds supported map dimensions');
  const padX=Math.floor((size-width)/8)*4,padZ=Math.floor((size-height)/8)*4;
  const position=(x:number,y:number)=>({x:(x-t.offsetX)/scale+padX-.5,y:height-(y-t.offsetY)/scale+padZ-.5});
- const report:ImportReport={name:input.info.name,trees:0,starts:0,mines:0,campCounts:{small:0,medium:0,hard:0},camps:[],textures:[],warnings:[],startingPads:[],placementAdjustments:[]};
+ const report:ImportReport={spatial:{sourceUnitsPerWorldUnit:scale,terrainTileWorldSize:cell,sourceWidth:width,sourceHeight:height},name:input.info.name,trees:0,clearedStartingTrees:0,starts:0,mines:0,clearedStartingCreeps:0,campCounts:{small:0,medium:0,hard:0},camps:[],textures:[],warnings:[],startingPads:[],placementAdjustments:[]};
  const units={...source.units},trees=new Set(source.trees);
  for(const change of input.unitChanges){
   const base=units[change.base],level=change.fields.ulev;
@@ -63,9 +64,10 @@ export function convertWarcraftMap(input:WarcraftMap,textureOverrides:Record<str
  // rejects maps that fit: a 0..40 source must translate by 16, not by 20.
  const preferredOffset=Math.round((min+max)/2/cell)*cell;
  const elevationOffset=Math.max(max-HEIGHT_MAX,Math.min(min-HEIGHT_MIN,preferredOffset));
- const paints=[...new Set(materials)].map(material=>({material,weights:new Float32Array(n),variants:new Uint8Array((field.span/cell)**2)}));
+ const textureGrid={cellSize:cell,origin:[padX-.5,padZ-.5] as [number,number]},tileGrid=textureGridLayout([field.origin,field.origin],[field.span,field.span],textureGrid);
+ const paints=[...new Set(materials)].map(material=>({material,weights:new Float32Array(n),variants:new Uint8Array(tileGrid.count)}));
  const paintByIndex=materials.map(id=>paints.find(p=>p.material===id)!);
- const cliffPaints=[...new Set(cliffMaterials.values())].map(material=>({material,weights:new Float32Array(n),variants:new Uint8Array((field.span/cell)**2)}));
+ const cliffPaints=[...new Set(cliffMaterials.values())].map(material=>({material,weights:new Float32Array(n),variants:new Uint8Array(tileGrid.count)}));
  const cliffPaintByIndex=new Map([...cliffMaterials].map(([index,id])=>[index,cliffPaints.find(p=>p.material===id)!]));
  const waterOffset=source.waterOffsets[t.tileset];if(waterOffset===undefined&&t.corners.some(c=>c.water))throw Error(`Missing water definition for tileset ${t.tileset}`);
  const at=(x:number,y:number)=>t.corners[Math.max(0,Math.min(t.height-1,y))*t.width+Math.max(0,Math.min(t.width-1,x))];
@@ -90,11 +92,11 @@ export function convertWarcraftMap(input:WarcraftMap,textureOverrides:Record<str
   paintByIndex[cornerGround[Math.round(sy)*t.width+Math.round(sx)]].weights[i]=1;
   const cliff=cliffPaintByIndex.get(cliffCells[iy*(t.width-1)+ix]);if(cliff)cliff.weights[i]=1;
  }
- const cells=field.span/cell;
- for(let z=0;z<cells;z++)for(let x=0;x<cells;x++){
-  const sx=Math.floor((field.origin+x*cell-padX)/cell),sy=Math.floor((height-(field.origin+z*cell-padZ))/cell)-1;
+ const [columns,rows]=tileGrid.cells;
+ for(let z=0;z<rows;z++)for(let x=0;x<columns;x++){
+  const sx=Math.round((tileGrid.start[0]+x*cell-textureGrid.origin[0])/cell),sy=Math.round((height-(tileGrid.start[1]+z*cell-textureGrid.origin[1]))/cell)-1;
   const variation=at(sx,sy).variation;
-  for(const paint of paints){const count=groundTextures.get(paint.material)!.terrain!.atlas.fullTiles.length;paint.variants[z*cells+x]=Math.min(count-1,variation);}
+  for(const paint of paints){const count=groundTextures.get(paint.material)!.terrain!.atlas.fullTiles.length;paint.variants[z*columns+x]=Math.min(count-1,variation);}
  }
 
  const objects:AuthoredObject[]=[];
@@ -107,10 +109,29 @@ export function convertWarcraftMap(input:WarcraftMap,textureOverrides:Record<str
   const xy=snapPlacement(content.get(content.rules.startingSetup.fort),position(p.x,p.y));return {player:i+1,x:Math.round(xy.x*2)/2,z:Math.round(xy.y*2)/2,setup:policy.playerSetup,mainFort:`start.player.${i+1}/main-fort`};
  });
  if(starts.length<2||starts.length>8)throw Error('Import requires between two and eight playable starting positions');report.starts=starts.length;
+ const entities:Placement[]=[],camps:Camp[]=[],fixedSites=new Set<string>();
+ const mine=content.get(policy.mineDefinition);
+ const primaryMines=startingMines(starts,input.units.flatMap((u,index)=>u.id==='ngol'?[{index,...position(u.location[0],u.location[1])}]:[]),policy.startingMineSearchRadius);
+ for(const start of starts)if(![...primaryMines.values()].some(s=>s.player===start.player))report.warnings.push(`Player ${start.player}: no primary gold mine within the starting search radius.`);
+ for(const [i,u] of input.units.entries())if(u.id==='ngol'){
+  const p=position(u.location[0],u.location[1]);report.mines++;
+  // The starting economy uses our fixed five-node service lanes. Import scale
+  // changes geography, not extraction travel time or the hall's body size.
+  const start=primaryMines.get(i),primary=!!start;
+  if(primary)fixedSites.add(`warcraft.mine.${i}`);
+  const dx=p.x-(start?.x??p.x),dz=p.y-(start?.z??p.y);
+  const direction=Math.abs(dx)>Math.abs(dz)?{x:Math.sign(dx),y:0}:{x:0,y:Math.sign(dz)||-1};
+  let remaining=Math.max(0,u.goldAmount),capacity=mine.yield??0;
+  if(remaining>capacity*policy.mineOffsets.length)report.warnings.push(`Gold mine ${report.mines}: source amount ${remaining} exceeds the substitute site's ${capacity*policy.mineOffsets.length} capacity.`);
+  for(const [j,[dx,dz]] of policy.mineOffsets.entries()){
+   const amount=Math.min(capacity,Math.ceil(remaining/(policy.mineOffsets.length-j)));remaining-=amount;
+   entities.push({id:`warcraft.mine.${i}.${j}`,definition:mine.id,position:snapPlacement(mine,primary?{x:start.x+direction.x*(policy.startingMineDistance-dz)-direction.y*dx,y:start.z+direction.y*(policy.startingMineDistance-dz)+direction.x*dx}:{x:p.x+dx,y:p.y+dz}),rotation:0,owner:'none',appearance:{asset:mine.resourceVisuals?.variants[j % mine.resourceVisuals.variants.length]??mine.asset},initialState:{construction:'complete',amount}});
+  }
+ }
  // Warcraft town halls flatten their foundations. Commit that edit once during
  // import, covering our declared worker formation as well as the larger hall.
  for(const start of starts){
-  const area=startingArea(start),hs:number[]=[],waters:number[]=[];
+  const area=startingArea(start,entities),hs:number[]=[],waters:number[]=[];
   for(let z=area.minZ;z<=area.maxZ;z++)for(let x=area.minX;x<=area.maxX;x++){
    const i=(z-field.origin)*field.verts+x-field.origin;hs.push(field.samples[i]);waters.push(water[i]);
   }
@@ -126,21 +147,17 @@ export function convertWarcraftMap(input:WarcraftMap,textureOverrides:Record<str
    }
   report.startingPads.push({player:start.player,height:target,maxAdjustment});
  }
- const terrain:TerrainData={version:1,size,heights:encodeFloats(field.samples),waterHeights:encodeFloats(water),waterFlow:encodeBytes(flow),waterProfiles:[],grass:encodeFloats(zero),rock:encodeFloats(zero),paint:[...paints,...cliffPaints].filter(p=>p.weights.some(w=>w>0)).map(p=>({material:p.material,weights:encodeFloats(p.weights),variants:encodeBytes(p.variants)}))};
+ const terrain:TerrainData={version:1,size,textureGrid,heights:encodeFloats(field.samples),waterHeights:encodeFloats(water),waterFlow:encodeBytes(flow),waterProfiles:[],grass:encodeFloats(zero),rock:encodeFloats(zero),paint:[...paints,...cliffPaints].filter(p=>p.weights.some(w=>w>0)).map(p=>({material:p.material,weights:encodeFloats(p.weights),variants:encodeBytes(p.variants)}))};
 
- const entities:Placement[]=[],camps:Camp[]=[];
- const mine=content.get(policy.mineDefinition);
- for(const [i,u] of input.units.entries())if(u.id==='ngol'){
-  const p=position(u.location[0],u.location[1]);report.mines++;
-  let remaining=Math.max(0,u.goldAmount),capacity=mine.yield??0;
-  if(remaining>capacity*policy.mineOffsets.length)report.warnings.push(`Gold mine ${report.mines}: source amount ${remaining} exceeds the substitute site's ${capacity*policy.mineOffsets.length} capacity.`);
-  for(const [j,[dx,dz]] of policy.mineOffsets.entries()){
-   const amount=Math.min(capacity,Math.ceil(remaining/(policy.mineOffsets.length-j)));remaining-=amount;
-   entities.push({id:`warcraft.mine.${i}.${j}`,definition:mine.id,position:snapPlacement(mine,{x:p.x+dx,y:p.y+dz}),rotation:0,owner:'none',appearance:{asset:mine.resourceVisuals?.variants[j % mine.resourceVisuals.variants.length]??mine.asset},initialState:{construction:'complete',amount}});
-  }
- }
  const neutralOwner=input.info.build>=132?24:12;
- const remaining=input.units.filter(u=>u.player===neutralOwner);
+ // The installed Blizzard.j MeleeClearExcessUnits removes nearby neutral
+ // hostiles for occupied starts (bj_MELEE_CLEAR_UNITS_RADIUS = 1500).
+ // Every imported start is occupied in our skirmish setup. Apply this in source
+ // coordinates before camp replacement/grouping, independently of import scale.
+ const activeStarts=input.info.players.filter(p=>p.type===1||p.type===2);
+ const hostiles=input.units.filter(u=>u.player===neutralOwner);
+ const remaining=hostiles.filter(u=>!activeStarts.some(p=>(p.x-u.location[0])**2+(p.y-u.location[1])**2<=policy.startCreepClearRadius**2));
+ report.clearedStartingCreeps=hostiles.length-remaining.length;
  let unknown=0;
  while(remaining.length){
   const group=[remaining.shift()!];
@@ -164,7 +181,7 @@ export function convertWarcraftMap(input:WarcraftMap,textureOverrides:Record<str
  }
  if(unknown)report.warnings.push(`${unknown} neutral units have no known source level; their placed level was used. Review the affected camps.`);
  const map:UtcMap={...emptyUtcMap(size),name:input.info.name,description:input.info.description,biome:policy.defaultBiome,authoring:{version:1,terrain,objects},playerStarts:starts,entities,camps};
- const fitted=fitImportedPlacements(map,policy.placementSearchRadius);report.placementAdjustments=fitted.adjusted;report.warnings.push(...fitted.warnings);
+ const fitted=fitImportedPlacements(map,policy.placementSearchRadius,fixedSites);report.clearedStartingTrees=fitted.clearedTrees.length;report.trees-=report.clearedStartingTrees;report.placementAdjustments=fitted.adjusted;report.warnings.push(...fitted.warnings);
  const checked=readUtcMap(fitted.map);if('error'in checked)throw Error(checked.error);validatePlacements(checked.map,content);
  return {map:checked.map,report};
 }

@@ -8,7 +8,7 @@ import {game,placed,slots,run} from './helpers';
 function setup(){
  const map=emptyUtcMap();
  const entities=map.playerStarts.flatMap(s=>[
-  {...placed(`mine.${s.player}`,'building.neutral.amber-mine',s.x,s.z-14),owner:'none' as const},
+  {...placed(`mine.${s.player}`,'building.neutral.amber-mine',s.x,s.z-24),owner:'none' as const},
   {...placed(`tree.${s.player}`,'resource.forest.tree',s.x+8,s.z+5,{amount:8}),owner:'none' as const},
  ]);
  return new Game({...map,entities},slots,content,159);
@@ -54,7 +54,7 @@ describe('ten-resource trips',()=>{
  for(const [definition,item] of [['building.neutral.amber-mine','item.amber'],['resource.forest.tree','item.wood']] as const){
   it(`delivers ten ${item} exactly once per full load, including an in-flight save`,()=>{
    const map=emptyUtcMap(),start=map.playerStarts[0];
-   const g=new Game({...map,entities:[{...placed('source',definition,start.x+(definition==='resource.forest.tree'?10:14),start.z+4,{amount:definition==='resource.forest.tree'?10:100}),owner:'none'}]},slots,content);
+   const g=new Game({...map,entities:[{...placed('source',definition,start.x+(definition==='resource.forest.tree'?10:24),start.z+4,{amount:definition==='resource.forest.tree'?10:100}),owner:'none'}]},slots,content);
    // Isolate one gatherer so the source/receipt assertions are independent of startup groups.
    const owned=g.entities.filter(e=>e.owner==='player.1'&&content.get(e.definition).behaviors.work);
    g.command('player.1',{type:'stop',actors:owned.map(e=>e.id)});

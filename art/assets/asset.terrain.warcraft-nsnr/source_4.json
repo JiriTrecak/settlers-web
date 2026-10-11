@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Nsnr",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/northrend/north_snowrock.dds",
-      "sha256": "9fd04a09a31ca6a02c099ec1fcb65d131a5cdb9fd859ffcf41056e9dff344c40"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_snowrock_diffuse.dds",
+      "sha256": "e120edd1dee8c52f518d5685ff2a27330cd6aa31036158a83f6248d922b6b0f9"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_snowrock_normal.dds",
+      "sha256": "fee87301c129002a1b73a26d9893a31c82771c0ca58b8c318c111f3b104b54fb"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_snowrock_orm.dds",
+      "sha256": "83cfe1565517d3b7df182c9d410fae77954250ec92ea96201ac92681255cee43"
     }
   ],
   "packing": {

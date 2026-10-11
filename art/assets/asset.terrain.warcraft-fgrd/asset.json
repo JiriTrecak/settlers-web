@@ -3,7 +3,7 @@
   "id": "asset.terrain.warcraft-fgrd",
   "name": "Dark Grass · LordaeronFall",
   "kind": "terrain-material",
-  "revision": 2,
+  "revision": 8,
   "status": "published",
   "tags": [
     "warcraft",
@@ -15,98 +15,98 @@
       "role": "data",
       "index": 1,
       "format": "bin",
-      "sha256": "8ed20db949551a97301870933d2cdeb4503653754471dd47e41ebf76bf13a0c3",
-      "bytes": 2062236
+      "sha256": "205e1a46ba4d001e6bcaacf21920d55fc09082cf250644a16e18ce47ce78846c",
+      "bytes": 2349037
     },
     {
       "role": "data",
       "index": 2,
       "format": "bin",
-      "sha256": "aa69cb91f422ad17349e9a72218e2ab5d96e7f4c30dbc490ecae4b0b8d7641d2",
-      "bytes": 54882
+      "sha256": "adce28b6dd5cb0cb4488ff533ba572791693c638dfb7bf53f5df434789e0abac",
+      "bytes": 1948671
     },
     {
       "role": "data",
       "index": 3,
       "format": "bin",
-      "sha256": "ddb406d52f3d6792683abbfcfe7a6ff9fab288f2cbd61cf23e49d4a896e0f96f",
-      "bytes": 4101
+      "sha256": "608fe91eeadcaf728bac787d6b1ba0305707f76a981309f6ee853a27a8fdb6d1",
+      "bytes": 4115
     },
     {
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "f8188ad4322b0997c1c062ba1a8bdd46a1f464ecb9fae68b063e188c2c232ce1",
-      "bytes": 169598,
+      "sha256": "10eb90e22c04eee396ef35b8e676cb25112ebf700ea68e581e7037d2f3dbbe40",
+      "bytes": 1666731,
       "colorSpace": "srgb"
     },
     {
       "role": "normal",
       "index": 1,
       "format": "png",
-      "sha256": "a357c0687458b93c02ce334f4deaffb9cac2d7f5129046c2c8631b8a5f6d56b9",
-      "bytes": 3186,
+      "sha256": "173fac0f953e7c952a2568aafb10ef26cb0e0cdcd38a8a8bd0f332d6c4ca0e9c",
+      "bytes": 2859397,
       "colorSpace": "none"
     },
     {
       "role": "occlusion",
       "index": 1,
       "format": "png",
-      "sha256": "518764aac1c34be2391ae9edf627e920d6d909812780bd77a5baed2a7a1541fc",
-      "bytes": 1000,
+      "sha256": "2fb78ff679c252b410ace0afa193d6035573a6845ce543b79cf70b37494f42df",
+      "bytes": 8549,
       "colorSpace": "none"
     },
     {
       "role": "roughness",
       "index": 1,
       "format": "png",
-      "sha256": "518764aac1c34be2391ae9edf627e920d6d909812780bd77a5baed2a7a1541fc",
-      "bytes": 1000,
+      "sha256": "5deb47bd52008b805c5bdc4c335c0da6e3c1e70064724a30972fa4a13fe087df",
+      "bytes": 1261187,
       "colorSpace": "none"
     },
     {
       "role": "metalness",
       "index": 1,
       "format": "png",
-      "sha256": "8dc7d93f6d682a6595d4edb518dee547ea56b5f9ee1701506bf3bed64a481455",
-      "bytes": 482,
+      "sha256": "bb2e418aa6161528ea550aabcb885ed8ce6c8c6dc144e20dab289976c68a82b2",
+      "bytes": 6212,
       "colorSpace": "none"
     },
     {
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "eca2ef5fc7178e49f08a492764b58978a7e5d928787bf51b6ff82b73320c5655",
-      "bytes": 60760,
+      "sha256": "b94d8cc2d57eb83265e7518e19427fae5afc07dd3b2fd7df98a5972c6102817c",
+      "bytes": 46336,
       "colorSpace": "srgb"
     },
     {
       "role": "source",
       "index": 1,
       "format": "bin",
-      "sha256": "75a31698ff67f0fc41011d1f4534775fe875f1f3d0c02b41030b502e70898993",
-      "bytes": 174928
+      "sha256": "b4947675d1ddfc1d0ea10a61baedf795a95e8df5bcf49722152673c93072b427",
+      "bytes": 2796368
     },
     {
       "role": "source",
       "index": 2,
       "format": "bin",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c",
-      "bytes": 524288
+      "sha256": "57e05861d9e961b508084c3fd87ded43466c53c4ccc6a02a7fa56b940c76eb09",
+      "bytes": 2796368
     },
     {
       "role": "source",
       "index": 3,
       "format": "bin",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006",
-      "bytes": 524288
+      "sha256": "300d676e6a57bccf09a71655cc1e3d660a9a218620d8a9db64aef367eb7e6307",
+      "bytes": 2796368
     },
     {
       "role": "source",
       "index": 4,
       "format": "json",
-      "sha256": "be3afc0507c70495f4e49b3a5a8d811b384b7867bbf81660f2db2c8e5f7494eb",
-      "bytes": 1453
+      "sha256": "5625052907cf235c5e58391b1811cf7616545c8fdf7fc0e7adffc1f63f62b9cc",
+      "bytes": 1601
     }
   ],
   "usesGeometry": false,
@@ -128,12 +128,13 @@
   "capabilities": {},
   "provenance": {
     "method": "import",
-    "licenseNote": "Imported from the local Warcraft III installation (classic). Original sources retain their respective rights.",
-    "sourceHash": "d3fab54b0dad14e053f95dc1dbc6f51a4d240f497df796b0a10e1e6d70d61173"
+    "licenseNote": "Imported from the local Warcraft III installation (definitive). Original sources retain their respective rights.",
+    "sourceHash": "4e550094dedc58d5a67b3b6c96a8d3ae92fa766390b29647981de0b44cfc9cdb"
   },
   "terrain": {
     "tileWorldSize": 4,
-    "reflectance": 0.25,
+    "reflectance": 1,
+    "shading": "physical",
     "sourceIds": [
       "Fgrd"
     ],

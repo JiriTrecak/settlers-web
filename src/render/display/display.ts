@@ -3,7 +3,7 @@ import {ShaderDiagnostics} from './shaderDiagnostics';
 import {measureWebGLSubmission} from '../../debug/webglSubmission';
 import {AtmospherePass,type AtmosphereFrame} from '../atmosphere/atmospherePass';
 import {SHADOW_KEY,SHADOWS_CHANGED,readShadowMode} from '../../shared/settings/graphics';
-import {RESOLUTION_KEY,GRAPHICS_CHANGED,readResolutionScale,renderPixelRatio,type ResolutionScale} from '../../shared/settings/graphics';
+import {RESOLUTION_KEY,GRAPHICS_CHANGED,readRenderResolution,renderDimensions,isRenderResolution} from '../../shared/settings/graphics';
 import {perf} from '../../debug/performance';
 import {drawCensus} from '../../debug/drawCensus';
 /**
@@ -17,10 +17,10 @@ export class Display {
   private atmosphere:AtmospherePass|null=null;
   private readonly gpu:GpuTimings;
   private readonly shaders:ShaderDiagnostics;
-  private scale=readResolutionScale();
+  private resolution=readRenderResolution();
   private programs=-1;
   private programChanges=0;
-  private readonly graphicsChanged=(e:Event)=>{if(e instanceof StorageEvent&&e.key&&e.key!==RESOLUTION_KEY)return;if(e instanceof CustomEvent)this.scale=e.detail as ResolutionScale;else this.scale=readResolutionScale();this.onResize();};
+  private readonly graphicsChanged=(e:Event)=>{if(e instanceof StorageEvent&&e.key&&e.key!==RESOLUTION_KEY)return;if(e instanceof CustomEvent&&isRenderResolution(e.detail))this.resolution=e.detail;else this.resolution=readRenderResolution();this.onResize();};
   private readonly shadowsChanged=(event:Event)=>{
     if(event instanceof StorageEvent&&event.key&&event.key!==SHADOW_KEY)return;
     this.applyShadows();
@@ -51,7 +51,7 @@ export class Display {
     this.gl.outputColorSpace = SRGBColorSpace;
     this.gl.toneMapping = ACESFilmicToneMapping;
     this.gl.toneMappingExposure = 1.15;
-    this.gl.setPixelRatio(renderPixelRatio(this.scale,window.devicePixelRatio));
+    this.gl.setPixelRatio(1);
     this.applyShadows();
     this.onResize = () => {
       this.syncSize();
@@ -74,8 +74,9 @@ export class Display {
   }
 
   syncSize(): void {
-    this.gl.setPixelRatio(renderPixelRatio(this.scale,window.devicePixelRatio));
-    this.gl.setSize(this.width, this.height, false);
+    this.gl.setPixelRatio(1);
+    const size=renderDimensions(this.resolution,this.width,this.height,window.devicePixelRatio);
+    this.gl.setSize(size.width,size.height,false);
   }
 
   render(scene: Scene, camera: Camera, after?:()=>void, atmosphere?:AtmosphereFrame): void {
@@ -103,7 +104,7 @@ export class Display {
       // A rising count during play means materials are recompiling (a hitch each time).
       const programs=this.gl.info.programs?.length??0;if(programs!==this.programs){if(this.programs>=0)this.programChanges++;this.programs=programs;}
       perf.value('Shader programs',programs);perf.value('Shader program changes (since debug on)',this.programChanges);
-      perf.value('Canvas',`${this.canvas.width} × ${this.canvas.height} @ ${this.gl.getPixelRatio()} DPR`);
+      perf.value('Canvas',`${this.canvas.width} × ${this.canvas.height} @ ${this.resolution}`);
 
     }
   }

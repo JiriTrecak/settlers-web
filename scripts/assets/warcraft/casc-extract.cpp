@@ -1,11 +1,19 @@
 // Small, offline-only extraction adapter. Build with build-extractor.py.
 #include <CascLib.h>
 #include <cstdio>
+#include <cstring>
 #include <vector>
 int main(int argc, char** argv) {
     if (argc != 4) { std::fprintf(stderr, "Usage: casc-extract <.build.info> <archive path> <output>\n"); return 2; }
     HANDLE storage = nullptr, file = nullptr;
     if (!CascOpenStorage(argv[1], 0, &storage)) { std::fprintf(stderr, "Cannot read installed CASC storage (%u)\n", GetCascError()); return 1; }
+    if (std::strcmp(argv[2], "--list") == 0) {
+        CASC_FIND_DATA entry{};
+        HANDLE search = CascFindFirstFile(storage, argv[3], &entry, nullptr);
+        if (search == INVALID_HANDLE_VALUE) { CascCloseStorage(storage); return 1; }
+        do { std::puts(entry.szFileName); } while (CascFindNextFile(search, &entry));
+        CascFindClose(search); CascCloseStorage(storage); return 0;
+    }
     if (!CascOpenFile(storage, argv[2], 0, CASC_OPEN_BY_NAME, &file)) {
         std::fprintf(stderr, "Missing CASC entry %s (%u)\n", argv[2], GetCascError()); CascCloseStorage(storage); return 1;
     }

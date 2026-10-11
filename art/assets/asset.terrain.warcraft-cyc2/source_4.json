@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "cYc2",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/cityscape/city_dirt.dds",
-      "sha256": "c2aaacb106cc6d6585de9c53baf8788670f67b00dd51964ba3e8fc86cbc34c69"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/cityscape/city_dirt_diffuse.dds",
+      "sha256": "1e6f51910213b18c05dd1a2852d42dca9dc0e2ea49869bb303889f7cfdd9f0b7"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/cityscape/city_dirt_normal.dds",
+      "sha256": "1d13495634b5cc94cd3e38ce2d6538841f2585837a3530a43450c9526277eb65"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/cityscape/city_dirt_orm.dds",
+      "sha256": "b3772869a96aae4314eb69331a575bb80f75d4daaf450a19011f7dc63a4698d8"
     }
   ],
   "packing": {

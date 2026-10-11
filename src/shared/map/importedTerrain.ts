@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import {textureGridSchema,textureGridLayout} from './textureGrid';
 
 const pair=z.tuple([z.number().finite(),z.number().finite()]);
 const dims=z.tuple([z.number().int().min(2).max(4097),z.number().int().min(2).max(4097)]);
@@ -7,6 +8,7 @@ const assetName=z.string().regex(/^[a-z0-9_.-]+$/);
 /** Lossless source raster/instance payload. It is independent of the coarse navigation grid. */
 export const importedTerrainSchema=z.object({
  version:z.literal(1),source:z.string().max(128),sha256:z.string().regex(/^[a-f0-9]{64}$/),
+ textureGrid:textureGridSchema.optional(),
  origin:pair,sourceOrigin:pair,blocks:z.tuple([z.number().int().min(1).max(256),z.number().int().min(1).max(256)]),
  groundColor:z.object({size:dims,rgba:bytes}).optional(),
  displacement:z.object({mask:bytes,texture:assetName,tiling:z.number().positive()}).optional(),
@@ -28,8 +30,9 @@ export const importedTerrainSchema=z.object({
  if(s.heightSize[0]!==s.blocks[0]*16*(s.heightSamplesPerUnit??3)+1||s.heightSize[1]!==s.blocks[1]*16*(s.heightSamplesPerUnit??3)+1||length(s.height)!==s.heightSize[0]*s.heightSize[1]*2)fail('Invalid source height dimensions');
  if(s.maskSize[0]!==s.blocks[0]*16*(s.maskSamplesPerUnit??1.5)+1||s.maskSize[1]!==s.blocks[1]*16*(s.maskSamplesPerUnit??1.5)+1)fail('Invalid source mask dimensions');
  if(s.layers.some((l,i)=>i===0?l.mask!==undefined:!l.mask||length(l.mask)!==s.maskSize[0]*s.maskSize[1]))fail('Invalid source layer masks');
- if(s.layers.some(l=>l.connections&&length(l.connections)!==s.blocks[0]*s.blocks[1]*16))fail('Invalid terrain corner connections');
- if(s.layers.some(l=>l.variants&&length(l.variants)!==s.blocks[0]*s.blocks[1]*16))fail('Invalid ground tile variants');
+ const tiles=textureGridLayout(s.origin,[s.blocks[0]*16,s.blocks[1]*16],s.textureGrid).count;
+ if(s.layers.some(l=>l.connections&&length(l.connections)!==tiles))fail('Invalid terrain corner connections');
+ if(s.layers.some(l=>l.variants&&length(l.variants)!==tiles))fail('Invalid ground tile variants');
  if(length(s.layerSlots)!==s.blocks[0]*s.blocks[1]*16*6)fail('Invalid source subblock layers');
  if(s.groundColor&&length(s.groundColor.rgba)!==s.groundColor.size[0]*s.groundColor.size[1]*4)fail('Invalid source ground-color cache');
  if(s.occlusion&&length(s.occlusion.rgba)!==s.occlusion.size[0]*s.occlusion.size[1]*4)fail('Invalid source occlusion map');

@@ -1,3 +1,4 @@
+import {textureGridLayout} from '../../shared/map/textureGrid';
 import {indexedPaints} from '../../shared/authoring/sparseWeights';
 import {perf} from '../../debug/performance';
 import {setTerrainMask} from './terrainMasks';
@@ -56,23 +57,23 @@ export function authoredTerrain(field:HeightField,strokes:readonly TerrainStroke
  }
  perf.end('Terrain · material mask raster (event)',stage);stage=perf.start();
  const kinds=[[field.baseMaterial,.25,-1,0],['grass',.25,.5,0],['dirt',.2,.5,0],['waterbed',.05,-1,0],['stones',.4,.25,0],['rock',.16,-1,1]] as const;
- const result:ImportedTerrain={version:1,source:'authored-layered',sha256:'0'.repeat(64),origin:[origin,origin],sourceOrigin:[origin,origin],blocks:[blocks,blocks],heightSamplesPerUnit:1,maskSamplesPerUnit:1,heightSize:[hw,hw],height:encoded.height,heightOffset:-16,maskSize:[mw,mw],layers:kinds.map(([name,tiling,blend,edge],i)=>({name,...biomeTerrainTile(biome,name),tiling:biomeTerrainTile(biome,name).tiling??tiling,blend:biomeTerrainTile(biome,name).blend??blend,edge,verticality:0,desaturation:0,...(i?{mask:''}:{})})),layerSlots:encoded.slots,...(field.rockCoverage?.some(v=>v>0)?{displacement:{mask:'',texture:'asset.terrain.woodland-rock-displacement',tiling:.16}}:{}),grass:[],water:[]};
+ const result:ImportedTerrain={version:1,...(field.textureGrid?{textureGrid:field.textureGrid}:{}),source:'authored-layered',sha256:'0'.repeat(64),origin:[origin,origin],sourceOrigin:[origin,origin],blocks:[blocks,blocks],heightSamplesPerUnit:1,maskSamplesPerUnit:1,heightSize:[hw,hw],height:encoded.height,heightOffset:-16,maskSize:[mw,mw],layers:kinds.map(([name,tiling,blend,edge],i)=>({name,...biomeTerrainTile(biome,name),tiling:biomeTerrainTile(biome,name).tiling??tiling,blend:biomeTerrainTile(biome,name).blend??blend,edge,verticality:0,desaturation:0,...(i?{mask:''}:{})})),layerSlots:encoded.slots,...(field.rockCoverage?.some(v=>v>0)?{displacement:{mask:'',texture:'asset.terrain.woodland-rock-displacement',tiling:.16}}:{}),grass:[],water:[]};
  for(const id of custom)result.layers.push({name:id,ar:id,nh:id,tiling:1,blend:0,edge:0,verticality:0,desaturation:0,mask:''});
  // Resolve corner connectivity once for a render update, not once per fragment.
  // A cell entirely covered by authored textures uses its lowest layer as a full
  // base tile. Higher materials use the atlas's declared corner masks.
- const cells=field.span/4,connections=custom.map(()=>new Uint8Array(cells*cells));
+ const grid=textureGridLayout([origin,origin],[field.span,field.span],field.textureGrid),[columns,rows]=grid.cells,connections=custom.map(()=>new Uint8Array(grid.count));
  const weight=(mask:Uint8Array,x:number,z:number)=>{
   x=Math.max(0,Math.min(mw-1,x));z=Math.max(0,Math.min(mw-1,z));const ix=Math.floor(x),iz=Math.floor(z),jx=Math.min(mw-1,ix+1),jz=Math.min(mw-1,iz+1),u=x-ix,v=z-iz;
   return (mask[iz*mw+ix]*(1-u)+mask[iz*mw+jx]*u)*(1-v)+(mask[jz*mw+ix]*(1-u)+mask[jz*mw+jx]*u)*v;
  };
- for(let z=0;z<cells;z++)for(let x=0;x<cells;x++){
+ for(let z=0;z<rows;z++)for(let x=0;x<columns;x++){
   const totals=[0,0,0,0],codes=custom.map((_,j)=>{
    if(customCliffs[j])return 0;
-   let code=0;for(let c=0;c<4;c++){const w=weight(masks[j+5],x*4-.5+(c%2)*4,z*4-.5+Math.floor(c/2)*4);totals[c]+=w;if(w>=127.5)code|=1<<c;}return code;
+   let code=0;for(let c=0;c<4;c++){const w=weight(masks[j+5],grid.start[0]-origin+(x+c%2)*grid.cellSize,grid.start[1]-origin+(z+Math.floor(c/2))*grid.cellSize);totals[c]+=w;if(w>=127.5)code|=1<<c;}return code;
   });
   const base=totals.every(w=>w>=254)?codes.findIndex(c=>c>0):-1;
-  codes.forEach((code,j)=>connections[j][z*cells+x]=code|(base===j?16:0));
+  codes.forEach((code,j)=>connections[j][z*columns+x]=code|(base===j?16:0));
  }
  connections.forEach((bytes,j)=>{
   result.layers[j+6].connections=pack(bytes);

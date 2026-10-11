@@ -37,9 +37,17 @@ Initial travel targets, measured along navigable paths rather than straight line
 - Centre: 54–72 C; first camp: 18–27 C.
 - Primary lanes: 8–12 C clear; main choke: 6 C; flanks: 3–4 C.
 
-Player starts expose `rotation: 0 | 90 | 180 | 270`; rotate the Hall and its complete
-formation together. Unit navigation rounding rotates with the formation, so opposing
-starts remain exact point mirrors even around half-cell Hall centres.
+Player starts expose `rotation: 0 | 90 | 180 | 270` for the Hall. The starting
+formation independently faces the nearest active primary-resource deposit within
+the Hall’s gathering radius: five workers on that side, the selected hero opposite.
+With no nearby deposit, formation facing falls back to the authored Hall rotation.
+Unit navigation rounding rotates with the formation, preserving grid-centred bodies.
+Validate clearance for every race and selectable hero, not only the default race.
+
+Skirmishes start with explored terrain under fog. Set `initialExploration` to
+`hidden` to require discovery, or `explored` for a surveyed map; omission uses
+explored for skirmishes and hidden for campaigns. Initial neutral resources are
+known, but enemy units/buildings and subsequent resource changes still need sight.
 
 Mirror gameplay features and verify timings from both starts within 3%. Provide
 multiple approaches to contested ground. Camps sit off travel lanes so crossing

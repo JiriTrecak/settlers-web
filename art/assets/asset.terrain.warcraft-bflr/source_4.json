@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Bflr",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/barrens/barrens_rock.dds",
-      "sha256": "37cc85638304c6aaba8f27f5c6127b00881c6835f1d60fb8a076223729d07fac"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/barrens/barrens_rock_diffuse.dds",
+      "sha256": "915ab4514dd87aa4f93f043ba0e4ba7fbae85634a5c955d31939692b7b017985"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/barrens/barrens_rock_normal.dds",
+      "sha256": "539f355f66d925f9999f71505967afe681317014b84d28bece9c4e295b9eaec6"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/barrens/barrens_rock_orm.dds",
+      "sha256": "18600c291910fd30e623eac2c6022d2b88da9bdc45b885181a47393f2e56bec0"
     }
   ],
   "packing": {

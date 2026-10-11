@@ -75,10 +75,7 @@ export class CampaignScreen extends GameScreen {
     this.content.append(list);
   }
   private missionList():void {
-    const missions=missionMaps('vanguard');
-    // Editor saves retain a local copy of project maps. Show each shipped chapter
-    // once, while keeping newly authored local missions available to play.
-    const entries=missions.filter(entry=>entry.source==='project'||!missions.some(project=>project.source==='project'&&project.id===entry.id.replace(/^local:/,'')));
+    const entries=missionMaps('vanguard');
     const layout=document.createElement('div');layout.className='mission-selection';
     const list=document.createElement('nav');list.className='mission-selection-list';list.setAttribute('aria-label','Campaign chapters');
     const detail=document.createElement('section');detail.className='mission-selection-detail';detail.id='campaign-mission-detail';

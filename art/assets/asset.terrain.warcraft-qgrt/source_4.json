@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Qgrt",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/villagefall/villagefall_grassthick.dds",
-      "sha256": "a3854dbb336108a5680699ff7ef8cac97a63d98e34d95b239745b4094f4999af"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/villagefall/villagefall_grassthick_diffuse.dds",
+      "sha256": "1b0a1a6b227c8dfa01a191aab44a1e4377a9473aa9f357f42f2259a5218caee8"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/villagefall/villagefall_grassthick_normal.dds",
+      "sha256": "18392fc74547f63288b9810a0012c9221b7c4f936bb79cdb7b6ce637ff576170"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/villagefall/villagefall_grassthick_orm.dds",
+      "sha256": "8832b82d78f6cff960550d6dba78464f09ab66073298cc4f498781a2002ab7ae"
     }
   ],
   "packing": {

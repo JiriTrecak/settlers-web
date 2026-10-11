@@ -1,7 +1,7 @@
 """Original needle-card pines and bound-twig bridge. Independently authored meshes and textures.
 Z-up authoring, +Y bridge length (glTF -Z). Reproducible from local sources.
 """
-import bpy,math,random,json
+import bpy,math,random,json,struct
 from pathlib import Path
 from mathutils import Vector
 from forest_warfare import ForestKit
@@ -18,6 +18,7 @@ class Kit(ForestKit):
   m=self.mat(name,'#ffffff');p=m.node_tree.nodes.get('Principled BSDF');t=m.node_tree.nodes.new('ShaderNodeTexImage');t.image=bpy.data.images.load(str(self.asset/file));t.image.pack();t.image.use_fake_user=True;m.node_tree.links.new(t.outputs['Color'],p.inputs['Base Color'])
   if alpha:
    m.node_tree.links.new(t.outputs['Alpha'],p.inputs['Alpha']);m.surface_render_method='DITHERED';m.use_backface_culling=False
+  p.inputs['Specular IOR Level'].default_value=0
   return m
  def tube(self,name,pts,radii,mat=None,n=8,cuts=False):
   o=super().tube(name,pts,radii,mat,n,cuts)
@@ -31,10 +32,10 @@ class Kit(ForestKit):
    pts=[(x+math.cos(i*math.tau/12)*r,y+math.sin(i*math.tau/12)*r,z+dz) for i in range(13)]
    self.tube('Root-fibre lashing',pts,[.045]*13,self.rope,4)
  def atlas_uv(self,u,v,cell,mirror=False):
-  # Six original branches, with inset UVs to avoid adjacent cells at mip edges.
-  col,row=cell%3,cell//3
-  if mirror:u=1-u
-  return ((col+.015+u*.97)/3,1-(row+.015+(1-v)*.97)/2)
+  # One high-detail fan fills the texture. Mirrored sheets vary the painted strokes
+  # without spending five sixths of the runtime texture on near-identical fans.
+  if cell%2:u=1-u
+  return (.01+u*.98,.01+v*.98)
  def bough(self,a,h,r,width,drop,foliage,cell=0):
   # One draped 3-by-4 sheet per bough, as in the reference's construction.
   # The centre ridge sits well above the edges: the flat-shaded fold gives each
@@ -46,7 +47,7 @@ class Kit(ForestKit):
    t=j/3;distance=r*(.025+t*.88+.12*t*t)
    for col in range(3):
     across=col-1
-    edge_drop=abs(across)*width*.36
+    edge_drop=abs(across)*width*.20
     c=d*(distance-abs(across)*r*.06)+side*across*width*.5
     c.z=h-drop*(.65*t+.35*t*t)-edge_drop
     verts.append(tuple(c))
@@ -55,22 +56,22 @@ class Kit(ForestKit):
    for li in p.loop_indices:
     vi=o.data.loops[li].vertex_index
     o.data.uv_layers.active.data[li].uv=self.atlas_uv(vi%3/2,1-vi//3/3,cell)
-  o['atlasCell']=cell;o['atlasMirrored']=False;o['singleDrapedSheet']=True
+  o['atlasCell']=0;o['atlasMirrored']=bool(cell%2);o['singleDrapedSheet']=True
  def tree(self,variant):
   small=variant=='sapling';h=3.1 if small else 12.3 if variant=='a' else 11.4
-  self.tube('Tapered harvest trunk',[(0,0,0),(.07,0,h*.3),(-.09,.08,h*.7),(.02,.04,h)],[.12 if small else .43,.1 if small else .30,.025 if small else .055,.008],self.bark,8,True)
+  self.tube('Tapered harvest trunk',[(0,0,0),(.07,0,h*.3),(-.09,.08,h*.7),(.02,.04,h*(.975 if small else 1))],[.19 if small else .78,.13 if small else .51,.05 if small else .22,.008 if small else .025],self.bark,8,True)
   if not small:
    for i in range(5):
-    a=i*math.tau/5;self.tube('Root flare',[(math.cos(a)*.8,math.sin(a)*.8,.04),(math.cos(a)*.33,math.sin(a)*.33,.35),(0,0,1.1)],[.025,.18,.25],self.bark,6)
+    a=i*math.tau/5;self.tube('Root flare',[(math.cos(a)*1.30,math.sin(a)*1.30,.04),(math.cos(a)*.55,math.sin(a)*.55,.58),(0,0,1.65)],[.055,.30,.42],self.bark,6)
   foliage=self.tex('Original pine needles','albedo.png',True)
-  # Reference measurements: broad lower boughs descend roughly three units;
-  # upper boughs narrow and descend 1.7-1.9 units. Recreate that structure with
-  # independently authored sheets, rather than copying imported mesh vertices.
+  # Broad separated tiers leave the bottom fifth as a readable harvest trunk.
+  # Five sheets per whorl retain a full silhouette without overlapping seven
+  # fans into a dense cone. Lower tiers spread horizontally before drooping.
   # (attachment height, reach, width, drop, number of boughs), normalized below.
-  bands=[(3.8,3.8,3.6,2.8,7),(5.3,3.5,3.3,2.5,7),
-         (6.9,3.1,3.0,2.35,7),(8.3,2.7,2.7,1.7,7),
-         (9.5,2.15,2.35,1.7,7),(10.8,1.45,1.7,1.55,7)]
-  if small:bands=[(3.8,3.9,3.8,2.8,5),(6.3,3.2,3.2,2.7,5),(8.5,2.5,2.5,2.1,5),(10.5,1.6,1.7,1.7,5)]
+  bands=[(5.2,3.55,4.15,2.05,5),(6.95,3.1,3.8,2.0,5),
+         (8.55,2.55,3.3,1.85,5),(9.95,1.95,2.6,1.7,5),
+         (11.15,1.25,1.85,1.5,5)]
+  if small:bands=[(5.0,3.7,4.1,1.8,5),(7.3,3.05,3.4,1.85,5),(9.4,2.1,2.5,1.65,5),(10.9,1.2,1.5,1.3,4)]
   scale=h/12.3;radial=1 if variant!='b' else .96
   for tier,(z,r,w,drop,count) in enumerate(bands):
    phase=tier*2.39+(.4 if variant=='b' else 0)
@@ -115,6 +116,29 @@ class Kit(ForestKit):
   for o in meshes:o.select_set(True)
   bpy.context.view_layer.objects.active=meshes[0];bpy.ops.object.join()
   bpy.ops.export_scene.gltf(filepath=str(self.asset/'geometry.glb'),export_format='GLB',use_selection=False,export_cameras=False,export_lights=False,export_extras=True,export_animations=True,export_nla_strips=True,export_yup=True)
+  if 'pine' in self.asset.name and 'stump' not in self.asset.name:self.prepare_game_tree()
+ def prepare_game_tree(self):
+  # Reproducible runtime metadata, including the shader's foliage pivot attribute.
+  path=self.asset/'geometry.glb';data=path.read_bytes();length=struct.unpack_from('<I',data,12)[0]
+  doc=json.loads(data[20:20+length]);binary=bytearray(data[28+length:])
+  for m in doc['materials']:
+   foliage=m['name']=='Original pine needles';p=m['pbrMetallicRoughness'];factor=p.get('baseColorFactor',[1,1,1,1])
+   # The painted atlas is already the intended color. Lighting calibration must
+   # not be baked into a dark base-color multiplier on individual tree assets.
+   p['baseColorFactor']=factor
+   m['extras']={'referenceEnvironment':True,'sourceShader':'plant','foliage':foliage,'painted':True,'backsideLighting':.1 if foliage else 0,'crownNormal':.2,'sourceShaderAttributes':{'IsUseGroundColor':'false'}}
+   if foliage:m.update(alphaMode='MASK',alphaCutoff=.4,doubleSided=True)
+  height=3.1 if 'sapling' in self.asset.name else 12.3 if self.asset.name.endswith('-a') else 11.4
+  for node in doc.get('nodes',[]):node['extras']={**node.get('extras',{}),'referenceEnvironment':True,'plantHeight':height,'foliageWind':{'amplitude':.1,'speed':.18}}
+  for mesh in doc['meshes']:
+   for primitive in mesh['primitives']:
+    if not doc['materials'][primitive['material']]['extras']['foliage']:continue
+    count=doc['accessors'][primitive['attributes']['POSITION']]['count'];binary.extend(bytes((-len(binary))%4));offset=len(binary)
+    binary.extend(struct.pack('<4f',.5,.5,.5,1)*count);view=len(doc['bufferViews']);doc['bufferViews'].append({'buffer':0,'byteOffset':offset,'byteLength':count*16})
+    primitive['attributes']['_LEAF']=len(doc['accessors']);doc['accessors'].append({'bufferView':view,'componentType':5126,'count':count,'type':'VEC4'})
+  doc['buffers'][0]['byteLength']=len(binary);raw=json.dumps(doc,separators=(',',':')).encode();raw+=b' '*((-len(raw))%4)
+  path.write_bytes(struct.pack('<5I',0x46546c67,2,28+len(raw)+len(binary),len(raw),0x4e4f534a)+raw+struct.pack('<2I',len(binary),0x004e4942)+binary)
+
 def build(asset):
  k=Kit(asset);name=asset.name
  if 'bridge' in name:k.bridge()

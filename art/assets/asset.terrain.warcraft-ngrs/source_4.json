@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Ngrs",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/northrend/north_grass.dds",
-      "sha256": "7df601e8d7908439d1651283cf2f8e931f843cffb2bf8c2d45eee52075654afe"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_grass_diffuse.dds",
+      "sha256": "c2106d5592d8292aa504d580b2575e006cec42e155bf8bcf4f64bc8c951e249b"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_grass_normal.dds",
+      "sha256": "ec0ed3913cef3363d3782ce3db14d52b0933e3a8f36d8eb7bd3af891d5e8db87"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/northrend/north_grass_orm.dds",
+      "sha256": "01d9850ca4c12bd293a4d6bcbc80d291cbf7f2236cb9990724c7beba03b56929"
     }
   ],
   "packing": {

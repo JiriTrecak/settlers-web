@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Vgrt",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/village/village_grassthick.dds",
-      "sha256": "5b8f1153c460366680e4b7f7f752b5b79d4ef72cdfb00100f85278d43d7360e9"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/village/village_grassthick_diffuse.dds",
+      "sha256": "a134d886516a895e4c0bae7cd75983641540fe9ee50174ba1ec77191fba84379"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/village/village_grassthick_normal.dds",
+      "sha256": "9f1ce5fb2940a3dd362d502ae2f8faaf97c1879a1ccdf935ea3c14b543645074"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/village/village_grassthick_orm.dds",
+      "sha256": "e773d5a6af8a59233c83cf999853eb3202d89520acb19a3c2b19fb33775717f5"
     }
   ],
   "packing": {

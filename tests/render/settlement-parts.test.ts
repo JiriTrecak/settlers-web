@@ -1,6 +1,6 @@
 import './sourceAssetFetch';
 import {afterEach,expect,it,vi} from 'vitest';
-import {AnimationClip,Group,Scene,SpriteMaterial} from 'three';
+import {AnimationClip,Group,Scene} from 'three';
 import {MineLabels} from '../../src/render/settlement/mineLabels';
 import {ContentRegistry} from '../../src/content/registry';
 import type {AuthoredDefinition} from '../../src/content/schema';
@@ -30,7 +30,7 @@ it('updates cached model decorations without recursive name searches and refresh
 });
 
 it.each([1,1.7,2])('renders unit bodies and indicators at the definition model scale %s independently of building presentation scales and world positions',async(scale)=>{
- vi.spyOn(MineLabels.prototype,'material').mockReturnValue(new SpriteMaterial());
+ vi.spyOn(MineLabels.prototype,'update').mockImplementation(()=>{});
  vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async()=>{
   const scene=new Group();scene.userData.characterProfile={variants:{warrior:{states:{idle:'idle'}},base:{states:{idle:'idle'}}},attackEvents:{}};
   return {scene,animations:[new AnimationClip('idle',1,[])]} as any;
@@ -79,14 +79,14 @@ it('loads entity models on demand and shares one prototype for aliases',async()=
 });
 
 it('keeps placement ghosts at completed-building scale, including definitions sharing one asset',async()=>{
- vi.spyOn(MineLabels.prototype,'material').mockReturnValue(new SpriteMaterial());
+ vi.spyOn(MineLabels.prototype,'update').mockImplementation(()=>{});
  vi.spyOn(GLTFLoader.prototype,'loadAsync').mockResolvedValue({scene:new Group(),animations:[]} as any);
- const raw=source(),base=raw.definitions.find(d=>d.id==='building.ants.house')!;
- const shared=raw.definitions.find(d=>d.id==='building.ants.barracks')!;
+ const raw=source(),base=(raw.definitions as AuthoredDefinition[]).find(d=>d.id==='building.ants.house')!;
+ const shared=(raw.definitions as AuthoredDefinition[]).find(d=>d.id==='building.ants.barracks')!;
  base.modelScale=1.6;shared.asset=base.asset;shared.modelScale=.7;
  const registry=new ContentRegistry(raw),scene=new Scene(),layer=new SettlementLayer(scene,registry),field=new HeightField();
  await layer.ready;
- const g=game([placed('house',base.id,205,210)],draft=>{draft.definitions.find(d=>d.id===base.id)!.modelScale=base.modelScale;}),state=g.view();
+ const g=game([placed('house',base.id,205,210)],draft=>{(draft.definitions as AuthoredDefinition[]).find(d=>d.id===base.id)!.modelScale=base.modelScale;}),state=g.view();
  const entity=state.entities.find(e=>e.definition===base.id)!;
  layer.update({...state,entities:[entity]},field,0);await layer.ready;layer.update({...state,entities:[entity]},field,0);
  const body=scene.getObjectByName('game-entities')!.children.find(o=>o.userData.entityId===entity.id)!.getObjectByName('Body')!;

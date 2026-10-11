@@ -341,6 +341,9 @@ export class EditorControl {
       this.editor.waterStyle(water);
     } else if (action === "biome") {
       if(typeof o.biome!=='string')throw new Error('Expected biome ID');this.editor.setBiome(o.biome);
+    } else if (action === "exploration") {
+      if(o.initialExploration!=='explored'&&o.initialExploration!=='hidden'&&o.initialExploration!==null)throw Error('Expected initialExploration: explored, hidden or null (mode default)');
+      this.editor.setInitialExploration(o.initialExploration??undefined);
     } else if (action === "environment") {
       const allowed=new Set(['action','hour','playing','weather']);
       if(Object.keys(o).some(k=>!allowed.has(k)))throw new Error('Appearance is biome-owned. Choose a biome; only hour, playing and weather.kind are map conditions.');
@@ -352,6 +355,7 @@ export class EditorControl {
       this.editor.setTool(null);
     } else if (action !== "status") throw new Error("Unknown landscape action");
     return {
+      initialExploration: this.editor.map.initialExploration??(this.editor.map.mission?'hidden':'explored'),
       landscape: this.editor.map.landscape,
       diagnostics: this.editor.diagnostics(),
     };

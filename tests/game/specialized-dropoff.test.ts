@@ -35,10 +35,10 @@ it("allows oversaturation of a single Root extraction slot and saves their share
   g.context.create(placed("extra", "unit.ants.settler", 210, 210));
   const workers = g.entities.filter(e => e.owner === "player.1" && g.registry.get(e.definition).behaviors.work);
   const result = g.command("player.1", {type: "gather", actors: workers.map(e => e.id), target: root.id});
-  expect(result.actors).toHaveLength(7);
-  expect(workers.filter(w => w.unit!.order?.type === "gather")).toHaveLength(7);
+  expect(result.actors).toHaveLength(6);
+  expect(workers.filter(w => w.unit!.order?.type === "gather")).toHaveLength(6);
   g.tick();
-  expect(g.view("player.1").entities.find(e => e.id === root.id)?.gathering).toEqual({workers: 7, recommendedWorkers: 2});
+  expect(g.view("player.1").entities.find(e => e.id === root.id)?.gathering).toEqual({workers: 6, recommendedWorkers: 2});
   const restored = setup(); restored.restore(g.snapshot());
   for (let i = 0; i < 300; i++) {g.tick(); restored.tick();}
   expect(restored.snapshot()).toEqual(g.snapshot());

@@ -19,7 +19,7 @@ it('preserves every declared ground atlas and fractional material settings in a 
   [tint.r,tint.g,tint.b,layer.desaturation].forEach((v,i)=>expect(table.data[at+4+i]).toBeCloseTo(v,6));
   expect(table.data[at+12]).toBeCloseTo(layer.breakup??0,6);
   if(g){
-   expect([...table.data.slice(at+8,at+12)]).toEqual([g.atlas.columns,g.atlas.rows,g.tileWorldSize,g.atlas.fullTiles[0]]);
+   expect([...table.data.slice(at+8,at+12)]).toEqual([g.atlas.columns,g.atlas.rows,g.tileWorldSize,g.shading==='painted'?1:0]);
    expect([...table.data.slice(at+16,at+32)]).toEqual(g.atlas.corners?.map(c=>c??0)??Array(16).fill(0));
   }
  });

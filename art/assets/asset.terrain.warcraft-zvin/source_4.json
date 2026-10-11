@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Zvin",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/ruins/ruins_grassdark.dds",
-      "sha256": "32b85d240246a3b78d8d018a0da4913ce1a27fb0af53264cedae4dc3517b4fb7"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_grassdark_diffuse.dds",
+      "sha256": "39903136f21d978ef6913e894309b592a2c3deee84ac5c9e2fbe16e8b201c784"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_grassdark_normal.dds",
+      "sha256": "7b9e1057c81e5bfbc44f3924af22c246d33cd683497d377cd5c8905da2c37dbc"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_grassdark_orm.dds",
+      "sha256": "c8d0e1d384006cfb35105155f10bd873ee342b470259e5729f758a81424ea757"
     }
   ],
   "packing": {

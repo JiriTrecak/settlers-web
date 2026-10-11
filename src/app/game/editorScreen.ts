@@ -1,14 +1,12 @@
-import {browserDraftStorage} from '../../editor/file/draftStorage';
 import {importWarcraft,pickWarcraftFile} from '../../editor/import/warcraft/client';
 import {PerformanceDebugWindow} from '../../debug/performanceWindow';
 import {LoadingScreen} from '../../ui/loadingScreen';
-import {EditorDraft} from '../../editor/file/draft';
+import {openMapPreview} from '../../editor/file/preview';
 import {newMapDialog} from '../../editor/chrome/newMapDialog';
 import {selectedWalk} from '../../editor/select/select';
 import {ScenePanel} from '../../editor/chrome/scenePanel';
 import {MissionEditor} from "../../editor/chrome/missionEditor";
 import { EntityDock } from "../../editor/chrome/entityDock";
-import { rememberAuthoredMap } from "../../shared/map/library";
 import { playableMapError } from "../../shared/map/playable";
 import { SpawnDock } from "../../editor/chrome/spawnDock";
 import type { UtcMap } from "../../shared/map/utcmap";
@@ -37,10 +35,7 @@ export class EditorScreen extends GameScreen {
   private scenePanel?:ScenePanel;
   private performanceWindow?:PerformanceDebugWindow;
   private loading?:LoadingScreen;
-  private readonly draft:EditorDraft;
   private readonly initialMap:UtcMap;
-  private restoringDraft=true;
-  private draftNotice?:HTMLDivElement;
   private readonly editor: WorldEditor;
   private readonly files: MapStore;
   private readonly library = new CatalogueStore();
@@ -71,8 +66,6 @@ export class EditorScreen extends GameScreen {
     this.enableHudToggle();
     const initial = hooks.map ?? emptyUtcMap();
     this.initialMap=initial;
-    const mapId = hooks.mapId ?? 'new';
-    this.draft = new EditorDraft(browserDraftStorage(),mapId,initial);
     this.onLeave = hooks.onLeave;
     this.editor = new WorldEditor(canvas, {
       host: this.root,
@@ -100,10 +93,7 @@ export class EditorScreen extends GameScreen {
       onLeave: () => void this.askLeave(),
       onMission:()=>{this.missionEditor?.destroy();this.missionEditor=new MissionEditor(this.root,this.editor,async()=>{
         const error=playableMapError(this.editor.map);if(error)throw new Error(error);
-        const preview=window.open('about:blank',"_blank");
-        if(!preview)throw Error('Allow popups to test this mission.');
-        try{const id=await rememberAuthoredMap(this.editor.map);preview.location.href=`/?map=${encodeURIComponent(id)}`;}
-        catch(error){preview.close();throw error;}
+        await openMapPreview(this.editor.map);
       });},
       onSelect: () => this.armSelect(),
       onStamp: () => this.stamp(),
@@ -221,14 +211,7 @@ export class EditorScreen extends GameScreen {
     this.performanceWindow=new PerformanceDebugWindow(this.root,{title:'Map editor',buildViews:true,benchmark:true,performanceReport:()=>this.editor.performanceReport(),performanceControl:options=>this.editor.performanceControl(options)});
     const loading=this.loading=new LoadingScreen(this.root,this.onLeave,{title:'Opening map',progress:'Editor loading progress',waiting:'Preparing terrain, scenery and models.',error:'The map could not be loaded'});
     void (async()=>{
-      try{
-        const restored=await this.draft.restore();
-        if(this.loading!==loading)return;
-        this.editor.replace(restored.map??this.initialMap);
-        if(restored.recovery)this.offerDraftRecovery(restored.recovery);
-      }catch(error){if(this.loading===loading){this.showDraftError(error);this.editor.replace(this.initialMap);}}
-      if(this.loading!==loading)return;
-      this.restoringDraft=false;
+      this.editor.replace(this.initialMap);
       await this.editor.start();
     })().then(()=>{
       if(this.loading===loading){loading.destroy();this.loading=undefined;this.syncRemote();this.applyMcp();}
@@ -570,20 +553,6 @@ export class EditorScreen extends GameScreen {
     this.chrome.setName(this.editor.map.name);
     this.chrome.setDirty(this.dirty());
     this.environmentDock?.sync();
-    if(!this.restoringDraft)void this.draft.write(this.editor.map,this.dirty()).then(()=>{this.draftNotice?.remove();this.draftNotice=undefined;},error=>this.showDraftError(error));
-  }
-
-  private showDraftError(error:unknown):void {
-    if(!this.draftNotice){this.draftNotice=document.createElement('div');this.draftNotice.className='editor-draft-recovery';this.draftNotice.setAttribute('role','status');this.root.append(this.draftNotice);}
-    this.draftNotice.textContent=`Browser recovery could not be saved. Save or export your map. ${error instanceof Error?error.message:String(error)}`;
-  }
-
-  private offerDraftRecovery(map:UtcMap):void {
-    const notice=document.createElement('div');notice.className='editor-draft-recovery';notice.setAttribute('role','status');
-    const text=document.createElement('span');text.textContent='Updated map loaded. Your earlier browser draft is preserved.';
-    const button=document.createElement('button');button.textContent='Open earlier draft';button.type='button';
-    button.onclick=()=>{void (async()=>{if(!await this.ifClean('Save your current changes before opening the earlier draft?'))return;this.files.clearFile();this.saved='';this.editor.replace(map);notice.remove();})();};
-    notice.append(text,button);this.root.append(notice);
   }
 
   private markClean(map=this.editor.map): void {
@@ -657,22 +626,10 @@ export class EditorScreen extends GameScreen {
     if (document.activeElement instanceof HTMLElement)
       document.activeElement.blur();
     await this.editor.editsReady();
-    const map=this.editor.map,error = playableMapError(map);
-    if (error) {
-      await this.alert("Player starts", error);
-      return false;
-    }
-    if(!asNew){
-      try{await rememberAuthoredMap(map);this.markClean(map);return !this.dirty();}
-      catch{await this.alert("Couldn't save",'The local map library is full or unavailable. Use Export to save a map file.');return false;}
-    }
+    // Authoring files may be unfinished; playability is checked when testing or starting a match.
+    const map=this.editor.map;
     const result = await this.files.save(map, asNew);
     if (result === "ok") {
-      try {
-        await rememberAuthoredMap(map);
-      } catch {
-        /* Disk file was saved even if browser storage is full. */
-      }
       this.markClean(map);
       return !this.dirty();
     }
@@ -725,7 +682,7 @@ export class EditorScreen extends GameScreen {
       const {map,report}=await importWarcraft(new Uint8Array(await file.arrayBuffer()));
       this.files.clearFile();this.saved='';
       await this.editor.replace(map);await this.editor.editsReady();this.editor.lookAt(map.size/2,map.size/2);this.syncDoc();
-      await this.alert('Warcraft map imported',`${report.starts} starts · ${report.trees} trees · ${report.mines} amber sites\n${report.campCounts.small} easy, ${report.campCounts.medium} medium and ${report.campCounts.hard} hard camps.\nTerrain, water and ${report.textures.length} ground textures are editable. Save as a .utcmap file.\n${report.startingPads.length} starting areas leveled; ${report.placementAdjustments.length} substitute placements adjusted for clearance.${report.warnings.length?'\n\n'+report.warnings.join('\n'):''}`);
+      await this.alert('Warcraft map imported',`${report.starts} starts · ${report.trees} trees · ${report.mines} amber sites\n${report.campCounts.small} easy, ${report.campCounts.medium} medium and ${report.campCounts.hard} hard camps.\nTerrain, water and ${report.textures.length} ground textures are editable. Save as a .utcmap file.\n${report.clearedStartingCreeps} starting-area creeps cleared; ${report.startingPads.length} starting areas leveled; ${report.placementAdjustments.length} substitute placements adjusted for clearance.${report.warnings.length?'\n\n'+report.warnings.join('\n'):''}`);
     }catch(error){await this.alert('Couldn’t import Warcraft map',error instanceof Error?error.message:String(error));}
     finally{status.remove();this.importingWarcraft=false;}
   }
@@ -740,13 +697,6 @@ export class EditorScreen extends GameScreen {
     }
     this.saved = stringifyUtcMap(result.map);
     this.editor.replace(result.map);
-    if (!playableMapError(result.map)) {
-      try {
-        await rememberAuthoredMap(result.map);
-      } catch {
-        /* Disk file remains loaded. */
-      }
-    }
     this.markClean(result.map);
   }
 

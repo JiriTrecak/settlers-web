@@ -68,11 +68,18 @@ export type UtcMap = {
   readonly mission?: MissionDefinition;
   /** Local, fully revealed testbed: authored entities only, no opponents or victory rules. */
   readonly sandbox?: boolean;
+  /** Terrain knowledge at match start; never grants current sight of enemies. */
+  readonly initialExploration?: 'explored' | 'hidden';
   readonly stamps: readonly MapStamp[];
   readonly landscape?: Landscape;
   /** Committed editable terrain and placed objects. Generator previews are editor-only. */
   readonly authoring: SavedScene;
 };
+
+/** Skirmishes start surveyed; campaigns keep discovery unless explicitly overridden. */
+export function initialExploration(map: Pick<UtcMap,'initialExploration'|'mission'>): 'explored'|'hidden' {
+  return map.initialExploration ?? (map.mission ? 'hidden' : 'explored');
+}
 
 export function emptyUtcMap(size: MapSize = 256): UtcMap {
   return {
@@ -121,6 +128,7 @@ export function readUtcMap(raw: unknown): { map: UtcMap } | { error: string } {
           "description",
           "mission",
           "sandbox",
+          "initialExploration",
           "stamps",
           "playerStarts",
           "entities",
@@ -133,8 +141,9 @@ export function readUtcMap(raw: unknown): { map: UtcMap } | { error: string } {
         ].includes(k),
   );
   if (unknown) return fail(`Unknown top-level key: ${unknown}`);
-  if (o.size !== 256 && o.size !== 512 && o.size !== 1024 && o.size !== 2048) return fail(`size: must be 256, 512, 1024 or 2048, got ${JSON.stringify(o.size)}`);
+  if (o.size !== 256 && o.size !== 512 && o.size !== 640 && o.size !== 1024 && o.size !== 2048) return fail(`size: must be 256, 512, 640, 1024 or 2048, got ${JSON.stringify(o.size)}`);
   if (o.biome !== undefined && !BIOMES.some(b => b.id === o.biome)) return fail(`biome: unknown ${JSON.stringify(o.biome)}`);
+  if (o.initialExploration !== undefined && o.initialExploration !== "explored" && o.initialExploration !== "hidden") return fail("initialExploration: must be explored or hidden");
   const size = o.size;
   const mission = missionSchema.optional().safeParse(o.mission);
   if (!mission.success) return fail(issue("mission", mission.error));
@@ -185,6 +194,7 @@ export function readUtcMap(raw: unknown): { map: UtcMap } | { error: string } {
     ...(description ? { description } : {}),
     ...(mission.data ? {mission:mission.data} : {}),
     ...(o.sandbox ? {sandbox:true} : {}),
+    ...(o.initialExploration ? {initialExploration:o.initialExploration} : {}),
     stamps,
     playerStarts,
     entities: placements.data,
@@ -209,6 +219,7 @@ export function stringifyUtcMap(map: UtcMap): string {
       ...(map.description ? { description: map.description } : {}),
       ...(map.mission ? {mission:map.mission} : {}),
       ...(map.sandbox ? {sandbox:true} : {}),
+      ...(map.initialExploration ? {initialExploration:map.initialExploration} : {}),
       stamps: map.stamps,
       playerStarts: map.playerStarts,
       entities: map.entities,

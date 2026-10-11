@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Cvin",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/felwood/felwood_vines.dds",
-      "sha256": "22a5d4303d4f3f84dc9d37b15758b38b205495ecaa100918f8891fc5d29c97ab"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/felwood/felwood_vines_diffuse.dds",
+      "sha256": "b31783ccbc6b3de3719412cfe14dec8ac503a8752ec6801a802b2dcbcf4c3e92"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/felwood/felwood_vines_normal.dds",
+      "sha256": "4e41a1a022b511ac6c08c12b1d2085af214aee11638ad00323a388c0bd4c9a03"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/felwood/felwood_vines_orm.dds",
+      "sha256": "e98c37dd4c3aa1ad63588c417e0cc2bc15d0e203d2d567950d41ccb6fbd0d5a8"
     }
   ],
   "packing": {

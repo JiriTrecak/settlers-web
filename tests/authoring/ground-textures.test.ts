@@ -44,9 +44,20 @@ describe('declared ground atlases',()=>{
  });
  it('keeps transparent atlas color separate from opacity and material channels',async()=>{
   const pixels=(rgba:number[])=>Buffer.from(Array.from({length:16},()=>rgba).flat());
-  const packed=await packGroundAtlas(4,4,pixels([160,90,30,0]),pixels([128,128,255,255]),pixels([220,180,12,255]),4);
+  const packed=await packGroundAtlas({width:4,height:4,rgba:pixels([160,90,30,0])},{width:4,height:4,rgba:pixels([128,128,255,255])},{width:4,height:4,rgba:pixels([220,180,12,255])},4);
   expect([...packed.ar.subarray(0,4)]).toEqual([160,90,30,180]);
   expect([...packed.nh.subarray(0,4)]).toEqual([128,128,255,0]);
   expect([...packed.om.subarray(0,4)]).toEqual([220,12,0,255]);
  });
+});
+
+it('packs different native channel resolutions without mixing channels or losing atlas alignment',async()=>{
+ const plane=(width:number,height:number,value:number[])=>({width,height,rgba:Buffer.from(Array.from({length:width*height},()=>value).flat())});
+ const color=plane(8,4,[160,90,30,0]),normal=plane(16,8,[128,128,255,255]),orm=plane(4,2,[220,180,12,255]);
+ const packed=await packGroundAtlas(color,normal,orm,4);
+ expect([...packed.ar.subarray(0,4)]).toEqual([160,90,30,180]);
+ expect([...packed.nh.subarray(0,4)]).toEqual([128,128,255,0]);
+ expect([...packed.om.subarray(0,4)]).toEqual([220,12,0,255]);
+ expect(color.rgba[3]).toBe(0);
+ await expect(packGroundAtlas(color,plane(4,4,[128,128,255,255]),orm,4)).rejects.toThrow('aspect ratios differ');
 });

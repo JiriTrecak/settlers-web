@@ -128,20 +128,20 @@ it('keeps lower-floor memories when only the bridge above is visible',()=>{
  expect(g.view('player.1').entities.some(e=>e.id===tree.id)).toBe(false);
 });
 
-it('saves explored fog per floor while projecting a union for the minimap',()=>{
- const m={...map(),entities:[placed('scout','unit.ants.archer',35,40)]},g=new Game(m,slots,registry()),scout=g.entities.find(e=>e.placement==='scout')!;
+it.each(['hidden','explored'] as const)('saves %s fog per floor while projecting a union for the minimap',initialExploration=>{
+ const m={...map(),initialExploration,entities:[placed('scout','unit.ants.archer',35,40)]},g=new Game(m,slots,registry()),scout=g.entities.find(e=>e.placement==='scout')!;
  g.observation.update();const below=g.view('player.1').fog!,cell=40*256+40,deck=g.spatial.cell({x:40,y:40,surface:'arch'});
- expect(below.cells[cell]).toBe(2);expect(below.floors!.cells[cell]).toBe(2);expect(below.floors!.cells[deck]).toBe(0);
+ expect(below.cells[cell]).toBe(2);expect(below.floors!.cells[cell]).toBe(2);expect(below.floors!.cells[deck]).toBe(initialExploration==='hidden'?0:1);
  scout.x=40;scout.y=40;scout.surface='arch';scout.unit!.position=fixed(scout);g.observation.update();
  const above=g.view('player.1').fog!;
  expect(above.cells[cell]).toBe(2);expect(above.floors!.cells[cell]).toBe(1);expect(above.floors!.cells[deck]).toBe(2);
- expect(below.floors!.cells[deck]).toBe(0); // Existing presentations stay immutable.
+ expect(below.floors!.cells[deck]).toBe(initialExploration==='hidden'?0:1); // Existing presentations stay immutable.
  const copy=new Game(m,slots,registry());copy.restore(g.snapshot());expect(copy.checksum()).toBe(g.checksum());expect(copy.view('player.1').fog!.floors!.cells).toEqual(above.floors!.cells);
  const invalid=structuredClone(g.snapshot());invalid.knowledge[0]!.cells.length=256*256;expect(()=>copy.restore(invalid)).toThrow(/dimensions/);
 });
 
 it('reveals cinematic staging on its stacked floors without unveiling remote decks or exploring the map',()=>{
- const m=map();m.stamps.push({id:'remote-arch',asset:'leafbound-twig-bridge',x:100,y:100});
+ const m={...map(),initialExploration:'hidden' as const};m.stamps.push({id:'remote-arch',asset:'leafbound-twig-bridge',x:100,y:100});
  const world=new World({map:m,slots,seed:1}),g=world.settlement;
  g.state.mission={...emptyMissionState(),scene:{x:40,y:40}};
  const before=world.checksum(),normal=world.view(0).settlement.fog!,projection=new PresentationView();

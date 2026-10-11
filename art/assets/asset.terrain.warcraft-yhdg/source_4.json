@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Yhdg",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/cityscape/city_grasstrim.dds",
-      "sha256": "c0580355dee738d91a16439caa3835a5146e11703b9ee99ad9608d5f6fd50bf4"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/cityscape/city_grasstrim_diffuse.dds",
+      "sha256": "665fc3e89fac24934adaef5f7f259868cf157839777786de86f8f7eaaf549064"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/cityscape/city_grasstrim_normal.dds",
+      "sha256": "c4814fbc9847dbf2ea7b82b1de0e5a481a64cec6202fa66d70fc9719a19cada1"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/cityscape/city_grasstrim_orm.dds",
+      "sha256": "1f768f4d47e1c68db0ab4d9af05f7e74de0f5704d4c639aeca1f4da912361bc8"
     }
   ],
   "packing": {

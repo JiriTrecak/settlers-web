@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Zbks",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/ruins/ruins_smallbricks.dds",
-      "sha256": "3ac201d6dc294c18e8f4b0f32d7e30d938829d802a293f7ccc76d2058132d21a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_smallbricks_diffuse.dds",
+      "sha256": "342a42521361c4326e08e16159a8096f46fba46cd074c807fee5d08ab45c3c70"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_smallbricks_normal.dds",
+      "sha256": "864682c9d4e144c1cc4c4016dc5da265ea367fa55a04f9414757324c8c9e1649"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_smallbricks_orm.dds",
+      "sha256": "adb197e5d73fe0098329a6ef58179a6fe18fc6eea1dcb0595a89304d6e16135d"
     }
   ],
   "packing": {

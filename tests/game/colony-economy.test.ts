@@ -116,7 +116,7 @@ describe("direct gathering", () => {
     expect(g.view(0)).not.toHaveProperty("territory");
     expect(
       g.canBuild("player.1", "building.ants.house", { x: 163.5, y: 163.5 }, w.id),
-    ).toMatch(/Explore/);
+    ).toBeNull();
   });
   it("removes retired chains, forbids currency ground objects, and keeps hero loot", () => {
     for (const id of [

@@ -6,7 +6,7 @@ import type {LandscapeAsset} from '../catalogue';
 import {WatercourseIndex} from '../watercourses';
 
 export type SceneSnapshot=Omit<CompiledMapScene,'field'>&{
- field:Pick<HeightField,'size'|'origin'|'span'|'verts'|'samples'|'biome'|'forestCoverage'|'baseMaterial'|'grassCoverage'|'terrainGrassCoverage'|'rockCoverage'|'surfacePaint'|'watercourses'|'waterLevel'|'cellWater'>;
+ field:Pick<HeightField,'size'|'origin'|'span'|'verts'|'samples'|'biome'|'forestCoverage'|'baseMaterial'|'grassCoverage'|'terrainGrassCoverage'|'rockCoverage'|'surfacePaint'|'textureGrid'|'watercourses'|'waterLevel'|'cellWater'>;
  fieldId:number;terrainId:number;riversId:number;paintId:number;fieldPaintId:number;courseWater:boolean;
 };
 /** Identity is scoped to one worker, not persisted or exposed as asset versions. */

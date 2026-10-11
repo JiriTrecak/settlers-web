@@ -4,7 +4,7 @@ import {matchPerformanceSource} from './debug/performanceSource';
 import {EditorBridge} from './shared/control/editorBridge';
 /** Art-direction fixture: the saved map and the game's renderer, without editor chrome. */
 import { perf } from "./debug/performance";
-import { GRAPHICS_CHANGED, readResolutionScale, readShadowMode, setShadowMode } from "./shared/settings/graphics";
+import { GRAPHICS_CHANGED, readRenderResolution, readShadowMode, setShadowMode } from "./shared/settings/graphics";
 const mapSources = import.meta.glob('../assets/maps/{campaign,skirmish,showcase}/**/*.utcmap', {query:'?raw', import:'default', eager:true}) as Record<string,string>;
 import { parseUtcMap } from "./shared";
 import { emptyLandscape } from "./shared/landscape/curve";
@@ -96,10 +96,10 @@ async function start() {
   // Normal previews animate while retaining the selected daytime look.
   const benchmark=params.has('benchmark');
   let frames=0,lastFrame=0, intervals:number[]=[];
-  const results:{scale:number;shadow:string;fps:number;frameP95:number|undefined;report:ReturnType<typeof perf.report>}[]=[];
-  const summary=()=>results.map(r=>({scale:r.scale,shadows:r.shadow,fps:Math.round(r.fps),frameP95:r.frameP95,GPU:r.report.timings['GPU frame'],CPU:r.report.timings['Present total (CPU)']}));
-  const modes=[{scale:1,shadow:'soft'},{scale:.5,shadow:'soft'},{scale:1,shadow:'filtered'},{scale:.5,shadow:'filtered'}] as const;
-  const original={scale:readResolutionScale(),shadow:readShadowMode(),debug:perf.enabled};
+  const results:{resolution:string;shadow:string;fps:number;frameP95:number|undefined;report:ReturnType<typeof perf.report>}[]=[];
+  const summary=()=>results.map(r=>({resolution:r.resolution,shadows:r.shadow,fps:Math.round(r.fps),frameP95:r.frameP95,GPU:r.report.timings['GPU frame'],CPU:r.report.timings['Present total (CPU)']}));
+  const modes=[{resolution:'native',shadow:'soft'},{resolution:'1920x1080',shadow:'soft'},{resolution:'native',shadow:'filtered'},{resolution:'1920x1080',shadow:'filtered'}] as const;
+  const original={resolution:readRenderResolution(),shadow:readShadowMode(),debug:perf.enabled};
   let mode=0,finished=false;
   const output=document.createElement('pre');
   if(benchmark){
@@ -108,11 +108,11 @@ async function start() {
     if(!perf.enabled)perf.toggle();
   }
   const apply=()=>{
-    window.dispatchEvent(new CustomEvent(GRAPHICS_CHANGED,{detail:modes[mode]!.scale}));
+    window.dispatchEvent(new CustomEvent(GRAPHICS_CHANGED,{detail:modes[mode]!.resolution}));
     setShadowMode(modes[mode]!.shadow);
   };
   const restore=()=>{
-    window.dispatchEvent(new CustomEvent(GRAPHICS_CHANGED,{detail:original.scale}));
+    window.dispatchEvent(new CustomEvent(GRAPHICS_CHANGED,{detail:original.resolution}));
     setShadowMode(original.shadow);
     if(perf.enabled!==original.debug)perf.toggle();
   };

@@ -25,7 +25,7 @@
     "sourceHash": "b1b080d5",
     "image": "echo-isles.webp",
     "custom": false,
-    "generationHash": "698e43fa8cd65efd1c16d1eac6a4436a9207750cb7bc7e10495ef0e7f3e42ee8"
+    "generationHash": "f1b31685b0cc189f4f02e8e7158288a142562b6b20a2070196ea22a233ae05f8"
   },
   "turtle-rock": {
     "name": "Turtle Rock v2.0",
@@ -63,10 +63,11 @@
     ],
     "camps": 22,
     "sandbox": false,
-    "playable": true,
+    "playable": false,
     "sourceHash": "e13fe740",
+    "error": "start.player.4/unit-004: overlaps camp/warcraft-2/5",
     "image": "turtle-rock.webp",
     "custom": false,
-    "generationHash": "51144f3b58f2ee92c3962979057ab02cd8a1117ed5d221fef9ad7f32d891b11b"
+    "generationHash": "68ad3a795bb9febf0100d5efa256fc975b41a3a6e465354c65504221722b0641"
   }
 }

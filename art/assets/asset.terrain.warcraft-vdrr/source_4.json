@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Vdrr",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/village/village_dirtrough.dds",
-      "sha256": "808332042f4d962ca8492a4145be8e56ad88082b0b7722c330cdc267ddd1eaa7"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/village/village_dirtrough_diffuse.dds",
+      "sha256": "c5c6493f45f1b1430774308d7c7ea61ad421949601bb42273d8a880070b30058"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/village/village_dirtrough_normal.dds",
+      "sha256": "62e029801615f4288be1e45a336b73c973b577a0d440e2bc7fb10beffa02c1ed"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/village/village_dirtrough_orm.dds",
+      "sha256": "846711afe60343102796d655eea9a89fb9c089fceb30d49bf5bbec0a7a47efbb"
     }
   ],
   "packing": {

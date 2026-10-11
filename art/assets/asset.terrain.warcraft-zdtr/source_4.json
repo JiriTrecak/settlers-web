@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Zdtr",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/ruins/ruins_dirtrough.dds",
-      "sha256": "440ed54cb2b381071e1ae4103d92cc5ebf025948da0568fe3a64364515bd0fdf"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_dirtrough_diffuse.dds",
+      "sha256": "3abefd8855a6deeaf9628ee170819d276c0c03a97bce2fbae55e10480fa49379"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "2c887542dffec8d71834ce0b2c011291a6fd421f2f1f09cf691e795ad856627b"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_dirtrough_normal.dds",
+      "sha256": "926b03140f69d77dec543b434a652f3cd4bebfcfa3a72de2668948a5dd832556"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "47df6779f4f0f1229d7e34e1780953675dcd9c6915d1f990c172fe55fd4aa85a"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/ruins/ruins_dirtrough_orm.dds",
+      "sha256": "ddf20f59937780e35548c0313d1a4df0648d9cf54ed93d200e08708892d83921"
     }
   ],
   "packing": {

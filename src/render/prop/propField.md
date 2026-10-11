@@ -4,6 +4,10 @@
 
 ## Authored environment behavior
 
+Painted environment materials can opt into `extras.painted: true` alongside `referenceEnvironment`. They retain directional/ambient diffuse lighting, shadow reception, vertex occlusion and foliage wind, but omit physical specular highlights so white reflections do not wash out the painted colours. This is material metadata, not a biome-wide unlit mode. PBR source imports keep their original specular behavior.
+
+The original woodland pines use this mode. Their reproducible source is `art/recipes/woodland_originals.py`; canonical packages retain the generated alpha atlas, provenance, editable Blender scene and preview. After rebuilding and capturing sources, `node --import tsx scripts/assets/publish-woodland-pines.ts` validates and publishes the three variants through the Asset Workbench contract with 512px runtime texture limits.
+
 Catalogue entries may declare `blocker: {width, depth}` in local metres. Simulation and AI briefing rasterize the same rotated/scaled footprints through `shared/map/sceneryCollision.ts`; decorative meshes have no inferred collision. The collision declaration participates in the match revision fingerprint. Fences and waystone outcrops use this mechanism.
 
 Lantern posts declare a `light` with local `x/y/z`, hex `color`, `intensity`, and `range`. `SceneryLights` transforms the emitter with stamp yaw/scale/elevation and ground height. It maintains exactly four unshadowed point lights, selecting nearby emitters around the camera focus. Distant meshes retain emissive material. This bounds light count independently of map decoration count; a full scene benchmark is still required to establish frame cost. Tilted emitters are not currently supported: lanterns are authored upright.

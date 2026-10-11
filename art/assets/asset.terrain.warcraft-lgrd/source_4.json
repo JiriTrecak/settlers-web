@@ -1,26 +1,26 @@
 {
   "version": 1,
-  "graphics": "classic",
+  "graphics": "definitive",
   "tileId": "Lgrd",
   "tableSha256": "12919abf88a6016659cbd870fa8cd9b8a1ea0626a73f2015786721009da06d07",
   "sources": [
     {
       "channel": "diffuse",
-      "origin": "installed-classic",
-      "path": "war3.w3mod:terrainart/lordaeronsummer/lords_grassdark.dds",
-      "sha256": "37514d72ee9dc1671a440024ec93224f7051bebd00040a29c001bc900626cfb1"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronsummer/lords_grassdark_diffuse.dds",
+      "sha256": "29ce45698fcc987259fce9daf6c8477e8126573b0cc0cb5705e2648a88758bb4"
     },
     {
       "channel": "normal",
-      "origin": "neutral-material",
-      "path": "neutral:normal",
-      "sha256": "731feff2a859d6a939726c6c2e8d2ba9b1578a515e66b0f3a9b943a54e19505c"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronsummer/lords_grassdark_normal.dds",
+      "sha256": "7b9e1057c81e5bfbc44f3924af22c246d33cd683497d377cd5c8905da2c37dbc"
     },
     {
       "channel": "orm",
-      "origin": "neutral-material",
-      "path": "neutral:orm",
-      "sha256": "c0672d2ec7700d5502c1e8959164f6a8593b3aa8b0c1117d9841522c2e0c7006"
+      "origin": "installed-definitive",
+      "path": "war3.w3mod:_de.w3mod:terrainart/lordaeronsummer/lords_grassdark_orm.dds",
+      "sha256": "489dc7e0435ec5c6a7efddaff25e013ee3256afc3336d319bee0b2bfbfe53f90"
     }
   ],
   "packing": {

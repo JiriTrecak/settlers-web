@@ -1,21 +1,36 @@
 {
   "version": 1,
   "id": "asset.icons.resource-lumber",
-  "name": "Log",
+  "name": "Wood",
   "kind": "icon",
-  "revision": 1,
+  "revision": 6,
   "status": "published",
   "tags": [
-    "ants-v1",
-    "migrated"
+    "woodland-interface",
+    "resources",
+    "original"
   ],
   "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "14c0bfe82250c98334d141caf855b4b76c960d4ba35de0f36bdf8360b6eee7af",
+      "bytes": 1430
+    },
     {
       "role": "image",
       "index": 1,
       "format": "png",
-      "sha256": "9d60fb66017996838461a93c5f5f85f5c437fa7bf9853f26d7fc1da1c40505e7",
-      "bytes": 31198
+      "sha256": "e6bcb1d12ea0acd8b67e7886b89be04539480b18dd2b16a1d03353645939609c",
+      "bytes": 29156
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "278950f306c57c37317cfd7af133f5f94693206fbf9bccc3177b2d5b6e0ea836",
+      "bytes": 1800618
     }
   ],
   "usesGeometry": false,
@@ -46,7 +61,8 @@
   },
   "capabilities": {},
   "provenance": {
-    "method": "migration",
-    "sourceHash": "9d60fb66017996838461a93c5f5f85f5c437fa7bf9853f26d7fc1da1c40505e7"
+    "method": "generated",
+    "licenseNote": "Original Under the Canopy resource artwork generated with built-in ImageGen.",
+    "sourceHash": "278950f306c57c37317cfd7af133f5f94693206fbf9bccc3177b2d5b6e0ea836"
   }
 }

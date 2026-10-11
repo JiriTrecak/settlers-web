@@ -18,7 +18,7 @@ it('previews the bound definition size and leaves unbound assets at authored siz
  const warrior=assetDefinitionSchema.parse(published.assets.find(a=>a.id==='asset.models.units.ants-warrior'));
  expect(previewModelScale(warrior,registry)).toBe(2.25);
  warrior.bindings.render=[];expect(previewModelScale(warrior,registry)).toBe(1);
- const hall=assetDefinitionSchema.parse(published.assets.find(a=>a.id==='asset.models.buildings.ants-acorn-hall'));
+ const hall=assetDefinitionSchema.parse(published.assets.find(a=>a.bindings.render.some(b=>b.id===registry.get('building.ants.fort').asset)));
  expect(previewModelScale(hall,registry)).toBe((hall.bindings.render.find(b=>b.geometry)?.scale??1)*(registry.get('building.ants.fort').modelScale??1));
 });
 
