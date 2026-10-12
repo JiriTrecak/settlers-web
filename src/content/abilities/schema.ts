@@ -33,11 +33,11 @@ export const amountScaleSchema=z.discriminatedUnion('source',[
 const magnitude={amount:amountSchema,scale:amountScaleSchema.optional(),record:parameter.describe('Record applied amount, successful recipient count and their pre-operation resources for later operations in this release.').optional()};
 const heal = z.object({op:z.literal('heal'), ...recipients, ...magnitude}).strict();
 const damage = z.object({op:z.literal('damage'), ...recipients, ...magnitude, damageType:z.string().min(1).max(80)}).strict();
-export const controlKindSchema=z.enum(['stun','root','silence','disarm','itemBlocked','moveSlow','attackSlow']);
+export const controlKindSchema=z.enum(['stun','root','silence','disarm','itemBlocked','moveSlow','attackSlow','taunt']);
 export type ControlKind=z.infer<typeof controlKindSchema>;
 export const statusEffectSchema=z.object({op:z.literal('status'),...recipients,id:parameter,
  amount:amountSchema,heroDuration:amountSchema.optional(),polarity:z.enum(['positive','negative']),dispel:z.boolean(),
- controlImmunity:z.array(controlKindSchema).min(1).max(7).refine(a=>new Set(a).size===a.length,'Duplicate control immunity').describe('Blocks incoming control components; suppresses existing controls while active without removing their timers or other effects.').optional(),
+ controlImmunity:z.array(controlKindSchema).min(1).max(8).refine(a=>new Set(a).size===a.length,'Duplicate control immunity').describe('Blocks incoming control components; suppresses existing controls while active without removing their timers or other effects.').optional(),
  ethereal:z.boolean().describe("Cannot attack or take non-spell damage; remains visible, collidable and spell-targetable. Independent of disarm immunity.").optional(),
  damageTakenPermille:z.record(z.string().min(1).max(80),amountSchema).refine(m=>Object.keys(m).length>0&&Object.keys(m).length<=16,"Use 1–16 damage types").describe("1000 is unchanged. Strongest vulnerability and strongest reduction per damage type combine once, before armor and shields.").optional(),
  combatModifiers:combatModifiersSchema.optional(),
@@ -45,7 +45,7 @@ export const statusEffectSchema=z.object({op:z.literal('status'),...recipients,i
  sourceAttackBonus:amountSchema.describe('Flat bonus per stack to subsequent primary basic attacks from this status source only.').optional(),
  modifiers:itemModifiersSchema.default({}),
  rankedModifiers:z.partialRecord(z.enum(['maxHp','healthRegenPerSecond','manaRegenPerSecond','damage','armor','damagePermille','attackSpeedPermille','moveSpeedPermille','lifestealPermille','meleeReflectionPermille']),amountSchema).optional(),
- stun:z.boolean().optional(),disarm:z.boolean().optional(),silence:z.boolean().optional(),itemBlocked:z.boolean().optional(),
+ taunt:z.boolean().describe("Temporarily forces an enemy combat unit to attack the living caster, then resumes its orders.").optional(),stun:z.boolean().optional(),disarm:z.boolean().optional(),silence:z.boolean().optional(),itemBlocked:z.boolean().optional(),
  breakOnDamage:z.boolean().optional(),shield:amountSchema.optional(),
  onShieldDepleted:z.enum(['retain','remove']).describe('Finite shield exhaustion: retain (default) keeps the status and its other payload until its ordinary lifetime ends; remove ends the whole status, including modifiers, reactions and bound visuals, immediately after absorbing the final point. Requires a positive shield at every rank. Does not apply to mana shields.').optional(),
  concealment:z.object({fadeTicks:ticks.max(400),breakOnAttack:z.boolean(),breakOnCast:z.boolean(),attackBonus:amountSchema.default(0)}).strict().optional(),
@@ -77,7 +77,7 @@ const sacrifice=z.object({op:z.literal('sacrifice'),...recipients,amount:z.numbe
 export const effectSchema = z.discriminatedUnion('op',[heal,damage,statusEffectSchema,dispel,summon,split,resurrect,revive,drain,mana,teleport,vision,convert,contain,releaseContained,sacrifice]);
 export type StatusEffect=z.infer<typeof statusEffectSchema>;
 export const deliverySchema=z.discriminatedUnion('kind',[
- z.object({kind:z.literal('charge'),speed:z.number().min(1).max(60),maxTicks:ticks.min(1).max(400)}).strict().describe('Move the grounded caster toward a unit using body and terrain clearance. Stop on obstruction, interruption or timeout; apply release operations only on contact.'),
+ z.object({kind:z.literal('charge'),speed:z.number().min(1).max(160),maxTicks:ticks.min(1).max(400)}).strict().describe('Move the grounded caster toward a unit using body and terrain clearance. Stop on obstruction, interruption or timeout; apply release operations only on contact.'),
  z.object({kind:z.literal('swarm'),count:amountSchema,durationTicks:amountSchema,speed:z.number().min(1).max(100),radius:z.number().min(1).max(32),launchIntervalTicks:ticks.max(40),attackIntervalTicks:ticks.min(1).max(400),maxPerTarget:z.number().int().min(1).max(32),returnThreshold:amountSchema,returnPermille:z.number().int().min(0).max(1000),maxHitsPerTrip:z.number().int().min(1).max(32),returnTimeoutTicks:ticks.min(1).max(4000),filter:targetFilterSchema.optional(),includeBuildings:z.boolean().default(false)}).strict().describe('Self-cast seekers execute onRelease on visible enemies. Drain restoreCaster is carried home before restoration; damage-only seekers return after maxHitsPerTrip.'),
  z.object({kind:z.literal('projectile'),speed:z.number().min(1).max(100)}).strict(),
  z.object({kind:z.literal('chain'),skipFullHealth:z.boolean().default(false),bounces:amountSchema,radius:z.number().min(1).max(20),intervalTicks:ticks.min(1).max(80),retentionPermille:z.number().int().min(1).max(1000)}).strict(),
@@ -263,7 +263,7 @@ export const abilitySchema = z.object({
    if(ability.ranks.some(r=>value(e.amount,r)<1||value(e.radius,r)<1))ctx.addIssue({code:'custom',message:'Vision duration and radius must be positive'});
   }
  }
- if(ability.activation==='passive' && (ability.targeting.kind!=='self'||(!ability.aura&&!ability.triggers?.length&&!ability.combatModifiers)||(ability.aura&&effects.some(e=>e.op!=='status'||e.periodic||e.stun||e.disarm||e.silence||e.itemBlocked||e.breakOnDamage||e.shield!==undefined||e.immunity||e.spellImmunity||e.manaShield))||ability.delivery||ability.cast.channel||ability.autocast))ctx.addIssue({code:'custom',message:'Passives require a self aura, combat modifiers or triggers; auras only apply modifier statuses'});
+ if(ability.activation==='passive' && (ability.targeting.kind!=='self'||(!ability.aura&&!ability.triggers?.length&&!ability.combatModifiers)||(ability.aura&&effects.some(e=>e.op!=='status'||e.periodic||e.taunt||e.stun||e.disarm||e.silence||e.itemBlocked||e.breakOnDamage||e.shield!==undefined||e.immunity||e.spellImmunity||e.manaShield))||ability.delivery||ability.cast.channel||ability.autocast))ctx.addIssue({code:'custom',message:'Passives require a self aura, combat modifiers or triggers; auras only apply modifier statuses'});
  if(ability.activation!=='passive'&&ability.aura)ctx.addIssue({code:'custom',message:'Only passive abilities declare auras'});
  if(ability.delivery && (ability.cast.channel||ability.activation==='passive'||ability.delivery.kind==='line'&&ability.targeting.kind!=='point'||ability.delivery.kind==='swarm'&&ability.targeting.kind!=='self'||(ability.delivery.kind==='chain'||ability.delivery.kind==='projectile'||ability.delivery.kind==='charge')&&ability.targeting.kind!=='unit'))ctx.addIssue({code:'custom',message:'Delivery does not match targeting'});
  if(ability.delivery?.kind==='swarm'){

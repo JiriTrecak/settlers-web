@@ -1,0 +1,283 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-winglancer",
+  "name": "Ant Winglancer",
+  "kind": "unit",
+  "revision": 20,
+  "status": "published",
+  "tags": [
+    "ants",
+    "winglancer",
+    "tripo",
+    "skinned"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "1fdf61ad5f1197c62253920df882f6fc64bba806e222a90908be30025b43deb6",
+      "bytes": 2507807
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "34870b74fada4d5ba757dd8b1f194b38e84a70f30e19342d9321d5614e40f8e4",
+      "bytes": 1056
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "bc066353353a6237c206eb553a80d19f56f2abd6f22125be256ffcfa9451ed6f",
+      "bytes": 3666876
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "402160cf019f79f6499d6090db90fb920847a9eefe9a7165128f564be3594928",
+      "bytes": 10620
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "69185004d81799e8cd0bb74ebed87f5a7d6d05ebb310c16801e21ca6e79c659a",
+      "bytes": 575617
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "67be3593f17961a090fcfd4ddbf8a6722a437d1978ae2965eea612034720511b",
+      "bytes": 585633
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "9dca7b83b2024a48a3ed9502a32e49fb6c7d5c6ba34cae34c75371fe151f3651",
+      "bytes": 6042
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "2d84b819e1baf3464f008e9706424ab01c6b8c536d0dcb03141def1b87792cad",
+      "bytes": 797
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "2b9be29947329e388bb980af7c7e610a137aa84e6eb83603c457c96a44c30fc8",
+      "bytes": 5270
+    },
+    {
+      "role": "recipe",
+      "index": 4,
+      "format": "py",
+      "sha256": "91cae4ac0d110d8c48ddc08296fea0a0c5c48a2504c950f2a920e292dd25d90d",
+      "bytes": 2808
+    },
+    {
+      "role": "recipe",
+      "index": 5,
+      "format": "py",
+      "sha256": "fb44b7a2bc3b6d697cf1599ebfd97c84e3b71f5580d77468c7a721a97d97f4a7",
+      "bytes": 3258
+    },
+    {
+      "role": "recipe",
+      "index": 6,
+      "format": "py",
+      "sha256": "35da7fae14d036acaa6464b09c5b413356acdde6f461f4a2ec5a6e2501ee7062",
+      "bytes": 1979
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "9ba0a2dfa2e0ee82f91742b99fc5c542d8390408aedfb1cf48b48ae46599ffb5",
+      "bytes": 1429724
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "666a6b400f1ff12b658b7190de59c2db377f74b092ffe99c92df5fe7ecf7f5b2",
+      "bytes": 28450604
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "8b4ad0f4ea475920527ce39c8ca00ad2314634d4b2c1f5680052a987048559e8",
+      "bytes": 8455404
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "92a4b4b20d114a5e5e747131c304b1edf7d394fc7c4937470ba29805fe2fc5ff",
+      "bytes": 6417
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "c233d7db1c64e23cb23a2312e9057c5606f07095777d5fe2e3733637cf0d5596",
+      "bytes": 7432
+    }
+  ],
+  "usesGeometry": true,
+  "exportSettings": {
+    "textureSize": 1024
+  },
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "ants",
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.ants.winglancer",
+        "character": "base",
+        "scale": 2,
+        "healthHeight": 2.1,
+        "castContact": 0.4722222222222222,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-winglancer"
+        }
+      },
+      {
+        "id": "icon.ants.winglancer",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.units.ants-winglancer"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "cast",
+        "clip": "cast",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 0.7083333333333334
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "handL",
+        "node": "socket_handL",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "handR",
+        "node": "socket_handR",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "cast",
+        "node": "socket_cast",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original generated artwork for Under the Canopy."
+  }
+}

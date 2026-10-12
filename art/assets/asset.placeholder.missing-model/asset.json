@@ -3,7 +3,7 @@
   "id": "asset.placeholder.missing-model",
   "name": "Missing model",
   "kind": "prop",
-  "revision": 20,
+  "revision": 25,
   "status": "published",
   "tags": [
     "placeholder",
@@ -274,6 +274,7 @@
           "forward": 0.15,
           "distance": 7
         },
+        "projectile": "effect.weapon.arrow",
         "geometry": {
           "role": "geometry",
           "index": 1,
@@ -376,22 +377,6 @@
         }
       },
       {
-        "id": "asset.ants.marshal",
-        "scale": 1,
-        "healthHeight": 2.8,
-        "cameraAnchor": {
-          "height": 1.85,
-          "forward": 0.15,
-          "distance": 7
-        },
-        "castContact": 0.68,
-        "geometry": {
-          "role": "geometry",
-          "index": 1,
-          "asset": "asset.placeholder.missing-model"
-        }
-      },
-      {
         "id": "asset.placeholder.missing-model",
         "scale": 1,
         "healthHeight": 2.8,
@@ -405,7 +390,7 @@
         "id": "asset.beetles.stone-slinger",
         "scale": 1,
         "healthHeight": 2.8,
-        "projectile": "stone",
+        "projectile": "effect.weapon.stone",
         "geometry": {
           "role": "geometry",
           "index": 1,

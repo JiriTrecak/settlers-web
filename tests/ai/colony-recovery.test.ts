@@ -45,5 +45,7 @@ it('preserves Hall savings during bounded site searches and can use stranded loa
  expect(actions).toMatchObject([{type:'build',definition:'building.ants.fort'}]);
  expect(g.state.wallets['player.1']).toEqual({'item.amber':100});
  run(g,4400);expect(g.entities.find(e=>e.definition==='building.ants.fort'&&e.owner==='player.1')!.construction).toBeUndefined();
- expect(g.state.wallets['player.1']['item.amber']).toBe(160);
+ // Every starting worker returns the cargo held before the Hall was destroyed.
+ expect(g.state.wallets['player.1']['item.amber']).toBe(100+workers.length*10);
+ expect(workers.every(w=>!w.unit!.cargo)).toBe(true);
 });

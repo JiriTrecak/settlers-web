@@ -1,0 +1,42 @@
+{
+  "provider": "Tripo Studio",
+  "tasks": [
+    {
+      "settings": {
+        "Ultra Mesh Quality": true,
+        "AI Complete": false,
+        "Texture": true,
+        "Remove Lighting": true,
+        "PBR": true,
+        "Texture Quality": "4K",
+        "Topology": "Triangle",
+        "Polycount": 6500
+      },
+      "model": "H3.1 – Best Quality",
+      "credits": 10820
+    },
+    {
+      "uuid": "be389ed7-12d8-4822-80d3-df3622f5bf93",
+      "url": "https://studio.tripo3d.ai/workspace/generate/be389ed7-12d8-4822-80d3-df3622f5bf93",
+      "cost": 55,
+      "creditsBefore": 10820
+    }
+  ],
+  "adaptation": {
+    "config": {
+      "metallicFactor": 0.35
+    },
+    "triangles": 6100,
+    "footprint": [
+      1,
+      1
+    ],
+    "height": 0.5141603350639343,
+    "ownershipCoverage": [
+      0.06497955322265625
+    ],
+    "source": "Tripo mesh, Blender pivot/footprint normalization and ownership mask"
+  },
+  "rebuild": "Run recipe.py with -- <staging directory containing provider.glb and reference.png>; publish with the asset workbench.",
+  "runtimeTextureSize": 2048
+}

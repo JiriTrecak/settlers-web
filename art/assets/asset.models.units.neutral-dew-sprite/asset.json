@@ -3,7 +3,7 @@
   "id": "asset.models.units.neutral-dew-sprite",
   "name": "Dew Sprite",
   "kind": "unit",
-  "revision": 2,
+  "revision": 4,
   "status": "published",
   "tags": [
     "original",
@@ -81,23 +81,23 @@
     "render": [
       {
         "id": "asset.neutral.dew-sprite",
-        "geometry": {
-          "asset": "asset.models.units.neutral-dew-sprite",
-          "role": "geometry",
-          "index": 1
-        },
         "character": "base",
         "scale": 1,
         "healthHeight": 1.87,
-        "projectile": "thorn",
-        "projectileSocket": "socket_projectile"
+        "projectile": "effect.weapon.thorn",
+        "projectileSocket": "socket_projectile",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.neutral-dew-sprite"
+        }
       },
       {
         "id": "icon.neutral.dew-sprite",
         "image": {
-          "asset": "asset.models.units.neutral-dew-sprite",
           "role": "image",
-          "index": 1
+          "index": 1,
+          "asset": "asset.models.units.neutral-dew-sprite"
         }
       }
     ],
@@ -108,9 +108,6 @@
       "radius": 0.29,
       "height": 1.7,
       "formationSpacing": 0.652
-    },
-    "groundContact": {
-      "mode": "pivot"
     },
     "animations": [
       {
@@ -165,7 +162,10 @@
           0
         ]
       }
-    ]
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    }
   },
   "provenance": {
     "method": "generated",

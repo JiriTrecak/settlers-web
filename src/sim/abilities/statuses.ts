@@ -1,3 +1,4 @@
+import {reconcileTaunt} from './taunt';
 import {locomotion} from '../game/locomotion';
 import {SpellSummons} from './summons';
 import {SpellCorpses} from './corpses';
@@ -105,8 +106,8 @@ export class SpellStatuses{
   if(effect.op==='status'){
    if(effect.form?.movement&&(!this.c.def(e).behaviors.movement||e.unit?.garrison||e.unit?.contained||e.unit?.release))return 0;
    if((effect.concealment||effect.form||effect.ethereal)&&!e.unit)return 0;
-   if((effect.stun||effect.modifiers.rooted||effect.disarm||effect.silence||effect.itemBlocked)&&this.c.registry&&this.c.def(e).kind!=='unit')return 0;
-   const blocked=statusControls(effect,ability,rank).filter(k=>controlImmunities(e,this.c.registry).has(k));
+   if((effect.taunt||effect.stun||effect.modifiers.rooted||effect.disarm||effect.silence||effect.itemBlocked)&&this.c.registry&&this.c.def(e).kind!=='unit')return 0;
+   const blocked=statusControls(effect,ability,rank).filter(k=>controlImmunities(e,this.c.registry).has(k)||(k==='taunt'&&(!this.c.def(e).behaviors.combat||!this.game.combat.hostile(caster,e))));
    if(blocked.length&&!statusHasPayload(effect,ability,rank,new Set(blocked)))return 0;
    const duration=effect.lifetime==='untilDeath'?UNTIL_DEATH-now:this.c.def(e).hero&&effect.heroDuration!==undefined?value(effect.heroDuration,ability.ranks[rank-1]):effect.amount;
    const needsSource=ability.triggers?.some(t=>t.event==='death'&&t.executor==='statusSource'&&t.whileStatus===effect.id);
@@ -124,6 +125,7 @@ export class SpellStatuses{
    const stun=spellControl(e,this.c.registry,'stun'),silence=spellControl(e,this.c.registry,'silence'),disarm=spellControl(e,this.c.registry,'disarm')||isEthereal(e,this.c.registry);
    if(stun||silence)this.game.abilities.cancel(e.id,stun?'Stunned':'Silenced');
    if(stun||disarm){if(e.unit)delete e.unit.attack;}
+   reconcileTaunt(this.game,e);
    if(!aura)this.c.clampPools(e);
    return duration;
   }
@@ -132,6 +134,7 @@ export class SpellStatuses{
    e.spellStatuses=e.spellStatuses?.filter(s=>{const d=spellStatusDefinition(s,this.c.registry);const remove=!s.aura&&d?.dispel&&(effect.polarity==='all'||d.polarity===effect.polarity);if(remove)removed++;return !remove;});
    if(!e.spellStatuses?.length)delete e.spellStatuses;
    this.c.clampPools(e);
+   reconcileTaunt(this.game,e);
    if(e.summoned&&this.game.combat.hostile({...caster,owner:resolvedOwner},e)){
     const result=this.game.combat.abilityHit({source,target,owner:resolvedOwner,damage:effect.amount,damageType:effect.damageType});for(const dead of result.dead)this.game.onCombatDeath(dead);
    }

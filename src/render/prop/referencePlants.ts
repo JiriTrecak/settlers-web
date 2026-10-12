@@ -2,8 +2,8 @@ import {prepareSnowSurface} from './snowSurface';
 import {Mesh,MeshStandardMaterial,DoubleSide,SRGBColorSpace,ShaderChunk,type Object3D,type Texture} from 'three';
 import type {ReferenceGround} from './referenceGround';
 
-/** Cache vertex colors encode pivots, not tint. Import retains them in _leaf;
- * COLOR_0 stores vertex occlusion. Matches Plants.fxs::PatchPlantNormals. */
+/** Imported pivots live in _leaf and COLOR_0 stores occlusion. Original assets
+ * can explicitly opt into authored color tint with vertexColorUsage. */
 export function prepareReferencePlants(root:Object3D,ground?:ReferenceGround,macro?:()=>Texture):boolean {
  let found=false;
  root.traverse(node=>{
@@ -24,7 +24,7 @@ export function prepareReferencePlants(root:Object3D,ground?:ReferenceGround,mac
    if(m.userData.underlay&&ground)ground.attach(m);
    // Normal.w is ambient occlusion, not a tint. Multiplying the albedo also
    // darkens direct sunlight and makes the undersides of branches almost black.
-   if(node.geometry.hasAttribute('color')){
+   if(node.geometry.hasAttribute('color')&&m.userData.vertexColorUsage!=='tint'){
     const previous=m.onBeforeCompile,key=m.customProgramCacheKey.bind(m);
     m.onBeforeCompile=(s,r)=>{
      previous.call(m,s,r);

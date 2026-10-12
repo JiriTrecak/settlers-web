@@ -397,9 +397,15 @@ export class AbilityRuntime {
     const spell=this.host.definition(binding.ability),rank=data.state.ranks[binding.id];
     if(!rank||!spell?.aura||spell.activation!=='passive')continue;
     access??=this.host.caster(id);if(!access?.actor.alive||!access.actor.targetable)break;
+    // Source markers and explicit area queries exist independently of ordinary
+    // recipients. An enemy aura must stay visible even with no enemies nearby.
+    const once=spell.onRelease.filter(op=>op.op!=='branch'&&(op.target==='caster'||op.query));
+    if(once.length)this.hit(access.actor,access.actor,1,spell,rank,1000,true,false,once);
+    const perRecipient=spell.onRelease.filter(op=>!once.includes(op));
+    if(!perRecipient.length)continue;
     for(const target of this.candidates(access.actor,spell,access.actor,spell.aura.radius)){
      if(spell.aura.meleeOnly&&!target.melee)continue;
-     this.hit(access.actor,target,1,spell,rank,1000,true);
+     this.hit(access.actor,target,1,spell,rank,1000,true,false,perRecipient);
     }
    }
   }

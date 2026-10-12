@@ -1,0 +1,11 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Leaf Archer overhead review</title>
+<style>body{margin:0;background:#18181b;color:white;font:14px system-ui}header{position:absolute;left:16px;top:16px;right:16px;width:fit-content;max-width:calc(100% - 60px);background:#18181bee;padding:14px;border-radius:8px;z-index:1}label{display:inline-block;margin:6px 12px 6px 0}select,button{font:inherit;padding:5px;background:#27272a;color:#fafafa;border:1px solid #52525b;border-radius:4px}input[type=range]{accent-color:#a1a1aa}canvas{display:block}.note{color:#e9ca88;font-size:12px}input[type=range]{vertical-align:middle;width:160px}</style>
+</head><body><header><strong>Leaf Archer · overhead animation review</strong>
+<div class="note">Published Archer · full combat validation in progress</div>
+<div><label>Action <select aria-label="Archer action" id="action"><option>idle</option><option>walk</option><option>run</option><option>attack</option><option>cast</option><option>hit</option><option>death</option></select></label>
+<label>View <select aria-label="Camera distance" id="distance"><option value="game">Game distance</option><option value="close">Closer inspection</option></select></label>
+<label>Angle <select aria-label="Camera angle" id="angle"><option value="game">Game overhead</option><option value="top">Directly above</option></select></label>
+<label>Facing <select aria-label="Archer facing" id="facing"><option value="0">Front</option><option value="180">Back</option><option value="90">Side</option></select></label></div>
+<div><button id="pause">Pause</button> <label>Animation position <input aria-label="Animation position" id="phase" type="range" min="0" max="100" step="0.1" value="0"></label><span id="phase-text"></span></div>
+<span id="status">Loading Archer…</span></header><canvas></canvas><script type="module" src="./main.ts"></script></body></html>

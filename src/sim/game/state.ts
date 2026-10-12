@@ -136,6 +136,7 @@ export const entitySchema = z
         garrison: z.object({building:positive,height:z.number().positive().max(32)}).strict().optional(),
         flight:z.object({height:z.number().min(1).max(30),source:z.object({ability:idSchema,status:z.string().min(1).max(48),cast:positive,rank:z.number().int().min(1).max(10),started:natural}).strict().optional()}).strict().optional(),
         release: point.nullable(),
+        taunt: z.object({source:positive,resumeGoal:natural.max(1048575).nullable()}).strict().optional(),
         target: positive.nullable(),
         pursuit: z.object({target:positive,position:placementPointSchema,seenTick:natural}).strict().optional(),
         cooldown: natural,

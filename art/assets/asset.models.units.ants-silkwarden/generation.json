@@ -1,0 +1,28 @@
+{
+  "provider": "Tripo Studio",
+  "task": "d912e24b-1f2b-4e73-b145-1ce3dc5f029a",
+  "adaptation": {
+    "ownershipMaskFraction": 0.09475725889205933,
+    "triangles": 4320,
+    "clips": [
+      "attack",
+      "cast",
+      "death",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "status": "requires-per-role-motion-and-game-review"
+  },
+  "refinement": "Broad leaf cap ownership, rigid silk spool and net; compact net flick and preserved provider gaits",
+  "sourceFiles": {
+    "adapt.py": "recipe.py",
+    "refine.py": "recipe_2.py",
+    "render-pose.py": "recipe_3.py",
+    "provider.glb": "source_2.glb",
+    "reference.png": "reference.png"
+  },
+  "rebuild": "Materialize the named recipe files and provider in a staging silkwarden directory; run Blender -b --python adapt.py -- <silkwarden directory>.",
+  "runtimeTextureSize": 1024
+}

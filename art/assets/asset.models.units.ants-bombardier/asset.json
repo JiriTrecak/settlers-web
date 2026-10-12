@@ -1,9 +1,9 @@
 {
   "version": 1,
   "id": "asset.models.units.ants-bombardier",
-  "name": "Bombardier Beetle",
+  "name": "Ant Bombardier",
   "kind": "unit",
-  "revision": 4,
+  "revision": 59,
   "status": "published",
   "tags": [
     "original",
@@ -14,60 +14,88 @@
   ],
   "resources": [
     {
-      "role": "geometry",
-      "index": 1,
-      "format": "glb",
-      "sha256": "6ad2fb59475a83488672458aeccb25f6625482b13fbfb1d96257136bad24a0d4",
-      "bytes": 11323560
-    },
-    {
-      "role": "source",
-      "index": 1,
-      "format": "blend",
-      "sha256": "94a31fff8c6078312d69b928375e9710cccea2989338644fc75c2e5690f0e12a",
-      "bytes": 23116094
-    },
-    {
-      "role": "reference",
-      "index": 1,
-      "format": "png",
-      "sha256": "2e68fa276c65d984c5a79311e3a434531e9c2b64c74be2abbbda98fb5f30644b",
-      "bytes": 1606819
-    },
-    {
-      "role": "preview",
-      "index": 1,
-      "format": "png",
-      "sha256": "3b887dcb5d6d20a8eaa7cb07a98cfde3d8baccfba0a69587344b5b55225a9a4a",
-      "bytes": 650830
-    },
-    {
-      "role": "image",
-      "index": 1,
-      "format": "png",
-      "sha256": "fc40856f2fde2e3053b05ddcd2c836db588e81e22cb9360885a1f411b447fa68",
-      "bytes": 15415
-    },
-    {
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "36e6ce6531fa81d0299a36779d26a45de7745909510880af247a10d38402d78d",
-      "bytes": 5920134
+      "sha256": "c62b53046b7ee10fb6a7b05e0dd62b0840da80153efe9c3cf8444f5ed8e54c46",
+      "bytes": 2122971
     },
     {
-      "role": "team_mask",
+      "role": "build",
       "index": 1,
-      "format": "png",
-      "sha256": "3bd62f4ce1bae9d6244a7ccce6332f8974fec5dd5c54d8f96aa6b8586a28db07",
-      "bytes": 34440
+      "format": "json",
+      "sha256": "33e73a45862e7c82ed175b0168aa21d41c2f5148cbbdf4bd374a6616bf08ce7d",
+      "bytes": 1106
     },
     {
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "24b473d3a5acbfca753c1d822e3e819cd9404ea7312cf8f7a5a7b2f7b7ed21e4",
-      "bytes": 10888
+      "sha256": "51879249a329cf93a96bc30ce3f5418f6960c3e6840143abdbfbb7211ea45105",
+      "bytes": 868
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "024911b962096789082fb0a4fde13d5d642cd4e3cd172b5197fb446b638137cc",
+      "bytes": 3297092
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "3823ea7fd57c3e58c7c9b283c5ce610ce62b346d422aab9702351738ad431471",
+      "bytes": 14782
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "a141478debbdeacfbd0dc0aead66a227a49242ffdd5b1f46e297143103ca2834",
+      "bytes": 601705
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "65993932ec5b9e31ad2077c6d352fdb444882769315511fa94c90bf26a24f778",
+      "bytes": 583686
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "6a1c69615f436b986df83fcffada3a918750d83a5f33475b98a7c8202cd09695",
+      "bytes": 8232
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "a34be36a3384608b1a0af4bb7ba87ce7c4684207e255a8924f2da90fe469fc6a",
+      "bytes": 4144
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "35da7fae14d036acaa6464b09c5b413356acdde6f461f4a2ec5a6e2501ee7062",
+      "bytes": 1979
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "202d13bfba5690f39a570f8db83b91fedb1ff01913ef50c4b9fb706c45aba337",
+      "bytes": 1407370
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "112ec07ccad2ed661a3fbbc63d1ba341f5a0320666e81b0dd71a90957eee89da",
+      "bytes": 37918092
     },
     {
       "role": "source",
@@ -87,8 +115,8 @@
       "role": "source",
       "index": 4,
       "format": "json",
-      "sha256": "fa474f87ece272f859013c4ac42b126108c0f3697da6585e8f9877ffc3360f56",
-      "bytes": 3257
+      "sha256": "c8c12d5c600cd320470cfe40e40443dcca55565cafaf17efecd68f1f62139d79",
+      "bytes": 963
     },
     {
       "role": "source",
@@ -96,20 +124,6 @@
       "format": "json",
       "sha256": "1e2c2a6604502f1a3a92a7a0abb0d85fb106af993c048ac6b7004197f2469fbc",
       "bytes": 503
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "cad90329a605b93b641bf1ccc0550d3eb249bad7c6d1227f33f47d27ef590126",
-      "bytes": 5707
-    },
-    {
-      "role": "recipe",
-      "index": 2,
-      "format": "py",
-      "sha256": "282f029e5feb080b9c259b6d9a89e7e8dcf8e10b358612a3f73207b81165a1ce",
-      "bytes": 2464
     },
     {
       "role": "source",
@@ -133,18 +147,11 @@
       "bytes": 5353
     },
     {
-      "role": "recipe",
-      "index": 3,
-      "format": "py",
-      "sha256": "cdc01912812d79efe66ff164b7603c8f4ddc2153b8356a10192e85a617b4a28a",
-      "bytes": 195
-    },
-    {
       "role": "source",
       "index": 9,
       "format": "json",
-      "sha256": "62f9dbdc6043710c3e19ff0104182704e5793cc9d4c82ed9d4fc885c27696cdf",
-      "bytes": 1390
+      "sha256": "cd966bc6cab3303fbc139047145016b8f7b9bd378607e42b8c8c8812c4324f73",
+      "bytes": 6904
     },
     {
       "role": "source",
@@ -178,8 +185,8 @@
       "role": "source",
       "index": 14,
       "format": "glb",
-      "sha256": "e5a6e44ec913596692af3a513b901470635a4a8ca83016647e228f3f9dce2fc8",
-      "bytes": 8225228
+      "sha256": "5c103a464dd0d55f4581ba8b284b271df86c686146cef3ff4d6d5d92638c4746",
+      "bytes": 8235632
     },
     {
       "role": "source",
@@ -189,14 +196,17 @@
       "bytes": 79833
     },
     {
-      "role": "build",
+      "role": "team_mask",
       "index": 1,
-      "format": "json",
-      "sha256": "29173049b45c63c2211ac49dfa6ef6440b1b306a231b2d742f359b9f5eaa85bd",
-      "bytes": 2865
+      "format": "png",
+      "sha256": "981af7bdc58fb189188439d09c7d009b78a1bf8c8bccbc17bdaba1cf486f9851",
+      "bytes": 31613
     }
   ],
   "usesGeometry": true,
+  "exportSettings": {
+    "textureSize": 1024
+  },
   "transform": {
     "scale": 1,
     "pivot": [
@@ -210,14 +220,17 @@
   "materials": [],
   "bindings": {
     "faction": "ants",
-    "profile": "bombardier",
+    "profile": "base",
     "render": [
       {
         "id": "asset.ants.bombardier",
-        "character": "bombardier",
-        "scale": 1,
-        "healthHeight": 3.05,
+        "character": "base",
+        "scale": 2,
+        "healthHeight": 2.15,
+        "projectile": "effect.weapon.resin-bomb",
+        "impactEffect": "effect.ants.resin-explosion",
         "projectileSocket": "socket_projectile",
+        "castContact": 0.3076923076923077,
         "geometry": {
           "role": "geometry",
           "index": 1,
@@ -266,19 +279,19 @@
         "events": []
       },
       {
-        "semantic": "charge",
-        "clip": "run",
-        "loop": true,
+        "semantic": "cast",
+        "clip": "cast",
+        "loop": false,
         "events": []
       },
       {
         "semantic": "attack",
-        "clip": "attack_mortar",
+        "clip": "attack",
         "loop": false,
         "events": [
           {
             "name": "release",
-            "time": 1.5
+            "time": 0.6666666666666666
           }
         ]
       },
@@ -324,8 +337,8 @@
         ]
       },
       {
-        "name": "back",
-        "node": "socket_back",
+        "name": "cast",
+        "node": "socket_cast",
         "offset": [
           0,
           0,
@@ -335,11 +348,6 @@
     ],
     "groundContact": {
       "mode": "pivot"
-    },
-    "dimensions": {
-      "radius": 0.2,
-      "height": 2,
-      "formationSpacing": 1
     }
   },
   "provenance": {

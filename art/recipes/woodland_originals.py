@@ -6,6 +6,13 @@ from pathlib import Path
 from mathutils import Vector
 from forest_warfare import ForestKit
 from forest_environment import tree_actions
+def canopy_tint(z,height):
+ # Linear albedo tint: cool shaded skirt, green middle, fresh crown.
+ t=max(0.,min(1.,(z/height-.20)/.75))
+ stops=[(.055,.14,.12),(.28,.48,.29),(1.,1.,.75)]
+ i=0 if t<.5 else 1;f=t*2-i
+ return tuple(stops[i][c]*(1-f)+stops[i+1][c]*f for c in range(3))+(1.,)
+
 class Kit(ForestKit):
  def __init__(self,asset):
   if not bpy.app.background:raise RuntimeError('Background Blender only')
@@ -18,6 +25,10 @@ class Kit(ForestKit):
   m=self.mat(name,'#ffffff');p=m.node_tree.nodes.get('Principled BSDF');t=m.node_tree.nodes.new('ShaderNodeTexImage');t.image=bpy.data.images.load(str(self.asset/file));t.image.pack();t.image.use_fake_user=True;m.node_tree.links.new(t.outputs['Color'],p.inputs['Base Color'])
   if alpha:
    m.node_tree.links.new(t.outputs['Alpha'],p.inputs['Alpha']);m.surface_render_method='DITHERED';m.use_backface_culling=False
+  if alpha:
+   tint=m.node_tree.nodes.new('ShaderNodeVertexColor');tint.layer_name='CanopyTint'
+   blend=m.node_tree.nodes.new('ShaderNodeMixRGB');blend.blend_type='MULTIPLY';blend.inputs[0].default_value=1
+   m.node_tree.links.new(t.outputs['Color'],blend.inputs[1]);m.node_tree.links.new(tint.outputs['Color'],blend.inputs[2]);m.node_tree.links.new(blend.outputs[0],p.inputs['Base Color'])
   p.inputs['Specular IOR Level'].default_value=0
   return m
  def tube(self,name,pts,radii,mat=None,n=8,cuts=False):
@@ -35,7 +46,9 @@ class Kit(ForestKit):
   # One high-detail fan fills the texture. Mirrored sheets vary the painted strokes
   # without spending five sixths of the runtime texture on near-identical fans.
   if cell%2:u=1-u
-  return (.01+u*.98,.01+v*.98)
+  # The wide fan occupies the central vertical half of the square source.
+  # Map that painted region, not its transparent padding, onto the branch.
+  return (.005+u*.99,.22+v*.53)
  def bough(self,a,h,r,width,drop,foliage,cell=0):
   # One draped 3-by-4 sheet per bough, as in the reference's construction.
   # The centre ridge sits well above the edges: the flat-shaded fold gives each
@@ -47,30 +60,35 @@ class Kit(ForestKit):
    t=j/3;distance=r*(.025+t*.88+.12*t*t)
    for col in range(3):
     across=col-1
-    edge_drop=abs(across)*width*.20
+    edge_drop=abs(across)*width*.10
     c=d*(distance-abs(across)*r*.06)+side*across*width*.5
     c.z=h-drop*(.65*t+.35*t*t)-edge_drop
     verts.append(tuple(c))
-  o=self.mesh('Draped needle bough',verts,[(j*3+c,j*3+c+1,(j+1)*3+c+1,(j+1)*3+c) for j in range(3) for c in range(2)],foliage)
+  # Upward winding is required by the foliage shader's camera-independent normals.
+  o=self.mesh('Draped needle bough',verts,[(j*3+c,(j+1)*3+c,(j+1)*3+c+1,j*3+c+1) for j in range(3) for c in range(2)],foliage)
   for p in o.data.polygons:
    for li in p.loop_indices:
     vi=o.data.loops[li].vertex_index
     o.data.uv_layers.active.data[li].uv=self.atlas_uv(vi%3/2,1-vi//3/3,cell)
+  tint=o.data.color_attributes.new(name='CanopyTint',type='FLOAT_COLOR',domain='CORNER')
+  for p in o.data.polygons:
+   for li in p.loop_indices:tint.data[li].color=canopy_tint(o.data.vertices[o.data.loops[li].vertex_index].co.z,self.tree_height)
   o['atlasCell']=0;o['atlasMirrored']=bool(cell%2);o['singleDrapedSheet']=True
  def tree(self,variant):
   small=variant=='sapling';h=3.1 if small else 12.3 if variant=='a' else 11.4
+  self.tree_height=h
   self.tube('Tapered harvest trunk',[(0,0,0),(.07,0,h*.3),(-.09,.08,h*.7),(.02,.04,h*(.975 if small else 1))],[.19 if small else .78,.13 if small else .51,.05 if small else .22,.008 if small else .025],self.bark,8,True)
   if not small:
    for i in range(5):
     a=i*math.tau/5;self.tube('Root flare',[(math.cos(a)*1.30,math.sin(a)*1.30,.04),(math.cos(a)*.55,math.sin(a)*.55,.58),(0,0,1.65)],[.055,.30,.42],self.bark,6)
   foliage=self.tex('Original pine needles','albedo.png',True)
   # Broad separated tiers leave the bottom fifth as a readable harvest trunk.
-  # Five sheets per whorl retain a full silhouette without overlapping seven
+  # Four sheets per whorl retain open branch gaps without overlapping five
   # fans into a dense cone. Lower tiers spread horizontally before drooping.
   # (attachment height, reach, width, drop, number of boughs), normalized below.
-  bands=[(5.2,3.55,4.15,2.05,5),(6.95,3.1,3.8,2.0,5),
-         (8.55,2.55,3.3,1.85,5),(9.95,1.95,2.6,1.7,5),
-         (11.15,1.25,1.85,1.5,5)]
+  bands=[(5.2,3.8,3.8,1.65,4),(7.0,3.2,3.45,1.65,4),
+         (8.65,2.65,3.0,1.5,4),(10.05,1.95,2.45,1.45,4),
+         (11.25,1.2,1.65,1.3,4)]
   if small:bands=[(5.0,3.7,4.1,1.8,5),(7.3,3.05,3.4,1.85,5),(9.4,2.1,2.5,1.65,5),(10.9,1.2,1.5,1.3,4)]
   scale=h/12.3;radial=1 if variant!='b' else .96
   for tier,(z,r,w,drop,count) in enumerate(bands):
@@ -126,14 +144,21 @@ class Kit(ForestKit):
    # The painted atlas is already the intended color. Lighting calibration must
    # not be baked into a dark base-color multiplier on individual tree assets.
    p['baseColorFactor']=factor
-   m['extras']={'referenceEnvironment':True,'sourceShader':'plant','foliage':foliage,'painted':True,'backsideLighting':.1 if foliage else 0,'crownNormal':.2,'sourceShaderAttributes':{'IsUseGroundColor':'false'}}
+   m['extras']={'referenceEnvironment':True,'sourceShader':'plant','foliage':foliage,'painted':True,'vertexColorUsage':'tint' if foliage else 'occlusion','backsideLighting':.1 if foliage else 0,'crownNormal':.45,'sourceShaderAttributes':{'IsUseGroundColor':'false'}}
    if foliage:m.update(alphaMode='MASK',alphaCutoff=.4,doubleSided=True)
   height=3.1 if 'sapling' in self.asset.name else 12.3 if self.asset.name.endswith('-a') else 11.4
   for node in doc.get('nodes',[]):node['extras']={**node.get('extras',{}),'referenceEnvironment':True,'plantHeight':height,'foliageWind':{'amplitude':.1,'speed':.18}}
   for mesh in doc['meshes']:
    for primitive in mesh['primitives']:
     if not doc['materials'][primitive['material']]['extras']['foliage']:continue
-    count=doc['accessors'][primitive['attributes']['POSITION']]['count'];binary.extend(bytes((-len(binary))%4));offset=len(binary)
+    position=doc['accessors'][primitive['attributes']['POSITION']];pv=doc['bufferViews'][position['bufferView']]
+    count=position['count'];start=pv.get('byteOffset',0)+position.get('byteOffset',0);stride=pv.get('byteStride',12)
+    colors=[canopy_tint(struct.unpack_from('<3f',binary,start+i*stride)[1],height) for i in range(count)]
+    binary.extend(bytes((-len(binary))%4));offset=len(binary)
+    for color in colors:binary.extend(struct.pack('<4f',*color))
+    view=len(doc['bufferViews']);doc['bufferViews'].append({'buffer':0,'byteOffset':offset,'byteLength':count*16})
+    primitive['attributes']['COLOR_0']=len(doc['accessors']);doc['accessors'].append({'bufferView':view,'componentType':5126,'count':count,'type':'VEC4'})
+    binary.extend(bytes((-len(binary))%4));offset=len(binary)
     binary.extend(struct.pack('<4f',.5,.5,.5,1)*count);view=len(doc['bufferViews']);doc['bufferViews'].append({'buffer':0,'byteOffset':offset,'byteLength':count*16})
     primitive['attributes']['_LEAF']=len(doc['accessors']);doc['accessors'].append({'bufferView':view,'componentType':5126,'count':count,'type':'VEC4'})
   doc['buffers'][0]['byteLength']=len(binary);raw=json.dumps(doc,separators=(',',':')).encode();raw+=b' '*((-len(raw))%4)

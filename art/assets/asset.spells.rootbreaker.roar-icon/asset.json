@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.spells.rootbreaker.roar-icon",
+  "name": "Challenge Roar",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "a6964edde83c39a77732c1960bcb65564565a09e4e1f9e1e7175c279baf7a012",
+      "bytes": 713
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "e5d55debc0703283ba93585dfba84fafad72cc42d25250e402d210e8db43e728",
+      "bytes": 42586
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "42294dd850d8a8d54467b7fc8174fb786a6ced884d0890e6d207f779157f4c3c",
+      "bytes": 1583928
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.spells.rootbreaker.roar-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.spells.rootbreaker.roar-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

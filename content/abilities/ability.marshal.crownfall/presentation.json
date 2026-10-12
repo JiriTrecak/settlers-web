@@ -3,9 +3,9 @@
   "id": "presentation.marshal.crownfall",
   "icon": "asset.spells.marshal.crownfall-icon",
   "animations": {
-    "prepare": "attack",
-    "release": "attack",
-    "recover": "idle",
+    "prepare": "cast",
+    "release": "cast",
+    "recover": "cast",
     "fallback": "idle"
   },
   "effects": [

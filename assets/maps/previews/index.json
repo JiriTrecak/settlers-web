@@ -1,20 +1,20 @@
 {
   "echo-isles": {
     "name": "Echo Isles v2.2",
-    "size": 512,
+    "size": 640,
     "description": "Though these islands are surrounded by deep and treacherous waters, they have seen little peace. Many of the creatures dwelling here are refugees from the war. They have nothing left to lose. Don't expect a warm welcome.",
     "starts": [
       {
         "player": 1,
-        "x": 93.5,
-        "z": 181.5,
+        "x": 117.5,
+        "z": 225.5,
         "setup": "setup.ants",
         "mainFort": "start.player.1/main-fort"
       },
       {
         "player": 2,
-        "x": 401.5,
-        "z": 181.5,
+        "x": 501.5,
+        "z": 225.5,
         "setup": "setup.ants",
         "mainFort": "start.player.2/main-fort"
       }
@@ -22,52 +22,51 @@
     "camps": 19,
     "sandbox": false,
     "playable": true,
-    "sourceHash": "b1b080d5",
+    "sourceHash": "c6a4d0cc",
     "image": "echo-isles.webp",
     "custom": false,
-    "generationHash": "f1b31685b0cc189f4f02e8e7158288a142562b6b20a2070196ea22a233ae05f8"
+    "generationHash": "f50a0af96a453c8f730b2db584b709341fb99ef803d4ec4c759f77e0625b98f1"
   },
   "turtle-rock": {
     "name": "Turtle Rock v2.0",
-    "size": 512,
+    "size": 640,
     "description": "Once an island for all those who were exiled, this has now become an island of riches for those who seek its hidden treasures.",
     "starts": [
       {
         "player": 1,
-        "x": 425.5,
-        "z": 321.5,
+        "x": 529.5,
+        "z": 401.5,
         "setup": "setup.ants",
         "mainFort": "start.player.1/main-fort"
       },
       {
         "player": 2,
-        "x": 337.5,
-        "z": 421.5,
+        "x": 421.5,
+        "z": 525.5,
         "setup": "setup.ants",
         "mainFort": "start.player.2/main-fort"
       },
       {
         "player": 3,
-        "x": 93.5,
-        "z": 205.5,
+        "x": 113.5,
+        "z": 257.5,
         "setup": "setup.ants",
         "mainFort": "start.player.3/main-fort"
       },
       {
         "player": 4,
-        "x": 189.5,
-        "z": 113.5,
+        "x": 237.5,
+        "z": 141.5,
         "setup": "setup.ants",
         "mainFort": "start.player.4/main-fort"
       }
     ],
-    "camps": 22,
+    "camps": 18,
     "sandbox": false,
-    "playable": false,
-    "sourceHash": "e13fe740",
-    "error": "start.player.4/unit-004: overlaps camp/warcraft-2/5",
+    "playable": true,
+    "sourceHash": "1b27682e",
     "image": "turtle-rock.webp",
     "custom": false,
-    "generationHash": "68ad3a795bb9febf0100d5efa256fc975b41a3a6e465354c65504221722b0641"
+    "generationHash": "ea6b32c485ba9ef6ccc8c1cb56a034174b33fe6356e17b70aae717ea8161bacd"
   }
 }

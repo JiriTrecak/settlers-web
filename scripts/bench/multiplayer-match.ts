@@ -3,6 +3,7 @@
  * --checkpoint restores a local save including its transport pipeline.
  * --resume restores a simulation benchmark snapshot with a fresh transport at
  * that tick. Both use normal World validation; neither modifies the input.
+ * --races ants,beetles assigns one declared race per fresh-match peer.
  */
 import {readFileSync,writeFileSync} from 'node:fs';
 import {deepStrictEqual} from 'node:assert';
@@ -33,7 +34,10 @@ if(sourceGame&&(sourceGame.content!==registry.fingerprint||sourceGame.map!==fing
  throw Error(`Checkpoint identity mismatch: content ${sourceGame.content} / ${registry.fingerprint}, map ${sourceGame.map} / ${fingerprint(map)}`);
 const playerCount=Number(option('--peers',String(map.playerStarts.length)));
 if(!Number.isSafeInteger(playerCount)||playerCount<2||playerCount>map.playerStarts.length)throw Error('Peer count must fit the map player starts');
-const config:MatchConfig=save?.match??{...localMatch({mapId,mapRevision:'benchmark',seed:731942,slotCount:playerCount,me:0,delay:4}),slots:snapshot?.slots??Array.from({length:playerCount},(_,player)=>({player,kind:'ai' as const,team:player}))};
+const raceOption=option('--races',''),races=raceOption?raceOption.split(',').map(r=>r.trim()):undefined;
+if(races&&(save||snapshot))throw Error('--races applies only to fresh matches; restored slots retain their races');
+if(races&&(races.length!==playerCount||races.some(r=>!Object.hasOwn(registry.rules.races,r))))throw Error('--races requires one declared race per peer');
+const config:MatchConfig=save?.match??{...localMatch({mapId,mapRevision:'benchmark',seed:731942,slotCount:playerCount,me:0,delay:4}),slots:snapshot?.slots??Array.from({length:playerCount},(_,player)=>({player,kind:'ai' as const,team:player,...(races?{race:races[player]}:{})}))};
 if(config.slots.length!==playerCount)throw Error('Checkpoint player count differs from requested peers');
 const begin=performance.now();
 const worlds=Array.from({length:playerCount},()=>{

@@ -5,9 +5,16 @@ import {convertWarcraftMap} from '../../src/editor/import/warcraft/convert';
 import {content} from '../../src/content/builtin';
 import {playableMapError} from '../../src/shared/map/playable';
 import {Game} from '../../src/sim/game/game';
+import {readUtcMap} from '../../src/shared/map/utcmap';
 
-it.each(['echo-isles','turtle-rock'])('preserves the starting economy and clearance when scaling %s',name=>{
- const {map}=convertWarcraftMap(readWarcraftMap(new Uint8Array(readFileSync(`tests/editor/fixtures/warcraft/${name}.w3x`))));
+it.each(['echo-isles','turtle-rock'].flatMap(name=>['import','published'].map(source=>({name,source}))))('preserves the starting economy and clearance in $name ($source)',({name,source})=>{
+ const loaded=source==='import'
+  ?convertWarcraftMap(readWarcraftMap(new Uint8Array(readFileSync(`tests/editor/fixtures/warcraft/${name}.w3x`))))
+  :readUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${name}.utcmap`,'utf8')));
+ if(!('map' in loaded))throw Error(`Invalid published ${name}`);
+ const {map}=loaded;
+ expect(map.size).toBe(640);
+ expect(map.authoring.terrain.textureGrid).toEqual({cellSize:5,origin:[-.5,-.5]});
  expect(playableMapError(map)).toBeNull();
  for(const race of ['ants','beetles']){
   const slots=map.playerStarts.map((_,player)=>({player,kind:'human' as const,race}));

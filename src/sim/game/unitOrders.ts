@@ -13,7 +13,7 @@ export class UnitOrders {
     return !!(e.abilities?.pending || u.order || u.job || u.cargo || u.employment || u.pendingMove || u.orderQueue.length);
   }
   canIssue(e: Entity, append = false): boolean {
-    return !append || e.unit!.orderQueue.length < MAX_QUEUED_ORDERS;
+    return !e.unit?.taunt && (!append || e.unit!.orderQueue.length < MAX_QUEUED_ORDERS);
   }
   issue(e: Entity, order: UnitOrder, append = false): boolean {
     if (!this.canIssue(e, append)) return false;
@@ -37,7 +37,7 @@ export class UnitOrders {
   advance(activate: (e: Entity, order: UnitOrder) => boolean) {
     for (const e of this.c.activeUnits()) {
       const u = e.unit!;
-      if (u.order || u.job || u.pendingMove || e.abilities?.pending || isStunned(e, this.c.registry)) continue;
+      if (u.taunt || u.order || u.job || u.pendingMove || e.abilities?.pending || isStunned(e, this.c.registry)) continue;
       if (u.cargo && (u.orderQueue[0]?.type !== 'construct' || this.economy.cargoBlocksConstruction(e))) continue;
       while (u.orderQueue.length) {
         const order = u.orderQueue.shift()!, remaining = u.orderQueue;

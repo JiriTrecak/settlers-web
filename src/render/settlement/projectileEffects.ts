@@ -1,30 +1,21 @@
 import type { GameState } from "../../sim/game/state";
 import type { HeightField } from "../../shared";
 import { content } from "../../content/builtin";
-import {IcosahedronGeometry,BoxGeometry,BufferAttribute,BufferGeometry,Color,CylinderGeometry,DynamicDrawUsage,Group,InstancedMesh,Matrix4,MeshStandardMaterial,Quaternion,Vector3} from 'three';
-import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {Group,Matrix4,Quaternion,Vector3} from 'three';
+import {StaticEffectBatch} from '../abilities/staticEffectBatch';
+import {coreEffects} from '../../content/effects/library';
+import {weaponProjectileLayers,type VisualEffect} from '../../content/effects/schema';
+import {WEAPON_EFFECT_LIMITS} from '../../content/effects/limits';
+import {loadEffectModel} from '../abilities/effectModel';
 
-export type ProjectileKind='arrow'|'thorn'|'stone';
-type Flight={scale:number;cast?:number;kind:ProjectileKind;start:Vector3;end:Vector3;tick:number;duration:number};
-type Batch={mesh:InstancedMesh;capacity:number};
-const KINDS:readonly ProjectileKind[]=['arrow','thorn','stone'];
+type Flight={scale:number;cast?:number;effect:string;start:Vector3;end:Vector3;tick:number;duration:number};
+export type WeaponFlight=Pick<GameState['missiles'][number],'id'|'source'|'definition'|'origin'|'destination'|'launched'|'impact'|'enhancement'> & {groundImpact?:boolean};
 const UP=new Vector3(0,1,0);
-function colored(geometry:BufferGeometry,tint:number){
- const color=new Color(tint),values=new Float32Array(geometry.getAttribute('position').count*3);
- for(let i=0;i<values.length;i+=3){values[i]=color.r;values[i+1]=color.g;values[i+2]=color.b;}
- geometry.setAttribute('color',new BufferAttribute(values,3));return geometry;
-}
-function arrowGeometry(){
- // Close to the authored nocked arrow, with slightly thicker detail for RTS zoom.
- const parts=[colored(new CylinderGeometry(.012,.012,.62,5),0xc3a779),colored(new CylinderGeometry(0,.04,.12,4).translate(0,.37,0),0xdfc99a),colored(new BoxGeometry(.10,.13,.01).translate(0,-.23,0),0xc3a779),colored(new BoxGeometry(.01,.13,.10).translate(0,-.23,0),0xc3a779)];
- const merged=mergeGeometries(parts)!;parts.forEach(p=>p.dispose());return merged;
-}
-/** Observer-filtered authoritative flights. One draw per projectile kind, never one per shot. */
+/** Observer-filtered authoritative flights. One draw per model primitive, never one per shot. */
 export class ProjectileEffects {
  readonly root=new Group();
- private readonly material=new MeshStandardMaterial({vertexColors:true,roughness:.75});
- private readonly geometry={stone:colored(new IcosahedronGeometry(.16,0),0xa39479),arrow:arrowGeometry(),thorn:colored(new CylinderGeometry(0,.195,.84,4),0xc3a779)};
- private readonly batches=new Map<ProjectileKind,Batch>();
+ private readonly batches=new Map<string,StaticEffectBatch[]>();
+ readonly ready:Promise<void>;
  private flights:Flight[]=[];
  private readonly effectPoses=new Map<number,{position:Vector3;direction:Vector3}>();
  /** Read-only world pose shared with linked spell VFX; never a second flight calculation. */
@@ -35,19 +26,22 @@ export class ProjectileEffects {
  private readonly tangent=new Vector3();
  private readonly rotation=new Quaternion();
  private readonly matrix=new Matrix4();
- // Batches exist (hidden) from the start so warm-up links their program before the first volley.
- constructor(parent:Group,private readonly registry=content){parent.add(this.root);for(const kind of KINDS)this.batch(kind,1).mesh.visible=false;}
- private batch(kind:ProjectileKind,count:number){
-  let batch=this.batches.get(kind);if(batch&&batch.capacity>=count)return batch;
-  let capacity=batch?.capacity??16;while(capacity<count)capacity*=2;
-  if(batch){batch.mesh.removeFromParent();batch.mesh.dispose();}
-  const mesh=new InstancedMesh(this.geometry[kind],this.material,capacity);mesh.name=`projectiles.${kind}`;
-  mesh.instanceMatrix.setUsage(DynamicDrawUsage);mesh.frustumCulled=false;mesh.count=0;
-  this.root.add(mesh);batch={mesh,capacity};this.batches.set(kind,batch);return batch;
+ // Eager loading lets the normal scene warm-up compile flight materials before the first volley.
+ constructor(parent:Group,private readonly registry=content,effects:readonly VisualEffect[]=coreEffects,loader=loadEffectModel,effectIds?:readonly string[]){
+  const plans=[...new Set(effectIds??registry.assets.flatMap(a=>a.projectile?[a.projectile]:[]))].map(id=>{
+   const effect=effects.find(e=>e.id===id);if(!effect)throw Error('Missing projectile effect '+id);
+   return {id,layers:weaponProjectileLayers(effect)};
+  });
+  parent.add(this.root);
+  for(const {id,layers} of plans){
+   const batches=layers.map(layer=>{const batch=new StaticEffectBatch(layer,loader);batch.root.name=`projectiles.${id}/${layer.id}`;this.root.add(batch.root);return batch;});this.batches.set(id,batches);
+  }
+  this.ready=Promise.all([...this.batches.values()].flat().map(b=>b.ready)).then(()=>{}).catch(error=>{this.dispose();throw error;});
+  void this.ready.catch(error=>console.error('Projectile effects could not load',error));
  }
- update(tick:number, missiles:GameState["missiles"], field:HeightField, launchPosition?:(missile:GameState["missiles"][number])=>Vector3|undefined){
+ update(tick:number, missiles:readonly WeaponFlight[], field:HeightField, launchPosition?:(missile:WeaponFlight)=>Vector3|undefined){
   this.effectPoses.clear();
-  const active=missiles.filter(m=>tick>=m.launched&&tick<m.impact);
+  const active=missiles.filter(m=>tick>=m.launched&&tick<m.impact).slice(0,WEAPON_EFFECT_LIMITS.flights);
   const liveIds=new Set(active.map(m=>m.id));
   for(const id of this.origins.keys())if(!liveIds.has(id))this.origins.delete(id);
   this.flights=active.map(m=>{
@@ -60,29 +54,25 @@ export class ProjectileEffects {
     cached={launched:m.launched,position};this.origins.set(m.id,cached);
    }
    return {
-    cast:m.enhancement?.cast,scale:this.registry.get(m.definition).modelScale??1,kind:this.registry.asset(this.registry.get(m.definition).asset).projectile??'arrow',
+    cast:m.enhancement?.cast,scale:this.registry.get(m.definition).modelScale??1,effect:this.registry.asset(this.registry.get(m.definition).asset).projectile!,
     start:cached.position,
-    end:new Vector3(m.destination.x,field.walkSample(m.destination.x,m.destination.y,m.destination.surface)+1+(m.destination.elevation??0),m.destination.y),
+    end:new Vector3(m.destination.x,field.walkSample(m.destination.x,m.destination.y,m.destination.surface)+(m.groundImpact?.1:1)+(m.destination.elevation??0),m.destination.y),
     tick:m.launched,duration:m.impact-m.launched,
    };
   });
-  let live=0;const counts:Record<ProjectileKind,number>={arrow:0,thorn:0,stone:0};
-  for(const flight of this.flights)if(tick-flight.tick<flight.duration){this.flights[live++]=flight;counts[flight.kind]++;}
-  this.flights.length=live;
-  for(const kind of KINDS){
-   const batch=counts[kind]?this.batch(kind,counts[kind]):this.batches.get(kind);
-   if(batch){batch.mesh.count=0;batch.mesh.visible=counts[kind]>0;}
-  }
+  const counts=new Map<string,number>();for(const flight of this.flights)counts.set(flight.effect,(counts.get(flight.effect)??0)+1);
+  for(const [id,batches] of this.batches)for(const batch of batches)batch.begin(counts.get(id)??0);
   for(const flight of this.flights){
-   const t=Math.max(0,(tick-flight.tick)/flight.duration),arc=.65;
+   const batches=this.batches.get(flight.effect);if(!batches)throw Error('Undeclared projectile effect for weapon: '+flight.effect);
+   const t=Math.max(0,(tick-flight.tick)/flight.duration),arc=batches[0]!.layer.arcHeight??0;
    this.position.lerpVectors(flight.start,flight.end,t);this.position.y+=4*arc*t*(1-t);
    this.tangent.subVectors(flight.end,flight.start);this.tangent.y+=4*arc*(1-2*t);
    if(this.tangent.lengthSq()<1e-10)this.tangent.copy(UP);else this.tangent.normalize();
    if(flight.cast!==undefined)this.effectPoses.set(flight.cast,{position:this.position.clone(),direction:this.tangent.clone()});
    this.scale.setScalar(flight.scale);this.rotation.setFromUnitVectors(UP,this.tangent);this.matrix.compose(this.position,this.rotation,this.scale);
-   const mesh=this.batches.get(flight.kind)!.mesh;mesh.setMatrixAt(mesh.count++,this.matrix);
+   for(const batch of batches)batch.append(this.matrix);
   }
-  for(const batch of this.batches.values())if(batch.mesh.count)batch.mesh.instanceMatrix.needsUpdate=true;
+  for(const batches of this.batches.values())for(const batch of batches)batch.flush();
  }
- dispose(){for(const b of this.batches.values())b.mesh.dispose();this.batches.clear();this.flights=[];this.origins.clear();this.effectPoses.clear();this.root.clear();this.root.removeFromParent();this.material.dispose();Object.values(this.geometry).forEach(g=>g.dispose());}
+ dispose(){for(const batches of this.batches.values())for(const b of batches)b.dispose();this.batches.clear();this.flights=[];this.origins.clear();this.effectPoses.clear();this.root.clear();this.root.removeFromParent();}
 }

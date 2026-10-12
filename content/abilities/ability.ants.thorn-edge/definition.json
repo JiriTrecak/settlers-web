@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "ability.ants.thorn-edge",
+  "name": "Thorn Edge",
+  "description": "Thornblade attacks have a 20% chance to deal double weapon damage.",
+  "activation": "passive",
+  "combatModifiers": {
+    "critical": {
+      "chancePermille": {
+        "rankParameter": "chance"
+      },
+      "multiplierPermille": {
+        "rankParameter": "multiplier"
+      }
+    }
+  },
+  "ranks": [
+    {
+      "chance": 200,
+      "multiplier": 2000
+    }
+  ],
+  "targeting": {
+    "kind": "self",
+    "alive": true,
+    "visible": true,
+    "relations": [
+      "ally"
+    ],
+    "allowSelf": true,
+    "range": 0,
+    "outOfRange": "reject"
+  },
+  "cast": {
+    "prepareTicks": 10,
+    "recoverTicks": 8,
+    "cost": {
+      "resource": "mana",
+      "amount": 0,
+      "commit": "release"
+    },
+    "cooldown": {
+      "ticks": 0,
+      "start": "release",
+      "scope": "ability"
+    },
+    "cancelBeforeRelease": "refund",
+    "revalidateAtRelease": [
+      "caster",
+      "target",
+      "range",
+      "visibility",
+      "relationship"
+    ]
+  },
+  "onRelease": [],
+  "presentation": "presentation.ants.thorn-edge"
+}

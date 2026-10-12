@@ -1,0 +1,290 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-marshal",
+  "name": "Ant Marshal",
+  "kind": "unit",
+  "revision": 1,
+  "status": "published",
+  "tags": [
+    "ants",
+    "marshal",
+    "tripo",
+    "skinned"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "e748edffb6d28641dfc9463eada97e405e770f846de05c0cc026a8dc9060182e",
+      "bytes": 2169468
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "8459f5b2d865b635bdf65e88d6bf9a0e6d5276df47fe9424c6356e9ccb560106",
+      "bytes": 916
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "8ab26324b838580ede8200470491dc8970f935a515f9f2d7c7e0916b1461a695",
+      "bytes": 3195852
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "069c90d85240c079769993ba051e14fbd5dbbe74fc67ed6e09e2ec549329a392",
+      "bytes": 19181
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "0e45e47220d3ba4a5204a25ec7aaf99f30517c0ba8b068c06302024d52f4b514",
+      "bytes": 643476
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "be4cdb31aab453fe56cffab2374e63fb17dfed1f10969550299b33ea6ee03a7f",
+      "bytes": 589624
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "9284035e724517ba9a9ad50d4f2427168ea7a20cc524a7245238077c9fbc72d1",
+      "bytes": 8253
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "fed277b4fb02f74c0905d2ef4272ca271af4ddbce88e34cba898a0421fe6fe83",
+      "bytes": 4804
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "4a92d10406950247ecde19b01564a7e7645965bd0830082fadfd86727e4a29f3",
+      "bytes": 2086
+    },
+    {
+      "role": "recipe",
+      "index": 4,
+      "format": "py",
+      "sha256": "682c8473c7b1277932d1c0de008f8d826844adebbb7a75b16490094265d01b67",
+      "bytes": 950
+    },
+    {
+      "role": "recipe",
+      "index": 5,
+      "format": "py",
+      "sha256": "0681b3dabdb3166919e423b2776615bb46f4a94c5c28d5499498cf7b4ae980ff",
+      "bytes": 1019
+    },
+    {
+      "role": "recipe",
+      "index": 6,
+      "format": "py",
+      "sha256": "1f875e00cca079b947b1d8f3e9ee217b109c37806a6581369fcd73bd430c302c",
+      "bytes": 932
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "b1e16c5dc9c6edcf50a34acbaf29f246391d4c44cbe6a6a016222d7f1601a71f",
+      "bytes": 1463445
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "ce7e51f03d2e31e21b5bd0377c1c0dc6fd3fd771a7c7b9a3b046e2a4ca08692a",
+      "bytes": 36314532
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "403f93f0d76ef314fd15a3fb259de6c46c44c026981a905eaedab38d2fc00631",
+      "bytes": 7146564
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "e6c5d1588898f86bdd5322c19778fc931ca8c268667479e17d3730b6a3cb1cee",
+      "bytes": 6750
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "3aa67e58914cbe5b7348a81217243eb515b5a4bbaa51bc3ef52e2bf25b51bd71",
+      "bytes": 42928
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "a171579ae60f891b99341bf9a07805549423d1ae606d548b64702d109bec0789",
+      "bytes": 42865
+    }
+  ],
+  "usesGeometry": true,
+  "exportSettings": {
+    "textureSize": 1024
+  },
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "ants",
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.ants.marshal",
+        "character": "base",
+        "scale": 2,
+        "healthHeight": 2.15,
+        "castContact": 0.5384615384615384,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-marshal"
+        }
+      },
+      {
+        "id": "icon.ants.marshal",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.units.ants-marshal"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "cast",
+        "clip": "cast",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "hit",
+            "time": 0.875
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "handL",
+        "node": "socket_handL",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "handR",
+        "node": "socket_handR",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "cast",
+        "node": "socket_cast",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original generated artwork for Under the Canopy."
+  }
+}

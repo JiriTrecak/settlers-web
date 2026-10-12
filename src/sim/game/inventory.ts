@@ -24,7 +24,7 @@ export class Inventory {
       if(order?.type!=="pickup")continue;
       const target=this.c.get(order.target),error=this.pickupError(hero,target);
       if(error){this.stop(hero,error);continue;}
-      if(isStunned(hero,this.c.registry)||hero.abilities?.pending)continue;
+      if(hero.unit?.taunt||isStunned(hero,this.c.registry)||hero.abilities?.pending)continue;
       if(this.withinReach(hero,target!)){
         hero.unit!.route=[];hero.unit!.goal=null;delete hero.unit!.detour;continue;
       }
@@ -42,7 +42,7 @@ export class Inventory {
       const order=hero.unit!.order;if(order?.type!=="pickup")continue;
       const target=this.c.get(order.target);
       if(this.pickupError(hero,target))continue;
-      if(isStunned(hero,this.c.registry)||hero.abilities?.pending)continue;
+      if(hero.unit?.taunt||isStunned(hero,this.c.registry)||hero.abilities?.pending)continue;
       if(!this.withinReach(hero,target!))continue;
       const effect=this.c.def(target!).itemEffect!;
       if(effect.type==="consumable"&&effect.onPickup){

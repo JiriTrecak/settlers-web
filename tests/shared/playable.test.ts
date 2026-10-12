@@ -10,13 +10,17 @@ import { World } from "../../src/sim/world/world";
 import {content} from '../../src/content/builtin';
 import {placementOccupancyError,expandMap} from '../../src/content/map';
 import {snapPlacement} from '../../src/shared/spatial/placement';
+import {footprintCellBounds} from '../../src/shared/spatial/footprint';
 describe("authored playable maps", () => {
   it('rejects an adjacent resource clipping a starting body even when its centre cell is free',()=>{
     const blank=emptyUtcMap(),hero=expandMap(blank,content).find(p=>p.owner==='player.1'&&content.get(p.definition).hero)!;
-    const node=content.get('building.neutral.amber-mine');
-    const position=snapPlacement(node,{x:hero.position.x+3.5,y:hero.position.y-.5});
+    // A tree leaves the mine-facing formation unchanged, isolating body clearance.
+    const node=content.get('resource.forest.tree');
+    const position=snapPlacement(node,{x:hero.position.x+2,y:hero.position.y});
     const map={...blank,entities:[{id:'node',definition:node.id,owner:'none' as const,rotation:0,position}]};
-    expect(placementOccupancyError(map,content)).toMatch(/body overlaps node/);
+    const bounds=footprintCellBounds(position,node.footprint);
+    expect(hero.position.x).toBeLessThan(bounds.minX);
+    expect(placementOccupancyError(map,content)).toBe(`${hero.id}: body overlaps node`);
     expect(playableMapError(map)).toMatch(/body overlaps node/);
     map.entities[0].position.x+=4;
     expect(playableMapError(map)).toBeNull();

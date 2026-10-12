@@ -22,7 +22,9 @@ it('resolves current spell icons by ID and uses them on command cards without a 
   const {game,caster}=createAbilityEncounter(spell,presentation,encounterSettingsSchema.parse({}));
   if(presentation.icon)expect(game.registry.asset(presentation.icon).image).toBeTruthy();
   const card=commandCard(game.view('player.1'),[caster],'player.1',game.registry).find(c=>c.type==='castAbility');
-  expect(card?.icon).toBe(presentation.icon);
+  const unit=game.context.get(caster)!;
+  expect(card,spell.id).toBeDefined();
+  expect(card?.icon,spell.id).toBe(presentation.icon??game.registry.get(unit.definition).icon);
  }
  const changed=structuredClone(published);
  changed.library.presentations[0].icon=changed.library.presentations[1].icon;

@@ -1,0 +1,201 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-trailwarden",
+  "name": "Ant Trailwarden",
+  "kind": "unit",
+  "revision": 39,
+  "status": "draft",
+  "tags": [
+    "ants",
+    "trailwarden",
+    "hero",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "de1a8e13a2f47145e91ec3f3a938e79e9424713e7aca66d53af139edd370cf2b",
+      "bytes": 856
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "d76a7b5955d9171136d3d222509386c4d16060aa5667de2af55b7f0bcc0ee4a4",
+      "bytes": 3510540
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "e3dc249624a2be63ec27e4efa94ee67bb69beaa3e1ec200ef2418aa56c185f48",
+      "bytes": 9255
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "5b2e96286a774fac28b0d2eef7238be97fab5fea7e055504480989ca9e89bf9e",
+      "bytes": 7791
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "f0dcfc6c9d151349aa11c278958978e1500c79785fa9fe5661474018b398558a",
+      "bytes": 5395
+    },
+    {
+      "role": "recipe",
+      "index": 4,
+      "format": "py",
+      "sha256": "a94eca37a6781a035bca99715c1f899bf7d6ef9b7f98be9124ad704c53259e93",
+      "bytes": 2130
+    },
+    {
+      "role": "recipe",
+      "index": 5,
+      "format": "py",
+      "sha256": "db168983b1828139480b87156aaa02ffb13d2535000d7276d43b684745997651",
+      "bytes": 1672
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "445f894f88ef28837d297dfa2f36f39f2fe55b9bdfc209de69f42f39a2a31b68",
+      "bytes": 1391669
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "b3b77494f171f6dd2927e52caaeb97154e0bac7b712178857caf7ff853940e43",
+      "bytes": 40130714
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "9bec2ec7767e63dc5b742904ccfae6256582c6fb978b5f17794b1f3442634798",
+      "bytes": 7273708
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "9f35ae739ce6d71f92e909fdd6994a45ef82a1c951d7bae04b4f2ac65fd1110c",
+      "bytes": 54196
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "d719e100620bdbd95773fcbebc49522d9314bd0ef1b55b277ef7ab40cb246f32",
+      "bytes": 240222
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "a82f4958981c334606e625d1c38ccb0aa8878a04bdbb38635d0e3c7efb4bf7c2",
+      "bytes": 420345
+    }
+  ],
+  "usesGeometry": true,
+  "modelClass": "hero",
+  "exportSettings": {
+    "textureSize": 1024
+  },
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "profile": "base",
+    "render": [],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 1.5
+          }
+        ]
+      },
+      {
+        "semantic": "cast",
+        "clip": "cast",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 2
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original reference-based artwork generated for Under the Canopy."
+  }
+}

@@ -327,7 +327,8 @@
       "hero": {
         "default": "unit.ants.marshal",
         "choices": [
-          "unit.ants.marshal"
+          "unit.ants.marshal",
+          "unit.ants.rootbreaker"
         ],
         "offset": {
           "x": 0,
@@ -948,7 +949,9 @@
         "roster": [
           "unit.ants.settler",
           "unit.ants.warrior",
+          "unit.ants.thornblade",
           "unit.ants.archer",
+          "unit.ants.silkwarden",
           "building.ants.fort",
           "building.ants.great-mound",
           "building.ants.elder-hall",
@@ -964,8 +967,23 @@
           "unit.ants.bombardier",
           "building.ants.bombardier-workshop",
           "unit.ants.civilian",
-          "unit.ants.youngling"
-        ]
+          "unit.ants.youngling",
+          "unit.ants.nectarist",
+          "unit.ants.banneret",
+          "unit.ants.amber-adept",
+          "unit.ants.queensguard",
+          "unit.ants.winglancer",
+          "unit.ants.rootweaver",
+          "unit.ants.rootbreaker"
+        ],
+        "construction": {
+          "scaffold": "asset.construction.ants",
+          "padding": 0.4,
+          "revealAt": 0.95,
+          "retractUntil": 0.985,
+          "dustEffect": "effect.construction.dust",
+          "dustIntervalTicks": 8
+        }
       },
       "beetles": {
         "name": "Beetles",
@@ -1064,6 +1082,14 @@
             "ability.hornbreaker.horn-rush",
             "ability.hornbreaker.steadfast"
           ]
+        },
+        "construction": {
+          "scaffold": "asset.construction.beetles",
+          "padding": 0.4,
+          "revealAt": 0.95,
+          "retractUntil": 0.985,
+          "dustEffect": "effect.construction.dust",
+          "dustIntervalTicks": 8
         }
       }
     },
@@ -1080,8 +1106,8 @@
       "kind": "unit",
       "name": "Worker",
       "description": "Gather resources and construct buildings. Trained at the main hall; uses 1 supply.",
-      "asset": "asset.ants.settler",
-      "icon": "icon.ants.settler",
+      "asset": "asset.ants.colony-worker",
+      "icon": "icon.ants.colony-worker",
       "selectionClass": "worker",
       "body": {
         "maxHp": 240,
@@ -1139,8 +1165,8 @@
       "kind": "unit",
       "name": "Warrior",
       "description": "Armored ant infantry. Protects the colony and fights at close range.",
-      "asset": "asset.ants.warrior",
-      "icon": "icon.ants.warrior",
+      "asset": "asset.ants.cleaver-warrior",
+      "icon": "icon.ants.cleaver-warrior",
       "selectionClass": "army",
       "body": {
         "maxHp": 300,
@@ -1188,12 +1214,350 @@
       "modelScale": 2.4
     },
     {
+      "id": "unit.ants.queensguard",
+      "kind": "unit",
+      "name": "Queensguard",
+      "description": "Elite armored protector. Shields nearby allies and braces behind a tower shield for additional armor at reduced speed.",
+      "asset": "asset.ants.queensguard",
+      "icon": "icon.ants.queensguard",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 720,
+        "armor": 4,
+        "armorType": "heavy"
+      },
+      "vision": 32,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 26,
+          "damageType": "melee",
+          "range": 1.2,
+          "cooldownTicks": 64,
+          "aggroRange": 20,
+          "attack": {
+            "windupTicks": 16,
+            "recoveryTicks": 18,
+            "rangeBuffer": 0.75
+          }
+        },
+        "movement": {
+          "speed": 10
+        },
+        "abilities": {
+          "maxMana": 100,
+          "manaRegenPerSecond": 1,
+          "bindings": [
+            {
+              "id": "royal-guard",
+              "ability": "ability.ants.royal-guard",
+              "initialRank": 1,
+              "controls": [
+                "scenario"
+              ]
+            },
+            {
+              "id": "shield-brace",
+              "ability": "ability.ants.shield-brace",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              }
+            }
+          ]
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 280
+          },
+          {
+            "item": "item.wood",
+            "amount": 80
+          }
+        ],
+        "workTicks": 1280
+      },
+      "level": 3,
+      "supplyCost": 3,
+      "dimensions": {
+        "radius": 2,
+        "height": 6.4,
+        "formationSpacing": 4.4
+      },
+      "modelScale": 3.2,
+      "requires": [
+        "building.ants.great-mound"
+      ]
+    },
+    {
+      "id": "unit.ants.winglancer",
+      "kind": "unit",
+      "name": "Winglancer",
+      "description": "Fast flying lancer. Crosses rough terrain and strikes ground targets with an ivory lance; vulnerable to ranged anti-air fire.",
+      "asset": "asset.ants.winglancer",
+      "icon": "icon.ants.winglancer",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 340,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 36,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 28,
+          "damageType": "melee",
+          "range": 2.5,
+          "targets": [
+            "ground"
+          ],
+          "cooldownTicks": 56,
+          "aggroRange": 24,
+          "attack": {
+            "windupTicks": 12,
+            "recoveryTicks": 14,
+            "rangeBuffer": 0.75
+          }
+        },
+        "movement": {
+          "speed": 18,
+          "turnRate": 540,
+          "locomotion": "air",
+          "flightHeight": 3
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 230
+          },
+          {
+            "item": "item.wood",
+            "amount": 70
+          }
+        ],
+        "workTicks": 1120
+      },
+      "level": 3,
+      "supplyCost": 3,
+      "dimensions": {
+        "radius": 1.6,
+        "height": 5,
+        "formationSpacing": 5.5
+      },
+      "modelScale": 2.5,
+      "requires": [
+        "building.ants.great-mound"
+      ]
+    },
+    {
+      "id": "unit.ants.rootweaver",
+      "kind": "unit",
+      "name": "Rootweaver",
+      "description": "Fragile root caster with a broad leaf fan. Entangles ground enemies and grows slowing briar patches to control the battlefield.",
+      "asset": "asset.ants.rootweaver",
+      "icon": "icon.ants.rootweaver",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 260,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 36,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 14,
+          "damageType": "spell",
+          "range": 18,
+          "cooldownTicks": 64,
+          "aggroRange": 20,
+          "attack": {
+            "windupTicks": 16,
+            "recoveryTicks": 16,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          },
+          "targets": [
+            "ground",
+            "air"
+          ]
+        },
+        "movement": {
+          "speed": 10
+        },
+        "abilities": {
+          "maxMana": 200,
+          "manaRegenPerSecond": 1.5,
+          "bindings": [
+            {
+              "id": "root-bind",
+              "ability": "ability.ants.root-bind",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 16
+              }
+            },
+            {
+              "id": "briar-patch",
+              "ability": "ability.ants.briar-patch",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "W",
+                "column": 2
+              }
+            }
+          ]
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 240
+          },
+          {
+            "item": "item.wood",
+            "amount": 100
+          }
+        ],
+        "workTicks": 1200
+      },
+      "level": 3,
+      "supplyCost": 3,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 6.4,
+        "formationSpacing": 4.5
+      },
+      "modelScale": 3.2,
+      "requires": [
+        "building.ants.great-mound"
+      ]
+    },
+    {
+      "id": "unit.ants.thornblade",
+      "kind": "unit",
+      "name": "Thornblade",
+      "description": "Agile paired-dagger infantry. Automatically rushes visible ground enemies; can disable autocast for controlled engagements.",
+      "asset": "asset.ants.thornblade",
+      "icon": "icon.ants.thornblade",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 280,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 32,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 15,
+          "damageType": "melee",
+          "range": 0.6,
+          "cooldownTicks": 40,
+          "aggroRange": 20,
+          "attack": {
+            "windupTicks": 10,
+            "recoveryTicks": 10,
+            "rangeBuffer": 0.6
+          }
+        },
+        "movement": {
+          "speed": 14
+        },
+        "abilities": {
+          "maxMana": 60,
+          "manaRegenPerSecond": 2,
+          "bindings": [
+            {
+              "id": "thorn-rush",
+              "ability": "ability.ants.thorn-rush",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 8
+              }
+            }
+          ]
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 180
+          },
+          {
+            "item": "item.wood",
+            "amount": 35
+          }
+        ],
+        "workTicks": 960
+      },
+      "level": 2,
+      "supplyCost": 2,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
+    },
+    {
       "id": "unit.ants.archer",
       "kind": "unit",
       "name": "Archer",
       "description": "Ranged support. Keep enemies at a distance and protect archers with infantry.",
-      "asset": "asset.ants.archer",
-      "icon": "icon.ants.archer",
+      "asset": "asset.ants.leaf-archer",
+      "icon": "icon.ants.leaf-archer",
       "selectionClass": "army",
       "body": {
         "maxHp": 375,
@@ -1246,6 +1610,365 @@
         "formationSpacing": 3.25
       },
       "modelScale": 2.4
+    },
+    {
+      "id": "unit.ants.silkwarden",
+      "kind": "unit",
+      "name": "Silkwarden",
+      "description": "Silk support caster. Launches silk shots and automatically ensnares enemies, rooting ground units and grounding flyers.",
+      "asset": "asset.ants.silkwarden",
+      "icon": "icon.ants.silkwarden",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 300,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 36,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 8,
+          "damageType": "piercing",
+          "range": 14,
+          "cooldownTicks": 64,
+          "aggroRange": 20,
+          "attack": {
+            "windupTicks": 16,
+            "recoveryTicks": 16,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 26
+          }
+        },
+        "movement": {
+          "speed": 12
+        },
+        "abilities": {
+          "maxMana": 100,
+          "manaRegenPerSecond": 1.5,
+          "bindings": [
+            {
+              "id": "silken-snare",
+              "ability": "ability.ants.silken-snare",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 12
+              }
+            }
+          ]
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 160
+          },
+          {
+            "item": "item.wood",
+            "amount": 45
+          }
+        ],
+        "workTicks": 1000
+      },
+      "level": 2,
+      "supplyCost": 2,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
+    },
+    {
+      "id": "unit.ants.nectarist",
+      "kind": "unit",
+      "name": "Nectarist",
+      "description": "Restorative support. Automatically sends nectar to wounded allies and can cleanse harmful effects.",
+      "asset": "asset.ants.nectarist",
+      "icon": "icon.ants.nectarist",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 280,
+        "armor": 0,
+        "armorType": "light"
+      },
+      "vision": 36,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 5,
+          "damageType": "spell",
+          "range": 14,
+          "cooldownTicks": 72,
+          "aggroRange": 20,
+          "attack": {
+            "windupTicks": 18,
+            "recoveryTicks": 16,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 26
+          }
+        },
+        "movement": {
+          "speed": 12
+        },
+        "abilities": {
+          "maxMana": 140,
+          "manaRegenPerSecond": 2,
+          "bindings": [
+            {
+              "id": "nectar-mend",
+              "ability": "ability.ants.nectar-mend",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              },
+              "ai": {
+                "preference": "wounded-ally",
+                "intervalTicks": 12
+              }
+            },
+            {
+              "id": "nectar-cleanse",
+              "ability": "ability.ants.nectar-cleanse",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "W",
+                "column": 2
+              }
+            }
+          ]
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 170
+          },
+          {
+            "item": "item.wood",
+            "amount": 50
+          }
+        ],
+        "workTicks": 1000
+      },
+      "level": 2,
+      "supplyCost": 2,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.4
+    },
+    {
+      "id": "unit.ants.amber-adept",
+      "kind": "unit",
+      "name": "Amber Adept",
+      "description": "Disruption caster. Seals enemy spellcasters and strips their temporary magical protection.",
+      "asset": "asset.ants.amber-adept",
+      "icon": "icon.ants.amber-adept",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 320,
+        "armor": 1,
+        "armorType": "light"
+      },
+      "vision": 36,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 12,
+          "damageType": "spell",
+          "range": 18,
+          "cooldownTicks": 64,
+          "aggroRange": 20,
+          "attack": {
+            "windupTicks": 16,
+            "recoveryTicks": 16,
+            "rangeBuffer": 0.75
+          },
+          "projectile": {
+            "speed": 32
+          }
+        },
+        "movement": {
+          "speed": 12
+        },
+        "abilities": {
+          "maxMana": 160,
+          "manaRegenPerSecond": 2,
+          "bindings": [
+            {
+              "id": "amber-seal",
+              "ability": "ability.ants.amber-seal",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 12
+              }
+            },
+            {
+              "id": "amber-sever",
+              "ability": "ability.ants.amber-sever",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "W",
+                "column": 2
+              }
+            }
+          ]
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 180
+          },
+          {
+            "item": "item.wood",
+            "amount": 60
+          }
+        ],
+        "workTicks": 1100
+      },
+      "level": 2,
+      "supplyCost": 2,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 2.7
+    },
+    {
+      "id": "unit.ants.banneret",
+      "kind": "unit",
+      "name": "Banneret",
+      "description": "Standard bearer. Rallies nearby allies for increased attack damage and defends itself with a baton.",
+      "asset": "asset.ants.banneret",
+      "icon": "icon.ants.banneret",
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 440,
+        "armor": 2,
+        "armorType": "light"
+      },
+      "vision": 36,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 10,
+          "damageType": "melee",
+          "range": 1,
+          "cooldownTicks": 56,
+          "aggroRange": 20,
+          "attack": {
+            "windupTicks": 14,
+            "recoveryTicks": 16,
+            "rangeBuffer": 0.75
+          }
+        },
+        "movement": {
+          "speed": 12
+        },
+        "abilities": {
+          "maxMana": 120,
+          "manaRegenPerSecond": 1.5,
+          "bindings": [
+            {
+              "id": "rallying-standard",
+              "ability": "ability.ants.rallying-standard",
+              "initialRank": 1,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 16
+              }
+            }
+          ]
+        }
+      },
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 150
+          },
+          {
+            "item": "item.wood",
+            "amount": 45
+          }
+        ],
+        "workTicks": 1000
+      },
+      "level": 2,
+      "supplyCost": 2,
+      "dimensions": {
+        "radius": 1.5,
+        "height": 4.8,
+        "formationSpacing": 3.25
+      },
+      "modelScale": 3.3
     },
     {
       "id": "building.ants.fort",
@@ -1447,9 +2170,9 @@
       "id": "building.ants.barracks",
       "kind": "building",
       "name": "Barracks",
-      "description": "Trains Warriors and Archers independently of the workforce. Each recruit uses one supply.",
-      "asset": "asset.ants.barracks",
-      "icon": "icon.ants.barracks",
+      "description": "Trains the colony’s infantry and ranged troops.",
+      "asset": "asset.ants.leaf-garrison",
+      "icon": "icon.ants.leaf-garrison",
       "body": {
         "maxHp": 1200,
         "armor": 5,
@@ -1487,7 +2210,8 @@
           "capacity": 500,
           "accepts": [
             "item.wood",
-            "item.amber"
+            "item.amber",
+            "item.root"
           ]
         },
         "production": {
@@ -1495,7 +2219,16 @@
           "outputs": [
             "unit.ants.warrior",
             "unit.ants.archer",
-            "unit.ants.hunter"
+            "unit.ants.hunter",
+            "unit.ants.thornblade",
+            "unit.ants.silkwarden",
+            "unit.ants.nectarist",
+            "unit.ants.banneret",
+            "unit.ants.bombardier",
+            "unit.ants.amber-adept",
+            "unit.ants.queensguard",
+            "unit.ants.winglancer",
+            "unit.ants.rootweaver"
           ],
           "workerSlots": 0,
           "queueCapacity": 6
@@ -1552,8 +2285,8 @@
       "kind": "building",
       "name": "Mound",
       "description": "A compact colony mound that provides 8 supply when completed.",
-      "asset": "asset.ants.house",
-      "icon": "icon.ants.house",
+      "asset": "asset.ants.silk-brood-house",
+      "icon": "icon.ants.silk-brood-house",
       "body": {
         "maxHp": 600,
         "armor": 3,
@@ -1595,7 +2328,7 @@
       "id": "building.ants.tower",
       "kind": "building",
       "name": "Watchtower",
-      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit\u2019s own weapon and upgrades.",
+      "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit’s own weapon and upgrades.",
       "asset": "asset.ants.tower",
       "icon": "icon.ants.tower",
       "body": {
@@ -1968,11 +2701,11 @@
       },
       "supplyCost": 4,
       "dimensions": {
-        "radius": 2,
-        "height": 5.6,
-        "formationSpacing": 4.25
+        "radius": 3,
+        "height": 9.6,
+        "formationSpacing": 6.5
       },
-      "modelScale": 2.8,
+      "modelScale": 4.8,
       "creation": {
         "method": "train",
         "items": [
@@ -2208,7 +2941,8 @@
         "production": {
           "mode": "queued",
           "outputs": [
-            "unit.ants.marshal"
+            "unit.ants.marshal",
+            "unit.ants.rootbreaker"
           ],
           "queueCapacity": 4,
           "workerSlots": 0
@@ -2228,7 +2962,7 @@
       "id": "item.trailkeeper-flask",
       "kind": "item",
       "itemTier": 1,
-      "name": "Trailkeeper\u2019s Flask",
+      "name": "Trailkeeper’s Flask",
       "description": "3 charges: restore 70 health and 25 mana. 10s cooldown between uses.",
       "asset": "asset.item.chest",
       "icon": "icon.item.trailkeeper-flask",
@@ -2312,7 +3046,7 @@
       "id": "item.scout-whistle",
       "kind": "item",
       "itemTier": 1,
-      "name": "Scout\u2019s Whistle",
+      "name": "Scout’s Whistle",
       "description": "2 charges: allied units within 6 tiles gain 15% movement speed for 8s. 25s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.scout-whistle",
@@ -2380,7 +3114,7 @@
       "id": "item.predator-talon",
       "kind": "item",
       "itemTier": 2,
-      "name": "Predator\u2019s Talon",
+      "name": "Predator’s Talon",
       "description": "+10 damage. Basic attacks restore 10% of damage dealt as health.",
       "asset": "asset.item.chest",
       "icon": "icon.item.predator-talon",
@@ -2427,7 +3161,7 @@
       "id": "item.broodkeeper-lantern",
       "kind": "item",
       "itemTier": 2,
-      "name": "Broodkeeper\u2019s Lantern",
+      "name": "Broodkeeper’s Lantern",
       "description": "Aura: allied living units within 6 tiles regenerate 2 health per second.",
       "asset": "asset.item.chest",
       "icon": "icon.item.broodkeeper-lantern",
@@ -2451,7 +3185,7 @@
       "id": "item.warcaller-standard",
       "kind": "item",
       "itemTier": 2,
-      "name": "Warcaller\u2019s Standard",
+      "name": "Warcaller’s Standard",
       "description": "Aura: allied units within 6 tiles gain 10% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.warcaller-standard",
@@ -2519,7 +3253,7 @@
       "id": "item.rootbinder-idol",
       "kind": "item",
       "itemTier": 2,
-      "name": "Rootbinder\u2019s Idol",
+      "name": "Rootbinder’s Idol",
       "description": "Activate: enemies within 4 tiles take 60 magic damage and are rooted for 2s (they can still attack). 35s cooldown.",
       "asset": "asset.item.chest",
       "icon": "icon.item.rootbinder-idol",
@@ -2600,7 +3334,7 @@
       "id": "item.reaper-mandible",
       "kind": "item",
       "itemTier": 3,
-      "name": "Reaper\u2019s Mandible",
+      "name": "Reaper’s Mandible",
       "description": "+18 damage. Every fourth basic hit cleaves up to 4 enemies within 3 tiles of the target for 50% attack damage.",
       "asset": "asset.item.chest",
       "icon": "icon.item.reaper-mandible",
@@ -2821,8 +3555,8 @@
       "kind": "building",
       "name": "Chitin Works",
       "description": "Researches permanent improvements for the colony. Existing and future units benefit from completed research.",
-      "asset": "asset.ants.ironroot-forge",
-      "icon": "icon.ants.ironroot-forge",
+      "asset": "asset.ants.chitin-workshop",
+      "icon": "icon.ants.chitin-workshop",
       "body": {
         "maxHp": 1100,
         "armor": 5,
@@ -2983,7 +3717,7 @@
       "id": "unit.ants.hunter",
       "kind": "unit",
       "name": "Hunter",
-      "description": "Spear infantry that charges enemy units from 3\u20138 building cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
+      "description": "Spear infantry that charges enemy units from 3–8 building cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
       "asset": "asset.ants.hunter",
       "icon": "icon.ants.hunter",
       "selectionClass": "army",
@@ -3116,7 +3850,7 @@
         "height": 4.8,
         "formationSpacing": 5.25
       },
-      "modelScale": 2.4
+      "modelScale": 3.2
     },
     {
       "id": "building.ants.bombardier-workshop",
@@ -3582,7 +4316,7 @@
     {
       "id": "item.briar-ledger",
       "kind": "item",
-      "name": "Merchant\u2019s Leaf Ledger",
+      "name": "Merchant’s Leaf Ledger",
       "description": "Return this stolen ledger to Pell at the roadside cart.",
       "asset": "asset.briar.leaf-ledger",
       "icon": "icon.briar.leaf-ledger",
@@ -3677,7 +4411,7 @@
     {
       "id": "item.briar-rescue-ring",
       "kind": "item",
-      "name": "Caretaker\u2019s Ring",
+      "name": "Caretaker’s Ring",
       "description": "A gift for bringing the youngling home. +1 armor.",
       "asset": "asset.briar.family-ring",
       "icon": "icon.briar.family-ring",
@@ -3736,7 +4470,7 @@
       "id": "unit.neutral.thorn-slinger",
       "kind": "unit",
       "name": "Thorn Slinger",
-      "description": "Thornback Foragers \u00b7 ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
+      "description": "Thornback Foragers · ranged forest creature. Bramble-nesting rodents that guard berries and fling thorns.",
       "asset": "asset.neutral.thorn-slinger",
       "icon": "icon.neutral.thorn-slinger",
       "selectionClass": "army",
@@ -3782,7 +4516,7 @@
       "id": "unit.neutral.dew-sprite",
       "kind": "unit",
       "name": "Dew Sprite",
-      "description": "Dewdrop Sprites \u00b7 ranged forest creature. Fragile water spirits gathered around wet leaves.",
+      "description": "Dewdrop Sprites · ranged forest creature. Fragile water spirits gathered around wet leaves.",
       "asset": "asset.neutral.dew-sprite",
       "icon": "icon.neutral.dew-sprite",
       "selectionClass": "army",
@@ -3828,7 +4562,7 @@
       "id": "unit.neutral.puddle-wisp",
       "kind": "unit",
       "name": "Puddle Wisp",
-      "description": "Dewdrop Sprites \u00b7 melee forest creature. Fragile water spirits gathered around wet leaves.",
+      "description": "Dewdrop Sprites · melee forest creature. Fragile water spirits gathered around wet leaves.",
       "asset": "asset.neutral.puddle-wisp",
       "icon": "icon.neutral.puddle-wisp",
       "selectionClass": "army",
@@ -3871,7 +4605,7 @@
       "id": "unit.neutral.webling",
       "kind": "unit",
       "name": "Webling",
-      "description": "Hungry Weblings \u00b7 melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "description": "Hungry Weblings · melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
       "asset": "asset.neutral.webling",
       "icon": "icon.neutral.webling",
       "selectionClass": "army",
@@ -3914,7 +4648,7 @@
       "id": "unit.neutral.spitter",
       "kind": "unit",
       "name": "Spitter",
-      "description": "Hungry Weblings \u00b7 ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+      "description": "Hungry Weblings · ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
       "asset": "asset.neutral.spitter",
       "icon": "icon.neutral.spitter",
       "selectionClass": "army",
@@ -3960,7 +4694,7 @@
       "id": "unit.neutral.capling",
       "kind": "unit",
       "name": "Capling",
-      "description": "Mushroom Circle \u00b7 melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "description": "Mushroom Circle · melee forest creature. Animated mushrooms hiding among ordinary forest fungi.",
       "asset": "asset.neutral.capling",
       "icon": "icon.neutral.capling",
       "selectionClass": "army",
@@ -4003,7 +4737,7 @@
       "id": "unit.neutral.puffcap",
       "kind": "unit",
       "name": "Puffcap",
-      "description": "Mushroom Circle \u00b7 ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
+      "description": "Mushroom Circle · ranged forest creature. Animated mushrooms hiding among ordinary forest fungi.",
       "asset": "asset.neutral.puffcap",
       "icon": "icon.neutral.puffcap",
       "selectionClass": "army",
@@ -4049,7 +4783,7 @@
       "id": "unit.neutral.rootling",
       "kind": "unit",
       "name": "Rootling",
-      "description": "Rootbound Guardians \u00b7 melee forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians · melee forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.rootling",
       "icon": "icon.neutral.rootling",
       "selectionClass": "army",
@@ -4092,7 +4826,7 @@
       "id": "unit.neutral.twigcaster",
       "kind": "unit",
       "name": "Twigcaster",
-      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.twigcaster",
       "icon": "icon.neutral.twigcaster",
       "selectionClass": "army",
@@ -4138,7 +4872,7 @@
       "id": "unit.neutral.old-root",
       "kind": "unit",
       "name": "Old Root",
-      "description": "Rootbound Guardians \u00b7 ranged forest creature. Ancient roots defending an overgrown grove.",
+      "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
       "asset": "asset.neutral.old-root",
       "icon": "icon.neutral.old-root",
       "selectionClass": "army",
@@ -4184,7 +4918,7 @@
       "id": "unit.neutral.hornet-guard",
       "kind": "unit",
       "name": "Hornet Guard",
-      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders · melee forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.hornet-guard",
       "icon": "icon.neutral.hornet-guard",
       "selectionClass": "army",
@@ -4227,7 +4961,7 @@
       "id": "unit.neutral.needle-wasp",
       "kind": "unit",
       "name": "Needle Wasp",
-      "description": "Hornet Raiders \u00b7 ranged forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders · ranged forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.needle-wasp",
       "icon": "icon.neutral.needle-wasp",
       "selectionClass": "army",
@@ -4273,7 +5007,7 @@
       "id": "unit.neutral.nest-mother",
       "kind": "unit",
       "name": "Nest Mother",
-      "description": "Hornet Raiders \u00b7 melee forest creature. Wild hornets patrolling a paper nest.",
+      "description": "Hornet Raiders · melee forest creature. Wild hornets patrolling a paper nest.",
       "asset": "asset.neutral.nest-mother",
       "icon": "icon.neutral.nest-mother",
       "selectionClass": "army",
@@ -4316,7 +5050,7 @@
       "id": "unit.neutral.young-toad",
       "kind": "unit",
       "name": "Young Toad",
-      "description": "Bog Toad Hunters \u00b7 melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters · melee forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.young-toad",
       "icon": "icon.neutral.young-toad",
       "selectionClass": "army",
@@ -4359,7 +5093,7 @@
       "id": "unit.neutral.tree-frog",
       "kind": "unit",
       "name": "Tree Frog",
-      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters · ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.tree-frog",
       "icon": "icon.neutral.tree-frog",
       "selectionClass": "army",
@@ -4405,7 +5139,7 @@
       "id": "unit.neutral.tadpole-spirit",
       "kind": "unit",
       "name": "Tadpole Spirit",
-      "description": "Bog Toad Hunters \u00b7 ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
+      "description": "Bog Toad Hunters · ranged forest creature. Large amphibians and pond spirits hunting at the waterline.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -4451,7 +5185,7 @@
       "id": "unit.neutral.briar-hulk",
       "kind": "unit",
       "name": "Briar Hulk",
-      "description": "Briar Covenant \u00b7 melee forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant · melee forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.briar-hulk",
       "icon": "icon.neutral.briar-hulk",
       "selectionClass": "army",
@@ -4494,7 +5228,7 @@
       "id": "unit.neutral.seedcaster",
       "kind": "unit",
       "name": "Seedcaster",
-      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant · ranged forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.seedcaster",
       "icon": "icon.neutral.seedcaster",
       "selectionClass": "army",
@@ -4540,7 +5274,7 @@
       "id": "unit.neutral.bloom-witch",
       "kind": "unit",
       "name": "Bloom Witch",
-      "description": "Briar Covenant \u00b7 ranged forest creature. Hostile thorn growth animated into a fighting grove.",
+      "description": "Briar Covenant · ranged forest creature. Hostile thorn growth animated into a fighting grove.",
       "asset": "asset.neutral.bloom-witch",
       "icon": "icon.neutral.bloom-witch",
       "selectionClass": "army",
@@ -4586,7 +5320,7 @@
       "id": "unit.neutral.hollow-stag",
       "kind": "unit",
       "name": "Hollow Stag",
-      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.hollow-stag",
       "icon": "icon.neutral.hollow-stag",
       "selectionClass": "army",
@@ -4629,7 +5363,7 @@
       "id": "unit.neutral.barkguard",
       "kind": "unit",
       "name": "Barkguard",
-      "description": "The Hollow Stag \u00b7 melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.barkguard",
       "icon": "icon.neutral.barkguard",
       "selectionClass": "army",
@@ -4672,7 +5406,7 @@
       "id": "unit.neutral.willow-wisp",
       "kind": "unit",
       "name": "Willow Wisp",
-      "description": "The Hollow Stag \u00b7 ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+      "description": "The Hollow Stag · ranged forest creature. A sacred forest guardian and its bark-and-willow retinue.",
       "asset": "asset.neutral.willow-wisp",
       "icon": "icon.neutral.willow-wisp",
       "selectionClass": "army",
@@ -4718,7 +5452,7 @@
       "id": "unit.neutral.rotwood-ancient",
       "kind": "unit",
       "name": "Rotwood Ancient",
-      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.rotwood-ancient",
       "icon": "icon.neutral.rotwood-ancient",
       "selectionClass": "army",
@@ -4761,7 +5495,7 @@
       "id": "unit.neutral.corrupted-rootbeast",
       "kind": "unit",
       "name": "Corrupted Rootbeast",
-      "description": "The Rotwood Court \u00b7 melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · melee forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.corrupted-rootbeast",
       "icon": "icon.neutral.corrupted-rootbeast",
       "selectionClass": "army",
@@ -4804,7 +5538,7 @@
       "id": "unit.neutral.violet-sporeling",
       "kind": "unit",
       "name": "Violet Sporeling",
-      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.violet-sporeling",
       "icon": "icon.neutral.violet-sporeling",
       "selectionClass": "army",
@@ -4850,7 +5584,7 @@
       "id": "unit.neutral.root-seer",
       "kind": "unit",
       "name": "Root Seer",
-      "description": "The Rotwood Court \u00b7 ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+      "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
       "asset": "asset.neutral.root-seer",
       "icon": "icon.neutral.root-seer",
       "selectionClass": "army",
@@ -4958,7 +5692,7 @@
       "id": "unit.spell.shadow-spirit-lesser",
       "kind": "unit",
       "name": "Lesser Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -5001,7 +5735,7 @@
       "id": "unit.spell.shadow-spirit-standard",
       "kind": "unit",
       "name": "Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -5044,7 +5778,7 @@
       "id": "unit.spell.shadow-spirit-greater",
       "kind": "unit",
       "name": "Greater Shadow Spirit",
-      "description": "A temporary forest spirit raised by a cursed enemy\u2019s death.",
+      "description": "A temporary forest spirit raised by a cursed enemy’s death.",
       "asset": "asset.neutral.tadpole-spirit",
       "icon": "icon.neutral.tadpole-spirit",
       "selectionClass": "army",
@@ -5759,7 +6493,7 @@
       "id": "building.beetles.bastion",
       "kind": "building",
       "name": "Bastion",
-      "description": "The beetle colony\u2019s iron-clad main hall stores resources, trains workers and provides supply.",
+      "description": "The beetle colony’s iron-clad main hall stores resources, trains workers and provides supply.",
       "asset": "asset.beetles.carapace-hall",
       "icon": "icon.beetles.carapace-hall",
       "body": {
@@ -5955,9 +6689,9 @@
       "id": "building.beetles.brood-den",
       "kind": "building",
       "name": "Brood Den",
-      "description": "Brood Den of the beetle colony. Model pending.",
-      "asset": "asset.placeholder.missing-model",
-      "icon": "icon.item.root",
+      "description": "An iron-banded shell nursery that provides eight supply for the beetle colony.",
+      "asset": "asset.beetles.armored-brood-den",
+      "icon": "icon.beetles.armored-brood-den",
       "body": {
         "maxHp": 600,
         "armor": 3,
@@ -5999,9 +6733,9 @@
       "id": "building.beetles.war-lodge",
       "kind": "building",
       "name": "War Lodge",
-      "description": "War Lodge of the beetle colony. Model pending.",
-      "asset": "asset.placeholder.missing-model",
-      "icon": "icon.item.root",
+      "description": "Iron-clad training hall for the beetle colony’s infantry and ranged troops.",
+      "asset": "asset.beetles.iron-garrison",
+      "icon": "icon.beetles.iron-garrison",
       "body": {
         "maxHp": 1200,
         "armor": 5,
@@ -6060,9 +6794,9 @@
       "id": "building.beetles.shell-forge",
       "kind": "building",
       "name": "Shell Forge",
-      "description": "Shell Forge of the beetle colony. Model pending.",
-      "asset": "asset.placeholder.missing-model",
-      "icon": "icon.item.root",
+      "description": "Forges stronger weapons and armor for the beetle colony. Completed research benefits existing and future units.",
+      "asset": "asset.beetles.shell-foundry",
+      "icon": "icon.beetles.shell-foundry",
       "body": {
         "maxHp": 1100,
         "armor": 5,
@@ -6294,6 +7028,285 @@
         "lookoutRadius": 1.35
       },
       "modelScale": 1
+    },
+    {
+      "id": "unit.ants.rootbreaker",
+      "kind": "unit",
+      "name": "Rootbreaker",
+      "description": "A towering ant bruiser with a massive root club. Weakens enemy armor, crushes individual foes, draws attacks with his roar, and erupts roots across the battlefield.",
+      "asset": "asset.ants.rootbreaker",
+      "icon": "icon.ants.rootbreaker",
+      "hero": true,
+      "level": 1,
+      "selectionClass": "army",
+      "body": {
+        "maxHp": 900,
+        "armor": 3,
+        "armorType": "hero"
+      },
+      "vision": 36,
+      "behaviorSets": [
+        "behavior-set.ground-army"
+      ],
+      "behaviors": {
+        "combat": {
+          "damage": 38,
+          "damageType": "hero",
+          "range": 1.2,
+          "cooldownTicks": 88,
+          "aggroRange": 20,
+          "attack": {
+            "windupTicks": 26,
+            "recoveryTicks": 26,
+            "rangeBuffer": 0.6
+          }
+        },
+        "progression": {
+          "experienceRadius": 40,
+          "levels": [
+            {
+              "experience": 0,
+              "maxHp": 900,
+              "damage": 38,
+              "armor": 3,
+              "maxMana": 250,
+              "cooldownTicks": 88,
+              "healthRegenPerSecond": 1.8,
+              "manaRegenPerSecond": 0.85
+            },
+            {
+              "experience": 160,
+              "maxHp": 990,
+              "damage": 42,
+              "armor": 3,
+              "maxMana": 270,
+              "cooldownTicks": 86,
+              "healthRegenPerSecond": 1.98,
+              "manaRegenPerSecond": 0.92
+            },
+            {
+              "experience": 400,
+              "maxHp": 1080,
+              "damage": 46,
+              "armor": 4,
+              "maxMana": 290,
+              "cooldownTicks": 84,
+              "healthRegenPerSecond": 2.16,
+              "manaRegenPerSecond": 0.99
+            },
+            {
+              "experience": 720,
+              "maxHp": 1170,
+              "damage": 50,
+              "armor": 4,
+              "maxMana": 310,
+              "cooldownTicks": 82,
+              "healthRegenPerSecond": 2.34,
+              "manaRegenPerSecond": 1.06
+            },
+            {
+              "experience": 1120,
+              "maxHp": 1260,
+              "damage": 54,
+              "armor": 5,
+              "maxMana": 330,
+              "cooldownTicks": 80,
+              "healthRegenPerSecond": 2.52,
+              "manaRegenPerSecond": 1.13
+            },
+            {
+              "experience": 1600,
+              "maxHp": 1350,
+              "damage": 58,
+              "armor": 5,
+              "maxMana": 350,
+              "cooldownTicks": 78,
+              "healthRegenPerSecond": 2.7,
+              "manaRegenPerSecond": 1.2
+            },
+            {
+              "experience": 2160,
+              "maxHp": 1440,
+              "damage": 62,
+              "armor": 6,
+              "maxMana": 370,
+              "cooldownTicks": 76,
+              "healthRegenPerSecond": 2.88,
+              "manaRegenPerSecond": 1.27
+            },
+            {
+              "experience": 2800,
+              "maxHp": 1530,
+              "damage": 66,
+              "armor": 6,
+              "maxMana": 390,
+              "cooldownTicks": 74,
+              "healthRegenPerSecond": 3.06,
+              "manaRegenPerSecond": 1.34
+            },
+            {
+              "experience": 3520,
+              "maxHp": 1620,
+              "damage": 70,
+              "armor": 7,
+              "maxMana": 410,
+              "cooldownTicks": 72,
+              "healthRegenPerSecond": 3.24,
+              "manaRegenPerSecond": 1.41
+            },
+            {
+              "experience": 4320,
+              "maxHp": 1710,
+              "damage": 74,
+              "armor": 7,
+              "maxMana": 430,
+              "cooldownTicks": 70,
+              "healthRegenPerSecond": 3.42,
+              "manaRegenPerSecond": 1.48
+            },
+            {
+              "experience": 5200,
+              "maxHp": 1800,
+              "damage": 78,
+              "armor": 8,
+              "maxMana": 450,
+              "cooldownTicks": 70,
+              "healthRegenPerSecond": 3.6,
+              "manaRegenPerSecond": 1.55
+            }
+          ]
+        },
+        "inventory": {
+          "slots": 4,
+          "pickupRange": 1.5
+        },
+        "abilities": {
+          "maxMana": 250,
+          "manaRegenPerSecond": 0.85,
+          "bindings": [
+            {
+              "id": "skullcrack",
+              "ability": "ability.rootbreaker.skullcrack",
+              "initialRank": 0,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "Q",
+                "column": 1
+              },
+              "learning": {
+                "requiredLevels": [
+                  1,
+                  3,
+                  5
+                ]
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 20
+              }
+            },
+            {
+              "id": "roar",
+              "ability": "ability.rootbreaker.roar",
+              "initialRank": 0,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "W",
+                "column": 2
+              },
+              "learning": {
+                "requiredLevels": [
+                  1,
+                  3,
+                  5
+                ]
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 20
+              }
+            },
+            {
+              "id": "presence",
+              "ability": "ability.rootbreaker.presence",
+              "initialRank": 0,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "E",
+                "column": 3
+              },
+              "learning": {
+                "requiredLevels": [
+                  1,
+                  3,
+                  5
+                ]
+              }
+            },
+            {
+              "id": "uproot",
+              "ability": "ability.rootbreaker.uproot",
+              "initialRank": 0,
+              "controls": [
+                "player",
+                "ai",
+                "scenario"
+              ],
+              "command": {
+                "hotkey": "R",
+                "column": 4
+              },
+              "learning": {
+                "requiredLevels": [
+                  5,
+                  8
+                ]
+              },
+              "ai": {
+                "preference": "enemy",
+                "intervalTicks": 20
+              }
+            }
+          ]
+        },
+        "movement": {
+          "speed": 11
+        }
+      },
+      "supplyCost": 4,
+      "dimensions": {
+        "radius": 3,
+        "height": 9.6,
+        "formationSpacing": 6.5
+      },
+      "modelScale": 3.84,
+      "creation": {
+        "method": "train",
+        "items": [
+          {
+            "item": "item.amber",
+            "amount": 425
+          },
+          {
+            "item": "item.wood",
+            "amount": 100
+          }
+        ],
+        "workTicks": 2200
+      },
+      "displayOrder": 1
     }
   ]
 }

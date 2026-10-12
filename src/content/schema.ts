@@ -367,7 +367,8 @@ export const assetSchema = z
     cameraAnchor:z.object({height:z.number().positive().max(40),forward:z.number().min(-5).max(5).default(0),distance:z.number().min(1).max(40).default(7)}).strict().optional(),
     stackHeight: z.number().positive().optional(),
     stackColumns: positive.optional(),
-    projectile: z.enum(["arrow", "thorn", "stone"]).optional(),
+    projectile: idSchema.refine(id=>id.startsWith('effect.'),'Projectile must reference a published effect').optional(),
+    impactEffect: idSchema.refine(id=>id.startsWith('effect.'),'Impact must reference a published effect').optional(),
     projectileSocket: z.string().min(1).optional(),
     sockets:z.array(z.object({name:z.string().min(1).max(160),node:z.string().min(1).max(160),offset:z.tuple([z.number().finite(),z.number().finite(),z.number().finite()])}).strict()).max(128).optional(),
     castContact: z.number().min(0).max(1).optional(),
@@ -453,7 +454,16 @@ export const aiRulesSchema = z
         skillPreference: z.array(idSchema).max(16),
       })
       .strict();
-export const raceSchema=z.object({name:z.string().min(1).max(80),description:z.string().max(1000),startingSetup:startingSetupSchema.optional(),roster:z.array(idSchema).min(1),ai:z.object({composition:aiRulesSchema.shape.composition,skillPreference:aiRulesSchema.shape.skillPreference}).strict().optional()}).strict();
+export const constructionPresentationSchema=z.object({
+ scaffold:idSchema,
+ padding:z.number().positive().max(4),
+ revealAt:z.number().min(.5).max(.99),
+ retractUntil:z.number().min(.5).max(1),
+ dustEffect:idSchema,
+ dustIntervalTicks:z.number().int().min(4).max(160),
+}).strict().refine(c=>c.retractUntil>c.revealAt,'Scaffold retraction must end after the reveal begins');
+export type ConstructionPresentation=z.infer<typeof constructionPresentationSchema>;
+export const raceSchema=z.object({name:z.string().min(1).max(80),description:z.string().max(1000),construction:constructionPresentationSchema.optional(),startingSetup:startingSetupSchema.optional(),roster:z.array(idSchema).min(1),ai:z.object({composition:aiRulesSchema.shape.composition,skillPreference:aiRulesSchema.shape.skillPreference}).strict().optional()}).strict();
 export type RaceDefinition=z.infer<typeof raceSchema>;
 export const rulesSchema = z
   .object({

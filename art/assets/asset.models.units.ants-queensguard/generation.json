@@ -1,0 +1,29 @@
+{
+  "provider": "Tripo Studio",
+  "task": "945a779a-135c-4df2-a721-efa821d15734",
+  "adaptation": {
+    "ownershipMaskFraction": 0.04052126407623291,
+    "triangles": 4250,
+    "clips": [
+      "attack",
+      "cast",
+      "death",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "status": "requires-per-role-motion-and-game-review"
+  },
+  "refinement": "Rigid tower shield and polearm; overhead leaf crest; deliberate halberd chop and shield brace with adapted locomotion",
+  "sourceFiles": {
+    "adapt.py": "recipe.py",
+    "refine.py": "recipe_2.py",
+    "render-pose.py": "recipe_3.py",
+    "crest.py": "recipe_4.py",
+    "provider.glb": "source_2.glb",
+    "reference.png": "reference.png"
+  },
+  "rebuild": "Materialize the named recipe files and provider in a staging queensguard directory; run Blender -b --python adapt.py -- <queensguard directory>.",
+  "runtimeTextureSize": 1024
+}

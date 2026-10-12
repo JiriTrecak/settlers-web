@@ -6,7 +6,7 @@ import type { HeightField } from "../../shared/map/height";
 import { PLAYER_COLORS, clampPlayer } from "../../shared/player/player";
 
 type GroundPoint = {x:number;z:number;surface?:string};
-/** One rally shown for a selected production building: door → flag. */
+/** One rally shown for a selected production building: center → flag. */
 export type RallyMarker = {id:number;from:GroundPoint;to:GroundPoint;slot:number};
 
 /** Modelled at 1.9 m, scaled to about unit height so the flag reads at RTS zoom like WC3's. */

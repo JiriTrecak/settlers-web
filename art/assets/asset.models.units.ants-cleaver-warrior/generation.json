@@ -1,0 +1,27 @@
+{
+  "provider": "Tripo Studio",
+  "task": "26e1394d-868b-4b8c-8045-d17c8b56ee2f",
+  "adaptation": {
+    "ownershipMaskFraction": 0.163912832736969,
+    "triangles": 4390,
+    "clips": [
+      "attack",
+      "death",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "status": "requires-per-role-motion-and-game-review"
+  },
+  "refinement": "Approved broad helmet and leaf shoulder armor; complete cleaver weights, restrained head motion, planted IK strike and measured impact event",
+  "sourceFiles": {
+    "adapt.py": "recipe.py",
+    "refine.py": "recipe_2.py",
+    "render-pose.py": "recipe_3.py",
+    "provider.glb": "source_2.glb",
+    "reference.png": "reference.png"
+  },
+  "rebuild": "Materialize the named recipe files and provider in a staging warrior-armored directory; run Blender -b --python adapt.py -- <warrior directory>.",
+  "runtimeTextureSize": 1024
+}

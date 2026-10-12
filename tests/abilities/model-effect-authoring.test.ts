@@ -20,7 +20,19 @@ it('publishes mesh effects with verified geometry dependencies, blocks archive, 
   await expect(new AuthoringStore(root).dispatch({op:'asset.archive',id,expectedRevision:1})).rejects.toThrow(/requires asset.test.mesh/);
   effect.layers[0].model!.animation={clip:'missing',speed:1,loop:true};await expect(store.validate(effect)).rejects.toThrow('Unknown effect model animation');delete effect.layers[0].model!.animation;
   const tooMany=structuredClone(effect);tooMany.layers=Array.from({length:17},(_,i)=>({...effect.layers[0],id:String(i)}));await expect(store.validate(tooMany)).rejects.toThrow('mesh instance or triangle budget');
-  await writeFile(file,Buffer.from('broken'));await expect(store.validate(effect)).rejects.toThrow('Damaged effect resource');
+  // Once a render binding consumes this effect as a weapon, both editor saves
+  // and asset publication must reject recipes the batched renderer cannot play.
+  asset.bindings.render.push({id:'asset.test.archer',projectile:effect.id});
+  await writeFile(path.join(root,'assets/authoring/published.json'),JSON.stringify({version:1,assets:[asset]}));
+  await expect(store.validate(effect)).rejects.toThrow('static model missile');
+  const arrow=structuredClone(effect);arrow.layers[0].shape='missile';arrow.layers[0].arcHeight=.65;
+  await expect(store.validate(arrow)).resolves.toEqual({valid:true});
+  const updated=await store.save(arrow,saved.revision);await store.publish(arrow.id,updated.revision);
+  const {planPublication}=await import('../../tooling/asset-studio/server/authoring/publication');
+  const brokenBinding=structuredClone(asset);brokenBinding.bindings.render[0].projectile='effect.test.missing';
+  await expect(planPublication(root,[brokenBinding],new Set())).rejects.toThrow('Missing published projectile effect');
+  const badArc=structuredClone(arrow);badArc.layers.push({...badArc.layers[0],id:'other',arcHeight:2});await expect(store.validate(badArc)).rejects.toThrow('share one flight arc');
+  await writeFile(file,Buffer.from('broken'));await expect(store.validate(arrow)).rejects.toThrow('Damaged effect resource');
   delete effect.layers[0].model;expect(visualEffectSchema.safeParse(effect).success).toBe(false);
  }finally{await rm(root,{recursive:true,force:true});}
 });

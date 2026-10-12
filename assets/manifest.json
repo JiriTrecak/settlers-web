@@ -1920,6 +1920,74 @@
       "scenery": []
     },
     {
+      "id": "asset.effects.ants.resin-burst",
+      "name": "Ant resin-burst",
+      "kind": "texture",
+      "tags": [
+        "ants",
+        "spell-effects",
+        "silk",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.ants.resin-burst/image.png",
+          "sha256": "4d430b7cbc575d408528a335591bae3ff5ddbf5e22ec9fd6f918ec1ecb438729",
+          "bytes": 208153
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.ants.rootbreaker-aura",
+      "name": "Ant rootbreaker-aura",
+      "kind": "texture",
+      "tags": [
+        "ants",
+        "effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.ants.rootbreaker-aura/image.png",
+          "sha256": "6d91d13e4de4f272ecaf4d535b460c55c236c9a906e99f65fe48912ac0fd8f10",
+          "bytes": 153140
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.ants.silk-net",
+      "name": "Ant silk capture net",
+      "kind": "texture",
+      "tags": [
+        "ants",
+        "spell-effects",
+        "silk",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.ants.silk-net/image.png",
+          "sha256": "dc44d5ca2c171486f5e87747956c2a92b4e11c080c67d73cdac131a029601e72",
+          "bytes": 201320
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
       "id": "asset.effects.blizzard-ice",
       "name": "Blizzard · falling ice",
       "kind": "texture",
@@ -1936,6 +2004,28 @@
           "path": "assets/library/asset.effects.blizzard-ice/image.png",
           "sha256": "ceeb01cc66f77d27a00eb228161d391a451469aca2ea79657c141d04c53d6d3f",
           "bytes": 43906
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.effects.construction-dust",
+      "name": "Construction dust",
+      "kind": "texture",
+      "tags": [
+        "construction",
+        "effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.effects.construction-dust/image.png",
+          "sha256": "f3db2b009fe3b7e4b08a861ef172cf85732bd8ab9b5794bae88318c97a34ef23",
+          "bytes": 193506
         }
       ],
       "render": [],
@@ -4373,7 +4463,7 @@
         "ants-v1",
         "migrated"
       ],
-      "revision": 1,
+      "revision": 2,
       "profile": "icon",
       "outputs": [
         {
@@ -4383,12 +4473,7 @@
           "bytes": 36103
         }
       ],
-      "render": [
-        {
-          "id": "icon.ants.marshal",
-          "image": "assets/library/asset.icons.unit-ants-marshal/image.png"
-        }
-      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -5191,6 +5276,110 @@
       "scenery": []
     },
     {
+      "id": "asset.models.buildings.ants-chitin-workshop",
+      "name": "Chitin Workshop",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 14,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-chitin-workshop/albedo.png",
+          "sha256": "1932bec673e25e03ac3efecc911b162f2725009888dbe0a8a0180387a2805d08",
+          "bytes": 8640682
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-chitin-workshop/geometry.glb",
+          "sha256": "9faeffc6a948ac93d42168e09aa47626c08ffa42bd8f007613935a44b12422f8",
+          "bytes": 12525884
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-chitin-workshop/image.png",
+          "sha256": "edbaafb7cb3e4fa7f4fe80da5ceb90ecd8b2be2742e69087a9941cc5a5c80bf1",
+          "bytes": 16049
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-chitin-workshop/team_mask.png",
+          "sha256": "e8991dc05b1a9c2b311156888b237ebfaae6e6757e753a6d590b4e5539759a18",
+          "bytes": 176353
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.chitin-workshop",
+          "file": "assets/library/asset.models.buildings.ants-chitin-workshop/geometry.glb",
+          "scale": 9.6,
+          "healthHeight": 8.254242658615112
+        },
+        {
+          "id": "icon.ants.chitin-workshop",
+          "image": "assets/library/asset.models.buildings.ants-chitin-workshop/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.ants-leaf-garrison",
+      "name": "Leaf Garrison",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 70,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-leaf-garrison/albedo.png",
+          "sha256": "28c8de74ebdbd823fa47d5ba4ace9b858e69351da74c296b504197687f988ee5",
+          "bytes": 8561445
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-leaf-garrison/geometry.glb",
+          "sha256": "5839f26d85841d49c49fbdc18768c27ee62a674617c9476fb99ea725b4272d4d",
+          "bytes": 12920468
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-leaf-garrison/image.png",
+          "sha256": "b40888047e46f46e0026585fd50bf14d93fd254ee784a2b372c414664e3c35d2",
+          "bytes": 19298
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-leaf-garrison/team_mask.png",
+          "sha256": "caf161e95db405aea3cc8b7cd06c285be7f0a70fe6c468e28b18f52bc39e4d34",
+          "bytes": 295022
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.leaf-garrison",
+          "file": "assets/library/asset.models.buildings.ants-leaf-garrison/geometry.glb",
+          "scale": 9.6,
+          "healthHeight": 8.595534086227417
+        },
+        {
+          "id": "icon.ants.leaf-garrison",
+          "image": "assets/library/asset.models.buildings.ants-leaf-garrison/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.models.buildings.ants-mandible-hall",
       "name": "Mandible Hall",
       "kind": "model",
@@ -5465,6 +5654,58 @@
       "scenery": []
     },
     {
+      "id": "asset.models.buildings.ants-silk-brood-house",
+      "name": "Silk Brood House",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 42,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-silk-brood-house/albedo.png",
+          "sha256": "ec8cdc575e6cd61a1e4983af818de90959d3163367ec3577bdac1684cbbc77c6",
+          "bytes": 7800448
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.ants-silk-brood-house/geometry.glb",
+          "sha256": "170012696f1eab75a8946e5ea6d4249ed859c17330634b4e66887920b4389b49",
+          "bytes": 10806464
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.ants-silk-brood-house/image.png",
+          "sha256": "da69230e0bb81905501ecbb63d27d808f5241cef7ceaf4fe0b532eaa1d7906a1",
+          "bytes": 11702
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.ants-silk-brood-house/team_mask.png",
+          "sha256": "b7eb2ccf59623e23e98f4e022c581510c74d72e39909f901bed154704ffb1789",
+          "bytes": 259574
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.silk-brood-house",
+          "file": "assets/library/asset.models.buildings.ants-silk-brood-house/geometry.glb",
+          "scale": 7.2727272727272725,
+          "healthHeight": 4.9093828201293945
+        },
+        {
+          "id": "icon.ants.silk-brood-house",
+          "image": "assets/library/asset.models.buildings.ants-silk-brood-house/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.models.buildings.ants-watchtower",
       "name": "Watchtower",
       "kind": "model",
@@ -5525,6 +5766,58 @@
         {
           "id": "icon.ants.tower",
           "image": "assets/library/asset.models.buildings.ants-watchtower/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.beetles-armored-brood-den",
+      "name": "Armored Brood Den",
+      "kind": "model",
+      "faction": "beetles",
+      "tags": [
+        "beetles",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 28,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.beetles-armored-brood-den/albedo.png",
+          "sha256": "78d11588ebb8a3db038bad6c6364116e5df2634e34b5569b6028d8d7c2ec2e2d",
+          "bytes": 6422753
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.beetles-armored-brood-den/geometry.glb",
+          "sha256": "7cba9b575da6b408d509361b246463ff9c5c682ff003864f7708b8eeea902943",
+          "bytes": 9329580
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.beetles-armored-brood-den/image.png",
+          "sha256": "7e2f6960184628ef4e473f5f9a0369d318062986904fb540ef1e6b3815ab9ed2",
+          "bytes": 11730
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.beetles-armored-brood-den/team_mask.png",
+          "sha256": "53bb048617839822042565df9bfd479dd5b0b3d9d2718e79d2121b1ac1007351",
+          "bytes": 108028
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.beetles.armored-brood-den",
+          "file": "assets/library/asset.models.buildings.beetles-armored-brood-den/geometry.glb",
+          "scale": 8,
+          "healthHeight": 4.613282680511475
+        },
+        {
+          "id": "icon.beetles.armored-brood-den",
+          "image": "assets/library/asset.models.buildings.beetles-armored-brood-den/image.png"
         }
       ],
       "scenery": []
@@ -5599,6 +5892,348 @@
           "image": "assets/library/asset.models.buildings.beetles-carapace-hall/image.png"
         }
       ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.beetles-iron-garrison",
+      "name": "Iron Garrison",
+      "kind": "model",
+      "faction": "beetles",
+      "tags": [
+        "beetles",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 40,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.beetles-iron-garrison/albedo.png",
+          "sha256": "a972688f3ce75dcd0ff58d0791d04878c48c70801ecdc6a19c16625452b698d6",
+          "bytes": 7218057
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.beetles-iron-garrison/geometry.glb",
+          "sha256": "b8e791e1d965e9b7a5d66f25c8f47a89b28a162a9425b1b89ab0e89f7ff95f91",
+          "bytes": 10284848
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.beetles-iron-garrison/image.png",
+          "sha256": "c12ec7595747ec0b242307a762dd1b8b663746db572b4afe0a73dfa4ea8d1874",
+          "bytes": 15640
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.beetles-iron-garrison/team_mask.png",
+          "sha256": "e99b469204ad9758df24ba697c13ef14c13fc5ec74a7252fd9e2fb97c54f39a9",
+          "bytes": 114830
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.beetles.iron-garrison",
+          "file": "assets/library/asset.models.buildings.beetles-iron-garrison/geometry.glb",
+          "scale": 12,
+          "healthHeight": 8.469104051589966
+        },
+        {
+          "id": "icon.beetles.iron-garrison",
+          "image": "assets/library/asset.models.buildings.beetles-iron-garrison/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.buildings.beetles-shell-foundry",
+      "name": "Shell Foundry",
+      "kind": "model",
+      "faction": "beetles",
+      "tags": [
+        "beetles",
+        "tripo",
+        "team-mask"
+      ],
+      "revision": 14,
+      "profile": "building",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.beetles-shell-foundry/albedo.png",
+          "sha256": "b9cb1098274e68dbc91395372d11e11b598b38fef23ab7816d22c0180b4d8fe9",
+          "bytes": 7392518
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.buildings.beetles-shell-foundry/geometry.glb",
+          "sha256": "6a2603955cc2b5343cfb80be9a39913be9e8052a301066b4932043a7b2b8e0ee",
+          "bytes": 10236584
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.buildings.beetles-shell-foundry/image.png",
+          "sha256": "8f7e9dd886e73bb2ad42e04479c2b5cc5804e5baa845720a0989f29c1bf0e90e",
+          "bytes": 14861
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.buildings.beetles-shell-foundry/team_mask.png",
+          "sha256": "510d0dcb80c301bfc0f5a438f13548c2f774ea2312ec2f1998c825cc7e4e7e2d",
+          "bytes": 153270
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.beetles.shell-foundry",
+          "file": "assets/library/asset.models.buildings.beetles-shell-foundry/geometry.glb",
+          "scale": 12,
+          "healthHeight": 8.228070735931396
+        },
+        {
+          "id": "icon.beetles.shell-foundry",
+          "image": "assets/library/asset.models.buildings.beetles-shell-foundry/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.construction.ants",
+      "name": "Ant timber scaffold",
+      "kind": "model",
+      "tags": [
+        "construction",
+        "ants",
+        "tripo",
+        "neutral-colors"
+      ],
+      "revision": 24,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.construction.ants/geometry.glb",
+          "sha256": "c2474e7d86a3b6e47431f3820f4fc4305237905fb5f2d070abae6feac7b411c6",
+          "bytes": 1141140
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.construction.ants/image.png",
+          "sha256": "fb7da5a70afa25983f821a7fd82bad8b1e25edcd9ed810209b5c8dfed73c03df",
+          "bytes": 87097
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.construction.ants",
+          "file": "assets/library/asset.models.construction.ants/geometry.glb"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.construction.beetles",
+      "name": "Beetle iron scaffold",
+      "kind": "model",
+      "tags": [
+        "construction",
+        "beetles",
+        "tripo",
+        "neutral-colors"
+      ],
+      "revision": 23,
+      "profile": "model",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.construction.beetles/geometry.glb",
+          "sha256": "3c9812977cca0ab7c0f1b78036f6cda90195898549a56149f6204e98ee0ba999",
+          "bytes": 1419232
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.construction.beetles/image.png",
+          "sha256": "fb57be213746e23fd25ed29f325476aebf55128eea76dec52b7c0c92b0679b2f",
+          "bytes": 72523
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.construction.beetles",
+          "file": "assets/library/asset.models.construction.beetles/geometry.glb"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.effects.amber-bolt",
+      "name": "Amber focus bolt",
+      "kind": "model",
+      "tags": [
+        "weapon",
+        "projectile"
+      ],
+      "revision": 5,
+      "profile": "prop",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.effects.amber-bolt/geometry.glb",
+          "sha256": "88164afc24271723a9bbf686a9ca477d8b6effa42f634b9d3fd825639315fd58",
+          "bytes": 2084
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.effects.arrow",
+      "name": "Weapon arrow",
+      "kind": "model",
+      "tags": [
+        "weapon",
+        "projectile"
+      ],
+      "revision": 6,
+      "profile": "prop",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.effects.arrow/geometry.glb",
+          "sha256": "12aef2188d080e8a2d0661b4cf8bb0aede3aa1d30b7ffbf4b6336b31aa993f3d",
+          "bytes": 7484
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.effects.nectar",
+      "name": "Weapon nectar",
+      "kind": "model",
+      "tags": [
+        "weapon",
+        "projectile"
+      ],
+      "revision": 5,
+      "profile": "prop",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.effects.nectar/geometry.glb",
+          "sha256": "2c814ad72057500ec300d73d63bd3f9e47688d5bc12b38d4eb4d06aa98f0136b",
+          "bytes": 9544
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.effects.resin-bomb",
+      "name": "Resin seed bomb",
+      "kind": "model",
+      "tags": [
+        "weapon",
+        "projectile"
+      ],
+      "revision": 6,
+      "profile": "prop",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.effects.resin-bomb/geometry.glb",
+          "sha256": "59a95f019e22130f2fd7f0e2404fdfca065009408cda5a3670c209042e9fbfa0",
+          "bytes": 19436
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.effects.rootbreaker-uproot",
+      "name": "Rootbreaker · Uproot eruption",
+      "kind": "model",
+      "tags": [
+        "spell",
+        "roots",
+        "rootbreaker",
+        "tripo"
+      ],
+      "revision": 11,
+      "profile": "prop",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.effects.rootbreaker-uproot/geometry.glb",
+          "sha256": "b3d7ce60a4e1efb1b7baf2d0f9bddf2e6253ddcfcf3836303558b0d697a58307",
+          "bytes": 905224
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.effects.silk",
+      "name": "Weapon silk",
+      "kind": "model",
+      "tags": [
+        "weapon",
+        "projectile"
+      ],
+      "revision": 5,
+      "profile": "prop",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.effects.silk/geometry.glb",
+          "sha256": "9424deacf4d5b821682d5c7bfa21ab272b3aa8cfc2c7ac45d6bbba0a43b7b520",
+          "bytes": 20444
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.effects.stone",
+      "name": "Weapon stone",
+      "kind": "model",
+      "tags": [
+        "weapon",
+        "projectile"
+      ],
+      "revision": 5,
+      "profile": "prop",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.effects.stone/geometry.glb",
+          "sha256": "550a0a59fe505d6a4deec2aa71ae6c7bd45d98c2654ff09c2ee4c8cc30940173",
+          "bytes": 3256
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.effects.thorn",
+      "name": "Weapon thorn",
+      "kind": "model",
+      "tags": [
+        "weapon",
+        "projectile"
+      ],
+      "revision": 5,
+      "profile": "prop",
+      "outputs": [
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.effects.thorn/geometry.glb",
+          "sha256": "e1a1eea7ae54ea7bdff18650ef79c14680ebbb2e5eed828b84cea0c49e912978",
+          "bytes": 2024
+        }
+      ],
+      "render": [],
       "scenery": []
     },
     {
@@ -9398,26 +10033,26 @@
         "woodland",
         "forest"
       ],
-      "revision": 58,
+      "revision": 102,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.woodland-pine-a/albedo.png",
-          "sha256": "16027ecc7c900392d74ae12687ea3091ffdada7a585b8d6931f71eeb45a0e706",
-          "bytes": 1969458
+          "sha256": "caa767a0d932087ddabf23d3af35ae3313b0ae9ccb5238879219da9d2c550e71",
+          "bytes": 827273
         },
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.woodland-pine-a/albedo_2.png",
-          "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
-          "bytes": 236370
+          "sha256": "5adb5aa08ca24e3932d00eb544056b99c464ced691472dd24c2a8ee6a71cbe9c",
+          "bytes": 2116207
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.woodland-pine-a/geometry.glb",
-          "sha256": "5958bf04d49815997c365b72d16b0e7838267fe0158db6e014ec077e4a93932f",
-          "bytes": 511256
+          "sha256": "93b48092dfdb3bfd358f25b5c4029595b7ef80aa0327a09f6cc6cb7fa731461e",
+          "bytes": 845096
         }
       ],
       "render": [
@@ -9447,26 +10082,26 @@
         "woodland",
         "forest"
       ],
-      "revision": 57,
+      "revision": 101,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.woodland-pine-b/albedo.png",
-          "sha256": "16027ecc7c900392d74ae12687ea3091ffdada7a585b8d6931f71eeb45a0e706",
-          "bytes": 1969458
+          "sha256": "caa767a0d932087ddabf23d3af35ae3313b0ae9ccb5238879219da9d2c550e71",
+          "bytes": 827273
         },
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.woodland-pine-b/albedo_2.png",
-          "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
-          "bytes": 236370
+          "sha256": "5adb5aa08ca24e3932d00eb544056b99c464ced691472dd24c2a8ee6a71cbe9c",
+          "bytes": 2116207
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.woodland-pine-b/geometry.glb",
-          "sha256": "52bcd98fbe3820825c5349e0289673327e568d3b2f8beec01b4923cddfbf8af2",
-          "bytes": 511260
+          "sha256": "fb35336e8dd58315fa27b1ece37ba9f213e907dc8d5894def957fb06444cf562",
+          "bytes": 845096
         }
       ],
       "render": [
@@ -9496,26 +10131,26 @@
         "woodland",
         "forest"
       ],
-      "revision": 58,
+      "revision": 102,
       "profile": "model",
       "outputs": [
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.woodland-pine-sapling/albedo.png",
-          "sha256": "16027ecc7c900392d74ae12687ea3091ffdada7a585b8d6931f71eeb45a0e706",
-          "bytes": 1969458
+          "sha256": "caa767a0d932087ddabf23d3af35ae3313b0ae9ccb5238879219da9d2c550e71",
+          "bytes": 827273
         },
         {
           "role": "image",
           "path": "assets/library/asset.models.environment.woodland-pine-sapling/albedo_2.png",
-          "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
-          "bytes": 236370
+          "sha256": "5adb5aa08ca24e3932d00eb544056b99c464ced691472dd24c2a8ee6a71cbe9c",
+          "bytes": 2116207
         },
         {
           "role": "model",
           "path": "assets/library/asset.models.environment.woodland-pine-sapling/geometry.glb",
-          "sha256": "d2494d8050d07e173de798617848b6a5e5594e10511d03f3ba000f2d1cb34351",
-          "bytes": 490776
+          "sha256": "9355f2c96ee0c33fa4398372d2b0a15f89c8d292e70a97f3dc340a77bdaee88e",
+          "bytes": 828268
         }
       ],
       "render": [
@@ -10546,6 +11181,101 @@
       "scenery": []
     },
     {
+      "id": "asset.models.units.ants-amber-adept",
+      "name": "Ant Amber Adept",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "amber-adept",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 33,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-amber-adept/albedo.png",
+          "sha256": "94b9c8015b6769a6651c1d98ff81c1d85f3b1f68bdb2c7a6caae6d0830a4b4fd",
+          "bytes": 1933352
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-amber-adept/geometry.glb",
+          "sha256": "2a32ec201a48429bf76ba34036a44427adb42a8fd3b1a5610f4fdada44562dba",
+          "bytes": 3045296
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-amber-adept/image.png",
+          "sha256": "07e61d1741445ef27816db80f7b21e04a3398f2790d4b0c7a5723317ab77b44e",
+          "bytes": 12932
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-amber-adept/team_mask.png",
+          "sha256": "7807cc5e41076378b3f84fa020ff47c1dc10d74b44991230d58dd7d207714025",
+          "bytes": 51676
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.amber-adept",
+          "file": "assets/library/asset.models.units.ants-amber-adept/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "projectile": "effect.weapon.amber-bolt",
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "castContact": 0.5
+        },
+        {
+          "id": "icon.ants.amber-adept",
+          "image": "assets/library/asset.models.units.ants-amber-adept/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.models.units.ants-archer",
       "name": "Ant Archer",
       "kind": "model",
@@ -10557,7 +11287,7 @@
         "tripo",
         "ant-archer-tripo"
       ],
-      "revision": 5,
+      "revision": 7,
       "profile": "archer",
       "outputs": [
         {
@@ -10597,7 +11327,7 @@
           "character": "archer",
           "scale": 1,
           "healthHeight": 2.15,
-          "projectile": "arrow",
+          "projectile": "effect.weapon.arrow",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -10646,8 +11376,101 @@
       "scenery": []
     },
     {
+      "id": "asset.models.units.ants-banneret",
+      "name": "Ant Banneret",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "banneret",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 65,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-banneret/albedo.png",
+          "sha256": "c1f10739493e52fb1d123df2e1e59e7c3f2c8ebaf731a6e530daadb214343999",
+          "bytes": 2357547
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-banneret/geometry.glb",
+          "sha256": "023492c71a6a6c3f4143ea0fc2af6b0a508014bab5417c8adc34a3b0ba5289e0",
+          "bytes": 3610952
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-banneret/image.png",
+          "sha256": "911b97e0a986c59dd2e5f032045b299b6fac7c0f541e3da68ee978d48329e4d8",
+          "bytes": 11843
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-banneret/team_mask.png",
+          "sha256": "41ccfc0b5c801bdfb70a137203cd9073c0d74fa6baab35970d1db50a3eb49923",
+          "bytes": 105645
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.banneret",
+          "file": "assets/library/asset.models.units.ants-banneret/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "castContact": 0.325
+        },
+        {
+          "id": "icon.ants.banneret",
+          "image": "assets/library/asset.models.units.ants-banneret/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
       "id": "asset.models.units.ants-bombardier",
-      "name": "Bombardier Beetle",
+      "name": "Ant Bombardier",
       "kind": "model",
       "faction": "ants",
       "tags": [
@@ -10657,46 +11480,43 @@
         "tripo",
         "ant-bombardier-tripo"
       ],
-      "revision": 4,
-      "profile": "bombardier",
+      "revision": 59,
+      "profile": "base",
       "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-bombardier/albedo.png",
+          "sha256": "c62b53046b7ee10fb6a7b05e0dd62b0840da80153efe9c3cf8444f5ed8e54c46",
+          "bytes": 2122971
+        },
         {
           "role": "model",
           "path": "assets/library/asset.models.units.ants-bombardier/geometry.glb",
-          "sha256": "6ad2fb59475a83488672458aeccb25f6625482b13fbfb1d96257136bad24a0d4",
-          "bytes": 11323560
+          "sha256": "024911b962096789082fb0a4fde13d5d642cd4e3cd172b5197fb446b638137cc",
+          "bytes": 3297092
         },
         {
           "role": "image",
           "path": "assets/library/asset.models.units.ants-bombardier/image.png",
-          "sha256": "fc40856f2fde2e3053b05ddcd2c836db588e81e22cb9360885a1f411b447fa68",
-          "bytes": 15415
-        },
-        {
-          "role": "image",
-          "path": "assets/library/asset.models.units.ants-bombardier/albedo.png",
-          "sha256": "36e6ce6531fa81d0299a36779d26a45de7745909510880af247a10d38402d78d",
-          "bytes": 5920134
+          "sha256": "3823ea7fd57c3e58c7c9b283c5ce610ce62b346d422aab9702351738ad431471",
+          "bytes": 14782
         },
         {
           "role": "data",
           "path": "assets/library/asset.models.units.ants-bombardier/team_mask.png",
-          "sha256": "3bd62f4ce1bae9d6244a7ccce6332f8974fec5dd5c54d8f96aa6b8586a28db07",
-          "bytes": 34440
+          "sha256": "981af7bdc58fb189188439d09c7d009b78a1bf8c8bccbc17bdaba1cf486f9851",
+          "bytes": 31613
         }
       ],
       "render": [
         {
           "id": "asset.ants.bombardier",
           "file": "assets/library/asset.models.units.ants-bombardier/geometry.glb",
-          "dimensions": {
-            "radius": 0.2,
-            "height": 2,
-            "formationSpacing": 1
-          },
-          "character": "bombardier",
-          "scale": 1,
-          "healthHeight": 3.05,
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "projectile": "effect.weapon.resin-bomb",
+          "impactEffect": "effect.ants.resin-explosion",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -10727,8 +11547,83 @@
               ]
             },
             {
-              "name": "back",
-              "node": "socket_back",
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "castContact": 0.3076923076923077
+        },
+        {
+          "id": "icon.ants.bombardier",
+          "image": "assets/library/asset.models.units.ants-bombardier/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-cleaver-warrior",
+      "name": "Ant Cleaver Warrior",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "warrior",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 73,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-cleaver-warrior/albedo.png",
+          "sha256": "abe048cd604982d7c5d389548b5413e5be1dc304bae6aef14b7047bf3d408901",
+          "bytes": 2188483
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-cleaver-warrior/geometry.glb",
+          "sha256": "46c329e233bbe8f0722d3daf32368d5dee302414c8583a48936ca841951075b1",
+          "bytes": 4079792
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-cleaver-warrior/image.png",
+          "sha256": "1f77a15dcc5f499551f0a8e7174027b58abf30062f9a1962c97d6405fcd13ae4",
+          "bytes": 20102
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-cleaver-warrior/team_mask.png",
+          "sha256": "596fcd76c029b0681397a7a30b3dfb04d272e6def1984b43ba2bf7422b5361c3",
+          "bytes": 42705
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.cleaver-warrior",
+          "file": "assets/library/asset.models.units.ants-cleaver-warrior/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
               "offset": [
                 0,
                 0,
@@ -10738,8 +11633,823 @@
           ]
         },
         {
-          "id": "icon.ants.bombardier",
-          "image": "assets/library/asset.models.units.ants-bombardier/image.png"
+          "id": "icon.ants.cleaver-warrior",
+          "image": "assets/library/asset.models.units.ants-cleaver-warrior/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-colony-worker",
+      "name": "Ant Colony Worker",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "worker",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 76,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-colony-worker/albedo.png",
+          "sha256": "c7bc95ec18b0bad9534ce0fbe77cdc0c3175652ff3e774c0faac87d3e07b57c5",
+          "bytes": 2312618
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-colony-worker/geometry.glb",
+          "sha256": "4f1fcbe53917ff0e2bfd656e742321966be444f6b32621cc790e57c5d2b02eb9",
+          "bytes": 4278628
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-colony-worker/image.png",
+          "sha256": "7c6e9c04fa0d8da7c710119b451d3aa31ccfe80596b305851eee7504cbe9fc21",
+          "bytes": 16676
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-colony-worker/team_mask.png",
+          "sha256": "faf78cf552b1d29af6a68a54284249d17b745279f2717b0af136a803019f29ca",
+          "bytes": 20485
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.colony-worker",
+          "file": "assets/library/asset.models.units.ants-colony-worker/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "sockets": [
+            {
+              "name": "back",
+              "node": "socket_back",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "icon.ants.colony-worker",
+          "image": "assets/library/asset.models.units.ants-colony-worker/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-leaf-archer",
+      "name": "Ant Leaf Archer",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "archer",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 19,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-leaf-archer/albedo.png",
+          "sha256": "46f2c87cbb6ccd54f792605b0fa66c0a07aca5a94774b2c130b0b74737638bfa",
+          "bytes": 2190867
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-leaf-archer/geometry.glb",
+          "sha256": "3413eabb5b2636e2e6c3d5db33235629a77a8662d68e472323504efff28fcafd",
+          "bytes": 3956836
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-leaf-archer/image.png",
+          "sha256": "702e119d16b694382b880d61989ba3382cbd7a47925353201f5e25da717cc77e",
+          "bytes": 8140
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-leaf-archer/team_mask.png",
+          "sha256": "6a13e88ce8fbb91916b52b32ad5720431a9da2df25daa4fb6e02f1bd76354032",
+          "bytes": 76265
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.leaf-archer",
+          "file": "assets/library/asset.models.units.ants-leaf-archer/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "projectile": "effect.weapon.arrow",
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "icon.ants.leaf-archer",
+          "image": "assets/library/asset.models.units.ants-leaf-archer/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-marshal",
+      "name": "Ant Marshal",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "marshal",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 1,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-marshal/albedo.png",
+          "sha256": "e748edffb6d28641dfc9463eada97e405e770f846de05c0cc026a8dc9060182e",
+          "bytes": 2169468
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-marshal/geometry.glb",
+          "sha256": "8ab26324b838580ede8200470491dc8970f935a515f9f2d7c7e0916b1461a695",
+          "bytes": 3195852
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-marshal/image.png",
+          "sha256": "069c90d85240c079769993ba051e14fbd5dbbe74fc67ed6e09e2ec549329a392",
+          "bytes": 19181
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-marshal/team_mask.png",
+          "sha256": "a171579ae60f891b99341bf9a07805549423d1ae606d548b64702d109bec0789",
+          "bytes": 42865
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.marshal",
+          "file": "assets/library/asset.models.units.ants-marshal/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "castContact": 0.5384615384615384
+        },
+        {
+          "id": "icon.ants.marshal",
+          "image": "assets/library/asset.models.units.ants-marshal/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-nectarist",
+      "name": "Ant Nectarist",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "nectarist",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 17,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-nectarist/albedo.png",
+          "sha256": "9f1cda5687f09f56e5e7e44f2cf515d6ccc0db0a7dcc31d564817b397a857225",
+          "bytes": 2220796
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-nectarist/geometry.glb",
+          "sha256": "730abe8ec37cabbebdd02f5e259baa239d5e8daef8302294da018f7e980a5d7e",
+          "bytes": 3436732
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-nectarist/image.png",
+          "sha256": "f2fd82e853efadcd870348872c9e4c9b1c49254a90db3321dbed05678018c161",
+          "bytes": 13204
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-nectarist/team_mask.png",
+          "sha256": "3ea42e91b1a9ea3b573f597825a78e833190551aba6daee06a5f2fd04577d848",
+          "bytes": 54278
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.nectarist",
+          "file": "assets/library/asset.models.units.ants-nectarist/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "projectile": "effect.weapon.nectar",
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "castContact": 0.3611111111111111
+        },
+        {
+          "id": "icon.ants.nectarist",
+          "image": "assets/library/asset.models.units.ants-nectarist/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-queensguard",
+      "name": "Ant Queensguard",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "queensguard",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 18,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-queensguard/albedo.png",
+          "sha256": "36586ed5121fbb3cc3c212c1f9cdb4d15e9411ba8d7d5827afd4c92f794cd2d4",
+          "bytes": 2368731
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-queensguard/geometry.glb",
+          "sha256": "3a3fe9616baa268c362857d0fcb00365749edadd1305273acd534bd0e1afba85",
+          "bytes": 3538000
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-queensguard/image.png",
+          "sha256": "8840a25c53046489e21f4d416149a4c41e548b5f229d9871b6c2cf4f4117fffe",
+          "bytes": 15768
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-queensguard/team_mask.png",
+          "sha256": "74220888fa5a18a5eb26eb902ca9d327bd750de18a1a21d1b2ef2827b722049c",
+          "bytes": 15425
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.queensguard",
+          "file": "assets/library/asset.models.units.ants-queensguard/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.1,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "castContact": 0.5
+        },
+        {
+          "id": "icon.ants.queensguard",
+          "image": "assets/library/asset.models.units.ants-queensguard/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-rootbreaker",
+      "name": "Ant Rootbreaker",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "rootbreaker",
+        "hero",
+        "tripo"
+      ],
+      "revision": 4,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-rootbreaker/albedo.png",
+          "sha256": "145136772f60864c748bf87b80c9a33fb6de1f9b99ff28f9b69c4674aa9dfe18",
+          "bytes": 2674313
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-rootbreaker/geometry.glb",
+          "sha256": "8a82f847d8db4ec85583416c762df7df36ef3ce37f63a51ffc734d5a12a3b97f",
+          "bytes": 4377148
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-rootbreaker/image.png",
+          "sha256": "4f4906fed765fbb1da14ac0268b51373a8b187a20dc262d80a1820a1cbbfa680",
+          "bytes": 19806
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-rootbreaker/team_mask.png",
+          "sha256": "28efa6e3a2472cf7e700da820a880ef19f319c8220d89b4e60c73738135e294f",
+          "bytes": 75629
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.rootbreaker",
+          "file": "assets/library/asset.models.units.ants-rootbreaker/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "castContact": 0.47368421052631576
+        },
+        {
+          "id": "icon.ants.rootbreaker",
+          "image": "assets/library/asset.models.units.ants-rootbreaker/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-rootweaver",
+      "name": "Ant Rootweaver",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "rootweaver",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 65,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-rootweaver/albedo.png",
+          "sha256": "f7a10e074236b90a2d7578aa866f85d600770e055268558d2aced198cab32dd0",
+          "bytes": 2576585
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-rootweaver/geometry.glb",
+          "sha256": "53f33d4821e9cdd34d7cace98b5d84771e2f0d2389fe1d81a4f4502605695486",
+          "bytes": 3734968
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-rootweaver/image.png",
+          "sha256": "552cc350056abc2daa53fa6a6b5adc03aec87e2cdccdba0f8e37081a33338da5",
+          "bytes": 10986
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-rootweaver/team_mask.png",
+          "sha256": "0dfa17ef2825e116fde03e1cfcf4ab7fc251694abec7c0a41ce842f3c23c09c7",
+          "bytes": 63130
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.rootweaver",
+          "file": "assets/library/asset.models.units.ants-rootweaver/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "projectile": "effect.weapon.thorn",
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "castContact": 0.5
+        },
+        {
+          "id": "icon.ants.rootweaver",
+          "image": "assets/library/asset.models.units.ants-rootweaver/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-silkwarden",
+      "name": "Ant Silkwarden",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "silkwarden",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 51,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-silkwarden/albedo.png",
+          "sha256": "8c4f32cb2e31da24a9df5688136a9997113cb2d060a08b96faa1a02c2813c45e",
+          "bytes": 2636990
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-silkwarden/geometry.glb",
+          "sha256": "be3ca23dabb813a8fc7b6287420daff6deda7d62d3b0629541fff1e8f201df0c",
+          "bytes": 4054184
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-silkwarden/image.png",
+          "sha256": "8137476ed8965d368c17172d08c9a7deb59ed50914ef73180ea84dda81b70904",
+          "bytes": 13608
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-silkwarden/team_mask.png",
+          "sha256": "82d0ab8d698a139cd18bc418fc5b0392c571aa4df2a34d1f37374fb28bea786d",
+          "bytes": 34266
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.silkwarden",
+          "file": "assets/library/asset.models.units.ants-silkwarden/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "projectile": "effect.weapon.silk",
+          "projectileSocket": "socket_projectile",
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "castContact": 0.36666666666666664
+        },
+        {
+          "id": "icon.ants.silkwarden",
+          "image": "assets/library/asset.models.units.ants-silkwarden/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-thornblade",
+      "name": "Ant Thornblade",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "thornblade",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 31,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-thornblade/albedo.png",
+          "sha256": "b354676085be455572dc8fb96d1b7afb820a625827f984114c06c2a7ec6ed72d",
+          "bytes": 2273831
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-thornblade/geometry.glb",
+          "sha256": "5db52d6d4e90176304b07c9aa940ad18af441943ae6aacb2743a5659d4809087",
+          "bytes": 3556472
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-thornblade/image.png",
+          "sha256": "e6ea65eb4823b082268513bd0daf66d44987c894fb145409ad07bc610ef8d1a5",
+          "bytes": 13012
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-thornblade/team_mask.png",
+          "sha256": "249b22db5247e3053e832f4ebf115770dac15d9fc81b8e0ddbea06d4f1f1c0b8",
+          "bytes": 72137
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.thornblade",
+          "file": "assets/library/asset.models.units.ants-thornblade/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.15,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "icon.ants.thornblade",
+          "image": "assets/library/asset.models.units.ants-thornblade/image.png"
         }
       ],
       "scenery": []
@@ -10827,6 +12537,99 @@
         {
           "id": "icon.ants.warrior",
           "image": "assets/library/asset.models.units.ants-warrior/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.models.units.ants-winglancer",
+      "name": "Ant Winglancer",
+      "kind": "model",
+      "faction": "ants",
+      "tags": [
+        "ants",
+        "winglancer",
+        "tripo",
+        "skinned"
+      ],
+      "revision": 20,
+      "profile": "base",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-winglancer/albedo.png",
+          "sha256": "1fdf61ad5f1197c62253920df882f6fc64bba806e222a90908be30025b43deb6",
+          "bytes": 2507807
+        },
+        {
+          "role": "model",
+          "path": "assets/library/asset.models.units.ants-winglancer/geometry.glb",
+          "sha256": "bc066353353a6237c206eb553a80d19f56f2abd6f22125be256ffcfa9451ed6f",
+          "bytes": 3666876
+        },
+        {
+          "role": "image",
+          "path": "assets/library/asset.models.units.ants-winglancer/image.png",
+          "sha256": "402160cf019f79f6499d6090db90fb920847a9eefe9a7165128f564be3594928",
+          "bytes": 10620
+        },
+        {
+          "role": "data",
+          "path": "assets/library/asset.models.units.ants-winglancer/team_mask.png",
+          "sha256": "c233d7db1c64e23cb23a2312e9057c5606f07095777d5fe2e3733637cf0d5596",
+          "bytes": 7432
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.ants.winglancer",
+          "file": "assets/library/asset.models.units.ants-winglancer/geometry.glb",
+          "character": "base",
+          "scale": 2,
+          "healthHeight": 2.1,
+          "sockets": [
+            {
+              "name": "handL",
+              "node": "socket_handL",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "handR",
+              "node": "socket_handR",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "projectile",
+              "node": "socket_projectile",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "name": "cast",
+              "node": "socket_cast",
+              "offset": [
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "castContact": 0.4722222222222222
+        },
+        {
+          "id": "icon.ants.winglancer",
+          "image": "assets/library/asset.models.units.ants-winglancer/image.png"
         }
       ],
       "scenery": []
@@ -11156,7 +12959,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -11184,7 +12987,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 2.8600000000000003,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -11361,7 +13164,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -11389,7 +13192,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 1.87,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -11518,7 +13321,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -11546,7 +13349,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 2.4200000000000004,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -11627,7 +13430,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -11655,7 +13458,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 3.5200000000000005,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -11736,7 +13539,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -11764,7 +13567,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 1.9800000000000002,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -11797,7 +13600,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -11825,7 +13628,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 3.08,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -11954,7 +13757,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -11982,7 +13785,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 2.75,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -12015,7 +13818,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -12043,7 +13846,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 1.4300000000000002,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -12076,7 +13879,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -12104,7 +13907,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 1.4300000000000002,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -12137,7 +13940,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -12165,7 +13968,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 1.9800000000000002,
-          "projectile": "arrow",
+          "projectile": "effect.weapon.arrow",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -12198,7 +14001,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -12226,7 +14029,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 1.7600000000000002,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -12259,7 +14062,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -12287,7 +14090,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 2.64,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -12320,7 +14123,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -12348,7 +14151,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 2.09,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -12429,7 +14232,7 @@
         "skinned",
         "tripo"
       ],
-      "revision": 2,
+      "revision": 4,
       "profile": "base",
       "outputs": [
         {
@@ -12457,7 +14260,7 @@
           "character": "base",
           "scale": 1,
           "healthHeight": 2.2,
-          "projectile": "thorn",
+          "projectile": "effect.weapon.thorn",
           "projectileSocket": "socket_projectile",
           "sockets": [
             {
@@ -12534,7 +14337,7 @@
         "placeholder",
         "diagnostic"
       ],
-      "revision": 20,
+      "revision": 25,
       "profile": "prop",
       "outputs": [
         {
@@ -12690,7 +14493,8 @@
             "height": 1.5,
             "forward": 0.15,
             "distance": 7
-          }
+          },
+          "projectile": "effect.weapon.arrow"
         },
         {
           "id": "asset.briar.captain",
@@ -12752,18 +14556,6 @@
           }
         },
         {
-          "id": "asset.ants.marshal",
-          "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
-          "scale": 1,
-          "healthHeight": 2.8,
-          "cameraAnchor": {
-            "height": 1.85,
-            "forward": 0.15,
-            "distance": 7
-          },
-          "castContact": 0.68
-        },
-        {
           "id": "asset.placeholder.missing-model",
           "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
           "scale": 1,
@@ -12774,7 +14566,7 @@
           "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
           "scale": 1,
           "healthHeight": 2.8,
-          "projectile": "stone"
+          "projectile": "effect.weapon.stone"
         }
       ],
       "scenery": [
@@ -12887,6 +14679,251 @@
         {
           "id": "asset.spells.marshal.rally-icon",
           "image": "assets/library/asset.spells.marshal.rally-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.rootbreaker.attention",
+      "name": "Challenge Roar attention",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.rootbreaker.attention/image.png",
+          "sha256": "2111df9e839a0b76cc88ac139b5ceebc6ccf8da97a161e258595e6c8fa2db728",
+          "bytes": 99923
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.rootbreaker.presence-icon",
+      "name": "Crushing Presence",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.rootbreaker.presence-icon/image.png",
+          "sha256": "c4c4f62a72dced7297d86bc7476eb3b316665c5bfeb15d7b877acffc4886cb44",
+          "bytes": 46041
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.rootbreaker.presence-icon",
+          "image": "assets/library/asset.spells.rootbreaker.presence-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.rootbreaker.presence-icon-v2",
+      "name": "Crushing Presence refined icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.rootbreaker.presence-icon-v2/image.png",
+          "sha256": "448450aed39e739c06677866b5fe6fe04d5d106513dbc34f6b626abc04ed8e30",
+          "bytes": 35167
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.rootbreaker.presence-icon-v2",
+          "image": "assets/library/asset.spells.rootbreaker.presence-icon-v2/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.rootbreaker.roar-icon",
+      "name": "Challenge Roar",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.rootbreaker.roar-icon/image.png",
+          "sha256": "e5d55debc0703283ba93585dfba84fafad72cc42d25250e402d210e8db43e728",
+          "bytes": 42586
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.rootbreaker.roar-icon",
+          "image": "assets/library/asset.spells.rootbreaker.roar-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.rootbreaker.roar-icon-v2",
+      "name": "Challenge Roar refined icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.rootbreaker.roar-icon-v2/image.png",
+          "sha256": "9f395914ba47cf8b03172f777354a32c08e5b5ed18b725c7a412be070f8f1ff8",
+          "bytes": 41452
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.rootbreaker.roar-icon-v2",
+          "image": "assets/library/asset.spells.rootbreaker.roar-icon-v2/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.rootbreaker.roar-shield",
+      "name": "Challenge Roar shield",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.rootbreaker.roar-shield/image.png",
+          "sha256": "309664f7792012bb831c2c5f9710e2b59296df4359be92dfc4d3898ba155c34f",
+          "bytes": 225474
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.rootbreaker.skullcrack-icon",
+      "name": "Skullcrack",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.rootbreaker.skullcrack-icon/image.png",
+          "sha256": "307e81ca526def98ed73fc75ac584721a5a617d1c2c59af8371fe416c731b809",
+          "bytes": 38095
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.rootbreaker.skullcrack-icon",
+          "image": "assets/library/asset.spells.rootbreaker.skullcrack-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.rootbreaker.stun-stars",
+      "name": "Skullcrack stun stars",
+      "kind": "texture",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "texture",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.rootbreaker.stun-stars/image.png",
+          "sha256": "879ff9c4e622161ac95648f61038c977266de3dbf8fbf6888df952880e5175ae",
+          "bytes": 131490
+        }
+      ],
+      "render": [],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.rootbreaker.uproot-icon",
+      "name": "Uproot",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.rootbreaker.uproot-icon/image.png",
+          "sha256": "da44dc5eb26d3d009ea9d3483022213d682c91b3f10a29584519104cbeedb70d",
+          "bytes": 36330
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.rootbreaker.uproot-icon",
+          "image": "assets/library/asset.spells.rootbreaker.uproot-icon/image.png"
+        }
+      ],
+      "scenery": []
+    },
+    {
+      "id": "asset.spells.rootbreaker.uproot-icon-v2",
+      "name": "Uproot refined icon",
+      "kind": "icon",
+      "tags": [
+        "spell-effects",
+        "generated"
+      ],
+      "revision": 5,
+      "profile": "icon",
+      "outputs": [
+        {
+          "role": "image",
+          "path": "assets/library/asset.spells.rootbreaker.uproot-icon-v2/image.png",
+          "sha256": "0ac8ad985e6a724cca4ed0acc5bb886e64a99f1f176fb0e54a9c208c38f9d1c5",
+          "bytes": 36976
+        }
+      ],
+      "render": [
+        {
+          "id": "asset.spells.rootbreaker.uproot-icon-v2",
+          "image": "assets/library/asset.spells.rootbreaker.uproot-icon-v2/image.png"
         }
       ],
       "scenery": []

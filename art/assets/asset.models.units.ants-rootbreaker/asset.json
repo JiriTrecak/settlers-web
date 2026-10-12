@@ -1,0 +1,364 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-rootbreaker",
+  "name": "Ant Rootbreaker",
+  "kind": "unit",
+  "revision": 4,
+  "status": "published",
+  "tags": [
+    "ants",
+    "rootbreaker",
+    "hero",
+    "tripo"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "145136772f60864c748bf87b80c9a33fb6de1f9b99ff28f9b69c4674aa9dfe18",
+      "bytes": 2674313
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "1a7ba00ab854393a302520e3c01fff4839ed9541987b1460636b2a24f7fe064f",
+      "bytes": 1038
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "8a82f847d8db4ec85583416c762df7df36ef3ce37f63a51ffc734d5a12a3b97f",
+      "bytes": 4377148
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "4f4906fed765fbb1da14ac0268b51373a8b187a20dc262d80a1820a1cbbfa680",
+      "bytes": 19806
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "9dbfd0b6c479f22303a2984cc6bcd7ec8e79f48e3f36014aea0428d0b65688fa",
+      "bytes": 765193
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "2123495433d8e82b3ec595f052a01584f3afd7f7f3fc8e19fa220043f1f51c4f",
+      "bytes": 722541
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "0e6e8f8341ceec66c875534812d8efd0a449c596974389f953ba7ba6d7598143",
+      "bytes": 10364
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "4c5e58cfcab2e49f5c302e17e71ff1ba6f1265ba7c6a15b0e179614a5e76c76a",
+      "bytes": 7021
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "252b529c4e6fc7324bce22faa64d2170f503be23692f5155f409255c3a6887a7",
+      "bytes": 2110
+    },
+    {
+      "role": "recipe",
+      "index": 4,
+      "format": "py",
+      "sha256": "682c8473c7b1277932d1c0de008f8d826844adebbb7a75b16490094265d01b67",
+      "bytes": 950
+    },
+    {
+      "role": "recipe",
+      "index": 5,
+      "format": "py",
+      "sha256": "0681b3dabdb3166919e423b2776615bb46f4a94c5c28d5499498cf7b4ae980ff",
+      "bytes": 1019
+    },
+    {
+      "role": "recipe",
+      "index": 6,
+      "format": "py",
+      "sha256": "1f875e00cca079b947b1d8f3e9ee217b109c37806a6581369fcd73bd430c302c",
+      "bytes": 932
+    },
+    {
+      "role": "recipe",
+      "index": 7,
+      "format": "py",
+      "sha256": "01ac791c8d4b88b5a16c38a67512b683e40c395ce04ca11b89e77c8607ed2d7d",
+      "bytes": 1701
+    },
+    {
+      "role": "recipe",
+      "index": 8,
+      "format": "py",
+      "sha256": "bedcefcaedb8a912e3633ec9e17502148d4aedf3d406c58da2dfba510ec62879",
+      "bytes": 3098
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "557540d9dd86c4ec270d3051c183b05c12fcddf30fbb46cea5614749a0b5236f",
+      "bytes": 1732014
+    },
+    {
+      "role": "reference",
+      "index": 2,
+      "format": "png",
+      "sha256": "5e3d299079a4b79784d3103ed78ec85e57baf3426eabea11d789c6b4cbf06960",
+      "bytes": 2195097
+    },
+    {
+      "role": "reference",
+      "index": 3,
+      "format": "png",
+      "sha256": "dc72e84803c0edec77bd91f659a8391b560919bc6a547cf58071377effe8825d",
+      "bytes": 2369447
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "8f628eb357fd6eefeed3b616573c41ea1ff4bfde87530d25709bbb09a65fa0e0",
+      "bytes": 10651792
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "glb",
+      "sha256": "e5f12f24418a6e4640f478de5fb032360dee5ca9fb1f71d81f2f09c9ed1d29a1",
+      "bytes": 9767636
+    },
+    {
+      "role": "source",
+      "index": 4,
+      "format": "json",
+      "sha256": "c6833e7240e19fa0c3bff5414f5edc6092d669cec623c39029ccc9dd1a72e73f",
+      "bytes": 84192
+    },
+    {
+      "role": "source",
+      "index": 5,
+      "format": "json",
+      "sha256": "b61f8c5c5b14e7d86f45a5e1c566f5b775bdfe6cca8e36c514cd84ed0e64cb31",
+      "bytes": 7500
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "28efa6e3a2472cf7e700da820a880ef19f319c8220d89b4e60c73738135e294f",
+      "bytes": 75629
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "645367f1a553c6279e41dbec69edfefcc58aef0c25e74c8650074b3548d2e548",
+      "bytes": 57190638
+    }
+  ],
+  "usesGeometry": true,
+  "modelClass": "hero",
+  "exportSettings": {
+    "textureSize": 1024
+  },
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "ants",
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.ants.rootbreaker",
+        "character": "base",
+        "scale": 2,
+        "healthHeight": 2.15,
+        "castContact": 0.47368421052631576,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-rootbreaker"
+        }
+      },
+      {
+        "id": "icon.ants.rootbreaker",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.units.ants-rootbreaker"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "cast",
+        "clip": "cast",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 1.5
+          }
+        ]
+      },
+      {
+        "semantic": "skullcrack",
+        "clip": "skullcrack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 1.1666666666666667
+          }
+        ]
+      },
+      {
+        "semantic": "roar",
+        "clip": "roar",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 1.25
+          }
+        ]
+      },
+      {
+        "semantic": "uproot",
+        "clip": "uproot",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 1.5
+          }
+        ]
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "hit",
+            "time": 1.0833333333333333
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "handL",
+        "node": "socket_handL",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "handR",
+        "node": "socket_handR",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "cast",
+        "node": "socket_cast",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original reference-based artwork generated for Under the Canopy."
+  }
+}

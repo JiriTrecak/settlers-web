@@ -30,3 +30,14 @@ it('purchases permanent shell research and applies it to the real mortar at rele
  a.rotation=heading(a,b);a.unit!.target=b.id;g.combat.resolve();expect(a.unit!.attack?.impact).toBe(22);expect(g.state.shells).toHaveLength(0);
  g.state.tick=22;g.combat.resolve();expect(g.state.shells[0]).toMatchObject({radius:3,slowPermille:350,damage:42,damageType:'siege',impact:62});
 });
+
+it('can recruit the replacement from barracks after its existing hall prerequisite',()=>{
+ const g=game([placed('supply','building.ants.house',245,245),placed('barracks','building.ants.barracks',189.5,209.5)]);
+ const b=g.entities.find(e=>e.placement==='barracks')!,m=g.context.get(g.state.objectives['player.1'])!;
+ g.state.wallets[m.owner]={'item.amber':1000,'item.wood':1000,'item.root':100};
+ m.definition='building.ants.great-mound';run(g,1);
+ const card=commandCard(g.view(m.owner),[b.id],m.owner,g.registry).find(c=>c.targetDefinition===bomb)!;
+ expect(card.enabled).toBe(true);expect(g.command(m.owner,card.immediate!).accepted).toBe(true);
+ for(let i=0;i<1600&&!g.entities.some(e=>e.definition===bomb);i++)g.tick();
+ expect(g.entities.some(e=>e.definition===bomb)).toBe(true);
+});

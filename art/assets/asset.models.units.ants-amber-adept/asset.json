@@ -1,0 +1,271 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-amber-adept",
+  "name": "Ant Amber Adept",
+  "kind": "unit",
+  "revision": 33,
+  "status": "published",
+  "tags": [
+    "ants",
+    "amber-adept",
+    "tripo",
+    "skinned"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "94b9c8015b6769a6651c1d98ff81c1d85f3b1f68bdb2c7a6caae6d0830a4b4fd",
+      "bytes": 1933352
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "6f30251843a042c9e576d4903e9dc99225619e4a637377f8fe62982a90eb5b19",
+      "bytes": 928
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "2a32ec201a48429bf76ba34036a44427adb42a8fd3b1a5610f4fdada44562dba",
+      "bytes": 3045296
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "07e61d1741445ef27816db80f7b21e04a3398f2790d4b0c7a5723317ab77b44e",
+      "bytes": 12932
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "a6eae34afed8ad0d5278090a05d44e81937ee4e84dba836e3defa74e142c9b2f",
+      "bytes": 576259
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "91238d5603a69d000abeba498bb9b1cbbe0299781a133b0ee9b676300eee8e11",
+      "bytes": 579777
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "a8dadb68ee8675df3e6db689cc89bc082b271929b7894cb072412b98d5adfdee",
+      "bytes": 8291
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "81157891872decc48a805ce05772b79a9723e7c799eb83d46cece1fed1745a2d",
+      "bytes": 4457
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "35da7fae14d036acaa6464b09c5b413356acdde6f461f4a2ec5a6e2501ee7062",
+      "bytes": 1979
+    },
+    {
+      "role": "recipe",
+      "index": 4,
+      "format": "py",
+      "sha256": "c7c3705988960c6b55c22d33de1845f7bbb4d6f1efb18d00920c8e7fd23aabaf",
+      "bytes": 2084
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "0d1ea1bac1226187cc16ca5d98ea9f85ecb12779fc7dc1ecd8b73b07057440ac",
+      "bytes": 1452281
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "9834191e833bd1126933e49da84bcb1399ebedabb2890519aebc9ea8b264e4cd",
+      "bytes": 34123660
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "db34aaf3b9e7786dfe7bf057f3ddd676fd452b9b79a9b1c631c2e341cceefebe",
+      "bytes": 7161000
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "fbe2e03b7633518d1b7cdda5948c1bf932e501ab8ce375d44f92e6e4eabcd333",
+      "bytes": 6360
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "7807cc5e41076378b3f84fa020ff47c1dc10d74b44991230d58dd7d207714025",
+      "bytes": 51676
+    }
+  ],
+  "usesGeometry": true,
+  "exportSettings": {
+    "textureSize": 1024
+  },
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "ants",
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.ants.amber-adept",
+        "character": "base",
+        "scale": 2,
+        "healthHeight": 2.15,
+        "projectile": "effect.weapon.amber-bolt",
+        "projectileSocket": "socket_projectile",
+        "castContact": 0.5,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-amber-adept"
+        }
+      },
+      {
+        "id": "icon.ants.amber-adept",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.units.ants-amber-adept"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "cast",
+        "clip": "cast",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 0.8333333333333334
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "handL",
+        "node": "socket_handL",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "handR",
+        "node": "socket_handR",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "cast",
+        "node": "socket_cast",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original generated artwork for Under the Canopy."
+  }
+}

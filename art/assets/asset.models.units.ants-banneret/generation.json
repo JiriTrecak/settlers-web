@@ -1,0 +1,28 @@
+{
+  "provider": "Tripo Studio",
+  "task": "411f9a0c-df5f-4a16-adf1-5457b9dbce66",
+  "adaptation": {
+    "ownershipMaskFraction": 0.32992517948150635,
+    "triangles": 4421,
+    "clips": [
+      "attack",
+      "cast",
+      "death",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "status": "requires-per-role-motion-and-game-review"
+  },
+  "refinement": "Rigid standard and offhand baton, corrected grip, broad banner/mantle ownership; standard raise, baton strike and adapted carrying gaits",
+  "sourceFiles": {
+    "adapt.py": "recipe.py",
+    "refine.py": "recipe_2.py",
+    "render-pose.py": "recipe_3.py",
+    "provider.glb": "source_2.glb",
+    "reference.png": "reference.png"
+  },
+  "rebuild": "Materialize the named recipe files and provider in a staging banneret directory; run Blender -b --python adapt.py -- <banneret directory>.",
+  "runtimeTextureSize": 1024
+}

@@ -59,6 +59,7 @@ export class Spatial {
    return Math.max(this.heights[i]!/100,this.waterHeights[i]!/100,...(this.layers?.at(x,y).map(n=>this.layers!.nodes[n]!.height/100)??[]));}
   elevation(e:Pick<Entity,'definition'|'x'|'y'|'surface'> & Partial<Pick<Entity,'spellStatuses'|'unit'>>,point:Point=e){return this.airborne(e)?this.airFloor(point)-this.height(point)+flightHeight(formDefinition(this.registry.get(e.definition),e,this.registry)):0;}
   elevatedPoint(e:Entity){const p=precise(e),elevation=this.elevation(e,p)+(e.unit?.garrison?.height??0);return elevation?{...p,elevation}:p;}
+  sightPoint(e:Entity){return {...this.elevatedPoint(e),...(this.airborne(e)?{airborne:true}:{})};}
   private airNavigation:Navigation|undefined;
 
   dimensions(actor?:Actor):Body {return actor&&'definition' in actor ? this.registry.get(actor.definition).dimensions??this.registry.navigationBody : actor??this.registry.navigationBody;}
@@ -349,7 +350,12 @@ export class Spatial {
       this.routing.meshAccepted++;return compact;
     });
   }
-  visible(a:Point & {elevation?:number},b:Point & {elevation?:number}){return (this.layers??this.tactical).visible(a,b);}
+  visible(a:Point & {elevation?:number},b:Point & {elevation?:number;airborne?:boolean}){
+    const terrain=this.layers??this.tactical;
+    // Uphill terrain concealment applies to units standing on a higher floor,
+    // not aircraft above an otherwise visible field. Solid terrain/decks still occlude.
+    return b.airborne?terrain.shotClear(a,b):terrain.visible(a,b);
+  }
   private readonly layerViews=new Map<string,readonly number[]>();
   visibleNodes(origin:Point & {elevation?:number},radius:number,ignoreTerrain=false):readonly number[]|Uint32Array{
     if(!this.layers&&!ignoreTerrain)return this.tactical.visibleCells(origin,radius);

@@ -24,6 +24,11 @@ export function characterProfile(root, clips, variant, capabilities) {
 export function oneShotState(definitions, state) {
   return definitions?.find(a => a.semantic === state)?.loop === false || (!definitions && ONE_SHOT.has(state));
 }
+/** Authored semantic contact is normalized against the actual exported clip. */
+export function semanticContact(definitions, state, duration, fallback = .55) {
+  const event = definitions?.find(a => a.semantic === state)?.events.find(e => e.name === 'release' || e.name === 'hit');
+  return event && duration > 0 ? Math.min(1, Math.max(0, event.time / duration)) : fallback;
+}
 /** Shared by the studio and game. Call update(dt) with seconds from the game clock. */
 export class CharacterPlayer {
   constructor(root, clips, variant = 'base', capabilities) {
@@ -84,6 +89,10 @@ export class CharacterPlayer {
     const crossed = attack && event && !this.eventFired && action.time + step * this.speed >= action.getClip().duration * event.normalizedTime;
     if (crossed) { this.eventFired = true; this.onEvent?.({ type: event.event, variant: this.variant }); }
     this.mixer.update(step * this.speed); this.posed = true;
+  }
+  castContact(state, fallback = .55) {
+    const action = this.actions.get(this.profile.variants[this.variant].states[state]);
+    return semanticContact(this.definitions, state, action?.getClip().duration, fallback);
   }
   attackContact() { return this.profile.attackEvents?.[this.variant]?.normalizedTime ?? .55; }
   clipDuration() { return this.action.getClip().duration; }

@@ -71,6 +71,7 @@ export const assetDefinitionSchema=z.object({
  version:z.literal(1),id:authoringId,name:z.string().trim().min(1).max(160),kind:z.enum(ASSET_KINDS),
  revision:z.number().int().positive(),status:z.enum(['draft','published','archived']),tags:z.array(z.string().min(1).max(80)).max(64).default([]),
  resources:z.array(resourceSchema).max(2048),usesGeometry:z.boolean(),
+ modelClass:z.enum(['standard','hero']).optional().describe('Hero unit models allow 10,000 triangles including attachments; standard units remain at 5,000.'),
  exportSettings:z.object({textureSize:z.union([z.literal(128),z.literal(256),z.literal(512),z.literal(1024),z.literal(2048),z.literal(4096)])}).strict().optional(),
  transform:z.object({scale:finite.positive().max(10000),pivot:vector,up:z.literal('Y'),forward:z.enum(['+Z','-Z'])}).strict().default({scale:1,pivot:[0,0,0],up:'Y',forward:'+Z'}),
  materials:z.array(materialSchema).max(128).default([]),
@@ -91,6 +92,7 @@ export const assetDefinitionSchema=z.object({
  water:waterProfileSchema.optional(),recipe:landscapeRecipeSchema.optional(),terrain:groundTextureSchema.optional(),
  provenance:z.object({method:z.enum(['import','migration','generated','authored']),licenseNote:z.string().max(4000).optional(),sourceHash:z.string().regex(/^[a-f0-9]{64}$/).optional(),generation:refSchema.optional()}).strict(),
 }).strict().superRefine((asset,ctx)=>{
+ if(asset.modelClass==='hero'&&asset.kind!=='unit')ctx.addIssue({code:'custom',path:['modelClass'],message:'Hero model class requires a unit asset'});
  const keys=new Set<string>(),roles=new Map<string,number[]>();
  for(const [i,r]of asset.resources.entries()){
   const key=`${r.role}:${r.index}`;

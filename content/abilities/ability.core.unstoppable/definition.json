@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "ability.core.unstoppable",
   "name": "Unstoppable",
-  "description": "Protect an ally from stuns, roots, silence, disarm, item lockout, movement slows and attack slows for 4/6/8 seconds. Existing controls are suppressed while protected; their timers keep running. Incoming control components are prevented. Damage, armor penalties and other spell components still apply. This protection can be dispelled.",
+  "description": "Protect an ally from stuns, roots, silence, disarm, item lockout, movement slows, attack slows and taunts for 4/6/8 seconds. Existing controls are suppressed while protected; their timers keep running. Incoming control components are prevented. Damage, armor penalties and other spell components still apply. This protection can be dispelled.",
   "activation": "targeted",
   "piercesSpellImmunity": false,
   "ranks": [
@@ -76,7 +76,8 @@
         "disarm",
         "itemBlocked",
         "moveSlow",
-        "attackSlow"
+        "attackSlow",
+        "taunt"
       ],
       "modifiers": {},
       "lifetime": "duration"

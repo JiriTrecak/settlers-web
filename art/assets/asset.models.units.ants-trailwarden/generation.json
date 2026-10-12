@@ -1,0 +1,30 @@
+{
+  "provider": "Tripo Studio",
+  "task": "4b28f147-2f55-4d2b-8b08-49f1cfe9c4c2",
+  "adaptation": {
+    "ownershipMaskFraction": 0.3209396004676819,
+    "triangles": 4306,
+    "clips": [
+      "attack",
+      "cast",
+      "death",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "status": "requires-per-role-motion-and-game-review"
+  },
+  "sourceFiles": {
+    "source.blend": "source.blend",
+    "provider.glb": "source_2.glb",
+    "parts.json": "source_3.json",
+    "raw-geometry.json": "source_4.json",
+    "adapt.py": "recipe.py",
+    "refine.py": "recipe_2.py",
+    "rig-bowstring.py": "recipe_3.py",
+    "reference.png": "reference.png"
+  },
+  "rebuild": "Materialize the sourceFiles mapping, then run background Blender --python adapt.py -- <staging directory>.",
+  "status": "Draft, pending visual review and gameplay integration"
+}

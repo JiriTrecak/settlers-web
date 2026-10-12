@@ -2,14 +2,14 @@
  * Eight player tints shared by menu swatches, faction materials and map markers.
  */
 export const PLAYER_COLORS = [
-  0xbe343d, // Broad red leaf roofs and armor; distinct from natural brown chitin.
-  0x2878df, // Blue
-  0x34a853, // Green
+  0xff3038, // Bright ownership red, distinct from natural brown chitin.
+  0x338dff, // Blue
+  0x35de53, // Green
   0xf2cf35, // Yellow
   0xed842a, // Orange
   0x9656cf, // Purple
   0x36cbd0, // Cyan
-  0xeeeeee, // White
+  0xffffff, // White
 ] as const;
 
 export function clampPlayer(n: number): number {

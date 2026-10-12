@@ -180,6 +180,96 @@
     "scenery": []
   },
   {
+    "id": "asset.models.buildings.ants-chitin-workshop",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          12,
+          12
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 6,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.ants-chitin-workshop/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.ants-leaf-garrison",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          12,
+          12
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 6,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.ants-leaf-garrison/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
     "id": "asset.models.buildings.ants-mandible-hall",
     "transform": {
       "scale": 1,
@@ -356,6 +446,51 @@
     "scenery": []
   },
   {
+    "id": "asset.models.buildings.ants-silk-brood-house",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          8,
+          8
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 4,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.ants-silk-brood-house/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
     "id": "asset.models.buildings.ants-watchtower",
     "transform": {
       "scale": 1,
@@ -401,6 +536,51 @@
     "scenery": []
   },
   {
+    "id": "asset.models.buildings.beetles-armored-brood-den",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          8,
+          8
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 4,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.beetles-armored-brood-den/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
     "id": "asset.models.buildings.beetles-carapace-hall",
     "transform": {
       "scale": 1,
@@ -442,6 +622,288 @@
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.buildings.beetles-carapace-hall/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.beetles-iron-garrison",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          12,
+          12
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 6,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.beetles-iron-garrison/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.buildings.beetles-shell-foundry",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "blocker": {
+        "shape": "box",
+        "size": [
+          12,
+          12
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      "vegetationClearance": 6,
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.buildings.beetles-shell-foundry/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.construction.ants",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.construction.ants/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.construction.beetles",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.construction.beetles/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.effects.amber-bolt",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.effects.amber-bolt/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.effects.arrow",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.effects.arrow/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.effects.nectar",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.effects.nectar/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.effects.resin-bomb",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.effects.resin-bomb/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.effects.rootbreaker-uproot",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "animations": [
+        {
+          "semantic": "erupt",
+          "clip": "erupt",
+          "loop": false,
+          "events": []
+        }
+      ]
+    },
+    "geometry": [
+      "assets/library/asset.models.effects.rootbreaker-uproot/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.effects.silk",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.effects.silk/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.effects.stone",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.effects.stone/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.effects.thorn",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "geometry": [
+      "assets/library/asset.models.effects.thorn/geometry.glb"
     ],
     "scenery": []
   },
@@ -3895,6 +4357,126 @@
     "scenery": []
   },
   {
+    "id": "asset.models.units.ants-amber-adept",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.8333333333333334
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "cast",
+          "node": "socket_cast",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-amber-adept/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
     "id": "asset.models.units.ants-archer",
     "transform": {
       "scale": 1,
@@ -4020,7 +4602,7 @@
     "scenery": []
   },
   {
-    "id": "asset.models.units.ants-bombardier",
+    "id": "asset.models.units.ants-banneret",
     "transform": {
       "scale": 1,
       "pivot": [
@@ -4032,11 +4614,6 @@
       "forward": "+Z"
     },
     "capabilities": {
-      "dimensions": {
-        "radius": 0.2,
-        "height": 2,
-        "formationSpacing": 1
-      },
       "teamColor": {
         "mode": "mask",
         "slots": [
@@ -4067,19 +4644,19 @@
           "events": []
         },
         {
-          "semantic": "charge",
-          "clip": "run",
-          "loop": true,
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
           "events": []
         },
         {
           "semantic": "attack",
-          "clip": "attack_mortar",
+          "clip": "attack",
           "loop": false,
           "events": [
             {
               "name": "release",
-              "time": 1.5
+              "time": 0.5
             }
           ]
         },
@@ -4125,8 +4702,128 @@
           ]
         },
         {
-          "name": "back",
-          "node": "socket_back",
+          "name": "cast",
+          "node": "socket_cast",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-banneret/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-bombardier",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.6666666666666666
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "cast",
+          "node": "socket_cast",
           "offset": [
             0,
             0,
@@ -4141,6 +4838,1217 @@
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.units.ants-bombardier/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-cleaver-warrior",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.8333333333333334
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-cleaver-warrior/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-colony-worker",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "carry",
+          "clip": "carry",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "carry_walk",
+          "clip": "carry_walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "carry_run",
+          "clip": "carry_run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "build",
+          "clip": "build",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "chop",
+          "clip": "chop",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "chop",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.8333333333333334
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "back",
+          "node": "socket_back",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-colony-worker/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-leaf-archer",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 1.7083333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "cast",
+          "node": "socket_cast",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-leaf-archer/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-marshal",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.875
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "cast",
+          "node": "socket_cast",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-marshal/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-nectarist",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.5416666666666666
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "cast",
+          "node": "socket_cast",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-nectarist/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-queensguard",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.875
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "cast",
+          "node": "socket_cast",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-queensguard/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-rootbreaker",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 1.5
+            }
+          ]
+        },
+        {
+          "semantic": "skullcrack",
+          "clip": "skullcrack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 1.1666666666666667
+            }
+          ]
+        },
+        {
+          "semantic": "roar",
+          "clip": "roar",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 1.25
+            }
+          ]
+        },
+        {
+          "semantic": "uproot",
+          "clip": "uproot",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 1.5
+            }
+          ]
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 1.0833333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "cast",
+          "node": "socket_cast",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-rootbreaker/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-rootweaver",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.8333333333333334
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "cast",
+          "node": "socket_cast",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-rootweaver/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-silkwarden",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.4583333333333333
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "cast",
+          "node": "socket_cast",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-silkwarden/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-thornblade",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "charge",
+          "clip": "charge",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "hit",
+              "time": 0.2916666666666667
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-thornblade/geometry.glb"
     ],
     "scenery": []
   },
@@ -4262,6 +6170,126 @@
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.units.ants-warrior/geometry.glb"
+    ],
+    "scenery": []
+  },
+  {
+    "id": "asset.models.units.ants-winglancer",
+    "transform": {
+      "scale": 1,
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "up": "Y",
+      "forward": "+Z"
+    },
+    "capabilities": {
+      "teamColor": {
+        "mode": "mask",
+        "slots": [
+          "TC_TeamColor"
+        ],
+        "mask": {
+          "role": "team_mask",
+          "index": 1
+        }
+      },
+      "animations": [
+        {
+          "semantic": "idle",
+          "clip": "idle",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "walk",
+          "clip": "walk",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "run",
+          "clip": "run",
+          "loop": true,
+          "events": []
+        },
+        {
+          "semantic": "cast",
+          "clip": "cast",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "attack",
+          "clip": "attack",
+          "loop": false,
+          "events": [
+            {
+              "name": "release",
+              "time": 0.7083333333333334
+            }
+          ]
+        },
+        {
+          "semantic": "hit",
+          "clip": "hit",
+          "loop": false,
+          "events": []
+        },
+        {
+          "semantic": "death",
+          "clip": "death",
+          "loop": false,
+          "events": []
+        }
+      ],
+      "sockets": [
+        {
+          "name": "handL",
+          "node": "socket_handL",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "handR",
+          "node": "socket_handR",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "projectile",
+          "node": "socket_projectile",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "cast",
+          "node": "socket_cast",
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "groundContact": {
+        "mode": "pivot"
+      }
+    },
+    "groundContact": "pivot",
+    "geometry": [
+      "assets/library/asset.models.units.ants-winglancer/geometry.glb"
     ],
     "scenery": []
   },

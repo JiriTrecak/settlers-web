@@ -77,15 +77,15 @@ it('independent preview fixtures can use neutral models as ordinary air targets 
  expect(()=>createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'neutral',combat:false}),false)).not.toThrow();
 });
 
-it('neutral spell sight uses airborne height across a terrain ridge for unit and point targets',async()=>{
+it('neutral spell sight lets airborne observers see higher ground for unit and point targets',async()=>{
  const {vi}=await import('vitest'),{TacticalTerrain}=await import('../../src/shared/map/tacticalTerrain');
  for(const kind of ['unit','point'] as const)for(const mode of ['ground','air'] as const){
   const original=coreAbilities.abilities.find(a=>a.id==='ability.core.storm-bolt')!;
   const a=abilitySchema.parse({...original,targeting:kind==='unit'?{...original.targeting,relations:['enemy']}:{...original.targeting,kind:'point',range:18,radius:2},delivery:undefined});
   const p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
-  const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'neutral',distance:6,casterLocomotion:mode,targetLocomotion:mode,mana:1000}));
+  const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'neutral',distance:6,casterLocomotion:mode,targetLocomotion:'ground',mana:1000}));
   const caster=f.game.context.get(f.caster)!;caster.owner='none';caster.unit!.camp='preview-camp';f.game.context.get(f.target!)!.owner='player.2';
-  const heights=new Int16Array(256*256);for(let y=0;y<256;y++)heights[y*256+122]=200;
+  const heights=new Int16Array(256*256);for(let y=0;y<256;y++)for(let x=122;x<256;x++)heights[y*256+x]=400;
   const terrain=new TacticalTerrain(256,heights);
   const sight=vi.spyOn(f.game.spatial,'visible').mockImplementation((from,to)=>terrain.visible(from,to));
   const result=f.game.abilities.cast(f.caster,'preview',kind==='unit'?f.target!:{x:126,y:120});
@@ -102,7 +102,7 @@ it('neutral weapon acquisition uses the same elevated sight as neutral spell tar
   const caster=f.game.context.get(f.caster)!,target=f.game.context.get(f.target!)!;
   caster.owner='none';caster.unit!.camp='preview-camp';target.owner='player.2';
   caster.unit!.order={type:'attack',target:target.id,force:false};
-  const heights=new Int16Array(256*256);for(let y=0;y<256;y++)heights[y*256+122]=200;
+  const heights=new Int16Array(256*256);for(let y=0;y<256;y++)for(let x=122;x<256;x++)heights[y*256+x]=400;
   const terrain=new TacticalTerrain(256,heights),sight=vi.spyOn(f.game.spatial,'visible').mockImplementation((from,to)=>terrain.visible(from,to));
   f.game.combat.plan(new Set([caster.id]));
   expect(caster.unit!.target,mode).toBe(mode==='air'?target.id:null);

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "id": "asset.spells.rootbreaker.presence-icon",
+  "name": "Crushing Presence",
+  "kind": "icon",
+  "revision": 5,
+  "status": "published",
+  "tags": [
+    "spell-effects",
+    "generated"
+  ],
+  "resources": [
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "552830b080778b43d23c9908520f481e110fce75f701797249080a7cf078b901",
+      "bytes": 689
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "c4c4f62a72dced7297d86bc7476eb3b316665c5bfeb15d7b877acffc4886cb44",
+      "bytes": 46041
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "png",
+      "sha256": "018dd817c27dbc6908a307d741f67e5a3e45933b19ed3d79b834413844f84588",
+      "bytes": 1731731
+    }
+  ],
+  "usesGeometry": false,
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "render": [
+      {
+        "id": "asset.spells.rootbreaker.presence-icon",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.spells.rootbreaker.presence-icon"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {},
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original artwork generated with OpenAI GPT Image 2.5."
+  }
+}

@@ -615,6 +615,7 @@ export class ContentRegistry {
     for(const campaign of Object.values(this.rules.campaigns))if(!this.rules.races[campaign.race])throw Error(`Unknown campaign race ${campaign.race}`);
     const profiles=Object.keys(this.rules.races).map(id=>[id,raceDefinition(this.rules,id)] as const);
     for(const [race,r] of profiles){
+      if(r.construction&&!this.asset(r.construction.scaffold).file)throw Error(`${race}: construction scaffold must reference a model`);
       const roster=new Set(r.roster);
       const foreign=(id:string)=>!roster.has(id)&&profiles.some(([other,profile])=>other!==race&&profile.roster.includes(id));if(roster.size!==r.roster.length)throw Error(`${race}: duplicate roster entry`);
       for(const id of roster){const d=this.get(id);if(d.kind!=='unit'&&d.kind!=='building')throw Error(`${race}: invalid roster member ${id}`);

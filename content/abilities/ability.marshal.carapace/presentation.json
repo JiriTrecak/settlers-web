@@ -3,9 +3,9 @@
   "id": "presentation.marshal.carapace",
   "icon": "asset.spells.marshal.carapace-icon",
   "animations": {
-    "prepare": "attack",
-    "release": "attack",
-    "recover": "idle",
+    "prepare": "cast",
+    "release": "cast",
+    "recover": "cast",
     "fallback": "idle"
   },
   "effects": [

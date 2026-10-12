@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {TacticalTerrain,SIGHT_HEIGHT_CM,MAX_GROUND_STEP_CM,type TerrainPoint} from '../../src/shared/map/tacticalTerrain';
+import {TacticalTerrain,SIGHT_HEIGHT_CM,UPHILL_VISIBILITY_CM,MAX_GROUND_STEP_CM,type TerrainPoint} from '../../src/shared/map/tacticalTerrain';
 
 /** Deliberately brute-force reference: no acceleration structures or cached endpoints. */
 function reference(size:number,heights:Int16Array){
@@ -20,7 +20,7 @@ function reference(size:number,heights:Int16Array){
   for(let i=1;i<=n;i++){const h=height(point(a,b,i/n));if(Math.abs(h-prev)>MAX_GROUND_STEP_CM*length+1)return false;prev=h;}
   return true;
  };
- return {height,shotClear,meleeClear,visible:(a:TerrainPoint,b:TerrainPoint)=>height(b)+(b.elevation??0)*100<=height(a)+(a.elevation??0)*100+SIGHT_HEIGHT_CM&&shotClear(a,b)};
+ return {height,shotClear,meleeClear,visible:(a:TerrainPoint,b:TerrainPoint)=>height(b)+(b.elevation??0)*100<=height(a)+(a.elevation??0)*100+UPHILL_VISIBILITY_CM};
 }
 
 it('matches brute-force terrain rays across ridges, block boundaries, elevated decks and fractional positions',()=>{
@@ -66,7 +66,7 @@ it('does not ray-march a clear shelf because a coarse block includes a distant c
  const expected:number[]=[];
  for(let y=0;y<size;y++)for(let x=0;x<size;x++)if((x-origin.x)**2+(y-origin.y)**2<=16&&brute.visible(origin,{x,y}))expected.push(y*size+x);
  expect([...cells]).toEqual(expected);
- expect(counts.get('Fine shelf footprints')).toBe(1);expect(counts.get('Terrain rays')).toBe(0);
+ expect(counts.get('Computed visible cells')).toBe(expected.length);expect(counts.get('Terrain rays')??0).toBe(0);
 });
 
 

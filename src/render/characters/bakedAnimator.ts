@@ -10,7 +10,7 @@
  */
 import type { AssetDefinition } from "../../shared/authoring/asset";
 import { BAKE_FPS, type BakedClip, type CharacterBake } from "./animationBake";
-import { characterProfile, oneShotState, type AntState, type CharacterProfile } from "./character-player.js";
+import { semanticContact, characterProfile, oneShotState, type AntState, type CharacterProfile } from "./character-player.js";
 import type { AnimationClip, Object3D } from "three";
 
 type Track = { clip: BakedClip; time: number; once: boolean };
@@ -28,6 +28,7 @@ export interface UnitAnimator {
   setState(state: AntState, options?: { restart?: boolean; fade?: number }): void;
   update(dt: number): void;
   sample(normalized: number, dt: number): void;
+  castContact(state: string, fallback?: number): number;
   attackContact(): number;
   clipDuration(): number;
   phase(): number;
@@ -98,6 +99,9 @@ export class BakedAnimator implements UnitAnimator {
     this.advanceFades(dt * this.speed);
   }
 
+  castContact(state: string, fallback = .55) {
+    return semanticContact(this.definitions, state, this.bake.clips.get(this.states[state]!)?.duration, fallback);
+  }
   attackContact() { return this.profile.attackEvents?.[this.variant]?.normalizedTime ?? 0.55; }
   clipDuration() { return this.current.clip.duration; }
   phase() { return this.current.time / this.current.clip.duration; }

@@ -606,7 +606,7 @@ export class GameContext {
     for(const id of blockers.sort((a,b)=>a-b)){
       const ally=this.get(id),idle=ally?.unit;
       if(!ally||!idle||ally.owner!==e.owner||!this.ready(ally)||idle.order||idle.orderQueue.length||idle.route.length||
-        idle.job||idle.employment||idle.pendingMove||idle.contained||idle.release||idle.garrison||idle.target!==null||idle.attack||
+        idle.taunt||idle.job||idle.employment||idle.pendingMove||idle.contained||idle.release||idle.garrison||idle.target!==null||idle.attack||
         ally.abilities?.pending||isStunned(ally,this.registry)||!this.def(ally).behaviors.movement?.speed||
         itemFlag(ally,this.registry,'rooted')&&!controlImmune(ally,this.registry,'root'))continue;
       const claims=new Set(occupied);claims.delete(this.spatial.cell(ally));claims.add(this.spatial.cell(e));

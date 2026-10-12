@@ -3,7 +3,7 @@
   "id": "asset.models.environment.woodland-pine-a",
   "name": "woodland pine a",
   "kind": "tree",
-  "revision": 60,
+  "revision": 102,
   "status": "published",
   "tags": [
     "original",
@@ -15,15 +15,15 @@
       "role": "albedo",
       "index": 1,
       "format": "png",
-      "sha256": "550ed78db2f0b540d8534b60b5c3f5fa55d20cfd80848a169835a1c294ddaea2",
-      "bytes": 1169377
+      "sha256": "caa767a0d932087ddabf23d3af35ae3313b0ae9ccb5238879219da9d2c550e71",
+      "bytes": 827273
     },
     {
       "role": "albedo",
       "index": 2,
       "format": "png",
-      "sha256": "5ba5e38c3f60f5de61a16de00980bfad07a56f8f9b023012b7718eb43a1aa837",
-      "bytes": 236370
+      "sha256": "5adb5aa08ca24e3932d00eb544056b99c464ced691472dd24c2a8ee6a71cbe9c",
+      "bytes": 2116207
     },
     {
       "role": "build",
@@ -36,15 +36,15 @@
       "role": "generation",
       "index": 1,
       "format": "json",
-      "sha256": "f4348074a1f0b8bb6a758357eed1379cac9801b92861d96f6b2ae9893b460c26",
-      "bytes": 1522
+      "sha256": "8e2c77b8fcbdc4ed0ed4b2bdeac6b7097c5f94fd090ca43b8fb2cbe0c8642626",
+      "bytes": 3764
     },
     {
       "role": "geometry",
       "index": 1,
       "format": "glb",
-      "sha256": "5958bf04d49815997c365b72d16b0e7838267fe0158db6e014ec077e4a93932f",
-      "bytes": 511256
+      "sha256": "93b48092dfdb3bfd358f25b5c4029595b7ef80aa0327a09f6cc6cb7fa731461e",
+      "bytes": 845096
     },
     {
       "role": "recipe",
@@ -57,8 +57,8 @@
       "role": "source",
       "index": 1,
       "format": "blend",
-      "sha256": "f85a3615e80cb0a908b18164d8c9b5d0763d72af22f2385615e851b0f1f87330",
-      "bytes": 2821482
+      "sha256": "c2e3f19dd6ad2edf1caff42c2bf503570ffedfb0446d57e2d189dea42b1d09f8",
+      "bytes": 3414865
     },
     {
       "role": "source",
@@ -71,15 +71,15 @@
       "role": "source",
       "index": 3,
       "format": "glb",
-      "sha256": "33fe0435eaf2d687bc1cf866088bb93535d337b49272fb575e8fa6dbfef543a1",
-      "bytes": 2259600
+      "sha256": "c6dd8748bfdb04c4e1d3672105d77ff8a335837d87e5f7ac6c131dc14a2fae1c",
+      "bytes": 3010140
     },
     {
       "role": "source",
       "index": 4,
       "format": "glb",
-      "sha256": "366cb7d09430b90f769fe2b4ceb5a147064749aa5e45489c90836e2d65c0ffa7",
-      "bytes": 2240632
+      "sha256": "c3d5205969085a99fe360b733c5cbaa24ba899b3cfa9390a621aeb35bce0c17e",
+      "bytes": 2974088
     },
     {
       "role": "source",
@@ -99,8 +99,8 @@
       "role": "source",
       "index": 7,
       "format": "png",
-      "sha256": "56c73460cc43d9f06ba07c4fbe0e17ae039ce27eb4ab0fa5da3412c82845fe87",
-      "bytes": 645584
+      "sha256": "ac9069611404d6d5a9a5fd139de1492265483c8f74a571f2b925acdd1fa7459e",
+      "bytes": 268249
     },
     {
       "role": "source",
@@ -194,6 +194,6 @@
   },
   "provenance": {
     "method": "authored",
-    "licenseNote": "Original Blender geometry and procedural bark. Original pine-bough albedo generated with built-in ImageGen. All geometry and pixels independently authored."
+    "licenseNote": "Original Blender geometry and original foliage and bark textures generated with built-in ImageGen. All geometry and pixels independently authored."
   }
 }

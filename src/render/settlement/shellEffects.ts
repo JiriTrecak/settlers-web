@@ -1,59 +1,49 @@
+import {Group,type Vector3} from 'three';
 import {content} from '../../content/builtin';
-import {AdditiveBlending,Color,DoubleSide,DynamicDrawUsage,Group,InstancedBufferAttribute,InstancedMesh,Matrix4,MeshBasicMaterial,MeshStandardMaterial,Quaternion,RingGeometry,SphereGeometry,Vector3} from 'three';
+import {coreEffects} from '../../content/effects/library';
+import type {VisualEffect} from '../../content/effects/schema';
 import type {Shell} from '../../sim/game/shellState';
 import type {HeightField} from '../../shared/map/height';
+import {EffectPlayer} from '../abilities/effectPlayer';
+import {loadEffectModel} from '../abilities/effectModel';
+import {ProjectileEffects,type WeaponFlight} from './projectileEffects';
 
-/** Observed simulation flights, including impacts after the firing entity disappears. */
+/** Fixed-target shell simulation with editor-authored flight and impact visuals. */
 export class ShellEffects {
- private readonly root=new Group();
- private readonly ballGeometry=new SphereGeometry(.2,8,6);
- private readonly ringGeometry=new RingGeometry(.72,1,24);
- private readonly ballMaterial=new MeshStandardMaterial({color:0x655c4e,metalness:.65,roughness:.55});
- private readonly ringMaterial=new MeshBasicMaterial({color:0xffffff,transparent:true,depthWrite:false,side:DoubleSide,forceSinglePass:true,blending:AdditiveBlending});
- private capacity=0;
- private balls:InstancedMesh|null=null;
- private rings:InstancedMesh|null=null;
- private readonly matrix=new Matrix4();private readonly position=new Vector3();private readonly scale=new Vector3();
- private readonly rotation=new Quaternion();private readonly flat=new Quaternion().setFromAxisAngle(new Vector3(1,0,0),-Math.PI/2);
- private readonly color=new Color();
- private readonly origins=new Map<number,{launched:number;position:Vector3}>();
- // Reserved up front (with ring colours) so warm-up links both programs before the first shell.
- constructor(parent:Group,private readonly registry=content){parent.add(this.root);this.reserve(1);this.balls!.count=0;this.rings!.count=0;}
- private reserve(count:number){
-  if(this.capacity>=count)return;
-  let capacity=Math.max(16,this.capacity);while(capacity<count)capacity*=2;
-  this.balls?.dispose();this.rings?.dispose();this.root.clear();this.capacity=capacity;
-  this.balls=new InstancedMesh(this.ballGeometry,this.ballMaterial,capacity);this.rings=new InstancedMesh(this.ringGeometry,this.ringMaterial,capacity);
-  this.rings.instanceColor=new InstancedBufferAttribute(new Float32Array(capacity*3),3);
-  for(const mesh of [this.balls,this.rings]){mesh.instanceMatrix.setUsage(DynamicDrawUsage);mesh.frustumCulled=false;this.root.add(mesh);}
+ readonly root=new Group();
+ readonly ready:Promise<void>;
+ private readonly flights:ProjectileEffects;
+ private readonly impacts:EffectPlayer;
+ private readonly effects=new Map<string,VisualEffect>();
+ private readonly seen=new Map<number,number>();
+ private lastTick=-1;
+ constructor(parent:Group,private readonly registry=content,effects:readonly VisualEffect[]=coreEffects,loader=loadEffectModel,impacts=new EffectPlayer()){
+  parent.add(this.root);this.impacts=impacts;this.root.add(impacts.root);
+  const bindings=registry.definitions.filter(d=>d.behaviors.combat?.shell).map(d=>registry.asset(d.asset));
+  for(const binding of bindings){
+   if(!binding.projectile||!binding.impactEffect)throw Error('Shell weapon needs declared projectile and impact effects: '+binding.id);
+   const effect=effects.find(e=>e.id===binding.impactEffect);if(!effect)throw Error('Missing shell impact effect '+binding.impactEffect);
+   this.effects.set(binding.impactEffect,effect);
+  }
+  this.flights=new ProjectileEffects(this.root,registry,effects,loader,bindings.map(b=>b.projectile!));
+  // Load impact textures before the first shot, through the shared effect player.
+  const warmup=[...this.effects.values()].map(e=>impacts.play(e));impacts.root.visible=false;
+  this.ready=Promise.all([this.flights.ready,impacts.ready()]).then(()=>{for(const handle of warmup)impacts.stop(handle);impacts.root.visible=true;});
+  void this.ready.catch(error=>console.error('Shell effects could not load',error));
  }
  update(shells:readonly Shell[],field:HeightField,tick:number,launchPosition?:(shell:Shell)=>Vector3|undefined){
-  const live=new Set(shells.map(s=>s.id));
-  for(const id of this.origins.keys())if(!live.has(id))this.origins.delete(id);
-  this.reserve(shells.length);if(!this.balls||!this.rings)return;this.balls.count=0;this.rings.count=0;
+  if(tick<this.lastTick){this.seen.clear();this.impacts.clear();}this.lastTick=tick;
+  const byId=new Map(shells.map(s=>[s.id,s]));
+  for(const id of this.seen.keys())if(!byId.has(id))this.seen.delete(id);
+  const flights:WeaponFlight[]=shells.map(s=>({...s,destination:s.target,groundImpact:true}));
+  this.flights.update(tick,flights,field,launchPosition?s=>launchPosition(byId.get(s.id)!):undefined);
   for(const shell of shells){
-   if(tick<shell.impact){
-    let cached=this.origins.get(shell.id);
-    if(!cached||cached.launched!==shell.launched){
-     // Sample once: a flying shell must not follow its moving or dying shooter.
-     const position=(tick<=shell.launched+1?launchPosition?.(shell):undefined)?.clone()
-      ?? new Vector3(shell.origin.x,field.walkSample(shell.origin.x,shell.origin.y,shell.origin.surface)+2.1+(shell.origin.elevation??0),shell.origin.y);
-     cached={launched:shell.launched,position};this.origins.set(shell.id,cached);
-    }
-    const origin=cached.position;
-    const t=Math.max(0,(tick-shell.launched)/(shell.impact-shell.launched)),dx=shell.target.x-origin.x,dy=shell.target.y-origin.z;
-    const start=origin.y,end=field.walkSample(shell.target.x,shell.target.y,shell.target.surface)+.1;
-    const arc=Math.max(2,Math.hypot(dx,dy)*.3);
-    this.position.set(origin.x+dx*t,start+(end-start)*t+4*arc*t*(1-t),origin.z+dy*t);this.scale.setScalar(this.registry.get(shell.definition).modelScale??1);
-    this.balls.setMatrixAt(this.balls.count++,this.matrix.compose(this.position,this.rotation,this.scale));
-   }else{
-    const t=(tick-shell.impact)/20;if(t>=1)continue;
-    this.position.set(shell.target.x,field.walkSample(shell.target.x,shell.target.y,shell.target.surface)+.12,shell.target.y);this.scale.setScalar(shell.radius*(.25+.9*t));
-    this.rings.setMatrixAt(this.rings.count,this.matrix.compose(this.position,this.flat,this.scale));
-    this.rings.setColorAt(this.rings.count++,this.color.setRGB(.6*(1-t),.32*(1-t),.1*(1-t)));
-   }
+   if(tick<shell.impact||this.seen.get(shell.id)===shell.launched)continue;
+   this.seen.set(shell.id,shell.launched);
+   const binding=this.registry.asset(this.registry.get(shell.definition).asset),effect=this.effects.get(binding.impactEffect!)!;
+   this.impacts.play(effect,{tick:shell.impact,seed:shell.id,target:{...shell.target,height:field.walkSample(shell.target.x,shell.target.y,shell.target.surface)},radius:shell.radius});
   }
-  this.balls.instanceMatrix.needsUpdate=true;this.rings.instanceMatrix.needsUpdate=true;if(this.rings.instanceColor)this.rings.instanceColor.needsUpdate=true;
+  this.impacts.update(tick);
  }
- dispose(){this.origins.clear();this.balls?.dispose();this.rings?.dispose();this.root.removeFromParent();this.root.clear();this.ballGeometry.dispose();this.ringGeometry.dispose();this.ballMaterial.dispose();this.ringMaterial.dispose();}
+ dispose(){this.flights.dispose();this.impacts.dispose();this.seen.clear();this.root.removeFromParent();this.root.clear();}
 }

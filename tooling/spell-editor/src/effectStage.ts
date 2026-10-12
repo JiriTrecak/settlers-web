@@ -4,7 +4,7 @@ import {resolveEffectSocket} from '../../../src/render/abilities/effectSocket';
 import published from '../../../assets/authoring/published.json';
 import {assetDefinitionSchema,type AssetDefinition} from '../../../src/shared/authoring/asset';
 import {visibleBounds,frameBounds,inspectionCapture} from './framing';
-import {Vector3,Group,Mesh,MeshStandardMaterial,GridHelper,PlaneGeometry} from 'three';
+import {Vector3,Group,Mesh,MeshBasicMaterial,GridHelper,PlaneGeometry} from 'three';
 import {Renderer} from '../../../src/render';
 import {HeightField} from '../../../src/shared/map/height';
 import {emptyLandscape} from '../../../src/shared/landscape/curve';
@@ -13,8 +13,8 @@ import type {VisualEffect} from '../../../src/content/effects/schema';
 /** Independent visual stage, sharing the game's renderer, lighting and biome profiles. */
 export class EffectStage{
  private subject?:InspectionSubject;private subjectAsset?:AssetDefinition;private modelGeneration=0;private modelId='';private modelLoading?:Promise<void>;modelAnchor:'source'|'target'='target';
- private renderer:Renderer;private player=new EffectPlayer();private root=new Group();private grid=new GridHelper(40,40,0x80908c,0x65716a);
- private geometry=new PlaneGeometry(2000,2000);private material=new MeshStandardMaterial({color:0x263438,roughness:1});
+ private renderer:Renderer;private player=new EffectPlayer();private root=new Group();private grid=new GridHelper(40,40,0x52525b,0x3f3f46);
+ private geometry=new PlaneGeometry(2000,2000);private material=new MeshBasicMaterial({color:'#27272a'});
  private frame=0;private abort=new AbortController();private drag?:{x:number;y:number};private last=0;private effect?:VisualEffect;
  tick=0;playing=true;speed=1;repeat=true;sustain=false;distance=6;seed=1;private end=200;
  constructor(private canvas:HTMLCanvasElement,private onFrame:(tick:number,end:number)=>void){

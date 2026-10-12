@@ -1,0 +1,170 @@
+{
+  "version": 1,
+  "id": "asset.models.buildings.beetles-armored-brood-den",
+  "name": "Armored Brood Den",
+  "kind": "building",
+  "revision": 28,
+  "status": "published",
+  "tags": [
+    "beetles",
+    "tripo",
+    "team-mask"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "78d11588ebb8a3db038bad6c6364116e5df2634e34b5569b6028d8d7c2ec2e2d",
+      "bytes": 6422753
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "d15a2a82b7548f5891ca111246493cf67d79b04b243235c19aff18b22bc97ce6",
+      "bytes": 1087
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "7cba9b575da6b408d509361b246463ff9c5c682ff003864f7708b8eeea902943",
+      "bytes": 9329580
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "7e2f6960184628ef4e473f5f9a0369d318062986904fb540ef1e6b3815ab9ed2",
+      "bytes": 11730
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "6980a371faf2a1cb707f873f7de9f15224e093543da4dae5a7babbe581e4d05b",
+      "bytes": 990443
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "3dc0e3b137dd4b3a7fcf83bb58842ac7f335deebac9848ded2c2d83fc26c3711",
+      "bytes": 949096
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "55dc35bfc666d36085efbdde301dfb8633859aaa4649fefc5091aaa4a56221bc",
+      "bytes": 7398
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "5eb59989a93807ef5661e7c53c962c8ae0f38334c90230d057d516545dd980c9",
+      "bytes": 1866858
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "bf0cca0052300e65abfcc28bdb841d2697bfa8dfbdd7110b3e41b11278b8cb0b",
+      "bytes": 22479675
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "b852580076434150c93d58e46fe6cf74440eb81f1fafa6d2e0804ce672a3e30b",
+      "bytes": 9260936
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "aeb50237f8071d220ba98c7fbdeb713049e6d7045946d8158f67a795553ba9fe",
+      "bytes": 25
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "53bb048617839822042565df9bfd479dd5b0b3d9d2718e79d2121b1ac1007351",
+      "bytes": 108028
+    }
+  ],
+  "usesGeometry": true,
+  "exportSettings": {
+    "textureSize": 2048
+  },
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "beetles",
+    "profile": "building",
+    "render": [
+      {
+        "id": "asset.beetles.armored-brood-den",
+        "scale": 8,
+        "healthHeight": 4.613282680511475,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.buildings.beetles-armored-brood-den"
+        }
+      },
+      {
+        "id": "icon.beetles.armored-brood-den",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.buildings.beetles-armored-brood-den"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "blocker": {
+      "shape": "box",
+      "size": [
+        8,
+        8
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "vegetationClearance": 4,
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original generated artwork for Under the Canopy."
+  }
+}

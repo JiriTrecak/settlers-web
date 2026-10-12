@@ -18,11 +18,13 @@ function fixture(ward={},ops:unknown[]=[mixed]){
  return {...f,a,c,t,apply,statuses};
 }
 it('prevents each incoming control component without granting spell damage immunity',()=>{
- const controls=[{stun:true},{modifiers:{rooted:true}},{silence:true},{disarm:true},{itemBlocked:true},{modifiers:{moveSpeedPermille:-500}},{modifiers:{attackSpeedPermille:-500}}];
- const f=fixture({},controls.map((p,i)=>({op:'status',target:'target',id:'control'+i,amount:80,polarity:'negative',dispel:true,modifiers:{},...p})));
- expect(f.apply()).toBe(160);for(let i=1;i<=controls.length;i++)expect(f.apply(i)).toBe(0);
- expect(f.t.spellStatuses).toHaveLength(1);expect(controlImmunities(f.t,f.game.registry).size).toBe(7);
+ const controls=[{stun:true},{modifiers:{rooted:true}},{silence:true},{disarm:true},{itemBlocked:true},{taunt:true},{modifiers:{moveSpeedPermille:-500}},{modifiers:{attackSpeedPermille:-500}}];
+ for(const p of controls){
+ const f=fixture({},[{op:'status',target:'target',id:'control',amount:80,polarity:'negative',dispel:true,modifiers:{},...p}]);
+ expect(f.apply()).toBe(160);expect(f.apply(1)).toBe(0);
+ expect(f.t.spellStatuses).toHaveLength(1);expect(controlImmunities(f.t,f.game.registry).size).toBe(8);
  const result=f.game.combat.abilityHit({source:f.caster,target:f.target,damage:30,damageType:'spell'});expect(result.damage).toBe(30);
+ }
 });
 it('retains damage and armor penalties but permanently prevents incoming control portions',()=>{
  const f=fixture({amount:20});f.apply();expect(f.apply(1)).toBe(160);

@@ -1,6 +1,7 @@
 import './sourceAssetFetch';
-import {afterEach,expect,it,vi} from 'vitest';
-import {AnimationClip,Group,Scene} from 'three';
+import {beforeEach,afterEach,expect,it,vi} from 'vitest';
+import {Texture,TextureLoader,AnimationClip,Group,Scene,Mesh,BoxGeometry,MeshStandardMaterial,Box3,Vector3} from 'three';
+import {RallyMarkers} from '../../src/render/settlement/rallyMarkers';
 import {MineLabels} from '../../src/render/settlement/mineLabels';
 import {ContentRegistry} from '../../src/content/registry';
 import type {AuthoredDefinition} from '../../src/content/schema';
@@ -8,9 +9,31 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {SettlementLayer} from '../../src/render/settlement/settlementLayer';
 import {HeightField} from '../../src/shared/map/height';
 import {game,placed,source} from '../game/helpers';
+// The shared renderer also loads declared weapon effects; a GLTF fixture must
+// contain geometry to satisfy the same model contract as production assets.
+function modelFixture(){const scene=new Group();scene.add(new Mesh(new BoxGeometry(1,1,1),new MeshStandardMaterial()));return scene;}
+// These tests exercise scene lifecycle; browser image decoding is covered separately.
+beforeEach(()=>vi.spyOn(TextureLoader.prototype,'load').mockImplementation((_url,onLoad)=>{const texture=new Texture({width:1,height:1} as HTMLImageElement);queueMicrotask(()=>onLoad?.(texture));return texture;}));
 afterEach(()=>vi.restoreAllMocks());
+it('uses a grounded scaffold in the shared renderer and reveals the full-sized building before completion',async()=>{
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async()=>{const scene=new Group(),mesh=new Mesh(new BoxGeometry(1,1,1),new MeshStandardMaterial());mesh.position.y=.5;scene.add(mesh);return {scene,animations:[]} as any;});
+ const scene=new Scene(),layer=new SettlementLayer(scene),g=game([placed('scaffold-test','building.ants.house',205,210)]),view=g.view();
+ const e=view.entities.find(e=>e.definition==='building.ants.house')!,field=new HeightField();
+ const total=g.registry.get(e.definition).creation!.workTicks;
+ const state={...view,entities:[{...e,construction:{progress:Math.floor(total*.5)}}]};
+ for(let i=0;i<3;i++){layer.update(state,field,0);await layer.ready;}
+ const root=scene.getObjectByName('game-entities')!.children.find(o=>o.userData.entityId===e.id)!,body=root.getObjectByName('Body')!,scaffold=root.getObjectByName('Construction scaffold')!;
+ expect(scaffold.visible).toBe(true);expect(body.visible).toBe(false);expect(body.scale.y).toBe(body.scale.x);
+ scene.updateMatrixWorld(true);
+ expect(new Box3().setFromObject(scaffold).getCenter(new Vector3()).x).toBeCloseTo(e.x);
+ const progressed={...state,entities:[{...e,construction:{progress:Math.ceil(total*.96)}}]};
+ layer.update(progressed,field,1);expect(body.visible).toBe(true);expect(scaffold.scale.y).toBe(1);expect(scaffold.position.y).toBeLessThan(0);
+ layer.update({...view,entities:[e]},field,2);expect(root.getObjectByName('Construction scaffold')).toBeUndefined();expect(body.visible).toBe(true);
+ layer.update(state,field,3);expect(root.getObjectByName('Construction scaffold')).toBeDefined();expect(body.visible).toBe(false);
+ layer.update({...view,entities:[]},field,4);expect(root.parent).toBeNull();layer.destroy(scene);
+});
 it('updates cached model decorations without recursive name searches and refreshes them on asset replacement',async()=>{
- vi.spyOn(GLTFLoader.prototype,'loadAsync').mockResolvedValue({scene:new Group(),animations:[]} as any);
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockResolvedValue({scene:modelFixture(),animations:[]} as any);
  const scene=new Scene(),layer=new SettlementLayer(scene);await layer.ready;
  const g=game([placed('building','building.ants.house',205,210)]),view=g.view();
  const entity=view.entities.find(e=>e.definition==='building.ants.house')!;
@@ -32,7 +55,7 @@ it('updates cached model decorations without recursive name searches and refresh
 it.each([1,1.7,2])('renders unit bodies and indicators at the definition model scale %s independently of building presentation scales and world positions',async(scale)=>{
  vi.spyOn(MineLabels.prototype,'update').mockImplementation(()=>{});
  vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async()=>{
-  const scene=new Group();scene.userData.characterProfile={variants:{warrior:{states:{idle:'idle'}},base:{states:{idle:'idle'}}},attackEvents:{}};
+  const scene=modelFixture();scene.userData.characterProfile={variants:{warrior:{states:{idle:'idle'}},base:{states:{idle:'idle'}}},attackEvents:{}};
   return {scene,animations:[new AnimationClip('idle',1,[])]} as any;
  });
  const raw=source();(raw.definitions as AuthoredDefinition[]).filter(d=>d.kind==='unit').forEach(d=>d.modelScale=scale);
@@ -64,7 +87,7 @@ it.each([1,1.7,2])('renders unit bodies and indicators at the definition model s
 });
 
 it('loads entity models on demand and shares one prototype for aliases',async()=>{
- const load=vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async()=>({scene:new Group(),animations:[]}) as any);
+ const load=vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async()=>({scene:modelFixture(),animations:[]}) as any);
  const scene=new Scene(),layer=new SettlementLayer(scene);await layer.ready;
  // Harvest-tree proxies have their own residency; no entity catalogue is loaded.
  const initial=load.mock.calls.length;
@@ -80,7 +103,7 @@ it('loads entity models on demand and shares one prototype for aliases',async()=
 
 it('keeps placement ghosts at completed-building scale, including definitions sharing one asset',async()=>{
  vi.spyOn(MineLabels.prototype,'update').mockImplementation(()=>{});
- vi.spyOn(GLTFLoader.prototype,'loadAsync').mockResolvedValue({scene:new Group(),animations:[]} as any);
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockResolvedValue({scene:modelFixture(),animations:[]} as any);
  const raw=source(),base=(raw.definitions as AuthoredDefinition[]).find(d=>d.id==='building.ants.house')!;
  const shared=(raw.definitions as AuthoredDefinition[]).find(d=>d.id==='building.ants.barracks')!;
  base.modelScale=1.6;shared.asset=base.asset;shared.modelScale=.7;
@@ -98,4 +121,47 @@ it('keeps placement ghosts at completed-building scale, including definitions sh
  expect(ghost.scale.x).toBeCloseTo((registry.asset(shared.asset).scale??1)*.7);
  layer.preview(null,0,0,true,field);expect(ghost.visible).toBe(false);
  layer.destroy(scene);
+});
+
+it('starts the selected building rally route at its center regardless of its facing',async()=>{
+ vi.spyOn(MineLabels.prototype,'update').mockImplementation(()=>{});
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockResolvedValue({scene:modelFixture(),animations:[]} as any);
+ const scene=new Scene(),layer=new SettlementLayer(scene),g=game(),view=g.view(),field=new HeightField();
+ const building=view.entities.find(e=>e.definition==='building.ants.fort'&&e.owner==='player.1')!;
+ const update=vi.spyOn(RallyMarkers.prototype,'update');layer.viewer(0,()=> 'own');layer.select([building.id]);
+ for(const rotation of [0,90,180,270]){
+  const state={...view,entities:[{...building,rotation,production:{...building.production!,rally:{x:180,y:180}}}]};
+  layer.update(state,field,0);await layer.ready;layer.update(state,field,0);
+  expect(update.mock.calls.at(-1)![0]).toEqual([{id:building.id,slot:0,from:{x:building.x,z:building.y,surface:undefined},to:{x:180,z:180,surface:undefined}}]);
+ }
+ layer.destroy(scene);
+});
+
+it('keeps the physical charge pose during cast recovery and resumes attacks after contact',async()=>{
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async()=>({scene:modelFixture(),animations:['idle','walk','run','charge','attack','hit','death'].map(name=>new AnimationClip(name,1,[]))}) as any);
+ const scene=new Scene(),layer=new SettlementLayer(scene),g=game([placed('dash','unit.ants.thornblade',205,210)]),view=g.view(),field=new HeightField();
+ const e=view.entities.find(e=>e.definition==='unit.ants.thornblade')!;
+ const casting={ability:'ability.ants.thorn-rush',startTick:0,resolveTick:2,finishTick:14};
+ const state={...view,entities:[{...e,unit:{...e.unit!,moving:true,charging:true,casting}}]};
+ layer.update(state,field,4);await layer.ready;layer.update(state,field,4);
+ const player=(layer as any).characters.get(e.id).player;
+ expect(player.state).toBe('charge');
+ layer.update({...state,entities:[{...state.entities[0],unit:{...state.entities[0].unit,moving:false,charging:false}}]},field,8);
+ expect(player.state).toBe('attack');layer.destroy(scene);
+});
+
+it('drops airborne corpses onto their flight floor while leaving ground corpses in place',async()=>{
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async()=>({scene:modelFixture(),animations:['idle','walk','run','attack','hit','death'].map(name=>new AnimationClip(name,2,[]))}) as any);
+ const scene=new Scene(),layer=new SettlementLayer(scene),g=game([placed('air','unit.ants.warrior',205,210),placed('ground','unit.ants.warrior',215,210)]),view=g.view(),field=new HeightField();
+ // A raised flight floor also covers water/decks; it must not fall through to raw terrain.
+ const air=view.entities.find(e=>e.x===205&&e.y===210)!,ground=view.entities.find(e=>e.x===215&&e.y===210)!;
+ const airborne={...air,elevation:7,unit:{...air.unit!,flight:{height:3}}};
+ const live={...view,fog:undefined,entities:[airborne,ground]};
+ layer.update(live,field,0);await layer.ready;layer.update(live,field,0);
+ const root=scene.getObjectByName('game-entities')!,flying=root.children.find(o=>o.userData.entityId===air.id)!,standing=root.children.find(o=>o.userData.entityId===ground.id)!;
+ const initial=flying.position.y,groundY=standing.position.y;
+ const dead={...live,entities:[],deaths:[airborne,ground]};layer.update(dead,field,1);expect(flying.position.y).toBe(initial);
+ layer.update(dead,field,11);expect(flying.position.y).toBeLessThan(initial);expect(flying.position.y).toBeGreaterThan(4);expect(standing.position.y).toBe(groundY);
+ layer.update(dead,field,41);expect(flying.position.y).toBe(4);expect(standing.position.y).toBe(groundY);
+ layer.update(dead,field,90);expect(flying.parent).toBeNull();expect(standing.parent).toBeNull();layer.destroy(scene);
 });

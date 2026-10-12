@@ -9,6 +9,17 @@ function setup(){
  return {g,a:g.entities.find(e=>e.placement==='flyer')!,b:g.entities.find(e=>e.placement==='ground')!};
 }
 describe('air locomotion',()=>{
+ it('reveals nearby enemy aircraft without treating altitude as hidden high ground',()=>{
+  const {g,a,b}=setup();
+  expect(g.observation.visible('player.2',a)).toBe(true);
+  expect(g.view('player.2').entities.some(e=>e.id===a.id)).toBe(true);
+  // The same elevated point on a physical floor still uses uphill concealment.
+  const origin=g.spatial.elevatedPoint(b),target=g.spatial.sightPoint(a);
+  expect(g.spatial.visible(origin,{...target,airborne:false})).toBe(false);
+  a.x=220;a.unit!.position=fixed(a);g.observation.update();
+  expect(g.observation.visible('player.2',a)).toBe(false);
+  expect(g.view('player.2').entities.some(e=>e.id===a.id)).toBe(false);
+ });
  it('crosses impassable ground and resource/building occupancy but stays inside the map',()=>{
   const {g,a,b}=setup(),s=g.context.spatial;
   for(let y=0;y<s.size;y++){s.occupied[y*s.size+103]=999;s.resources[y*s.size+104]=998;s.heights[y*s.size+103]=5000;}

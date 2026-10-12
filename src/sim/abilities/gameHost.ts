@@ -33,7 +33,7 @@ export function createGameAbilities(game:Game){
  const get=(id:number,resolved?:ReturnType<typeof c.stats>):AbilityActor|undefined=>{
   const e=c.get(id);if(!e)return;
   const stats=resolved??c.stats(e),definition=c.def(e);
-  return {height:c.spatial.height(precise(e))+c.spatial.elevation(e),sourceContext:spellSource(c,e,stats),id:e.id,owner:e.owner,camp:e.unit?.camp??undefined,...precise(e),hp:e.hp??0,mana:e.abilities?.mana??0,maxHp:stats.maxHp,maxMana:stats.maxMana,alive:alive(e),unit:!!e.unit,locomotion:locomotion(definition),nature:unitNature(definition),hero:!!definition.hero,summoned:!!e.summoned,...(e.summoned?{summonOrigin:{source:e.summoned.source,ability:e.summoned.ability}}:{}),level:stats.level,spellImmunity:spellImmunity(e,c.registry),...damageEligibility(e,c.registry),controlImmunity:[...controlImmunities(e,c.registry)],melee:!!definition.behaviors.combat&&!definition.behaviors.combat?.projectile&&!definition.behaviors.combat?.shell,blocked:isStunned(e,c.registry)||spellControl(e,c.registry,'silence')||!!e.unit?.contained||!!e.unit?.garrison||!!e.unit?.release,targetable:!e.unit?.contained&&!e.unit?.garrison&&!e.unit?.release};
+  return {height:c.spatial.height(precise(e))+c.spatial.elevation(e),sourceContext:spellSource(c,e,stats),id:e.id,owner:e.owner,camp:e.unit?.camp??undefined,...precise(e),hp:e.hp??0,mana:e.abilities?.mana??0,maxHp:stats.maxHp,maxMana:stats.maxMana,alive:alive(e),unit:!!e.unit,locomotion:locomotion(definition),nature:unitNature(definition),hero:!!definition.hero,summoned:!!e.summoned,...(e.summoned?{summonOrigin:{source:e.summoned.source,ability:e.summoned.ability}}:{}),level:stats.level,spellImmunity:spellImmunity(e,c.registry),...damageEligibility(e,c.registry),controlImmunity:[...controlImmunities(e,c.registry)],melee:!!definition.behaviors.combat&&!definition.behaviors.combat?.projectile&&!definition.behaviors.combat?.shell,blocked:!!e.unit?.taunt||isStunned(e,c.registry)||spellControl(e,c.registry,'silence')||!!e.unit?.contained||!!e.unit?.garrison||!!e.unit?.release,targetable:!e.unit?.contained&&!e.unit?.garrison&&!e.unit?.release};
  };
  const world=new SpellWorldEffects(game);
  // Runtime actors use absolute height; terrain sight accepts a relative elevation.
@@ -45,7 +45,7 @@ export function createGameAbilities(game:Game){
    if(!caster||(caster.x-p.x)**2+(caster.y-p.y)**2>24**2)return false;
    if(!game.observation.detects(owner,entity,c.get(caster.id)))return false;
    const point=target??{id:entity.id,...p,height:c.spatial.height(p)+c.spatial.elevation(entity)};
-   return c.spatial.visible(sightPoint(caster),sightPoint(point));
+   return c.spatial.visible(sightPoint(caster),{...sightPoint(point),airborne:c.spatial.airborne(entity)});
   }
   if(!game.observation.detects(owner as Owner,entity,caster?c.get(caster.id):undefined))return false;
   return game.observation.visible(owner as Owner,entity);

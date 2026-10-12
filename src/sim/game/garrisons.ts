@@ -36,7 +36,7 @@ export class Garrisons {
     else {u.route=[];u.goal=null;}
     continue;
    }
-   if(u.order?.type!=='garrison'||!c.ready(e)||isStunned(e,c.registry))continue;
+   if(u.taunt||u.order?.type!=='garrison'||!c.ready(e)||isStunned(e,c.registry))continue;
    const host=c.get(u.order.target);
    if(!host||!alive(host)||!this.available(e,host)){u.order=null;u.route=[];u.goal=null;continue;}
    const entrance=c.spatial.entrance(host),reach=Math.ceil(c.spatial.dimensions(e).radius)+2;

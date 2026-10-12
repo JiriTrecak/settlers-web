@@ -6,7 +6,7 @@ import type {EffectSocket,EffectSocketPose} from './effectSocket';
 import {EffectModels,type EffectModel} from './effectModel';
 import {EffectSound,type AudioView} from '../audio/effectSound';
 import {sampleCueMotion} from './cueMotion';
-import {AdditiveBlending,NormalBlending,Color,PlaneGeometry,CylinderGeometry,DoubleSide,Group,Mesh,MeshBasicMaterial,PointLight,RingGeometry,SphereGeometry,Sprite,SpriteMaterial,Vector3,type Texture,type BufferGeometry} from 'three';
+import {Euler,Quaternion,AdditiveBlending,NormalBlending,Color,PlaneGeometry,CylinderGeometry,DoubleSide,Group,Mesh,MeshBasicMaterial,PointLight,RingGeometry,SphereGeometry,Sprite,SpriteMaterial,Vector3,type Texture,type BufferGeometry} from 'three';
 import {TICK_MS} from '../../shared/match/match';
 import type {EffectRecipe,VisualEffect} from '../../content/effects/schema';
 import {resolveEffectBindings} from '../../content/effects/schema';
@@ -80,8 +80,8 @@ export class EffectPlayer {
    if(this.cues.length>=64)break;
    if(recipe.shape==='light'&&this.cues.filter(c=>c.light).length>=4)continue;
    const perDrop=recipe.shape==='rain'&&recipe.impact?recipe.impact.count+2:1;
-   const count=['light','sound','mesh'].includes(recipe.shape)?0:Math.min(['burst','streaks','rain','beam','particles'].includes(recipe.shape)?recipe.count:1,Math.floor((512-this.cues.reduce((sum,c)=>sum+c.meshes.length,0))/perDrop));
-   if(!count&&!['light','sound','mesh'].includes(recipe.shape))continue;
+   const count=recipe.model||['light','sound','mesh'].includes(recipe.shape)?0:Math.min(['burst','streaks','rain','beam','particles'].includes(recipe.shape)?recipe.count:1,Math.floor((512-this.cues.reduce((sum,c)=>sum+c.meshes.length,0))/perDrop));
+   if(!count&&!recipe.model&&!['light','sound','mesh'].includes(recipe.shape))continue;
    const model=recipe.model?this.models.create(recipe.model):undefined;if(recipe.model&&!model)continue;
    const image=recipe.texture&&count?this.images.acquire(recipe.texture):undefined;
    const trail=recipe.trail?new EffectTrail(recipe.trail):undefined;
@@ -193,6 +193,14 @@ export class EffectPlayer {
     if(r.shape==='missile'&&anchor){const target=anchor(cue.entity);if(target)end.set(target.x,target.height+r.height,target.y);}
     const pose=deliveryPose?.(cue.cast);
     const position=pose?.position??(cue.flight?cue.flight.previous.clone().lerp(cue.flight.position,Math.max(0,Math.min(1,tick-cue.flight.tick))):cue.origin.clone().lerp(end,Math.min(1,t)));cue.root.position.set(r.offset?.x??0,r.offset?.y??0,r.offset?.z??0);
+    if(!pose&&!cue.flight&&r.shape==='missile'&&r.arcHeight)position.y+=4*r.arcHeight*t*(1-t);
+    if(cue.model){
+     const direction=(pose?.direction??cue.flight?.direction??end.clone().sub(cue.origin).add(new Vector3(0,4*(r.arcHeight??0)*(1-2*t),0))).clone().normalize();
+     cue.model.root.position.copy(position);if(pose||cue.flight)cue.model.root.position.y+=r.height;
+     cue.model.root.quaternion.setFromUnitVectors(new Vector3(0,1,0),direction.lengthSq()?direction:new Vector3(0,1,0));
+     const rotation=r.model!.rotation;cue.model.root.quaternion.multiply(new Quaternion().setFromEuler(new Euler(rotation.x*Math.PI/180,rotation.y*Math.PI/180,rotation.z*Math.PI/180)));cue.model.root.scale.setScalar(r.size);
+     cue.model.sample(localTick-cue.start,r.intensity??1,r.colour);
+    }
     for(const [segment,mesh] of cue.meshes.entries()){mesh.material.opacity=(r.intensity??1)*(r.shape==='beam'?1-t:1);
      if(r.shape==='beam'){
       const direction=end.clone().sub(origin),side=new Vector3(-direction.z,0,direction.x).normalize();

@@ -14,13 +14,13 @@ export type EffectModelSource={scene:Object3D;animations:AnimationClip[];transfo
 type ModelRef=NonNullable<VisualLayer['model']>;
 type Entry={refs:number;ready:Promise<EffectModelSource>;source?:EffectModelSource;triangles:number;settled:boolean;failed?:boolean};
 const identity:ModelTransform={scale:1,pivot:[0,0,0],up:'Y',forward:'+Z'};
-async function loadModel(ref:ModelRef):Promise<EffectModelSource>{
+export async function loadEffectModel(ref:ModelRef):Promise<EffectModelSource>{
  const resource=effectResource(ref);if(resource.bytes>EFFECT_MODEL_LIMITS.maxBytes)throw Error('Effect model exceeds 16 MB');
  const gltf=await new GLTFLoader().loadAsync(assetUrls[resource.path]??'/'+resource.path);
  return {scene:gltf.scene,animations:gltf.animations,transform:geometryModel(resource.path)?.transform??identity};
 }
 function triangles(root:Object3D){let count=0;root.traverse(o=>{if(o instanceof Mesh)count+=(o.geometry.index?.count??o.geometry.attributes.position?.count??0)/3*(o instanceof InstancedMesh?o.count:1);});return count;}
-function disposeSource(source:EffectModelSource){
+export function disposeEffectModelSource(source:EffectModelSource){
  const geometries=new Set<BufferGeometry>(),materials=new Set<Material>(),textures=new Set<Texture>();
  source.scene.traverse(o=>{if(o instanceof Mesh){geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){materials.add(m);for(const value of Object.values(m))if(value instanceof Texture)textures.add(value);}}});
  for(const item of [...geometries,...materials,...textures])item.dispose();
@@ -29,7 +29,7 @@ function disposeSource(source:EffectModelSource){
 /** Shared geometry/textures, independently owned materials, skeletons and clocks. Cosmetic only. */
 export class EffectModels {
  private entries=new Map<string,Entry>();private handles=new Set<EffectModel>();private triangleCount=0;private closed=false;
- constructor(private loader:(ref:ModelRef)=>Promise<EffectModelSource>=loadModel){}
+ constructor(private loader:(ref:ModelRef)=>Promise<EffectModelSource>=loadEffectModel){}
  create(ref:ModelRef):EffectModel|undefined{
   if(this.closed||this.handles.size>=EFFECT_MODEL_LIMITS.instances)return;
   const key=`${ref.asset}/${ref.index}`;let entry=this.entries.get(key);
@@ -38,8 +38,8 @@ export class EffectModels {
    entry={refs:0,triangles:0,settled:false,ready:Promise.resolve(undefined as never)};const owned=entry;
    entry.ready=this.loader(ref).then(source=>{
     owned.triangles=triangles(source.scene);
-    if(owned.triangles>EFFECT_MODEL_LIMITS.perModelTriangles){disposeSource(source);throw Error('Effect model exceeds 10,000 triangles');}
-    if(this.closed){disposeSource(source);throw Error('Effect model player closed');}
+    if(owned.triangles>EFFECT_MODEL_LIMITS.perModelTriangles){disposeEffectModelSource(source);throw Error('Effect model exceeds 10,000 triangles');}
+    if(this.closed){disposeEffectModelSource(source);throw Error('Effect model player closed');}
     owned.source=source;this.trim();return source;
    }).catch(error=>{owned.failed=true;throw error;}).finally(()=>{owned.settled=true;this.trim();});this.entries.set(key,entry);
   }
@@ -51,9 +51,9 @@ export class EffectModels {
   },()=>{this.triangleCount-=charged;owned.refs--;this.handles.delete(handle);this.trim();});
   this.handles.add(handle);this.trim();return handle;
  }
- private trim(){for(const [key,entry]of this.entries){if(entry.refs||!entry.settled||!entry.failed&&this.entries.size<=EFFECT_MODEL_LIMITS.cachedModels)continue;this.entries.delete(key);if(entry.source)disposeSource(entry.source);}}
+ private trim(){for(const [key,entry]of this.entries){if(entry.refs||!entry.settled||!entry.failed&&this.entries.size<=EFFECT_MODEL_LIMITS.cachedModels)continue;this.entries.delete(key);if(entry.source)disposeEffectModelSource(entry.source);}}
  async ready(){for(;;){const handles=[...this.handles];await Promise.all(handles.map(h=>h.ready));if([...this.handles].every(h=>handles.includes(h)))break;}for(const h of this.handles)if(h.error)throw h.error;}
- dispose(){if(this.closed)return;this.closed=true;for(const h of [...this.handles])h.dispose();for(const entry of this.entries.values())if(entry.source)disposeSource(entry.source);this.entries.clear();}
+ dispose(){if(this.closed)return;this.closed=true;for(const h of [...this.handles])h.dispose();for(const entry of this.entries.values())if(entry.source)disposeEffectModelSource(entry.source);this.entries.clear();}
 }
 export class EffectModel {
  readonly root=new Group();readonly ready:Promise<void>;error?:Error;

@@ -1,3 +1,4 @@
+import {reconcileTaunts} from '../abilities/taunt';
 import {heroAdmission, heroRoster} from '../../content/heroRoster';
 import {workplaceHead, workplaceQueueSize} from '../../content/workplaceQueue';
 import {revivalTerms} from '../../content/revival';
@@ -282,6 +283,7 @@ export class Game {
           !!e &&
           alive(e) &&
           !!this.context.def(e).behaviors.playerControl &&
+          !e.unit?.taunt &&
           !e.unit?.contained &&
           !e.unit?.release,
       );
@@ -583,7 +585,7 @@ export class Game {
       return;
     }
     for(const e of this.state.entities)if(e.stunnedUntil!==undefined&&e.stunnedUntil<=this.state.tick)delete e.stunnedUntil;
-    measure("Ability lifecycle", () => {this.abilities.tick();if(!passiveUnits)this.abilities.ambient();});
+    measure("Ability lifecycle", () => {this.abilities.tick();if(!passiveUnits)this.abilities.ambient();reconcileTaunts(this);});
     measure("Item effects", () => this.combat.items.tick());
     measure("Regeneration", () => new Regeneration(this.context).tick());
     if(!passiveUnits)measure("Work assignment", () => {
@@ -610,7 +612,7 @@ export class Game {
         this.onCombatDeath(dead);
       }
     });
-    measure("Ability delivery", () => this.abilities.resolve());
+    measure("Ability delivery", () => {this.abilities.resolve();reconcileTaunts(this);});
     measure("Economy", () => {
       // Revival precedes completion of training. The workplace head chosen at
       // assignment owns this tick; switching task kinds never grants double work.
@@ -861,6 +863,7 @@ export class Game {
         throw new Error("Invalid loose item stack");
       if (e.unit) {
         const u = e.unit;
+        if(u.taunt&&(u.taunt.source===e.id||(u.taunt.resumeGoal!==null&&!this.spatial.validNode(u.taunt.resumeGoal))))throw new Error("Invalid saved taunt navigation");
         const points=[u.pendingMove,u.release,u.idle?.home].filter(p=>p!=null);
         if(points.some(p=>!this.spatial.validPoint(p)))throw new Error('Invalid saved order surface');
         if(u.segment&&(!this.spatial.validNode(u.segment.to)||!this.spatial.validPoint({x:u.segment.from.x/1000,y:u.segment.from.y/1000,surface:u.segment.from.surface})))throw new Error('Invalid saved segment surface');

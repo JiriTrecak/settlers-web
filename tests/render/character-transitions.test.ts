@@ -39,3 +39,24 @@ describe('canonical character metadata',()=>{
   const events:string[]=[];canonical.onEvent=e=>events.push(e.type);canonical.speed=1;canonical.setState('attack',{fade:0});canonical.update(.39);expect(events).toEqual([]);canonical.update(.02);expect(events).toEqual(['release']);canonical.dispose();
  });
 });
+
+it('resolves distinct authored spell contacts identically for live and baked characters',async()=>{
+ const {BakedAnimator}=await import('../../src/render/characters/bakedAnimator');
+ const {castAnimation}=await import('../../src/render/abilities/castAnimation');
+ const {presentationSchema}=await import('../../src/content/abilities/schema');
+ const root=new Group(),names=['idle','skullcrack','roar','uproot'];
+ const durations=[4,2.5,64/24,76/24],times=[undefined,28/24,30/24,36/24];
+ const animations=names.map((semantic,i)=>({semantic,clip:semantic,loop:i===0,events:times[i]===undefined?[]:[{name:'release',time:times[i]!}]}));
+ const clips=names.map((name,i)=>new AnimationClip(name,durations[i],[]));
+ const live=new CharacterPlayer(root,clips,'base',{animations});
+ const bakedClips=new Map(clips.map(c=>[c.name,{name:c.name,duration:c.duration,start:0,frames:2}]));
+ const baked=new BakedAnimator({clips:bakedClips},{variants:{base:{states:Object.fromEntries(names.map(n=>[n,n]))}}},animations,'base');
+ const timeline={startTick:0,releaseTick:20,finishTick:40};
+ for(const name of names.slice(1)){
+  const p=presentationSchema.parse({schemaVersion:1,id:'presentation.test.contact',animations:{prepare:name,release:name,recover:name,fallback:'idle'},effects:[]});
+  const phase=castAnimation(p,timeline,20,()=>true,c=>live.castContact(c)).phase;
+  expect(phase).toBeCloseTo(times[names.indexOf(name)]!/durations[names.indexOf(name)]);
+  expect(castAnimation(p,timeline,20,()=>true,c=>baked.castContact(c)).phase).toBeCloseTo(phase);
+ }
+ expect(live.castContact('idle',.7)).toBe(.7);expect(baked.castContact('missing',.3)).toBe(.3);live.dispose();
+});

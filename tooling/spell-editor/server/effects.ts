@@ -4,13 +4,13 @@ import {readFile,readdir} from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {canonical} from '../../../src/content/registry';
-import {visualEffectSchema,type VisualEffect} from '../../../src/content/effects/schema';
+import {visualEffectSchema,weaponProjectileLayers,type VisualEffect} from '../../../src/content/effects/schema';
 import {readEffectLibrary} from '../../content/effects';
 import {commitFiles} from '../../asset-studio/server/transaction';
 import {readPublished} from '../../asset-studio/server/authoring/publication';
 import {publishedResource} from '../../asset-studio/server/authoring/packages';
-import {inspectGeometry} from '../../asset-studio/server/authoring/modelQuality';
-import {EFFECT_MODEL_LIMITS,EFFECT_IMAGE_LIMITS} from '../../../src/content/effects/limits';
+import {inspectGeometry,validateStaticWeaponGeometry} from '../../asset-studio/server/authoring/modelQuality';
+import {EFFECT_MODEL_LIMITS,EFFECT_IMAGE_LIMITS,validateWeaponEffectGeometry} from '../../../src/content/effects/limits';
 const hash=(value:unknown)=>createHash('sha256').update(canonical(value)).digest('hex');
 const bytes=(v:unknown)=>Buffer.from(JSON.stringify(v,null,2)+'\n');
 export class EffectStore {
@@ -19,6 +19,9 @@ export class EffectStore {
  async list(){let entries;try{entries=await readdir(path.join(this.root,'content/effects'),{withFileTypes:true});}catch(e){if((e as NodeJS.ErrnoException).code==='ENOENT')return [];throw e;}return Promise.all(entries.filter(e=>e.isDirectory()&&e.name.startsWith('effect.')).map(async e=>{const {document,revision}=await this.read(e.name);return {id:document.id,name:document.name,layers:document.layers.length,revision};}));}
  async validate(raw:VisualEffect){
   const document=visualEffectSchema.parse(raw),assets=await readPublished(this.root)??[];let modelTriangles=0;
+  const weapon=assets.some(a=>a.bindings.render.some(b=>b.projectile===document.id));
+  if(weapon)weaponProjectileLayers(document);
+  const weaponReports:{triangles:number;primitives:number;bones:number}[]=[];
   for(const layer of document.layers)for(const ref of layerResources(layer)){
    const asset=assets.find(a=>a.id===ref.asset),resource=asset?.resources.find(r=>r.role===ref.role&&r.index===ref.index);if(!asset||!resource)throw Error('Missing published effect resource '+ref.asset);
    const buffer=await readFile(path.join(this.root,publishedResource(asset,ref)));if(buffer.length!==resource.bytes||createHash('sha256').update(buffer).digest('hex')!==resource.sha256)throw Error('Damaged effect resource '+ref.asset);
@@ -29,12 +32,14 @@ export class EffectStore {
     if(layer.flipbook&&(image.width%layer.flipbook.columns||image.height%layer.flipbook.rows))throw Error('Flipbook texture dimensions must divide evenly into its grid');
    }
    if(ref.role==='geometry'){
+    if(weapon&&layer.enabled)validateStaticWeaponGeometry(buffer);
     if(buffer.length>EFFECT_MODEL_LIMITS.maxBytes)throw Error('Effect model exceeds 16 MB');
-    const report=await inspectGeometry(buffer,asset,false);if(report.triangles>EFFECT_MODEL_LIMITS.perModelTriangles)throw Error('Effect model exceeds 10,000 triangles');if(layer.enabled)modelTriangles+=report.triangles;
+    const report=await inspectGeometry(buffer,asset,false);if(report.triangles>EFFECT_MODEL_LIMITS.perModelTriangles)throw Error('Effect model exceeds 10,000 triangles');if(layer.enabled){modelTriangles+=report.triangles;if(weapon)weaponReports.push(report);}
     if(layer.model?.animation&&!report.clips.some(c=>c.name===layer.model!.animation!.clip))throw Error('Unknown effect model animation '+layer.model.animation.clip);
    }
   }
-  if(document.layers.filter(l=>l.shape==='mesh'&&l.enabled).length>EFFECT_MODEL_LIMITS.instances||modelTriangles>EFFECT_MODEL_LIMITS.triangles)throw Error('Effect exceeds the mesh instance or triangle budget');return {valid:true};
+  if(weapon)validateWeaponEffectGeometry(weaponReports);
+  if(document.layers.filter(l=>!!l.model&&l.enabled).length>EFFECT_MODEL_LIMITS.instances||modelTriangles>EFFECT_MODEL_LIMITS.triangles)throw Error('Effect exceeds the mesh instance or triangle budget');return {valid:true};
  }
  async save(document:VisualEffect,expectedRevision:string|null){await this.validate(document);let previous:string|null=null;try{previous=(await this.read(document.id)).revision;}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}if(previous!==expectedRevision)throw Error('Revision conflict: reload effect before saving');await commitFiles(this.root,[{path:`content/effects/${document.id}/effect.json`,bytes:bytes(document)}]);return {document,revision:hash(document)};}
  async publish(id:string,expectedRevision:string){const {document,revision}=await this.read(id);if(revision!==expectedRevision)throw Error('Revision conflict: reload effect before publishing');await this.validate(document);const library=await readEffectLibrary(this.root);library.effects=library.effects.filter(e=>e.id!==id).concat(document);await commitFiles(this.root,[{path:'content/effects/published.json',bytes:bytes(library)}]);return {published:true,id};}

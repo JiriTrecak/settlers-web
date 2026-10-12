@@ -13,7 +13,10 @@ export async function resizeModelTextures(bytes:Buffer,limit=512):Promise<Buffer
   const input=bin.subarray(view.byteOffset??0,(view.byteOffset??0)+view.byteLength),meta=await sharp(input).metadata();
   if(Math.max(meta.width!,meta.height!)<=limit)continue;
   const factor=limit/Math.max(meta.width!,meta.height!),width=Math.max(1,Math.round(meta.width!*factor)),height=Math.max(1,Math.round(meta.height!*factor));
-  let rgb=await sharp(input).removeAlpha().toColourspace('srgb').resize(width,height,{kernel:'lanczos3'}).raw().toBuffer();
+  // Sharp schedules resize before removeAlpha in a single pipeline. Decode RGB
+  // first, otherwise mask-zero pixels are premultiplied to black before filtering.
+  const source=await sharp(input).removeAlpha().toColourspace('srgb').raw().toBuffer({resolveWithObject:true});
+  let rgb=await sharp(source.data,{raw:{width:source.info.width,height:source.info.height,channels:3}}).resize(width,height,{kernel:'lanczos3'}).raw().toBuffer();
   if(normalImages.has(index))for(let i=0;i<rgb.length;i+=3){const x=rgb[i]/127.5-1,y=rgb[i+1]/127.5-1,z=rgb[i+2]/127.5-1,n=Math.hypot(x,y,z)||1;rgb[i]=Math.round((x/n+1)*127.5);rgb[i+1]=Math.round((y/n+1)*127.5);rgb[i+2]=Math.round((z/n+1)*127.5);}
   let output=sharp(rgb,{raw:{width,height,channels:3}});
   if(meta.hasAlpha){const alpha=await sharp(input).extractChannel('alpha').resize(width,height).raw().toBuffer();output=output.joinChannel(alpha,{raw:{width,height,channels:1}});}

@@ -69,11 +69,11 @@ describe('Frozen Forest and living woodland',()=>{
   expect(waterSurface(scene.field).profiles![3]).toBeCloseTo(landscapeAssets.find(a=>a.id===biomeById(scene.field.biome).waterProfile)!.water!.clarity);
  });
  it('holds the winter day look and never accumulates cloud dimming',()=>{
-  expect(sampleDaytime(12,'winter').look.sunColor.multiplier).toBe(10);expect(sampleDaytime(12,'winter').look.textureColorLUT).toContain('winter');
+  const winterSun=sampleDaytime(12,'winter').look.sunColor.multiplier;expect(sampleDaytime(12,'winter').look.textureColorLUT).toContain('winter');
   expect(sampleDaytime(7,'winter')).toBe(sampleDaytime(16,'winter'));
   const sky=new Sky(new Scene());sky.setProfile('winter');sky.setHour(12);
   for(let i=0;i<1000;i++){sky.tick(i*16);sky.setSunTransmission(.8);}
-  expect(sky.sun.intensity).toBeCloseTo(8);sky.setSunTransmission(1);expect(sky.sun.intensity).toBe(10);
-  sky.setProfile('temperate');sky.setSunTransmission(.8);expect(sky.sun.intensity).toBeCloseTo(12.8);
+  expect(sky.sun.intensity).toBeCloseTo(winterSun*.8);sky.setSunTransmission(1);expect(sky.sun.intensity).toBe(winterSun);
+  sky.setProfile('temperate');sky.setSunTransmission(.8);expect(sky.sun.intensity).toBeCloseTo(sampleDaytime(12,'temperate').look.sunColor.multiplier*.8);
  });
 });

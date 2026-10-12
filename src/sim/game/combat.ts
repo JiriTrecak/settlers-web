@@ -81,7 +81,7 @@ export class Combat {
   private planningSight:Map<string,boolean>|null=null;
   private perceives(a: Entity, b: Entity) {
     if(!this.vision.detects(a.owner,b,a))return false;
-    if(a.owner==='none')return this.c.spatial.visible(this.c.spatial.elevatedPoint(a),this.c.spatial.elevatedPoint(b))&&distance2(precise(a),precise(b))<=
+    if(a.owner==='none')return this.c.spatial.visible(this.c.spatial.elevatedPoint(a),this.c.spatial.sightPoint(b))&&distance2(precise(a),precise(b))<=
       (this.camps.find(c=>c.id===a.unit?.camp)?.aggroRange??this.c.def(a).behaviors.combat?.aggroRange??this.c.def(a).vision??0)**2;
     const key=`${a.owner}:${b.id}`,cached=this.planningSight?.get(key);
     if(cached!==undefined){this.c.profile.count('Planning visibility cache hits');return cached;}
@@ -124,6 +124,21 @@ export class Combat {
         }
       }
       if(e.abilities?.pending || charging(this.c,e.id) || isStunned(e,this.c.registry))continue;
+      if(u.taunt){
+        if(u.cooldown>0)u.cooldown--;
+        const target=c.get(u.taunt.source);
+        if(!combat||!target||!alive(target)||!this.weaponEligible(e,target)||!this.perceives(e,target)||spellControl(e,c.registry,'disarm')||isEthereal(e,c.registry)){
+          discardNavigation(u);releaseCombat(u);continue;
+        }
+        u.target=target.id;this.rememberTarget(e,target);
+        if(c.spatial.bodyRange(e,target)<=combat.range**2&&this.terrainClear(e,target)){
+          discardNavigation(u);
+          if(!u.attack&&!u.cooldown)this.beginAttack(e,target);
+        }else if(u.retryAt<=c.state.tick){
+          routeToAttack(c,e,target,approaches);u.retryAt=c.state.tick+6;
+        }
+        continue;
+      }
       if(spellControl(e,this.c.registry,"disarm")||isEthereal(e,this.c.registry)){
         suspendCombat(u,c.state.tick);
         if(order?.type!=="move"&&order?.type!=="patrol"&&order?.type!=="follow")continue;

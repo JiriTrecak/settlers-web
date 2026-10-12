@@ -186,6 +186,7 @@ export class Economy {
           this.c.def(e).behaviors.work &&
           !e.unit!.order &&
           !e.unit!.orderQueue.length &&
+          !e.unit!.taunt &&
           !e.unit!.pendingMove &&
           !e.unit!.job &&
           !e.unit!.cargo &&
@@ -227,7 +228,7 @@ export class Economy {
     const occupied = new Set(this.s.jobs.filter(j => j.type === "construct").map(j => j.target));
     for (const worker of this.c.activeUnits()) {
       const u = worker.unit!, order = u.order;
-      if (order?.type !== "construct") continue;
+      if (u.taunt || order?.type !== "construct") continue;
       const building = this.c.get(order.target);
       if (!building?.construction || !alive(building) || building.owner !== worker.owner || !this.c.def(worker).behaviors.work?.builds.includes(building.definition)) {
         u.order = null;
@@ -408,6 +409,7 @@ export class Economy {
       const u = w.unit!,
         order = u.order;
       if (
+        u.taunt ||
         order?.type !== "gather" ||
         u.job ||
         u.cargo ||
@@ -540,7 +542,7 @@ export class Economy {
     let w = this.c.get(p.staff);
     if (
       w?.unit &&
-      (w.unit.job || w.unit.order || w.unit.orderQueue.length || w.unit.cargo || w.unit.pendingMove)
+      (w.unit.taunt || w.unit.job || w.unit.order || w.unit.orderQueue.length || w.unit.cargo || w.unit.pendingMove)
     ) {
       p.status = "Worker busy";
       return;
@@ -595,7 +597,7 @@ export class Economy {
   /** Funding and ready tasks are allocated before movement, never after output creation. */
   assign() {
     for (const e of this.c.activeUnits())
-      if (e.unit!.cargo && !e.unit!.job) this.reroute(e);
+      if (!e.unit!.taunt && e.unit!.cargo && !e.unit!.job) this.reroute(e);
     const buildings = this.c
       .liveBuildings()
       .filter(
@@ -685,12 +687,12 @@ export class Economy {
       const w = this.c.get(job.worker), source = this.c.get(job.source), hall = this.c.get(job.target);
       if (!w?.unit || !alive(w) || !hall || !alive(hall) || !source || !alive(source) || !source.resource?.amount) continue;
       const u = w.unit;
-      if (job.phase === "walk" && !u.route.length && (u.goal === null || this.at(w, this.c.spatial.point(u.goal)))) {
+      if (!u.taunt && job.phase === "walk" && !u.route.length && (u.goal === null || this.at(w, this.c.spatial.point(u.goal)))) {
         job.phase = "wait";
         job.arrivedTick = this.s.tick;
       }
       if (job.phase === "work") active.set(source.id, (active.get(source.id) ?? 0) + 1);
-      else if (job.phase === "wait" && !isStunned(w, this.c.registry)) waiting.push(job);
+      else if (job.phase === "wait" && !u.taunt && !isStunned(w, this.c.registry)) waiting.push(job);
     }
     waiting.sort((a, b) => a.arrivedTick! - b.arrivedTick! || a.id - b.id);
     for (const job of waiting) {
@@ -712,7 +714,7 @@ export class Economy {
         continue;
       }
       const u = w.unit;
-      if (isStunned(w, this.c.registry)) continue;
+      if (u.taunt || isStunned(w, this.c.registry)) continue;
       if (u.route.length) continue;
       if (u.goal !== null && !this.at(w, this.c.spatial.point(u.goal))) {
         if (this.s.tick >= u.retryAt) {

@@ -14,6 +14,7 @@ export class CharacterPlayer {
   hasState(state: AntState): boolean;
   setState(state: AntState, options?: {restart?: boolean; fade?: number}): void;
   update(dt: number): void;
+  castContact(state: string, fallback?: number): number;
   attackContact(): number;
   clipDuration(): number;
   phase(): number;
@@ -28,3 +29,5 @@ export type CharacterProfile = {variants: Record<string, {states: Record<string,
 export function characterProfile(root: Object3D, clips: readonly AnimationClip[], variant: AntVariant, capabilities?: AssetDefinition['capabilities']): {profile: CharacterProfile; definitions: NonNullable<AssetDefinition['capabilities']>['animations'] | undefined};
 export function oneShotState(definitions: NonNullable<AssetDefinition['capabilities']>['animations'] | undefined, state: string): boolean;
 export function createCharacterInstance(gltf: {scene: Object3D; animations: AnimationClip[]}, variant?: AntVariant, capabilities?:AssetDefinition['capabilities']): {root: Object3D; player: CharacterPlayer; dispose(): void};
+
+export function semanticContact(definitions: NonNullable<AssetDefinition["capabilities"]>["animations"] | undefined, state: string, duration: number | undefined, fallback?: number): number;

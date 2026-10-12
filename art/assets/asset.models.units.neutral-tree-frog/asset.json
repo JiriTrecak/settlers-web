@@ -3,7 +3,7 @@
   "id": "asset.models.units.neutral-tree-frog",
   "name": "Tree Frog",
   "kind": "unit",
-  "revision": 2,
+  "revision": 4,
   "status": "published",
   "tags": [
     "original",
@@ -81,23 +81,23 @@
     "render": [
       {
         "id": "asset.neutral.tree-frog",
-        "geometry": {
-          "asset": "asset.models.units.neutral-tree-frog",
-          "role": "geometry",
-          "index": 1
-        },
         "character": "base",
         "scale": 1,
         "healthHeight": 1.7600000000000002,
-        "projectile": "thorn",
-        "projectileSocket": "socket_projectile"
+        "projectile": "effect.weapon.thorn",
+        "projectileSocket": "socket_projectile",
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.neutral-tree-frog"
+        }
       },
       {
         "id": "icon.neutral.tree-frog",
         "image": {
-          "asset": "asset.models.units.neutral-tree-frog",
           "role": "image",
-          "index": 1
+          "index": 1,
+          "asset": "asset.models.units.neutral-tree-frog"
         }
       }
     ],
@@ -108,9 +108,6 @@
       "radius": 0.567,
       "height": 1.6,
       "formationSpacing": 1.276
-    },
-    "groundContact": {
-      "mode": "pivot"
     },
     "animations": [
       {
@@ -165,7 +162,10 @@
           0
         ]
       }
-    ]
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    }
   },
   "provenance": {
     "method": "generated",

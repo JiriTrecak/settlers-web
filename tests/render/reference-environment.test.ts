@@ -24,13 +24,13 @@ async function load(_folder:string,id:string){
  const loader=new GLTFLoader().register(referenceMaterialPlugin).register(()=>({name:'geometry-only-test-textures',loadTexture:()=>Promise.resolve(new Texture())}));
  return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
 }
-for(const [id,triangles,parts] of [['woodland-pine-a',556,3],['woodland-pine-b',556,3],['woodland-pine-sapling',324,3],['woodland-pine-stump',210,2]] as const){
+for(const [id,triangles,parts] of [['woodland-pine-a',496,3],['woodland-pine-b',496,3],['woodland-pine-sapling',324,3],['woodland-pine-stump',210,2]] as const){
  it(`imports every ${id} material range with valid UVs, indices and correctly decoded normals`,async()=>{
   const {scene}=await load('trees',id);let count=0,meshes=0,normalCount=0,correct=0;
   scene.traverse(o=>{
    if(!(o instanceof Mesh))return;meshes++;
    const g=o.geometry,p=g.getAttribute('position'),n=g.getAttribute('normal'),uv=g.getAttribute('uv'),leaf=g.getAttribute('_leaf'),ix=g.index!;
-   count+=ix.count/3;expect(uv.count).toBe(p.count);if(leaf)expect(leaf.count).toBe(p.count);
+   count+=ix.count/3;expect(uv.count).toBe(p.count);if(leaf){expect(leaf.count).toBe(p.count);let up=0;for(let i=0;i<n.count;i++)up+=n.getY(i);expect(up/n.count).toBeGreaterThan(.3);}
    for(const a of [p,n,uv,...(leaf?[leaf]:[])])expect(Array.from(a.array).every(Number.isFinite)).toBe(true);
    const a=new Vector3(),b=new Vector3(),c=new Vector3(),normal=new Vector3();
    for(let i=0;i<ix.count;i+=3){
@@ -112,6 +112,17 @@ it('composes painted foliage normals with ordinary game lighting and neutral mat
    expect(shader.fragmentShader).not.toContain('uReferenceMacro');
    expect(shader.fragmentShader).toContain('reflectedLight.directDiffuse +=');
    expect(m.color.toArray()).toEqual([1,1,1]);
+   expect(m.userData.vertexColorUsage).toBe('tint');
+   expect(shader.fragmentShader).toContain('#include <color_fragment>');
+   expect(shader.fragmentShader).not.toContain('reflectedLight.indirectDiffuse*=vColor.r');
+   const positions=node.geometry.getAttribute('position'),colors=node.geometry.getAttribute('color');
+   let low=0,high=0,nLow=0,nHigh=0;
+   for(let i=0;i<positions.count;i++){
+    if(positions.getY(i)<4){low+=colors.getY(i);nLow++;}
+    if(positions.getY(i)>10){high+=colors.getY(i);nHigh++;}
+   }
+   expect(nLow).toBeGreaterThan(0);expect(nHigh).toBeGreaterThan(0);
+   expect(high/nHigh-low/nLow).toBeGreaterThan(.25);
   }
  });expect(foliage).toBeGreaterThan(0);ground.dispose();macro.dispose();
 });

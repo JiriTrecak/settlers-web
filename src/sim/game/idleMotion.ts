@@ -7,7 +7,7 @@ export function idleMotion(c: GameContext) {
   const units=c.activeUnits(),occupiedByMode=new Map<boolean,Set<number>>();
   for (const e of units) {
     const u = e.unit!,definition=c.def(e);
-    const busy = u.order || u.orderQueue.length || u.job || u.employment || u.cargo || u.pendingMove ||
+    const busy = u.taunt || u.order || u.orderQueue.length || u.job || u.employment || u.cargo || u.pendingMove ||
       u.target || u.cooldown || u.returning || u.camp;
     if (!definition.behaviors.work || !definition.behaviors.movement?.idleWander || busy) {
       if (u.idle?.walking) { u.route = []; u.segment = null; u.goal = null; }

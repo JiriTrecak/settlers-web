@@ -1,9 +1,11 @@
+import {weaponProjectileLayers} from '../../../../src/content/effects/schema';
+import {validateWeaponEffectGeometry} from '../../../../src/content/effects/limits';
 import {BIOMES} from '../../../../src/content/biomes';
 import {readEffectLibrary} from '../../../content/effects';
 import {validateCommandIcon} from '../../../content/icon';
 import {presentationResources,layerResources} from '../../../../src/content/abilities/resources';
 import {readAbilityLibrary} from '../../../content/abilities';
-import {inspectGeometry,validateCompleteModel,type ModelQuality} from './modelQuality';
+import {inspectGeometry,validateStaticWeaponGeometry,validateCompleteModel,type ModelQuality} from './modelQuality';
 /** Published snapshots isolate draft edits; one journal commits binaries and every runtime index. */
 import path from 'node:path';
 import {ContentRegistry,type ContentSource} from '../../../../src/content/registry';
@@ -49,6 +51,10 @@ export async function planPublication(root:string,assets:AssetDefinition[],chang
  if(content)new ContentRegistry({...content,abilityLibrary:await readAbilityLibrary(root),assets:manifest.records.flatMap(a=>a.render)});
  // Dependents follow stable IDs, but publication must never leave a broken reference.
  const effectLibrary=await readEffectLibrary(root);
+ for(const binding of sorted.flatMap(a=>a.bindings.render))if(binding.impactEffect&&!effectLibrary.effects.some(e=>e.id===binding.impactEffect))throw Error('Missing published impact effect '+binding.impactEffect);
+ const weaponLayers=[...new Set(sorted.flatMap(a=>a.bindings.render.flatMap(b=>b.projectile?[b.projectile]:[])))].map(id=>{const effect=effectLibrary.effects.find(e=>e.id===id);if(!effect)throw Error('Missing published projectile effect '+id);return weaponProjectileLayers(effect);});
+ const weaponModels=new Set(weaponLayers.flat().map(l=>`${l.model!.asset}/${l.model!.index}`));
+ const weaponReports=new Map<string,ModelQuality>();
  const imageRefs=[...(await readAbilityLibrary(root)).presentations.flatMap(p=>presentationResources(p,effectLibrary.effects).map(ref=>({owner:p.id,ref}))),...effectLibrary.effects.flatMap(e=>e.layers.flatMap(l=>layerResources(l).map(ref=>({owner:e.id,ref}))))];
  for(const {owner,ref} of imageRefs){const asset=sorted.find(a=>a.id===ref.asset);if(!asset||!runtimeResources(asset).some(r=>r.role===ref.role&&r.index===ref.index))throw Error(`Published content ${owner} requires ${ref.asset}/${ref.role}:${ref.index}`);}
 
@@ -78,12 +84,13 @@ export async function planPublication(root:string,assets:AssetDefinition[],chang
    const target=publishedResource(asset,resource),source=changed.has(asset.id)?assetFolder(asset.id)+'/'+resourceFilename(resource):target;
    const bytes=staged.get(source)??await readFile(await within(root,source));if(bytes.length!==resource.bytes||hash(bytes)!==resource.sha256)throw Error('Damaged publication resource: '+source);
    const icon=icons.get(target);if(icon)validateCommandIcon(icon,target,bytes);
-   if(resource.role==='geometry')quality.push(await inspectGeometry(bytes,asset,resource.index===1));
+   if(resource.role==='geometry'){if(weaponModels.has(`${asset.id}/${resource.index}`))validateStaticWeaponGeometry(bytes);const report=await inspectGeometry(bytes,asset,resource.index===1);quality.push(report);weaponReports.set(`${asset.id}/${resource.index}`,report);}
    if(changed.has(asset.id))await add(target,bytes);
   }
   validateCompleteModel(asset,quality);
   if(!runtimeResources(asset).length)await add(publishedDefinition(asset),definitionBytes(asset));
  }
+ for(const layers of weaponLayers)validateWeaponEffectGeometry(layers.map(l=>{const ref=l.model!,report=weaponReports.get(`${ref.asset}/${ref.index}`);if(!report)throw Error('Missing weapon model '+ref.asset);return report;}));
  await add('assets/authoring/models.json',Buffer.from(JSON.stringify(modelCatalogue(sorted),null,2)+'\n'));
  await add('assets/authoring/catalogue.json',Buffer.from(JSON.stringify(landscapeCatalogue(sorted),null,2)+'\n'));
  await add(RELEASE_PATH,Buffer.from(JSON.stringify({version:1,assets:sorted},null,2)+'\n'));

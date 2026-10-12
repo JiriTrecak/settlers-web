@@ -27,7 +27,7 @@ export const controlImmune=(e:Holder,registry:ContentRegistry,kind:ControlKind)=
 export function statusModifiersRaw(d:StatusEffect,a:AbilityDefinition,rank:number,stacks=1){const m={...d.modifiers,...Object.fromEntries(Object.entries(d.rankedModifiers??{}).map(([key,n])=>[key,value(n,a.ranks[rank-1])]))};if(d.stacking)for(const k of Object.keys(m))if(typeof m[k as keyof typeof m]==='number')(m as Record<string,unknown>)[k]=Number(m[k as keyof typeof m])*stacks;return m;}
 export function statusControls(d:StatusEffect,a:AbilityDefinition,rank:number):ControlKind[]{
  const m=statusModifiersRaw(d,a,rank),k:ControlKind[]=[];
- for(const kind of ['stun','disarm','silence','itemBlocked'] as const)if(d[kind])k.push(kind);
+ for(const kind of ['stun','disarm','silence','itemBlocked','taunt'] as const)if(d[kind])k.push(kind);
  if(m.rooted)k.push('root');if((m.moveSpeedPermille??0)<0)k.push('moveSlow');if((m.attackSpeedPermille??0)<0)k.push('attackSlow');return k;
 }
 export function blockedStatusControls(s:SpellStatus,immune:ReadonlySet<ControlKind>){return new Set([...immune,...s.blockedControls??[]]);}

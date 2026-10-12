@@ -28,6 +28,20 @@
     "clearance": 4.5
   },
   {
+    "id": "asset.models.buildings.ants-chitin-workshop",
+    "name": "Chitin Workshop",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 6
+  },
+  {
+    "id": "asset.models.buildings.ants-leaf-garrison",
+    "name": "Leaf Garrison",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 6
+  },
+  {
     "id": "asset.models.buildings.ants-mandible-hall",
     "name": "Mandible Hall",
     "kind": "building",
@@ -56,6 +70,13 @@
     "clearance": 5.5
   },
   {
+    "id": "asset.models.buildings.ants-silk-brood-house",
+    "name": "Silk Brood House",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 4
+  },
+  {
     "id": "asset.models.buildings.ants-watchtower",
     "name": "Watchtower",
     "kind": "building",
@@ -63,11 +84,102 @@
     "clearance": 3.5
   },
   {
+    "id": "asset.models.buildings.beetles-armored-brood-den",
+    "name": "Armored Brood Den",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 4
+  },
+  {
     "id": "asset.models.buildings.beetles-carapace-hall",
     "name": "Carapace Bastion",
     "kind": "building",
     "scale": 1,
     "clearance": 10
+  },
+  {
+    "id": "asset.models.buildings.beetles-iron-garrison",
+    "name": "Iron Garrison",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 6
+  },
+  {
+    "id": "asset.models.buildings.beetles-shell-foundry",
+    "name": "Shell Foundry",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 6
+  },
+  {
+    "id": "asset.models.construction.ants",
+    "name": "Ant timber scaffold",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.construction.beetles",
+    "name": "Beetle iron scaffold",
+    "kind": "building",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.effects.amber-bolt",
+    "name": "Amber focus bolt",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.effects.arrow",
+    "name": "Weapon arrow",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.effects.nectar",
+    "name": "Weapon nectar",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.effects.resin-bomb",
+    "name": "Resin seed bomb",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.effects.rootbreaker-uproot",
+    "name": "Rootbreaker · Uproot eruption",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.effects.silk",
+    "name": "Weapon silk",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.effects.stone",
+    "name": "Weapon stone",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.effects.thorn",
+    "name": "Weapon thorn",
+    "kind": "prop",
+    "scale": 1,
+    "clearance": 0
   },
   {
     "id": "asset.models.environment.autumn-grass",
@@ -1022,6 +1134,13 @@
     "clearance": 7.5
   },
   {
+    "id": "asset.models.units.ants-amber-adept",
+    "name": "Ant Amber Adept",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
     "id": "asset.models.units.ants-archer",
     "name": "Ant Archer",
     "kind": "unit",
@@ -1029,8 +1148,85 @@
     "clearance": 0
   },
   {
+    "id": "asset.models.units.ants-banneret",
+    "name": "Ant Banneret",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
     "id": "asset.models.units.ants-bombardier",
-    "name": "Bombardier Beetle",
+    "name": "Ant Bombardier",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-cleaver-warrior",
+    "name": "Ant Cleaver Warrior",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-colony-worker",
+    "name": "Ant Colony Worker",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-leaf-archer",
+    "name": "Ant Leaf Archer",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-marshal",
+    "name": "Ant Marshal",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-nectarist",
+    "name": "Ant Nectarist",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-queensguard",
+    "name": "Ant Queensguard",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-rootbreaker",
+    "name": "Ant Rootbreaker",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-rootweaver",
+    "name": "Ant Rootweaver",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-silkwarden",
+    "name": "Ant Silkwarden",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-thornblade",
+    "name": "Ant Thornblade",
     "kind": "unit",
     "scale": 1,
     "clearance": 0
@@ -1038,6 +1234,13 @@
   {
     "id": "asset.models.units.ants-warrior",
     "name": "Ant Warrior",
+    "kind": "unit",
+    "scale": 1,
+    "clearance": 0
+  },
+  {
+    "id": "asset.models.units.ants-winglancer",
+    "name": "Ant Winglancer",
     "kind": "unit",
     "scale": 1,
     "clearance": 0
@@ -4014,13 +4217,6 @@
       "sourceIds": [
         "CLdi"
       ],
-      "atlas": {
-        "columns": 1,
-        "rows": 1,
-        "fullTiles": [
-          0
-        ]
-      },
       "albedo": {
         "role": "albedo",
         "index": 1
@@ -4058,6 +4254,13 @@
           "role": "data",
           "index": 3
         }
+      },
+      "atlas": {
+        "columns": 1,
+        "rows": 1,
+        "fullTiles": [
+          0
+        ]
       }
     },
     "terrainImages": {
@@ -4088,13 +4291,6 @@
       "sourceIds": [
         "CLgr"
       ],
-      "atlas": {
-        "columns": 1,
-        "rows": 1,
-        "fullTiles": [
-          0
-        ]
-      },
       "albedo": {
         "role": "albedo",
         "index": 1
@@ -4132,6 +4328,13 @@
           "role": "data",
           "index": 3
         }
+      },
+      "atlas": {
+        "columns": 1,
+        "rows": 1,
+        "fullTiles": [
+          0
+        ]
       }
     },
     "terrainImages": {

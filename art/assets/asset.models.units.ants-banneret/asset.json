@@ -1,0 +1,262 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-banneret",
+  "name": "Ant Banneret",
+  "kind": "unit",
+  "revision": 65,
+  "status": "published",
+  "tags": [
+    "ants",
+    "banneret",
+    "tripo",
+    "skinned"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "c1f10739493e52fb1d123df2e1e59e7c3f2c8ebaf731a6e530daadb214343999",
+      "bytes": 2357547
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "534cb199f5bd5440e84498a8ceaa7265ed0d9a0ebb85c6b400391719c29cee4e",
+      "bytes": 891
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "023492c71a6a6c3f4143ea0fc2af6b0a508014bab5417c8adc34a3b0ba5289e0",
+      "bytes": 3610952
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "911b97e0a986c59dd2e5f032045b299b6fac7c0f541e3da68ee978d48329e4d8",
+      "bytes": 11843
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "e90be523c108256e46b36be186095f2c774d6d1e66ed221838214431aa116dba",
+      "bytes": 587980
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "e5b206e8814deb9d8a5c9d0fe8eb31b48b5a2f2f00829e7511730c2184f11e9d",
+      "bytes": 557213
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "272d232c8b6378de339e3290a78a5c9ee206c4fb378c78e8918b4e7044bd8e12",
+      "bytes": 6997
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "c546894b6d37a7cec5cd48a3b2c0d018100e5af717e4900f143fc4091e716d85",
+      "bytes": 8697
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "35da7fae14d036acaa6464b09c5b413356acdde6f461f4a2ec5a6e2501ee7062",
+      "bytes": 1979
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "16f8f21687e226d8f70d7ff6d05f2a3c8d80b879f72674bb477663b5bb9bc906",
+      "bytes": 1486274
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "23a377078c92c7d33a687c9fac71fb93fba34f08e1557183d0d485c78b170e99",
+      "bytes": 35915738
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "e14d50c6d00e6442b7e56f3fcd53d14e515b9a2e275306be348fdb11eb6e36e7",
+      "bytes": 7760048
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "92bae3ed9fb83aa417296ebeb0180945c0048a9eacfff46dad4e5eba91e41471",
+      "bytes": 6218
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "41ccfc0b5c801bdfb70a137203cd9073c0d74fa6baab35970d1db50a3eb49923",
+      "bytes": 105645
+    }
+  ],
+  "usesGeometry": true,
+  "exportSettings": {
+    "textureSize": 1024
+  },
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "ants",
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.ants.banneret",
+        "character": "base",
+        "scale": 2,
+        "healthHeight": 2.15,
+        "castContact": 0.325,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-banneret"
+        }
+      },
+      {
+        "id": "icon.ants.banneret",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.units.ants-banneret"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "cast",
+        "clip": "cast",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 0.5
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "handL",
+        "node": "socket_handL",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "handR",
+        "node": "socket_handR",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "cast",
+        "node": "socket_cast",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original generated artwork for Under the Canopy."
+  }
+}

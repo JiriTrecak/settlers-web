@@ -56,3 +56,15 @@ it('integrates mesh layers with authored placement, lifetime and clear without s
  const effect=visualEffectSchema.parse({schemaVersion:1,id:'effect.test.mesh',name:'Mesh',durationTicks:60,layers:[{id:'mesh',shape:'mesh',model:ref,colour:'#ffffff',accent:'#ffffff',durationTicks:60,count:1,size:.5,height:2}]});
  try{player.play(effect,{target:{x:10,y:12}});player.update(15);await player.ready();expect(player.root.children[0].position.x).toBe(10);expect(player.root.children[0].children[0].scale.x).toBe(.5);expect(player.root.children[0].children[0].position.y).toBe(2);player.update(61);expect(player.liveCues).toBe(0);await player.ready();}finally{player.dispose();}
 });
+it('flies model missiles on an authored arc and shares external poses without an extra primitive or double transform',async()=>{
+ const pool=new EffectModels(async()=>source()),player=new EffectPlayer(pool);
+ const effect=visualEffectSchema.parse({schemaVersion:1,id:'effect.test.arrow',name:'Arrow',durationTicks:40,layers:[{id:'arrow',shape:'missile',model:ref,arcHeight:3,colour:'#ffffff',accent:'#ffffff',durationTicks:40,count:1,size:.5,height:2,offset:{x:1,y:0,z:0}}]});
+ try{
+  player.play(effect,{source:{x:0,y:0},target:{x:10,y:0}});await player.ready();player.update(20);
+  const cue=player.root.children[0],model=cue.children[0];expect(cue.children).toHaveLength(1);expect(model.position.x).toBe(5);expect(model.position.y).toBe(5);expect(cue.position.x).toBe(1);expect(model.scale.x).toBe(.5);
+  const position=model.position.clone().set(7,4,2),direction=position.clone().set(0,0,1);
+  player.update(21,undefined,()=>({position,direction}));expect(model.position.toArray()).toEqual([7,6,2]);expect(position.toArray()).toEqual([7,4,2]);
+  expect(new (await import('three')).Vector3(0,1,0).applyQuaternion(model.quaternion).distanceTo(direction)).toBeLessThan(1e-6);
+  player.update(20);expect(model.position.toArray()).toEqual([5,5,0]);player.update(40);expect(player.liveCues).toBe(0);
+ }finally{player.dispose();}
+});

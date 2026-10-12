@@ -1,4 +1,3 @@
-import {footprintCellBounds} from '../../shared/spatial/footprint';
 import {resolveEffectSocket} from '../abilities/effectSocket';
 import {attackPhase} from '../characters/attackPhase';
 import type {AntState} from '../characters/character-player';
@@ -71,6 +70,10 @@ import { PLAYER_COLORS, clampPlayer } from "../../shared/player/player";
 import { TEAM_COLOR_MATERIAL, applyPlayerMaterials } from "./playerMaterials";
 import { placementGrid } from "./placementGrid";
 import {resourceDepositAssets,resourceDepositVisual} from './resourceDepositVisual';
+import {ConstructionScaffold} from './constructionScaffold';
+import {EffectPlayer} from '../abilities/effectPlayer';
+import {coreEffects} from '../../content/effects/library';
+import type {ConstructionPresentation} from '../../content/schema';
 
 const UNIT_CULL_MARGIN = 6;
 /** A live rig (CharacterPlayer + SkinnedMesh) or a baked crowd member; `pose` syncs baked sockets. */
@@ -86,6 +89,9 @@ function holdableMatrices(o: Object3D) {
 /** One scene adapter for observed entities. Models and pose variants come from asset declarations. */
 export class SettlementLayer {
   private readonly root = new Group();
+  private readonly constructionEffects=new EffectPlayer();
+  private readonly constructionStyles=new Map<string,ConstructionPresentation>();
+  private readonly scaffolds=new Map<number,ConstructionScaffold>();
   private cameraHidden:number|null=null;
   private readonly cameraPrepared=new WeakSet<Object3D>();
   private hiddenSprites:Array<[Sprite,boolean]>=[];
@@ -153,7 +159,7 @@ export class SettlementLayer {
   private readonly concealment = new ConcealmentVisuals();
   private readonly corpses = new Map<
     number,
-    { root: Object3D; remaining: number; born: number }
+    { root: Object3D; remaining: number; born: number; fall?: { from: number; floor: number } }
   >();
   /** Merged depth casters for unit rigs (see shadowProxy.ts); shown only during the shadow pass. */
   private readonly shadowProxies = new Set<SkinnedMesh>();
@@ -222,11 +228,15 @@ export class SettlementLayer {
   private readonly modelLoads=new Map<string,Promise<GLTF>>();
   private readonly bindingLoads=new Map<string,Promise<void>>();
   private readonly modelLoader=new GLTFLoader();
-  get ready():Promise<void>{return Promise.all([this.harvestTrees.ready,...this.bindingLoads.values()]).then(()=>{});}
+  get ready():Promise<void>{return Promise.all([this.harvestTrees.ready,this.projectiles.ready,this.shells.ready,...this.bindingLoads.values()]).then(()=>{});}
   constructor(scene: Scene, private readonly registry:ContentRegistry=content) {
+    for(const race of Object.values(registry.rules.races))if(race.construction){
+      if(!coreEffects.some(e=>e.id===race.construction!.dustEffect))throw Error(`Unknown construction effect: ${race.construction.dustEffect}`);
+      for(const id of race.roster)this.constructionStyles.set(id,race.construction);
+    }
     this.shells=new ShellEffects(this.root,registry);this.projectiles=new ProjectileEffects(this.root,registry);
     this.root.name = "game-entities";
-    this.root.add(this.ghost, this.entranceGhost, this.gridLines);
+    this.root.add(this.ghost, this.entranceGhost, this.gridLines,this.constructionEffects.root);
     this.gridLines.visible = this.entranceGhost.visible = this.ghost.visible = false;
     // Static root: children update their own subtrees, so a frozen (culled) unit is skipped
     // by updateMatrixWorld instead of being force-updated through this node.
@@ -348,6 +358,7 @@ export class SettlementLayer {
    * Factions come from the entities seen at start; neutral camps/mines and items are shared.
    */
   preloadRoster() {
+    for(const style of this.constructionStyles.values())this.requestModel(style.scaffold);
     const factions = new Set(["neutral", ...this.modelEntities.map((e) => e.definition.split(".")[1]!)]);
     for (const d of this.registry.definitions)
       if (d.kind === "item" || ((d.kind === "unit" || d.kind === "building") && factions.has(d.id.split(".")[1]!)))
@@ -449,6 +460,8 @@ export class SettlementLayer {
       o = undefined;
     }
     if (o) return o;
+    const constructionStyle=e.construction?this.constructionStyles.get(e.definition):undefined;
+    if(constructionStyle&&!this.prototypes.has(constructionStyle.scaffold)){this.requestModel(constructionStyle.scaffold);return null;}
     if(!this.prototypes.has(assetId)){this.requestModel(assetId);return null;}
     const source = this.characterSources.get(assetId);
     const baked = source ? this.crowd.create(assetId, e.id) : null;
@@ -481,6 +494,10 @@ export class SettlementLayer {
     o.userData.pickHeight = d.dimensions?.height ?? (asset.healthHeight ?? 2.5) * visualScale;
     o.userData.pickRadius = d.dimensions?.radius;
     model.scale.setScalar(scale);
+    if(constructionStyle){
+      const scaffold=new ConstructionScaffold(constructionStyle,this.clone(constructionStyle.scaffold)!,model,this.constructionEffects,coreEffects.find(e=>e.id===constructionStyle.dustEffect)!);
+      o.add(scaffold.root);this.scaffolds.set(e.id,scaffold);
+    }
     if (asset.carryAsset) {
       const carry = this.clone(asset.carryAsset);
       if (carry) {
@@ -611,6 +628,8 @@ export class SettlementLayer {
         );
       }
       const target = this.targetPosition.set(e.x, field.walkSample(e.x,e.y,e.surface)+(e.elevation??0)+(e.unit?.garrison?.height??0), e.y);
+      // Keep the actual flight floor (including water/decks), not just terrain height.
+      o.userData.flightFloor = e.unit?.flight ? target.y - e.unit.flight.height : undefined;
       if (e.unit?.garrison) {
         const host=byId.get(e.unit.garrison.building);
         const radius=host?(this.registry.get(host.definition).garrison?.lookoutRadius??0)*(host.appearance?.scale??1):0;
@@ -663,8 +682,11 @@ export class SettlementLayer {
         const castStarted = !!cast && o.userData.castKey !== `${cast.ability}/${cast.resolveTick}`;
         const definition=cast?this.registry.abilityLibrary.abilities.find(a=>a.id===cast.ability):undefined;
         const presentation=definition?this.registry.abilityLibrary.presentations.find(p=>p.id===definition.presentation):undefined;
-        const castPose=cast&&presentation?castAnimation(presentation,{startTick:cast.startTick,releaseTick:cast.resolveTick,finishTick:cast.finishTick,channel:cast.channel},renderTick,clip=>character.player.hasState(clip as AntState),this.registry.asset(e.appearance?.asset??d.asset).castContact??.55):undefined;
-        if (castPose) {
+        const castPose=cast&&presentation?castAnimation(presentation,{startTick:cast.startTick,releaseTick:cast.resolveTick,finishTick:cast.finishTick,channel:cast.channel},renderTick,clip=>character.player.hasState(clip as AntState),clip=>character.player.castContact(clip,this.registry.asset(e.appearance?.asset??d.asset).castContact??.55)):undefined;
+        if (e.unit.charging) {
+          // A physical lunge owns the pose even while cast recovery is active.
+          character.player.setState("charge", {fade:.025});
+        } else if (castPose) {
           character.player.setState(castPose.clip as AntState,{restart:castStarted,fade:.08});
           o.userData.castKey=`${cast!.ability}/${cast!.resolveTick}`;
         } else if (o.userData.wasCasting && !e.unit.moving && !attack) {
@@ -692,7 +714,8 @@ export class SettlementLayer {
         }
         o.userData.wasCasting=!!castPose;
         const cycle = e.unit.work?.cycle;
-        if(castPose){character.player.sample(castPose.phase,dt);}
+        if(e.unit.charging){character.player.update(previousState === "charge" ? dt : 0);}
+        else if(castPose){character.player.sample(castPose.phase,dt);}
         else if (attack && character.player.state === "attack") {
           const contact = character.player.attackContact();
           const phase = attackPhase(renderTick,attack,contact);
@@ -722,10 +745,24 @@ export class SettlementLayer {
         carry.visible = !!e.unit?.cargo;
         body.visible = !carry.visible;
       }
-      const buildProgress = e.construction
-        ? Math.max(0.1, e.construction.progress / d.creation!.workTicks)
-        : 1;
-      body.scale.y = buildProgress * (o.userData.modelScale ?? 1);
+      if(e.construction&&!this.scaffolds.has(e.id)){
+        const style=this.constructionStyles.get(e.definition);
+        if(style){
+          const model=this.clone(style.scaffold);
+          if(model){const scaffold=new ConstructionScaffold(style,model,body,this.constructionEffects,coreEffects.find(e=>e.id===style.dustEffect)!);o.add(scaffold.root);this.scaffolds.set(e.id,scaffold);}
+          else{this.requestModel(style.scaffold);body.visible=false;}
+        }
+      }
+      const scaffold=this.scaffolds.get(e.id);
+      if(scaffold){
+        const pose=scaffold.update(e.construction?e.construction.progress/d.creation!.workTicks:1,renderTick,o.visible&&!e.remembered,e.id);
+        // Remembered construction retains its last enclosure without revealing
+        // a hidden completion or emitting new work particles through fog.
+        if(e.remembered&&e.construction)scaffold.root.visible=pose.height>0&&o.visible;
+        body.visible=pose.buildingVisible;
+        if(!e.construction){this.disposeInstance(scaffold.root);scaffold.dispose();this.scaffolds.delete(e.id);}
+      }
+      body.scale.y=o.userData.modelScale??1;
       const attackTarget =
         commandedTargets.has(e.id) && !e.remembered && !e.unit?.contained;
       const chosen = this.selected.has(e.id);
@@ -743,10 +780,8 @@ export class SettlementLayer {
           const dx = e.x - to.x, dz = e.y - to.z, len = Math.hypot(dx, dz) || 1;
           to = {...to, x: to.x + dx / len * 1.3, z: to.z + dz / len * 1.3};
         }
-        // Spawns exit on the side facing the flag (sim `deployment`), so the route starts at that edge.
-        const edge = footprintCellBounds({x:e.x,y:e.y}, d.footprint, e.rotation);
         rallies.push({id:e.id,slot:this.viewerSlot,to,
-          from:{x:Math.max(edge.minX-1,Math.min(edge.maxX+1,to.x)),z:Math.max(edge.minY-1,Math.min(edge.maxY+1,to.z)),surface:e.surface}});
+          from:{x:o.position.x,z:o.position.z,surface:e.surface}});
       }
       this.statusBadges.update(o, e, tick, o.userData.pickHeight);
       const hp = parts.hp;
@@ -808,6 +843,7 @@ export class SettlementLayer {
       return socket ? source.getObjectByName(socket)?.getWorldPosition(new Vector3()) : undefined;
     };
     this.shells.update(state.shells ?? [], field, renderTick, launchPosition);
+    this.constructionEffects.update(renderTick);
     this.projectiles.update(renderTick, state.missiles ?? [], field, launchPosition);
     this.abilityEffects.update(renderTick,id=>{const e=state.entities.find(e=>e.id===id);return e?{x:e.x,y:e.y,height:field.sample(e.x,e.y)+(e.elevation??0)}:undefined;},this.projectiles.effectPose,(id,name)=>{const e=byId.get(id),root=this.entities.get(id);return e&&root?.visible&&!e.remembered?resolveEffectSocket(root,this.registry.asset(e.appearance?.asset??this.registry.get(e.definition).asset).sockets,name):undefined;});
     perf.end('Projectiles / shell effects',projectileTiming);
@@ -821,7 +857,8 @@ export class SettlementLayer {
             const part = o.getObjectByName(name);
             if (part) part.visible = false;
           }
-          this.corpses.set(id, { root: o, remaining: 2, born: renderTick });
+          this.corpses.set(id, { root: o, remaining: 2, born: renderTick,
+            ...(o.userData.flightFloor !== undefined ? { fall: { from: o.position.y, floor: o.userData.flightFloor } } : {}) });
         } else this.removeModel(id, o);
         this.entities.delete(id);
         this.frozen.delete(id);
@@ -832,6 +869,10 @@ export class SettlementLayer {
         Math.round(corpse.root.position.x);
       const corpseDelta = corpse.born === renderTick ? 0 : dt;
       corpse.remaining -= corpseDelta;
+      if (corpse.fall) {
+        const elapsed = 2 - corpse.remaining;
+        corpse.root.position.y = Math.max(corpse.fall.floor, corpse.fall.from - 15 * elapsed * elapsed);
+      }
       if (corpse.remaining <= 0 || (state.fog && state.fog.cells[cell] !== 2)) {
         this.removeModel(id, corpse.root);
         this.corpses.delete(id);
@@ -927,6 +968,8 @@ export class SettlementLayer {
   }
 
   private removeModel(id: number, o: Object3D) {
+    const scaffold=this.scaffolds.get(id);
+    if(scaffold){this.disposeInstance(scaffold.root);scaffold.dispose();this.scaffolds.delete(id);}
     this.parts.get(o)?.hp.dispose();
     const mine=this.parts.get(o)?.mine;if(mine)this.mineLabels.remove(mine);
     const body=this.parts.get(o)?.body;if(body)this.concealment.remove(body);
@@ -965,6 +1008,7 @@ export class SettlementLayer {
     this.gridLines.geometry.dispose();
     this.gridLines.material.dispose();
     this.abilityEffects.dispose();
+    this.constructionEffects.dispose();
     this.impacts.dispose();
     this.meleeTrails.dispose();
     this.commandEffects.dispose();

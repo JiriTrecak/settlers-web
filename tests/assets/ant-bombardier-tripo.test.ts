@@ -18,7 +18,7 @@ describe('published bombardier',()=>{
   const count=primitives.reduce((n:number,p:any)=>n+gltf.accessors[p.indices].count/3,0);
   expect(count).toBeGreaterThan(4000);expect(count).toBeLessThanOrEqual(5000);
   const binding=manifest.bindings.render.find((r:any)=>r.id==='asset.ants.bombardier');
-  expect(binding.projectileSocket).toBe('socket_projectile');
+  expect(binding.projectileSocket).toBe('socket_projectile');expect(binding.projectile).toBe('effect.weapon.resin-bomb');expect(binding.impactEffect).toBe('effect.ants.resin-explosion');
  });
  it('retains normalized skin weights, the muzzle socket and keyed mortar recoil',()=>{
   expect(gltf.skins[0].joints.length).toBeGreaterThanOrEqual(68);
@@ -27,16 +27,17 @@ describe('published bombardier',()=>{
    expect(p.attributes.JOINTS_0).toBeDefined();
    for(const weights of accessor(p.attributes.WEIGHTS_0))expect(weights.reduce((a,b)=>a+b,0)).toBeCloseTo(1,4);
   }
-  const profile=gltf.nodes.find((n:any)=>n.extras?.characterProfile).extras.characterProfile;
-  for(const state of ['idle','walk','run','attack','hit','death']){
-   const clip=gltf.animations.find((a:any)=>a.name===profile.variants.bombardier.states[state]);expect(clip).toBeDefined();expect(clip.channels.length).toBeGreaterThan(50);
+  const states=Object.fromEntries(manifest.capabilities.animations.map((a:any)=>[a.semantic,a.clip]));
+  for(const state of ['idle','walk','run','attack','cast','hit','death']){
+   const clip=gltf.animations.find((a:any)=>a.name===states[state]);expect(clip).toBeDefined();expect(clip.channels.length).toBeGreaterThan(50);
    for(const sampler of clip.samplers){expect(gltf.accessors[sampler.input].count).toBeGreaterThan(1);for(const values of accessor(sampler.output))for(const v of values)expect(Number.isFinite(v)).toBe(true);}
   }
-  const shot=gltf.animations.find((a:any)=>a.name==='attack_mortar');
-  const node=gltf.nodes.findIndex((n:any)=>n.name==='mortar');
-  const channel=shot.channels.find((c:any)=>c.target.node===node&&c.target.path==='translation');
+  const shot=gltf.animations.find((a:any)=>a.name===states.attack);
+  const node=gltf.nodes.findIndex((n:any)=>n.name==='mixamorigSpine' || n.name==='mixamorig:Spine');
+  const channel=shot.channels.find((c:any)=>c.target.node===node&&c.target.path==='rotation');
   expect(channel).toBeDefined();const values=accessor(shot.samplers[channel.sampler].output);
   expect(new Set(values.map(v=>v.join(','))).size).toBeGreaterThan(5);
+  const release=manifest.capabilities.animations.find((a:any)=>a.semantic==='attack').events[0];expect(release).toEqual({name:'release',time:16/24});
 
  });
  it('has opaque leaf ownership while retaining natural chitin, eyes and timber',async()=>{

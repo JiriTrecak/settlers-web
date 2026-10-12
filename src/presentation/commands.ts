@@ -62,6 +62,13 @@ export type NavigationBinding = Omit<CommandBinding, "type" | "immediate"> & {
 };
 export type CommandEntry = CommandBinding | NavigationBinding;
 
+function commandOrder(a: CommandEntry, b: CommandEntry) {
+  return b.priority - a.priority ||
+    (a.type === 'learnAbility' && b.type === 'learnAbility'
+      ? (a.column ?? 1) - (b.column ?? 1) : 0) ||
+    (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+}
+
 /** Camera controls remain available when inspecting a visible unit as an observer. */
 export function unitCameraCommand(view:SettlementView,focusId:number|undefined,registry:ContentRegistry,mode:UnitCameraMode):CommandBinding[] {
   const focus=view.entities.find(e=>e.id===focusId),meta=registry.actions.navigation.camera;
@@ -90,7 +97,7 @@ export function commandMenu(
     entries.push({ ...meta, id: `category:${id}`, type: "category", destination: id,
       costs: [], actors: [], enabled: true });
   }
-  entries.sort((a, b) => b.priority - a.priority || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  entries.sort(commandOrder);
   if (category) entries.unshift({
     id: "navigation:back", type: "back", destination: categories[category].parent ?? null,
     ...registry.actions.navigation.back, costs: [], actors: [], enabled: true,
@@ -366,10 +373,11 @@ export function commandCard(
         if(!binding.command||!binding.controls.includes('player'))continue;
         const spell=registry.abilityLibrary.abilities.find(a=>a.id===binding.ability)!,learned=state.ranks[binding.id]??0;
         const icon=binding.command.icon??registry.abilityLibrary.presentations.find(p=>p.id===spell.presentation)?.icon??registry.get(caster.definition).icon;
-        if(binding.learning&&learned<spell.ranks.length){
-          const level=caster.stats?.level??1,spent=policy.bindings.reduce((sum,b)=>sum+(state.ranks[b.id]??0)-b.initialRank,0),required=binding.learning.requiredLevels[learned];
-          const learnReason=state.pending?'Casting':level<required?`Requires level ${required}`:spent>=level?'No skill points available':undefined;
-          result.push({id:`learn:${binding.id}`,type:'learnAbility',ability:spell.id,binding:binding.id,name:`Learn ${spell.name}`,description:`${spell.description}\nRank ${learned+1}/${spell.ranks.length} · Requires level ${required}`,icon,costs:[],priority:60,category:'category.hero.skills',placement:'bottom-row',column:binding.command.column,hotkey:binding.command.hotkey,actors:[caster.id],enabled:!view.outcome&&!learnReason,reason:learnReason,immediate:{type:'learnAbility',actor:caster.id,ability:binding.id}});
+        if(binding.learning){
+          const level=caster.stats?.level??1,spent=policy.bindings.reduce((sum,b)=>sum+(state.ranks[b.id]??0)-b.initialRank,0),required=binding.learning.requiredLevels[learned],maxed=learned>=spell.ranks.length;
+          const learnReason=maxed?'Fully learned':state.pending?'Casting':level<required?`Requires level ${required}`:spent>=level?'No skill points available':undefined;
+          const learningDetails=maxed?`Rank ${learned}/${spell.ranks.length} · Fully learned`:`Rank ${learned+1}/${spell.ranks.length} · Requires level ${required}`;
+          result.push({id:`learn:${binding.id}`,type:'learnAbility',ability:spell.id,binding:binding.id,name:`Learn ${spell.name}`,description:`${spell.description}\n${learningDetails}`,icon,costs:[],priority:60,category:'category.hero.skills',column:binding.command.column,hotkey:binding.command.hotkey,actors:[caster.id],enabled:!view.outcome&&!learnReason,reason:learnReason,immediate:{type:'learnAbility',actor:caster.id,ability:binding.id}});
         }
         if(!learned)continue;
         const rank=spell.ranks[learned-1],mana=value(spell.cast.cost.amount,rank),cooldown=Math.round(value(spell.cast.cooldown.ticks,rank)*(1000-(caster.stats?.cooldownReductionPermille??0))/1000);
@@ -395,8 +403,5 @@ export function commandCard(
       add("build", workers, id);
     }
   }
-  return result.sort(
-    (a, b) =>
-      b.priority - a.priority || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
-  );
+  return result.sort(commandOrder);
 }

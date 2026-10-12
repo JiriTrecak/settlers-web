@@ -313,13 +313,13 @@ export class Observation {
     return this.c.state.spellVisions.filter(v=>v.expires>this.c.state.tick&&this.sharesVision(owner,{owner:v.owner as Owner} as Entity));
   }
   private spellVisible(owner:Owner,e:Entity){
-    const point=this.c.spatial.elevatedPoint(e);
+    const point=this.c.spatial.sightPoint(e);
     return this.spellSensors(owner).some(v=>(point.x-v.point.x)**2+(point.y-v.point.y)**2<=v.radius**2&&(v.ignoreTerrain||this.c.spatial.visible(v.point,point)));
   }
   /** Detection never grants ordinary sight; both checks must pass for hostile targets. */
   detects(owner:Owner,e:Entity,observer?:Entity):boolean {
     if(!spellHidden(e,this.c.registry,this.c.state.tick)||this.nativeSharesVision(owner,e)&&owner!=='none'||observer?.id===e.id)return true;
-    const p=this.c.spatial.elevatedPoint(e),sensors=owner==='none'?(observer?[observer]:[]):this.c.liveSensors().filter(s=>this.nativeSharesVision(owner,s));
+    const p=this.c.spatial.sightPoint(e),sensors=owner==='none'?(observer?[observer]:[]):this.c.liveSensors().filter(s=>this.nativeSharesVision(owner,s));
     if(sensors.some(s=>!s.unit?.contained&&!s.unit?.release&&alive(s)&&(()=>{const r=spellDetection(s,this.c.registry,this.c.state.tick),o=precise(s);return r>0&&(p.x-o.x)**2+(p.y-o.y)**2<=r*r&&this.c.spatial.visible(this.c.spatial.elevatedPoint(s),p);})()))return true;
     return this.spellSensors(owner).some(v=>v.detectInvisible&&(p.x-v.point.x)**2+(p.y-v.point.y)**2<=v.radius*v.radius&&(v.ignoreTerrain||this.c.spatial.visible(v.point,p)));
   }
@@ -374,7 +374,7 @@ export class Observation {
     const candidates=this.nearbySensors(e);
     if(this.c.spatial.layers||this.c.spatial.airborne(e)){
       for(const sensor of candidates)if(alive(sensor)&&this.sharesVision(owner,sensor)&&!sensor.unit?.contained&&!sensor.unit?.release&&
-        this.c.spatial.range(sensor,e)<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(this.c.spatial.elevatedPoint(sensor),this.c.spatial.elevatedPoint(e)))return true;
+        this.c.spatial.range(sensor,e)<=(this.c.def(sensor).vision??0)**2&&this.c.spatial.visible(this.c.spatial.elevatedPoint(sensor),this.c.spatial.sightPoint(e)))return true;
       return false;
     }
     const cells=this.fogFootprint(e);

@@ -19,7 +19,7 @@ function setup(tier=1,queueCapacity=4){
   const defs=s.definitions as AuthoredDefinition[],marshal=defs.find(d=>d.id==='unit.ants.marshal')!;
   for(const [index,id] of [second,third,fourth].entries())defs.push({...structuredClone(marshal),id,name:['Warden','Mender','Scout'][index],displayOrder:index+1});
   const altar=defs.find(d=>d.id==='building.ants.sanctuary')!;
-  altar.behaviors!.production!.outputs!.push(second,third,fourth,'unit.ants.settler');
+  altar.behaviors!.production!.outputs=['unit.ants.marshal',second,third,fourth,'unit.ants.settler'];
   altar.behaviors!.production!.queueCapacity=queueCapacity;altar.behaviors!.revival!.queueCapacity=queueCapacity;
  });
  const hall=g.context.get(g.state.objectives['player.1'])!,altar=g.entities.find(e=>e.placement==='altar')!,backup=g.entities.find(e=>e.placement==='backup')!;

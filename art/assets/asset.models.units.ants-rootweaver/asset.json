@@ -1,0 +1,264 @@
+{
+  "version": 1,
+  "id": "asset.models.units.ants-rootweaver",
+  "name": "Ant Rootweaver",
+  "kind": "unit",
+  "revision": 65,
+  "status": "published",
+  "tags": [
+    "ants",
+    "rootweaver",
+    "tripo",
+    "skinned"
+  ],
+  "resources": [
+    {
+      "role": "albedo",
+      "index": 1,
+      "format": "png",
+      "sha256": "f7a10e074236b90a2d7578aa866f85d600770e055268558d2aced198cab32dd0",
+      "bytes": 2576585
+    },
+    {
+      "role": "generation",
+      "index": 1,
+      "format": "json",
+      "sha256": "e7d63e44365d995222d87bead8465983ca73d2bd0482eb565aa05dfc199926a0",
+      "bytes": 888
+    },
+    {
+      "role": "geometry",
+      "index": 1,
+      "format": "glb",
+      "sha256": "53f33d4821e9cdd34d7cace98b5d84771e2f0d2389fe1d81a4f4502605695486",
+      "bytes": 3734968
+    },
+    {
+      "role": "image",
+      "index": 1,
+      "format": "png",
+      "sha256": "552cc350056abc2daa53fa6a6b5adc03aec87e2cdccdba0f8e37081a33338da5",
+      "bytes": 10986
+    },
+    {
+      "role": "preview",
+      "index": 1,
+      "format": "png",
+      "sha256": "ce739cdb26836f9ecd866b077057e9715b73f55e398a18111d4b82f8d1a9e5c9",
+      "bytes": 583303
+    },
+    {
+      "role": "preview",
+      "index": 2,
+      "format": "png",
+      "sha256": "5584f16ddf9ee8c7fa6cf4656d986a6890a73b7712393d7d8a41ccba7185e356",
+      "bytes": 561780
+    },
+    {
+      "role": "recipe",
+      "index": 1,
+      "format": "py",
+      "sha256": "baa6c93aef0eb28ed4f327f26ad7676f2f18e125d9b73851332444b3d1365591",
+      "bytes": 8307
+    },
+    {
+      "role": "recipe",
+      "index": 2,
+      "format": "py",
+      "sha256": "b2d9ba191251edf81e88f5d623eca59de04b87331ecb20b2756732bb49bca34f",
+      "bytes": 3897
+    },
+    {
+      "role": "recipe",
+      "index": 3,
+      "format": "py",
+      "sha256": "35da7fae14d036acaa6464b09c5b413356acdde6f461f4a2ec5a6e2501ee7062",
+      "bytes": 1979
+    },
+    {
+      "role": "reference",
+      "index": 1,
+      "format": "png",
+      "sha256": "381e18b97db3522a57ad537505e8f2d7e886b3ec926655f0bcf929da7fab480d",
+      "bytes": 1515293
+    },
+    {
+      "role": "source",
+      "index": 1,
+      "format": "blend",
+      "sha256": "110411c1b135d58470dba4abf056b9c6c0871928a044e0c8cbf4660106d8a723",
+      "bytes": 38969115
+    },
+    {
+      "role": "source",
+      "index": 2,
+      "format": "glb",
+      "sha256": "b98b69c6c31d909cf92b568c7556432729b265155ae7da05907f884f697fa2dd",
+      "bytes": 7842744
+    },
+    {
+      "role": "source",
+      "index": 3,
+      "format": "json",
+      "sha256": "e38e4b487ba4893d88991c32c64031db7dac4fd7aa5fa39233c234af548e4cde",
+      "bytes": 6301
+    },
+    {
+      "role": "team_mask",
+      "index": 1,
+      "format": "png",
+      "sha256": "0dfa17ef2825e116fde03e1cfcf4ab7fc251694abec7c0a41ce842f3c23c09c7",
+      "bytes": 63130
+    }
+  ],
+  "usesGeometry": true,
+  "exportSettings": {
+    "textureSize": 1024
+  },
+  "transform": {
+    "scale": 1,
+    "pivot": [
+      0,
+      0,
+      0
+    ],
+    "up": "Y",
+    "forward": "+Z"
+  },
+  "materials": [],
+  "bindings": {
+    "faction": "ants",
+    "profile": "base",
+    "render": [
+      {
+        "id": "asset.ants.rootweaver",
+        "character": "base",
+        "scale": 2,
+        "healthHeight": 2.15,
+        "projectile": "effect.weapon.thorn",
+        "projectileSocket": "socket_projectile",
+        "castContact": 0.5,
+        "geometry": {
+          "role": "geometry",
+          "index": 1,
+          "asset": "asset.models.units.ants-rootweaver"
+        }
+      },
+      {
+        "id": "icon.ants.rootweaver",
+        "image": {
+          "role": "image",
+          "index": 1,
+          "asset": "asset.models.units.ants-rootweaver"
+        }
+      }
+    ],
+    "scenery": []
+  },
+  "capabilities": {
+    "teamColor": {
+      "mode": "mask",
+      "slots": [
+        "TC_TeamColor"
+      ],
+      "mask": {
+        "role": "team_mask",
+        "index": 1
+      }
+    },
+    "animations": [
+      {
+        "semantic": "idle",
+        "clip": "idle",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "walk",
+        "clip": "walk",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "run",
+        "clip": "run",
+        "loop": true,
+        "events": []
+      },
+      {
+        "semantic": "cast",
+        "clip": "cast",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "attack",
+        "clip": "attack",
+        "loop": false,
+        "events": [
+          {
+            "name": "release",
+            "time": 0.8333333333333334
+          }
+        ]
+      },
+      {
+        "semantic": "hit",
+        "clip": "hit",
+        "loop": false,
+        "events": []
+      },
+      {
+        "semantic": "death",
+        "clip": "death",
+        "loop": false,
+        "events": []
+      }
+    ],
+    "sockets": [
+      {
+        "name": "handL",
+        "node": "socket_handL",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "handR",
+        "node": "socket_handR",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "projectile",
+        "node": "socket_projectile",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "cast",
+        "node": "socket_cast",
+        "offset": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "groundContact": {
+      "mode": "pivot"
+    }
+  },
+  "provenance": {
+    "method": "generated",
+    "licenseNote": "Original generated artwork for Under the Canopy."
+  }
+}

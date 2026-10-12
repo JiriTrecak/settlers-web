@@ -26,7 +26,7 @@ it('shows one centered symbol for neighboring mine nodes, keeping separate depos
 });
 it('renders the imported Echo Isles mine sites once each instead of overlapping node icons',()=>{
  const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/echo-isles.utcmap','utf8')))!;
- expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(20);
+ expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(25);
  const svg=atlasSymbols(map);expect(icons(svg)).toBe(5);
  expect((svg.match(/stroke-linejoin="round"/g)??[])).toHaveLength(map.camps.length);
 });

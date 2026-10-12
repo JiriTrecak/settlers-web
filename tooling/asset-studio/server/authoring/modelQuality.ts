@@ -2,7 +2,8 @@ import sharp from 'sharp';
 import type {AssetDefinition} from '../../../../src/shared/authoring/asset';
 import {hash} from '../storage';
 
-export const MODEL_LIMITS={unit:5000,creature:5000,building:10000} as const;
+export const MODEL_LIMITS={unit:5000,hero:10000,creature:5000,building:10000} as const;
+function modelLimit(asset:AssetDefinition){return asset.kind==='unit'&&asset.modelClass==='hero'?MODEL_LIMITS.hero:MODEL_LIMITS[asset.kind as keyof typeof MODEL_LIMITS];}
 export type ModelQuality={sha256:string;triangles:number;primitives:number;bones:number;textures:number;textureBytes:number;clips:{name:string;duration:number}[];materials:string[];warnings:string[]};
 type Document=Record<string,any>;
 export function readGlb(bytes:Buffer):{doc:Document;bin:Buffer}{
@@ -73,7 +74,7 @@ async function measure(bytes:Buffer){
 export async function inspectGeometry(bytes:Buffer,asset:AssetDefinition,primary=true):Promise<ModelQuality>{
  const key=hash(bytes);let pending=cache.get(key);if(!pending){if(cache.size>=128)cache.delete(cache.keys().next().value!);pending=measure(bytes);cache.set(key,pending);pending.catch(()=>cache.delete(key));}
  const {report,doc}=await pending;
- const limit=MODEL_LIMITS[asset.kind as keyof typeof MODEL_LIMITS];if(limit&&report.triangles>limit)throw Error(`${asset.id}: ${report.triangles} triangles exceeds ${limit}`);
+ const limit=modelLimit(asset);if(limit&&report.triangles>limit)throw Error(`${asset.id}: ${report.triangles} triangles exceeds ${limit}`);
  if(primary){
   const names=new Set((doc.nodes??[]).map((n:any)=>n.name));
   for(const socket of asset.capabilities.sockets??[])if(!names.has(socket.node))throw Error(`Missing socket ${socket.node}`);
@@ -85,7 +86,13 @@ export async function inspectGeometry(bytes:Buffer,asset:AssetDefinition,primary
 }
 
 export function validateCompleteModel(asset:AssetDefinition,reports:readonly ModelQuality[]){
- const limit=MODEL_LIMITS[asset.kind as keyof typeof MODEL_LIMITS];if(!limit)return;
+ const limit=modelLimit(asset);if(!limit)return;
  const triangles=reports.reduce((sum,r)=>sum+r.triangles,0);
  if(triangles>limit)throw Error(`${asset.id}: body plus attachments totals ${triangles} triangles (limit ${limit})`);
+}
+
+/** Volley models are baked static meshes; authored clips may exist but are not sampled. */
+export function validateStaticWeaponGeometry(bytes:Buffer){
+ const {doc}=readGlb(bytes);
+ if(doc.nodes?.some((n:any)=>n.skin!==undefined||n.extensions?.EXT_mesh_gpu_instancing)||doc.meshes?.some((m:any)=>m.primitives?.some((p:any)=>p.targets?.length)))throw Error('Weapon projectile models require baked static geometry without skins, morphs or nested instances');
 }

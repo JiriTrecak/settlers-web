@@ -1,0 +1,28 @@
+{
+  "provider": "Tripo Studio",
+  "task": "8a72a895-b7b9-42f8-b8ed-76f12ad74494",
+  "adaptation": {
+    "ownershipMaskFraction": 0.5340170860290527,
+    "triangles": 4307,
+    "clips": [
+      "attack",
+      "cast",
+      "death",
+      "hit",
+      "idle",
+      "run",
+      "walk"
+    ],
+    "status": "requires-per-role-motion-and-game-review"
+  },
+  "refinement": "Rigid staff and five-leaf fan, top-down fan tilt, stable abdomen, adapted provider gait/death and deliberate root-casting gestures",
+  "sourceFiles": {
+    "adapt.py": "recipe.py",
+    "refine.py": "recipe_2.py",
+    "render-pose.py": "recipe_3.py",
+    "provider.glb": "source_2.glb",
+    "reference.png": "reference.png"
+  },
+  "rebuild": "Materialize the named recipe files and provider in a staging rootweaver directory; run Blender -b --python adapt.py -- <rootweaver directory>.",
+  "runtimeTextureSize": 1024
+}

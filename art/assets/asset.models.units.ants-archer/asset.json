@@ -3,7 +3,7 @@
   "id": "asset.models.units.ants-archer",
   "name": "Ant Archer",
   "kind": "unit",
-  "revision": 5,
+  "revision": 7,
   "status": "published",
   "tags": [
     "original",
@@ -217,7 +217,7 @@
         "character": "archer",
         "scale": 1,
         "healthHeight": 2.15,
-        "projectile": "arrow",
+        "projectile": "effect.weapon.arrow",
         "projectileSocket": "socket_projectile",
         "geometry": {
           "role": "geometry",
@@ -237,6 +237,11 @@
     "scenery": []
   },
   "capabilities": {
+    "dimensions": {
+      "radius": 0.2,
+      "height": 2,
+      "formationSpacing": 1
+    },
     "teamColor": {
       "mode": "mask",
       "slots": [
@@ -336,11 +341,6 @@
     ],
     "groundContact": {
       "mode": "pivot"
-    },
-    "dimensions": {
-      "radius": 0.2,
-      "height": 2,
-      "formationSpacing": 1
     }
   },
   "provenance": {

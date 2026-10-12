@@ -1,11 +1,12 @@
 import {readFileSync} from 'node:fs';
 import {expect,it} from 'vitest';
-import {readWarcraftMap} from '../../src/editor/import/warcraft/read';
-import {convertWarcraftMap} from '../../src/editor/import/warcraft/convert';
+import {readUtcMap} from '../../src/shared/map/utcmap';
 import {playableMapError} from '../../src/shared/map/playable';
 import {Game} from '../../src/sim/game/game';
-it.each(['echo-isles','turtle-rock'])('%s import has usable starts and a deterministic save continuation',name=>{
- const source=readWarcraftMap(new Uint8Array(readFileSync(`tests/editor/fixtures/warcraft/${name}.w3x`))),{map}=convertWarcraftMap(source);
+it.each(['echo-isles','turtle-rock'])('%s published map has usable starts and a deterministic save continuation',name=>{
+ const loaded=readUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${name}.utcmap`,'utf8')));
+ if(!('map' in loaded))throw Error(`Invalid published ${name}`);
+ const {map}=loaded;
  expect(playableMapError(map)).toBeNull();
  const slots=map.playerStarts.map((_,player)=>({player,kind:'human' as const})),game=new Game(map,slots);
  for(const e of game.entities.filter(e=>e.unit))expect(game.spatial.unitWalkable(e,e),e.placement??undefined).toBe(true);

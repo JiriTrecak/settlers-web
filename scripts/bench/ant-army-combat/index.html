@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Ant army · mixed combat</title><style>
+body{margin:0;background:#18181b;color:#fafafa;font:14px system-ui}header{position:absolute;top:12px;left:12px;background:#18181bee;padding:14px;border-radius:8px;z-index:1;max-width:calc(100vw - 60px)}button,a,select{font:inherit;color:#fafafa;background:#27272a;border:1px solid #52525b;border-radius:4px;padding:6px;text-decoration:none}canvas{display:block}p{margin:8px 0}small{color:#a1a1aa}label{margin-left:10px}#roster{display:flex;gap:6px;flex-wrap:wrap;max-width:850px}#roster span{background:#27272a;padding:3px 6px;border-radius:3px}
+</style></head><body><header><strong>Ant army · combined arms</strong><p id="roster"></p><p>
+<button id="pause">Start battle</button> <button id="restart">Reset formation</button> <button id="step">Step</button>
+<label>Hero <select id="hero-select"><option value="marshal">Marshal</option><option value="rootbreaker">Rootbreaker</option></select></label>
+<label>Speed <select id="speed"><option value="1">1×</option><option value="0.5">½×</option><option value="0.25">¼×</option><option value="2">2×</option></select></label>
+<label>View <select id="angle"><option value="game">Commander</option><option value="top">Directly above</option></select></label>
+<label>Zoom <input id="zoom" aria-label="Zoom" type="range" min="60" max="220" value="170"></label>
+<a href="?army=large">Large army</a> <a href="?army=small">Small army</a>
+</p><p id="hero-commands">Red hero: </p><small id="order-status"></small><p id="status">Loading published models…</p><small>Drag to pan · wheel to zoom · workers wait behind the lines · normal game simulation and shared renderer</small></header><canvas></canvas><script type="module" src="./main.ts"></script></body></html>

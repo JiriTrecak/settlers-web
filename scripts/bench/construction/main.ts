@@ -1,0 +1,22 @@
+import {AmbientLight,Color,DirectionalLight,Mesh,MeshStandardMaterial,PlaneGeometry,PerspectiveCamera,Scene,WebGLRenderer} from 'three';
+import {SettlementLayer} from '../../../src/render/settlement/settlementLayer';
+import {HeightField} from '../../../src/shared/map/height';
+import {content} from '../../../src/content/builtin';
+import type {EntityView,SettlementView} from '../../../src/sim/game/observation';
+const canvas=document.querySelector('canvas')!,renderer=new WebGLRenderer({canvas,antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;
+const scene=new Scene();scene.background=new Color('#233025');scene.add(new AmbientLight(0xfff4e0,1.6));const sun=new DirectionalLight(0xffefdc,3);sun.position.set(70,100,40);scene.add(sun);
+const ground=new Mesh(new PlaneGeometry(200,200),new MeshStandardMaterial({color:'#526741',roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.set(64,-.05,64);scene.add(ground);
+const camera=new PerspectiveCamera(42,innerWidth/innerHeight,.1,400);camera.position.set(64,49,112);camera.lookAt(64,4,61);
+const layer=new SettlementLayer(scene),field=new HeightField(128);layer.viewer(0,()=> 'own');
+const pairs={halls:['building.ants.fort','building.beetles.bastion'],barracks:['building.ants.barracks','building.beetles.war-lodge'],forges:['building.ants.ironroot-forge','building.beetles.shell-forge'],supply:['building.ants.house','building.beetles.brood-den']};
+const buildingSelect=document.querySelector<HTMLSelectElement>('#buildings')!,colorSelect=document.querySelector<HTMLSelectElement>('#colors')!;
+const defs=Object.values(pairs).flat();
+layer.preloadAssets(defs.flatMap(id=>[content.get(id).asset,content.rules.races[id.split('.')[1]!]!.construction!.scaffold]));await layer.ready;
+const progress=document.querySelector<HTMLInputElement>('#progress')!,fog=document.querySelector<HTMLInputElement>('#fog')!,status=document.querySelector('#status')!;let playing=false,cancelled=false,tick=0,last=performance.now();
+document.querySelector('#play')!.addEventListener('click',()=>{playing=!playing;cancelled=false;if(Number(progress.value)>=1000)progress.value='0';});document.querySelector('#cancel')!.addEventListener('click',()=>{cancelled=!cancelled;playing=false;});
+function frame(now:number){const dt=Math.min(.1,(now-last)/1000);last=now;tick+=dt*40;if(playing)progress.value=String(Math.min(1000,Number(progress.value)+dt*65));const p=Number(progress.value)/1000;document.querySelector('#percent')!.textContent=(p*100).toFixed(1)+'%';
+ const allColors=colorSelect.value==='all',pair=pairs[buildingSelect.value as keyof typeof pairs],rows=allColors?[0,1,2,7]:[0];
+ const entities=cancelled?[]:rows.flatMap((slot,row)=>pair.map((definition,i)=>({id:row*2+i+1,definition,owner:`player.${(allColors?slot:i)+1}`,x:allColors?51+i*26:49+i*30,y:allColors?34+row*20:62,rotation:0,hp:content.get(definition).body!.maxHp,remembered:fog.checked,...(p<1?{construction:{progress:Math.round(p*content.get(definition).creation!.workTicks)}}:{})} as EntityView)));
+ camera.position.set(64,allColors?100:49,allColors?153:112);camera.lookAt(64,4,61);
+ layer.update({entities} as SettlementView,field,tick);renderer.render(scene,camera);status.textContent=`Ant timber / Beetle iron · ${renderer.info.render.calls} draws\n${cancelled?'Cancelled':p>=.985?'Revealed':p>=.95?'Retracting':'Rising scaffold'} · ${fog.checked?'Dust hidden in fog':'Visible construction'}`;requestAnimationFrame(frame);}
+requestAnimationFrame(frame);

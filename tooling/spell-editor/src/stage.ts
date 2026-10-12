@@ -9,7 +9,7 @@ import {ConcealmentVisuals} from '../../../src/render/characters/concealment';
 import {value} from '../../../src/content/abilities/schema';
 import {AbilityTarget} from '../../../src/render/settlement/abilityTarget';
 import {castAnimation} from '../../../src/render/abilities/castAnimation';
-import {Vector3,Group,Mesh,MeshStandardMaterial,GridHelper,PlaneGeometry} from 'three';
+import {Vector3,Group,Mesh,MeshBasicMaterial,GridHelper,PlaneGeometry} from 'three';
 import {Renderer} from '../../../src/render';
 import {HeightField} from '../../../src/shared/map/height';
 import {emptyLandscape} from '../../../src/shared/landscape/curve';
@@ -32,8 +32,8 @@ export class SpellStage{
  private receivedAt=0;
  private modelKey='';private version=0;private mode:ViewMode='encounter';private frame=0;private abort=new AbortController();private drag?:{x:number;y:number;startX:number;startY:number};
  private active=true;private autoFrame=true;private framedKey='';
- private grid=new GridHelper(40,40,0x80908c,0x65716a);
- private floorGeometry=new PlaneGeometry(2000,2000);private floorMaterial=new MeshStandardMaterial({color:0x263438,roughness:1});
+ private grid=new GridHelper(40,40,0x52525b,0x3f3f46);
+ private floorGeometry=new PlaneGeometry(2000,2000);private floorMaterial=new MeshBasicMaterial({color:'#27272a'});
  constructor(private canvas:HTMLCanvasElement,private onError:(error:unknown)=>void,private onAim:(selection:TargetSelection)=>void){
   this.renderer=new Renderer(canvas);this.renderer.setGridMode('none');this.renderer.mountInspectionSubject(this.fixtures);this.renderer.mountInspectionSubject(this.effects.root);this.renderer.mountInspectionSubject(this.aimRoot);this.renderer.mountInspectionSubject(this.weapons);
   this.renderer.camera.setGame(false);this.renderer.camera.minZoom=1;this.renderer.camera.maxZoom=80;
@@ -65,7 +65,7 @@ export class SpellStage{
    subject.root.position.set(entity.x,entity.elevation??0,entity.y);subject.root.rotation.y=entity.rotation*Math.PI/180;
    const controls=defaultSubjectControls();controls.owner=entity.owner==='player.2'?1:0;controls.paused=true;
    const pending=entity.abilities?.pending;
-   const pose=pending?castAnimation(state.document.presentation,pending,state.tick,clip=>subject.info.states.includes(clip)):undefined;
+   const pose=pending?castAnimation(state.document.presentation,pending,state.tick,clip=>subject.info.states.includes(clip),clip=>subject.castContact(clip,content.asset(subject.root.userData.renderAsset).castContact??.55)):undefined;
    controls.state=pose?.clip??(entity.hp===0?'death':entity.attack?'attack':entity.moving?'run':'idle');if(!subject.info.states.includes(controls.state))controls.state='idle';subject.configure(controls);
    subject.seek(entity.corpse||entity.fallen?1:pose?.phase??(entity.attack?attackPhase(state.tick,entity.attack,subject.attackContact()):(state.tick%100)/100));
    subject.update(dt);
@@ -159,6 +159,6 @@ export class SpellStage{
   this.renderer.camera.setGame(this.mode==='environment',256);
   this.renderer.camera.pose({...frameBounds(bounds,aspect),gameZoom:1.8});
  }
- async capture(){await this.effects.ready();if(this.abort.signal.aborted)throw Error("Spell canvas was closed during capture");this.updateEffects(this.state?.tick??0);this.fit(inspectionCapture.aspect);try{return this.renderer.capture(inspectionCapture.width,inspectionCapture.aspect).toDataURL('image/png');}finally{this.fit();}}
+ async capture(){await Promise.all([this.effects.ready(),this.projectiles.ready]);if(this.abort.signal.aborted)throw Error("Spell canvas was closed during capture");this.updateEffects(this.state?.tick??0);this.fit(inspectionCapture.aspect);try{return this.renderer.capture(inspectionCapture.width,inspectionCapture.aspect).toDataURL('image/png');}finally{this.fit();}}
  dispose(){this.concealment.dispose();cancelAnimationFrame(this.frame);this.abort.abort();this.version++;for(const s of this.subjects.values())s.dispose();this.effects.dispose();this.projectiles.dispose();this.shells.dispose();this.aimVisual.dispose();this.grid.dispose();this.floorGeometry.dispose();this.floorMaterial.dispose();this.renderer.destroy();}
 }

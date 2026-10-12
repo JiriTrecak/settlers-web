@@ -12,7 +12,7 @@ A Warcraft terrain tile (128 source units) spans **five world/navigation units**
 
 The saved `terrain.textureGrid` records the texture tile size and origin independently of navigation. Ground coverage remains an ordinary one-unit editable raster. Atlas connectivity and variant arrays follow the texture grid through rendering, worker transfer, Save/Load, and repainting.
 
-Ground assets are resolved through each asset's `terrain.sourceIds`, preserving source layer order and full-tile variations. Missing materials stop import with their IDs, or can be explicitly substituted through MCP. Atlas corner connections are resolved by the normal renderer. Installed Classic textures and neutral defaults for their absent material channels are imported separately by `scripts/assets/import-warcraft-terrain.ts`.
+Ground assets are resolved through each asset's `terrain.sourceIds`, preserving source layer order and full-tile variations. Missing materials stop import with their IDs, or can be explicitly substituted through MCP. Atlas corner connections are resolved by the normal renderer. Installed Definitive textures (the `_de.w3mod` set) and neutral defaults for their absent material channels are imported separately by `scripts/assets/import-warcraft-terrain.ts`.
 
 Used source cliff types resolve to ordinary cliff-face terrain assets through the same `terrain.sourceIds` mechanism. Their coverage is saved independently from ground coverage and remains editable. `scripts/assets/import-warcraft-cliffs.ts` reads the wall region declared in `content/import/warcraft/cliff-surfaces.json`, preserving original DDS sources and separate material channels. These regions use slope-gated vertical projection on our heightfield; source cliff MDX silhouettes and UV geometry are not imported. The supplied maps use `CLdi`; `CLgr` is also available. Missing cliff-face declarations stop import rather than silently painting an unrelated material.
 
@@ -35,6 +35,22 @@ The installed game is only needed for this offline metadata/asset refresh, never
 ## Verification and remaining limits
 
 The supplied Echo Isles and Turtle Rock fixtures exercise W3E 11/12 and W3I 31/33, Reforged object overrides, terrain serialization, source tree positions, full-tile variants, camp tiers and subsequent cell editing. The browser worker and renderer are checked separately in the live editor.
+
+Both shipped maps use the 640-world-unit / 160-C conversion. Starting-economy
+regressions exercise both fresh conversions and the actual published `.utcmap`
+files, for Ants and Beetles. Published-map playability checks verify initial body
+clearance, reachable camp approaches, and deterministic save continuation.
+
+On 2026-10-11, mixed Ant/Beetle runs on both published maps completed 1,600 ticks
+through the real Room/Lockstep protocol. Echo Isles used two peers and Turtle
+Rock four; each matched 17 full-state checkpoints and final snapshots despite
+one synthetic transport stall. This verifies finite deterministic openings, not
+Internet performance or full-match balance. Reproduce with:
+
+```sh
+node --import tsx scripts/bench/multiplayer-match.ts --map echo-isles --ticks 1600 --races ants,beetles
+node --import tsx scripts/bench/multiplayer-match.ts --map turtle-rock --ticks 1600 --races ants,beetles,ants,beetles
+```
 
 Imported maps still need author review for playable margins, exact cliff silhouettes, source pathing overrides and ramp behavior. Triggers, items, neutral shops, other decorative doodads and source models are outside this import scope. Source height changes and current water rendering can differ from Warcraft; this importer supplies editable geometry and placements, not a pixel-identical scene.
 

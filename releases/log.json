@@ -21,7 +21,18 @@
       "Expanded the editor terrain palette to all ground definitions covered by the supplied Rebirth replacements, with missing texture channels supplied by the local Reforged installation and visual previews for each material.",
       "Cliff-face terrain textures can be painted and erased independently of ground textures, with thumbnails, undo and editable Warcraft import coverage. Echo Isles and Turtle Rock now include their source cliff material.",
       "Moving ground units leave fading water ripples and wakes, with bounded rendering for large groups and a relaxed walking cadence.",
-      "Maps can start explored under fog or fully hidden. Skirmishes default to explored and campaigns to hidden; unseen enemy activity remains concealed."
+      "Maps can start explored under fog or fully hidden. Skirmishes default to explored and campaigns to hidden; unseen enemy activity remains concealed.",
+      "Silkwardens can now be trained at ant barracks, firing silk shots and automatically ensnaring enemies. Their animated model has a rigid casting net, a large silk spool, and team-colored leaf armor; snares root ground units and temporarily ground flyers.",
+      "Nectarists can now be trained at ant barracks. Their animated leaf-robed model carries a nectar jar and bowl, automatically heals wounded allies with traveling nectar, and can manually cleanse harmful effects. Healing and cleanse visuals remain editable in the Spell Editor.",
+      "Ant barracks can recruit Bannerets, whose Rallying Standard boosts nearby allies' damage. Includes an animated standard bearer, player-color leaves and banner, and editable rally effects.",
+      "Amber Adepts can now be trained at ant barracks, with an animated ring staff, readable team-colored leaf mantle, amber bolts, enemy-buff dispel and an autocast silence that lasts less time on heroes.",
+      "Queensguards join the ant barracks as larger elite protectors, with tower shields, protection auras and shield brace. A mixed-army combat preview brings all ten completed ant unit types together for scale and combat review.",
+      "Winglancers join the ant barracks as flying ground-attack troops, with four-wing flight animations, readable team colors, and a place in the mixed-army combat preview.",
+      "Rootweavers join the ant barracks with automatic Root Bind and a persistent Briar Patch that slows and damages ground enemies. The mixed-army preview now includes all twelve integrated ant unit types.",
+      "Unit assets can declare a hero model class with a 10,000-triangle budget, including attachments; regular unit models retain the 5,000-triangle limit.",
+      "Added the Rootbreaker hero model to the asset library with team colors, ten animation clips, and an overhead animation review. Gameplay integration is still in progress.",
+      "Spell Editor statuses can now taunt enemies temporarily, with immunity, dispels, and restoration of their previous orders.",
+      "Rootbreaker joins the ant hero roster with Crushing Presence, Skullcrack, Challenge Roar and Uproot, including animated roots, spell icons and combat effects. Choose him at match start or recruit him as a second hero after upgrading the Hall."
     ],
     "improved": [
       "Reduced unnecessary collision-index preparation during combat planning while preserving movement and combat behavior.",
@@ -89,7 +100,25 @@
       "Woodland trees now have broader painted branch tiers, clearer trunks and roots, and lower mesh costs while preserving harvesting animations.",
       "Balanced daylight and readable cool nights across painted terrain, foliage and buildings; original Warcraft terrain colors no longer receive a darkening multiplier.",
       "Imported terrain now uses the installed Warcraft Definitive Edition textures and matching material maps, with native source resolutions preserved and clean texture transitions.",
-      "Choose and remember an explicit game render resolution, with a Native option and full-resolution interface text."
+      "Choose and remember an explicit game render resolution, with a Native option and full-resolution interface text.",
+      "Woodland trees now have ragged painted foliage, brighter crowns, darker lower branches, and more substantial trunks.",
+      "Ant and beetle buildings now rise inside race-specific scaffolds with construction dust, then reveal their full model near completion.",
+      "Ant Barracks now use the red-leaf garrison design, and Beetle War Lodges have a new iron-and-shell model with player-colored armor panels.",
+      "Ant Chitin Works and Beetle Shell Forges now have distinct, player-colored workshop models.",
+      "Ant Houses and Beetle Brood Dens now use distinct leaf-and-silk and armored-shell supply models.",
+      "Ant workers now use the new Colony Worker model, with leaf team colors, a fitted resource backpack, and refined work and carrying animations.",
+      "Rally routes now start at building centers. Construction scaffolds rise from below ground without stretching, with larger, denser dust effects.",
+      "Ant Warriors now wear broad leaf helmets and shoulder armor for clearer team ownership, with the new cleaver model and a refined strike animation.",
+      "Player colors are brighter and easier to distinguish, with vivid red, blue and green armor and cleaner white team markings.",
+      "Construction dust is more abundant and scatters across scaffold roofs, sides and edges with varied timing instead of following a perimeter sequence.",
+      "Ant Archers now use the leaf-cloaked model with team colors, a refined running pose, and an animated bowstring and arrow release.",
+      "Weapon arrows, thorns and stones now use editable model effects shared with Spell & Effect Studio, with batched army volleys and validated publication limits.",
+      "Thornblades now fight with quick alternating dagger strikes and close gaps with a dedicated rapid lunge, an ivory trail, and subtle takeoff and contact dust. Charge effects remain editable in the Spell Editor.",
+      "Bombardier now uses its new back-mounted mortar model with braced recoil, arcing seed bombs and editable resin explosions. It is also recruitable from ant barracks after the Great Acorn Hall upgrade.",
+      "The Ant Marshal now uses a distinct animated hero model at twice the Warrior's scale, with matching selection size and formation spacing. The mixed-army preview includes learned Marshal spell controls.",
+      "Spell animations now use each model clip's authored impact timing consistently in the game and Spell Editor.",
+      "Rootbreaker's two-handed strikes have cleaner wrist deformation, and Uproot's club now meets the ground as the roots erupt.",
+      "Rootbreaker's model is 20% smaller while retaining his large collision radius and formation spacing."
     ],
     "fixed": [
       "Building placement now checks units’ full collision bodies, preventing foundations from overlapping units whose centers are just outside the footprint.",
@@ -127,7 +156,12 @@
       "Imported Warcraft terrain now uses a consistent installed Classic texture set, preserving painted shading without mod-pack mixing, warm overlays, or artificial specular sheen.",
       "Warcraft map imports now remove hostile creeps around occupied starts before creating camps, matching the source game’s melee setup.",
       "Warcraft imports now scale terrain and scenery to our five-cell halls, preserve atlas tiles at the matching scale, and keep starting mineral lines aligned with clear worker access.",
-      "Base worker-count labels stay crisp and consistently sized at every camera zoom and game render resolution."
+      "Base worker-count labels stay crisp and consistently sized at every camera zoom and game render resolution.",
+      "Turtle Rock now uses the corrected battlefield scale, with properly spaced starting bases and five-node amber lines.",
+      "Ground units can see and target nearby flying enemies; flight altitude no longer incorrectly hides them as high-ground terrain.",
+      "Resizing model textures preserves neutral colors beneath team ownership masks instead of turning those surfaces black.",
+      "Flying units now fall onto the ground, water or deck beneath them during their death animation.",
+      "Hero skill learning now shows all four abilities in slots 1–4 without overlapping Back or hiding locked skills on another page."
     ],
     "knownIssues": []
   },

@@ -15,11 +15,14 @@ export function prepareMaskedTeamColor(material) {
       #ifdef USE_MAP
         vec4 ownershipSample = texture2D(map, vMapUv);
         float ownershipShade = max(ownershipSample.r, max(ownershipSample.g, ownershipSample.b)) / ${sourceMax.toFixed(8)};
+        // Lift the authored midtones without erasing creases or changing hue.
+        // World lighting still shades the surface normally; this is not emission.
+        ownershipShade = sqrt(max(ownershipShade, 0.0));
         diffuseColor.rgb = mix(ownershipSample.rgb, vec3(ownershipShade) * diffuseColor.rgb, ownershipSample.a);
       #endif
     `);
   };
-  material.customProgramCacheKey = () => priorKey + '|ownership-alpha-v1|' + sourceMax;
+  material.customProgramCacheKey = () => priorKey + '|ownership-alpha-v2|' + sourceMax;
   material.needsUpdate = true;
   return true;
 }
