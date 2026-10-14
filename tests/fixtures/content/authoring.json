@@ -494,14 +494,14 @@
   },
   {
    "version": 1,
-   "id": "asset.effects.blizzard-ice",
-   "name": "Blizzard · falling ice",
+   "id": "asset.effects.falling-ice",
+   "name": "Falling ice",
    "kind": "texture",
    "revision": 4,
    "status": "published",
    "tags": [
     "effect",
-    "blizzard",
+    "channelled-waves",
     "ice"
    ],
    "resources": [
@@ -23448,15 +23448,14 @@
   },
   {
    "version": 1,
-   "id": "asset.terrain.warcraft-cliff-clgr",
-   "name": "Cliff face · CLgr",
+   "id": "asset.terrain.test-cliff-grass",
+   "name": "Cliff face · test grass",
    "kind": "terrain-material",
    "revision": 8,
    "status": "published",
    "tags": [
-    "warcraft",
-    "cliff",
-    "CLgr"
+    "test",
+    "cliff"
    ],
    "resources": [
     {
@@ -23635,7 +23634,7 @@
    },
    "provenance": {
     "method": "import",
-    "licenseNote": "Imported from the local Warcraft III installation (definitive). Original sources retain their respective rights.",
+    "licenseNote": "Test fixture terrain material.",
     "sourceHash": "4681111c65131d88ae855c8890620991c4dd4323db4bd2c1109080b46bc9dea4"
    }
   },
@@ -24721,7 +24720,7 @@
    "capabilities": {},
    "provenance": {
     "method": "generated",
-    "licenseNote": "Original built-in imagegen artwork. Prompt: Use case: stylized-concept. Create one square painted fantasy RTS spell command icon inspired by Warcraft III's readable hand-painted ability art. Original Holy Light icon: a luminous ivory-gold hand cupping a concentrated golden healing star, three broad shafts of sacred golden light descending into the palm, a simple curling golden halo above it. Dark ochre and deep brown background, intense lemon gold and warm ivory focal light. Bold chunky painterly shapes, powerful light-dark contrast, restrained detail, readable at 48x48 pixels. Full bleed square, no UI frame, no lettering, no text, no watermark, no montage. Not photorealistic, not a flat vector."
+    "licenseNote": "Original built-in imagegen artwork. Prompt: Use case: stylized-concept. Create one square painted fantasy RTS spell command icon in a readable hand-painted classic RTS ability style. Original Holy Light icon: a luminous ivory-gold hand cupping a concentrated golden healing star, three broad shafts of sacred golden light descending into the palm, a simple curling golden halo above it. Dark ochre and deep brown background, intense lemon gold and warm ivory focal light. Bold chunky painterly shapes, powerful light-dark contrast, restrained detail, readable at 48x48 pixels. Full bleed square, no UI frame, no lettering, no text, no watermark, no montage. Not photorealistic, not a flat vector."
    }
   },
   {

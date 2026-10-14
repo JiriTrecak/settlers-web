@@ -1,7 +1,7 @@
 import {viewRotation,type ClosePose} from './unitCamera';
 /**
  * Look-at on the XZ plane.
- * Editor free-cam is ortho and can orbit. Gamecam / play is WC3-style perspective:
+ * Editor free-cam is ortho and can orbit. Gamecam / play is classic RTS perspective:
  * North-up, 56° downward pitch, terrain-following distance zoom and footprint bounds.
  * `rev` is the view epoch — any widget that mirrors the camera keys off it.
  */
@@ -12,14 +12,13 @@ import { BUILDING_CELL_SIZE } from "../../shared/spatial/footprint";
 /** True-iso yaw / pitch. Preview snapshots and the editor free-cam use this pair. */
 export const ISO_YAW = Math.PI / 4;
 export const ISO_PITCH = Math.atan(1 / Math.sqrt(2));
-/** Warcraft's north-facing view, translated to our +Z-south, Y-up world. */
+/** North-facing classic RTS view in our +Z-south, Y-up world. */
 export const GAME_YAW = 0;
 /** Classic angle of attack 304°: 56° below the horizontal. */
 export const GAME_PITCH = (56 * Math.PI) / 180;
 export const GAME_ASPECT = 16 / 9;
-/** Warcraft's authored 70° is not a Three.js vertical FOV. Its classic world
- * viewport uses 70 / sqrt(1 + aspect²); retain that reference lens at 16:9.
- * Source and viewport differences are documented in camera.md. */
+/** Reference lens: an authored 70° lens expressed as a Three.js vertical FOV,
+ * 70 / sqrt(1 + aspect²) (about 34.32° at 16:9). See camera.md. */
 export const GAME_FOV = 70 / Math.hypot(1, GAME_ASPECT);
 /** Default battlefield coverage at the focus plane: a five-cell Hall occupies
  * 5/32 of its width. Derive distance from the lens instead of tuning it in isolation. */

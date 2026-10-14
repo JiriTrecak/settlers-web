@@ -14,7 +14,7 @@ const scenarios:Scenario[]=[
  {name:'holy-light',event:'healed',settings:{relationship:'ally',targetHealth:100}},
  {name:'death-coil',event:'damaged',settings:{targetNature:'organic'}},
  {name:'storm-bolt',event:'damaged'},
- {name:'blizzard',event:'wave',settings:{targetCount:4}},
+ {name:'channelled-waves',event:'wave',settings:{targetCount:4}},
  {name:'shockwave',event:'damaged'},
  {name:'chain-lightning',event:'damaged',settings:{targetCount:4}},
  {name:'healing-wave',event:'healed',settings:{relationship:'ally',targetCount:4,targetHealth:100}},

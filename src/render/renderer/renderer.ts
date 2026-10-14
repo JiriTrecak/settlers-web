@@ -8,7 +8,6 @@ import type {ImportedTerrain} from '../../shared/map/importedTerrain';
 import type {InspectionShot} from '../../shared/camera/inspectionShot';
 import {ForestSurroundingsLayer} from '../canopy/forestSurroundings';
 import {biomeById,biomeLandscape,type ResolvedLandscape} from '../../content/biomes';
-import {PlacedGrass} from '../foliage/placedGrass';
 import {liveSourceOcclusion} from '../prop/liveSourceOcclusion';
 import {ImportedWater} from '../water/importedWater';
 import {DewLayer} from '../prop/dewLayer';
@@ -35,7 +34,6 @@ import {
 } from "../../shared/environment/presets";
 import { DecalLayer } from "../decal/decalLayer";
 import { TerrainMaterial } from "../terrain/terrainMaterial";
-import { Meadow } from "../foliage/meadow";
 import { emptyLandscape, type Landscape } from "../../shared/landscape/curve";
 /**
  * Height mesh, water, scenery and observed declarative gameplay entities.
@@ -205,8 +203,6 @@ export class Renderer {
   private readonly weather = new WeatherLayer(this.scene);
   private authoredLandscape: Landscape = emptyLandscape();
   private landscape: ResolvedLandscape = biomeLandscape(undefined,emptyLandscape());
-  private readonly meadow: Meadow;
-  private readonly placedGrass: PlacedGrass;
   private readonly decals: DecalLayer;
   private settlement: SettlementLayer | null = null;
   private readonly cutaway=new SceneryCutaway();
@@ -299,7 +295,6 @@ export class Renderer {
     this.refreshEnvironment();
 
 
-    this.meadow = new Meadow(this.scene);this.placedGrass=new PlacedGrass(this.scene);
     this.decals = new DecalLayer(this.scene);
     this.lines.name = "grid-lines";
     this.scene.add(this.lines);
@@ -363,7 +358,6 @@ export class Renderer {
     try {
       if (animationTime !== undefined) {
         this.importedWater?.tick(animationTime * 1000);
-        this.meadow.tick(animationTime * 1000);this.placedGrass.tick(animationTime*1000);
         this.props.tick(animationTime * 1000);
       }
       const cam = inspection ? new PerspectiveCamera(inspection.fov,w/h,.08,180) : this.threeCam();
@@ -382,7 +376,6 @@ export class Renderer {
         this.height,
       );
       this.props.updateLOD(cam);
-      this.meadow.updateLOD(cam);
       gl.setRenderTarget(target);
       if(cull){this.props.cull(new Frustum().setFromProjectionMatrix(new Matrix4().multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse),cam.coordinateSystem));this.culledFrame=true;}
       // The RTS overhead cutaway footprint would punch holes in the floor at eye level.
@@ -477,12 +470,11 @@ export class Renderer {
         mat.update(this.height, landscape.strokes);
         mat.setCover(landscape.cover);
       }
-      if (rebuild) this.meadow.rebuild(this.height, landscape);
     }
   }
   async ready(onReady?:(name:string,durationMs:number)=>void): Promise<void> {
     const started=performance.now();
-    const pending=[['Surroundings',this.surroundings.ready],['Scenery models and placement',this.props.ready()],['Meadow',this.meadow.ready],['Placed grass',this.placedGrass.ready],['Terrain textures',this.terrain?.material.ready],['Water textures',this.importedWater?.ready]] as const;
+    const pending=[['Surroundings',this.surroundings.ready],['Scenery models and placement',this.props.ready()],['Terrain textures',this.terrain?.material.ready],['Water textures',this.importedWater?.ready]] as const;
     await Promise.all(pending.map(([name,ready])=>Promise.resolve(ready).then(()=>onReady?.(name,performance.now()-started))));
   }
   async preload(stamps: readonly MapStamp[]): Promise<void> {
@@ -565,7 +557,6 @@ export class Renderer {
       triangles: this.display.gl.info.render.triangles,
       geometries: this.display.gl.info.memory.geometries,
       textures: this.display.gl.info.memory.textures,
-      coverInstances: this.meadow.count,
       assets: this.props.diagnostics(),
       environment: this.sky.snapshot(),
       lighting: this.sky.lightingDiagnostics(),
@@ -644,7 +635,6 @@ export class Renderer {
     );
     (this.terrain.material as TerrainMaterial).setCover(this.landscape.cover);
     perf.end('Terrain · ground material (event)',stage);stage=perf.start();
-    if(surfaceOnly)this.meadow.updateGround(field);else this.meadow.rebuild(field, this.landscape);
     perf.end('Terrain · grass grounding (event)',stage);
     if(!surfaceOnly)this.decals.rebuild(
       this.landscape.decals ?? [],
@@ -676,7 +666,6 @@ export class Renderer {
         (this.terrain.material as TerrainMaterial).setCover(
           this.landscape.cover,
         );
-        this.meadow.rebuild(this.height, this.landscape);
       }
       this.lines.visible = this.gridOn;
       this.refreshGrid();
@@ -698,9 +687,7 @@ export class Renderer {
     const props = perf.start();
     if(this.height?.source)liveSourceOcclusion(this.height.source.source).sync(stamps);
     let sceneryStage=perf.start();
-    const propStamps=this.placedGrass.sync(stamps,this.height);
-    perf.end('Scenery sync · placed grass',sceneryStage);sceneryStage=perf.start();
-    this.props.sync(propStamps);
+    this.props.sync(stamps);
     perf.end('Scenery sync · model placements',sceneryStage);sceneryStage=perf.start();
     if(this.height)this.sceneryLights.sync(stamps,this.height);
     perf.end('Scenery sync · lights',sceneryStage);
@@ -815,7 +802,6 @@ export class Renderer {
         ? Math.max(40, Math.min(110, this.camera.distance * 0.8))
         : 70,
     );
-    this.meadow.tick(now);this.placedGrass.tick(now);
     this.props.tick(now);
     this.sceneryLights.update(this.camera.targetX,this.camera.targetZ);
     this.navigation?.follow(this.camera.targetX,this.camera.targetZ,this.height);
@@ -842,7 +828,6 @@ export class Renderer {
       this.height,
     );
     this.props.updateLOD(cam);
-    this.meadow.updateLOD(cam);
     perf.end("Camera / atmosphere", camera);
     cam.updateMatrixWorld();
     this.viewFrustum.setFromProjectionMatrix(this.viewProjection.multiplyMatrices(cam.projectionMatrix,cam.matrixWorldInverse),cam.coordinateSystem);
@@ -999,7 +984,7 @@ export class Renderer {
     }
     this.spawnFlags.clear();
     this.previewCurve([]);
-    this.meadow.destroy();this.placedGrass.destroy();
+
     this.weather.dispose();
     this.surroundings.dispose();
     this.canopy.dispose();

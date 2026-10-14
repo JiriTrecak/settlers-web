@@ -9,11 +9,11 @@ type GroundPoint = {x:number;z:number;surface?:string};
 /** One rally shown for a selected production building: center → flag. */
 export type RallyMarker = {id:number;from:GroundPoint;to:GroundPoint;slot:number};
 
-/** Modelled at 1.9 m, scaled to about unit height so the flag reads at RTS zoom like WC3's. */
+/** Modelled at 1.9 m, scaled to about unit height so the flag reads at RTS zoom. */
 const BANNER_W = .78, BANNER_H = .46, POLE = 1.9, FLAG_SCALE = 1.6;
 
-/** Rally flags and routes for the viewer's selected buildings. WC3 plants a team banner;
- * the dashed route (SC2-style) additionally says which building sends units where. */
+/** Rally flags and routes for the viewer's selected buildings: a team banner at the rally
+ * point plus a dashed route that says which building sends units where. */
 export class RallyMarkers {
   private readonly group = new Group();
   private readonly flags = new Map<number, {root:Group;banner:Mesh<PlaneGeometry,MeshStandardMaterial>;ring:Mesh<RingGeometry,MeshBasicMaterial>;line:Line2;key:string}>();

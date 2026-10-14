@@ -9,7 +9,7 @@ Status: proposal, 2026-10-14. Companion to the [native renderer](native-renderer
 - `.git` is **7.3 GB** (7.0 GB packed). There is no Git LFS.
 - Tracked binaries: `art/` about **5.9 GB**, `assets/` about **1.9 GB**. Code is small by comparison: `src/` 3.5 MB, `tests/` 3.2 MB.
 - Each unit has a 35–56 MB `source.blend`. Every saved change adds the full file to history.
-- `assets/library/` holds a published copy of all 583 asset folders in `art/assets/`, so every publish commits each runtime binary a second time.
+- `assets/library/` holds a published copy of all 317 asset folders in `art/assets/`, so every publish commits each runtime binary a second time.
 
 This is the largest structural problem: clone, fetch and push times grow with every art iteration, and agents working in fresh checkouts pay for it.
 
@@ -22,7 +22,7 @@ Three product identities coexist: `settlers` (npm package, bundle id `com.jiritr
 | Editor | Where its code lives today |
 |---|---|
 | Map editor | `src/editor/`, `src/app/game/editorScreen.ts` (inside the game), `src/shared/authoring/`, `src/shared/control/`, `mcp/editor/`, `src/editor/import/warcraft/`, `content/import/warcraft/` |
-| Asset workbench | `tooling/src/asset-editor/`, `tooling/asset-studio/`, `tooling/src-tauri/` (shared "Forest Empire Tools" app), `scripts/assets/` (74 files), `experiments/building-studio/` (the production Blender pipeline, in Python), `art/profiles/`, `art/recipes/` |
+| Asset workbench | `tooling/src/asset-editor/`, `tooling/asset-studio/`, `tooling/src-tauri/` (shared "Forest Empire Tools" app), `scripts/assets/` (14 files), `experiments/building-studio/` (the production Blender pipeline, in Python), `art/profiles/` |
 | Spell editor | `tooling/spell-editor/` (own Vite config, its own nested `agent-app` with `node_modules`), `mcp/spells/`, `tooling/content/`, `tooling/scripting/` |
 
 The map editor ships inside the game. The asset workbench and spell editor share a "tools" Tauri shell.
@@ -47,15 +47,15 @@ Editor services run as Vite dev-server plugins (`tooling/asset-studio/server/plu
 ### 1.7 Everything else
 
 - One root `package.json` holds every dependency: game, editors, AI SDKs (`@mastra/core`, `@ai-sdk/openai`, `eve`), Tauri, three, VitePress.
-- The repository root holds four HTML entry pages (`index.html`, `combat-lab.html`, `reference-stage.html`, `vegetation-gallery.html`), plus `components.json`, a tracked `output/`, and tracked `experiments/` review pages.
-- `scripts/` has 225 files. `scripts/bench/` alone has 77, many of them one-off probes.
+- The repository root holds four HTML entry pages (`index.html`, `combat-lab.html`, `reference-stage.html`, `vegetation-gallery.html`), plus `components.json`, a tracked `output/`, and the `experiments/building-studio/` review page.
+- `scripts/` has 157 files. `scripts/bench/` alone has 75 entries, many of them one-off probes.
 - `wiki/` (the VitePress site) sits apart from `docs/` and `scripts/wiki/`.
-- `tests/` mirrors the source tree separately (565 files).
-- Documentation has drifted. For example, `README.md` names Threewater Forest as the maintained map, but it no longer exists, and `src/render/index.md` still describes "cubes from players".
+- `tests/` mirrors the source tree separately (506 files).
+- Module notes drift. For example, `src/render/index.md` still describes "cubes from players".
 
 ### 1.8 Release risk outside the code
 
-The map editor contains a Warcraft III map importer. The shipped skirmish maps are named Echo Isles and Turtle Rock, and the shipped Holy Light ability shares a Warcraft III name. Confirm map provenance and naming before a commercial Steam release.
+The map editor contains a third-party map importer (`src/editor/import/warcraft/`). Confirm the provenance and naming of the shipped skirmish maps (Echo Isles, Turtle Rock), their imported terrain textures, and ability names such as Holy Light before a commercial Steam release.
 
 ## 2. Principles
 
@@ -112,7 +112,7 @@ canopy/
 | `src/sim`, `src/session`, `src/net`, `src/content`, `src/render`, `src/presentation`, `src/ui`, `src/app` | `packages/web-engine/` now; replaced by `crates/*` and `game/` |
 | `src/editor`, `src/shared/authoring`, `src/shared/control`, `src/app/game/editorScreen.ts`, `mcp/editor` | `editors/map/` |
 | `src/editor/import/warcraft`, `content/import/warcraft` | `editors/map/importers/warcraft/` (or removed; see §1.8) |
-| `tooling/src/asset-editor`, `tooling/asset-studio`, `scripts/assets`, `experiments/building-studio`, `art/profiles`, `art/recipes` | `editors/assets/` |
+| `tooling/src/asset-editor`, `tooling/asset-studio`, `scripts/assets`, `experiments/building-studio`, `art/profiles` | `editors/assets/` |
 | `tooling/spell-editor`, `mcp/spells`, `tooling/content`, `tooling/scripting` | `editors/spells/` |
 | `tooling/src-tauri`, `tooling/src/app` (shared tools shell) | split into one `src-tauri/` per editor, common code in `editors/shared/` |
 | `src/shared/map`, `net`, `save`, `match` | contracts in `crates/content` and `crates/net`; TypeScript types generated into `packages/formats` |
@@ -124,7 +124,7 @@ canopy/
 | `scripts/releases`, `docs`, `maps`, `wiki` | `tools/` |
 | `scripts/bench` | the useful benchmarks move beside their crate; one-off probes are deleted |
 | `wiki/`, `scripts/wiki` | `docs/` |
-| `src/dev/combatLab.ts`, `reference-stage`, `vegetation-gallery`, `experiments/` review pages | deleted; kept capabilities become editor or debug features |
+| `src/dev/combatLab.ts`, `reference-stage`, `vegetation-gallery`, `experiments/building-studio` review page | deleted; kept capabilities become editor or debug features |
 | `tests/` | beside the code each test covers |
 
 ## 4. Decisions (agreed 2026-10-14)

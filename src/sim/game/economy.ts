@@ -256,7 +256,7 @@ export class Economy {
   }
   private workPoint(target: Entity, worker: Entity): Point | null {
     if (this.c.def(target).kind === "building") {
-      // Drop-off, construction and repair happen at any side, as in WC3: the nearest
+      // Drop-off, construction and repair happen at any side: the nearest
       // touching cell to the worker approximates the shortest walk. Standing bodies can
       // fill that edge, so the next ring out is still in service range.
       const origin = precise(worker), spatial = this.c.spatial;
@@ -671,7 +671,7 @@ export class Economy {
     if (!exit) { p.status = "Deployment blocked"; return false; }
     if (this.missing(b, this.price(d.id))) return false;
     const unit = this.c.create({id: "", definition: d.id, position: exit, rotation: 0, owner: b.owner});
-    // WC3 rally semantics: harvesters rallied onto a resource start gathering it, units rallied
+    // Rally semantics: harvesters rallied onto a resource start gathering it, units rallied
     // onto a friendly unit follow it, everything else walks to the flag.
     if (target?.resource && this.harvestItem(unit, target) && this.canAssignGather(unit, target))
       unit.unit!.order = {type: "gather", target: target.id};
@@ -840,7 +840,7 @@ export class Economy {
   }
   /** A regrown tree reclaims its whole movement disc. It waits while a building sits on the
    * stump, a doorway falls inside the disc, or a body stands in it; idle bodies are walked out
-   * (as WC3 pushes units off a regrowing site) so a parked worker cannot hold it off forever.
+   * so a parked worker cannot hold it off forever.
    * Disc cells under neighbouring buildings or trees are already blocked and do not matter. */
   private canRegrow(r: Entity) {
     const s = this.c.spatial, cells = new Set(s.collision(r).filter(i => i >= 0));

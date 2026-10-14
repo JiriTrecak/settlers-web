@@ -590,30 +590,6 @@
     "clearance": 0.1
   },
   {
-    "id": "asset.models.environment.woodland-amber-lantern",
-    "name": "woodland amber lantern",
-    "kind": "prop",
-    "scenery": "woodland-amber-lantern",
-    "scale": 1,
-    "clearance": 0.25
-  },
-  {
-    "id": "asset.models.environment.woodland-canopy-elder",
-    "name": "Ancient canopy oak",
-    "kind": "prop",
-    "scenery": "woodland-canopy-elder",
-    "scale": 1,
-    "clearance": 4.6
-  },
-  {
-    "id": "asset.models.environment.woodland-canopy-spreading",
-    "name": "Spreading canopy oak",
-    "kind": "prop",
-    "scenery": "woodland-canopy-spreading",
-    "scale": 1,
-    "clearance": 4.6
-  },
-  {
     "id": "asset.models.environment.woodland-drift-log",
     "name": "Waterworn drift log",
     "kind": "prop",
@@ -628,22 +604,6 @@
     "scenery": "woodland-fallen-log",
     "scale": 1,
     "clearance": 0.25
-  },
-  {
-    "id": "asset.models.environment.woodland-giant-mushroom-ochre",
-    "name": "Giant ochre umbrella",
-    "kind": "prop",
-    "scenery": "woodland-giant-mushroom-ochre",
-    "scale": 1,
-    "clearance": 1.9
-  },
-  {
-    "id": "asset.models.environment.woodland-giant-mushroom-russet",
-    "name": "Giant russet umbrella",
-    "kind": "prop",
-    "scenery": "woodland-giant-mushroom-russet",
-    "scale": 1,
-    "clearance": 1.7
   },
   {
     "id": "asset.models.environment.woodland-grass-high-a",
@@ -676,22 +636,6 @@
     "scenery": "woodland-grass-messy",
     "scale": 1,
     "clearance": 0
-  },
-  {
-    "id": "asset.models.environment.woodland-great-broken-trunk",
-    "name": "Great broken trunk",
-    "kind": "prop",
-    "scenery": "woodland-great-broken-trunk",
-    "scale": 1,
-    "clearance": 4.6
-  },
-  {
-    "id": "asset.models.environment.woodland-great-fallen-log",
-    "name": "Great fallen hollow log",
-    "kind": "prop",
-    "scenery": "woodland-great-fallen-log",
-    "scale": 1,
-    "clearance": 4
   },
   {
     "id": "asset.models.environment.woodland-hollow-log",
@@ -812,22 +756,6 @@
     "scenery": "woodland-rock-ledge",
     "scale": 1,
     "clearance": 0.25
-  },
-  {
-    "id": "asset.models.environment.woodland-root-arch-bridge",
-    "name": "woodland root arch bridge",
-    "kind": "bridge",
-    "scenery": "woodland-root-arch-bridge",
-    "scale": 1,
-    "clearance": 0.25
-  },
-  {
-    "id": "asset.models.environment.woodland-ruined-watchtower",
-    "name": "woodland ruined watchtower",
-    "kind": "prop",
-    "scenery": "woodland-ruined-watchtower",
-    "scale": 1,
-    "clearance": 2
   },
   {
     "id": "asset.models.resources.amber-crystal-1",
@@ -1273,80 +1201,6 @@
       "roughness": "assets/library/asset.terrain.warcraft-cliff-cldi/roughness.png",
       "metalness": "assets/library/asset.terrain.warcraft-cliff-cldi/metalness.png",
       "thumbnail": "assets/library/asset.terrain.warcraft-cliff-cldi/image.png"
-    }
-  },
-  {
-    "id": "asset.terrain.warcraft-cliff-clgr",
-    "name": "Cliff face · CLgr",
-    "kind": "terrain-material",
-    "scale": 1,
-    "clearance": 0,
-    "terrain": {
-      "tileWorldSize": 12,
-      "projection": {
-        "type": "cliff",
-        "verticalWorldSize": 4,
-        "startSlope": 0.8,
-        "fullSlope": 1.8
-      },
-      "reflectance": 1,
-      "shading": "physical",
-      "sourceIds": [
-        "CLgr"
-      ],
-      "albedo": {
-        "role": "albedo",
-        "index": 1
-      },
-      "normal": {
-        "role": "normal",
-        "index": 1
-      },
-      "occlusion": {
-        "role": "occlusion",
-        "index": 1
-      },
-      "roughness": {
-        "role": "roughness",
-        "index": 1
-      },
-      "metalness": {
-        "role": "metalness",
-        "index": 1
-      },
-      "thumbnail": {
-        "role": "image",
-        "index": 1
-      },
-      "runtime": {
-        "albedoRoughness": {
-          "role": "data",
-          "index": 1
-        },
-        "normalOpacity": {
-          "role": "data",
-          "index": 2
-        },
-        "occlusionMetalness": {
-          "role": "data",
-          "index": 3
-        }
-      },
-      "atlas": {
-        "columns": 1,
-        "rows": 1,
-        "fullTiles": [
-          0
-        ]
-      }
-    },
-    "terrainImages": {
-      "albedo": "assets/library/asset.terrain.warcraft-cliff-clgr/albedo.png",
-      "normal": "assets/library/asset.terrain.warcraft-cliff-clgr/normal.png",
-      "occlusion": "assets/library/asset.terrain.warcraft-cliff-clgr/occlusion.png",
-      "roughness": "assets/library/asset.terrain.warcraft-cliff-clgr/roughness.png",
-      "metalness": "assets/library/asset.terrain.warcraft-cliff-clgr/metalness.png",
-      "thumbnail": "assets/library/asset.terrain.warcraft-cliff-clgr/image.png"
     }
   },
   {
@@ -4018,25 +3872,6 @@
         "shoreWidth": 0.65,
         "crestStrength": 0.24
       }
-    }
-  },
-  {
-    "id": "water.muddy",
-    "name": "Muddy water",
-    "kind": "water-profile",
-    "scale": 1,
-    "clearance": 0,
-    "water": {
-      "shallowColor": "#8c8060",
-      "deepColor": "#494a35",
-      "clarity": 0.7,
-      "rippleScale": 0.18,
-      "rippleStrength": 0.045,
-      "foamStrength": 0.2,
-      "reflectionStrength": 0.3,
-      "causticStrength": 0.02,
-      "cloudStrength": 0.025,
-      "flowSpeed": 1
     }
   }
 ]

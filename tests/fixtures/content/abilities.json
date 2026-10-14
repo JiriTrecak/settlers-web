@@ -2746,8 +2746,8 @@
   },
   {
    "schemaVersion": 1,
-   "id": "ability.test.blizzard",
-   "name": "Blizzard",
+   "id": "ability.test.channelled-waves",
+   "name": "Channelled Waves",
    "description": "Channel a storm over a fixed area. Six waves of falling ice strike enemies; moving or being stunned ends the storm.",
    "activation": "targeted",
    "ranks": [
@@ -2822,7 +2822,7 @@
      "damageType": "spell"
     }
    ],
-   "presentation": "presentation.test.blizzard"
+   "presentation": "presentation.test.channelled-waves"
   },
   {
    "schemaVersion": 1,
@@ -5515,7 +5515,7 @@
    "schemaVersion": 1,
    "id": "ability.test.death-and-decay",
    "name": "Death and Decay",
-   "description": "Channel for 35 pulses, once per second. Each pulse deals spell damage equal to 4% of each recipient’s current maximum health, including the caster, allies and buildings in the area. Damage protection still applies. Adapted from Warcraft III; terrain is unaffected.",
+   "description": "Channel for 35 pulses, once per second. Each pulse deals spell damage equal to 4% of each recipient’s current maximum health, including the caster, allies and buildings in the area. Damage protection still applies. Terrain is unaffected.",
    "activation": "targeted",
    "ranks": [
     {}
@@ -7699,7 +7699,7 @@
    "schemaVersion": 1,
    "id": "ability.test.carrion-spirits",
    "name": "Carrion Spirits",
-   "description": "Consume one nearby corpse to summon a permanent forest spirit, up to five retained per caster across ranks. Spirits survive their caster. Adapts Warcraft III Carrion Beetles mechanics using our existing forest-spirit models; it does not introduce a beetle model.",
+   "description": "Consume one nearby corpse to summon a permanent forest spirit, up to five retained per caster across ranks. Spirits survive their caster. Uses the existing forest-spirit models.",
    "activation": "targeted",
    "ranks": [
     {
@@ -8848,7 +8848,7 @@
   },
   {
    "schemaVersion": 1,
-   "id": "presentation.test.blizzard",
+   "id": "presentation.test.channelled-waves",
    "animations": {
     "prepare": "attack",
     "release": "attack",
@@ -8859,7 +8859,7 @@
    "effects": [
     {
      "id": "effect-0",
-     "effect": "effect.test.blizzard.wavestarted",
+     "effect": "effect.test.channelled-waves.wavestarted",
      "event": "waveStarted",
      "anchor": "target",
      "lifetime": "finite",
@@ -8868,7 +8868,7 @@
     },
     {
      "id": "frost-impact-sound",
-     "effect": "effect.test.blizzard.frost-impact-sound",
+     "effect": "effect.test.channelled-waves.frost-impact-sound",
      "event": "wave",
      "anchor": "target",
      "lifetime": "finite"

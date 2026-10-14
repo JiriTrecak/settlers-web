@@ -2,7 +2,7 @@
 
 Saved terrain samples define the bed and local water height. The water mesh follows those heights and clips dry ground; navigation reads the same saved samples independently of rendering. Nothing in the shader changes shallow-crossing or deep-water passability.
 
-Each biome declares a published `waterProfile`. GPU profile slot zero supplies that default to ordinary grid water and imported Warcraft water. Saved local profiles retain indices 1–255, so applying a river profile changes only assigned cells. Profile assets declare shallow/deep color, clarity, ripples, foam, reflection, caustics, cloud shading and flow speed. Appearance is not duplicated in map snapshots.
+Each biome declares a published `waterProfile`. GPU profile slot zero supplies that default to ordinary grid water and imported map water. Saved local profiles retain indices 1–255, so applying a river profile changes only assigned cells. Profile assets declare shallow/deep color, clarity, ripples, foam, reflection, caustics, cloud shading and flow speed. Appearance is not duplicated in map snapshots.
 
 The renderer uses depth absorption, refraction, animated swells and broken foam, inspired by [GameIdea's stylized water approach](https://gameidea.org/2026/02/01/creating-a-stylized-3d-water-shader/). A shared world-space wave field drives vertex displacement and fragment normals. Physical depth continuously scales its amplitude, without changing phase: shallow crossings stay calm while deeper water develops swells and occasional crest foam. Waves are centred on the saved local water level, fade to zero at dry edges, and remain below 18% of the water-column depth. Elevated lakes use the same field; there is no sea-level-only assumption.
 

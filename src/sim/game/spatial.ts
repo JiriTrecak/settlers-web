@@ -445,7 +445,7 @@ export class Spatial {
         if (x >= 0 && y >= 0 && x < this.size && y < this.size) out.push({ x, y });
     return out;
   }
-  /** WC3/SC2 exit rule: a trained unit appears on the building side nearest where it is
+  /** Classic RTS exit rule: a trained unit appears on the building side nearest where it is
    * headed, spiralling outward ring by ring once bodies fill the edge. Only cells in the
    * door's walk region qualify, so a unit never spawns on an island behind the building. */
   deployment(b: Pick<Entity, "definition" | "x" | "y" | "rotation">, toward: Point, actor?: Actor, maxRing = 8): Point | null {

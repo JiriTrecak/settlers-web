@@ -1,7 +1,7 @@
 import { BufferGeometry, Float32BufferAttribute, Group, Mesh, MeshBasicMaterial } from "three";
 import type { HeightField } from "../../shared/map/height";
 
-/** Warcraft III-style tint: own green, allies a cooler green, neutral yellow, enemy red.
+/** Relation tint: own green, allies a cooler green, neutral yellow, enemy red.
  * `target` is the commanded attack target, which stays red regardless of relation. */
 export type CircleRelation = "own" | "ally" | "neutral" | "enemy" | "target";
 export type SelectionCircle = {id:number;x:number;z:number;surface?:string;radius:number;relation:CircleRelation;hover?:boolean};
@@ -85,7 +85,7 @@ function ringGeometry() {
 }
 
 function drape(g: BufferGeometry, c: SelectionCircle, field: HeightField) {
-  // Line width grows slowly with size, like WC3's small/medium/large circle textures.
+  // Line width grows slowly with size, approximating small/medium/large circle tiers.
   const width = Math.min(.2, .07 + c.radius * .025) * (c.hover ? .7 : 1);
   const p = g.getAttribute("position") as Float32BufferAttribute, arr = p.array as Float32Array;
   for (let r = 0; r < PROFILE.length; r++) {

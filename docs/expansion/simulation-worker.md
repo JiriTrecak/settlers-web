@@ -50,7 +50,7 @@ Run the repeatable isolation benchmark with:
 node --import tsx scripts/bench/worker-isolation.ts --ticks 12000 --output /tmp/worker-isolation.json
 ```
 
-It runs Threewater Forest through the production worker protocol, at 4× speed, with an 8 ms parent heartbeat and no renderer. It reports worker tick cost, publication costs, main-thread message handling, heartbeat intervals, transport counts and a final deterministic checksum. The heartbeat is evidence of event-loop isolation, **not a browser FPS measurement**. Compare it with the [sector benchmark](/development/expansion/spatial-sectors) using the same map, seed, slots and tick count.
+It runs Echo Isles (or `--map <id>`) through the production worker protocol, at 4× speed, with an 8 ms parent heartbeat and no renderer. It reports worker tick cost, publication costs, main-thread message handling, heartbeat intervals, transport counts and a final deterministic checksum. The heartbeat is evidence of event-loop isolation, **not a browser FPS measurement**. Compare it with the [sector benchmark](/development/expansion/spatial-sectors) using the same map, seed, slots and tick count.
 
 ### Remaining limits
 

@@ -85,12 +85,12 @@ it('targets the chosen unit and reconstructs identical outcomes in both scrub di
  await f.service.execute({op:'preview.seek',tick:80});expect(f.state().checksum).toBe(end);expect(f.state().playing).toBe(false);
 });
 it('supports empty-ground spells and rejects unit spells without a target',async()=>{
- const f=await fixture('blizzard',{targetCount:0});expect(f.state().entities).toHaveLength(1);
+ const f=await fixture('channelled-waves',{targetCount:0});expect(f.state().entities).toHaveLength(1);
  expect(await f.service.execute({op:'preview.cast'})).toMatchObject({accepted:true});await f.service.execute({op:'preview.seek',tick:65});expect(f.state().events.some(e=>e.event==='wave')).toBe(true);
  const g=await fixture('storm-bolt',{targetCount:0});expect(await g.service.execute({op:'preview.cast'})).toMatchObject({accepted:false});expect(g.state().active).toBe(false);
 });
 it('replays interruptions when seeking and starts a clean take on the next cast',async()=>{
- const f=await fixture('blizzard');await f.service.execute({op:'preview.cast'});await f.service.execute({op:'preview.step',ticks:70});await f.service.execute({op:'preview.stop'});await f.service.execute({op:'preview.step',ticks:40});
+ const f=await fixture('channelled-waves');await f.service.execute({op:'preview.cast'});await f.service.execute({op:'preview.step',ticks:70});await f.service.execute({op:'preview.stop'});await f.service.execute({op:'preview.step',ticks:40});
  const hash=f.state().checksum;await f.service.execute({op:'preview.seek',tick:10});await f.service.execute({op:'preview.seek',tick:110});expect(f.state().checksum).toBe(hash);expect(f.state().events.some(e=>e.event==='cancelled')).toBe(true);
  await f.service.execute({op:'preview.cast'});await f.service.execute({op:'preview.seek',tick:110});expect(f.state().events.some(e=>e.event==='cancelled')).toBe(false);
 });
@@ -108,7 +108,7 @@ it('Cast resets immediately and waits for a canvas target before firing',async()
  await f.service.execute({op:'preview.seek',tick:80});expect(f.state().events.find(e=>e.event==='damaged')?.target).toBe(target);
 });
 it('Cast aims point spells, fires self spells and auras immediately, and Reset cancels targeting',async()=>{
- const f=await fixture('blizzard',{targetCount:0});await f.service.execute({op:'preview.beginCast'});
+ const f=await fixture('channelled-waves',{targetCount:0});await f.service.execute({op:'preview.beginCast'});
  expect(f.state().targeting).toBe(true);
  expect(await f.service.execute({op:'preview.confirmTarget',target:{kind:'point',position:{x:128,y:120}}})).toMatchObject({accepted:true,state:{aim:{x:128,y:120},targeting:false}});
  await f.service.execute({op:'preview.beginCast'});await f.service.execute({op:'preview.reset'});

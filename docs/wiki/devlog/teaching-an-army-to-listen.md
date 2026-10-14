@@ -64,13 +64,13 @@ Those need their own decisions.
 
 ## Research helped us ask better questions
 
-Warcraft III was an obvious reference for the feel we wanted. Its [official unit-command documentation](https://classic.battle.net/war3/basics/unitcommands.shtml) makes the distinctions between Move, Stop, Hold Position, Attack-move, and Patrol concrete. Move follows the destination despite enemies; Hold can fire without chasing; Patrol engages and then resumes its route.
+Classic RTS games were an obvious reference for the feel we wanted. Their command sets make the distinctions between Move, Stop, Hold Position, Attack-move, and Patrol concrete. Move follows the destination despite enemies; Hold can fire without chasing; Patrol engages and then resumes its route.
 
 Those are player-facing promises. Two buttons that look different but collapse into the same underlying behavior cannot support the same decisions.
 
 For crowd movement, we also looked at [Optimal Reciprocal Collision Avoidance, or ORCA](https://gamma.cs.unc.edu/ORCA/). The authors describe agents sharing responsibility for avoiding a collision. That is a useful way to think about a crowd: each participant's movement affects the options available to the others.
 
-We did **not** implement ORCA. Our game has its own constraints, including finite turning, collision rules, and a simulation that must agree across multiplayer peers. Reading an algorithm does not make it an automatic fit, and a community explanation of Warcraft is not proof of Blizzard's internal implementation.
+We did **not** implement ORCA. Our game has its own constraints, including finite turning, collision rules, and a simulation that must agree across multiplayer peers. Reading an algorithm does not make it an automatic fit.
 
 Research gave us vocabulary and questions to investigate. The rules we shipped still needed to make sense in our game and survive our tests.
 
@@ -164,7 +164,7 @@ I wanted immediate response to commands. I also wanted units to turn, with weigh
 
 These requirements can coexist. The new intention should replace the old one promptly. The ant should begin reacting. It still has to physically face the direction before moving or beginning a directional attack or cast.
 
-Our initial turn rate is 720 degrees per second: a full reversal takes a quarter of a second. That is our tuning value, not a claim about Warcraft's internal turn-rate scale.
+Our initial turn rate is 720 degrees per second: a full reversal takes a quarter of a second. That is our own tuning value.
 
 On the input side, right-click orders submit on pointer-down. Local commands enter the next 25 ms simulation tick without an extra empty tick. The ground marker acknowledges the click immediately, while authoritative execution follows the simulation.
 

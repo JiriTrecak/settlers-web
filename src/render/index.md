@@ -11,7 +11,7 @@ Visual target is PBR meshes + a sun — [`docs/game/art.md`](../../docs/game/art
 | `grid/` | Sun + draped grid lines |
 | `height/` | Dirt height mesh |
 | `water/` | Depth-tinted water plane |
-| `camera/` | Editor ortho orbit. Play / Gamecam is WC3 perspective |
+| `camera/` | Editor ortho orbit. Play / Gamecam is classic RTS perspective |
 | `input/` | `MapInput` — pan / zoom / WASD. Editor also orbits. |
 | `prop/` | Catalog glTF clones on stamp cells |
 | `brush/` | Red splat + ring cursor for the foliage brush |

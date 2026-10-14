@@ -10,7 +10,7 @@ export function resourceBlocksCell(cell:Point,position:Point,footprint:Footprint
 }
 /** Cells a standing resource blocks for movement: its footprint, widened to a disc of
  * `collisionRadius × scale` when declared. Forest spacing is ~3.7 cells, so a radius of 2
- * makes neighbouring trees merge into a wall that units must chop through, as in WC3/AoE. */
+ * makes neighbouring trees merge into a wall that units must chop through. */
 export function resourceCollisionCells(position:Point,footprint:Footprint|undefined,collisionRadius:number|undefined,scale=1,rotation=0):Point[] {
  const b=footprintCellBounds(position,footprint,rotation),r=(collisionRadius??0)*scale,out:Point[]=[];
  for(let y=Math.min(b.minY,Math.ceil(position.y-r));y<=Math.max(b.maxY,Math.floor(position.y+r));y++)

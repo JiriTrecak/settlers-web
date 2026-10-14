@@ -79,6 +79,6 @@ export function castLifecycleSource(draft: ReturnType<typeof source>) {
  const hero=(draft.definitions as AuthoredDefinition[]).find(d=>d.id==='unit.test.marshal')!;
  hero.behaviors!.abilities!.bindings=[
   {id:'holy-light',ability:'ability.test.holy-light-lite',initialRank:1,controls:['player'],command:{hotkey:'Q',column:1}},
-  {id:'blizzard',ability:'ability.test.blizzard',initialRank:1,controls:['player'],command:{hotkey:'W',column:2}},
+  {id:'channelled-waves',ability:'ability.test.channelled-waves',initialRank:1,controls:['player'],command:{hotkey:'W',column:2}},
  ];
 }

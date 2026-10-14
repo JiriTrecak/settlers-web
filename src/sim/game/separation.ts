@@ -2,8 +2,8 @@ import type { GameContext } from "./context";
 import { fixed } from "./motion";
 
 /** Nudges idle solid bodies out of each other. Overlaps arise from spawns, garrison releases,
- * revivals and ghost workers turning solid; WC3 pushes such units apart instead of leaving
- * them stacked. Movers already escape through `unitSegmentClear`'s separating-motion rule,
+ * revivals and ghost workers turning solid; such units are pushed apart instead of being
+ * left stacked. Movers already escape through `unitSegmentClear`'s separating-motion rule,
  * so only parked units are handled here, each checked every 20 ticks (staggered by id). */
 export function separateOverlaps(c: GameContext) {
   let indexed = false;

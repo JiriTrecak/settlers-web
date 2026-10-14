@@ -8,7 +8,7 @@ This is the current narrative direction for **Under the Canopy**, recorded from 
 
 A large, tragic and ultimately hopeful saga at insect scale, carried by playable heroes whom players come to know through battles, relationships and consequential decisions. The campaign is intended to be a central selling point of the game.
 
-Warcraft III is a reference for the prominence of heroes and the connection between story and RTS missions. Our characters, civilizations, conflict and mythology must develop their own identity. The forest's corruption serves the epic story; an environmental message is not the creative objective.
+Classic hero-driven RTS campaigns are a reference for the prominence of heroes and the connection between story and missions. Our characters, civilizations, conflict and mythology must develop their own identity. The forest's corruption serves the epic story; an environmental message is not the creative objective.
 
 Each mission advances the overarching story through a base-building military operation or a hero-focused adventure. Missions can establish characters and consequences, but the campaign should keep moving toward major events. Mission counts follow the story rather than determine it. Around 36 missions, roughly 12 per faction, was an initial scope reference; longer campaigns remain possible. Three substantial acts or more numerous shorter acts are both open structures.
 

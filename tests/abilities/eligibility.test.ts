@@ -27,7 +27,7 @@ it.each(['hex','mana-burn'])('blocks %s while allowing friendly healing',id=>{
  const ally=fixture('holy-light-lite',{relationship:'ally',targetHealth:100});apply(ally,'spell-ward');expect(ally.game.abilities.cast(ally.caster,'preview',ally.target)).toBeNull();ticks(ally,30);expect(ally.t.hp).toBeGreaterThan(100);
 });
 it('area waves skip protected units but hit ordinary recipients',()=>{
- const f=fixture('blizzard',{targetCount:3,targetSpacing:2});apply(f,'spell-ward');
+ const f=fixture('channelled-waves',{targetCount:3,targetSpacing:2});apply(f,'spell-ward');
  expect(f.game.abilities.cast(f.caster,'preview',{x:f.t.x,y:f.t.y})).toBeNull();ticks(f,130);
  expect(f.t.hp).toBe(500);expect(f.game.entities.some(e=>e.id!==f.caster&&e.id!==f.target&&e.hp!<500)).toBe(true);
 });

@@ -2288,88 +2288,6 @@
     ]
   },
   {
-    "id": "asset.models.environment.woodland-amber-lantern",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-amber-lantern/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-amber-lantern"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-canopy-elder",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 4.6,
-      "canopy": true,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "canopy": true,
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-canopy-elder"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-canopy-spreading",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 4.6,
-      "canopy": true,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "canopy": true,
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-canopy-spreading/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-canopy-spreading"
-    ]
-  },
-  {
     "id": "asset.models.environment.woodland-drift-log",
     "transform": {
       "scale": 1,
@@ -2419,58 +2337,6 @@
     ],
     "scenery": [
       "woodland-fallen-log"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-giant-mushroom-ochre",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 1.9,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-giant-mushroom-ochre"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-giant-mushroom-russet",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 1.7,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-giant-mushroom-russet"
     ]
   },
   {
@@ -2595,58 +2461,6 @@
     ],
     "scenery": [
       "woodland-grass-messy"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-great-broken-trunk",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 4.6,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-great-broken-trunk/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-great-broken-trunk"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-great-fallen-log",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 4,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-great-fallen-log/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-great-fallen-log"
     ]
   },
   {
@@ -3075,58 +2889,6 @@
     ],
     "scenery": [
       "woodland-rock-ledge"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-root-arch-bridge",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-root-arch-bridge/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-root-arch-bridge"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-ruined-watchtower",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 2,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-ruined-watchtower/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-ruined-watchtower"
     ]
   },
   {

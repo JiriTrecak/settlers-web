@@ -6,7 +6,7 @@ import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {abilityOutline} from '../../src/render/settlement/abilityTarget';
 /** Encounter subjects come from the test world; the schema defaults name shipped units. */
 const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
-const spell=testAbilities.abilities.find(a=>a.id==='ability.test.blizzard')!,look=testAbilities.presentations.find(p=>p.id===spell.presentation)!;
+const spell=testAbilities.abilities.find(a=>a.id==='ability.test.channelled-waves')!,look=testAbilities.presentations.find(p=>p.id===spell.presentation)!;
 function setup(relationship:'ally'|'enemy'='enemy'){
  const fixture=createAbilityEncounter(spell,look,encounterSettingsSchema.parse({...encounterUnits,relationship,targetCount:4,targetHealth:500}),false,testSource());
  const {game,caster}=fixture;

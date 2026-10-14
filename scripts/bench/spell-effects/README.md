@@ -1,6 +1,6 @@
 # Spell first-cast benchmark
 
-With the game dev server running, open `/scripts/bench/spell-effects/index.html` and run the benchmark. Reload between comparisons; avoid other browser interaction during the run. It prepares actual published effects, then measures first and repeat casts of Holy Light, Blizzard, Carapace, Crownfall, Uproot and Inferno.
+With the game dev server running, open `/scripts/bench/spell-effects/index.html` and run the benchmark. Reload between comparisons; avoid other browser interaction during the run. It prepares actual published effects, then measures first and repeat casts of the Holy Light, resin explosion, Carapace, Crownfall, Uproot and Faultline effects listed in `main.ts`.
 
 Creation CPU is separate from the maximum update/render-submit CPU. Frame interval includes browser scheduling; neither is a GPU timer. Effect draw count subtracts the 13 static scene draws. The raw JSON retains total draws. New shader programs and resource requests should both remain zero after preparation.
 

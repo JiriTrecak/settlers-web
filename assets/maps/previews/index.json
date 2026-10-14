@@ -25,7 +25,7 @@
     "sourceHash": "c6a4d0cc",
     "image": "echo-isles.webp",
     "custom": false,
-    "generationHash": "b88447074f8b9a1057b73c5e3a7c8b5357966f7f6303243440949a8264b0cffa"
+    "generationHash": "97e1eb5685a49555b6088c40793a2f2f6675d11a47a3d7c72866fd8470bfe7f1"
   },
   "turtle-rock": {
     "name": "Turtle Rock v2.0",
@@ -67,6 +67,6 @@
     "sourceHash": "1b27682e",
     "image": "turtle-rock.webp",
     "custom": false,
-    "generationHash": "d1f62683fc581ab39d6b6bae7a599f876f975eaab27edac64cc83e0cf6058bf6"
+    "generationHash": "8b043146dfb49f522a2fd05e0cc2ef431c49fcefb6fbce446f50932b49a49eed"
   }
 }

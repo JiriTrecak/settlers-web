@@ -1,12 +1,12 @@
 # RTS controls and input bindings
 
-## Research and design decisions
+## Design decisions
 
-Blizzard documents numbered groups, double-press camera focus, on-screen same-type selection, subgroup cycling, hero keys, idle-worker and town-hall cycling, recent-alert jumps, inventory keys, and queued orders. These are the reference for this pass. [Blizzard: Hot Keys and Special Commands](https://classic.battle.net/war3/basics/specialcommands.shtml).
+The control set follows established classic RTS conventions: numbered groups, double-press camera focus, on-screen same-type selection, subgroup cycling, hero keys, idle-worker and town-hall cycling, recent-alert jumps, inventory keys, and queued orders.
 
-The distinction between Move, Stop, Hold Position and Patrol matters mechanically: Move avoids automatic engagement; Stop permits subsequent acquisition; Hold attacks without pursuit; Patrol resumes its route after combat. [Blizzard: Unit Commands](https://classic.battle.net/war3/basics/unitcommands.shtml).
+The distinction between Move, Stop, Hold Position and Patrol matters mechanically: Move avoids automatic engagement; Stop permits subsequent acquisition; Hold attacks without pursuit; Patrol resumes its route after combat.
 
-We retain the fixed game-camera orientation, existing momentum zoom, army-first box selection, worker-first construction assignment, and 16 pending orders. We do not adopt Warcraft's twelve-unit selection cap. Enter remains reserved for chat. Editor tools retain their existing gestures. Game settings do not pause a multiplayer match.
+We retain the fixed game-camera orientation, existing momentum zoom, army-first box selection, worker-first construction assignment, and 16 pending orders. Selection has no twelve-unit cap. Enter remains reserved for chat. Editor tools retain their existing gestures. Game settings do not pause a multiplayer match.
 
 This is an RTS control implementation, not a reproduction of campaign, transport, allied-unit sharing, replay, formation-speed synchronization, or siege attack-ground mechanics that our game does not yet expose. Subgroup special commands follow the focused type; ordinary movement and combat orders still affect the eligible selection. A Ctrl-only subgroup-order mode is not included in this pass.
 

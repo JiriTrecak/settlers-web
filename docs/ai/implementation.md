@@ -16,7 +16,7 @@ Code responsibilities:
 - `playerAI.ts`: knowledge updates, strategic objectives, army operations, command arbitration, receipts, save/restore, and explanations.
 - `economy.ts`: growth, worker reservations, funding, recruitment, recurring population capacity, gathering recovery, forestry, and sanctuary construction/revival.
 - `tactics.ts`: eligible skill choices, items, visible-target spell scoring, worker evacuation, wounded-unit retreat, bounded pursuit, and limited archer spacing.
-- `src/content/spellArea.ts`: shared line/blast hit geometry used by both authoritative spell resolution and AI scoring.
+- `src/sim/abilities/ai.ts`, `eligibility.ts`: ability aim scoring and target eligibility shared with authoritative spell resolution.
 
 ## Knowledge and fog
 
@@ -76,7 +76,7 @@ F3 shows each AI's decision timing, mission, economic state, current reason, and
 Run the reproducible headless harness:
 
 ```sh
-node --import tsx scripts/ai/match.ts assets/maps/skirmish/threewater-forest.utcmap 24000 duel tmp/ai-match.json
+node --import tsx scripts/ai/match.ts assets/maps/skirmish/echo-isles.utcmap 24000 duel tmp/ai-match.json
 ```
 
 The harness reports investments, skill/loot use, hero levels, outcome, and CPU percentiles for actual decision beats. `passive` instead of `duel` supplies a stationary human-controlled opponent. Results are written to the specified JSON report. These are simulation tests, not a claim of human playtesting or a fixed match length.

@@ -3639,8 +3639,8 @@
   },
   {
    "schemaVersion": 1,
-   "id": "effect.test.blizzard.wavestarted",
-   "name": "Blizzard Shards",
+   "id": "effect.test.channelled-waves.wavestarted",
+   "name": "Channelled Wave Shards",
    "description": "",
    "durationTicks": 40,
    "loop": false,
@@ -3675,7 +3675,7 @@
      "spread": 1,
      "length": 1.7,
      "texture": {
-      "asset": "asset.effects.blizzard-ice",
+      "asset": "asset.effects.falling-ice",
       "role": "image",
       "index": 1
      }
@@ -6827,9 +6827,9 @@
   },
   {
    "schemaVersion": 1,
-   "id": "effect.test.blizzard.frost-impact-sound",
-   "name": "Blizzard — Frost Impact Sound",
-   "description": "One Frost Impact one-shot at each Blizzard damage wave. Sound only; bound to wave, not waveStarted.",
+   "id": "effect.test.channelled-waves.frost-impact-sound",
+   "name": "Channelled Waves — Frost Impact Sound",
+   "description": "One Frost Impact one-shot at each channelled damage wave. Sound only; bound to wave, not waveStarted.",
    "durationTicks": 40,
    "loop": false,
    "layers": [

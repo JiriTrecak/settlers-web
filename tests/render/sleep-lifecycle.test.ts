@@ -6,6 +6,13 @@ import {releaseEffects} from '../../src/content/abilities/schema';
 import {testEffects} from '../fixtures/content';
 import {encounter,presentationOf,testAbility} from '../abilities/encounter-harness';
 
+// Effect images resolve through the shipped asset library; give test effects synthetic outputs.
+vi.mock('../../src/content/abilities/resources',async importOriginal=>{
+ const m=await importOriginal<typeof import('../../src/content/abilities/resources')>();
+ const effectResource=(ref:{asset:string;role:string})=>({role:ref.role,path:`test/${ref.asset}/${ref.role}.png`,sha256:'',bytes:0});
+ return {...m,effectResource,effectImage:effectResource};
+});
+
 it.each(['damage','expiry','dispel'] as const)('removes every published Sleep layer on actual %s without changing its mechanics',end=>{
  const ability=testAbility('ability.test.sleep'),presentation=presentationOf(ability);
  const f=encounter(ability,{relationship:'enemy',distance:3,targetHealth:500});

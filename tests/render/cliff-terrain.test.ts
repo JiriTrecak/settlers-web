@@ -11,6 +11,9 @@ import {groundTextures,isCliffMaterial} from '../../src/shared/authoring/groundT
 
 // ENGINE-COUPLED: terrain editing and rendering resolve materials through the shipped ground catalogue with no injection
 // point, so the test selects generic catalogue entries by kind instead of naming shipped materials.
+// The shipped catalogue may contain a single cliff; add a test-owned second cliff material.
+const shippedCliff=[...groundTextures.keys()].find(isCliffMaterial)!;
+groundTextures.set('asset.test.cliff-b',{...groundTextures.get(shippedCliff)!,id:'asset.test.cliff-b'});
 const grounds=[...groundTextures.keys()].filter(id=>!isCliffMaterial(id)),cliffs=[...groundTextures.keys()].filter(isCliffMaterial);
 const [dirt,grass]=grounds as [string,string],[cliff,otherCliff]=cliffs as [string,string];
 const selection={type:'rectangle' as const,from:{x:2,z:2},to:{x:4,z:4}};

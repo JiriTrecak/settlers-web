@@ -15,7 +15,7 @@ The fixed conversion is **1 C = 4 engine world units = 4 navigation cells**. Nav
 
 Keep the optimized sector routing, ground mesh, body sweeps, shared corridors, spatial indexes and incremental occupancy invalidation. Change their inputs and boundary conversions where necessary, rather than replacing working algorithms. `src/shared/spatial/footprint.ts` owns physical bounds, conservative raster coverage, snapping and navigation-body/rectangle intersection. Simulation, authoring validation, AI blockers and placement rendering share its geometry. Foundation placement tests the same conservative square body footprint used by terrain navigation, at continuous positions; a center outside the footprint does not prove that the body is outside.
 
-Calibrate the Warcraft-inspired camera by visible battlefield coverage and unit/building proportions, not by copying an unverified FOV constant. Warcraft imports use 25.6 source units per world unit: its 128-unit terrain tile becomes 5 world units, while our building lattice remains 4. This matches the source 512-unit Town Hall foundation to our 5 C Hall. Imported atlas size/origin are saved separately from navigation; native map editing and body dimensions retain their established grid.
+Calibrate the classic RTS camera by visible battlefield coverage and unit/building proportions, not by copying an unverified FOV constant. The map importer uses 25.6 source units per world unit: a 128-unit source terrain tile becomes 5 world units, while our building lattice remains 4, so a 512-unit source hall foundation matches our 5 C Hall. Imported atlas size/origin are saved separately from navigation; native map editing and body dimensions retain their established grid.
 
 ## Money and harvesting
 
@@ -47,21 +47,18 @@ Choose the first hero before the match. Tier 2 allows a second distinct hero; Ti
 
 ## Maps and verification
 
-The user authorized removing the entire old map catalogue. Replace it with newly authored maps instead of adapting incompatible layouts. Update the author-canopy-map skill and editor together: visible building grid, compulsory snapping for gameplay placements, footprint and clearance previews, and measurements expressed in C. Keep scenery variation natural while ensuring generated resource trees and other pathing obstacles respect the competitive layout. The skill must teach the new rules and Warcraft-inspired map-design practices, without preserving outdated numeric guidance.
+Maps are authored or imported through the editor command system. The editor and the author-canopy-map skill share the visible building grid, compulsory snapping for gameplay placements, footprint and clearance previews, and measurements expressed in C. Scenery varies naturally, while generated resource trees and other pathing obstacles respect the competitive layout. The skill teaches classic RTS map-design practices with the current numeric rules.
 
 Matches also expose the same terrain-following world grid through Debug → Show world grid. This is a local visual diagnostic, available in multiplayer without changing simulation, revealing fog or requesting hidden navigation state. Disabling Show world grid hides it and frees its geometry; CPU profiling is independent.
 
 Author a 128 × 128 C benchmark 1v1 through the editor command system. Target a 135 C opposing approach (45 seconds for baseline infantry), natural expansion 30–42 C away, center 54–72 C away, first camp 18–27 C away. Give each base a 24 × 22 C building shelf excluding harvesting corridors. Primary lanes: 8–12 C, chokepoints: 6 C, flanks: 3–4 C. Eight resource sites: main/natural/third per player and two contested. Forest and frost variants must have identical competitive topology.
 
-Migrate in verified stages: wallet and escrow; spatial dimensions; serialized node queues and tree loads; supply/construction/costs; pre-match hero selection and roster; camera/asset calibration; benchmark and showcase map; AI and multiplayer audit.
+Acceptance includes conservation of currency, interrupted harvesting, oversaturation curves, legal building clearance, passage by different body sizes, queue cancellation, over-cap completion, hero death/revival, restored snapshots, deterministic command replays and multiplayer state equality. Record actual timings and throughput, not only theoretical rates.
 
-Acceptance includes conservation of currency, interrupted harvesting, oversaturation curves, legal building clearance, passage by different body sizes, queue cancellation, over-cap completion, hero death/revival, restored snapshots, deterministic command replays and multiplayer state equality. Record actual timings and throughput, not only theoretical rates. Review all AI and UI consumers of the old economy and scale rules. This document describes the full target; it is not a completion report.
+## Implementation
 
-## Implementation and verification (6 October 2026)
-
-The migration uses simulation build `declarative-sim-109`. The numerical values
-above are implemented initial tuning, not a claim of tournament-ready balance.
-The following evidence replaces the superseded incremental migration reports.
+The numerical values above are implemented initial tuning, not a claim of
+tournament-ready balance.
 
 ### Spatial rules, placement and navigation
 
@@ -138,11 +135,11 @@ with declared test content; no unrequested hero models were invented.
 
 ### Camera, assets and authoring
 
-The default perspective shows **32 C horizontally at 16:9**, with a Warcraft-derived
+The default perspective shows **32 C horizontally at 16:9**, with a classic RTS
 vertical lens (about 34.32°), 56-degree downward pitch and north-up orientation.
 The full viewport stays within map bounds, including at maximum zoom and after
 resizing. The minimap uses that same projection, producing a horizontal trapezoid.
-See `src/render/camera/camera.md` for source conventions and HUD differences. Infantry projects to the tested
+See `src/render/camera/camera.md` for the lens and framing contract. Infantry projects to the tested
 40–60-pixel height band at 1080p. `tests/render/camera.test.ts` also covers terrain
 following, camera modes and narrow editor panes.
 
@@ -158,81 +155,16 @@ The map editor enforces gameplay snapping and exposes the shared grid. The
 C-based authoring, base shelves, measured routes, whole camp stamps and export
 through the live MCP command system. Scenery remains organic. Forest masses
 define the clearings; the existing woodland-edge meadow generates grass ground,
-animated fringe and undergrowth from tree distance, leaving open dirt. That
+grass fringe props and undergrowth from tree distance, leaving open dirt. That
 recipe is now in the biome's foliage menu.
 
-### Published playtest maps
+### Shipped maps
 
-The old project map catalogue and legacy standalone composers were removed.
-Local browser saves are retained for recovery. Three editor-authored project
-maps have current validated previews:
-
-- **Amberwake Basin:** 128 × 128 C mirrored 1v1 benchmark; eight five-node amber
-  sites, two guarded Root sites, six neutral camps, opening wood and build shelves.
-- **Amberwake Frost:** the benchmark's paired winter edition. Terrain, blockers,
-  starts and resource geometry are checked for equality by
-  `tests/game/amberwake-biomes.test.ts`.
-- **Amberwake Wilds:** adapted forest showcase with giant-oak watches, hollow logs,
-  acorns, mushrooms and dressed shores. Forests shape the routes and expose dirt
-  clearings. The final export has 28 live layers, 94 independent scenery objects,
-  57,623 generated objects, one water body and no generation issues. Overview and
-  standard game-camera views were inspected in the editor.
-
-`tests/game/amberwake-map.test.ts` runs the same seven contracts on Basin and
-Wilds; `tests/game/tier-two-maps.test.ts` checks all three maps' Root layouts.
-The map/topology suite checks the five-node layout, 5/10/15-worker mining and
-cold continuation. Ten workers deliver **1,410–1,420 amber/minute** and fifteen
-approximately **1,500** after a ten-second warm-up. Adjacent node footprints touch
-while the initial worker formation and all five mining approaches remain accessible.
-Actual opposing scout journeys are within 3% of 45 seconds and do not pull camps,
-including a cold restore mid-route. The full mirrored 24 × 22 C production
-layout fits and Bombardiers can leave its production buildings. Rootworks
-can be built near both deposits and actually deliver Root after guards are cleared.
-`tests/game/amberwake-opening-combat.test.ts` verifies the benchmark's first-camp
-fight, XP and cold continuation; it does not establish general matchup balance.
-
-### AI, save/load and multiplayer evidence
-
-The centred five-node Wilds export passes a fresh 2,400-tick two-replica lockstep
-check with 25 matching full-state checkpoints, equal final snapshots and checksum
-391307542. Ordered synthetic delivery includes one injected upstream stall; this
-is a determinism check, not an Internet latency benchmark.
-
-On the forest-corrected Wilds export before the later near/far amber rearrangement,
-a fresh five-minute two-replica match agrees at
-**121 full-state checkpoints**, ends with equal complete snapshots and checksum
-**1745537715**, and has 74 live units per replica. A separate AI opening restored
-cold at tick 6,000 and matched through tick 12,000. All nine completed-building
-production/unit combinations at that endpoint have body-clear exits to the field.
-CPU mean was 0.836 / 0.831 ms and p95 1.830 / 1.851 ms for those replicas.
-
-A fifteen-minute seed-42 duel on the same export exercises advanced economy:
-both colonies reached Tier 2, harvested Root, researched all six faction upgrades,
-and created 7 / 11 Bombardiers, firing 202 / 312 siege shells. One colony revived
-its hero twice. Both continued producing and fighting; neither was defeated by
-minute fifteen. Restoring that state into independent lockstep replicas for
-another minute matched **25 full-state checkpoints** and complete final snapshots,
-checksum **3339051560**, with 89 live units per replica. Late-army p95 CPU cost
-was about 10.5 ms; occasional spikes exceeded a 25 ms simulation tick budget.
-This is finite integration evidence, not a zero-spike or final balance guarantee.
-
-Reproduce with `scripts/ai/match.ts` and `scripts/bench/multiplayer-match.ts`.
-The former reports newly spawned units and actual player wallets; it no longer
-looks for obsolete worker conversions. The latter uses the real Room/Lockstep
-protocol with synthetic ordered delays and one transport stall. It is not an
-Internet latency test. Saved command queues, future AI intentions and transport
-resume are additionally covered by `tests/net/settlement-lockstep.test.ts`.
-
-### Verification scope
-
-The complete regression run after the forest correction passed **2,497 tests,
-zero failed and one skipped** (the pre-existing Sanctuary asset exception).
-Type checking, map preview freshness, documentation links and release-log checks
-pass. Production builds of the game, Asset Studio and Spell Workbench also pass;
-Vite still reports non-fatal third-party directive and bundle-size advisories.
-Initial balance values are ready for playtesting; broader matchup studies,
-new hero content and graphics/performance work beyond the migration remain
-separate work. No release has been published.
+The shipped skirmish maps are Echo Isles and Turtle Rock in
+`assets/maps/skirmish/`, converted by the map importer into ordinary editable
+maps with five-node amber sites and neutral camps.
+`tests/game/imported-map-playability.test.ts` checks every published map for
+usable starts, reachable camps and a deterministic save continuation.
 
 ## Hero progression contract
 
@@ -268,4 +200,4 @@ Marshal's published bindings are `ability.marshal.faultline`,
 `ability.marshal.crownfall`. Their ranks, target queries, damage, shields,
 reflection, hero-specific stun durations and linked effects are ordinary authored
 data, with no bespoke spell runtime. The [hero guide](../wiki/guide/heroes.md)
-describes the kit. Simulation build 110 separates this ruleset from older peers.
+describes the kit.

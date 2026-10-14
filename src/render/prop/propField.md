@@ -6,19 +6,18 @@
 
 Painted environment materials can opt into `extras.painted: true` alongside `referenceEnvironment`. They retain directional/ambient diffuse lighting, shadow reception, vertex occlusion and foliage wind, but omit physical specular highlights so white reflections do not wash out the painted colours. This is material metadata, not a biome-wide unlit mode. PBR source imports keep their original specular behavior.
 
-The original woodland pines use this mode. Their reproducible source is `art/recipes/woodland_originals.py`; canonical packages retain the generated broad-fan alpha texture, painted bark, exact generation prompts, editable Blender scene and preview. Four separated boughs per adult whorl expose the tapered trunk and flared roots. The foliage's `vertexColorUsage: tint` stores an authored cool-dark skirt to bright-green crown gradient in `COLOR_0`; it is albedo tint, not imported ambient occlusion. This keeps one material and one texture for all tiers. Full-sheet UVs keep the painted branch readable within the 512px texture budget; mirror variation avoids atlas downsampling. Republish changed variants through the Asset Studio, with 512px runtime texture limits.
+The original woodland pines use this mode. Each canonical package keeps one editable `source.blend` with the broad-fan alpha texture and painted bark packed in. Four separated boughs per adult whorl expose the tapered trunk and flared roots. The foliage's `vertexColorUsage: tint` stores an authored cool-dark skirt to bright-green crown gradient in `COLOR_0`; it is albedo tint, not imported ambient occlusion. This keeps one material and one texture for all tiers. Full-sheet UVs keep the painted branch readable within the 512px texture budget; mirror variation avoids atlas downsampling. Republish changed variants through the Asset Studio, with 512px runtime texture limits.
 
 Catalogue entries may declare `blocker: {width, depth}` in local metres. Simulation and AI briefing rasterize the same rotated/scaled footprints through `shared/map/sceneryCollision.ts`; decorative meshes have no inferred collision. The collision declaration participates in the match revision fingerprint. Fences and waystone outcrops use this mechanism.
 
 Lantern posts declare a `light` with local `x/y/z`, hex `color`, `intensity`, and `range`. `SceneryLights` transforms the emitter with stamp yaw/scale/elevation and ground height. It maintains exactly four unshadowed point lights, selecting nearby emitters around the camera focus. Distant meshes retain emissive material. This bounds light count independently of map decoration count; a full scene benchmark is still required to establish frame cost. Tilted emitters are not currently supported: lanterns are authored upright.
 
-`python3 scripts/maps/decorate-worldroot.py` reapplies the 47 roadside and shoreline kit placements without changing terrain or gameplay entities. The enrichment generator invokes this pass after generating natural scenery. Bridge deck traversal and terrain road painting are integrated as described below.
 
 ### Bridge decks
 
 A catalogue `deck` declares local width/depth, edge height and cosine arch height. `bridgeSurface.ts` projects it with stamp yaw and scale. The simulation and AI use that surface for traversal; unit rendering uses `HeightField.walkSample`. Terrain sampling remains unchanged for water and construction. `Spatial.decks` forbids buildings on deck cells. Bridge meshes preserve their authored structural origin, including submerged support posts.
 
-Worldroot's western crossing is at stamp (110,123), rotated 90 degrees, length scale 1.75, and elevated 1.62 metres from its terrain origin. Path tests verify connection between its banks; its visible mesh was reviewed in the in-game reference stage against both banks. Bridge stamps currently assume upright yaw-only placement, as used on Worldroot.
+Bridge stamps assume upright, yaw-only placement. Path tests verify that bridge decks connect both banks.
 
 ### Roads
 

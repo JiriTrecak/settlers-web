@@ -2,27 +2,6 @@
   "version": 1,
   "records": [
     {
-      "id": "asset.assistant-trials.verdant-ward-leaf",
-      "name": "Verdant Ward leaf particle",
-      "kind": "texture",
-      "tags": [
-        "spell-effects",
-        "generated"
-      ],
-      "revision": 6,
-      "profile": "texture",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.assistant-trials.verdant-ward-leaf/image.png",
-          "sha256": "ceae3d2228bf935a448416134e99838539816fdc5a821dc21546b8c64f961af7",
-          "bytes": 197383
-        }
-      ],
-      "render": [],
-      "scenery": []
-    },
-    {
       "id": "asset.audio.spells.frost-impact",
       "name": "Frost Impact",
       "kind": "audio",
@@ -61,28 +40,6 @@
           "path": "assets/library/asset.audio.spells.radiant-chime/audio.wav",
           "sha256": "be0b612604a75d8683588b16e4e53fd0b781df166355ce59cb5608f92d738419",
           "bytes": 52964
-        }
-      ],
-      "render": [],
-      "scenery": []
-    },
-    {
-      "id": "asset.audio.spells.ward-hum",
-      "name": "Ward Hum",
-      "kind": "audio",
-      "tags": [
-        "spell",
-        "audio",
-        "ward-hum"
-      ],
-      "revision": 1,
-      "profile": "audio",
-      "outputs": [
-        {
-          "role": "data",
-          "path": "assets/library/asset.audio.spells.ward-hum/audio.wav",
-          "sha256": "f2d9d74a20a1b216e0007047424860f7c5e3295364922150efff071f6725d2c1",
-          "bytes": 44144
         }
       ],
       "render": [],
@@ -141,32 +98,6 @@
       "scenery": []
     },
     {
-      "id": "asset.custom.blink-command-icon",
-      "name": "Blink — Single Ant Fold",
-      "kind": "icon",
-      "tags": [
-        "spell-effects",
-        "generated"
-      ],
-      "revision": 6,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.custom.blink-command-icon/image.png",
-          "sha256": "c5c62a19b303bcbbd62d22a759a924c9f5ee8460f9905f6c05f2e1aec10df237",
-          "bytes": 42950
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.custom.blink-command-icon",
-          "image": "assets/library/asset.custom.blink-command-icon/image.png"
-        }
-      ],
-      "scenery": []
-    },
-    {
       "id": "asset.custom.frost-armor-command",
       "name": "Frost Armor — Iced Chitin and Melee Chill",
       "kind": "icon",
@@ -190,27 +121,6 @@
           "image": "assets/library/asset.custom.frost-armor-command/image.png"
         }
       ],
-      "scenery": []
-    },
-    {
-      "id": "asset.custom.inferno-fire-atlas",
-      "name": "Inferno — Golden Fire Impact Atlas",
-      "kind": "texture",
-      "tags": [
-        "spell-effects",
-        "generated"
-      ],
-      "revision": 6,
-      "profile": "texture",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.custom.inferno-fire-atlas/image.png",
-          "sha256": "2c976336e009bf6d4a865199270388207b6a606a6fb9add3d00b7c9e21ad0d90",
-          "bytes": 225765
-        }
-      ],
-      "render": [],
       "scenery": []
     },
     {
@@ -263,27 +173,6 @@
           "image": "assets/library/asset.custom.silence-command-icon/image.png"
         }
       ],
-      "scenery": []
-    },
-    {
-      "id": "asset.custom.sleep-floating-crescent",
-      "name": "Sleep — floating lavender crescent",
-      "kind": "texture",
-      "tags": [
-        "spell-effects",
-        "generated"
-      ],
-      "revision": 6,
-      "profile": "texture",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.custom.sleep-floating-crescent/image.png",
-          "sha256": "0cc70a08a43fd1add87db6b8a0f67456f0cbb5927be43265ef6380540494e02e",
-          "bytes": 201070
-        }
-      ],
-      "render": [],
       "scenery": []
     },
     {
@@ -375,28 +264,6 @@
           "path": "assets/library/asset.effects.ants.silk-net/image.png",
           "sha256": "dc44d5ca2c171486f5e87747956c2a92b4e11c080c67d73cdac131a029601e72",
           "bytes": 201320
-        }
-      ],
-      "render": [],
-      "scenery": []
-    },
-    {
-      "id": "asset.effects.blizzard-ice",
-      "name": "Blizzard · falling ice",
-      "kind": "texture",
-      "tags": [
-        "effect",
-        "blizzard",
-        "ice"
-      ],
-      "revision": 4,
-      "profile": "texture",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.effects.blizzard-ice/image.png",
-          "sha256": "ceeb01cc66f77d27a00eb228161d391a451469aca2ea79657c141d04c53d6d3f",
-          "bytes": 43906
         }
       ],
       "render": [],
@@ -610,119 +477,6 @@
           "path": "assets/library/asset.effects.seismic-crescent/image.png",
           "sha256": "2e0e90ad3bf99ee07b47a58fb1cce18077edb5c416b050a659d62598554a5341",
           "bytes": 61262
-        }
-      ],
-      "render": [],
-      "scenery": []
-    },
-    {
-      "id": "asset.effects.storm-hammer",
-      "name": "storm hammer effect texture",
-      "kind": "texture",
-      "tags": [
-        "spell",
-        "effect"
-      ],
-      "revision": 4,
-      "profile": "texture",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.effects.storm-hammer/image.png",
-          "sha256": "b3d3a2a128375685e2b7a00f88013e8456f528f16c021e55c9ee34c916a8460f",
-          "bytes": 98491
-        }
-      ],
-      "render": [],
-      "scenery": []
-    },
-    {
-      "id": "asset.effects.thorns-heart",
-      "name": "Thorns Aura · living heart",
-      "kind": "texture",
-      "tags": [
-        "effect",
-        "aura",
-        "ground",
-        "original"
-      ],
-      "revision": 1,
-      "profile": "texture",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.effects.thorns-heart/image.png",
-          "sha256": "bb7b540cfc5f21fa2c7e9fb2a35977694db0401328b30db7006903f02e9dbd49",
-          "bytes": 182102
-        }
-      ],
-      "render": [],
-      "scenery": []
-    },
-    {
-      "id": "asset.effects.thorns-wreath",
-      "name": "Thorns Aura · bramble wreath",
-      "kind": "texture",
-      "tags": [
-        "effect",
-        "aura",
-        "ground",
-        "original"
-      ],
-      "revision": 1,
-      "profile": "texture",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.effects.thorns-wreath/image.png",
-          "sha256": "9c2ce6cb8bf819b0642cdf5bdce1db5db12e07f2cdc3c018f78160cca6bad09e",
-          "bytes": 338530
-        }
-      ],
-      "render": [],
-      "scenery": []
-    },
-    {
-      "id": "asset.effects.vampiric-crest",
-      "name": "Vampiric Aura · pulsing crest",
-      "kind": "texture",
-      "tags": [
-        "effect",
-        "aura",
-        "ground",
-        "original"
-      ],
-      "revision": 1,
-      "profile": "texture",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.effects.vampiric-crest/image.png",
-          "sha256": "93b78323327031ef7b75ca8c55221821baa11ab1fb0167aec6b6c0fabe655763",
-          "bytes": 148841
-        }
-      ],
-      "render": [],
-      "scenery": []
-    },
-    {
-      "id": "asset.effects.vampiric-wreath",
-      "name": "Vampiric Aura · rotating wreath",
-      "kind": "texture",
-      "tags": [
-        "effect",
-        "aura",
-        "ground",
-        "original"
-      ],
-      "revision": 1,
-      "profile": "texture",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.effects.vampiric-wreath/image.png",
-          "sha256": "6cf49670af96f52211570e9f117236ff8279f392349e41b8cfb5c0ae2996a0db",
-          "bytes": 248129
         }
       ],
       "render": [],
@@ -1488,32 +1242,6 @@
       "scenery": []
     },
     {
-      "id": "asset.icons.item-plank",
-      "name": "Plank",
-      "kind": "icon",
-      "tags": [
-        "ants-v1",
-        "migrated"
-      ],
-      "revision": 1,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.icons.item-plank/image.png",
-          "sha256": "8a326d5d5e3dbf922b706fd7ddd8b549c3e43487550fb77a69b10c85bf279894",
-          "bytes": 28628
-        }
-      ],
-      "render": [
-        {
-          "id": "icon.item.plank",
-          "image": "assets/library/asset.icons.item-plank/image.png"
-        }
-      ],
-      "scenery": []
-    },
-    {
       "id": "asset.icons.item-predator-talon",
       "name": "Predator Talon",
       "kind": "icon",
@@ -2085,35 +1813,6 @@
         {
           "id": "asset.icons.spell-holy-light",
           "image": "assets/library/asset.icons.spell-holy-light/image.png"
-        }
-      ],
-      "scenery": []
-    },
-    {
-      "id": "asset.icons.spell-thorns-aura",
-      "name": "Thorns Aura",
-      "kind": "icon",
-      "tags": [
-        "spell",
-        "aura",
-        "thorns",
-        "reflection",
-        "nature"
-      ],
-      "revision": 1,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.icons.spell-thorns-aura/image.png",
-          "sha256": "72e464978a641b6e1f9bb8f7f7d5b08825520955c6b21c96aca176702d9429ac",
-          "bytes": 14744
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.icons.spell-thorns-aura",
-          "image": "assets/library/asset.icons.spell-thorns-aura/image.png"
         }
       ],
       "scenery": []
@@ -5648,147 +5347,6 @@
       ]
     },
     {
-      "id": "asset.models.environment.woodland-amber-lantern",
-      "name": "woodland amber lantern",
-      "kind": "model",
-      "tags": [
-        "original",
-        "woodland"
-      ],
-      "revision": 5,
-      "profile": "model",
-      "outputs": [
-        {
-          "role": "model",
-          "path": "assets/library/asset.models.environment.woodland-amber-lantern/geometry.glb",
-          "sha256": "4a2ce3546309ddef1c88dcccf0abe44d850b28328a76bbebf221a2b3afd36b65",
-          "bytes": 1555152
-        },
-        {
-          "role": "image",
-          "path": "assets/library/asset.models.environment.woodland-amber-lantern/albedo_2.png",
-          "sha256": "0cb743835af1e9d15666d8e521c3ba09d422d7ef8ac88e76d3d28603e032adf6",
-          "bytes": 1705512
-        },
-        {
-          "role": "image",
-          "path": "assets/library/asset.models.environment.woodland-amber-lantern/albedo.png",
-          "sha256": "9e93d22c83829ddd11def8ac4664b02842e4f0e3daae662b00939ec027fc75a7",
-          "bytes": 1534415
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.scenery.woodland-amber-lantern",
-          "file": "assets/library/asset.models.environment.woodland-amber-lantern/geometry.glb",
-          "sceneryAsset": "woodland-amber-lantern"
-        }
-      ],
-      "scenery": [
-        {
-          "id": "woodland-amber-lantern",
-          "name": "woodland amber lantern",
-          "category": "landmark",
-          "type": "prop",
-          "light": {
-            "x": 0.78,
-            "y": 2.25,
-            "z": -0.04,
-            "color": "#d8a457",
-            "intensity": 1.6,
-            "range": 5
-          },
-          "file": "library/asset.models.environment.woodland-amber-lantern/geometry.glb"
-        }
-      ]
-    },
-    {
-      "id": "asset.models.environment.woodland-canopy-elder",
-      "name": "Ancient canopy oak",
-      "kind": "model",
-      "tags": [
-        "original",
-        "woodland",
-        "forest-scale"
-      ],
-      "revision": 4,
-      "profile": "model",
-      "outputs": [
-        {
-          "role": "model",
-          "path": "assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb",
-          "sha256": "321cfc0d5ed708596068364639f51cddbcd9e03fe959ef29f6da878af5a39362",
-          "bytes": 2705856
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.scenery.woodland-canopy-elder",
-          "file": "assets/library/asset.models.environment.woodland-canopy-elder/geometry.glb",
-          "sceneryAsset": "woodland-canopy-elder"
-        }
-      ],
-      "scenery": [
-        {
-          "id": "woodland-canopy-elder",
-          "name": "Ancient canopy oak",
-          "category": "landmark",
-          "type": "prop",
-          "blockers": [
-            {
-              "width": 8.2,
-              "depth": 8.2,
-              "shape": "ellipse"
-            }
-          ],
-          "file": "library/asset.models.environment.woodland-canopy-elder/geometry.glb"
-        }
-      ]
-    },
-    {
-      "id": "asset.models.environment.woodland-canopy-spreading",
-      "name": "Spreading canopy oak",
-      "kind": "model",
-      "tags": [
-        "original",
-        "woodland",
-        "forest-scale"
-      ],
-      "revision": 4,
-      "profile": "model",
-      "outputs": [
-        {
-          "role": "model",
-          "path": "assets/library/asset.models.environment.woodland-canopy-spreading/geometry.glb",
-          "sha256": "8d4dbaddd95bc0ebea09dfd860bcb36e3452c6845425923b0eca0c35471c8ab9",
-          "bytes": 2705756
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.scenery.woodland-canopy-spreading",
-          "file": "assets/library/asset.models.environment.woodland-canopy-spreading/geometry.glb",
-          "sceneryAsset": "woodland-canopy-spreading"
-        }
-      ],
-      "scenery": [
-        {
-          "id": "woodland-canopy-spreading",
-          "name": "Spreading canopy oak",
-          "category": "landmark",
-          "type": "prop",
-          "blockers": [
-            {
-              "width": 8.2,
-              "depth": 8.2,
-              "shape": "ellipse"
-            }
-          ],
-          "file": "library/asset.models.environment.woodland-canopy-spreading/geometry.glb"
-        }
-      ]
-    },
-    {
       "id": "asset.models.environment.woodland-drift-log",
       "name": "Waterworn drift log",
       "kind": "model",
@@ -5875,92 +5433,6 @@
           "category": "landmark",
           "type": "prop",
           "file": "library/asset.models.environment.woodland-fallen-log/geometry.glb"
-        }
-      ]
-    },
-    {
-      "id": "asset.models.environment.woodland-giant-mushroom-ochre",
-      "name": "Giant ochre umbrella",
-      "kind": "model",
-      "tags": [
-        "original",
-        "woodland",
-        "forest-scale"
-      ],
-      "revision": 3,
-      "profile": "model",
-      "outputs": [
-        {
-          "role": "model",
-          "path": "assets/library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb",
-          "sha256": "c8fc2ef160f25bc0949f8a92c896513ef1ea63ba6de18874fa4727a024b30b9c",
-          "bytes": 2009024
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.scenery.woodland-giant-mushroom-ochre",
-          "file": "assets/library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb",
-          "sceneryAsset": "woodland-giant-mushroom-ochre"
-        }
-      ],
-      "scenery": [
-        {
-          "id": "woodland-giant-mushroom-ochre",
-          "name": "Giant ochre umbrella",
-          "category": "landmark",
-          "type": "prop",
-          "blockers": [
-            {
-              "width": 2.8,
-              "depth": 2.8,
-              "shape": "ellipse"
-            }
-          ],
-          "file": "library/asset.models.environment.woodland-giant-mushroom-ochre/geometry.glb"
-        }
-      ]
-    },
-    {
-      "id": "asset.models.environment.woodland-giant-mushroom-russet",
-      "name": "Giant russet umbrella",
-      "kind": "model",
-      "tags": [
-        "original",
-        "woodland",
-        "forest-scale"
-      ],
-      "revision": 3,
-      "profile": "model",
-      "outputs": [
-        {
-          "role": "model",
-          "path": "assets/library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb",
-          "sha256": "3775530dd39b72c7bdfe913c4bcc6828b6b2b4603bc5e3d0b4e8899338ae1e5e",
-          "bytes": 2009020
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.scenery.woodland-giant-mushroom-russet",
-          "file": "assets/library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb",
-          "sceneryAsset": "woodland-giant-mushroom-russet"
-        }
-      ],
-      "scenery": [
-        {
-          "id": "woodland-giant-mushroom-russet",
-          "name": "Giant russet umbrella",
-          "category": "landmark",
-          "type": "prop",
-          "blockers": [
-            {
-              "width": 2.4,
-              "depth": 2.4,
-              "shape": "ellipse"
-            }
-          ],
-          "file": "library/asset.models.environment.woodland-giant-mushroom-russet/geometry.glb"
         }
       ]
     },
@@ -6101,91 +5573,6 @@
           "category": "foliage",
           "type": "prop",
           "file": "library/asset.models.environment.woodland-grass-messy/geometry.glb"
-        }
-      ]
-    },
-    {
-      "id": "asset.models.environment.woodland-great-broken-trunk",
-      "name": "Great broken trunk",
-      "kind": "model",
-      "tags": [
-        "original",
-        "woodland",
-        "forest-scale"
-      ],
-      "revision": 3,
-      "profile": "model",
-      "outputs": [
-        {
-          "role": "model",
-          "path": "assets/library/asset.models.environment.woodland-great-broken-trunk/geometry.glb",
-          "sha256": "289b495111da253f815139ee93520da085715fd1da19e442478526dde80d294e",
-          "bytes": 1628780
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.scenery.woodland-great-broken-trunk",
-          "file": "assets/library/asset.models.environment.woodland-great-broken-trunk/geometry.glb",
-          "sceneryAsset": "woodland-great-broken-trunk"
-        }
-      ],
-      "scenery": [
-        {
-          "id": "woodland-great-broken-trunk",
-          "name": "Great broken trunk",
-          "category": "landmark",
-          "type": "prop",
-          "blockers": [
-            {
-              "width": 8.2,
-              "depth": 8.2,
-              "shape": "ellipse"
-            }
-          ],
-          "file": "library/asset.models.environment.woodland-great-broken-trunk/geometry.glb"
-        }
-      ]
-    },
-    {
-      "id": "asset.models.environment.woodland-great-fallen-log",
-      "name": "Great fallen hollow log",
-      "kind": "model",
-      "tags": [
-        "original",
-        "woodland",
-        "forest-scale"
-      ],
-      "revision": 3,
-      "profile": "model",
-      "outputs": [
-        {
-          "role": "model",
-          "path": "assets/library/asset.models.environment.woodland-great-fallen-log/geometry.glb",
-          "sha256": "1513498173fe5720db10ff5ea0acfab693bee324c184b7f51d40fe2f0b5fe8cb",
-          "bytes": 1597108
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.scenery.woodland-great-fallen-log",
-          "file": "assets/library/asset.models.environment.woodland-great-fallen-log/geometry.glb",
-          "sceneryAsset": "woodland-great-fallen-log"
-        }
-      ],
-      "scenery": [
-        {
-          "id": "woodland-great-fallen-log",
-          "name": "Great fallen hollow log",
-          "category": "landmark",
-          "type": "prop",
-          "blockers": [
-            {
-              "width": 30,
-              "depth": 7
-            }
-          ],
-          "file": "library/asset.models.environment.woodland-great-fallen-log/geometry.glb"
         }
       ]
     },
@@ -6775,106 +6162,6 @@
           "category": "landmark",
           "type": "prop",
           "file": "library/asset.models.environment.woodland-rock-ledge/geometry.glb"
-        }
-      ]
-    },
-    {
-      "id": "asset.models.environment.woodland-root-arch-bridge",
-      "name": "woodland root arch bridge",
-      "kind": "model",
-      "tags": [
-        "original",
-        "woodland"
-      ],
-      "revision": 5,
-      "profile": "model",
-      "outputs": [
-        {
-          "role": "model",
-          "path": "assets/library/asset.models.environment.woodland-root-arch-bridge/geometry.glb",
-          "sha256": "da4271b7856d58c04ede241f863520d729f54a6d2205e87da8d5be23eded4e36",
-          "bytes": 1583168
-        },
-        {
-          "role": "image",
-          "path": "assets/library/asset.models.environment.woodland-root-arch-bridge/albedo_2.png",
-          "sha256": "0cb743835af1e9d15666d8e521c3ba09d422d7ef8ac88e76d3d28603e032adf6",
-          "bytes": 1705512
-        },
-        {
-          "role": "image",
-          "path": "assets/library/asset.models.environment.woodland-root-arch-bridge/albedo.png",
-          "sha256": "9e93d22c83829ddd11def8ac4664b02842e4f0e3daae662b00939ec027fc75a7",
-          "bytes": 1534415
-        }
-      ],
-      "render": [],
-      "scenery": [
-        {
-          "id": "woodland-root-arch-bridge",
-          "name": "woodland root arch bridge",
-          "category": "landmark",
-          "type": "prop",
-          "deck": {
-            "width": 3,
-            "depth": 16,
-            "height": 0.48,
-            "arch": 1.4,
-            "thickness": 0.7,
-            "level": 1,
-            "connections": {
-              "start": 0,
-              "end": 0
-            }
-          },
-          "file": "library/asset.models.environment.woodland-root-arch-bridge/geometry.glb"
-        }
-      ]
-    },
-    {
-      "id": "asset.models.environment.woodland-ruined-watchtower",
-      "name": "woodland ruined watchtower",
-      "kind": "model",
-      "tags": [
-        "original",
-        "woodland"
-      ],
-      "revision": 5,
-      "profile": "model",
-      "outputs": [
-        {
-          "role": "model",
-          "path": "assets/library/asset.models.environment.woodland-ruined-watchtower/geometry.glb",
-          "sha256": "3dfa3fc09eb49b7240dd836604c15c66cd8746a904aed2c344324d415ae63132",
-          "bytes": 3369084
-        },
-        {
-          "role": "image",
-          "path": "assets/library/asset.models.environment.woodland-ruined-watchtower/albedo_2.png",
-          "sha256": "0cb743835af1e9d15666d8e521c3ba09d422d7ef8ac88e76d3d28603e032adf6",
-          "bytes": 1705512
-        },
-        {
-          "role": "image",
-          "path": "assets/library/asset.models.environment.woodland-ruined-watchtower/albedo.png",
-          "sha256": "9e93d22c83829ddd11def8ac4664b02842e4f0e3daae662b00939ec027fc75a7",
-          "bytes": 1534415
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.scenery.woodland-ruined-watchtower",
-          "file": "assets/library/asset.models.environment.woodland-ruined-watchtower/geometry.glb",
-          "sceneryAsset": "woodland-ruined-watchtower"
-        }
-      ],
-      "scenery": [
-        {
-          "id": "woodland-ruined-watchtower",
-          "name": "woodland ruined watchtower",
-          "category": "landmark",
-          "type": "prop",
-          "file": "library/asset.models.environment.woodland-ruined-watchtower/geometry.glb"
         }
       ]
     },
@@ -10723,32 +10010,6 @@
       "scenery": []
     },
     {
-      "id": "asset.spells.rootbreaker.presence-icon",
-      "name": "Crushing Presence",
-      "kind": "icon",
-      "tags": [
-        "spell-effects",
-        "generated"
-      ],
-      "revision": 5,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.spells.rootbreaker.presence-icon/image.png",
-          "sha256": "c4c4f62a72dced7297d86bc7476eb3b316665c5bfeb15d7b877acffc4886cb44",
-          "bytes": 46041
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.spells.rootbreaker.presence-icon",
-          "image": "assets/library/asset.spells.rootbreaker.presence-icon/image.png"
-        }
-      ],
-      "scenery": []
-    },
-    {
       "id": "asset.spells.rootbreaker.presence-icon-v2",
       "name": "Crushing Presence refined icon",
       "kind": "icon",
@@ -10770,32 +10031,6 @@
         {
           "id": "asset.spells.rootbreaker.presence-icon-v2",
           "image": "assets/library/asset.spells.rootbreaker.presence-icon-v2/image.png"
-        }
-      ],
-      "scenery": []
-    },
-    {
-      "id": "asset.spells.rootbreaker.roar-icon",
-      "name": "Challenge Roar",
-      "kind": "icon",
-      "tags": [
-        "spell-effects",
-        "generated"
-      ],
-      "revision": 5,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.spells.rootbreaker.roar-icon/image.png",
-          "sha256": "e5d55debc0703283ba93585dfba84fafad72cc42d25250e402d210e8db43e728",
-          "bytes": 42586
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.spells.rootbreaker.roar-icon",
-          "image": "assets/library/asset.spells.rootbreaker.roar-icon/image.png"
         }
       ],
       "scenery": []
@@ -10892,32 +10127,6 @@
         }
       ],
       "render": [],
-      "scenery": []
-    },
-    {
-      "id": "asset.spells.rootbreaker.uproot-icon",
-      "name": "Uproot",
-      "kind": "icon",
-      "tags": [
-        "spell-effects",
-        "generated"
-      ],
-      "revision": 5,
-      "profile": "icon",
-      "outputs": [
-        {
-          "role": "image",
-          "path": "assets/library/asset.spells.rootbreaker.uproot-icon/image.png",
-          "sha256": "da44dc5eb26d3d009ea9d3483022213d682c91b3f10a29584519104cbeedb70d",
-          "bytes": 36330
-        }
-      ],
-      "render": [
-        {
-          "id": "asset.spells.rootbreaker.uproot-icon",
-          "image": "assets/library/asset.spells.rootbreaker.uproot-icon/image.png"
-        }
-      ],
       "scenery": []
     },
     {
@@ -11109,76 +10318,6 @@
           "path": "assets/library/asset.terrain.warcraft-cliff-cldi/image.png",
           "sha256": "d16ed19e5f8f800590150af18b4c21b86091e613c2d4f916d07d942f91bd76bd",
           "bytes": 55801
-        }
-      ],
-      "render": [],
-      "scenery": []
-    },
-    {
-      "id": "asset.terrain.warcraft-cliff-clgr",
-      "name": "Cliff face · CLgr",
-      "kind": "data",
-      "tags": [
-        "warcraft",
-        "cliff",
-        "CLgr"
-      ],
-      "revision": 8,
-      "profile": "terrain-material",
-      "outputs": [
-        {
-          "role": "data",
-          "path": "assets/library/asset.terrain.warcraft-cliff-clgr/data.bin",
-          "sha256": "e8e0e29929f56e867834133cb17ac6e890e8b2ada64c40cea933392e45d6564c",
-          "bytes": 2053438
-        },
-        {
-          "role": "data",
-          "path": "assets/library/asset.terrain.warcraft-cliff-clgr/data_2.bin",
-          "sha256": "837fbcfa677df32b56949ea7768554053108cc7a089a66089bfbea36d335ea2d",
-          "bytes": 1024275
-        },
-        {
-          "role": "data",
-          "path": "assets/library/asset.terrain.warcraft-cliff-clgr/data_3.bin",
-          "sha256": "ddb406d52f3d6792683abbfcfe7a6ff9fab288f2cbd61cf23e49d4a896e0f96f",
-          "bytes": 4101
-        },
-        {
-          "role": "image",
-          "path": "assets/library/asset.terrain.warcraft-cliff-clgr/albedo.png",
-          "sha256": "426edf7301df96e698e63ff4ca9548e54be3f719abea89ad9f6a3d73fb020638",
-          "bytes": 152280
-        },
-        {
-          "role": "data",
-          "path": "assets/library/asset.terrain.warcraft-cliff-clgr/normal.png",
-          "sha256": "00fe60afd3adaa0d02efa41231b10647254ed5a38045ab994b09a45fa8fce6b2",
-          "bytes": 116860
-        },
-        {
-          "role": "data",
-          "path": "assets/library/asset.terrain.warcraft-cliff-clgr/occlusion.png",
-          "sha256": "b30e5f5feda85a1609c9abb521cf706a2fa185b1d49dff8347bc80eb5603df99",
-          "bytes": 1225
-        },
-        {
-          "role": "data",
-          "path": "assets/library/asset.terrain.warcraft-cliff-clgr/roughness.png",
-          "sha256": "89ead348bdcdc509b6954a370134df46ef3ff89385861a92b4fc603b23575018",
-          "bytes": 72680
-        },
-        {
-          "role": "data",
-          "path": "assets/library/asset.terrain.warcraft-cliff-clgr/metalness.png",
-          "sha256": "d49548a73bf55db1363061f137d6cb7ec2ed362a68428ce5e2a31cf8bbca45ee",
-          "bytes": 673
-        },
-        {
-          "role": "image",
-          "path": "assets/library/asset.terrain.warcraft-cliff-clgr/image.png",
-          "sha256": "ede68d94d280825ea1b1cc04be68f84bdf14522622c00e4dc2f94c70ce665534",
-          "bytes": 61247
         }
       ],
       "render": [],
@@ -12988,27 +12127,6 @@
           "path": "assets/library/water.clear-forest/definition.json",
           "sha256": "1f201195845a112a6afcf8989a82c3ed4aa54b13e44c7634aab5e14302d126e7",
           "bytes": 1166
-        }
-      ],
-      "render": [],
-      "scenery": []
-    },
-    {
-      "id": "water.muddy",
-      "name": "Muddy water",
-      "kind": "data",
-      "tags": [
-        "authoring",
-        "source-informed"
-      ],
-      "revision": 1,
-      "profile": "water-profile",
-      "outputs": [
-        {
-          "role": "data",
-          "path": "assets/library/water.muddy/definition.json",
-          "sha256": "994c3de9006c0d438e98a5ac892d5ad5ffdd5e9bc144ec0a3b25b83839607e1c",
-          "bytes": 931
         }
       ],
       "render": [],

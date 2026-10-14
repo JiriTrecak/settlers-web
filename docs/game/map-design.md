@@ -3,7 +3,6 @@
 Author skirmish maps through the live editor MCP (`author-canopy-map` skill).
 The numerical contract is [Competitive foundation](../expansion/competitive-foundation.md).
 These are initial balance targets; acceptance requires simulation measurements.
-Do not copy legacy Oakfall/Heartroot composers or old mine layouts.
 
 ## Units and symmetry
 
@@ -67,10 +66,8 @@ and occupies the same 5-C width. Adjacent foundations touch at the outer corners
 and along the inner row. Workers approach from the Hall-facing side.
 
 Ten workers are the standard economical assignment: 10 per load and 2 seconds
-mining. Five active nodes have a 1,500 amber/minute extraction ceiling, 25% above
-the previous four-node layout; a full site holds 22,500 amber. Measured Amberwake
-home deliveries are 1,410–1,420/minute with ten workers and approximately 1,500
-with fifteen after warm-up. Measure 5/10/15-worker throughput after authoring;
+mining. Five active nodes have a 1,500 amber/minute extraction ceiling; a full site
+holds 22,500 amber. Measure 5/10/15-worker throughput after authoring;
 longer travel can justify extra workers. The initial match starts with five
 workers in one row along the Hall, automatically assigned to Amber; ten is the mining recommendation, not a starting-unit count or hard cap.
 
@@ -116,7 +113,7 @@ Forests occupy substantial connected masses and define the map's clearings and
 routes; they are not a thin border around a grass field. Author those masses first,
 then cut out the measured base shelves, resource approaches and travel corridors.
 Use live forest layers. In Vibrant Forest, `recipe.meadow.woodland-edge` derives
-grass ground, animated grass and undergrowth from distance to generated trees.
+grass ground, grass props and undergrowth from distance to generated trees.
 A broad mask is appropriate: the tree-distance coverage leaves open ground bare.
 Do not cover the map with a grass-ground paint layer, which overrides that dirt
 transition. `recipe.grass.meadow` is an additional grass scatter, not a replacement

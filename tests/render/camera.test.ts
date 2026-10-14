@@ -94,7 +94,7 @@ describe("iso camera", () => {
     expect(z).toBeCloseTo(hit.z, 4);
   });
 
-  it("setGame locks WC3 perspective, starts at the default distance, and allows distance zoom while locking orbit", () => {
+  it("setGame locks RTS perspective, starts at the default distance, and allows distance zoom while locking orbit", () => {
     const cam = new Camera();
     cam.locked = false;
     cam.lookAt(128, 128);

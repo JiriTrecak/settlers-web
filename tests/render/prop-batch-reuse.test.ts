@@ -1,7 +1,6 @@
 import {expect,it,vi} from 'vitest';
 import {BoxGeometry,Group,Mesh,MeshStandardMaterial,Scene,Vector3,Matrix4,Raycaster,Box3,Frustum,Plane} from 'three';
 import {PropField} from '../../src/render/prop/propField';
-import {HeightField} from '../../src/shared/map/height';
 
 
 it('discards stale pending placements when a document changes or the renderer closes',async()=>{
@@ -161,14 +160,13 @@ it('retains conservative bounds for terrain-conforming shader underlays',async()
 
 it('applies successive immutable harvests and safely falls back after skipped updates',async()=>{
  const {SceneryComposition}=await import('../../src/presentation/sceneryChanges');
- const {PlacedGrass}=await import('../../src/render/foliage/placedGrass');
- const scene=new Scene(),field=new PropField(scene,new Map()),internal=field as any,grass=new PlacedGrass(scene),height=new HeightField(256);
+ const scene=new Scene(),field=new PropField(scene,new Map()),internal=field as any;
  vi.spyOn(internal.referenceGround,'ready','get').mockReturnValue(Promise.resolve());
  const prototype=new Group();prototype.add(new Mesh(new BoxGeometry(),new MeshStandardMaterial()));
  internal.protos.set('pine#base',Promise.resolve(prototype));
  const compose=new SceneryComposition(),base=Array.from({length:300},(_,i)=>({id:'base'+i,asset:'pine',x:50+i%30,y:50+Math.floor(i/30)}));
  const a={id:'a',asset:'pine',x:1,y:1},b={...a,id:'b',x:3},c={...a,id:'c',x:5};
- const sync=async(dynamic:typeof base)=>{field.sync(grass.sync(compose.compose(base,dynamic),height));await field.ready();};
+ const sync=async(dynamic:typeof base)=>{field.sync(compose.compose(base,dynamic));await field.ready();};
  await sync([a,b,c]);
  await sync([b,c]);await sync([c]);
  expect(internal.placed.size).toBe(base.length+1);expect(internal.placed.get('c').position.x).toBe(5.5);
@@ -182,7 +180,7 @@ it('applies successive immutable harvests and safely falls back after skipped up
  expect(internal.placed.has('c')).toBe(false);expect(internal.placed.has('a')).toBe(true);
  // A later edit still updates the surviving transform through the full path.
  await sync([{...a,x:140}]);expect(internal.placed.get('a').position.x).toBe(140.5);
- field.destroy();grass.destroy();
+ field.destroy();
 });
 
 it('does not apply removal hints to a partially loaded forest',async()=>{

@@ -6,7 +6,7 @@ Status: proposal, 2026-10-14. Based on a read-only audit of all of `src/render/`
 
 The game moves from TypeScript + Three.js in a Tauri webview to a native Rust engine on **wgpu** (Metal first; Windows/D3D12 kept compiling from day one). The renderer is a **rewrite with its own architecture**, not a port. The current game is the *visual reference*: the target is "looks very close", and lighting is expected to be retuned. Priorities, in order: performance, predictable behaviour across machines, simple tweaking, full control.
 
-The visual direction stays: stylized, readable, Warcraft 3-like forest-floor RTS ([art direction](../game/art.md)).
+The visual direction stays: stylized, readable, classic-RTS forest-floor game ([art direction](../game/art.md)).
 
 ## 1. What the audit found
 
@@ -23,7 +23,7 @@ The current renderer is about 13.6k dense lines in 144 files. Three.js itself pr
 7. **Renderer guesses gameplay.** Hit sparks are inferred from HP decreases (with an O(N²) attacker search), aura pulses from tick rounding, melee trail windows are hard-coded (0.43–0.69).
 8. **Expensive full-resolution work.** At native Retina there is no upscaling. The composite reconstructs world position about nine times per pixel. Water does full-screen colour and depth copies, a 64-tap SSR march, caustics regeneration and 60+ fetches per pixel. VSM shadows run two blur passes every frame. Fog changes rescan every cell and re-upload the whole texture (about 16 MB on a 2048 map).
 9. **Terrain has no LOD.** One vertex per world unit, about 8.5M triangles on a 2048 map, and the fragment cost scales with the total number of layers on the map rather than the local ones. `terrainDisplace` runs the whole layer loop in the vertex shader and discards it (`src/render/terrain/sourceTerrainShader.ts:135`).
-10. **Dead or unreachable code in hot paths.** Scenery LOD runs every frame with no data; imported "source" terrain, occlusion rasters, dew, resin shimmer, vivid foliage, underlays, `Meadow` in the game, `ReferenceTerrain`, the legacy effect-layer format (`src/content/effectLayers.ts`) and `Renderer.mountInspectionSubject` have no live producer.
+10. **Dead or unreachable code in hot paths.** Scenery LOD runs every frame with no data; imported "source" terrain, occlusion rasters, dew, resin shimmer, vivid foliage, underlays, `ReferenceTerrain`, the legacy effect-layer format (`src/content/effectLayers.ts`) and `Renderer.mountInspectionSubject` have no live producer.
 
 ### Good ideas worth carrying over
 
@@ -34,13 +34,13 @@ The current renderer is about 13.6k dense lines in 144 files. Three.js itself pr
 | Analytic, seekable effects: playback is a function of `(tick − start, seed)` | `abilities/effectPlayer.ts`, `cueMotion.ts`, `flipbook.ts` | Stateless GPU particles evaluated in the vertex shader |
 | Analytic projectile flight from launch/impact ticks | `settlement/projectileEffects.ts` | Effect "delivery" transform driver |
 | Water ripples / unit wakes | `water/waterDisturbances.ts`, `waterInteraction.ts` | Port one-to-one (see §4.6) |
-| Warcraft 3 camera framing and clamping | `camera/camera.ts` | Pure `CameraController`, reverse-Z |
+| Classic RTS camera framing and clamping | `camera/camera.ts` | Pure `CameraController`, reverse-Z |
 | Texel-snapped, view-fitted sun shadow | `sky/sky.ts:112-135` | Same, with PCF |
 | Day-cycle palette and canopy light pattern | `sky/`, `atmosphere/canopyLayer.ts` | One lighting environment; canopy as a sun light cookie |
 | Masked team colour: luminance-preserving recolour of albedo alpha | `settlement/maskedTeamColor.js` | Same formula, per-instance colour, explicit mask flag |
 | Screen-door concealment, scenery cutaway stipple | `characters/concealment.ts`, `visibility/sceneryCutaway.ts` | Shared dither function |
 | Multi-floor fog (bridges, decks) and the fog look | `visibility/` | Shared fog function, dirty-rect uploads |
-| Terrain concept: height-blended layers, WC3 corner-tile atlases, slope-projected cliffs | `terrain/` | Texture-array splat, CPU-resolved tile ids, triplanar cliffs |
+| Terrain concept: height-blended layers, corner-tile terrain atlases, slope-projected cliffs | `terrain/` | Texture-array splat, CPU-resolved tile ids, triplanar cliffs |
 | Capsule unit picking with deterministic tie-break | `settlement/unitPicking.ts` | CPU picking service, decoupled from rendering |
 | Per-instance budgets and leases for effects | `abilities/` | One global effect budget |
 
@@ -111,7 +111,7 @@ Render scale is a setting (with a sharpening upscale) so Retina displays need no
 - Heightfield as an R16/R32F texture; chunked grid, vertex-pulled heights, chunk LOD (CDLOD or geomipmaps, chosen by maximum map size: Q9).
 - Normals computed on the GPU or baked when terrain changes.
 - Layer weights in RGBA8 weight textures (4 layers each); a per-cell "top 4 layers" index bounds per-pixel cost.
-- WC3 corner atlases resolved on the CPU into a per-cell tile-id texture: no corner maths per pixel.
+- Corner-tile terrain atlases resolved on the CPU into a per-cell tile-id texture: no corner maths per pixel.
 - Cliffs use slope-triplanar projection.
 - One GPU bake of terrain albedo after each edit feeds grass/tree ground tint and the minimap: one source of truth.
 - Editor grid, brush and navigation overlay become terrain-shader overlay uniforms, not geometry.

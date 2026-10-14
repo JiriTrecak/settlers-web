@@ -10,7 +10,7 @@ A TypeScript / Three.js RTS about forest-floor warfare, with deterministic simul
 - `npm run build` and `npm run build:tools` — game type check/build and tools build.
 - `npm test` — automated checks. Socket tests need local loopback access.
 
-The maintained map is **Threewater Forest**, in `assets/maps/skirmish/threewater-forest.utcmap`. Open `/?screen=editor&map=threewater-forest` to edit it. Earlier campaign and study maps are not shipped.
+The shipped skirmish maps are **Echo Isles** and **Turtle Rock**, in `assets/maps/skirmish/`. Open `/?screen=editor&map=echo-isles` to edit one. No campaign maps are shipped.
 
 ## Documentation
 

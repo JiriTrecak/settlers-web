@@ -103,7 +103,7 @@ it('Roots complete their final periodic tick and continue after the caster dies'
 });
 it('stuns interrupt channels immediately and use the shorter hero duration',()=>{
  const f=setup('storm-bolt');const hero=f.game.context.create({id:'hero',definition:'unit.test.marshal',owner:'player.2',position:{x:126,y:120},rotation:270});
- f.game.observation.update();const channel=f.game.registry.get(hero.definition).behaviors.abilities!.bindings.find(b=>b.ability==='ability.test.blizzard')!;expect(f.game.abilities.cast(hero.id,channel.id,{x:122,y:120})).toBeNull();expect(f.game.command('player.1',{type:'castAbility',actor:f.caster,binding:'preview',target:{kind:'unit',entity:hero.id}}).accepted).toBe(true);
+ f.game.observation.update();const channel=f.game.registry.get(hero.definition).behaviors.abilities!.bindings.find(b=>b.ability==='ability.test.channelled-waves')!;expect(f.game.abilities.cast(hero.id,channel.id,{x:122,y:120})).toBeNull();expect(f.game.command('player.1',{type:'castAbility',actor:f.caster,binding:'preview',target:{kind:'unit',entity:hero.id}}).accepted).toBe(true);
  advance(f.game,30);expect(hero.abilities!.pending).toBeNull();expect(hero.spellStatuses![0].expires-hero.spellStatuses![0].started).toBe(120);
 });
 it('aura lifesteal only applies to actual ordinary melee damage, never ability hits',()=>{

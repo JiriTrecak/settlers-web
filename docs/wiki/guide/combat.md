@@ -27,7 +27,7 @@ Ordinary attacks apply the attack-class multiplier, then multiply by `1 / (1 + 0
 
 {{stats:armor}}
 
-Melee is effective against lightly armored ground units. Piercing loses effectiveness against heroes and buildings. Hero attacks are versatile against units but deal half damage to buildings. These are our own matchups: Light describes lightly armored **ground** units, not Warcraft's air-unit class. Hover Damage and Armor in the selection panel to see the current attack interval and defenses.
+Melee is effective against lightly armored ground units. Piercing loses effectiveness against heroes and buildings. Hero attacks are versatile against units but deal half damage to buildings. These are our own matchups: Light describes lightly armored **ground** units, not air units. Hover Damage and Armor in the selection panel to see the current attack interval and defenses.
 
 ## Health and repair
 

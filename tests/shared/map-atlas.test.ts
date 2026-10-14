@@ -3,7 +3,7 @@ import {atlasSymbols} from '../../scripts/maps/atlas';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import policy from '../../content/import/warcraft/policy.json';
 
-// ENGINE-COUPLED: scripts/maps/atlas.ts recognises the shipped imported mine definition (the Warcraft import policy's
+// ENGINE-COUPLED: scripts/maps/atlas.ts recognises the shipped imported mine definition (the map import policy's
 // mineDefinition), so the fixture reads that id from the same shipped source instead of naming it.
 const mine=(id:string,x:number,y:number)=>({id,definition:policy.mineDefinition,owner:'none' as const,rotation:0,position:{x,y}});
 const icons=(svg:string)=>(svg.match(/<circle r="8"/g)??[]).length;

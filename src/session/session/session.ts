@@ -203,7 +203,7 @@ export class Session {
     if (slot === this.visionPlayer) return "own";
     return team(slot) === team(this.visionPlayer) ? "ally" : "enemy";
   }
-  /** Selected own, finished buildings that train units: right-click sets their rally (WC3 convention). */
+  /** Selected own, finished buildings that train units: right-click sets their rally (classic RTS convention). */
   private rallyProducers(ids: readonly number[]) {
     const owner = slotOwner(this.me);
     return this.selectionView().entities.filter(

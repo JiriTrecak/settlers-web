@@ -514,7 +514,7 @@ export function editorTools(hub: EditorHub) {
         gameCam: z
           .boolean()
           .optional()
-          .describe("WC3 perspective for the shot."),
+          .describe("Classic RTS game-camera perspective for the shot."),
         game: z.boolean().optional(),
         keep: z
           .boolean()

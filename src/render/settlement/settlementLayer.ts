@@ -314,7 +314,7 @@ export class SettlementLayer {
       ids === null ? [] : typeof ids === "number" ? [ids] : ids,
     );
   }
-  /** Pre-selection highlight under the cursor (WC3 shows a fainter circle). */
+  /** Pre-selection highlight under the cursor (a fainter circle). */
   hover(id: number | null) {
     this.hovered = id;
   }
@@ -531,7 +531,7 @@ export class SettlementLayer {
       cargo.scale.setScalar(scale/socketScale);
       backSocket.add(cargo);
     }else o.add(cargo);
-    // Circle hugs the body like WC3's selection scale: units by body radius / formation
+    // Circle hugs the body: units by body radius / formation
     // spacing; buildings by whichever is wider, footprint or model (palisades overhang it).
     const bounds = d.footprint && new Box3().setFromObject(model).getSize(new Vector3());
     o.userData.circleRadius = d.dimensions
