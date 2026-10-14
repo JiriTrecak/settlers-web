@@ -3,8 +3,8 @@ import { game, placed, worker } from "./helpers";
 
 function setup(withWorks = true) {
   return game([
-    {...placed("root", "building.neutral.corrupted-root", 228, 229), owner: "none"},
-    ...(withWorks ? [placed("works", "building.ants.rootworks", 235, 220)] : []),
+    {...placed("root", "building.test.neutral-corrupted-root", 228, 229), owner: "none"},
+    ...(withWorks ? [placed("works", "building.test.rootworks", 235, 220)] : []),
   ]);
 }
 
@@ -22,17 +22,17 @@ it("delivers ten Root to Rootworks, credits the colony, and retains earned curre
   g.command(w.owner, {type: "gather", actors: [w.id], target: root.id});
   g.tick();
   expect(g.state.jobs.find(j => j.worker === w.id)?.target).toBe(works.id);
-  for (let i = 0; i < 1800 && !g.state.wallets[mound.owner]["item.root"]; i++) g.tick();
-  expect(g.state.wallets[mound.owner]["item.root"]).toBe(10);
-  expect(works.inventory["item.root"] ?? 0).toBe(0);
-  expect(g.economy.balance(mound.owner, "item.root")).toBe(10);
+  for (let i = 0; i < 1800 && !g.state.wallets[mound.owner]["item.test.root"]; i++) g.tick();
+  expect(g.state.wallets[mound.owner]["item.test.root"]).toBe(10);
+  expect(works.inventory["item.test.root"] ?? 0).toBe(0);
+  expect(g.economy.balance(mound.owner, "item.test.root")).toBe(10);
   g.economy.remove(works);
-  expect(g.state.wallets[mound.owner]["item.root"]).toBe(10);
+  expect(g.state.wallets[mound.owner]["item.test.root"]).toBe(10);
 });
 
 it("allows oversaturation of a single Root extraction slot and saves their shared resource state", () => {
   const g = setup(), root = g.entities.find(e => e.placement === "root")!;
-  g.context.create(placed("extra", "unit.ants.settler", 210, 210));
+  g.context.create(placed("extra", "unit.test.settler", 210, 210));
   const workers = g.entities.filter(e => e.owner === "player.1" && g.registry.get(e.definition).behaviors.work);
   const result = g.command("player.1", {type: "gather", actors: workers.map(e => e.id), target: root.id});
   expect(result.actors).toHaveLength(6);
@@ -49,9 +49,9 @@ it("carries the final partial load without creating more Root than the deposit h
   root.resource!.amount = 7;
   const mound = g.context.get(g.state.objectives[w.owner])!;
   g.command(w.owner, {type: "gather", actors: [w.id], target: root.id});
-  for (let i = 0; i < 1800 && !g.state.wallets[mound.owner]["item.root"]; i++) g.tick();
-  expect(g.state.wallets[mound.owner]["item.root"]).toBe(7);
+  for (let i = 0; i < 1800 && !g.state.wallets[mound.owner]["item.test.root"]; i++) g.tick();
+  expect(g.state.wallets[mound.owner]["item.test.root"]).toBe(7);
   expect(root.resource!.amount).toBe(0);
   for (let i = 0; i < 200; i++) g.tick();
-  expect(g.state.wallets[mound.owner]["item.root"]).toBe(7);
+  expect(g.state.wallets[mound.owner]["item.test.root"]).toBe(7);
 });

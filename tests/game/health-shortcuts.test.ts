@@ -32,7 +32,7 @@ it('keeps health shortcuts local, persisted and readable, including modifier-onl
 });
 
 it('reveals only observed health while preserving selected and damaged-unit defaults',()=>{
- const entity:EntityView={id:1,definition:'unit.ants.warrior',owner:'player.1',hostile:false,x:0,y:0,rotation:0,hp:100};
+ const entity:EntityView={id:1,definition:'unit.test.warrior',owner:'player.1',hostile:false,x:0,y:0,rotation:0,hp:100};
  const show=(overrides:Partial<EntityView>,key='',kind='building',selected=false)=>healthBarVisible({...entity,...overrides},kind,100,selected,new Set(key?[key]:[]));
  expect(show({})).toBe(false);expect(show({},'', 'building',true)).toBe(true);
  expect(show({hp:90},'', 'unit')).toBe(true);expect(show({hp:90})).toBe(false);

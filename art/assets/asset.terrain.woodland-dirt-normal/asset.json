@@ -16,13 +16,6 @@
       "format": "bin",
       "sha256": "2f8d8a207021db466e35069ebc7a48ba28e209778cd327d614d01813d8eabe3a",
       "bytes": 1282230
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "106c9705c0358f956c58673df197752313dab78418f9f3de7600a5c20b21f8f5",
-      "bytes": 320
     }
   ],
   "usesGeometry": false,
@@ -44,10 +37,6 @@
   "capabilities": {},
   "provenance": {
     "method": "generated",
-    "licenseNote": "Original artwork created for Under the Canopy.",
-    "generation": {
-      "role": "generation",
-      "index": 1
-    }
+    "licenseNote": "Original artwork created for Under the Canopy."
   }
 }

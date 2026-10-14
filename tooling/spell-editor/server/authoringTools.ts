@@ -1,5 +1,8 @@
 import {z} from 'zod';
 import sharp from 'sharp';
+import path from 'node:path';
+import {readFile,readdir} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
 import {COMMAND_ICON_SIZE} from '../../content/icon';
 import {AuthoringStore} from '../../asset-studio/server/authoring/store';
 import {assetDefinitionSchema,type AssetDefinition} from '../../../src/shared/authoring/asset';
@@ -14,11 +17,20 @@ import type {CanvasBridge} from './canvasBridge';
 import {authoringResponse} from './toolResponses';
 import {inspectAssetImage} from './assetImage';
 
+const referenceRoot=fileURLToPath(new URL('../agent-app/author-spells/reference/',import.meta.url));
+/** Engine reference topics from the authoring skill, served to agents without filesystem access. */
+export async function authoringReference(section:string){
+ const topics=(await readdir(referenceRoot)).filter(f=>f.endsWith('.md')).map(f=>f.slice(0,-3)).sort();
+ if(section==='reference')return {topics:await Promise.all(topics.map(async name=>({section:'reference.'+name,title:(await readFile(path.join(referenceRoot,name+'.md'),'utf8')).match(/^# (.+)$/m)?.[1]??name})))};
+ const name=section.slice('reference.'.length);
+ if(!topics.includes(name))throw Error('Unknown reference topic. Use section reference to list topics.');
+ return {section,text:await readFile(path.join(referenceRoot,name+'.md'),'utf8')};
+}
 export function authoringSchema(section:string){
  const schemas={spell:documentSchema,effect:visualEffectSchema,encounter:encounterSettingsSchema,asset:assetCommandSchema};
  if(section==='commands')return spellCommandSchema.options.map(s=>s.shape.op.value);
  if(section in schemas)return z.toJSONSchema(schemas[section as keyof typeof schemas],{reused:'ref'});
- const command=spellCommandSchema.options.find(s=>s.shape.op.value===section);if(!command)throw Error('Unknown schema. Use commands, spell, effect, encounter, asset, or a command name.');
+ const command=spellCommandSchema.options.find(s=>s.shape.op.value===section);if(!command)throw Error('Unknown schema. Use commands, spell, effect, encounter, asset, reference, reference.<topic>, or a command name.');
  return z.toJSONSchema(command,{reused:'ref'});
 }
 export class AuthoringToolkit {
@@ -26,7 +38,7 @@ export class AuthoringToolkit {
  constructor(private service:SpellEditorService,private credentials:Credentials,private canvas:CanvasBridge,private fetcher:typeof fetch=fetch,private previewService:(client?:string)=>SpellEditorService=()=>service){}
  async execute(name:AuthoringToolName,raw:unknown,client?:string,signal?:AbortSignal):Promise<unknown>{
   const input=authoringTools[name].inputSchema.parse(raw);
-  if(name==='studio_schema')return authoringSchema((input as {section:string}).section);
+  if(name==='studio_schema'){const {section}=input as {section:string};return section==='reference'||section.startsWith('reference.')?authoringReference(section):authoringSchema(section);}
   if(name==='studio_author'){const options=authoringTools.studio_author.inputSchema.parse(input),command=spellCommandSchema.parse(JSON.parse(options.commandJson));return authoringResponse(command,await this.previewService(client).execute(command),options);}
   if(name==='studio_canvas'){this.previewService(client);return this.canvas.request(authoringTools.studio_canvas.inputSchema.parse(input),client);}
   if(name==='studio_asset_image'){const ref=authoringTools.studio_asset_image.inputSchema.parse(input);return inspectAssetImage(this.service.root,ref.asset,ref.index);}

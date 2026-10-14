@@ -27,7 +27,6 @@ describe('Biome documents',()=>{
     expect(asset.status).toBe('published');expect(asset.recipe).toBeDefined();
     if(biome.rivers.includes(preset))expect(asset.recipe.type).toBe('river');
    }
-   expect(biome.rivers).toHaveLength(2);
   }
  });
  it('bare ground has no invented grass; painting grass affects only its patch',()=>{

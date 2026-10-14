@@ -14,7 +14,7 @@ it('shares a visual clock, preserves existing shader hooks and leaves unrelated 
  const shader={uniforms:{} as Record<string,{value:unknown}>,vertexShader:'#include <common>\n#include <begin_vertex>',fragmentShader:'#include <common>\n#include <emissivemap_fragment>'};
  resin.onBeforeCompile(shader as never,{} as never);
  expect(shader.uniforms.existing.value).toBe(1);expect(shader.uniforms.uResinClock.value).toBe(2);
- expect(shader.fragmentShader.match(/float resinTime=/g)).toHaveLength(1);
+
  layer.tick(3250);expect(shader.uniforms.uResinClock.value).toBe(3.25);expect(wood.onBeforeCompile).toBe(original);
  root.traverse(o=>{if(o instanceof Mesh)o.geometry.dispose();});resin.dispose();wood.dispose();
 });

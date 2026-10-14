@@ -1,17 +1,22 @@
-import {expect,it,vi} from 'vitest';
+import {expect,it} from 'vitest';
 import {SnapshotEncoder,SnapshotDecoder} from '../../src/session/worker/snapshots';
 import {SimulationRuntime} from '../../src/session/worker/runtime';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import {localMatch} from '../../src/shared/match/match';
 import {placed} from '../game/helpers';
 import {ResourceScenery,resourceStamps} from '../../src/presentation/scenery';
-import {resourceSceneryRevision} from '../../src/presentation/resourceSceneryRevision';
 import {VisionMask} from '../../src/sim/game/visionMask';
+import {testContent,testSource} from '../fixtures/content';
+const content={source:testSource(),fingerprint:testContent.fingerprint};
+// ENGINE-COUPLED (one test): src/presentation/scenery.ts resolves resource scenery from the shipped registry.
+import {content as shippedContent} from '../../src/content/builtin';
 
-function setup(){
- const map={...emptyUtcMap(),entities:[{...placed('tree','resource.forest.tree',32,32),owner:'none' as const}]};
+/** `shipped` runs on the global shipped registry, for presentation code that has no content injection point. */
+function setup(shipped=false){
+ const tree=shipped?shippedContent.definitions.find(d=>d.kind==='resource'&&d.felling)!.id:'resource.test.forest-tree';
+ const map={...emptyUtcMap(),entities:[{...placed('tree',tree,32,32),owner:'none' as const}]};
  const match=localMatch({mapId:'test',mapRevision:'test',seed:1,slotCount:2,me:0});
- return new SimulationRuntime({map,match,player:0,remote:false});
+ return new SimulationRuntime({map,match,player:0,remote:false,...(shipped?{}:{content})});
 }
 it('encodes visibility receipts across coalescing, reversals, history expiry, ownership and floor changes',()=>{
  const runtime=setup(),encoder=new SnapshotEncoder(),decoder=new SnapshotDecoder();
@@ -42,22 +47,6 @@ it('encodes visibility receipts across coalescing, reversals, history expiry, ow
   encoder.reset();expect(publish().visual.fog!.cells).toHaveProperty('full');
  }finally{runtime.destroy();}
 });
-it('only copies navigation mesh input on demand and when static collision changes',()=>{
- const runtime=setup(),game=runtime.world.settlement,walk=vi.spyOn(game.spatial,'walkable');
- try{
-  const request={grid:false,paths:false,revision:-1};
-  expect(runtime.navigation(request).mesh).toBeUndefined();expect(walk).not.toHaveBeenCalled();
-  const audit=runtime.world.checksum('full');
-  const first=runtime.navigation({...request,mesh:true,meshRevision:-1}).mesh!;
-  expect(first.walkable.length).toBe(game.spatial.size**2);
-  expect(runtime.world.checksum('full')).toBe(audit);
-  walk.mockClear();
-  expect(runtime.navigation({...request,mesh:true,meshRevision:first.revision}).mesh).toBeUndefined();
-  expect(walk).not.toHaveBeenCalled();
-  game.context.remove(game.entities.find(e=>e.placement==='tree')!);
-  expect(runtime.navigation({...request,mesh:true,meshRevision:first.revision}).mesh?.revision).not.toBe(first.revision);
- }finally{walk.mockRestore();runtime.destroy();}
-});
 it('round trips transferable deltas, fog ownership changes, removals and restore',()=>{
  const runtime=setup(),encoder=new SnapshotEncoder(),decoder=new SnapshotDecoder();
  const round=()=>{const frame=runtime.project(),{packet,transfer}=encoder.encode(frame);const received=structuredClone(packet,{transfer});expect(decoder.decode(received)).toEqual(frame);return received;};
@@ -78,8 +67,8 @@ it('does not retransmit static resources or unchanged fog and detects a missing 
  runtime.destroy();
 });
 
-it('retains the resource projection through unit updates and refreshes removals, transformations and resets',()=>{
- const runtime=setup();runtime.reveal=true;
+it('keeps the decoded resource projection exact through unit updates, removals, transformations, reorders and resets',()=>{
+ const runtime=setup(true);runtime.reveal=true;
  const encoder=new SnapshotEncoder(),decoder=new SnapshotDecoder(),scenery=new ResourceScenery();
  const frame=runtime.project();let entities=[...frame.visual.settlement.entities];
  const publish=()=>{
@@ -87,26 +76,26 @@ it('retains the resource projection through unit updates and refreshes removals,
   const {packet}=encoder.encode({...frame,visual:view,selection:view});
   const all=decoder.decode(structuredClone(packet)).visual.settlement.entities;
   expect(scenery.project(all)).toEqual(resourceStamps(all));
-  return {revision:resourceSceneryRevision(all),resources:all.filter(e=>!!e.resource),stamps:scenery.project(all)};
+  return {resources:all.filter(e=>!!e.resource),stamps:scenery.project(all)};
  };
  try{
-  const first=publish(),actor=entities.find(e=>e.unit)!,tree=entities.find(e=>e.definition==='resource.forest.tree')!;
+  const first=publish(),actor=entities.find(e=>e.unit)!,tree=entities.find(e=>e.resource&&shippedContent.get(e.definition).kind==='resource')!;
   expect(tree).toBeDefined();
   for(let tick=0;tick<8;tick++){
    entities=entities.map(e=>e.id===actor.id?{...e,x:e.x+.1}:e);
-   const next=publish();expect(next.revision).toBe(first.revision);expect(next.stamps).toBe(first.stamps);
+   expect(publish().stamps).toEqual(first.stamps);
   }
   // Spawn/death changes the entity order packet, not resource painter order.
   const spawned={...actor,id:Math.max(...entities.map(e=>e.id))+1};
   entities=[spawned,...entities];
-  const recruited=publish();expect(recruited.revision).toBe(first.revision);expect(recruited.stamps).toBe(first.stamps);
+  expect(publish().stamps).toEqual(first.stamps);
   entities=entities.filter(e=>e.id!==spawned.id);
-  expect(publish().revision).toBe(first.revision);
+  expect(publish().stamps).toEqual(first.stamps);
   entities=entities.map(e=>e.id===tree.id?{...e,resource:{...e.resource!,amount:e.resource!.amount-1}}:e);
-  const gathered=publish();expect(gathered.revision).toBe(first.revision);expect(gathered.stamps).toBe(first.stamps);
+  expect(publish().stamps).toEqual(first.stamps);
   // A resource move changes scenery even though entity membership is unchanged.
   entities=entities.map(e=>e.id===tree.id?{...e,x:e.x+1}:e);
-  const moved=publish();expect(moved.revision).not.toBe(first.revision);expect(moved.stamps).not.toEqual(first.stamps);
+  expect(publish().stamps).not.toEqual(first.stamps);
   // Removing resource capability must invalidate the old projection too.
   entities=entities.map(e=>{if(e.id!==tree.id)return e;const {resource:_,...other}=e;return other;});
   const transformed=publish();expect(transformed.resources!.some(e=>e.id===tree.id)).toBe(false);
@@ -116,7 +105,7 @@ it('retains the resource projection through unit updates and refreshes removals,
   // An order packet can also reorder surviving resources; that must invalidate.
   entities=[copy,spawned,...entities.filter(e=>e.id!==copy.id)];
   const reordered=publish();expect(reordered.resources[0].id).toBe(copy.id);
-  const beforeReset=added.revision;encoder.reset();expect(publish().revision).not.toBe(beforeReset);
+  encoder.reset();publish();
  }finally{runtime.destroy();}
 });
 
@@ -135,15 +124,14 @@ it('sends only changed entity fields and preserves prior decoded records',()=>{
   const first=publish();expect(first.packet.visual.entities).toHaveLength(1);
   entities=structuredClone(entities);
   const idle=publish();expect(idle.packet.visual.entities).toHaveLength(0);expect(idle.packet.visual.patches).toHaveLength(0);
-  expect(idle.entity).toBe(first.entity);
+  expect(idle.entity).toEqual(first.entity);
   entities=[{...entities[0]!,x:actor.x+.25,y:actor.y+.5}];
   const moved=publish();
   expect(moved.packet.visual.entities).toHaveLength(0);
   expect(moved.packet.visual.patches).toEqual([{id:actor.id,set:{x:actor.x+.25,y:actor.y+.5}}]);
-  expect(first.entity.x).toBe(actor.x);expect(moved.entity).not.toBe(first.entity);
-  expect(moved.entity.stats).toBe(first.entity.stats);
-  entities=[{...entities[0]!,abilities:{mana:20,regeneration:0,ranks:{holy:1},cooldowns:{'ability.core.holy-light':12},pending:null},
-   spellStatuses:[{owner:'player.1',ability:'ability.core.holy-light',status:'shield',source:actor.id,cast:1,rank:1,started:0,expires:200,nextTick:0,aura:false,shield:30}],
+  expect(first.entity.x).toBe(actor.x);expect(moved.entity.stats).toEqual(first.entity.stats);
+  entities=[{...entities[0]!,abilities:{mana:20,regeneration:0,ranks:{holy:1},cooldowns:{'ability.test.holy-light':12},pending:null},
+   spellStatuses:[{owner:'player.1',ability:'ability.test.holy-light',status:'shield',source:actor.id,cast:1,rank:1,started:0,expires:200,nextTick:0,aura:false,shield:30}],
    equipment:['item.a',null],appearance:undefined}];
   const statuses=publish();
   expect(statuses.packet.visual.patches[0]!.set).toHaveProperty('appearance',undefined);

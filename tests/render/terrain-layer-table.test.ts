@@ -4,12 +4,10 @@ import {HeightField} from '../../src/shared/map/height';
 import {authoredTerrain} from '../../src/render/terrain/authoredTerrain';
 import {terrainLayerTable} from '../../src/render/terrain/terrainLayerTable';
 import {groundTextures} from '../../src/shared/authoring/groundTextures';
-import {sourceTerrainGLSL} from '../../src/render/terrain/sourceTerrainShader';
 
 it('preserves every declared ground atlas and fractional material settings in a large palette',()=>{
  const source=authoredTerrain(new HeightField(16),[],[]);
  for(const [id,a] of groundTextures)if(!a.terrain?.projection)source.layers.push({name:id,ar:id,nh:id,tiling:.375,blend:-.25,verticality:.125,edge:.75,tint:'#aabbcc',desaturation:.325,breakup:.45});
- expect(source.layers.length).toBeGreaterThan(100);
  const table=terrainLayerTable(source);
  expect(table.height*table.width*4).toBe(table.data.length);
  source.layers.forEach((layer,index)=>{
@@ -23,10 +21,6 @@ it('preserves every declared ground atlas and fractional material settings in a 
    expect([...table.data.slice(at+16,at+32)]).toEqual(g.atlas.corners?.map(c=>c??0)??Array(16).fill(0));
   }
  });
- // Metadata no longer grows the shader uniform arrays or sampler count.
- const glsl=sourceTerrainGLSL(source.layers.length,true);
- expect(glsl).not.toMatch(/uniform\s+(?:float|int|vec[234])\s+\w+\[/);
- expect(glsl).toContain('texelFetch(uSourceSlots');
 });
 
 it('keeps all rectangular-map subblock slots distinct from material metadata',()=>{

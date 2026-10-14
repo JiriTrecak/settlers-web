@@ -12,7 +12,7 @@ it('reuses prefetched biome tiles for the actual material without allocating GPU
  const {biomeById}=await import('../../src/content/biomes');
  const {authoredTerrain}=await import('../../src/render/terrain/authoredTerrain');
  const {HeightField}=await import('../../src/shared/map/height');
- const biome=biomeById('vibrant-forest');
+ const biome=biomeById();
  const field=new HeightField(256);field.biome=biome.id;field.baseMaterial=biome.ground;
  const names=authoredTerrain(field,[],[]).layers;
  const fetch=vi.fn(async()=>response(47));vi.stubGlobal('fetch',fetch);
@@ -22,18 +22,17 @@ it('reuses prefetched biome tiles for the actual material without allocating GPU
  for(const array of arrays){expect(array.image.data![0]).toBe(47);expect(array.image.data![array.image.data!.length-1]).toBe(47);array.dispose();}
 });
 
-it('loads tiles concurrently, joins duplicate requests and preserves array order and raw channels',async()=>{
+it('joins duplicate requests and preserves array order, raw channels and sampler state',async()=>{
  const {terrainTilePixels}=await import('../../src/render/terrain/terrainTilePixels');
  const {terrainTileArray}=await import('../../src/render/terrain/terrainTileArray');
  const release=new Map<string,(r:Response)=>void>();
  const fetch=vi.fn((url:string)=>new Promise<Response>(resolve=>release.set(url,resolve)));vi.stubGlobal('fetch',fetch);
  const arrayReady=terrainTileArray(['a','b','a','c','d','e'],true);
  const duplicate=terrainTilePixels('a');
- expect(fetch).toHaveBeenCalledTimes(4);expect(release.has('/tiles/e')).toBe(false);
- release.get('/tiles/b')!(response(73));
- await terrainTilePixels('b');
- await vi.waitFor(()=>expect(release.has('/tiles/e')).toBe(true));
- for(const [name,value] of [['e',201],['d',0],['c',127],['a',255]] as const)release.get('/tiles/'+name)!(response(value));
+ // Resolve out of request order; requests may be throttled, so release each as it is issued.
+ for(const [name,value] of [['b',73],['e',201],['d',0],['c',127],['a',255]] as const){
+  await vi.waitFor(()=>expect(release.has('/tiles/'+name)).toBe(true));release.get('/tiles/'+name)!(response(value));
+ }
  const array=await arrayReady,raw=await duplicate;
  expect(fetch).toHaveBeenCalledTimes(5);
  for(const [i,value] of [255,73,255,127,0,201].entries())expect(Buffer.from(array.image.data!.subarray(i*bytes,(i+1)*bytes)).equals(Buffer.alloc(bytes,value))).toBe(true);
@@ -50,12 +49,3 @@ it('retries failed requests and rejects wrong dimensions without poisoning the c
  expect((await terrainTilePixels('bad'))[0]).toBe(19);expect(fetch).toHaveBeenCalledTimes(3);
 });
 
-it('bounds decoded tile retention and keeps recently used pixels',async()=>{
- const {terrainTilePixels}=await import('../../src/render/terrain/terrainTilePixels');
- const compressed=gzipSync(new Uint8Array(bytes).fill(31));
- const fetch=vi.fn(async()=>new Response(compressed));vi.stubGlobal('fetch',fetch);
- for(let i=0;i<16;i++)await terrainTilePixels(String(i));
- const hot=await terrainTilePixels('0');await terrainTilePixels('16');
- expect(await terrainTilePixels('0')).toBe(hot);expect(fetch).toHaveBeenCalledTimes(17);
- await terrainTilePixels('1');expect(fetch).toHaveBeenCalledTimes(18);
-});

@@ -1,12 +1,12 @@
 import {expect,it} from 'vitest';
 import {game,placed} from './helpers';
 import {precise,fixed} from '../../src/sim/game/motion';
-import {content} from '../../src/content/builtin';
+import {testContent} from '../fixtures/content';
 
 it.each([{x:6,y:0},{x:0,y:6},{x:6,y:6},{x:-6,y:0}])('moves a compact 12-unit army without reorganizing it on clear ground: %j',offset=>{
- const spacing=Math.ceil(content.get('unit.ants.warrior').dimensions!.formationSpacing);
+ const spacing=Math.ceil(testContent.get('unit.test.warrior').dimensions!.formationSpacing);
  offset={x:offset.x*spacing,y:offset.y*spacing};
- const placements=Array.from({length:12},(_,i)=>{const p=placed(`army-${i}`,'unit.ants.warrior',100+i%4*spacing,100+Math.floor(i/4)*spacing);p.rotation=90;return p;});
+ const placements=Array.from({length:12},(_,i)=>{const p=placed(`army-${i}`,'unit.test.warrior',100+i%4*spacing,100+Math.floor(i/4)*spacing);p.rotation=90;return p;});
  const g=game(placements),army=g.entities.filter(e=>e.placement?.startsWith('army-'));
  const starts=new Map(army.map(e=>[e.id,{x:e.x,y:e.y}])),first=new Map<number,number>();
  g.command('player.1',{type:'move',actors:army.map(e=>e.id),destination:{x:100+Math.round(1.5*spacing)+offset.x,y:100+spacing+offset.y}});
@@ -25,7 +25,7 @@ it.each([{x:6,y:0},{x:0,y:6},{x:6,y:6},{x:-6,y:0}])('moves a compact 12-unit arm
 });
 
 it('replaces a moving formation immediately and replays the reversal deterministically',()=>{
- const placements=Array.from({length:12},(_,i)=>{const p=placed(`army-${i}`,'unit.ants.warrior',100+i%4,100+Math.floor(i/4));p.rotation=90;return p;});
+ const placements=Array.from({length:12},(_,i)=>{const p=placed(`army-${i}`,'unit.test.warrior',100+i%4,100+Math.floor(i/4));p.rotation=90;return p;});
  const g=game(placements),army=g.entities.filter(e=>e.placement?.startsWith('army-')),ids=army.map(e=>e.id);
  g.command('player.1',{type:'move',actors:ids,destination:{x:126,y:101}});
  for(let n=0;n<40;n++)g.tick();

@@ -1,10 +1,12 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellCorpses,CORPSE_TICKS,MAX_CORPSES} from '../../src/sim/abilities/corpses';
 import {colonySupply} from '../../src/sim/game/supply';
-function fixture(settings={}){const a=coreAbilities.abilities.find(a=>a.id==='ability.core.holy-light')!;return createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'ally',...settings}));}
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+function fixture(settings={}){const a=testAbilities.abilities.find(a=>a.id==='ability.test.holy-light')!;return createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,relationship:'ally',...settings}),false,testSource());}
 function die(f:ReturnType<typeof fixture>,id=f.target){const e=f.game.context.get(id)!;e.hp=0;f.game.onCombatDeath(e);return e;}
 it('retains a dead unit without occupancy, supply, inventory or transient combat state',()=>{
  const f=fixture(),e=f.game.context.get(f.target)!,before=colonySupply(f.game.entities,'player.1',f.game.registry).used;
@@ -16,10 +18,10 @@ it('retains a dead unit without occupancy, supply, inventory or transient combat
 });
 it('mechanical, summoned and contained units do not create usable corpses',()=>{
  const mechanical=fixture({targetNature:'mechanical'});die(mechanical);expect(mechanical.game.state.corpses).toEqual([]);
- for(const kind of ['summoned','contained']){const f=fixture(),e=f.game.context.get(f.target)!;if(kind==='summoned')e.summoned={source:f.caster,ability:'ability.core.feral-spirit',rank:1,cast:1,started:0,expires:100};else e.unit!.contained=f.caster;die(f);expect(f.game.state.corpses).toEqual([]);}
+ for(const kind of ['summoned','contained']){const f=fixture(),e=f.game.context.get(f.target)!;if(kind==='summoned')e.summoned={source:f.caster,ability:'ability.test.feral-spirit',rank:1,cast:1,started:0,expires:100};else e.unit!.contained=f.caster;die(f);expect(f.game.state.corpses).toEqual([]);}
 });
 it('fallen heroes remain in the existing revival system, not the corpse store',()=>{
- const f=fixture(),hero=f.game.context.create({id:'hero',definition:'unit.ants.marshal',owner:'player.1',position:{x:125,y:125},rotation:0});die(f,hero.id);
+ const f=fixture(),hero=f.game.context.create({id:'hero',definition:'unit.test.marshal',owner:'player.1',position:{x:125,y:125},rotation:0});die(f,hero.id);
  expect(f.game.context.get(hero.id)?.fallen).toBe(true);expect(f.game.state.corpses).toEqual([]);
 });
 it('consumes a corpse at most once and only before expiration',()=>{
@@ -36,11 +38,11 @@ it('saves and replays corpse decay with the same checksum',()=>{
 });
 it('rejects duplicate, live-identity, out-of-map and forged expiry corpses atomically',()=>{
  const f=fixture();die(f);const original=f.game.snapshot(),hash=f.game.checksum();f.game.restore(original);
- for(const patch of [{id:f.caster},{id:99999},{expires:99999},{died:100},{position:{x:300,y:300}},{definition:'unit.ants.marshal'}]){const s=structuredClone(original);Object.assign(s.state.corpses[0],patch);expect(()=>f.game.restore(s)).toThrow();expect(f.game.checksum()).toBe(hash);}
+ for(const patch of [{id:f.caster},{id:99999},{expires:99999},{died:100},{position:{x:300,y:300}},{definition:'unit.test.marshal'}]){const s=structuredClone(original);Object.assign(s.state.corpses[0],patch);expect(()=>f.game.restore(s)).toThrow();expect(f.game.checksum()).toBe(hash);}
  const duplicate=structuredClone(original);duplicate.state.corpses.push(structuredClone(duplicate.state.corpses[0]));expect(()=>f.game.restore(duplicate)).toThrow();expect(f.game.checksum()).toBe(hash);
 });
 it('retains spell ranks and absolute cooldowns but removes mana and pending casts',()=>{
- const f=fixture(),caster=f.game.context.get(f.caster)!;caster.abilities!.cooldowns['ability.core.holy-light']=100;caster.abilities!.mana=100;die(f,f.caster);
- const corpse=f.game.state.corpses[0];expect(corpse.abilities).toMatchObject({mana:0,regeneration:0,pending:null,ranks:{preview:1},cooldowns:{'ability.core.holy-light':100}});f.game.restore(f.game.snapshot());
+ const f=fixture(),caster=f.game.context.get(f.caster)!;caster.abilities!.cooldowns['ability.test.holy-light']=100;caster.abilities!.mana=100;die(f,f.caster);
+ const corpse=f.game.state.corpses[0];expect(corpse.abilities).toMatchObject({mana:0,regeneration:0,pending:null,ranks:{preview:1},cooldowns:{'ability.test.holy-light':100}});f.game.restore(f.game.snapshot());
  const corrupt=f.game.snapshot();corrupt.state.corpses[0].abilities!.ranks.preview=9;expect(()=>f.game.restore(corrupt)).toThrow();
 });

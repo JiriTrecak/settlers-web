@@ -44,7 +44,7 @@ it('resolves distinct authored spell contacts identically for live and baked cha
  const {BakedAnimator}=await import('../../src/render/characters/bakedAnimator');
  const {castAnimation}=await import('../../src/render/abilities/castAnimation');
  const {presentationSchema}=await import('../../src/content/abilities/schema');
- const root=new Group(),names=['idle','skullcrack','roar','uproot'];
+ const root=new Group(),names=['idle','strike','shout','heave'];
  const durations=[4,2.5,64/24,76/24],times=[undefined,28/24,30/24,36/24];
  const animations=names.map((semantic,i)=>({semantic,clip:semantic,loop:i===0,events:times[i]===undefined?[]:[{name:'release',time:times[i]!}]}));
  const clips=names.map((name,i)=>new AnimationClip(name,durations[i],[]));

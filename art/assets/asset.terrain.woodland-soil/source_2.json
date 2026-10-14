@@ -1,7 +1,0 @@
-{
-  "method": "imagegen (user-provided) graded by art/recipes/grade_terrain_tile.py 96 81 64",
-  "originalPixels": true,
-  "brief": "Painted packed earth: soft plates, small pebbles; seamless.",
-  "source": "gen-soil-graded.png",
-  "packing": "Periodic normal/height derived from luminance; original colors retained."
-}

@@ -12,7 +12,7 @@ Research effects `splashRadius` and `splashSlowPermille` raise eligible units' f
 
 Snapshot build 20 saves shells, identity counter and unit slow timers. Restore validates definition capability, timing, world bounds, recipients/viewers and identity. Observations filter shots to launch witnesses; an unrestricted observer sees all. The renderer creates a high arc and a brief expanding impact ring from those observed records in two instanced batches. No new model is implied by this primitive effect.
 
-Verification: `tests/game/shells.test.ts` exercises delay, one-time application, dodging, friendly exclusion, shooter death, overlapping slow expiry, research capture and deterministic restore. The isolated `tests/manual/shells.html` uses a clearly labeled Archer stand-in and offers launch, move-away and reset controls; it pauses at impact for visual inspection. It does not change authored balance or saved matches.
+Verification: `tests/game/shells.test.ts` exercises delay, one-time application, dodging, friendly exclusion, shooter death, overlapping slow expiry, research capture and deterministic restore.
 
 ### Authored firing windup
 

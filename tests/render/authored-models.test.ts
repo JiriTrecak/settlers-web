@@ -1,4 +1,4 @@
-import './sourceAssetFetch';
+import './sourceAssetFetch'; // ENGINE-COUPLED: PropField loads the shared reflection texture from assets/library.
 import {afterEach,describe,expect,it,vi} from 'vitest';
 import {Box3,BoxGeometry,Group,Mesh,MeshStandardMaterial,OrthographicCamera,Scene,Vector3} from 'three';
 import {GLTFLoader,type GLTF} from 'three/addons/loaders/GLTFLoader.js';

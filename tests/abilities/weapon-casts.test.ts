@@ -1,18 +1,19 @@
 import {expect,it,vi} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {abilityAimScore} from '../../src/sim/abilities/ai';
 import {SpellEditorService} from '../../tooling/spell-editor/server/service';
 import type {PreviewState} from '../../tooling/spell-editor/shared/view';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.searing-arrows')!;
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource,useEditorWorkspace} from './encounter-harness';
+const workspace=useEditorWorkspace();
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.searing-arrows')!;
 const prototype={...base,persistent:undefined,onRelease:[],weaponCast:{bonus:{rankParameter:'bonus'},weapon:'projectile',status:'chilled'},autocast:{intervalTicks:1,enabledByDefault:false},
  targeting:{...base.targeting,kind:'unit',relations:['enemy'],allowSelf:false,range:30},cast:{...base.cast,cost:{...base.cast.cost,amount:10}},
  statuses:[{op:'status',id:'chilled',target:'target',amount:200,heroDuration:60,polarity:'negative',dispel:true,modifiers:{moveSpeedPermille:-300,attackSpeedPermille:-300}}]};
 function fixture(settings={},patch={}){
- const a=abilitySchema.parse({...prototype,...patch}),p=coreAbilities.presentations.find(p=>p.id===a.presentation)!,f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({combat:true,relationship:'enemy',casterDefinition:'unit.ants.archer',distance:10,targetHealth:500,mana:40,...settings}));
+ const a=abilitySchema.parse({...prototype,...patch}),p=testAbilities.presentations.find(p=>p.id===a.presentation)!,f=createAbilityEncounter(a,p,testSettings({combat:true,relationship:'enemy',casterDefinition:'unit.test.archer',distance:10,targetHealth:500,mana:40,...settings}),false,encounterSource());
  const c=f.game.context.get(f.caster)!,t=f.game.context.get(f.target)!;f.game.command('player.2',{type:'hold',actors:[f.target]});
  return {...f,a,p,c,t};
 }
@@ -38,9 +39,9 @@ it('movement and stop interrupt windup without mana or cooldown payment',()=>{
 it('cancels invalidated manual shots without silently firing a downgraded shot',()=>{
  for(const mode of ['mana','silence','target','range','owner','profile'] as const){const f=fixture();cast(f);until(f,()=>!!f.c.unit?.attack&&!f.c.unit.attack.released);
  if(mode==='mana')f.c.abilities!.mana=0;
- if(mode==='silence'){const a=coreAbilities.abilities.find(a=>a.id==='ability.core.silence')!;for(const e of releaseEffects(a,1,'enemy'))new SpellStatuses(f.game).apply(f.target,f.caster,a,1,f.game.state.nextCast++,e);}
+ if(mode==='silence'){const a=testAbilities.abilities.find(a=>a.id==='ability.test.silence')!;for(const e of releaseEffects(a,1,'enemy'))new SpellStatuses(f.game).apply(f.target,f.caster,a,1,f.game.state.nextCast++,e);}
  if(mode==='target')f.game.context.remove(f.t);if(mode==='range'){f.t.x=180;f.t.y=180;f.t.unit!.position=null;}
- if(mode==='owner')f.c.owner='player.2';if(mode==='profile')f.c.abilities!.weaponOrder!.profile='unit.ants.warrior';
+ if(mode==='owner')f.c.owner='player.2';if(mode==='profile')f.c.abilities!.weaponOrder!.profile='unit.test.warrior';
  step(f);expect(f.c.abilities!.weaponOrder).toBeUndefined();expect(f.game.state.missiles).toEqual([]);expect(f.c.abilities!.mana).toBe(mode==='mana'?0:40);}
 });
 it('does not erase a newer movement order when cancelling an obsolete weapon record',()=>{
@@ -61,12 +62,12 @@ it('uses ranked damage, hero duration and a release cooldown without charging or
  expect(cast(f).reason).toMatch(/cooling down/);until(f,()=>f.game.state.nextMissile>m.id+1);expect(f.c.abilities!.mana).toBe(30);
 });
 it('rejects wrong weapon, allies, unseen targets, spell immunity and unaffordable commands',()=>{
- for(const settings of [{casterDefinition:'unit.ants.warrior'},{casterDefinition:'unit.ants.bombardier'},{relationship:'ally'},{mana:9}])expect(cast(fixture(settings)).accepted).toBe(false);
+ for(const settings of [{casterDefinition:'unit.test.warrior'},{casterDefinition:'unit.test.bombardier'},{relationship:'ally'},{mana:9}])expect(cast(fixture(settings)).accepted).toBe(false);
  const f=fixture();vi.spyOn(f.game.observation,'visible').mockReturnValue(false);expect(cast(f).accepted).toBe(false);
- const g=fixture();const a=coreAbilities.abilities.find(a=>a.id==='ability.core.spell-ward')!;for(const e of releaseEffects(a,1,'ally'))new SpellStatuses(g.game).apply(g.target,g.target,a,1,g.game.state.nextCast++,e);expect(cast(g).accepted).toBe(false);
+ const g=fixture();const a=testAbilities.abilities.find(a=>a.id==='ability.test.spell-ward')!;for(const e of releaseEffects(a,1,'ally'))new SpellStatuses(g.game).apply(g.target,g.target,a,1,g.game.state.nextCast++,e);expect(cast(g).accepted).toBe(false);
 });
 it('melee uses the same release and mark path; evasion spends mana but prevents marks',()=>{
- for(const evade of [false,true]){const f=fixture({casterDefinition:'unit.ants.warrior',distance:3},{weaponCast:{bonus:5,weapon:'melee',status:'chilled'}});if(evade)vi.spyOn(f.game.combat as any,'evaded').mockReturnValue(true);cast(f);until(f,()=>f.c.abilities!.mana<40);expect(f.c.abilities!.mana).toBe(30);expect(!!f.t.spellStatuses?.length).toBe(!evade);}
+ for(const evade of [false,true]){const f=fixture({casterDefinition:'unit.test.warrior',distance:3},{weaponCast:{bonus:5,weapon:'melee',status:'chilled'}});if(evade)vi.spyOn(f.game.combat as any,'evaded').mockReturnValue(true);cast(f);until(f,()=>f.c.abilities!.mana<40);expect(f.c.abilities!.mana).toBe(30);expect(!!f.t.spellStatuses?.length).toBe(!evade);}
 });
 it('single-shot stationary previews move only the caster and resolve physical missiles without retaliation',()=>{
  const f=fixture({distance:18});cast(f);const original={x:f.t.x,y:f.t.y},m=shot(f,true);while(f.game.state.tick<=m.impact+100)step(f,1,true);
@@ -77,18 +78,18 @@ it('peers and resumed windup/flight states produce identical hashes',()=>{
  for(let i=0;i<180;i++){step(f);step(g);expect(g.game.checksum()).toBe(f.game.checksum());if(i===2||i===80)g.game.restore(f.game.snapshot());}
 });
 it('rejects corrupt saved weapon orders atomically and forbids contradictory definitions',()=>{
- const f=fixture();cast(f);const hash=f.game.checksum();for(const patch of [{rank:10},{ability:'ability.core.holy-light'},{id:f.game.state.nextCast},{target:f.game.state.nextId},{started:5},{profile:'building.ants.mound'},{binding:'missing'}]){const s=f.game.snapshot();Object.assign(s.state.entities.find(e=>e.id===f.caster)!.abilities!.weaponOrder!,patch);expect(()=>f.game.restore(s)).toThrow();expect(f.game.checksum()).toBe(hash);}
+ const f=fixture();cast(f);const hash=f.game.checksum();for(const patch of [{rank:10},{ability:'ability.test.holy-light'},{id:f.game.state.nextCast},{target:f.game.state.nextId},{started:5},{profile:'building.test.house'},{binding:'missing'}]){const s=f.game.snapshot();Object.assign(s.state.entities.find(e=>e.id===f.caster)!.abilities!.weaponOrder!,patch);expect(()=>f.game.restore(s)).toThrow();expect(f.game.checksum()).toBe(hash);}
  for(const patch of [{onRelease:[{op:'heal',target:'target',amount:10}]},{cast:{...prototype.cast,prepareTicks:5}},{weaponCast:{bonus:0,weapon:'any'}},{weaponCast:{bonus:5,weapon:'any',status:'absent'}}])expect(abilitySchema.safeParse({...prototype,...patch}).success).toBe(false);
 });
 it('workbench scrubbing replays a manual shot with stationary targets',async()=>{
- const f=fixture(),s=new SpellEditorService('/tmp');await s.execute({op:'preview.load',document:{definition:f.a,presentation:{...f.p,effects:[],icon:undefined}},settings:{combat:false,relationship:'enemy',casterDefinition:'unit.ants.archer',distance:10,targetHealth:500}});
+ const f=fixture(),s=new SpellEditorService(workspace());await s.execute({op:'preview.load',document:{definition:f.a,presentation:{...f.p,effects:[],icon:undefined}},settings:testSettings({combat:false,relationship:'enemy',casterDefinition:'unit.test.archer',distance:10,targetHealth:500})});
  await s.execute({op:'preview.cast'});await s.execute({op:'preview.seek',tick:80});const first=s.state() as PreviewState;expect(first.events.some(e=>e.event==='projectile')).toBe(true);expect(first.entities.find(e=>e.id===first.target)!.hp).toBeLessThan(500);
  await s.execute({op:'preview.seek',tick:0});await s.execute({op:'preview.seek',tick:80});expect((s.state() as PreviewState).checksum).toBe(first.checksum);
  const result=await s.execute({op:'preview.replay',from:'release',tick:3}) as {state:PreviewState};
  expect(result.state.tick).toBe(result.state.events.find(e=>e.event==='released')!.tick+3);
 });
 it('published Frost Arrows resolves all three ranked slows and expires exactly once',()=>{
- const published=coreAbilities.abilities.find(a=>a.id==='ability.core.frost-arrows')!;
+ const published=testAbilities.abilities.find(a=>a.id==='ability.test.frost-arrows')!;
  for(let rank=1;rank<=3;rank++){
   const f=fixture({},published);f.c.abilities!.ranks.preview=rank;expect(cast(f).accepted).toBe(true);const m=shot(f,true);
   expect(m.enhancement?.bonus).toBe(rank*5);while(f.game.state.tick<=m.impact)step(f,1,true);

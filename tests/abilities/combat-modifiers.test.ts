@@ -1,5 +1,4 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
@@ -7,10 +6,13 @@ import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {resolveDamage} from '../../src/sim/game/damage';
 import type {Entity} from '../../src/sim/game/state';
 import {combatModifiers,criticalStrike,evadeWeapon} from '../../src/sim/abilities/combatModifiers';
-const spell=(id:string)=>coreAbilities.abilities.find(a=>a.id==='ability.core.'+id)!;
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const spell=(id:string)=>testAbilities.abilities.find(a=>a.id==='ability.test.'+id)!;
 function fixture(id='critical-strike',settings:Record<string,unknown>={},patch={}){
  const a=abilitySchema.parse({...spell(id),...patch});
- const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({combat:true,distance:3,relationship:'enemy',targetHealth:500,...settings}));
+ const f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,combat:true,distance:3,relationship:'enemy',targetHealth:500,...settings}),false,testSource());
  return {...f,a,c:f.game.context.get(f.caster)!,t:f.game.context.get(f.target)!};
 }
 function strike(f:ReturnType<typeof fixture>,a=f.c,b=f.t){
@@ -38,7 +40,7 @@ it('evasion avoids direct melee and arrow hits before consuming shields and neve
 });
 it('cleave uses a capped forward arc, excludes the primary and allies, and creates no secondary weapon hits',()=>{
  const f=fixture('cleaving-attack',{}, {combatModifiers:{cleave:{damagePermille:500,radius:6,arcDegrees:120,maxTargets:1,includeBuildings:false}}});
- const make=(id:string,x:number,y:number,owner:'player.1'|'player.2'='player.2')=>f.game.context.create({id,definition:'unit.ants.warrior',owner,position:{x,y},rotation:270});
+ const make=(id:string,x:number,y:number,owner:'player.1'|'player.2'='player.2')=>f.game.context.create({id,definition:'unit.test.warrior',owner,position:{x,y},rotation:270});
  const near=make('near',124,121),far=make('far',125,119),back=make('back',118,120),ally=make('ally',123,119,'player.1');
  const hp=new Map([near,far,back,ally].map(e=>[e.id,e.hp!])),raw=f.game.context.stats(f.c).damage;
  strike(f);expect(near.hp).toBe(hp.get(near.id)!-expected(f,raw*.5,near));for(const e of [far,back,ally])expect(e.hp).toBe(hp.get(e.id));
@@ -46,17 +48,17 @@ it('cleave uses a capped forward arc, excludes the primary and allies, and creat
  expect(f.game.abilities.observedEvents()).toContainEqual(expect.objectContaining({event:'cleaved',target:near.id}));
 });
 it('a missed or fully absorbed primary hit cannot cleave',()=>{
- const f=fixture('cleaving-attack');const other=f.game.context.create({id:'other',definition:'unit.ants.warrior',owner:'player.2',position:{x:124,y:121},rotation:270}),hp=other.hp;
+ const f=fixture('cleaving-attack');const other=f.game.context.create({id:'other',definition:'unit.test.warrior',owner:'player.2',position:{x:124,y:121},rotation:270}),hp=other.hp;
  apply(f,'absorption-shield',f.t);strike(f);expect(other.hp).toBe(hp);expect(f.game.abilities.observedEvents().some(e=>e.event==='cleaved')).toBe(false);
 });
 it('critical and cleave compose once and ranged weapons never cleave',()=>{
  const f=fixture('critical-strike',{}, {combatModifiers:{critical:{chancePermille:1000,multiplierPermille:2000},cleave:{damagePermille:500,radius:6,arcDegrees:360,maxTargets:16}}});
- const other=f.game.context.create({id:'other',definition:'unit.ants.warrior',owner:'player.2',position:{x:124,y:121},rotation:270}),hp=other.hp!;
+ const other=f.game.context.create({id:'other',definition:'unit.test.warrior',owner:'player.2',position:{x:124,y:121},rotation:270}),hp=other.hp!;
  strike(f);expect(other.hp).toBe(hp-expected(f,f.game.context.stats(f.c).damage,other));
- const arrow=fixture('cleaving-attack',{casterDefinition:'unit.ants.archer',distance:8});strike(arrow);expect(arrow.game.state.missiles).toHaveLength(1);expect(arrow.game.combat.spellEvents).toHaveLength(0);
+ const arrow=fixture('cleaving-attack',{casterDefinition:'unit.test.archer',distance:8});strike(arrow);expect(arrow.game.state.missiles).toHaveLength(1);expect(arrow.game.combat.spellEvents).toHaveLength(0);
 });
 it('released critical arrows retain rolled damage after source death and restore identically in flight',()=>{
- const patch={combatModifiers:{critical:{chancePermille:1000,multiplierPermille:2000}}},settings={casterDefinition:'unit.ants.archer',distance:10};
+ const patch={combatModifiers:{critical:{chancePermille:1000,multiplierPermille:2000}}},settings={casterDefinition:'unit.test.archer',distance:10};
  const f=fixture('critical-strike',settings,patch);f.game.command('player.2',{type:'hold',actors:[f.target]});
  for(let i=0;i<100&&!f.game.state.missiles.length;i++)f.game.tick();
  const m=f.game.state.missiles[0];expect(m).toMatchObject({criticalAbility:f.a.id,damage:f.game.context.stats(f.c).damage*2});

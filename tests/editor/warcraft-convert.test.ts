@@ -6,6 +6,9 @@ import {readUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
 import {HeightField,WADING_DEPTH_CM} from '../../src/shared/map/height';
 import {restoreTerrain,decodeBytes,decodeFloats} from '../../src/shared/map/terrainData';
 import {editTerrainGrid} from '../../src/shared/authoring/gridTerrain';
+import policy from '../../content/import/warcraft/policy.json';
+// ENGINE-COUPLED: the converter emits ids from shipped content (content/import/warcraft/policy.json, campCompositions,
+// builtin content). Expected ids are read from the same policy; the .w3x inputs are test-owned fixtures.
 const load=(name:string)=>readWarcraftMap(new Uint8Array(readFileSync(`tests/editor/fixtures/warcraft/${name}.w3x`)));
 
 it.each([
@@ -18,11 +21,14 @@ it.each([
  expect(map.size).toBe(640);expect(map.authoring.terrain.textureGrid).toEqual({cellSize:5,origin:[-.5,-.5]});
  expect(report.spatial).toEqual({sourceUnitsPerWorldUnit:25.6,terrainTileWorldSize:5,sourceWidth:640,sourceHeight:640});
  expect(map.authoring!.objects).toHaveLength(report.trees);expect(map.playerStarts).toHaveLength(starts);
- expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(mines*5);
+ expect(map.entities.filter(e=>e.definition===policy.mineDefinition)).toHaveLength(mines*5);
  const sourceTree=source.doodads.find(d=>d.id==='LTlt')!,tree=map.authoring!.objects.find(o=>o.id===`warcraft.tree.${source.doodads.indexOf(sourceTree)}`)!;
  expect(tree.x).toBe((sourceTree.location[0]-source.terrain.offsetX)/25.6-.5);
  expect(tree.z).toBe(640-(sourceTree.location[1]-source.terrain.offsetY)/25.6-.5);
- expect(map.entities.filter(e=>e.definition.startsWith('unit.neutral.')).length).toBe(map.camps.reduce((n,c)=>n+c.members.length,0));
+ // Every other neutral placement is a camp member, and every camp member is placed exactly once.
+ const members=map.camps.flatMap(c=>c.members);
+ expect(new Set(members).size).toBe(members.length);
+ expect(map.entities.filter(e=>e.owner==='none'&&e.definition!==policy.mineDefinition).map(e=>e.id).sort()).toEqual([...members].sort());
  expect(report.camps.every(c=>c.difficulty===(c.sourceLevel<10?'small':c.sourceLevel<20?'medium':'hard'))).toBe(true);
  const json=stringifyUtcMap(map),loaded=readUtcMap(JSON.parse(json));expect('map'in loaded).toBe(true);
  expect(json).not.toMatch(/"layers"|"generators"|"importedTerrain"|"layerSlots"|"connections"/);

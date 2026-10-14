@@ -1,16 +1,15 @@
-import {coreEffects} from '../../src/content/effects/library';
 import {visualEffectSchema} from '../../src/content/effects/schema';
-import {expect,it,vi} from 'vitest';
-import {TextureLoader,Texture,Mesh} from 'three';
+import {expect,it} from 'vitest';
+import {Mesh} from 'three';
 import {AbilityEffects} from '../../src/render/abilities/abilityEffects';
 import {sampleCueMotion} from '../../src/render/abilities/cueMotion';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {presentationSchema} from '../../src/content/abilities/schema';
 import {UNTIL_DEATH} from '../../src/sim/abilities/state';
+import {testAbilities,testEffects} from '../fixtures/content';
 
 it('keeps Doom embers alive independently of the caster and clears every layer with the victim',()=>{
- const fx=new AbilityEffects(),fresh=new AbilityEffects(),p=coreAbilities.presentations.find(p=>p.id==='presentation.core.doom')!;
- const entity={id:2,x:4,y:5,hp:100,spellStatuses:[{ability:'ability.core.doom',status:'doom',cast:1,source:1,started:12,expires:UNTIL_DEATH,aura:false}]};
+ const fx=new AbilityEffects(()=>testEffects),fresh=new AbilityEffects(()=>testEffects),p=testAbilities.presentations.find(p=>p.id==='presentation.test.doom')!;
+ const entity={id:2,x:4,y:5,hp:100,spellStatuses:[{ability:'ability.test.doom',status:'doom',cast:1,source:1,started:12,expires:UNTIL_DEATH,aura:false}]};
  try{
   fx.syncStatuses([entity],1200,()=>p);fx.update(1200);expect(fx.liveCues).toBe(2);
   const roots=[...fx.root.children];expect(roots.some(r=>r.children.some(c=>c.visible))).toBe(true);
@@ -33,35 +32,42 @@ it('samples independent rotation and eased/bouncing pulses at reproducible tick 
  const earlier=sampleCueMotion(motion,19.5);sampleCueMotion(motion,240);expect(sampleCueMotion(motion,19.5)).toEqual(earlier);
 });
 
-it.each(['vampiric-aura','thorns-aura'])('%s keeps its three visual layers and any audio steady beyond five seconds, follows movement and clears on status loss',name=>{
- const loader=vi.spyOn(TextureLoader.prototype,'load').mockReturnValue(new Texture()),fx=new AbilityEffects(),fresh=new AbilityEffects();
- const p=coreAbilities.presentations.find(p=>p.id==='presentation.core.'+name)!;
- const entity={id:2,x:4,y:5,hp:100,spellStatuses:[{ability:'ability.core.'+name,cast:1,source:1,started:1,expires:2,aura:true}]};
+// Test-owned sustained aura: a static glow, a rotating ring and a bouncing pulse, all bound to the status lifetime.
+const auraEffect=()=>visualEffectSchema.parse({schemaVersion:1,id:'effect.test.inline-aura',name:'Aura',durationTicks:320,loop:true,layers:[
+ {id:'glow',sustain:true,anchor:'target',shape:'glow',colour:'#823bcc',accent:'#ffffff',durationTicks:80,count:1,size:1.6,height:.045,orientation:'ground',follow:true},
+ {id:'wreath',sustain:true,anchor:'target',shape:'ring',colour:'#ffffff',accent:'#ffffff',durationTicks:80,count:1,size:4.5,height:.06,orientation:'ground',follow:true,motion:{rotation:{periodTicks:320,direction:'clockwise'}}},
+ {id:'pulse',sustain:true,anchor:'target',shape:'glow',colour:'#ffffff',accent:'#ffffff',durationTicks:80,count:1,size:2.6,height:.075,orientation:'ground',follow:true,motion:{scale:{periodTicks:80,min:.72,max:1.06,easing:'bounce'}}},
+]});
+const auraPresentation=()=>presentationSchema.parse({schemaVersion:1,id:'presentation.test.inline-aura',animations:{prepare:'idle',release:'idle',recover:'idle',fallback:'idle'},effects:[{id:'aura',effect:'effect.test.inline-aura',event:'statusApplied',anchor:'target',lifetime:'status'}]});
+
+it('keeps every aura layer steady beyond five seconds, follows movement, reconstructs identically and clears on status loss',()=>{
+ const effect=auraEffect(),p=auraPresentation(),fx=new AbilityEffects(()=>[effect]),fresh=new AbilityEffects(()=>[effect]);
+ const entity={id:2,x:4,y:5,hp:100,spellStatuses:[{ability:'ability.test.inline-aura',cast:1,source:1,started:1,expires:2,aura:true}]};
  const sync=(tick:number)=>{entity.spellStatuses[0].started=tick;entity.spellStatuses[0].expires=tick+1;fx.syncStatuses([entity],tick,()=>p);fx.update(tick,()=>({x:9,y:12,height:3}));};
  try{
-  sync(1);const roots=[...fx.root.children],visuals=roots.filter(r=>r.children.length);expect(visuals).toHaveLength(3);expect(fx.liveCues).toBe(roots.length);const glow=visuals[0].children[0] as Mesh;
+  sync(1);const roots=[...fx.root.children],visuals=roots.filter(r=>r.children.length);expect(visuals).toHaveLength(effect.layers.length);expect(fx.liveCues).toBe(roots.length);const glow=visuals[0].children[0] as Mesh;
   const opacity=(glow.material as any).opacity;
   sync(201);sync(801);expect(fx.root.children).toEqual(roots);expect((glow.material as any).opacity).toBe(opacity);
-  expect(roots.every(r=>r.position.x===9&&r.position.z===12&&r.position.y===3.035)).toBe(true);
+  expect(roots.every(r=>r.position.x===9&&r.position.z===12&&r.position.y===roots[0].position.y)).toBe(true);expect(roots[0].position.y).toBeCloseTo(3,1);
   fresh.syncStatuses([entity],801,()=>p);fresh.update(801);
   expect(fresh.root.children.filter(r=>r.children.length).map(r=>r.children[0].scale.toArray())).toEqual(visuals.map(r=>r.children[0].scale.toArray()));
   expect(fresh.root.children.filter(r=>r.children.length).map(r=>r.children[0].rotation.toArray())).toEqual(visuals.map(r=>r.children[0].rotation.toArray()));
   fx.syncStatuses([{...entity,spellStatuses:[]}],802,()=>p);expect(fx.liveCues).toBe(0);
   fx.syncStatuses([{...entity,hp:0}],801,()=>p);expect(fx.liveCues).toBe(0);
   fx.syncStatuses([entity],803,()=>p);expect(fx.liveCues).toBe(0);
- }finally{fx.dispose();fresh.dispose();loader.mockRestore();}
+ }finally{fx.dispose();fresh.dispose();}
 });
 
 it('validates animation ranges and status-bound lifecycle declarations',()=>{
- const p=structuredClone(coreAbilities.presentations.find(p=>p.id==='presentation.core.vampiric-aura')!);
+ const p=auraPresentation();
  p.effects[0].event='released';expect(presentationSchema.safeParse(p).success).toBe(false);
- const e=structuredClone(coreEffects.find(e=>e.id===p.effects[0].effect)!);
+ const e=auraEffect();
  e.layers[1].motion!.rotation!.periodTicks=0;expect(visualEffectSchema.safeParse(e).success).toBe(false);
  e.layers[1].motion!.rotation!.periodTicks=320;e.layers[2].motion!.scale!.max=.1;expect(visualEffectSchema.safeParse(e).success).toBe(false);
 });
 it('tracks two statuses from one cast independently, including shared unfiltered visual layers',()=>{
- const fx=new AbilityEffects();
- const p=presentationSchema.parse({schemaVersion:1,id:'presentation.test.multi-status',animations:{prepare:'idle',release:'idle',recover:'idle',fallback:'idle'},effects:[{id:'glow',event:'statusApplied',effect:'effect.core.frost-armor',lifetime:'status',anchor:'target'}]});
+ const fx=new AbilityEffects(()=>testEffects);
+ const p=presentationSchema.parse({schemaVersion:1,id:'presentation.test.multi-status',animations:{prepare:'idle',release:'idle',recover:'idle',fallback:'idle'},effects:[{id:'glow',event:'statusApplied',effect:'effect.test.frost-armor',lifetime:'status',anchor:'target'}]});
  const statuses=[{ability:'ability.test.multi-status',status:'armor',cast:7,source:1,started:1,expires:200,aura:false},{ability:'ability.test.multi-status',status:'ward',cast:7,source:1,started:1,expires:300,aura:false}];
  try{
   const e={id:2,x:4,y:5,hp:100,spellStatuses:statuses};
@@ -72,8 +78,8 @@ it('tracks two statuses from one cast independently, including shared unfiltered
 });
 
 it('reconstructs waiting hero effects at their original phase and clears them on return or visibility loss',()=>{
- const fx=new AbilityEffects(),fresh=new AbilityEffects(),p=coreAbilities.presentations.find(p=>p.id==='presentation.core.reincarnation')!;
- const r={id:2,owner:'player.1',x:4,y:5,ability:'ability.core.reincarnation',cast:17,started:12,due:292};
+ const fx=new AbilityEffects(()=>testEffects),fresh=new AbilityEffects(()=>testEffects),p=testAbilities.presentations.find(p=>p.id==='presentation.test.reincarnation')!;
+ const r={id:2,owner:'player.1',x:4,y:5,ability:'ability.test.reincarnation',cast:17,started:12,due:292};
  try{
   fx.syncReturns([r],13,()=>p);fx.update(13);expect(fx.liveCues).toBeGreaterThan(0);const roots=[...fx.root.children];
   fx.syncReturns([r],140,()=>p);fx.update(140);expect(fx.root.children).toEqual(roots);

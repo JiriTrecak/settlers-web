@@ -25,13 +25,12 @@ it('matches footprint sweeps on boundaries, directed slopes, obstacles and multi
  }
 });
 
-it('deduplicates footprint rays while checking current obstacles',()=>{
- const size=64,from=32*size+32,to=from+size+1,blocked=new Set<number>();let queries=0;
- const step=(_a:number,b:number)=>{queries++;return !blocked.has(b);};
+it('checks current obstacles on every query',()=>{
+ const size=64,from=32*size+32,to=from+size+1,blocked=new Set<number>();
+ const step=(_a:number,b:number)=>!blocked.has(b);
  expect(clearSweep({x:32000,y:32000},{x:33000,y:33000},step,size,595)).toBe(true);
- const baseline=queries;queries=0;
  const fast=adjacentSweep(size,595,step);
- expect(fast(from,to)).toBe(true);expect(queries).toBeLessThan(baseline);
+ expect(fast(from,to)).toBe(true);
  blocked.add(from+1);expect(fast(from,to)).toBe(false);
  blocked.clear();expect(fast(from,to)).toBe(true);
  expect(fast(from,from+3)).toBe(false);

@@ -1,9 +1,9 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilityAimScore,strategicAbilityAims} from '../../src/sim/abilities/ai';
+import {testAbilities} from '../fixtures/content';
 const actor=(id:number,x:number,hp=200)=>({id,x,y:0,hp,maxHp:500,alive:true,targetable:true,unit:true});
 const caster=actor(1,0),enemy=actor(2,3),ally=actor(3,2);
-const spell=(name:string)=>coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!;
+const spell=(name:string)=>testAbilities.abilities.find(a=>a.id==='ability.test.'+name)!;
 const relation=(a:{id:number})=>a.id===2?'enemy' as const:'ally' as const;
 it('scores a self area spell from nearby enemies and does not cast into an empty area',()=>{
  const a=spell('war-stomp');

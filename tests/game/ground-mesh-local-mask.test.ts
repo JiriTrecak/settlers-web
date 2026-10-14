@@ -27,10 +27,10 @@ it('local mask edits match full mask rebuilds through obstacle and height change
  }
 });
 
-it('retains unchanged tiles and handles broad edits and changed profiles',()=>{
+it('matches cold builds for no-op, broad edits and changed body profiles',()=>{
  const size=64,input:GroundMeshInput={size,radius:.595,walkable:new Uint8Array(size*size).fill(1),heights:new Int16Array(size*size)};
  const builder=new GroundMeshBuilder(),original=builder.build(input);
- const unchanged=builder.build(input,[0],[]);expect(unchanged.rebuiltTileIds).toEqual([]);expect(unchanged.tiles[0]).toBe(original.tiles[0]);
+ expect(builder.build(input,[0],[]).tiles).toEqual([original.tiles[0]]);
  const cells:number[]=[];for(let y=0;y<size;y++)for(let x=8;x<24;x++){const cell=y*size+x;input.walkable[cell]=0;cells.push(cell);}
  expect(builder.build(input,[0,1,2,3],cells).tiles).toEqual(new GroundMeshBuilder().build(input).tiles);
  input.radius=.34;

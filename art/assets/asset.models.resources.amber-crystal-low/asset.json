@@ -14,20 +14,6 @@
   ],
   "resources": [
     {
-      "role": "build",
-      "index": 1,
-      "format": "json",
-      "sha256": "d1eac1a46ff43e5f5e564b34c4db1bd20922853e5b6d59fe86db272bc4175342",
-      "bytes": 1140
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "cf1e15bdf12f42bfa75437935c75520e85ac2c6c8406360773513220c612aa77",
-      "bytes": 792
-    },
-    {
       "role": "geometry",
       "index": 1,
       "format": "glb",
@@ -35,53 +21,11 @@
       "bytes": 3462512
     },
     {
-      "role": "preview",
-      "index": 1,
-      "format": "png",
-      "sha256": "ca1d6b3921ea20c8cc64a83c6c7a933c679d9a3fd52c04c83e1c15c9f9fa4f46",
-      "bytes": 1180373
-    },
-    {
-      "role": "preview",
-      "index": 2,
-      "format": "png",
-      "sha256": "da03c1f2216f17b2fb14fadc36046689d98a9e41c57e0eaabc9e87c5bf530123",
-      "bytes": 1102343
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "3d8e3491f5674300f3c8db93cc91527089df6115da7001e94d284aff7b7f3712",
-      "bytes": 6641
-    },
-    {
-      "role": "reference",
-      "index": 1,
-      "format": "png",
-      "sha256": "3d0debf4acce42e85c20030ecd54b3af6912242da8def8fa9427d2eb46dc8f44",
-      "bytes": 1765542
-    },
-    {
       "role": "source",
       "index": 1,
       "format": "blend",
       "sha256": "498c5c8f36078c82e9f6b58d2c4cb0fe75d3f26aeb37433e5b6681b8a9a611c4",
       "bytes": 10916541
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "glb",
-      "sha256": "63924a0379e48b761655f3f4875316166e123fe77046e4cc4f0e94907b756b7f",
-      "bytes": 8338596
-    },
-    {
-      "role": "source",
-      "index": 3,
-      "format": "json",
-      "sha256": "592ca83054905b52a28c6fed8abf360cbe1c3a680cf2306f86234cc7cadae37a",
-      "bytes": 403
     }
   ],
   "usesGeometry": true,
@@ -131,10 +75,6 @@
   },
   "provenance": {
     "method": "generated",
-    "licenseNote": "Original artwork created for Under the Canopy.",
-    "generation": {
-      "role": "generation",
-      "index": 1
-    }
+    "licenseNote": "Original artwork created for Under the Canopy."
   }
 }

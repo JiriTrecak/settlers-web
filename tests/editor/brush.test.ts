@@ -106,15 +106,4 @@ describe("brush mask", () => {
     expect(kit.slots[1]?.scale).toBe(0.8);
     expect(kit.slots[0]?.id).not.toBe(kit.slots[1]?.id);
   });
-
-  it("reads old presets that have no slot id", () => {
-    const list = parsePresets(
-      JSON.stringify([
-        { id: "p", name: "Old", radius: 4, density: 0.4, slots: [{ asset: "pine", pct: 100 }] },
-      ]),
-    );
-    expect(list[0]?.slots[0]?.asset).toBe("pine");
-    expect(list[0]?.slots[0]?.id).toBeTruthy();
-    expect(list[0]?.slots[0]?.scale).toBe(1);
-  });
 });

@@ -1,14 +1,10 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { Scene, DirectionalLight } from 'three';
 import { FOREST, environmentPreset, validLight } from '../../src/shared/environment/presets';
 import { Sky } from '../../src/render/sky/sky';
-afterEach(()=>vi.unstubAllGlobals());
 describe('environment presets',()=>{
-  it('ignores device-local visual overrides and leaves biome inputs independent',()=>{
-    const data=new Map<string,string>();vi.stubGlobal('localStorage',{getItem:(k:string)=>data.get(k)??null,setItem:(k:string,v:string)=>data.set(k,v)});
-    const draft=environmentPreset();draft.light.sunStrength=.5;expect(environmentPreset().light.sunStrength).toBe(FOREST.light.sunStrength);
-    data.set('utc.environment-presets.woodland-2',JSON.stringify([draft]));expect(environmentPreset().light.sunStrength).toBe(FOREST.light.sunStrength);
-    draft.light.sunStrength=2;expect(environmentPreset().light.sunStrength).toBe(FOREST.light.sunStrength);
+  it('returns independent preset copies and rejects malformed light settings',()=>{
+    const draft=environmentPreset();draft.light.sunStrength=FOREST.light.sunStrength+1;expect(environmentPreset().light.sunStrength).toBe(FOREST.light.sunStrength);
     expect(validLight({...draft.light,hazeDistance:NaN})).toBe(false);
     expect(validLight({...draft.light,sunTint:'red'})).toBe(false);
   });

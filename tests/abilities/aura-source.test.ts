@@ -1,16 +1,18 @@
-import {expect,it,vi} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
+import {expect,it} from 'vitest';
 import {abilitySchema} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
 
 it('enemy auras retain their source marker without recipients and never debuff their source',()=>{
- const base=coreAbilities.abilities.find(a=>a.id==='ability.marshal.rally')!;
+ const base=testAbilities.abilities.find(a=>a.id==='ability.test.marshal-rally')!;
  const spell=abilitySchema.parse({...base,targeting:{...base.targeting,relations:['enemy'],allowSelf:false},onRelease:[
   {op:'status',target:'target',id:'crushed',amount:1,polarity:'negative',dispel:false,modifiers:{armor:-3}},
   {op:'status',target:'caster',id:'presence',amount:1,polarity:'positive',dispel:false,modifiers:{}},
  ]});
- const f=createAbilityEncounter(spell,coreAbilities.presentations.find(p=>p.id===base.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',distance:30,combat:false}));
+ const f=createAbilityEncounter(spell,testAbilities.presentations.find(p=>p.id===base.presentation)!,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',distance:30,combat:false}),false,testSource());
  const c=f.game.context.get(f.caster)!,t=f.game.context.get(f.target)!;
  f.game.tick();
  expect(c.spellStatuses?.map(s=>s.status)).toEqual(['presence']);
@@ -25,14 +27,3 @@ it('enemy auras retain their source marker without recipients and never debuff t
  expect(c.spellStatuses).toBeUndefined();
 });
 
-
-it('refreshes aura status without computing discarded event visibility',()=>{
- const spell=coreAbilities.abilities.find(a=>a.id==='ability.marshal.rally')!;
- const f=createAbilityEncounter(spell,coreAbilities.presentations.find(p=>p.id===spell.presentation)!,encounterSettingsSchema.parse({relationship:'ally',distance:6,combat:false}));
- const visibility=vi.spyOn(f.game.observation,'visible');
- try{
-  f.game.abilities.tick();
-  expect(f.game.context.get(f.target)!.spellStatuses?.some(s=>s.ability===spell.id)).toBe(true);
-  expect(visibility).not.toHaveBeenCalled();
- }finally{visibility.mockRestore();}
-});

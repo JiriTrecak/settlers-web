@@ -2,7 +2,7 @@ import {describe,it,expect} from 'vitest';
 import {paintedMaskSchema,mapPreviewSceneSchema,shapeBounds} from '../../src/shared/authoring/layers';
 import {regionDistance} from '../../src/shared/authoring/shapes';
 import {compileMapScene} from '../../src/shared/authoring/mapScene';
-import {landscapeAssets} from '../../src/shared/authoring/project';
+import {testLandscape} from './landscape';
 import {createBiomeMap} from '../../src/shared/map/newMap';
 import {parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
 import {waterSurface} from '../../src/render/water/waterSurface';
@@ -24,7 +24,7 @@ describe('painted procedural masks',()=>{
   expect(shapeBounds(m)).toEqual({minX:92,minZ:110,maxX:164,maxZ:146});
  });
  it('carves a lake, retains its island, excludes trees from water and grows banks and lilies',()=>{
-  const a=compileMapScene(map(),landscapeAssets);expect(a.generated!.issues).toEqual([]);
+  const a=compileMapScene(map(),testLandscape);expect(a.generated!.issues).toEqual([]);
   expect(a.field.waterAt(112,128)).toBe(-.6);expect(a.field.sample(112,128)).toBeLessThan(-1);
   expect(a.field.waterAt(128,128)).toBe(-8);expect(a.field.sample(128,128)).toBe(0);
   const trees=a.generated!.objects.filter(o=>o.owner==='forest');expect(trees.length).toBeGreaterThan(0);
@@ -34,24 +34,24 @@ describe('painted procedural masks',()=>{
   const surface=waterSurface(a.field);expect(surface.tiles.length).toBeGreaterThan(0);expect([...surface.tiles.flatMap(t=>[...t.positions])].every(Number.isFinite)).toBe(true);
  });
  it('applies and reopens exactly without retaining masks or ownership',()=>{
-  const m=map(),a=compileMapScene(m,landscapeAssets),history=new AuthoringHistory(m.authoring);history.apply(a);
+  const m=map(),a=compileMapScene(m,testLandscape),history=new AuthoringHistory(m.authoring);history.apply(a);
   const saved={...m,authoring:history.document},reopened=parseUtcMap(JSON.parse(stringifyUtcMap(saved)))!;
-  const b=compileMapScene(reopened,landscapeAssets);
+  const b=compileMapScene(reopened,testLandscape);
   expect(b.stamps).toEqual(a.stamps);expect(b.field.samples).toEqual(a.field.samples);expect(b.field.grassCoverage).toEqual(a.field.grassCoverage);
  });
  it('selects painted areas, but leaves subtracted holes and empty ground unselected',()=>{
   const lake=map().authoring.layers[0]!;
-  expect(hitLayer([lake],landscapeAssets,112,128)?.id).toBe('lake');
-  expect(hitLayer([lake],landscapeAssets,128,128)).toBeUndefined();
-  expect(hitLayer([lake],landscapeAssets,200,200)).toBeUndefined();
-  expect(hitLayer([{...lake,visible:false}],landscapeAssets,112,128)).toBeUndefined();
+  expect(hitLayer([lake],testLandscape,112,128)?.id).toBe('lake');
+  expect(hitLayer([lake],testLandscape,128,128)).toBeUndefined();
+  expect(hitLayer([lake],testLandscape,200,200)).toBeUndefined();
+  expect(hitLayer([{...lake,visible:false}],testLandscape,112,128)).toBeUndefined();
  });
  it('empty or subtracted-away masks generate nothing',()=>{
-  const m=map();m.authoring.layers=[{...m.authoring.layers[1]!,shape:{type:'mask',elevation:0,strokes:[]}}];expect(compileMapScene(m,landscapeAssets).stamps).toEqual([]);
+  const m=map();m.authoring.layers=[{...m.authoring.layers[1]!,shape:{type:'mask',elevation:0,strokes:[]}}];expect(compileMapScene(m,testLandscape).stamps).toEqual([]);
   m.authoring.layers[0]!.shape={type:'mask',elevation:0,strokes:[
    {operation:'add',radius:10,points:[{x:128,z:128}]},
    {operation:'subtract',radius:11,points:[{x:128,z:128}]},
   ]};
-  expect(compileMapScene(m,landscapeAssets).stamps).toEqual([]);
+  expect(compileMapScene(m,testLandscape).stamps).toEqual([]);
  });
 });

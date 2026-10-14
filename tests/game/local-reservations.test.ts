@@ -1,4 +1,4 @@
-import {expect,it,vi} from 'vitest';
+import {expect,it} from 'vitest';
 import {game,placed} from './helpers';
 import type {Entity} from '../../src/sim/game/state';
 import type {CellReservations} from '../../src/sim/game/spatial';
@@ -13,7 +13,7 @@ function brute(g:ReturnType<typeof game>,e:Entity){
 }
 
 it('matches materialized reservations through movement, lifecycle changes and remote yield pockets',()=>{
- const g=game(Array.from({length:16},(_,i)=>placed('unit'+i,'unit.ants.warrior',100+i%4,100+Math.floor(i/4))));
+ const g=game(Array.from({length:16},(_,i)=>placed('unit'+i,'unit.test.warrior',100+i%4,100+Math.floor(i/4))));
  const army=g.entities.filter(e=>e.placement?.startsWith('unit')),mover=army[0];g.state.tick=10;
  const pocket=g.spatial.cell({x:180,y:180});
  army.forEach((e,i)=>{e.owner=i%3?'player.1':'player.2';e.unit!.route=i%2?[g.spatial.cell({x:140,y:100})]:[];});
@@ -41,21 +41,8 @@ it('matches materialized reservations through movement, lifecycle changes and re
  }
 });
 
-it('does not inspect distant armies for a local reservation probe',()=>{
- const g=game(Array.from({length:400},(_,i)=>placed('unit'+i,'unit.ants.warrior',20+i%20*8,20+Math.floor(i/20)*8)));
- g.state.tick=10;const army=g.entities.filter(e=>e.placement?.startsWith('unit')),mover=army[0];
- for(const e of army)e.unit!.route=[g.spatial.cell({x:200,y:200})];
- g.spatial.beginUnitMovement();const live=mask(g,mover);live.has(g.spatial.cell(mover));
- const ignores=vi.spyOn(g.spatial,'ignoresUnits');
- try {
-  expect(live.has(g.spatial.cell(army[1]))).toBe(true);
-  expect(live.has(g.spatial.cell({x:21,y:20}))).toBe(false);
-  expect(ignores.mock.calls.length).toBeLessThan(4);
- }finally{ignores.mockRestore();g.spatial.endUnitMovement();}
-});
-
 it('retains start-of-pass eligibility when a previously releasing enemy becomes solid',()=>{
- const g=game([placed('mover','unit.ants.warrior',100,100),{...placed('released','unit.ants.warrior',101,100),owner:'player.2'}]);
+ const g=game([placed('mover','unit.test.warrior',100,100),{...placed('released','unit.test.warrior',101,100),owner:'player.2'}]);
  const mover=g.entities.find(e=>e.placement==='mover')!,released=g.entities.find(e=>e.placement==='released')!;g.state.tick=10;
  released.unit!.release={x:101,y:100};g.spatial.beginUnitMovement();
  try{

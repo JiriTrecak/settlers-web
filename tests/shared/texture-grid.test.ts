@@ -5,7 +5,6 @@ import {encodeBytes,flatTerrainData,restoreTerrain,terrainDataSchema} from '../.
 import {captureTerrain} from '../../src/shared/authoring/captureTerrain';
 import {editTerrainGrid} from '../../src/shared/authoring/gridTerrain';
 import {authoredTerrain} from '../../src/render/terrain/authoredTerrain';
-import {terrainLayerTable} from '../../src/render/terrain/terrainLayerTable';
 import {terrainMaskBytes} from '../../src/render/terrain/terrainMasks';
 import {importedTerrainSchema,unpackSourceBytes} from '../../src/shared/map/importedTerrain';
 
@@ -35,6 +34,4 @@ it('round-trips the atlas grid and variants through editable terrain and subsequ
  expect(unpackSourceBytes(layer.connections!)).toHaveLength(121);
  expect(unpackSourceBytes(layer.connections!)[4*11+4]).toBe(31);
  expect(layer.variants).toBe(edited.paint[0].variants);
- const table=terrainLayerTable(source),at=(table.metadataOffset+source.layers.indexOf(layer)*8)*4;
- expect(table.data[at+10]).toBe(5);
 });

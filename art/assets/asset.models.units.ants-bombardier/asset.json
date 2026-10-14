@@ -21,20 +21,6 @@
       "bytes": 2122971
     },
     {
-      "role": "build",
-      "index": 1,
-      "format": "json",
-      "sha256": "33e73a45862e7c82ed175b0168aa21d41c2f5148cbbdf4bd374a6616bf08ce7d",
-      "bytes": 1106
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "51879249a329cf93a96bc30ce3f5418f6960c3e6840143abdbfbb7211ea45105",
-      "bytes": 868
-    },
-    {
       "role": "geometry",
       "index": 1,
       "format": "glb",
@@ -49,151 +35,11 @@
       "bytes": 14782
     },
     {
-      "role": "preview",
-      "index": 1,
-      "format": "png",
-      "sha256": "a141478debbdeacfbd0dc0aead66a227a49242ffdd5b1f46e297143103ca2834",
-      "bytes": 601705
-    },
-    {
-      "role": "preview",
-      "index": 2,
-      "format": "png",
-      "sha256": "65993932ec5b9e31ad2077c6d352fdb444882769315511fa94c90bf26a24f778",
-      "bytes": 583686
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "6a1c69615f436b986df83fcffada3a918750d83a5f33475b98a7c8202cd09695",
-      "bytes": 8232
-    },
-    {
-      "role": "recipe",
-      "index": 2,
-      "format": "py",
-      "sha256": "a34be36a3384608b1a0af4bb7ba87ce7c4684207e255a8924f2da90fe469fc6a",
-      "bytes": 4144
-    },
-    {
-      "role": "recipe",
-      "index": 3,
-      "format": "py",
-      "sha256": "35da7fae14d036acaa6464b09c5b413356acdde6f461f4a2ec5a6e2501ee7062",
-      "bytes": 1979
-    },
-    {
-      "role": "reference",
-      "index": 1,
-      "format": "png",
-      "sha256": "202d13bfba5690f39a570f8db83b91fedb1ff01913ef50c4b9fb706c45aba337",
-      "bytes": 1407370
-    },
-    {
       "role": "source",
       "index": 1,
       "format": "blend",
       "sha256": "112ec07ccad2ed661a3fbbc63d1ba341f5a0320666e81b0dd71a90957eee89da",
       "bytes": 37918092
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "md",
-      "sha256": "647bfbc925117115a456fc54ef1cb85addcb6156e5bf54f2cea7b666d6b3fa86",
-      "bytes": 1810
-    },
-    {
-      "role": "source",
-      "index": 3,
-      "format": "png",
-      "sha256": "6711d23252444159206a644abda1d50fc862b8f65fa25925eaf304d17dceb6bc",
-      "bytes": 12308645
-    },
-    {
-      "role": "source",
-      "index": 4,
-      "format": "json",
-      "sha256": "c8c12d5c600cd320470cfe40e40443dcca55565cafaf17efecd68f1f62139d79",
-      "bytes": 963
-    },
-    {
-      "role": "source",
-      "index": 5,
-      "format": "json",
-      "sha256": "1e2c2a6604502f1a3a92a7a0abb0d85fb106af993c048ac6b7004197f2469fbc",
-      "bytes": 503
-    },
-    {
-      "role": "source",
-      "index": 6,
-      "format": "png",
-      "sha256": "b816df0a55c80b519b70404c71eb056f9ca81f7f7052be5a9956d60e81426ff4",
-      "bytes": 7490562
-    },
-    {
-      "role": "source",
-      "index": 7,
-      "format": "json",
-      "sha256": "5a1e4f5d7b517d3c05e3d2ad3c5d5750fc1f4ad32c83b8bce000a074b9a2b432",
-      "bytes": 153
-    },
-    {
-      "role": "source",
-      "index": 8,
-      "format": "json",
-      "sha256": "eb68bb1945370f21b5d34a200ba3d007efe4c4f0c498a524fd0de9d17bed6d3a",
-      "bytes": 5353
-    },
-    {
-      "role": "source",
-      "index": 9,
-      "format": "json",
-      "sha256": "cd966bc6cab3303fbc139047145016b8f7b9bd378607e42b8c8c8812c4324f73",
-      "bytes": 6904
-    },
-    {
-      "role": "source",
-      "index": 10,
-      "format": "png",
-      "sha256": "b6a37cc71984ce4e7514ac43c6941eeb26f071ec4a377155cb732c9b6a4cc8bc",
-      "bytes": 1846716
-    },
-    {
-      "role": "source",
-      "index": 11,
-      "format": "png",
-      "sha256": "d86b4f7c14067f0dc93244dcf532c2e54d583cceb8486182d8ef5c1516972638",
-      "bytes": 3064583
-    },
-    {
-      "role": "source",
-      "index": 12,
-      "format": "json",
-      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
-      "bytes": 3
-    },
-    {
-      "role": "source",
-      "index": 13,
-      "format": "jpeg",
-      "sha256": "43ebf9f85fc1917c5f85028e3e2eda1b78f70d5aa9134e2e18f102617b040e1a",
-      "bytes": 2667221
-    },
-    {
-      "role": "source",
-      "index": 14,
-      "format": "glb",
-      "sha256": "5c103a464dd0d55f4581ba8b284b271df86c686146cef3ff4d6d5d92638c4746",
-      "bytes": 8235632
-    },
-    {
-      "role": "source",
-      "index": 15,
-      "format": "png",
-      "sha256": "3d381114b1c949ee28229712220a9c9e9d2f2e144cbf23a8a1ae4d9edecbb3fd",
-      "bytes": 79833
     },
     {
       "role": "team_mask",
@@ -352,10 +198,6 @@
   },
   "provenance": {
     "method": "generated",
-    "licenseNote": "Original artwork created for Under the Canopy.",
-    "generation": {
-      "role": "generation",
-      "index": 1
-    }
+    "licenseNote": "Original artwork created for Under the Canopy."
   }
 }

@@ -9,7 +9,7 @@ it('uses authored thresholds at level boundaries and fills the capped level with
  expect(meter(5200)).toMatchObject({fraction:1,label:'Maximum level 11'});
  const view=g.view('player.1').entities.find(e=>e.id===hero.id)!;
  expect(experienceMeter({...view,progression:undefined},definition)).toBeNull();
- const worker=g.view('player.1').entities.find(e=>e.definition==='unit.ants.settler')!;
+ const worker=g.view('player.1').entities.find(e=>e.definition==='unit.test.settler')!;
  expect(experienceMeter(worker,g.registry.get(worker.definition))).toBeNull();
 });
 

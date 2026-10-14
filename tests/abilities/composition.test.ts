@@ -1,13 +1,15 @@
 import {it,expect} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema} from '../../src/content/abilities/schema';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {isStunned} from '../../src/sim/game/effects';
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
 function fixture(name:string,settings:Record<string,unknown>={}){
- const spell=coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!;
- const look=coreAbilities.presentations.find(p=>p.id===spell.presentation)!;
- const f=createAbilityEncounter(spell,look,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:250,...settings}));
+ const spell=testAbilities.abilities.find(a=>a.id==='ability.test.'+name)!;
+ const look=testAbilities.presentations.find(p=>p.id===spell.presentation)!;
+ const f=createAbilityEncounter(spell,look,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',targetHealth:250,...settings}),false,testSource());
  const cast=()=>f.game.abilities.cast(f.caster,'preview',spell.targeting.kind==='point'?{x:126,y:120}:spell.targeting.kind==='self'?f.caster:f.target);
  return {...f,cast};
 }
@@ -43,7 +45,7 @@ it.each(['healing-wave','war-stomp','frost-nova','inferno'])('%s is deterministi
  for(let i=0;i<80;i++){advance(a,1);advance(b,1);expect(a.game.checksum()).toBe(b.game.checksum());}
 });
 it('bounds recipient queries and forbids multiplying point operations through a unit query',()=>{
- const base=structuredClone(coreAbilities.abilities.find(a=>a.id==='ability.core.inferno')!);
+ const base=structuredClone(testAbilities.abilities.find(a=>a.id==='ability.test.inferno')!);
  const bad:any=base;bad.onRelease[0].query={center:'point',radius:5,relations:['enemy']};
  expect(abilitySchema.safeParse(bad).success).toBe(false);
  delete bad.onRelease[0].query;bad.onRelease[1].query.radius=33;

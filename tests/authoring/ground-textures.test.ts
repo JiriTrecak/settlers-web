@@ -1,18 +1,16 @@
-import {readFileSync} from 'node:fs';
 import {describe,it,expect} from 'vitest';
 import {assetDefinitionSchema} from '../../src/shared/authoring/asset';
 import {landscapeCatalogue} from '../../src/shared/authoring/catalogue';
 import {decodeGroundDds,warcraftGroundLayout} from '../../scripts/assets/warcraft/dds';
 import {packGroundAtlas} from '../../scripts/assets/warcraft/pack';
+import authoring from '../fixtures/content/authoring.json';
 
 describe('declared ground atlases',()=>{
- const dirt=JSON.parse(readFileSync('art/assets/asset.terrain.warcraft-ldrt/asset.json','utf8'));
+ const dirt=structuredClone(authoring.assets.find(a=>a.kind==='terrain-material'&&'terrain' in a&&(a as {terrain?:{atlas?:unknown}}).terrain?.atlas)!) as any;
  it('publishes terrain channels and a thumbnail through the landscape catalogue',()=>{
   const asset=assetDefinitionSchema.parse(dirt),[entry]=landscapeCatalogue([asset]);
-  expect(entry.terrain?.sourceIds).toEqual(['Ldrt']);
-  expect(entry.terrainImages?.thumbnail).toBe('assets/library/asset.terrain.warcraft-ldrt/image.png');
-  expect(entry.terrainImages?.roughness).toBe('assets/library/asset.terrain.warcraft-ldrt/roughness.png');
-  expect(asset.terrain?.atlas.fullTiles).toHaveLength(18);
+  expect(entry.terrain).toEqual(asset.terrain);
+  for(const role of ['albedo','normal','roughness','thumbnail'] as const)expect(entry.terrainImages?.[role]).toMatch(new RegExp(`^assets/library/${asset.id.replaceAll('.','\\.')}/`));
  });
  it('rejects atlas cells outside the image and undeclared channels',()=>{
   const out=structuredClone(dirt);out.terrain.atlas.fullTiles=[32];

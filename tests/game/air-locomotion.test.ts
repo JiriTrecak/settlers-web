@@ -5,7 +5,7 @@ import {fixed,precise} from '../../src/sim/game/motion';
 import {heading} from '../../src/sim/game/facing';
 import {matchesTargetFilter} from '../../src/content/abilities/conditions';
 function setup(){
- const g=game([placed('flyer','unit.ants.archer',100,100),{...placed('ground','unit.ants.warrior',105,100),owner:'player.2'}],s=>{const d=s.definitions.find(d=>(d as Definition).id==='unit.ants.archer') as Definition;d.behaviors.movement={speed:6,turnRate:720,locomotion:'air',flightHeight:6};});
+ const g=game([placed('flyer','unit.test.archer',100,100),{...placed('ground','unit.test.warrior',105,100),owner:'player.2'}],s=>{const d=s.definitions.find(d=>(d as Definition).id==='unit.test.archer') as Definition;d.behaviors.movement={speed:6,turnRate:720,locomotion:'air',flightHeight:6};});
  return {g,a:g.entities.find(e=>e.placement==='flyer')!,b:g.entities.find(e=>e.placement==='ground')!};
 }
 describe('air locomotion',()=>{
@@ -22,8 +22,8 @@ describe('air locomotion',()=>{
  });
  it('crosses impassable ground and resource/building occupancy but stays inside the map',()=>{
   const {g,a,b}=setup(),s=g.context.spatial;
-  const building=g.context.create(placed('wall','building.ants.house',104,100));
-  const tree=g.context.create({...placed('tree','resource.forest.tree',108,100),owner:'none'});
+  const building=g.context.create(placed('wall','building.test.house',104,100));
+  const tree=g.context.create({...placed('tree','resource.test.forest-tree',108,100),owner:'none'});
   for(let y=0;y<s.size;y++){s.terrain[y*s.size+103]=0;s.heights[y*s.size+103]=5000;}
   // Occupancy derives from entities; a rebuild also publishes raw terrain edits.
   s.rebuild();
@@ -37,9 +37,8 @@ describe('air locomotion',()=>{
  it('shares a horizontal position with ground units but collides with other flyers',()=>{
   const {g,a,b}=setup(),s=g.context.spatial;b.x=a.x;b.y=a.y;b.unit!.position=fixed(a);
   expect(s.free(a,a.id,a)).toBe(true);expect(s.unitSegmentClear(fixed(a),fixed(a),a.id)).toBe(true);
-  const other=g.context.create(placed('other','unit.ants.archer',a.x,a.y));
+  g.context.create(placed('other','unit.test.archer',a.x,a.y));
   expect(s.free(a,a.id,a)).toBe(false);expect(s.unitSegmentClear(fixed(a),fixed(a),a.id)).toBe(false);
-  expect(other.definition).toBe(a.definition);
   const probes=Array.from({length:25},(_,i)=>({x:98+i%5,y:98+Math.floor(i/5)}));
   for(const actor of [a,b])s.withLocalUnitClearance(fixed(actor),6000,actor.id,clear=>{
    for(const p of probes)expect(s.freeOnWalkable(p,actor.id,actor,clear)).toBe(s.freeOnWalkable(p,actor.id,actor));
@@ -57,16 +56,12 @@ describe('air locomotion',()=>{
   g.state.tick=a.unit!.attack!.impact;g.combat.resolve();expect(g.state.missiles[0].origin.elevation).toBe(6);
   const save=g.snapshot();g.restore(save);expect(g.snapshot()).toEqual(save);
  });
- it('samples flight floor at the precise position without copying unrelated entity state',()=>{
+ it('samples flight floor at the precise position, including garrison height',()=>{
   const {g,a,b}=setup(),s=g.spatial;
   a.unit!.position=fixed({x:100.6,y:100});
   s.waterHeights[100*s.size+101]=1200;
   a.unit!.garrison={building:999,height:3};
   const position=precise(a),expected=s.elevation({...a,...position})+3;
-  expect(s.elevatedPoint(a)).toEqual({...position,elevation:expected});
-  expect(expected).toBe(21);
-  // Presentation metadata has no role in physical sight elevation.
-  Object.defineProperty(a,'appearance',{enumerable:true,get(){throw Error('Unrelated entity property copied');}});
   expect(s.elevatedPoint(a)).toEqual({...position,elevation:expected});
   b.unit!.position=fixed({x:104.8,y:100});b.unit!.garrison={building:999,height:4};
   expect(s.elevatedPoint(b)).toEqual({...precise(b),elevation:4});

@@ -1,15 +1,17 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {acceptsSpell,matchesSpellFilter,spellImmunity} from '../../src/sim/abilities/eligibility';
 import {abilityAimScore} from '../../src/sim/abilities/ai';
-const spell=(id:string)=>coreAbilities.abilities.find(a=>a.id==='ability.core.'+id)!;
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const spell=(id:string)=>testAbilities.abilities.find(a=>a.id==='ability.test.'+id)!;
 function fixture(id='holy-light-lite',extra:Record<string,unknown>={},patch={}){
  const a=abilitySchema.parse({...spell(id),...patch});
- const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:500,distance:6,...extra}));
+ const f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',targetHealth:500,distance:6,...extra}),false,testSource());
  return {...f,a,c:f.game.context.get(f.caster)!,t:f.game.context.get(f.target)!};
 }
 function ticks(f:ReturnType<typeof fixture>,n:number){for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});}
@@ -43,11 +45,11 @@ it('suppresses existing periodic damage, resumes after protection, and replays i
  const f=fixture('entangling-roots');expect(f.game.abilities.cast(f.caster,'preview',f.target)).toBeNull();ticks(f,30);apply(f,'spell-ward');const hp=f.t.hp;
  const restored=fixture('entangling-roots');restored.game.restore(f.game.snapshot());
  for(let i=0;i<70;i++){ticks(f,1);ticks(restored,1);expect(restored.game.checksum()).toBe(f.game.checksum());}expect(f.t.hp).toBe(hp);
- f.t.spellStatuses=f.t.spellStatuses!.filter(s=>s.ability!=='ability.core.spell-ward');ticks(f,40);expect(f.t.hp).toBeLessThan(hp!);
+ f.t.spellStatuses=f.t.spellStatuses!.filter(s=>s.ability!=='ability.test.spell-ward');ticks(f,40);expect(f.t.hp).toBeLessThan(hp!);
 });
 it('validates hero/summon/level targets and exposes summon eligibility in observations',()=>{
  const f=fixture('dismiss-summon');expect(f.game.abilities.cast(f.caster,'preview',f.target)).toMatch(/filters/i);
- f.t.summoned={source:f.caster,ability:'ability.core.feral-spirit',rank:1,cast:1,started:0,expires:500};
+ f.t.summoned={source:f.caster,ability:'ability.test.feral-spirit',rank:1,cast:1,started:0,expires:500};
  expect(f.game.view('player.1').entities.find(e=>e.id===f.target)?.summoned).toBe(true);
  apply(f,'spell-ward');expect(f.game.abilities.cast(f.caster,'preview',f.target)).toBeNull();ticks(f,30);expect(f.t.hp).toBe(0);
  expect(matchesSpellFilter({hero:true,summoned:true,level:1},{heroes:false,summoned:true,maxLevel:6})).toBe(false);

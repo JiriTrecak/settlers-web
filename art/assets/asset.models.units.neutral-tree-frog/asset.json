@@ -29,39 +29,11 @@
       "bytes": 6818093
     },
     {
-      "role": "reference",
-      "index": 1,
-      "format": "png",
-      "sha256": "d99918c7eca8324a1b4d9903e2f6c483ac6c7403a499cf2bfe6d5b1785953101",
-      "bytes": 458733
-    },
-    {
-      "role": "preview",
-      "index": 1,
-      "format": "png",
-      "sha256": "7146f1a5934286e10dd45c63340dcc771413def9bf2971133ff4d3296f91b2fb",
-      "bytes": 475117
-    },
-    {
       "role": "image",
       "index": 1,
       "format": "png",
       "sha256": "2909402874aa0ae852730642670f65570ff35e438189801dfcec760a05e782af",
       "bytes": 10841
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "078a8dee7b37c59cd2c67caa5f363d54af35fcdb3f5dcfabebe9869b536fc347",
-      "bytes": 12961
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "57560300c8a6d9b0e6fc93ee7dca6c38d788a8a1baa6d42cbce11178dbd537bf",
-      "bytes": 518
     }
   ],
   "usesGeometry": true,
@@ -169,10 +141,6 @@
   },
   "provenance": {
     "method": "generated",
-    "licenseNote": "Original artwork created for Under the Canopy.",
-    "generation": {
-      "role": "generation",
-      "index": 1
-    }
+    "licenseNote": "Original artwork created for Under the Canopy."
   }
 }

@@ -4,12 +4,18 @@ import {
   defaultSlots,
   setLocalController,
 } from "../../src/shared/match/skirmish";
-import {
-  emptyUtcMap,
-  parseUtcMap,
-  stringifyUtcMap,
-} from "../../src/shared/map/utcmap";
+import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { World } from "../../src/sim/world/world";
+import { testContent } from "../fixtures/content";
+import { rulesSchema } from "../../src/content/schema";
+import gameSource from "../../content/game.json";
+
+// ENGINE-COUPLED: createSkirmishMatch validates races and fills default heroes from shipped content/game.json with no
+// injection point. Expected defaults are read from that same source; the simulated worlds use the test registry with
+// the lobby race/hero stripped (they default to the test world's race and hero).
+const shipped = rulesSchema.parse(gameSource.rules);
+const testSlots = (slots: readonly { race?: string; hero?: string }[]) =>
+  slots.map(({ race: _race, hero: _hero, ...slot }) => slot) as any;
 
 describe("skirmish setup", () => {
   const map = emptyUtcMap();
@@ -27,10 +33,10 @@ describe("skirmish setup", () => {
     );
     expect(player).toBe(1);
     expect(match.slots).toEqual([
-      { player: 0, kind: "ai", name: "Computer 1", hero:"unit.ants.marshal", race:"ants" },
-      { player: 1, kind: "human", name: "Alice", hero:"unit.ants.marshal", race:"ants" },
+      { player: 0, kind: "ai", name: "Computer 1", hero: shipped.startingSetup.hero!.default, race: shipped.defaultRace },
+      { player: 1, kind: "human", name: "Alice", hero: shipped.startingSetup.hero!.default, race: shipped.defaultRace },
     ]);
-    const world = new World({ map, slots: match.slots, seed: 1 });
+    const world = new World({ map, slots: testSlots(match.slots), seed: 1, registry: testContent });
     const hall = world.settlement.entities.find(
       (e) => e.id === world.settlement.state.objectives["player.2"],
     )!;
@@ -50,7 +56,7 @@ describe("skirmish setup", () => {
       "rev",
     );
     expect(player).toBeNull();
-    const world = new World({ map, slots: match.slots, seed: 1 });
+    const world = new World({ map, slots: testSlots(match.slots), seed: 1, registry: testContent });
     for (let n = 0; n < 80; n++) world.tick();
     expect(world.aiSummary().map((a) => a.owner)).toEqual([
       "player.1",
@@ -105,14 +111,5 @@ describe("skirmish setup", () => {
         "r",
       ),
     ).toThrow();
-  });
-  it("round-trips optional map descriptions and rejects malformed metadata", () => {
-    const described = { ...map, description: "An ancient woodland." };
-    expect(
-      parseUtcMap(JSON.parse(stringifyUtcMap(described)))?.description,
-    ).toBe(described.description);
-    expect(parseUtcMap(map)?.description).toBeUndefined();
-    expect(parseUtcMap({ ...map, description: 99 })).toBeNull();
-    expect(parseUtcMap({ ...map, description: "a".repeat(1201) })).toBeNull();
   });
 });

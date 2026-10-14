@@ -5,12 +5,13 @@ import { game, placed, run, slots } from "./helpers";
 import { Game } from "../../src/sim/game/game";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { Navigation } from "../../src/sim/game/navigation";
+import { testContent } from "../fixtures/content";
 
 describe("combat, knowledge and deterministic navigation", () => {
   it("S16 forced friendly attacks can destroy both objective forts in the same tick", () => {
     const g = game([
-      placed("a", "unit.ants.warrior", 218, 224),
-      { ...placed("b", "unit.ants.warrior", 38, 44), owner: "player.2" },
+      placed("a", "unit.test.warrior", 218, 224),
+      { ...placed("b", "unit.test.warrior", 38, 44), owner: "player.2" },
     ]);
     for (const owner of ["player.1", "player.2"] as const) {
       const target = g.context.get(g.state.objectives[owner])!,
@@ -28,11 +29,11 @@ describe("combat, knowledge and deterministic navigation", () => {
         }).accepted,
       ).toBe(true);
     }
-    run(g, 1 + g.registry.get("unit.ants.warrior").behaviors.combat!.attack.windupTicks);
+    run(g, 1 + g.registry.get("unit.test.warrior").behaviors.combat!.attack.windupTicks);
     expect(g.state.outcome?.winner).toBeNull();
     expect(g.state.outcome?.defeated).toHaveLength(2);
   });
-  it("S17 observation does not disclose enemy inventories and contains no territory boundary data", () => {
+  it("S17 observation does not disclose enemy inventories, including remembered buildings", () => {
     const map = emptyUtcMap(),
       g = new Game(
         {
@@ -42,19 +43,18 @@ describe("combat, knowledge and deterministic navigation", () => {
             x: i ? 157.5 : 101.5,
             z: 129.5,
           })),
-          entities: [placed("scout", "unit.ants.warrior", 151, 140)],
+          entities: [placed("scout", "unit.test.warrior", 151, 140)],
         },
         slots,
+        testContent,
       );
     const view = g.view("player.1"),
       enemy = view.entities.find(
-        (e) => e.owner === "player.2" && e.definition === "building.ants.fort",
+        (e) => e.owner === "player.2" && e.definition === "building.test.fort",
       )!;
     expect(enemy).toBeDefined();
     expect(enemy.inventory).toBeUndefined();
     expect(enemy.production).toBeUndefined();
-    expect(view).not.toHaveProperty('territory');
-    expect(g.snapshot().knowledge[0]).not.toHaveProperty('borders');
     const scout = g.entities.find((e) => e.placement === "scout")!;
     scout.x = 90;
     scout.y = 128;
@@ -68,7 +68,7 @@ describe("combat, knowledge and deterministic navigation", () => {
   it("S18 aggressive neutrals fight players, ignore unowned items, and return to camp after pursuit", () => {
     // Mid-map, clear of player 1's starting fort and escort at (218,218).
     const wolf = {
-        ...placed("wolf", "unit.neutral.webling", 205, 130),
+        ...placed("wolf", "unit.test.neutral-webling", 205, 130),
         owner: "none" as const,
       },
       g = new Game(
@@ -76,8 +76,8 @@ describe("combat, knowledge and deterministic navigation", () => {
           ...emptyUtcMap(),
           entities: [
             wolf,
-            placed("warrior", "unit.ants.warrior", 206, 130),
-            { ...placed("loose", "item.barkguard", 205, 131), owner: "none" },
+            placed("warrior", "unit.test.warrior", 206, 130),
+            { ...placed("loose", "item.test.barkguard", 205, 131), owner: "none" },
           ],
           camps: [
             {
@@ -91,6 +91,7 @@ describe("combat, knowledge and deterministic navigation", () => {
           ],
         },
         slots,
+        testContent,
       );
     const neutral = g.entities.find((e) => e.placement === "wolf")!,
       soldier = g.entities.find((e) => e.placement === "warrior")!,

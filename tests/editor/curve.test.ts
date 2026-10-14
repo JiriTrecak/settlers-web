@@ -108,4 +108,16 @@ describe("landscape curve strokes", () => {
       }),
     ).toBeUndefined();
   });
+  it("retains valid grass brush proportions and rejects malformed ones", () => {
+    const patch = { x: 10, z: 12, radius: 8, density: 2, seed: 73, flowers: 0.2 };
+    const cover = [{ ...patch, grassScale: 0.85, broadRatio: 0.3 }, patch];
+    expect(parseLandscape({ ...emptyLandscape(), cover })?.cover).toEqual(cover);
+    for (const grassScale of [0, 5, NaN, Infinity, "1"])
+      expect(parseLandscape({ ...emptyLandscape(), cover: [{ ...patch, grassScale }] })).toBeUndefined();
+    for (const broadRatio of [-0.1, 1.1, NaN, Infinity, "0"])
+      expect(parseLandscape({ ...emptyLandscape(), cover: [{ ...patch, broadRatio }] })).toBeUndefined();
+    expect(
+      parseLandscape({ ...emptyLandscape(), cover: [{ ...patch, grassScale: 0.2, broadRatio: 0 }, { ...patch, grassScale: 4, broadRatio: 1 }] }),
+    ).toBeDefined();
+  });
 });

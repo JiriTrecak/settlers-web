@@ -1,15 +1,17 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
 
 function setup(kind:'projectile'|'chain'|'line'='projectile',airSource=false){
- const base=coreAbilities.abilities.find(a=>a.id==='ability.core.'+(kind==='chain'?'chain-lightning':kind==='line'?'shockwave':'storm-bolt'))!;
+ const base=testAbilities.abilities.find(a=>a.id==='ability.test.'+(kind==='chain'?'chain-lightning':kind==='line'?'shockwave':'storm-bolt'))!;
  const a=abilitySchema.parse({...base,cast:{...base.cast,prepareTicks:0,recoverTicks:0,cost:{...base.cast.cost,amount:0}},...(kind==='projectile'?{delivery:{...base.delivery,speed:4}}:{})});
- const p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
- const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',targetCount:kind==='chain'?3:1,targetSpacing:2,targetLocomotion:'air',casterLocomotion:airSource?'air':'ground',distance:8,targetHealth:500}));
+ const p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+ const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',targetCount:kind==='chain'?3:1,targetSpacing:2,targetLocomotion:'air',casterLocomotion:airSource?'air':'ground',distance:8,targetHealth:500}),false,testSource());
  return {...f,a};
 }
 const tick=(f:ReturnType<typeof setup>,n=1)=>{for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});};
@@ -28,7 +30,7 @@ it('saves ascending delivery height and replays it after the source disappears',
 });
 it('steers the visual height toward a target that lands while the shot is travelling',()=>{
  const f=setup();cast(f);tick(f,20);const before=f.game.state.spellDeliveries[0].position.height;
- const web=coreAbilities.abilities.find(a=>a.id==='ability.core.web')!;
+ const web=testAbilities.abilities.find(a=>a.id==='ability.test.web')!;
  for(const op of releaseEffects(web,1,'enemy'))new SpellStatuses(f.game).apply(f.caster,f.target!,web,1,f.game.state.nextCast++,op);
  expect(f.game.spatial.airborne(f.game.context.get(f.target!)!)).toBe(false);tick(f);
  const shot=f.game.abilities.observedDeliveries()[0];expect(shot.position.height).toBeLessThan(before);expect(shot.direction.height).toBeLessThan(0);

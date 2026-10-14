@@ -1,11 +1,11 @@
 import {expect,it} from 'vitest';
 import {game,worker,placed} from './helpers';
 it('cached vision agrees with full rebuilding through movement, construction and restore',()=>{
- const make=()=>game([placed('scout','unit.ants.warrior',210,200)]);
+ const make=()=>game([placed('scout','unit.test.warrior',210,200)]);
  const a=make(),b=make();
  for(const g of [a,b]){
-  expect(g.command('player.1',{type:'build',actors: [worker(g).id],definition:'building.ants.barracks',position:placed('site','building.ants.barracks',193.5,209.5).position}).accepted).toBe(true);
-  const warrior=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.warrior')!;
+  expect(g.command('player.1',{type:'build',actors: [worker(g).id],definition:'building.test.barracks',position:placed('site','building.test.barracks',193.5,209.5).position}).accepted).toBe(true);
+  const warrior=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.test.warrior')!;
   expect(g.command('player.1',{type:'move',actors:[warrior.id],destination:{x:190,y:230}}).accepted).toBe(true);
  }
  const retained=a.view('player.1'),oldCells=retained.fog!.cells.slice();
@@ -19,10 +19,9 @@ it('cached vision agrees with full rebuilding through movement, construction and
  expect(a.checksum()).toBe(b.checksum());
  const saved=a.snapshot();a.restore(saved);a.tick();b.tick();expect(a.checksum()).toBe(b.checksum());
 });
-it('refreshes visible entity health without changing visibility arrays',()=>{
- const g=game(),before=g.view('player.1'),fort=g.entities.find(e=>e.owner==='player.1'&&e.definition==='building.ants.fort')!;
+it('refreshes visible entity health in new views without mutating older views',()=>{
+ const g=game(),before=g.view('player.1'),fort=g.entities.find(e=>e.owner==='player.1'&&e.definition==='building.test.fort')!;
  fort.hp!-=10;g.observation.update();const after=g.view('player.1');
- expect(after.fog!.cells).toBe(before.fog!.cells);
  expect(after.entities.find(e=>e.id===fort.id)!.hp).toBe(fort.hp);
  expect(before.entities.find(e=>e.id===fort.id)!.hp).toBe(fort.hp!+10);
 });

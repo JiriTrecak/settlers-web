@@ -1,12 +1,12 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.black-arrow')!;
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource} from './encounter-harness';
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.black-arrow')!;
 function fixture(health=100,patch={},settings={},rank=1){
- const a=abilitySchema.parse({...base,...patch}),f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({combat:true,relationship:'enemy',casterDefinition:'unit.ants.archer',distance:10,targetHealth:health,mana:40,...settings}));
+ const a=abilitySchema.parse({...base,...patch}),f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,testSettings({combat:true,relationship:'enemy',casterDefinition:'unit.test.archer',distance:10,targetHealth:health,mana:40,...settings}),false,encounterSource());
  const c=f.game.context.get(f.caster)!,t=f.game.context.get(f.target)!;f.game.command('player.2',{type:'hold',actors:[f.target]});
  c.abilities!.ranks.preview=rank;expect(f.game.abilities.cast(f.caster,'preview',f.caster)).toBeNull();return {...f,a,c,t};
 }
@@ -37,7 +37,7 @@ it('overkill arrows cannot overwrite the mark installed by the lethal hit',()=>{
 });
 it('full absorption and target removal produce no mark',()=>{
  for(const prevent of ['shield','removed']){const f=fixture(),m=shot(f);
- if(prevent==='removed')die(f);else if(prevent==='shield'){const a=coreAbilities.abilities.find(a=>a.id==='ability.core.absorption-shield')!;for(const op of releaseEffects(a,1,'ally'))new SpellStatuses(f.game).apply(f.target,f.target,a,1,f.game.state.nextCast++,op);}
+ if(prevent==='removed')die(f);else if(prevent==='shield'){const a=testAbilities.abilities.find(a=>a.id==='ability.test.absorption-shield')!;for(const op of releaseEffects(a,1,'ally'))new SpellStatuses(f.game).apply(f.target,f.target,a,1,f.game.state.nextCast++,op);}
  land(f,m);expect(f.t.spellStatuses?.some(s=>s.status==='shadowMark')??false).toBe(false);expect(spirits(f)).toHaveLength(0);}
 });
 it('a zero-bonus marking policy still pays and applies the status',()=>{
@@ -67,12 +67,12 @@ it('evasion prevents the paid mark without refunding mana',()=>{
 
 it('hostile spell immunity or an allied conversion prevents the mark without cancelling ordinary weapon damage',()=>{
  for(const prevention of ['ward','converted']){const f=fixture(),m=shot(f);
- if(prevention==='converted')f.t.owner='player.1';else {const a=coreAbilities.abilities.find(a=>a.id==='ability.core.spell-ward')!;for(const op of releaseEffects(a,1,'ally'))new SpellStatuses(f.game).apply(f.target,f.target,a,1,f.game.state.nextCast++,op);}
+ if(prevention==='converted')f.t.owner='player.1';else {const a=testAbilities.abilities.find(a=>a.id==='ability.test.spell-ward')!;for(const op of releaseEffects(a,1,'ally'))new SpellStatuses(f.game).apply(f.target,f.target,a,1,f.game.state.nextCast++,op);}
  land(f,m);expect(f.t.hp).toBeLessThan(100);expect(f.t.spellStatuses?.some(s=>s.status==='shadowMark')??false).toBe(false);
  }
 });
 it('melee enhancements share the mark-before-death path',()=>{
  const op=structuredClone(base.onRelease[0]);if(op.op!=='status')throw Error();op.combatModifiers!.attackBonus!.weapon='melee';
- const f=fixture(5,{onRelease:[op]},{casterDefinition:'unit.ants.warrior',distance:3});
+ const f=fixture(5,{onRelease:[op]},{casterDefinition:'unit.test.warrior',distance:3});
  for(let i=0;i<200&&!spirits(f).length;i++)f.game.tick();expect(spirits(f)).toHaveLength(1);expect(f.game.context.get(f.target)).toBeUndefined();
 });

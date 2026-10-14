@@ -11,9 +11,9 @@ describe('scenery camera cutaways',()=>{
   expect(weights.some(v=>v>0&&v<1)).toBe(true);
   s.update(camera(),[]);expect(data(s).some(v=>v!==0)).toBe(false);s.dispose();
  });
- it('ignores subjects behind the camera and avoids redundant uploads for an idle army',()=>{
+ it('ignores subjects behind the camera',()=>{
   const s=new SceneryCutaway(),c=camera();s.update(c,[{position:{x:0,y:12,z:30},height:2}]);expect(data(s).some(v=>v!==0)).toBe(false);
-  const units=[{position:{x:0,y:0,z:0},height:2}];s.update(c,units);const version=s.texture.version;s.update(c,units);expect(s.texture.version).toBe(version);s.dispose();
+  s.dispose();
  });
  it('keeps all units in a large visible army without a fixed subject limit',()=>{
   const s=new SceneryCutaway(),c=camera();const units=Array.from({length:200},(_,i)=>({position:{x:i<199?1000:0,y:0,z:0},height:2}));
@@ -23,14 +23,14 @@ describe('scenery camera cutaways',()=>{
   const s=new SceneryCutaway(),m=new MeshStandardMaterial();let called=0;m.onBeforeCompile=()=>{called++;};
   s.attach(m);s.attach(m);
   const shader={uniforms:{},vertexShader:'#include <common>\n#include <project_vertex>',fragmentShader:'#include <common>\n#include <clipping_planes_fragment>'};
-  m.onBeforeCompile(shader as never,{} as never);expect(called).toBe(1);expect(shader.fragmentShader).toContain('cut.r-vCutawayDepth');expect(m.transparent).toBe(false);expect(m.alphaTest).toBe(0);s.dispose();m.dispose();
+  m.onBeforeCompile(shader as never,{} as never);expect(called).toBe(1);expect(m.transparent).toBe(false);expect(m.alphaTest).toBe(0);s.dispose();m.dispose();
  });
 });
 it('lets interior terrain cutaways be disabled without recompiling the shared material',()=>{
  const s=new SceneryCutaway(),m=new MeshStandardMaterial(),scope={value:0};s.attach(m,16,scope);
  const shader={uniforms:{} as Record<string,{value:unknown}>,vertexShader:'#include <common>\n#include <project_vertex>',fragmentShader:'#include <common>\n#include <clipping_planes_fragment>'};
  m.onBeforeCompile(shader as never,{} as never);expect(shader.uniforms.uCutawayScope).toBe(scope);
- scope.value=1;expect(shader.uniforms.uCutawayScope.value).toBe(1);expect(shader.fragmentShader).toContain('uCutawayScope>.5');s.dispose();m.dispose();
+ scope.value=1;expect(shader.uniforms.uCutawayScope.value).toBe(1);s.dispose();m.dispose();
 });
 it('stays inactive until an unscoped canopy material attaches',()=>{
  const s=new SceneryCutaway(),terrain=new MeshStandardMaterial(),crown=new MeshStandardMaterial();

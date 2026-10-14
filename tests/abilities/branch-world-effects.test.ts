@@ -1,19 +1,21 @@
 import {expect,it,vi} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,type Effect} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
 
 const injured={kind:'resource',of:'caster',resource:'health',measure:'missing',comparison:'gt',value:0} as const;
 const heal:Effect={op:'heal',target:'caster',amount:100};
 const vision:Effect={op:'vision',id:'afterglow',target:'point',amount:20,radius:3,ignoreTerrain:false,detectInvisible:false,endsWithCaster:false};
 function fixture(name:string,onRelease:unknown[],patch={},settings={}){
- const base=coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!;
- const a=abilitySchema.parse({...base,onRelease,...patch}),p=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
- return {...createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',distance:6,mana:1000,...settings})),a};
+ const base=testAbilities.abilities.find(a=>a.id==='ability.test.'+name)!;
+ const a=abilitySchema.parse({...base,onRelease,...patch}),p=testAbilities.presentations.find(p=>p.id===base.presentation)!;
+ return {...createAbilityEncounter(a,p,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',distance:6,mana:1000,...settings}),false,testSource()),a};
 }
 function step(f:ReturnType<typeof fixture>,n=40){for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});}
-function baseOperation(name:string){return coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!.onRelease[0];}
+function baseOperation(name:string){return testAbilities.abilities.find(a=>a.id==='ability.test.'+name)!.onRelease[0];}
 
 it('validates only the selected arm and still rejects a selected blocked displacement',()=>{
  const name='blink';
@@ -29,7 +31,7 @@ it('validates only the selected arm and still rejects a selected blocked displac
  }
 });
 it('evaluates caster-operation branch conditions against the caster, not the enemy aim',()=>{
- const base=coreAbilities.abilities.find(a=>a.id==='ability.core.blink')!;
+ const base=testAbilities.abilities.find(a=>a.id==='ability.test.blink')!;
  const f=fixture('blink',[{op:'branch',condition:{kind:'relation',of:'target',to:'caster',is:'enemy'},then:[{...baseOperation('blink'),destination:'target'}],else:[heal]}],{targeting:{...base.targeting,kind:'unit',relations:['enemy'],radius:undefined}}, {casterHealth:400});
  const blocked=vi.spyOn(f.game.spatial,'nearest').mockReturnValue(null);
  expect(f.game.abilities.cast(f.caster,'preview',f.target!)).toBeNull();step(f);expect(f.game.context.get(f.caster)!.hp).toBe(500);blocked.mockRestore();
@@ -48,7 +50,7 @@ it('defers later conditional world checks when a preceding effect changes the br
  expect(f.game.abilities.observedEvents().some(e=>e.event==='teleported')).toBe(false);blocked.mockRestore();
 });
 it.each([false,true])('conditional reincarnation respects its arm (selected=%s) across a queued-death save',selected=>{
- const base=coreAbilities.abilities.find(a=>a.id==='ability.core.reincarnation')!;
+ const base=testAbilities.abilities.find(a=>a.id==='ability.test.reincarnation')!;
  const revive=base.triggers![0].operations[0];
  const patch={triggers:[{...base.triggers![0],operations:[{op:'branch',condition:{kind:'matches',of:'caster',filter:{heroes:selected}},then:[revive],else:[vision]}]}]};
  const f=fixture('reincarnation',base.onRelease,patch,{casterHero:true}),copy=fixture('reincarnation',base.onRelease,patch,{casterHero:true});

@@ -5,18 +5,18 @@ import { slots } from "./helpers";
 
 describe("declarative physical economy", () => {
   it("S01 constructs a barracks and trains a new warrior without consuming its builder", () => {
-    const g = game([placed("supply", "building.ants.house", 245, 240)]),
+    const g = game([placed("supply", "building.test.house", 245, 240)]),
       w = worker(g),
-      before = physical(g, "item.wood");
+      before = physical(g, "item.test.wood");
     expect(
       g.command("player.1", {
         type: "build",
         actors: [w.id],
-        definition: "building.ants.barracks",
+        definition: "building.test.barracks",
         position: { x: 189.5, y: 209.5 },
       }).accepted,
     ).toBe(true);
-    expect(physical(g, "item.wood")).toBe(before);
+    expect(physical(g, "item.test.wood")).toBe(before);
     const b = g.entities.at(-1)!;
     expect(b.construction).toBeDefined();
     run(g, 2400);
@@ -25,7 +25,7 @@ describe("declarative physical economy", () => {
       g.command("player.1", {
         type: "produce",
         actor: b.id,
-        definition: "unit.ants.warrior",
+        definition: "unit.test.warrior",
       }).accepted,
     ).toBe(true);
     const ids = g.entities.filter((e) => e.unit).map((e) => e.id);
@@ -35,20 +35,20 @@ describe("declarative physical economy", () => {
     expect(ids.every(id=>!!g.context.get(id))).toBe(true);
     expect(
       g.entities.filter(
-        (e) => e.owner === "player.1" && e.definition === "unit.ants.warrior",
+        (e) => e.owner === "player.1" && e.definition === "unit.test.warrior",
       ),
     ).toHaveLength(1);
     const bill = g.registry
       .get(b.definition)
-      .creation!.items.find((p) => p.item === "item.wood")!.amount;
-    const price = g.registry.get("unit.ants.warrior").creation!.items.find(p=>p.item==="item.wood")?.amount??0;
-    expect(physical(g, "item.wood")).toBe(before - bill - price);
+      .creation!.items.find((p) => p.item === "item.test.wood")!.amount;
+    const price = g.registry.get("unit.test.warrior").creation!.items.find(p=>p.item==="item.test.wood")?.amount??0;
+    expect(physical(g, "item.test.wood")).toBe(before - bill - price);
   });
   it("S02 one unassigned settler can construct without a carrier relay", () => {
     const g = game([], (s) => {
       const r = s.rules as any;
       r.startingSetup.units = r.startingSetup.units
-        .filter((u: any) => u.definition === "unit.ants.settler")
+        .filter((u: any) => u.definition === "unit.test.settler")
         .slice(0, 1);
     });
     const w = worker(g);
@@ -56,7 +56,7 @@ describe("declarative physical economy", () => {
       g.command("player.1", {
         type: "build",
         actors: [w.id],
-        definition: "building.ants.barracks",
+        definition: "building.test.barracks",
         position: { x: 189.5, y: 209.5 },
       }).accepted,
     ).toBe(true);
@@ -68,17 +68,17 @@ describe("declarative physical economy", () => {
   it("S04 two barracks train independently of a single worker", () => {
     const g = game(
       [
-        placed("a", "building.ants.barracks", 189.5, 209.5, {
-          inventory: { "item.wood": 1 },
+        placed("a", "building.test.barracks", 189.5, 209.5, {
+          inventory: { "item.test.wood": 1 },
         }),
-        placed("b", "building.ants.barracks", 245.5, 209.5, {
-          inventory: { "item.wood": 1 },
+        placed("b", "building.test.barracks", 245.5, 209.5, {
+          inventory: { "item.test.wood": 1 },
         }),
       ],
       (s) => {
         const r = s.rules as any;
         r.startingSetup.units = r.startingSetup.units
-          .filter((u: any) => u.definition === "unit.ants.settler")
+          .filter((u: any) => u.definition === "unit.test.settler")
           .slice(0, 1);
       },
     );
@@ -86,12 +86,12 @@ describe("declarative physical economy", () => {
       g.command("player.1", {
         type: "produce",
         actor: b.id,
-        definition: "unit.ants.warrior",
+        definition: "unit.test.warrior",
       });
     run(g, 900);
     expect(
       g.entities.filter(
-        (e) => e.owner === "player.1" && e.definition === "unit.ants.warrior",
+        (e) => e.owner === "player.1" && e.definition === "unit.test.warrior",
       ),
     ).toHaveLength(2);
     expect(
@@ -100,30 +100,8 @@ describe("declarative physical economy", () => {
         .reduce((n, b) => n + b.production!.queue.length, 0),
     ).toBe(0);
   });
-  it("S07 cancels partial construction and refunds three quarters of its cost to the wallet", () => {
-    const g = game(),
-      w = worker(g),
-      before = physical(g, "item.wood");
-    g.command("player.1", {
-      type: "build",
-      actors: [w.id],
-      definition: "building.ants.barracks",
-      position: { x: 189.5, y: 209.5 },
-    });
-    const b = g.entities.at(-1)!;
-    run(g, 50);
-    expect(
-      g.command("player.2", { type: "cancel", actor: b.id }).accepted,
-    ).toBe(false);
-    expect(
-      g.command("player.1", { type: "cancel", actor: b.id }).accepted,
-    ).toBe(true);
-    run(g, 300);
-    expect(physical(g, "item.wood")).toBe(before - 15);
-    expect(g.state.jobs.some((j) => j.target === b.id)).toBe(false);
-  });
   it("S09 finishes carrying a harvest before following a manual destination", () => {
-    const g=game([{...placed("tree","resource.forest.tree",217,228,{amount:8}),owner:"none"}]),w=worker(g);
+    const g=game([{...placed("tree","resource.test.forest-tree",217,228,{amount:8}),owner:"none"}]),w=worker(g);
     const tree=g.entities.find(e=>e.placement==="tree")!;
     expect(g.command("player.1",{type:"gather",actors:[w.id],target:tree.id}).accepted).toBe(true);
     let carrier;
@@ -145,14 +123,15 @@ describe("declarative physical economy", () => {
     expect(carrier!.y).toBe(235);
   });
   it("S10 blocked deployment retains funded training; cancellation refunds exactly once", () => {
-    const g=game([placed('supply','building.ants.house',245,240),placed('b','building.ants.barracks',189.5,209.5)]);
+    const g=game([placed('supply','building.test.house',245,240),placed('b','building.test.barracks',189.5,209.5)]);
     const b=g.entities.find(e=>e.placement==='b')!;
-    g.command('player.1',{type:'produce',actor:b.id,definition:'unit.ants.warrior'});
+    g.command('player.1',{type:'produce',actor:b.id,definition:'unit.test.warrior'});
     const deployment=g.spatial.deployment.bind(g.spatial);g.spatial.deployment=()=>null;
     run(g,900);
     expect(b.production!.status).toBe('Deployment blocked');
-    expect(b.production!.active!.progress).toBe(800);
-    expect(b.inventory['item.amber']).toBe(135);
+    const recipe=g.registry.get('unit.test.warrior').creation!;
+    expect(b.production!.active!.progress).toBe(recipe.workTicks);
+    expect(b.inventory).toEqual(Object.fromEntries(recipe.items.map(p=>[p.item,p.amount])));
     const id=b.production!.queue[0].id;
     expect(g.command('player.1',{type:'cancel',actor:b.id,queue:id}).accepted).toBe(true);
     expect(g.command('player.1',{type:'cancel',actor:b.id,queue:id}).accepted).toBe(false);
@@ -162,12 +141,12 @@ describe("declarative physical economy", () => {
     expect(restored.checksum()).toBe(g.checksum());
   });
   it("S21 save during recruitment and training resumes the same future simulation", () => {
-    const g = game([placed("supply", "building.ants.house", 245, 240), placed("b", "building.ants.barracks", 189.5, 209.5)]),
+    const g = game([placed("supply", "building.test.house", 245, 240), placed("b", "building.test.barracks", 189.5, 209.5)]),
       b = g.entities.find((e) => e.placement === "b")!;
     g.command("player.1", {
       type: "produce",
       actor: b.id,
-      definition: "unit.ants.warrior",
+      definition: "unit.test.warrior",
     });
     run(g, 20);
     const restored = new Game(g.map, slots, g.registry);

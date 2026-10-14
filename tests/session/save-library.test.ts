@@ -9,12 +9,13 @@ import {World} from '../../src/sim/world/world';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import {localMatch} from '../../src/shared/match/match';
 import {emptyPipeline} from '../../src/shared/save/save';
+import {testContent} from '../fixtures/content';
 import type {LoadedMapEntry} from '../../src/shared/map/library';
 function fixture(campaign=false){
  const source=campaign?missionFixture():emptyUtcMap();
  const map={...source,entities:source.entities.filter(e=>!campaign||!e.id.startsWith('tree.'))};
  const match=localMatch({mapId:campaign?'mission':'map',mapRevision:'rev',seed:19,slotCount:campaign?1:2,me:0});
- const world=new World({map,slots:match.slots,seed:match.seed});for(let i=0;i<15;i++)world.tick();
+ const world=new World({map,slots:match.slots,seed:match.seed,registry:testContent});for(let i=0;i<15;i++)world.tick();
  if(campaign)for(let i=0;i<600&&!world.settlement.state.mission?.dialogue?.remaining;i++)world.tick();
  const tick=world.clock.tickIndex;
  const entry:LoadedMapEntry={id:match.mapId,name:map.name,map,revision:'rev',players:match.slots.length,source:'project',overview:mapOverview(map)};
@@ -52,11 +53,11 @@ describe('mode-scoped local saves',()=>{
   expect(projection.project(world,0,false)).toEqual(world.view(0));
  });
  it('restores an active cinematic and rejects a damaged pipeline before replacing the running game',()=>{
-  const {entry,save,world}=fixture(true),restored=restoreSavedWorld(save,entry.map);
+  const {entry,save,world}=fixture(true),restored=restoreSavedWorld(save,entry.map,testContent);
   expect(restored.checksum()).toBe(world.checksum());
   expect(restored.settlement.state.mission?.dialogue?.cinematic).toBe(true);
-  expect(()=>restoreSavedWorld({...save,clients:[]},entry.map)).toThrow(/pipeline/);
-  expect(()=>restoreSavedWorld({...save,world:{}},entry.map)).toThrow();
+  expect(()=>restoreSavedWorld({...save,clients:[]},entry.map,testContent)).toThrow(/pipeline/);
+  expect(()=>restoreSavedWorld({...save,world:{}},entry.map,testContent)).toThrow();
   for(let i=0;i<410;i++){world.tick();restored.tick();}
   expect(restored.checksum()).toBe(world.checksum());
  });

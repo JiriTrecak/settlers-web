@@ -79,7 +79,6 @@
 .rts-command:hover,.rts-command[aria-pressed=true],.rts-inventory button:hover:not(:disabled),.rts-queued-task:hover:not(:disabled){filter:brightness(1.22);box-shadow:0 0 0 1px #b7a267,0 0 7px #d7bb6633}
 .rts-hud button:focus-visible,.rts-hud [tabindex]:focus-visible{outline:2px solid #e2d58c;outline-offset:2px}
 .rts-command[aria-disabled=true]{opacity:.42;cursor:default}
-.rts-command-name{display:none}
 .rts-command-cooldown{position:absolute;inset:12%;display:flex;align-items:center;justify-content:center;background:conic-gradient(from 0deg,#000c 0deg var(--cooldown),#0003 var(--cooldown) 360deg);color:#fff3d5;font:bold clamp(12px,6cqw,20px) Georgia,serif;text-shadow:0 1px 3px #000;pointer-events:none}
 .rts-command-banner{position:absolute;top:calc(100% + 4%);left:0;width:100%;height:12%;min-height:20px;display:flex;align-items:center;justify-content:center;gap:5px;padding:0 24px;background:radial-gradient(ellipse at top,#5b633c66,transparent 70%),var(--panel-color);border:0;border-radius:3px;overflow:visible}
 .rts-command-banner::after{inset:-7px -3px;background:var(--wood-bar) center/100% 100% no-repeat;border:0}

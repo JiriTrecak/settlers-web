@@ -4,7 +4,7 @@ import {
   observerStats,
 } from "../../src/presentation/observerStats";
 import { Game } from "../../src/sim/game/game";
-import { content } from "../../src/content/builtin";
+import { testContent as content } from "../fixtures/content";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { game, placed, slots, worker } from "./helpers";
 import type { ResourceDelivery } from "../../src/sim/game/economy";
@@ -12,7 +12,7 @@ import type { ResourceDelivery } from "../../src/sim/game/economy";
 const receipt = (
   tick: number,
   amount = 8,
-  item = "item.amber",
+  item = "item.test.amber",
   owner = "player.1",
 ): ResourceDelivery => ({ tick, amount, item, owner });
 describe("observer income", () => {
@@ -20,46 +20,46 @@ describe("observer income", () => {
     const income = new ObserverIncome();
     income.record(40, [
       receipt(40, 8),
-      receipt(40, 4, "item.wood"),
-      receipt(40, 2, "item.amber", "player.2"),
+      receipt(40, 4, "item.test.wood"),
+      receipt(40, 2, "item.test.amber", "player.2"),
     ]);
     income.record(1200, []);
     expect(income.observedSeconds).toBe(30);
-    expect(income.perMinute("player.1", "item.amber")).toBe(16);
-    expect(income.perMinute("player.1", "item.wood")).toBe(8);
-    expect(income.perMinute("player.2", "item.amber")).toBe(4);
+    expect(income.perMinute("player.1", "item.test.amber")).toBe(16);
+    expect(income.perMinute("player.1", "item.test.wood")).toBe(8);
+    expect(income.perMinute("player.2", "item.test.amber")).toBe(4);
     income.record(2400, []);
-    expect(income.perMinute("player.1", "item.amber")).toBe(8);
+    expect(income.perMinute("player.1", "item.test.amber")).toBe(8);
     income.record(2440, []);
-    expect(income.perMinute("player.1", "item.amber")).toBe(0);
+    expect(income.perMinute("player.1", "item.test.amber")).toBe(0);
   });
   it("ignores duplicate reads and stale receipts after a completed match", () => {
     const income = new ObserverIncome();
     income.record(40, [receipt(40)]);
     income.record(40, [receipt(40)]);
     income.record(80, [receipt(40)]);
-    expect(income.perMinute("player.1", "item.amber")).toBe(240);
+    expect(income.perMinute("player.1", "item.test.amber")).toBe(240);
   });
   it("starts a fresh sampling window when a save is loaded", () => {
     const income = new ObserverIncome();
     income.record(40, [receipt(40)]);
     income.reset(2000);
     expect(income.observedSeconds).toBe(0);
-    expect(income.perMinute("player.1", "item.amber")).toBe(0);
+    expect(income.perMinute("player.1", "item.test.amber")).toBe(0);
     income.record(2040, [receipt(2040, 2)]);
     income.record(3200, []);
-    expect(income.perMinute("player.1", "item.amber")).toBe(4);
+    expect(income.perMinute("player.1", "item.test.amber")).toBe(4);
   });
 });
 describe("observer score projection", () => {
   it("includes declared Root balances and income without counting undelivered cargo", () => {
     const g = game(), income = new ObserverIncome();
     const mound = g.context.get(g.state.objectives["player.1"])!;
-    g.state.wallets[mound.owner]["item.root"] = 70;
-    worker(g).unit!.cargo = {item: "item.root", amount: 10};
-    income.record(1200, [receipt(1200, 10, "item.root")]);
+    g.state.wallets[mound.owner]["item.test.root"] = 70;
+    worker(g).unit!.cargo = {item: "item.test.root", amount: 10};
+    income.record(1200, [receipt(1200, 10, "item.test.root")]);
     const row = observerStats(g.state, slots, content, income).players[0];
-    expect(row.resources.find(r => r.item === "item.root")).toEqual({item: "item.root", stored: 70, perMinute: 20});
+    expect(row.resources.find(r => r.item === "item.test.root")).toEqual({item: "item.test.root", stored: 70, perMinute: 20});
   });
   it("shows each hall balance separately; spending and refunds do not masquerade as income", () => {
     const g = game(),
@@ -68,27 +68,27 @@ describe("observer score projection", () => {
     const hall = g.context.get(g.state.objectives["player.1"])!;
     const initial = observerStats(g.state, slots, content, income);
     expect(initial.players[0].resources[0]).toEqual({
-      item: "item.amber",
-      stored: content.rules.startingSetup.inventory["item.amber"],
+      item: "item.test.amber",
+      stored: content.rules.startingSetup.inventory["item.test.amber"],
       perMinute: 16,
     });
-    g.state.wallets[hall.owner]["item.amber"] -= 20;
+    g.state.wallets[hall.owner]["item.test.amber"] -= 20;
     const spent = observerStats(g.state, slots, content, income);
     expect(spent.players[0].resources[0]).toEqual({
-      item: "item.amber",
-      stored: content.rules.startingSetup.inventory["item.amber"]-20,
+      item: "item.test.amber",
+      stored: content.rules.startingSetup.inventory["item.test.amber"]-20,
       perMinute: 16,
     });
-    g.state.wallets[hall.owner]["item.amber"] += 20;
-    worker(g).unit!.cargo = { item: "item.amber", amount: 8 };
+    g.state.wallets[hall.owner]["item.test.amber"] += 20;
+    worker(g).unit!.cargo = { item: "item.test.amber", amount: 8 };
     expect(
       observerStats(g.state, slots, content, income).players[0].resources[0]
         .stored,
-    ).toBe(content.rules.startingSetup.inventory["item.amber"]);
+    ).toBe(content.rules.startingSetup.inventory["item.test.amber"]);
     expect(initial.players[1].resources[0].perMinute).toBe(0);
   });
   it("counts contained and idle workers, excludes dead units, and retains fallen hero level", () => {
-    const g = game([placed("marshal", "unit.ants.marshal")]),
+    const g = game([placed("marshal", "unit.test.marshal")]),
       income = new ObserverIncome();
     const ownerUnits = g.entities.filter(
         (e) => e.owner === "player.1" && e.unit,
@@ -102,7 +102,7 @@ describe("observer score projection", () => {
     let row = observerStats(g.state, slots, content, income).players[0];
     expect(row.units).toBe(ownerUnits.length);
     expect(row.workers).toBe(workers);
-    w.definition = "unit.ants.warrior";
+    w.definition = "unit.test.warrior";
     row = observerStats(g.state, slots, content, income).players[0];
     expect(row.units).toBe(ownerUnits.length);
     expect(row.workers).toBe(workers - 1);
@@ -151,13 +151,13 @@ describe("economy delivery receipts", () => {
     const map = emptyUtcMap(),
       entities = map.playerStarts.flatMap((s) => [
         {
-          ...placed(`mine.${s.player}`, "building.neutral.amber-mine", s.x, s.z - 14),
+          ...placed(`mine.${s.player}`, "building.test.neutral-amber-mine", s.x, s.z - 14),
           owner: "none" as const,
         },
         {
           ...placed(
             `tree.${s.player}`,
-            "resource.forest.tree",
+            "resource.test.forest-tree",
             s.x + 8,
             s.z + 5,
             { amount: 8 },
@@ -204,14 +204,14 @@ describe("economy delivery receipts", () => {
     expect(sawReroutedDelivery).toBe(true);
     for (const owner of ["player.1", "player.2"]) {
       const hall = g.context.get(g.state.objectives[owner])!;
-      expect(totals.get(owner + "/item.amber")).toBe(
-        g.state.wallets[hall.owner]["item.amber"] - content.rules.startingSetup.inventory["item.amber"],
+      expect(totals.get(owner + "/item.test.amber")).toBe(
+        g.state.wallets[hall.owner]["item.test.amber"] - content.rules.startingSetup.inventory["item.test.amber"],
       );
-      expect(totals.get(owner + "/item.wood") ?? 0).toBe(
-        g.state.wallets[hall.owner]["item.wood"] - content.rules.startingSetup.inventory["item.wood"],
+      expect(totals.get(owner + "/item.test.wood") ?? 0).toBe(
+        g.state.wallets[hall.owner]["item.test.wood"] - content.rules.startingSetup.inventory["item.test.wood"],
       );
     }
-    expect(income.perMinute("player.1", "item.amber")).toBeGreaterThan(0);
+    expect(income.perMinute("player.1", "item.test.amber")).toBeGreaterThan(0);
     expect(g.snapshot()).not.toHaveProperty("deliveries");
   });
 });

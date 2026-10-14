@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { HeightField, emptyUtcMap, parseUtcMap, stringifyUtcMap, HEIGHT_ORIGIN, HEIGHT_VERTS } from '../../src/shared';
 import { decalAt, type GroundDecal } from '../../src/shared/landscape/decal';
-import { emptyLandscape } from '../../src/shared/landscape/curve';
 import { decalGeometry } from '../../src/render/decal/decalLayer';
 const decal:GroundDecal={id:'leaf-1',kind:'leaf-litter',x:10.3,z:12.8,size:5,rotation:37,opacity:.8};
 describe('ground decals',()=>{
@@ -16,11 +15,6 @@ describe('ground decals',()=>{
     expect(decalAt([decal,{...decal,id:'top'}],decal.x,decal.z)?.id).toBe('top');
     expect(decalAt([decal],decal.x+5,decal.z)).toBeUndefined();
   });
-  it.each(['root-rot','mycelium-bed'] as const)('retains authored %s through map serialization',kind=>{
-    const rot:GroundDecal={id:'rot',kind,x:64,z:65,size:28,rotation:18,opacity:.85};
-    const map={...emptyUtcMap(),landscape:{...emptyLandscape(),decals:[rot]}};
-    expect(parseUtcMap(JSON.parse(stringifyUtcMap(map)))?.landscape?.decals).toEqual([rot]);
-  });
   it('matches terrain vertices and diagonal before and after a height edit',()=>{
     const field=new HeightField();
     for(let z=0;z<HEIGHT_VERTS;z++)for(let x=0;x<HEIGHT_VERTS;x++)field.samples[z*HEIGHT_VERTS+x]=Math.sin(x*.6)*Math.cos(z*.5)*3;
@@ -31,7 +25,8 @@ describe('ground decals',()=>{
         expect(p.getY(i)).toBeCloseTo(field.samples[(z-HEIGHT_ORIGIN)*HEIGHT_VERTS+x-HEIGHT_ORIGIN]!+.012,5);
         expect(Number.isFinite(uv.getX(i))).toBe(true);
       }
-      const ids=Array.from(geo.index!.array);expect(ids.slice(0,6)).toEqual([0,Math.round(p.getX(p.count-1)-p.getX(0))+1,1,1,Math.round(p.getX(p.count-1)-p.getX(0))+1,Math.round(p.getX(p.count-1)-p.getX(0))+2]);
+      // The first quad splits along the same diagonal as the terrain grid (row stride = vertex columns).
+      const stride=Math.round(p.getX(p.count-1)-p.getX(0))+1;expect(Array.from(geo.index!.array).slice(0,6)).toEqual([0,stride,1,1,stride,stride+1]);
       geo.dispose();field.samples.forEach((v,i)=>field.samples[i]=v+2);
     }
   });

@@ -1,15 +1,15 @@
 import {expect,it} from 'vitest';
 import {abilitySchema} from '../../src/content/abilities/schema';
-import {coreAbilities} from '../../src/content/abilities/core';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {AbilityEffects} from '../../src/render/abilities/abilityEffects';
+import {testAbilities,testEffects} from '../fixtures/content';
+import {testSettings,encounterSource} from './encounter-harness';
 
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.absorption-shield')!;
-const presentation=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.absorption-shield')!;
+const presentation=testAbilities.presentations.find(p=>p.id===base.presentation)!;
 function fixture(policy?:'remove'|'retain',extra={},additional:unknown[]=[]){
  const ability=abilitySchema.parse({...base,onRelease:[{...base.onRelease[0],onShieldDepleted:policy,modifiers:{armor:5},...extra},...additional]});
- const f=createAbilityEncounter(ability,presentation,encounterSettingsSchema.parse({relationship:'ally',targetHealth:500,mana:1000}));
+ const f=createAbilityEncounter(ability,presentation,testSettings({relationship:'ally',targetHealth:500,mana:1000}),false,encounterSource());
  expect(f.game.abilities.cast(f.caster,'preview',f.target)).toBeNull();
  for(let i=0;i<15;i++)f.game.tick(undefined,{passiveUnits:true});
  return {...f,ability,targetEntity:()=>f.game.context.get(f.target)!,hit:(damage:number)=>f.game.combat.abilityHit({source:f.caster,target:f.target,damage,damageType:'spell'})};
@@ -22,7 +22,7 @@ it.each([undefined,'retain'] as const)('retains compound payload after exhaustio
  expect(f.hit(25).damage).toBe(25);
 });
 it('removes the exhausted compound status and its visuals and replays the boundary',()=>{
- const f=fixture('remove'),copy=fixture('remove'),fx=new AbilityEffects();
+ const f=fixture('remove'),copy=fixture('remove'),fx=new AbilityEffects(()=>testEffects);
  const target=f.targetEntity(),armor=f.game.context.stats(target).armor;
  try{
   fx.syncStatuses([target],15,()=>presentation);fx.update(15);expect(fx.liveCues).toBeGreaterThan(0);

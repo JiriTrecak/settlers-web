@@ -8,7 +8,7 @@ function fixture(rotation=0) {
     return {x,y};
   };
   const start=rotate(127,121),destination=rotate(134,121);
-  const g=game([placed('mover','unit.ants.warrior',start.x,start.y)]);
+  const g=game([placed('mover','unit.test.warrior',start.x,start.y)]);
   const mover=g.entities.find(e=>e.placement==='mover')!;
   const position=rotate(127.213,120.621);
   mover.unit!.position={x:Math.round(position.x*1000),y:Math.round(position.y*1000)};
@@ -38,7 +38,7 @@ it.each([0,1,2,3])('connects a mid-cell position to the A* corridor around a cor
 
 it('retains an existing route when traffic blocks the center connection',()=>{
   const {g,mover,start,destination}=fixture();
-  g.context.create(placed('hold','unit.ants.warrior',start.x,start.y));
+  g.context.create(placed('hold','unit.test.warrior',start.x,start.y));
   mover.unit!.route=[g.spatial.cell({x:125,y:120})];
   const before=structuredClone(mover.unit);
   expect(g.spatial.route(mover,destination,true)).toBe(false);

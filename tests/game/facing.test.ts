@@ -3,7 +3,7 @@ import {game,placed,castLifecycleSource} from './helpers';
 import {precise} from '../../src/sim/game/motion';
 import {heading,turnDifference,turnToward} from '../../src/sim/game/facing';
 it('turns toward the real next leg when a retry route starts with reached or repeated anchors',()=>{
- const g=game([placed('soldier','unit.ants.warrior',100,100)]),e=g.entities.find(e=>e.placement==='soldier')!;
+ const g=game([placed('soldier','unit.test.warrior',100,100)]),e=g.entities.find(e=>e.placement==='soldier')!;
  g.command(e.owner,{type:'move',actors:[e.id],destination:{x:110,y:100}});
  g.tick();e.rotation=0;
  const start=g.spatial.cell(e);
@@ -13,13 +13,13 @@ it('turns toward the real next leg when a retry route starts with reached or rep
  expect(precise(e)).toMatchObject({x:100,y:100});
  expect(e.unit!.lastMovedTick).toBeUndefined();
  expect(e.unit!.route).toEqual([g.spatial.cell({x:110,y:100})]);
- const restored=game([placed('soldier','unit.ants.warrior',100,100)]);restored.restore(g.snapshot());
+ const restored=game([placed('soldier','unit.test.warrior',100,100)]);restored.restore(g.snapshot());
  for(let i=0;i<4;i++){g.tick();restored.tick();}
  expect(e.rotation).toBe(90);expect(precise(e).x).toBeGreaterThan(100);
  expect(restored.checksum()).toBe(g.checksum());
 });
 it('reacts on the first order tick by turning, and only travels after facing the route',()=>{
- const g=game([placed('soldier','unit.ants.warrior',100,100)]),e=g.entities.find(e=>e.placement==='soldier')!;
+ const g=game([placed('soldier','unit.test.warrior',100,100)]),e=g.entities.find(e=>e.placement==='soldier')!;
  g.command('player.1',{type:'move',actors:[e.id],destination:{x:110,y:100}});g.tick();
  expect(e.rotation).toBe(18);expect(precise(e).x).toBe(100);
  for(let n=0;n<4;n++)g.tick();
@@ -29,25 +29,25 @@ it('reacts on the first order tick by turning, and only travels after facing the
  expect(e.rotation).toBe(108);expect(precise(e).x).toBe(before);
 });
 it('uses the short turn across north and preserves facing through saves',()=>{
- const g=game([placed('soldier','unit.ants.warrior',100,100)]),e=g.entities.find(e=>e.placement==='soldier')!;
+ const g=game([placed('soldier','unit.test.warrior',100,100)]),e=g.entities.find(e=>e.placement==='soldier')!;
  e.rotation=350;turnToward(e,{x:100,y:110},6);expect(e.rotation).toBe(356);
  turnToward(e,{x:100,y:110},6);expect(e.rotation).toBe(0);
  expect(turnDifference(5,355)).toBe(-10);
- const restored=game([placed('soldier','unit.ants.warrior',100,100)]);restored.restore(g.snapshot());expect(restored.checksum()).toBe(g.checksum());
+ const restored=game([placed('soldier','unit.test.warrior',100,100)]);restored.restore(g.snapshot());expect(restored.checksum()).toBe(g.checksum());
 });
 it('starts the attack windup only after facing the victim',()=>{
- const g=game([placed('a','unit.ants.warrior',100,100),{...placed('b','unit.ants.warrior',101,100),owner:'player.2'}]);
- const a=g.entities.find(e=>e.placement==='a')!,b=g.entities.find(e=>e.placement==='b')!;
+ const g=game([placed('a','unit.test.warrior',100,100),{...placed('b','unit.test.warrior',101,100),owner:'player.2'}]);
+ const a=g.entities.find(e=>e.placement==='a')!,b=g.entities.find(e=>e.placement==='b')!,hp=b.hp;
  g.command('player.1',{type:'attack',actors:[a.id],target:b.id});g.tick();
  expect(a.rotation).toBe(18);expect(a.unit!.attack).toBeUndefined();
  for(let n=0;n<4;n++)g.tick();
- expect(a.unit!.attack?.started).toBe(5);expect(b.hp).toBe(300);
+ expect(a.unit!.attack?.started).toBe(5);expect(b.hp).toBe(hp);
 });
 it('turns before a directional cast starts rather than snapping on the cast command',()=>{
  const g=game([],castLifecycleSource),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!;
- const id='ability.core.holy-light-lite';
+ const id='ability.test.holy-light-lite';
  const point={x:hero.x+2,y:hero.y};hero.rotation=270;
- const target=g.context.create({...placed('cast-target','unit.ants.warrior',point.x,point.y)});target.hp=100;g.observation.update();expect(g.abilities.cast(hero.id,'holy-light',target.id)).toBeNull();
+ const target=g.context.create({...placed('cast-target','unit.test.warrior',point.x,point.y)});target.hp=100;g.observation.update();expect(g.abilities.cast(hero.id,'holy-light',target.id)).toBeNull();
  expect(hero.rotation).toBe(270);expect(hero.abilities!.pending!.startTick).toBe(10);
  const casting=()=>g.view('player.1').entities.find(e=>e.id===hero.id)!.unit!.casting;
  expect(casting()).toBeUndefined();
@@ -57,7 +57,7 @@ it('turns before a directional cast starts rather than snapping on the cast comm
 });
 
 it('a replacement move cancels a turning cast immediately and refunds an unreleased spell',()=>{
- const g=game([],castLifecycleSource),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!,id='ability.core.holy-light-lite';
+ const g=game([],castLifecycleSource),hero=g.entities.find(e=>e.owner==='player.1'&&e.abilities)!,id='ability.test.holy-light-lite';
  hero.rotation=270;const mana=hero.abilities!.mana;
  hero.hp=100;g.abilities.cast(hero.id,'holy-light',hero.id);
  expect(hero.abilities!.pending).not.toBeNull();
@@ -73,7 +73,7 @@ it('an appended move waits for the spell instead of cancelling it',()=>{
 });
 
 it('reports locomotion only on ticks that travel, not while turning or blocked',()=>{
- const g=game([placed('soldier','unit.ants.warrior',100,100)]),e=g.entities.find(e=>e.placement==='soldier')!;
+ const g=game([placed('soldier','unit.test.warrior',100,100)]),e=g.entities.find(e=>e.placement==='soldier')!;
  const moving=()=>g.view('player.1').entities.find(v=>v.id===e.id)!.unit!.moving;
  g.command('player.1',{type:'move',actors:[e.id],destination:{x:110,y:100}});
  g.tick();expect(moving()).toBe(false);

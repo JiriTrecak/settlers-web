@@ -7,9 +7,8 @@ import {GameContext} from '../../src/sim/game/context';
 import {emptyState} from '../../src/sim/game/state';
 import {fixed,precise} from '../../src/sim/game/motion';
 import {ContentRegistry} from '../../src/content/registry';
-import {builtinSource} from '../../src/content/builtin';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
-import {placed,slots,run,compactBodySource} from './helpers';
+import {placed,slots,run,compactBodySource,source as testSource} from './helpers';
 import {Game} from '../../src/sim/game/game';
 import {heading} from '../../src/sim/game/facing';
 import {World} from '../../src/sim/world/world';
@@ -18,12 +17,12 @@ import {emptyMissionState} from '../../src/shared/scenario/schema';
 const map=()=>({...emptyUtcMap(),playerStarts:emptyUtcMap().playerStarts.map((s,i)=>({...s,x:201.5,z:i?81.5:201.5})),stamps:[{id:'arch',asset:'leafbound-twig-bridge',x:40,y:40}]});
 // This fixed arch isolates stacked-floor behavior using a 2-unit-tall body.
 // Shipped-body clearance and rejection have separate unit-bodies coverage.
-const registry=()=>{const source=structuredClone(builtinSource);compactBodySource(source);return new ContentRegistry(source);};
+const registry=()=>{const source=testSource();compactBodySource(source);return new ContentRegistry(source);};
 const setup=()=>new GameContext(emptyState(),registry(),map());
 function move(c:GameContext,n=1600){for(let i=0;i<n;i++){c.state.tick++;c.move();}}
 it('keeps indexed reservations on their walk surface, including distant yield pockets',()=>{
- const c=setup(),lower=c.create(placed('lower','unit.ants.warrior',40,40));
- const upper=c.create({...placed('upper','unit.ants.warrior',40,40),position:{x:40,y:40,surface:'arch'}});
+ const c=setup(),lower=c.create(placed('lower','unit.test.warrior',40,40));
+ const upper=c.create({...placed('upper','unit.test.warrior',40,40),position:{x:40,y:40,surface:'arch'}});
  const ground=c.spatial.cell(lower),deck=c.spatial.cell(upper),pocket=c.spatial.cell({x:40,y:43,surface:'arch'});
  upper.unit!.detour={goal:pocket,waypoint:pocket,points:[fixed(c.spatial.point(pocket))],yielding:{leader:lower.id,until:100}};
  c.spatial.beginUnitMovement();
@@ -36,14 +35,14 @@ it('keeps indexed reservations on their walk surface, including distant yield po
  }finally{c.spatial.endUnitMovement();}
 });
 it('moves under an occupied deck without collision or height snapping',()=>{
- const c=setup(),lower=c.create(placed('lower','unit.ants.warrior',30,40)),upper=c.create({...placed('upper','unit.ants.warrior',40,40),position:{x:40,y:40,surface:'arch'}});
+ const c=setup(),lower=c.create(placed('lower','unit.test.warrior',30,40)),upper=c.create({...placed('upper','unit.test.warrior',40,40),position:{x:40,y:40,surface:'arch'}});
  c.spatial.rebuild();expect(c.spatial.route(lower,{x:50,y:40},false)).toBe(true);
  expect(c.spatial.unitSegmentClear(fixed({x:39,y:40}),fixed({x:41,y:40}),lower.id)).toBe(true);
  move(c);expect(precise(lower)).toEqual({x:50,y:40});expect(upper.surface).toBe('arch');
 });
 it('keeps local collision snapshots separated by bridge deck height',()=>{
- const c=setup(),lower=c.create(placed('lower','unit.ants.warrior',39,40));
- c.create({...placed('upper','unit.ants.warrior',40,40),position:{x:40,y:40,surface:'arch'}});
+ const c=setup(),lower=c.create(placed('lower','unit.test.warrior',39,40));
+ c.create({...placed('upper','unit.test.warrior',40,40),position:{x:40,y:40,surface:'arch'}});
  c.spatial.rebuild();
  const probes=[
   [fixed({x:39,y:40}),fixed({x:41,y:40})],
@@ -60,7 +59,7 @@ it('keeps local collision snapshots separated by bridge deck height',()=>{
  c.spatial.endUnitMovement();
 });
 it('walks through an entrance onto the arch, can be interrupted there, and walks down again',()=>{
- const c=setup(),e=c.create(placed('walker','unit.ants.warrior',40,26));c.spatial.rebuild();
+ const c=setup(),e=c.create(placed('walker','unit.test.warrior',40,26));c.spatial.rebuild();
  expect(c.spatial.route(e,{x:40,y:40,surface:'arch'},false)).toBe(true);
  move(c);expect(precise(e)).toEqual({x:40,y:40,surface:'arch'});
  expect(c.spatial.height(precise(e))).toBeGreaterThan(3);
@@ -72,15 +71,15 @@ it('walks through an entrance onto the arch, can be interrupted there, and walks
 it('reaches the top from directly underneath by walking around to an end',()=>{
  // This low arch has 3.2 units of headroom: use the original 2-unit body here.
  // Enlarged-body rejection is covered separately in unit-bodies.test.ts.
- const source=structuredClone(builtinSource);compactBodySource(source);
- const c=new GameContext(emptyState(),new ContentRegistry(source),map()),e=c.create(placed('walker','unit.ants.warrior',40,40));c.spatial.rebuild();
+ const source=testSource();compactBodySource(source);
+ const c=new GameContext(emptyState(),new ContentRegistry(source),map()),e=c.create(placed('walker','unit.test.warrior',40,40));c.spatial.rebuild();
  expect(c.spatial.route(e,{x:40,y:40,surface:'arch'},false)).toBe(true);
  expect(e.unit!.route.length).toBeGreaterThan(2);
  move(c,2400);expect(precise(e)).toEqual({x:40,y:40,surface:'arch'});
 });
 
 it('keeps queued surface destinations and a mid-climb save deterministic',()=>{
- const m={...map(),entities:[placed('walker','unit.ants.warrior',40,26)]},g=new Game(m,slots,registry()),e=g.entities.find(e=>e.placement==='walker')!;
+ const m={...map(),entities:[placed('walker','unit.test.warrior',40,26)]},g=new Game(m,slots,registry()),e=g.entities.find(e=>e.placement==='walker')!;
  expect(g.command('player.1',{type:'move',actors:[e.id],destination:{x:40,y:40,surface:'arch'}}).accepted).toBe(true);
  expect(g.command('player.1',{type:'move',actors:[e.id],destination:{x:50,y:40},append:true}).accepted).toBe(true);
  run(g,110);expect(e.surface).toBe('arch');
@@ -91,7 +90,7 @@ it('keeps queued surface destinations and a mid-climb save deterministic',()=>{
  expect(()=>copy.restore(invalid)).toThrow(/surface/);
 });
 it('allows archers to see and shoot down, without revealing the upper deck to units below',()=>{
- const m={...map(),entities:[{...placed('archer','unit.ants.archer',43,40),position:{x:43,y:40,surface:'arch'}},{...placed('enemy','unit.ants.warrior',49,40),owner:'player.2' as const}]};
+ const m={...map(),entities:[{...placed('archer','unit.test.archer',43,40),position:{x:43,y:40,surface:'arch'}},{...placed('enemy','unit.test.warrior',49,40),owner:'player.2' as const}]};
  const g=new Game(m,slots,registry()),a=g.entities.find(e=>e.placement==='archer')!,b=g.entities.find(e=>e.placement==='enemy')!,hp=b.hp!;
  a.rotation=heading(a,b);
  expect(g.observation.visible('player.1',b)).toBe(true);expect(g.observation.visible('player.2',a)).toBe(false);
@@ -104,7 +103,7 @@ it('allows archers to see and shoot down, without revealing the upper deck to un
 });
 
 it('keeps neutral camp sight on the correct floor, then acquires troops at its own height',()=>{
- const m={...map(),entities:[{...placed('upper','unit.ants.warrior',43,40),position:{x:43,y:40,surface:'arch'}},{...placed('sentry','unit.neutral.spitter',49,40),owner:'none' as const}],camps:[{id:'sentries',members:['sentry'],home:{x:49,y:40},aggroRange:10,leash:15,aggression:'players' as const}]};
+ const m={...map(),entities:[{...placed('upper','unit.test.warrior',43,40),position:{x:43,y:40,surface:'arch'}},{...placed('sentry','unit.test.neutral-spitter',49,40),owner:'none' as const}],camps:[{id:'sentries',members:['sentry'],home:{x:49,y:40},aggroRange:10,leash:15,aggression:'players' as const}]};
  const g=new Game(m,slots,registry()),upper=g.entities.find(e=>e.placement==='upper')!,sentry=g.entities.find(e=>e.placement==='sentry')!;
  expect(g.command('player.1',{type:'hold',actors:[upper.id]}).accepted).toBe(true);
  run(g,32);expect(sentry.unit!.target).toBeNull();expect(sentry.unit!.route).toHaveLength(0);
@@ -121,7 +120,7 @@ it('sweeps body width beside an obstacle even on a map with elevated surfaces',(
 });
 
 it('keeps lower-floor memories when only the bridge above is visible',()=>{
- const m={...map(),entities:[placed('scout','unit.ants.archer',35,40),{...placed('tree','resource.forest.tree',40,40),owner:'none' as const}]};
+ const m={...map(),entities:[placed('scout','unit.test.archer',35,40),{...placed('tree','resource.test.forest-tree',40,40),owner:'none' as const}]};
  const g=new Game(m,slots,registry()),a=g.entities.find(e=>e.placement==='scout')!,tree=g.entities.find(e=>e.placement==='tree')!;
  g.observation.update();expect(g.view('player.1').entities.some(e=>e.id===tree.id)).toBe(true);
  a.x=40;a.y=40;a.surface='arch';a.unit!.position=fixed(a);g.observation.update();
@@ -133,7 +132,7 @@ it('keeps lower-floor memories when only the bridge above is visible',()=>{
 });
 
 it.each(['hidden','explored'] as const)('saves %s fog per floor while projecting a union for the minimap',initialExploration=>{
- const m={...map(),initialExploration,entities:[placed('scout','unit.ants.archer',35,40)]},g=new Game(m,slots,registry()),scout=g.entities.find(e=>e.placement==='scout')!;
+ const m={...map(),initialExploration,entities:[placed('scout','unit.test.archer',35,40)]},g=new Game(m,slots,registry()),scout=g.entities.find(e=>e.placement==='scout')!;
  g.observation.update();const below=g.view('player.1').fog!,cell=40*256+40,deck=g.spatial.cell({x:40,y:40,surface:'arch'});
  expect(below.cells[cell]).toBe(2);expect(below.floors!.cells[cell]).toBe(2);expect(below.floors!.cells[deck]).toBe(initialExploration==='hidden'?0:1);
  scout.x=40;scout.y=40;scout.surface='arch';scout.unit!.position=fixed(scout);g.observation.update();
@@ -146,7 +145,7 @@ it.each(['hidden','explored'] as const)('saves %s fog per floor while projecting
 
 it('reveals cinematic staging on its stacked floors without unveiling remote decks or exploring the map',()=>{
  const m={...map(),initialExploration:'hidden' as const};m.stamps.push({id:'remote-arch',asset:'leafbound-twig-bridge',x:100,y:100});
- const world=new World({map:m,slots,seed:1}),g=world.settlement;
+ const world=new World({map:m,slots,seed:1,registry:registry()}),g=world.settlement;
  g.state.mission={...emptyMissionState(),scene:{x:40,y:40}};
  const before=world.checksum(),normal=world.view(0).settlement.fog!,projection=new PresentationView();
  const local=g.spatial.cell({x:40,y:40,surface:'arch'}),remote=g.spatial.cell({x:100,y:100,surface:'remote-arch'});
@@ -159,31 +158,31 @@ it('reveals cinematic staging on its stacked floors without unveiling remote dec
 
 
 it('keeps loot on its deck and cannot pick it up through the floor',()=>{
- const c=setup(),hero=c.create({...placed('hero','unit.ants.marshal',40,40),position:{x:40,y:40,surface:'arch'}}),
-  lower=c.create({...placed('lower-item','item.barkguard',40,40),owner:'none'}),inventory=new Inventory(c);
+ const c=setup(),hero=c.create({...placed('hero','unit.test.marshal',40,40),position:{x:40,y:40,surface:'arch'}}),
+  lower=c.create({...placed('lower-item','item.test.barkguard',40,40),owner:'none'}),inventory=new Inventory(c);
  c.spatial.rebuild();c.state.tick=10;hero.unit!.order={type:'pickup',target:lower.id};
  inventory.advance();expect(c.get(lower.id)).toBe(lower);expect(hero.equipment!.every(i=>i===null)).toBe(true);
- hero.equipment![0]='item.thornband';expect(inventory.drop(hero,0)).toBeNull();
- const dropped=c.state.entities.find(e=>e.definition==='item.thornband')!;
+ hero.equipment![0]='item.test.thornband';expect(inventory.drop(hero,0)).toBeNull();
+ const dropped=c.state.entities.find(e=>e.definition==='item.test.thornband')!;
  expect(dropped.surface).toBe('arch');expect(c.spatial.height(dropped)).toBeGreaterThan(3);
  hero.unit!.order={type:'pickup',target:dropped.id};inventory.advance();
- expect(hero.equipment).toContain('item.thornband');expect(c.get(dropped.id)).toBeUndefined();
+ expect(hero.equipment).toContain('item.test.thornband');expect(c.get(dropped.id)).toBeUndefined();
 });
 
 
 it('revives a hero killed on a bridge onto the sanctuary landing',()=>{
- const c=setup(),hero=c.create({...placed('hero','unit.ants.marshal',40,40),position:{x:40,y:40,surface:'arch'}}),
- shrine=c.create(placed('shrine','building.ants.sanctuary',65,65)),revival=new Revival(c,new Economy(c));
+ const c=setup(),hero=c.create({...placed('hero','unit.test.marshal',40,40),position:{x:40,y:40,surface:'arch'}}),
+ shrine=c.create(placed('shrine','building.test.sanctuary',65,65)),revival=new Revival(c,new Economy(c));
  c.remove(hero);revival.retain(hero);c.state.tick=10;c.spatial.rebuild();
- c.create(placed('supply','building.ants.house',80,80));
- c.state.wallets[hero.owner]={'item.amber':200};expect(revival.enqueue(shrine,hero.id)).toBeNull();
+ c.create(placed('supply','building.test.house',80,80));
+ c.state.wallets[hero.owner]={'item.test.amber':200};expect(revival.enqueue(shrine,hero.id)).toBeNull();
  shrine.revival!.queue[0].progress=c.def(shrine).behaviors.revival!.workTicks;
  revival.tick();expect(hero.fallen).toBeUndefined();expect(hero.surface).toBeUndefined();
  expect(c.spatial.validPoint(hero)).toBe(true);expect(c.spatial.height(hero)).toBe(0);
 });
 
 it('routes a distant unit through sector portals onto the upper floor',()=>{
- const c=setup(),e=c.create(placed('distant','unit.ants.warrior',100,40));c.spatial.rebuild();
+ const c=setup(),e=c.create(placed('distant','unit.test.warrior',100,40));c.spatial.rebuild();
  const goal={x:40,y:40,surface:'arch'},start=c.spatial.cell(e),end=c.spatial.cell(goal);
  const corridor=c.spatial.sectors.corridor(start,end);expect(corridor).toBeTruthy();
  const path=c.spatial.findPath(start,end)!;expect(path.at(-1)).toBe(end);

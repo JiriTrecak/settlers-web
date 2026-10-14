@@ -154,12 +154,6 @@
   border: 1px solid #e6d7af;
   border-radius: 50%;
 }
-.skirmish-camp {
-  width: 5px;
-  height: 5px;
-  border: 1px solid #daa06d;
-  transform: rotate(45deg);
-}
 .skirmish-roster {
   padding: 24px 20px;
   border-left: 1px solid #72818233;

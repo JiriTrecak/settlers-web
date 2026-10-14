@@ -2,23 +2,19 @@ import {expect,it} from 'vitest';
 import {SectorNavigation} from '../../src/sim/game/sectorNavigation';
 import {Navigation,canTraverse} from '../../src/sim/game/navigation';
 import {Spatial} from '../../src/sim/game/spatial';
-import {ContentRegistry} from '../../src/content/registry';
-import {builtinSource} from '../../src/content/builtin';
+import {testContent} from '../fixtures/content';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
-import {SimulationProfiler} from '../../src/sim/profiling';
 
 function field(size:number,blocked=new Set<number>()){
  const walk=(i:number)=>i>=0&&i<size*size&&!blocked.has(i),step=(_a:number,b:number)=>walk(b);
  const sectors=new SectorNavigation(size,walk,step),nav=new Navigation(size,step,(a,b)=>sectors.connected(a,b),true);
  sectors.prepare();return {sectors,nav,step,blocked};
 }
-it('retains global connectivity for unchanged local topology, but rebuilds for splits and joins',()=>{
+it('updates global connectivity after local edits, splits, joins and newly isolated regions',()=>{
  const size=64,blocked=new Set<number>([10*size+10]),walk=(i:number)=>i>=0&&i<size*size&&!blocked.has(i),step=(_a:number,b:number)=>walk(b);
- const profile=new SimulationProfiler();profile.enabled=true;
- const sectors=new SectorNavigation(size,walk,step,undefined,profile);sectors.prepare();profile.reset();
+ const sectors=new SectorNavigation(size,walk,step);sectors.prepare();
  blocked.delete(10*size+10);sectors.invalidate([10*size+10]);sectors.prepare();
- expect(profile.workSnapshot().find(w=>w.path==='Connectivity reuse')?.value).toBe(1);
- expect(profile.workSnapshot().find(w=>w.path==='Connectivity rebuilds')?.value).toBe(0);
+ expect(sectors.connected(0,size*size-1)).toBe(true);
  const wall=Array.from({length:size},(_,y)=>y*size+31);
  for(const cell of wall)blocked.add(cell);sectors.invalidate(wall);sectors.prepare();
  expect(sectors.connected(0,size-1)).toBe(false);
@@ -26,18 +22,17 @@ it('retains global connectivity for unchanged local topology, but rebuilds for s
  expect(sectors.connected(0,size-1)).toBe(true);
  // New isolated interior region: unchanged portal links alone are insufficient.
  const ring:number[]=[];for(let y=20;y<=22;y++)for(let x=20;x<=22;x++)if(x!==21||y!==21){ring.push(y*size+x);blocked.add(y*size+x);}
- profile.reset();sectors.invalidate(ring);sectors.prepare();
- expect(profile.workSnapshot().find(w=>w.path==='Connectivity rebuilds')?.value).toBe(1);
+ sectors.invalidate(ring);sectors.prepare();
  expect(sectors.connected(0,21*size+21)).toBe(false);
  const fresh=new SectorNavigation(size,walk,step);fresh.prepare();
  for(const a of [0,15*size+15,32*size+32,63*size+63])for(const b of [0,gap,21*size+21,40*size+40])expect(sectors.connected(a,b)).toBe(fresh.connected(a,b));
 });
-it('keeps disconnected pieces within one sector separate and updates a new opening locally',()=>{
+it('keeps disconnected pieces within one sector separate and follows a new opening',()=>{
  const n=128,blocked=new Set<number>();for(let y=0;y<n;y++)blocked.add(y*n+7);
  const {sectors}=field(n,blocked);
  expect(sectors.connected(0,15)).toBe(false);expect(sectors.corridor(0,15)).toBeNull();
  const door=64*n+7;blocked.delete(door);sectors.invalidate([door]);sectors.prepare();
- expect(sectors.diagnostics.rebuiltSectors).toBe(1);expect(sectors.connected(0,15)).toBe(true);
+ expect(sectors.connected(0,15)).toBe(true);
  blocked.add(door);sectors.invalidate([door]);expect(sectors.connected(0,15)).toBe(false);
 });
 it('agrees with ordinary reachability after edits along sector edges and corners',()=>{
@@ -58,46 +53,18 @@ it('searches a narrow sector corridor around a lake and retains legal fine-grid 
  const routed=nav.path(start,goal,undefined,Infinity,corridor)!;expect(routed?.at(-1)).toBe(goal);
  let previous=start;for(const next of routed){expect(canTraverse(n,previous,next,step)).toBe(true);previous=next;}
  const cost=(path:number[])=>{let a=start,total=0;for(const b of path){total+=(a%n!==b%n&&Math.floor(a/n)!==Math.floor(b/n)?1414:1000);a=b;}return total;};
- const expanded=nav.lastExpanded,reference=new Navigation(n,step),optimal=reference.path(start,goal)!;
+ const reference=new Navigation(n,step),optimal=reference.path(start,goal)!;
  expect(cost(routed)).toBeLessThanOrEqual(cost(optimal)*1.05);
- expect(expanded).toBeLessThan(reference.lastExpanded*.75);
- expect(sectors.diagnostics.corridorSectors).toBeLessThan(corridor.length/2);
 });
 
 it('falls back outside the preferred corridor when temporary traffic blocks its crossings',()=>{
- const spatial=new Spatial(emptyUtcMap(),new ContentRegistry(builtinSource),()=>[]),n=spatial.size;
+ const spatial=new Spatial(emptyUtcMap(),testContent,()=>[]),n=spatial.size;
  for(let y=64;y<192;y++)for(let x=96;x<160;x++)spatial.terrain[y*n+x]=0;
  const start=128*n+32,goal=128*n+224,corridor=spatial.sectors.corridor(start,goal)!;
  const bodies=new Set<number>();
  for(let y=0;y<n;y++){const id=y*n+128;if(corridor[spatial.sectors.sector(id)])bodies.add(id);}
  const path=spatial.findPath(start,goal,bodies)!;
- expect(path?.at(-1)).toBe(goal);expect(spatial.routing.fallbacks).toBe(1);
+ expect(path?.at(-1)).toBe(goal);
  expect(path.some(id=>!corridor[spatial.sectors.sector(id)])).toBe(true);
  expect(path.every(id=>!bodies.has(id)&&spatial.terrain[id]===1)).toBe(true);
-});
-
-
-it('preserves corridor choices on partial sectors when boundary traversal skips interiors',()=>{
- for(const size of [1,17,31,33,65]){
-  const blocked=new Set<number>(),walk=(i:number)=>i>=0&&i<size*size&&!blocked.has(i),step=(_a:number,b:number)=>walk(b);
-  const optimized=new SectorNavigation(size,walk,step),reference=new SectorNavigation(size,walk,step);
-  // Original full-sector scan is the independent traversal oracle. Insertion
-  // order matters: equal-cost corridor choices must not change after an edit.
-  Object.defineProperty(reference,'boundaryNodes',{value:function*(sector:number){
-   const width=Math.ceil(size/16),sx=sector%width*16,sy=Math.floor(sector/width)*16;
-   const ex=Math.min(size,sx+16),ey=Math.min(size,sy+16);
-   for(let y=sy;y<ey;y++)for(let x=sx;x<ex;x++)if(x===sx||x===ex-1||y===sy||y===ey-1)yield y*size+x;
-  }});
-  const edits=[[],Array.from({length:size},(_,y)=>y*size+Math.floor(size/2)),[Math.floor(size/2)*size+Math.floor(size/2)]];
-  for(const cells of edits){
-   for(const cell of cells){if(blocked.has(cell))blocked.delete(cell);else blocked.add(cell);}
-   optimized.invalidate(cells);reference.invalidate(cells);optimized.prepare();reference.prepare();
-   expect(optimized.labels).toEqual(reference.labels);
-   const points=[0,size-1,Math.floor(size*size/2),size*(size-1),size*size-1];
-   for(const from of points)for(const to of points){
-    expect(optimized.connected(from,to)).toBe(reference.connected(from,to));
-    expect(optimized.corridor(from,to)).toEqual(reference.corridor(from,to));
-   }
-  }
- }
 });

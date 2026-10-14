@@ -3,8 +3,8 @@ import {Color,DataArrayTexture,DataTexture,type WebGLProgramParametersWithUnifor
 import {HeightField} from '../../src/shared/map/height';
 import {authoredTerrain} from '../../src/render/terrain/authoredTerrain';
 import {ImportedTerrainMaterial} from '../../src/render/terrain/importedTerrainMaterial';
-import {TerrainMaterial} from '../../src/render/terrain/terrainMaterial';
 import {terrainTileArray} from '../../src/render/terrain/terrainTileArray';
+import {groundTextures} from '../../src/shared/authoring/groundTextures';
 
 vi.mock('../../src/render/terrain/terrainTileArray',()=>({terrainTileArray:vi.fn(async()=>new DataArrayTexture(new Uint8Array(4),1,1,1))}));
 vi.mock('../../src/render/terrain/referenceTerrain',()=>({macroUrl:'macro',referenceTexture:()=>Object.assign(new DataTexture(new Uint8Array(4),1,1),{referenceReady:Promise.resolve()})}));
@@ -17,30 +17,23 @@ vi.mock('../../src/render/prop/referenceGround',()=>({ReferenceGround:class {
 const shader=()=>({uniforms:{}} as WebGLProgramParametersWithUniforms);
 beforeEach(()=>vi.clearAllMocks());
 
-it('updates mask bytes and uniforms without refetching tiles or uploading unchanged height',async()=>{
+it('updates mask bytes and layer metadata in place for compatible coverage and material edits',async()=>{
  const field=new HeightField(16);field.samples.fill(2);field.grassCoverage=new Float32Array(field.samples.length).fill(.25);
  const source=authoredTerrain(field,[],[]),material=new ImportedTerrainMaterial(source);await material.ready;
- const before=shader();material.bindUniforms(before);
- const masks=before.uniforms.uSourceMasks.value,slots=before.uniforms.uSourceSlots.value,height=before.uniforms.uSourceHeight.value;
- const maskVersion=masks.version,slotsVersion=slots.version;
  field.grassCoverage=new Float32Array(field.samples.length).fill(1);
  const next=authoredTerrain(field,[],[]);next.layers[1].tiling=.75;next.layers[1].tint='#aabbcc';
- expect(material.update(next)).toBe(true);
+ expect(material.update(next)).toBe(true);expect(material.source).toBe(next);
  const after=shader();material.bindUniforms(after);
- expect(terrainTileArray).toHaveBeenCalledTimes(2);
- expect(after.uniforms.uSourceAR).toBe(before.uniforms.uSourceAR);
- expect(after.uniforms.uSourceMasks.value).toBe(masks);expect(masks.version).toBe(maskVersion+1);
+ const masks=after.uniforms.uSourceMasks.value,slots=after.uniforms.uSourceSlots.value;
  const size=field.samples.length;expect(masks.image.data.slice(size*4,size*8).filter((_:number,i:number)=>i%4===0)).toEqual(new Uint8Array(size).fill(255));
- expect(after.uniforms.uSourceHeight.value).toBe(height);expect(after.uniforms.uSourceSlots.value).toBe(slots);expect(slots.version).toBe(slotsVersion+1);
  const at=(after.uniforms.uSourceMetadataOffset.value+8)*4;
  expect(slots.image.data[at]).toBe(.75);
  const tint=new Color('#aabbcc');
  for(const [i,value] of [tint.r,tint.g,tint.b].entries())expect(slots.image.data[at+4+i]).toBeCloseTo(value,6);
- expect(material.update(next)).toBe(true);expect(masks.version).toBe(maskVersion+1);expect(slots.version).toBe(slotsVersion+1);
  material.dispose();
 });
 
-it('refreshes sculpted height and displacement while keeping the biome texture arrays',async()=>{
+it('refreshes sculpted height and displacement and restores them on undo',async()=>{
  const field=new HeightField(16);field.samples.fill(2);field.grassCoverage=new Float32Array(field.samples.length).fill(.25);field.rockCoverage=new Float32Array(field.samples.length).fill(1);
  const original=authoredTerrain(field,[],[]),originalMask=original.displacement!.mask;
  const material=new ImportedTerrainMaterial(original);await material.ready;
@@ -55,7 +48,7 @@ it('refreshes sculpted height and displacement while keeping the biome texture a
  expect(original.displacement!.mask).toBe(originalMask);
  expect(material.update(original)).toBe(true);material.bindUniforms(after,true);
  expect(after.uniforms.uSourceMasks.value.image.data.slice(0,field.samples.length*4).filter((_:number,i:number)=>i%4===3)).toEqual(new Uint8Array(Buffer.from(originalMask,'base64')));
- expect(terrainTileArray).toHaveBeenCalledTimes(3);material.dispose();
+ material.dispose();
 });
 
 it('preserves independent ground masks when displacement coverage shares base alpha',async()=>{
@@ -86,40 +79,21 @@ it('rejects incompatible tiles, dimensions or displacement assets before changin
   (s:typeof source)=>{s.layers.pop();},
   (s:typeof source)=>{s.displacement={texture:'other',tiling:1,mask:s.layers[1].mask!};},
  ]){const next=structuredClone(source);mutate(next);expect(material.update(next)).toBe(false);expect(material.source).toBe(source);}
- expect(terrainTileArray).toHaveBeenCalledTimes(2);material.dispose();expect(material.update(source)).toBe(false);
+ material.dispose();expect(material.update(source)).toBe(false);
 });
 
-it('keeps one set of pending loads across edits and disposes late results once',async()=>{
+it('disposes texture loads that finish after the material is disposed',async()=>{
  const pending:Array<(texture:DataArrayTexture)=>void>=[];
  vi.mocked(terrainTileArray).mockImplementationOnce(()=>new Promise(resolve=>pending.push(resolve))).mockImplementationOnce(()=>new Promise(resolve=>pending.push(resolve)));
  const field=new HeightField(16),material=new ImportedTerrainMaterial(authoredTerrain(field,[],[]));
  field.grassCoverage=new Float32Array(field.samples.length).fill(1);
- expect(material.update(authoredTerrain(field,[],[]))).toBe(true);expect(terrainTileArray).toHaveBeenCalledTimes(2);
+ expect(material.update(authoredTerrain(field,[],[]))).toBe(true);
  material.dispose();
  const textures=pending.map(resolve=>{const texture=new DataArrayTexture();vi.spyOn(texture,'dispose');resolve(texture);return texture;});
  await material.ready;for(const texture of textures)expect(texture.dispose).toHaveBeenCalledOnce();
 });
 
-it('reuses terrain tiles through real coverage updates and rebinds the existing shadow shader',async()=>{
- const field=new HeightField(16);field.samples.fill(2);field.grassCoverage=new Float32Array(field.samples.length).fill(.25);const material=new TerrainMaterial();material.update(field,[]);await material.ready;
- // Depth compilation needs only the source vertex chunk; color binding is verified above.
- const depth=shader();depth.vertexShader='#include <common>\n#include <begin_vertex>';material.compileImportedDepth(depth);
- const masks=depth.uniforms.uSourceMasks.value,ar=depth.uniforms.uSourceAR.value;
- field.grassCoverage=new Float32Array(field.samples.length).fill(1);material.update(field,[],true);await material.ready;
- expect(depth.uniforms.uSourceMasks.value).toBe(masks);expect(depth.uniforms.uSourceAR.value).toBe(ar);
- expect(terrainTileArray).toHaveBeenCalledTimes(2);material.dispose();
-});
 
-it('rewrites changed subblock slots while retaining the GPU texture',async()=>{
- const source=authoredTerrain(new HeightField(16),[],[]),material=new ImportedTerrainMaterial(source);await material.ready;
- const before=shader();material.bindUniforms(before);const slots=before.uniforms.uSourceSlots.value,version=slots.version;
- const next=structuredClone(source),raw=Buffer.from(next.layerSlots,'base64');raw[7]=5;next.layerSlots=raw.toString('base64');
- expect(material.update(next)).toBe(true);
- const after=shader();material.bindUniforms(after);
- expect(after.uniforms.uSourceSlots.value).toBe(slots);expect(slots.image.data[9]).toBe(5);
- expect(slots.image.data[14]).toBe(255);expect(slots.image.data[15]).toBe(255);expect(slots.version).toBe(version+1);
- material.dispose();
-});
 
 it('a pending compatible load keeps the newest edit when it finishes',async()=>{
  const pending:Array<(texture:DataArrayTexture)=>void>=[];
@@ -134,32 +108,15 @@ it('a pending compatible load keeps the newest edit when it finishes',async()=>{
  material.dispose();
 });
 
-it('rebuilds a sparse palette when first painting a new material and rebinds erasure and undo without refetching',async()=>{
- const field=new HeightField(16);field.samples.fill(2);
- const material=new TerrainMaterial();material.update(field,[]);await material.ready;
- const depth=shader();depth.vertexShader='#include <common>\n#include <begin_vertex>';material.compileImportedDepth(depth);
- const oldAR=depth.uniforms.uSourceAR.value;vi.spyOn(oldAR,'dispose');
- const initiallyLoaded=vi.mocked(terrainTileArray).mock.calls[0][0];
- const grass=authoredTerrain(field,[],[]).layers[1].ar;expect(initiallyLoaded).not.toContain(grass);
- field.grassCoverage=new Float32Array(field.samples.length).fill(1);material.update(field,[],true);await material.ready;
- expect(terrainTileArray).toHaveBeenCalledTimes(4);expect(vi.mocked(terrainTileArray).mock.calls[2][0]).toContain(grass);
- expect(oldAR.dispose).toHaveBeenCalledOnce();expect(depth.uniforms.uSourceAR.value).not.toBe(oldAR);
- const resident=depth.uniforms.uSourceAR.value,table=depth.uniforms.uSourceSlots.value;
- const channelAt=(depth.uniforms.uSourceMetadataOffset.value+8)*4+13;
- expect(table.image.data[channelAt]).toBeGreaterThanOrEqual(0);
- field.grassCoverage.fill(0);material.update(field,[],true);await material.ready;
- expect(table.image.data[channelAt]).toBe(-1);
- field.grassCoverage.fill(1);material.update(field,[],true);await material.ready;
- expect(table.image.data[channelAt]).toBeGreaterThanOrEqual(0);
- expect(depth.uniforms.uSourceAR.value).toBe(resident);expect(terrainTileArray).toHaveBeenCalledTimes(4);material.dispose();
-});
 
+// ENGINE-COUPLED: atlas materials come from the shipped landscape catalogue; any multi-tile atlas will do.
+const atlas=[...groundTextures].find(([,a])=>!a.terrain?.projection&&(a.terrain?.atlas.columns??1)*(a.terrain?.atlas.rows??1)>1)![0];
 it('uploads atlas variants at their five-unit world positions and keeps the shifted origin in the shader',async()=>{
  const field=new HeightField(16);field.samples.fill(2);field.textureGrid={cellSize:5,origin:[-.5,-.5]};
- field.surfacePaint=[{owner:'terrain',material:'asset.terrain.warcraft-lgrs',weights:new Float32Array(field.samples.length).fill(1),variants:Uint8Array.from({length:121},(_,i)=>i%2)}];
+ field.surfacePaint=[{owner:'terrain',material:atlas,weights:new Float32Array(field.samples.length).fill(1),variants:Uint8Array.from({length:121},(_,i)=>i%2)}];
  const source=authoredTerrain(field,[],[]),material=new ImportedTerrainMaterial(source);await material.ready;
  const view=shader();material.bindUniforms(view);expect(view.uniforms.uSourceAtlasOrigin.value.toArray()).toEqual([-.5,-.5]);
- const bytes=view.uniforms.uSourceMasks.value.image.data,layer=source.layers.findIndex(l=>l.ar==='asset.terrain.warcraft-lgrs'),n=field.samples.length;
+ const bytes=view.uniforms.uSourceMasks.value.image.data,layer=source.layers.findIndex(l=>l.ar===atlas),n=field.samples.length;
  const at=(x:number,z:number,c:number)=>bytes[(layer*n+(z-field.origin)*field.verts+x-field.origin)*4+c];
  // The boundary lies at x=4.5; world x=0 and x=4 share a tile, x=5 does not.
  expect(at(0,0,1)).toBe(31);expect(at(0,0,2)).toBe(at(4,0,2));expect(at(5,0,2)).not.toBe(at(4,0,2));

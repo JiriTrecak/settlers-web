@@ -14,20 +14,6 @@
   ],
   "resources": [
     {
-      "role": "build",
-      "index": 1,
-      "format": "json",
-      "sha256": "c0307cbf1f17af79f41f032e3a8343cb744b57948757e23e87e293f93a078084",
-      "bytes": 866
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "100b700df50cb5438fb471d1097d46e4e2ce9fc171367fb0b46c1926062b2afe",
-      "bytes": 370
-    },
-    {
       "role": "geometry",
       "index": 1,
       "format": "glb",
@@ -42,46 +28,11 @@
       "bytes": 8224
     },
     {
-      "role": "preview",
-      "index": 1,
-      "format": "png",
-      "sha256": "e20b654122a47a094ada3a699d7a62035803c9e2337b9528b2a5a964b4d5b5f9",
-      "bytes": 694941
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "db6019de42ca848b92938e1a1d3008532e69e9639bd40715097debf18fe504f3",
-      "bytes": 5300
-    },
-    {
-      "role": "reference",
-      "index": 1,
-      "format": "png",
-      "sha256": "be2c7cb13a2699da1a439480b8b47b65ad578cbc8e3690ac444549fccc4ff5d0",
-      "bytes": 2237251
-    },
-    {
       "role": "source",
       "index": 1,
       "format": "blend",
       "sha256": "28d1d52339d64126011e44a6866e36722aa1c6f57ffa671649cac7b069cf58d7",
       "bytes": 13734714
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "md",
-      "sha256": "426fda91746ab882ef226c5e6ba47dfe25d4ec2b30d633c59784aee3e2ccdf43",
-      "bytes": 649
-    },
-    {
-      "role": "source",
-      "index": 3,
-      "format": "glb",
-      "sha256": "d6e571c73faa35bf2ec96fb0967677d307b5f6e0b5d411b533e6ceec8eb74d5a",
-      "bytes": 12671408
     }
   ],
   "usesGeometry": true,
@@ -130,10 +81,6 @@
   },
   "provenance": {
     "method": "generated",
-    "licenseNote": "Original artwork created for Under the Canopy.",
-    "generation": {
-      "role": "generation",
-      "index": 1
-    }
+    "licenseNote": "Original artwork created for Under the Canopy."
   }
 }

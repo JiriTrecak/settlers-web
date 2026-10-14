@@ -67,4 +67,11 @@ describe("utcmap", () => {
     ).toMatch(/landscape/);
     expect(error(emptyUtcMap())).toBeNull();
   });
+  it("round-trips optional map descriptions and rejects malformed metadata", () => {
+    const map = emptyUtcMap(), described = { ...map, description: "An ancient woodland." };
+    expect(parseUtcMap(JSON.parse(stringifyUtcMap(described)))?.description).toBe(described.description);
+    expect(parseUtcMap(map)?.description).toBeUndefined();
+    expect(parseUtcMap({ ...map, description: 99 })).toBeNull();
+    expect(parseUtcMap({ ...map, description: "a".repeat(1201) })).toBeNull();
+  });
 });

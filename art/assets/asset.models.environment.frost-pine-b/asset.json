@@ -25,13 +25,6 @@
       "bytes": 236370
     },
     {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "586d790715126af130c274c94c5d1281e4e83ae1e6dc604f2ce6a476c9523458",
-      "bytes": 458
-    },
-    {
       "role": "geometry",
       "index": 1,
       "format": "glb",
@@ -127,10 +120,6 @@
   },
   "provenance": {
     "method": "authored",
-    "licenseNote": "Original artwork created for Under the Canopy.",
-    "generation": {
-      "role": "generation",
-      "index": 1
-    }
+    "licenseNote": "Original artwork created for Under the Canopy."
   }
 }

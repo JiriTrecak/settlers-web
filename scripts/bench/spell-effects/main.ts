@@ -2,7 +2,7 @@ import {Scene,WebGLRenderer,PerspectiveCamera,Mesh,MeshStandardMaterial,BoxGeome
 import {EffectPlayer} from '../../../src/render/abilities/effectPlayer';
 import {coreEffects} from '../../../src/content/effects/library';
 import {effectWarmModels} from '../../../src/render/settlement/effectWarmup';
-const ids=['effect.core.holy-light-lite.released-1','effect.core.blizzard.wavestarted','effect.marshal.carapace.cast','effect.marshal.crownfall.impact','effect.rootbreaker.uproot','effect.core.inferno'];
+const ids=['effect.core.holy-light-lite.released-1','effect.ants.resin-explosion','effect.marshal.carapace.cast','effect.marshal.crownfall.impact','effect.rootbreaker.uproot','effect.marshal.faultline.hit'];
 const effects=ids.map(id=>{const effect=coreEffects.find(e=>e.id===id);if(!effect)throw Error('Missing benchmark effect: '+id);return effect;});
 const scene=new Scene(),camera=new PerspectiveCamera(45,640/400,.1,200),gl=new WebGLRenderer({antialias:true});gl.setSize(640,400);document.querySelector('#view')!.append(gl.domElement);camera.position.set(15,20,26);camera.lookAt(0,0,0);
 scene.add(new HemisphereLight(0xffffff,0x444444,2));const sun=new DirectionalLight(0xffffff,3);sun.position.set(8,15,10);scene.add(sun);

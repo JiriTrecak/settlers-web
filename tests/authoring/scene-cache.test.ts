@@ -9,6 +9,8 @@ import {proceduralFixture} from './fixture';
 import {parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
 import * as generators from '../../src/shared/authoring/generate';
 
+// ENGINE-COUPLED: the production compiler worker/runtime imports the shipped landscape catalogue
+// (src/shared/authoring/project.ts `landscapeAssets`) with no injection point, so direct compiles here use it too.
 it('loads a saved map in fresh workers without persistent artifacts or generators, preserving byte water buffers',async()=>{
  const preview=proceduralFixture(),compiled=compileMapScene(preview,landscapeAssets),history=new AuthoringHistory(preview.authoring!);history.apply(compiled);
  const text=stringifyUtcMap({...preview,authoring:history.document}),generate=vi.spyOn(generators,'generateScene');

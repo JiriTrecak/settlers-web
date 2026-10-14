@@ -19,25 +19,11 @@
       "bytes": 1053651
     },
     {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "1742ef34fee0d8e16b2ee9ea45c5e566dd068399934002573ab812f5516e760d",
-      "bytes": 366
-    },
-    {
       "role": "geometry",
       "index": 1,
       "format": "glb",
       "sha256": "d8a8daa7f6e7a396bf3aa32112bbc3ecaa1986bc7519beea35f934ee711484d6",
       "bytes": 1057948
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "0b2c9e2781d9b3be2cc0e557f6ae54c385efc1567ebbf206f7881f23ecabc0eb",
-      "bytes": 6743
     },
     {
       "role": "source",
@@ -88,10 +74,6 @@
   },
   "provenance": {
     "method": "import",
-    "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized.",
-    "generation": {
-      "role": "generation",
-      "index": 1
-    }
+    "licenseNote": "Adapted from the purchased PL Stylized Fantasy Foliage Environment Assets Pack (licensed for this project); mesh rescaled and re-pivoted, albedo downsized."
   }
 }

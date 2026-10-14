@@ -2,17 +2,19 @@ import {expect,it} from 'vitest';
 import {Room,Lockstep,MemoryChannel} from '../../src/net';
 import {World} from '../../src/sim/world/world';
 import {localMatch} from '../../src/shared';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
 
 it.each([
- {name:'vampiric-aura',namespace:'core',baseline:0,stat:'lifestealPermille' as const,amount:150},
- {name:'thorns-aura',namespace:'core',baseline:0,stat:'meleeReflectionPermille' as const,amount:200},
- {name:'rally',namespace:'marshal',baseline:1000,stat:'moveSpeedPermille' as const,amount:1080},
-])('$name reconstructs recipient membership through delayed movement, source death and peer restoration',({name,namespace,baseline,stat,amount})=>{
- const ability=coreAbilities.abilities.find(a=>a.id==='ability.'+namespace+'.'+name)!,presentation=coreAbilities.presentations.find(p=>p.id===ability.presentation)!;
- const f=createAbilityEncounter(ability,presentation,encounterSettingsSchema.parse({relationship:'ally',combat:true,distance:6,casterHealth:1,targetHealth:500}));
+ {name:'vampiric-aura',baseline:0,stat:'lifestealPermille' as const,amount:150},
+ {name:'thorns-aura',baseline:0,stat:'meleeReflectionPermille' as const,amount:200},
+ {name:'marshal-rally',baseline:1000,stat:'moveSpeedPermille' as const,amount:1080},
+])('$name (stat baseline $baseline) reconstructs recipient membership through delayed movement, source death and peer restoration',({name,baseline,stat,amount})=>{
+ const ability=testAbilities.abilities.find(a=>a.id==='ability.test.'+name)!,presentation=testAbilities.presentations.find(p=>p.id===ability.presentation)!;
+ const f=createAbilityEncounter(ability,presentation,encounterSettingsSchema.parse({...encounterUnits,relationship:'ally',combat:true,distance:6,casterHealth:1,targetHealth:500}),false,testSource());
  const enemy=f.game.context.create({id:'hunter',definition:'unit.preview.target',owner:'player.2',position:{x:150,y:140},rotation:270});
  const opts={map:f.game.map,slots:f.game.slots,registry:f.game.registry,seed:42};
  const worlds=[new World(opts),new World(opts)];for(const w of worlds)w.settlement.restore(f.game.snapshot());

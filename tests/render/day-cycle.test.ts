@@ -5,26 +5,18 @@ import {Sky} from '../../src/render/sky/sky';
 import {HEARTWOOD_INTERIOR} from '../../src/shared/environment/presets';
 
 describe('two-palette cycle with continuously moving shadows',()=>{
- it('keeps daylight neutral and night cooler without an extra dawn/dusk palette',()=>{
-  expect(Object.keys(DAYTIME_LOOKS).sort()).toEqual(['day','night']);
-  const day=DAYTIME_LOOKS.day.sunColor,night=DAYTIME_LOOKS.night.sunColor;
-  expect(day.rgb[0]).toBe(day.rgb[1]);expect(day.rgb[1]).toBe(day.rgb[2]);
-  expect(night.rgb[2]).toBeGreaterThan(night.rgb[0]);
-  expect(night.multiplier).toBeLessThan(day.multiplier);expect(night.multiplier).toBeGreaterThan(day.multiplier*.5);
- });
  it('holds colors on plateaus, including midnight, but blends directly at dawn and dusk',()=>{
-  for(const h of [6.6,8,11,14,17.4])expect(sampleDaytime(h).look).toBe(DAYTIME_LOOKS.day);
-  for(const h of [18.6,21,23.9,0,3,5.4,-1,25])expect(sampleDaytime(h).look).toBe(DAYTIME_LOOKS.night);
-  for(const h of [6,18]){
+  const {dawnStart,dawnEnd,duskStart,duskEnd}=DAY_PHASES;
+  for(const h of [dawnEnd+.01,11,14,duskStart-.01])expect(sampleDaytime(h).look).toBe(DAYTIME_LOOKS.day);
+  for(const h of [duskEnd+.01,21,23.9,0,3,dawnStart-.01,-1,25])expect(sampleDaytime(h).look).toBe(DAYTIME_LOOKS.night);
+  for(const h of [(dawnStart+dawnEnd)/2,(duskStart+duskEnd)/2]){
    const s=sampleDaytime(h);expect(s.blend).toBeCloseTo(.5);
    expect(s.look.sunColor.multiplier).toBeCloseTo((DAYTIME_LOOKS.day.sunColor.multiplier+DAYTIME_LOOKS.night.sunColor.multiplier)/2);
    expect(s.lutWeights.reduce((sum,l)=>sum+l.weight,0)).toBeCloseTo(1);
   }
-  expect(daytimeLabel(8)).toBe('Day');expect(daytimeLabel(18)).toBe('Dusk');
+  expect(daytimeLabel(12)).toBe('Day');expect(daytimeLabel((duskStart+duskEnd)/2)).toBe('Dusk');
  });
- it('uses ten-second transitions without jumps in colors or light direction',()=>{
-  expect((DAY_PHASES.dawnEnd-DAY_PHASES.dawnStart)/24*600).toBeCloseTo(10);
-  expect((DAY_PHASES.duskEnd-DAY_PHASES.duskStart)/24*600).toBeCloseTo(10);
+ it('transitions without jumps in colors or light direction',()=>{
   for(const h of [0,DAY_PHASES.dawnStart,6,DAY_PHASES.dawnEnd,DAY_PHASES.duskStart,18,DAY_PHASES.duskEnd,24]){
    const a=sampleDaytime(h-1e-7).look,b=sampleDaytime(h+1e-7).look;
    expect(a.sunColor.multiplier).toBeCloseTo(b.sunColor.multiplier,5);

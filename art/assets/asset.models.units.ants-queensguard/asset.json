@@ -20,13 +20,6 @@
       "bytes": 2368731
     },
     {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "4f0f8c92a9809041ff761a1c20abc4a3cfa320f010809ff0566b888715b9dc44",
-      "bytes": 909
-    },
-    {
       "role": "geometry",
       "index": 1,
       "format": "glb",
@@ -41,74 +34,11 @@
       "bytes": 15768
     },
     {
-      "role": "preview",
-      "index": 1,
-      "format": "png",
-      "sha256": "9103390d1f7d5745c3e05f4c608dd07b71d5b72bea3d7b7c26350cd8f3fafdbd",
-      "bytes": 605824
-    },
-    {
-      "role": "preview",
-      "index": 2,
-      "format": "png",
-      "sha256": "3807e41fb08181df0dfc6659a4d032a565a3b84537d1c020d868d029f9b6610a",
-      "bytes": 591369
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "5cad9f76d0587f6a0bebd36da851e828f837e597e9650c690c6fb4144fc8081d",
-      "bytes": 7633
-    },
-    {
-      "role": "recipe",
-      "index": 2,
-      "format": "py",
-      "sha256": "55cb274330705a411be8de299ae891e0f425df103a7eef100452fef2a8bb1e4a",
-      "bytes": 10230
-    },
-    {
-      "role": "recipe",
-      "index": 3,
-      "format": "py",
-      "sha256": "35da7fae14d036acaa6464b09c5b413356acdde6f461f4a2ec5a6e2501ee7062",
-      "bytes": 1979
-    },
-    {
-      "role": "recipe",
-      "index": 4,
-      "format": "py",
-      "sha256": "6cb6f384a08d502ed1b3b0927c5cc17fda5b6c3220f740ba9f4b153c9709605d",
-      "bytes": 2043
-    },
-    {
-      "role": "reference",
-      "index": 1,
-      "format": "png",
-      "sha256": "5a7c3aee0031b59d5cb28a1718b2e258be309a7cb2e422fec06901f798815e3c",
-      "bytes": 1520203
-    },
-    {
       "role": "source",
       "index": 1,
       "format": "blend",
       "sha256": "a8dd4043352c0025d114289ae5615533e928793cfc05a027252b249f2ac1c721",
       "bytes": 37831165
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "glb",
-      "sha256": "43acf3e55888566ecad8156dee61c7f5878a9f1f2d9486e8a0bdc06bee5681ba",
-      "bytes": 8126464
-    },
-    {
-      "role": "source",
-      "index": 3,
-      "format": "json",
-      "sha256": "a4a79b5df3269c6e6561ce94884431527f4a3028a0b48f149b464d25c8ecf5ea",
-      "bytes": 6264
     },
     {
       "role": "team_mask",

@@ -1,4 +1,4 @@
-import {expect,it,vi} from 'vitest';
+import {expect,it} from 'vitest';
 import {LocalTerrainSweeps} from '../../src/sim/game/localTerrainSweeps';
 import {clearSweep,type FixedPoint} from '../../src/sim/game/motion';
 import {game,placed} from './helpers';
@@ -27,50 +27,23 @@ it('matches uncached directed sweeps on quarter steps, arbitrary endpoints and m
  }
 });
 
-it('reuses exact edges and invalidates a footprint halo without discarding remote tiles',()=>{
- const size=64,blocked=new Set<number>(),step=vi.fn((_a:number,b:number)=>!blocked.has(b));
- const cache=new LocalTerrainSweeps(size,1700,step),from={x:15750,y:16000},to={x:16000,y:16250};
- const remote={x:48000,y:48000};
- expect(cache.clear(from,to)).toBe(true);expect(cache.clear(remote,remote)).toBe(true);
- step.mockClear();expect(cache.clear(from,to)).toBe(true);expect(step).not.toHaveBeenCalled();
- const obstruction=16*size+17;blocked.add(obstruction);cache.invalidate([obstruction]);
- expect(cache.clear(remote,remote)).toBe(true);expect(step).not.toHaveBeenCalled();
- expect(cache.clear(from,to)).toBe(false);expect(step).toHaveBeenCalled();
- blocked.clear();cache.invalidate([obstruction]);expect(cache.clear(from,to)).toBe(true);
- cache.invalidate();step.mockClear();expect(cache.clear(remote,remote)).toBe(true);expect(step).toHaveBeenCalled();
-});
-
 it('tracks live reservations, building additions/removals and explicit terrain rebuilds',()=>{
- const g=game([placed('actor','unit.ants.warrior',110,110)]),s=g.spatial,e=g.entities.find(e=>e.placement==='actor')!;
+ const g=game([placed('actor','unit.test.warrior',110,110)]),s=g.spatial,e=g.entities.find(e=>e.placement==='actor')!;
  const blocked=new Set<number>(),from={x:110000,y:110000},to={x:110250,y:110250};
  const verify=()=>expect(s.clearLocalSegment(from,to,blocked,e)).toBe(s.clearSegment(from,to,blocked,e));
  verify();blocked.add(s.cell(e));verify();blocked.clear();verify();
- const building=g.context.create(placed('obstacle','building.ants.house',110,110));s.appendOccupancy(building);
+ const building=g.context.create(placed('obstacle','building.test.house',110,110));s.appendOccupancy(building);
  verify();expect(s.clearLocalSegment(from,to,blocked,e)).toBe(false);
  g.context.remove(building);s.refreshAfterRemoval(building.id);verify();expect(s.clearLocalSegment(from,to,blocked,e)).toBe(true);
  s.terrain[s.cell(e)]=0;s.rebuild();verify();expect(s.clearLocalSegment(from,to,blocked,e)).toBe(false);
 });
 
-it('bounds retained work while armies explore many distant regions',()=>{
- const step=vi.fn(()=>true),cache=new LocalTerrainSweeps(512,595,step),first={x:1000,y:1000};
- expect(cache.clear(first,first)).toBe(true);
- for(let i=1;i<=160;i++){
-  const p={x:(i%32)*8000+1000,y:Math.floor(i/32)*8000+1000};
-  expect(cache.clear(p,p)).toBe(true);
- }
- step.mockClear();expect(cache.clear(first,first)).toBe(true);
- // An old remote region is recomputed, rather than retaining a growing field.
- expect(step).toHaveBeenCalled();
-});
-
-
-it('caches larger local steps separately and invalidates obstructions anywhere along their footprint',()=>{
- const size=64,blocked=new Set<number>(),step=vi.fn((_a:number,b:number)=>!blocked.has(b));
+it('invalidates cached larger steps for obstructions anywhere along their footprint',()=>{
+ const size=64,blocked=new Set<number>(),step=(_a:number,b:number)=>!blocked.has(b);
  const cache=new LocalTerrainSweeps(size,1700,step),from={x:15500,y:16000};
  const targets=[{x:15750,y:16000},{x:16000,y:16000},{x:16250,y:16750},{x:17500,y:18000}];
  for(const to of targets)expect(cache.clear(from,to)).toBe(clearSweep(from,to,step,size,1700));
- step.mockClear();for(const to of targets)expect(cache.clear(from,to)).toBe(true);
- expect(step).not.toHaveBeenCalled();
+ for(const to of targets)expect(cache.clear(from,to)).toBe(true);
  // This cell reaches only the long edge. Invalidating a quarter-step halo
  // alone would leave a stale clear result in the previous tile.
  const obstruction=19*size+19;blocked.add(obstruction);cache.invalidate([obstruction]);

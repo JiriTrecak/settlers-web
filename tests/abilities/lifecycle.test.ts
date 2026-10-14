@@ -1,18 +1,18 @@
 import {describe,it,expect} from 'vitest';
-import {builtinSource} from '../../src/content/builtin';
 import {ContentRegistry} from '../../src/content/registry';
 import {Game} from '../../src/sim/game/game';
 import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import type {Definition} from '../../src/content/schema';
 import {abilityLibrarySchema,abilitySchema,releaseEffects,type AbilityLibrary} from '../../src/content/abilities/schema';
-import {coreAbilities} from '../../src/content/abilities/core';
+import {testAbilities,testSource,testContent} from '../fixtures/content';
+const holyLight=testAbilities.abilities.find(a=>a.id==='ability.test.holy-light-lite')!;
 
-function setup(enemy=false,edit?:(library:AbilityLibrary)=>void){
- const source=structuredClone(builtinSource);
- const library=abilityLibrarySchema.parse(source.abilityLibrary);edit?.(library);source.abilityLibrary=library;
- const d=structuredClone(source.definitions.find(d=>(d as Definition).id==='unit.ants.warrior')) as Definition&{disabledBehaviors?:string[]};
+function setup(enemy=false,edit?:(library:AbilityLibrary,index:number)=>void){
+ const source=testSource();
+ const library=abilityLibrarySchema.parse(source.abilityLibrary);const index=library.abilities.findIndex(a=>a.id===holyLight.id);edit?.(library,index);source.abilityLibrary=library;
+ const d=structuredClone(source.definitions.find(d=>(d as Definition).id==='unit.test.warrior')) as Definition&{disabledBehaviors?:string[]};
  d.id='unit.test.ability-caster';source.definitions.push(d);
- d.behaviors.abilities={maxMana:200,manaRegenPerSecond:0,bindings:[{id:'holy-light',ability:'ability.core.holy-light-lite',initialRank:1,controls:['player','ai'],command:{hotkey:'Q',column:1}}]};
+ d.behaviors.abilities={maxMana:200,manaRegenPerSecond:0,bindings:[{id:'holy-light',ability:'ability.test.holy-light-lite',initialRank:1,controls:['player','ai'],command:{hotkey:'Q',column:1}}]};
  delete d.behaviors.combat;d.disabledBehaviors=[...(d.disabledBehaviors??[]),'combat'];
  const map={...emptyUtcMap(),sandbox:true,entities:[
   {id:'caster',definition:d.id,owner:'player.1' as const,position:{x:120,y:120},rotation:90},
@@ -26,19 +26,19 @@ function setup(enemy=false,edit?:(library:AbilityLibrary)=>void){
 const run=(game:Game,n:number)=>{for(let i=0;i<n;i++)game.tick();};
 describe('declarative ability schema',()=>{
  it('resolves rank parameters and branches without spell-specific dispatch',()=>{
-  const a=abilitySchema.parse(coreAbilities.abilities[0]);
+  const a=abilitySchema.parse(holyLight);
   expect(releaseEffects(a,1,'ally')).toEqual([{op:'heal',target:'target',amount:100}]);
   expect(releaseEffects(a,1,'enemy')).toEqual([{op:'damage',target:'target',amount:50,damageType:'spell'}]);
  });
  it('rejects missing parameters, unsupported operations and unsafe bounds',()=>{
-  const raw=structuredClone(coreAbilities.abilities[0]);delete raw.ranks[0].heal;expect(abilitySchema.safeParse(raw).success).toBe(false);
+  const raw=structuredClone(holyLight);delete raw.ranks[0].heal;expect(abilitySchema.safeParse(raw).success).toBe(false);
   expect(abilitySchema.safeParse({...raw,onRelease:[{op:'javascript',source:'alert(1)'}]}).success).toBe(false);
-  expect(abilitySchema.safeParse({...coreAbilities.abilities[0],ranks:[{...coreAbilities.abilities[0].ranks[0],range:5000}]}).success).toBe(false);
+  expect(abilitySchema.safeParse({...holyLight,ranks:[{...holyLight.ranks[0],range:5000}]}).success).toBe(false);
  });
  it('includes abilities in frozen registry identity',()=>{
-  const a=setup(),b=setup(false,l=>l.abilities[0].ranks[0].heal=99);
+  const a=setup(),b=setup(false,(l,i)=>l.abilities[i].ranks[0].heal=99);
   expect(a.game.registry.fingerprint).not.toBe(b.game.registry.fingerprint);
-  expect(Object.isFrozen(a.game.registry.abilityLibrary.abilities[0])).toBe(true);
+  expect(Object.isFrozen(a.game.registry.abilityLibrary.abilities.find(x=>x.id===holyLight.id))).toBe(true);
  });
 });
 describe('Holy Light in real Game simulation',()=>{
@@ -47,7 +47,7 @@ describe('Holy Light in real Game simulation',()=>{
   expect(cast().accepted).toBe(true);expect(caster.abilities!.mana).toBe(175);expect(caster.abilities!.cooldowns).toEqual({});
   const release=caster.abilities!.pending!.releaseTick;run(game,release-1);expect(target.hp).toBe(20);
   game.tick();expect(target.hp).toBe(120);expect(caster.abilities!.pending!.phase).toBe('recovering');
-  expect(caster.abilities!.cooldowns['ability.core.holy-light-lite']).toBe(release+200);
+  expect(caster.abilities!.cooldowns['ability.test.holy-light-lite']).toBe(release+200);
   run(game,8);expect(caster.abilities!.pending).toBeNull();expect(cast().reason).toMatch(/cooling/);
   expect(game.abilities.drainEvents().map(e=>e.event)).toEqual(['accepted','released','healed','finished']);
  });
@@ -67,7 +67,7 @@ describe('Holy Light in real Game simulation',()=>{
   const {game,caster,target,cast}=setup();cast();game.command('player.1',{type:'stop',actors:[caster.id]});
   expect(caster.abilities!.mana).toBe(200);expect(caster.abilities!.pending).toBeNull();
   cast();run(game,caster.abilities!.pending!.releaseTick);game.command('player.1',{type:'stop',actors:[caster.id]});
-  expect(caster.abilities!.mana).toBe(175);expect(target.hp).toBe(120);expect(caster.abilities!.cooldowns['ability.core.holy-light-lite']).toBeGreaterThan(game.state.tick);
+  expect(caster.abilities!.mana).toBe(175);expect(target.hp).toBe(120);expect(caster.abilities!.cooldowns['ability.test.holy-light-lite']).toBeGreaterThan(game.state.tick);
  });
  it('revalidates release, refunds invalid target and cannot resurrect',()=>{
   const {game,caster,target,cast}=setup();cast();target.hp=0;run(game,caster.abilities!.pending!.releaseTick);
@@ -108,10 +108,10 @@ describe('boundary cases and saved authority',()=>{
  });
  it('gives a neutral camp healer the same hidden ability runtime',()=>{
   const map={...emptyUtcMap(),sandbox:true,entities:[
-   {id:'seer',definition:'unit.neutral.root-seer',owner:'none' as const,position:{x:100,y:100},rotation:90},
-   {id:'friend',definition:'unit.neutral.webling',owner:'none' as const,position:{x:104,y:100},rotation:270},
+   {id:'seer',definition:'unit.test.neutral-root-seer',owner:'none' as const,position:{x:100,y:100},rotation:90},
+   {id:'friend',definition:'unit.test.neutral-webling',owner:'none' as const,position:{x:104,y:100},rotation:270},
   ],camps:[{id:'healers',members:['seer','friend'],home:{x:100,y:100},aggroRange:8,leash:18,aggression:'players' as const}]};
-  const game=new Game(map,[{player:0,kind:'human'},{player:1,kind:'human'}]),friend=game.entities.find(e=>e.placement==='friend')!;
+  const game=new Game(map,[{player:0,kind:'human'},{player:1,kind:'human'}],testContent),friend=game.entities.find(e=>e.placement==='friend')!;
   friend.hp=1;run(game,50);expect(friend.hp).toBeGreaterThan(1);expect(game.abilities.drainEvents().some(e=>e.event==='healed')).toBe(true);
   const caster=game.entities.find(e=>e.placement==='seer')!;expect(game.context.def(caster).behaviors.abilities!.bindings[0].command).toBeUndefined();
  });

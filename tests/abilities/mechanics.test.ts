@@ -1,18 +1,18 @@
 import {source,castLifecycleSource} from '../game/helpers';
 import {it,expect} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {isStunned} from '../../src/sim/game/effects';
 import {itemFlag} from '../../src/sim/game/itemModifiers';
 import {spellControl,SpellStatuses} from '../../src/sim/abilities/statuses';
 import {releaseEffects} from '../../src/content/abilities/schema';
+import {testAbilities} from '../fixtures/content';
+import {testSettings} from './encounter-harness';
 const names=['storm-bolt','entangling-roots','bloodlust','chain-lightning','shockwave','vampiric-aura','feral-spirit','dispel-magic'];
 function setup(name:string,settings:Record<string,unknown>={}){
- const spell=coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!;
- const look=coreAbilities.presentations.find(p=>p.id===spell.presentation)!;
+ const spell=testAbilities.abilities.find(a=>a.id==='ability.test.'+name)!;
+ const look=testAbilities.presentations.find(p=>p.id===spell.presentation)!;
  const data=source();castLifecycleSource(data);
- const f=createAbilityEncounter(spell,look,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:500,...settings}),false,data);
+ const f=createAbilityEncounter(spell,look,testSettings({relationship:'enemy',targetHealth:500,...settings}),false,data);
  const {game,caster,target}=f;
  const cast=()=>game.command('player.1',{type:'castAbility',actor:caster,binding:'preview',target:spell.targeting.kind==='point'?{kind:'point',position:{x:126,y:120}}:{kind:'unit',entity:spell.targeting.kind==='self'?caster:target}});
  return {...f,spell,cast,c:()=>game.context.get(caster)!,t:()=>game.context.get(target)!};
@@ -75,14 +75,14 @@ it('Feral Spirit spawns controllable models, replaces the old group, and expires
  advance(f.game,2401);expect(spirits()).toHaveLength(0);
 });
 it('Dispel removes positive and negative statuses and modifiers',()=>{
- const f=setup('dispel-magic',{initialStatuses:['ability.core.bloodlust','ability.core.entangling-roots']});expect(f.t().spellStatuses).toHaveLength(2);f.cast();advance(f.game,11);
+ const f=setup('dispel-magic',{initialStatuses:['ability.test.bloodlust','ability.test.entangling-roots']});expect(f.t().spellStatuses).toHaveLength(2);f.cast();advance(f.game,11);
  expect(f.t().spellStatuses).toBeUndefined();expect(f.game.context.stats(f.t()).moveSpeedPermille).toBe(1000);expect(itemFlag(f.t(),f.game.registry,'rooted')).toBe(false);
 });
 it('Dispel damages enemy summons but preserves non-dispellable stuns',()=>{
  const f=setup('dispel-magic');const statuses=new SpellStatuses(f.game);
- const stun=coreAbilities.abilities.find(a=>a.id==='ability.core.storm-bolt')!;
+ const stun=testAbilities.abilities.find(a=>a.id==='ability.test.storm-bolt')!;
  statuses.apply(f.caster,f.target,stun,1,f.game.state.nextCast++,releaseEffects(stun,1,'enemy')[1]);
- f.t().summoned={source:f.target,ability:'ability.core.feral-spirit',rank:1,cast:1,started:0,expires:9999};
+ f.t().summoned={source:f.target,ability:'ability.test.feral-spirit',rank:1,cast:1,started:0,expires:9999};
  f.cast();advance(f.game,11);expect(f.t().hp).toBe(300);expect(isStunned(f.t(),f.game.registry)).toBe(true);
 });
 it.each(names)('%s survives save/restore and lockstep replay',name=>{
@@ -102,8 +102,8 @@ it('Roots complete their final periodic tick and continue after the caster dies'
  const f=setup('entangling-roots');f.cast();advance(f.game,11);f.c().hp=0;f.game.onCombatDeath(f.c());advance(f.game,359);expect(f.t().hp).toBe(365);expect(f.t().spellStatuses).toBeUndefined();
 });
 it('stuns interrupt channels immediately and use the shorter hero duration',()=>{
- const f=setup('storm-bolt');const hero=f.game.context.create({id:'hero',definition:'unit.ants.marshal',owner:'player.2',position:{x:126,y:120},rotation:270});
- f.game.observation.update();const channel=f.game.registry.get(hero.definition).behaviors.abilities!.bindings.find(b=>b.ability==='ability.core.blizzard')!;expect(f.game.abilities.cast(hero.id,channel.id,{x:122,y:120})).toBeNull();expect(f.game.command('player.1',{type:'castAbility',actor:f.caster,binding:'preview',target:{kind:'unit',entity:hero.id}}).accepted).toBe(true);
+ const f=setup('storm-bolt');const hero=f.game.context.create({id:'hero',definition:'unit.test.marshal',owner:'player.2',position:{x:126,y:120},rotation:270});
+ f.game.observation.update();const channel=f.game.registry.get(hero.definition).behaviors.abilities!.bindings.find(b=>b.ability==='ability.test.blizzard')!;expect(f.game.abilities.cast(hero.id,channel.id,{x:122,y:120})).toBeNull();expect(f.game.command('player.1',{type:'castAbility',actor:f.caster,binding:'preview',target:{kind:'unit',entity:hero.id}}).accepted).toBe(true);
  advance(f.game,30);expect(hero.abilities!.pending).toBeNull();expect(hero.spellStatuses![0].expires-hero.spellStatuses![0].started).toBe(120);
 });
 it('aura lifesteal only applies to actual ordinary melee damage, never ability hits',()=>{
@@ -117,4 +117,16 @@ it('removing an aura source clears recipients and duplicate sources do not stack
  const f=setup('vampiric-aura',{combat:true,relationship:'ally'});const second=f.game.context.create({id:'second',definition:'unit.preview.caster',owner:'player.1',position:{x:120,y:124},rotation:90});advance(f.game,1);expect(f.game.context.stats(f.t()).lifestealPermille).toBe(150);
  f.c().hp=0;f.game.onCombatDeath(f.c());advance(f.game,1);expect(f.game.context.stats(f.t()).lifestealPermille).toBe(150);
  second.hp=0;f.game.onCombatDeath(second);advance(f.game,1);expect(f.game.context.stats(f.t()).lifestealPermille).toBe(0);
+});
+it('physical-type spell damage uses ordinary armor mitigation and shorter hero stuns',async()=>{
+ const {resolveDamage}=await import('../../src/sim/game/damage');
+ const spell=testAbilities.abilities.find(a=>a.id==='ability.test.rootbreaker-skullcrack')!,look=testAbilities.presentations.find(p=>p.id===spell.presentation)!;
+ const [hit,stun]=releaseEffects(spell,1,'enemy');if(hit.op!=='damage'||stun.op!=='status')throw Error('fixture');
+ for(const targetHero of [false,true]){
+  const f=createAbilityEncounter(spell,look,testSettings({relationship:'enemy',targetHealth:500,distance:6,mana:1000,targetHero}),false,source()),t=f.game.context.get(f.target)!;
+  const armor=f.game.context.stats(t);expect(f.game.abilities.cast(f.caster,'preview',f.target)).toBeNull();
+  for(let i=0;i<60&&t.hp===500;i++)f.game.tick();
+  expect(500-t.hp!).toBe(resolveDamage(f.game.registry.rules,{armor:armor.armor,armorType:f.game.context.def(t).body!.armorType},hit.amount as number,hit.damageType));
+  const s=t.spellStatuses!.find(s=>s.status===stun.id)!;expect(s.expires-s.started).toBe(spell.ranks[0][targetHero?'heroStun':'stun']);
+ }
 });

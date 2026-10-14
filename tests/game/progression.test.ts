@@ -9,14 +9,14 @@ import type { Rules } from "../../src/content/schema";
 function setup() {
   const data=source();
   delete (data.rules as Rules).startingSetup.hero;
-  const warrior=structuredClone(data.definitions.find(d=>(d as {id:string}).id==="unit.ants.warrior")) as Record<string,unknown>;
-  data.definitions.push({...warrior,id:"unit.ants.test-hero",hero:true,level:1,
+  const warrior=structuredClone(data.definitions.find(d=>(d as {id:string}).id==="unit.test.warrior")) as Record<string,unknown>;
+  data.definitions.push({...warrior,id:"unit.test.leveling-hero",hero:true,level:1,
     body:{maxHp:100,armor:0,armorType:"heavy"},
     behaviors:{movement:{speed:4},playerControl:{},combat:{damage:30,damageType:"melee",range:2,cooldownTicks:40,aggroRange:8},
       progression:{levels:[0,10,30].map((experience,i)=>({experience,maxHp:100+20*i,damage:30+5*i,armor:i,cooldownTicks:40,maxMana:0,healthRegenPerSecond:0,manaRegenPerSecond:0})),experienceRadius:8}}});
-  for(const d of data.definitions as Record<string,unknown>[]) if(d.id==="unit.neutral.webling" || d.id==="unit.ants.settler")d.experienceYield=35;
-  const map={...emptyUtcMap(),entities:[placed("hero1","unit.ants.test-hero",208,230),placed("hero2","unit.ants.test-hero",208,229),
-    {...placed("victim","unit.neutral.webling",209,230,{health:1}),owner:"none" as const}],
+  for(const d of data.definitions as Record<string,unknown>[]) if(d.id==="unit.test.neutral-webling" || d.id==="unit.test.settler")d.experienceYield=35;
+  const map={...emptyUtcMap(),entities:[placed("hero1","unit.test.leveling-hero",208,230),placed("hero2","unit.test.leveling-hero",208,229),
+    {...placed("victim","unit.test.neutral-webling",209,230,{health:1}),owner:"none" as const}],
     camps:[{id:"camp",members:["victim"],home:{x:209,y:230},aggroRange:5,leash:10,aggression:"players" as const}]};
   return new Game(map,slots,new ContentRegistry(data));
 }
@@ -38,7 +38,7 @@ describe("hero leveling",()=>{
   });
   it("does not reward forced friendly kills and rejects forged progression on ordinary units",()=>{
     const g=setup(),h=g.entities.find(e=>e.placement==="hero1")!;
-    const victim=g.entities.find(e=>e.definition==="unit.ants.settler"&&e.owner==="player.1")!;
+    const victim=g.entities.find(e=>e.definition==="unit.test.settler"&&e.owner==="player.1")!;
     victim.x=h.x+1;victim.y=h.y;victim.hp=1;
     h.rotation=heading(h,victim);h.unit!.order={type:"attack",target:victim.id,force:true};h.unit!.target=victim.id;
     // Keep the neutral alive outside combat range.
@@ -52,14 +52,15 @@ describe("hero leveling",()=>{
 
 describe("fixed-point movement",()=>{
   it("keeps snapshots restorable for units whose authored speed is fractional",()=>{
-    // Authored Webling speed 11.9 → 297.5 raw budget per tick before flooring.
-    const map={...emptyUtcMap(),entities:[{...placed("creep","unit.neutral.webling",100,100),owner:"none" as const}],
+    // Speed 11.9 → 297.5 raw budget per tick before flooring.
+    const fractional=()=>{const data=source();for(const d of data.definitions as Record<string,any>[])if(d.id==="unit.test.neutral-webling")d.behaviors.movement.speed=11.9;return new ContentRegistry(data);};
+    const map={...emptyUtcMap(),entities:[{...placed("creep","unit.test.neutral-webling",100,100),owner:"none" as const}],
       camps:[{id:"den",members:["creep"],home:{x:100,y:100},aggroRange:5,leash:10,aggression:"players" as const}]};
-    const g=new Game(map,slots,new ContentRegistry(source())),creep=g.entities.find(e=>e.placement==="creep")!;
+    const g=new Game(map,slots,fractional()),creep=g.entities.find(e=>e.placement==="creep")!;
     creep.x=112;creep.y=104;
     let moved=false;
     for(let t=0;t<10;t++){g.tick();moved||=!!creep.unit!.segment;expect(Number.isInteger(creep.unit!.segment?.progress??0)).toBe(true);}
     expect(moved).toBe(true);
-    expect(()=>new Game(map,slots,new ContentRegistry(source())).restore(g.snapshot())).not.toThrow();
+    expect(()=>new Game(map,slots,fractional()).restore(g.snapshot())).not.toThrow();
   });
 });

@@ -5,7 +5,7 @@ import os from 'node:os';
 import {setTimeout as delay} from 'node:timers/promises';
 import {withWorkspaceWriteLock} from '../../tooling/asset-studio/server/writeLock';
 import {SpellEditorService} from '../../tooling/spell-editor/server/service';
-import {coreAbilities} from '../../src/content/abilities/core';
+import {testAbilities} from '../fixtures/content';
 import type {SpellDocument} from '../../tooling/spell-editor/shared/protocol';
 function deferred(){let resolve!:()=>void;const promise=new Promise<void>(r=>{resolve=r;});return {promise,resolve};}
 
@@ -13,8 +13,8 @@ it.each(['read','list'] as const)('%s in another tab waits for a complete two-fi
  const root=await mkdtemp(path.join(os.tmpdir(),'spell-atomic-read-'));
  const ready=deferred(),release=deferred();let writing:Promise<void>|undefined;
  try{
-  const definition=structuredClone(coreAbilities.abilities.find(a=>a.id==='ability.core.holy-light-lite')!);
-  const presentation=structuredClone(coreAbilities.presentations.find(p=>p.id===definition.presentation)!);
+  const definition=structuredClone(testAbilities.abilities.find(a=>a.id==='ability.test.holy-light-lite')!);
+  const presentation=structuredClone(testAbilities.presentations.find(p=>p.id===definition.presentation)!);
   delete presentation.icon;presentation.effects=[];
   const folder=path.join(root,'content/abilities',definition.id);await mkdir(folder,{recursive:true});
   await writeFile(path.join(folder,'definition.json'),JSON.stringify(definition));await writeFile(path.join(folder,'presentation.json'),JSON.stringify(presentation));

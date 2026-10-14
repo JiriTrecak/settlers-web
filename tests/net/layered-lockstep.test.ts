@@ -11,8 +11,8 @@ it('keeps two peers identical through over/under movement, a mid-climb restore, 
  const base=emptyUtcMap(),map={...base,
   playerStarts:base.playerStarts.map((s,i)=>({...s,x:201.5,z:i?81.5:201.5})),
   stamps:[{id:'root',asset:'leafbound-twig-bridge',x:40,y:40}],
-  entities:[placed('climber','unit.ants.archer',40,26),placed('underpass','unit.ants.warrior',30,40),
-   {...placed('defender','unit.ants.marshal',49,40),owner:'player.2' as const}],
+  entities:[placed('climber','unit.test.archer',40,26),placed('underpass','unit.test.warrior',30,40),
+   {...placed('defender','unit.test.marshal',49,40),owner:'player.2' as const}],
  };
  const config={...localMatch({mapId:'layered-lockstep',mapRevision:'test',seed:4,slotCount:2,me:0,delay:3}),slots};
  const room=new Room(config),channels=slots.map(s=>new MemoryChannel(room,s.player)),peers=channels.map((c,i)=>new Lockstep(c,i,3));

@@ -1,14 +1,14 @@
 import {it,expect} from 'vitest';
 import '../fixtures/walkableCatalogue';
 import {Game} from '../../src/sim/game/game';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {abilitySchema} from '../../src/content/abilities/schema';
 import {snapPlacement} from '../../src/shared/spatial/placement';
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource} from './encounter-harness';
 function fixture(name:string,settings:Record<string,unknown>={}){
- const a=coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!;
- const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'ally',targetHealth:500,distance:3,...settings}));
+ const a=testAbilities.abilities.find(a=>a.id==='ability.test.'+name)!;
+ const f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,testSettings({relationship:'ally',targetHealth:500,distance:3,...settings}),false,encounterSource());
  return {...f,a,c:()=>f.game.context.get(f.caster)!,t:()=>f.game.context.get(f.target)!};
 }
 function advance(f:ReturnType<typeof fixture>,n:number){for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});}
@@ -22,26 +22,26 @@ it('Blink relocates a unit with current body clearance and clears stale movement
 });
 it('Blink rejects fully blocked arrivals without charging mana or starting cooldown',()=>{
  const f=fixture('blink'),c=f.c(),mana=c.abilities!.mana;
- for(let y=124;y<=132;y++)for(let x=124;x<=132;x++)f.game.context.spatial.occupied[y*256+x]=999;
+ for(let y=124;y<=132;y++)for(let x=124;x<=132;x++)f.game.spatial.terrain[y*256+x]=0;f.game.spatial.rebuild();
  expect(f.game.abilities.cast(c.id,'preview',{x:128,y:128})).toMatch(/arrival/);
  expect(c.abilities!.mana).toBe(mana);expect(c.abilities!.pending).toBeNull();expect(c.abilities!.cooldowns).toEqual({});
 });
 it('Blink rechecks arrival clearance at release and refunds if the destination becomes blocked',()=>{
  const f=fixture('blink'),c=f.c(),mana=c.abilities!.mana;
  expect(f.game.abilities.cast(c.id,'preview',{x:128,y:128})).toBeNull();expect(c.abilities!.mana).toBeLessThan(mana);
- const obstacle=f.game.context.create({id:'arrival-blocker',definition:'building.ants.house',owner:'player.1',position:snapPlacement(f.game.registry.get('building.ants.house'),{x:128,y:128}),rotation:0});
+ const obstacle=f.game.context.create({id:'arrival-blocker',definition:'building.test.house',owner:'player.1',position:snapPlacement(f.game.registry.get('building.test.house'),{x:128,y:128}),rotation:0});
  f.game.spatial.appendOccupancy(obstacle);
  advance(f,30);
  expect({x:c.x,y:c.y}).toEqual({x:120,y:120});expect(c.abilities!.mana).toBe(mana);expect(c.abilities!.cooldowns).toEqual({});
  expect(f.game.abilities.drainEvents().some(e=>e.event==='cancelled'&&e.reason?.includes('arrival'))).toBe(true);
 });
 it('checks fog before terrain clearance so an invalid Blink cannot probe hidden blockers',()=>{
- const f=fixture('blink');for(let y=190;y<210;y++)for(let x=190;x<210;x++)f.game.context.spatial.occupied[y*256+x]=999;
+ const f=fixture('blink');for(let y=190;y<210;y++)for(let x=190;x<210;x++)f.game.spatial.terrain[y*256+x]=0;f.game.spatial.rebuild();
  expect(f.game.abilities.cast(f.caster,'preview',{x:200,y:200})).toMatch(/visible/);
 });
 it('Mass Teleport transports nearby allies once and leaves the destination anchor in place',()=>{
  const f=fixture('mass-teleport',{targetCount:4,targetSpacing:2}),g=f.game;
- const destination=g.context.create({id:'destination',definition:'unit.ants.warrior',owner:'player.1',position:{x:160,y:120},rotation:0});
+ const destination=g.context.create({id:'destination',definition:'unit.test.warrior',owner:'player.1',position:{x:160,y:120},rotation:0});
  g.observation.update();
  expect(g.abilities.cast(f.caster,'preview',destination.id)).toBeNull();advance(f,140);
  expect({x:destination.x,y:destination.y}).toEqual({x:160,y:120});
@@ -52,7 +52,7 @@ it('Mass Teleport transports nearby allies once and leaves the destination ancho
 });
 it('Far Sight reveals remote enemies in actual observation and expires to explored fog',()=>{
  const f=fixture('far-sight'),g=f.game;
- const enemy=g.context.create({id:'hidden',definition:'unit.ants.warrior',owner:'player.2',position:{x:180,y:120},rotation:0});g.observation.update();
+ const enemy=g.context.create({id:'hidden',definition:'unit.test.warrior',owner:'player.2',position:{x:180,y:120},rotation:0});g.observation.update();
  expect(g.observation.visible('player.1',enemy)).toBe(false);
  expect(g.abilities.cast(f.caster,'preview',{x:180,y:120})).toBeNull();advance(f,30);
  expect(g.state.spellVisions).toHaveLength(1);expect(g.observation.visible('player.1',enemy)).toBe(true);
@@ -76,7 +76,7 @@ it('keeps the destination walk surface when teleporting to a unit on a bridge',(
  const f=fixture('mass-teleport');
  const game=new Game({...f.game.map,stamps:[{id:'test-arch',asset:'leafbound-twig-bridge',x:160,y:120}]},f.game.slots,f.game.registry);
  const caster=game.entities.find(e=>e.placement==='caster')!;
- const anchor=game.context.create({id:'bridge-anchor',definition:'unit.ants.warrior',owner:'player.1',position:{x:160,y:120,surface:'test-arch'},rotation:0});
+ const anchor=game.context.create({id:'bridge-anchor',definition:'unit.test.warrior',owner:'player.1',position:{x:160,y:120,surface:'test-arch'},rotation:0});
  game.observation.update();expect(game.abilities.cast(caster.id,'preview',anchor.id)).toBeNull();
  for(let i=0;i<140;i++)game.tick(undefined,{passiveUnits:true});
  expect(caster.surface).toBe('test-arch');expect(game.context.spatial.height(caster)).toBeGreaterThan(3);
@@ -84,12 +84,12 @@ it('keeps the destination walk surface when teleporting to a unit on a bridge',(
  const saved=game.snapshot();game.restore(saved);expect(game.snapshot()).toEqual(saved);
 });
 it('does not attach an airborne teleport recipient to the target bridge deck',()=>{
- const base=coreAbilities.abilities.find(a=>a.id==='ability.core.mass-teleport')!;
+ const base=testAbilities.abilities.find(a=>a.id==='ability.test.mass-teleport')!;
  const a=abilitySchema.parse({...base,onRelease:[{op:'status',id:'flight',target:'caster',amount:400,polarity:'positive',dispel:true,form:{movement:{locomotion:'air',flightHeight:7}}},...base.onRelease]});
- const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'ally',targetHealth:500,distance:3}));
+ const f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,testSettings({relationship:'ally',targetHealth:500,distance:3}),false,encounterSource());
  const game=new Game({...f.game.map,stamps:[{id:'test-arch',asset:'leafbound-twig-bridge',x:160,y:120}]},f.game.slots,f.game.registry);
  const caster=game.entities.find(e=>e.placement==='caster')!;
- const anchor=game.context.create({id:'bridge-anchor',definition:'unit.ants.warrior',owner:'player.1',position:{x:160,y:120,surface:'test-arch'},rotation:0});
+ const anchor=game.context.create({id:'bridge-anchor',definition:'unit.test.warrior',owner:'player.1',position:{x:160,y:120,surface:'test-arch'},rotation:0});
  game.observation.update();expect(game.abilities.cast(caster.id,'preview',anchor.id)).toBeNull();
  for(let i=0;i<140;i++)game.tick(undefined,{passiveUnits:true});
  expect(game.spatial.airborne(caster)).toBe(true);expect(caster.surface).toBeUndefined();expect(caster.x).toBeGreaterThan(150);

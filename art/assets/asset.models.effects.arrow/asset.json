@@ -18,13 +18,6 @@
       "bytes": 7484
     },
     {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "202b74dcf6ffff280fed89c9d38c890792fb7a2dfae96caa0c5dc073a25182c3",
-      "bytes": 1827
-    },
-    {
       "role": "source",
       "index": 1,
       "format": "blend",

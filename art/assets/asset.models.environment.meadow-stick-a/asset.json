@@ -24,20 +24,6 @@
       "format": "blend",
       "sha256": "da3c46c9cd3a2ad87b3cf334f35afb31c7c9c985216b87358b548a16bcf42fe3",
       "bytes": 565875
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "ec4f2bd4080b2b8a64301c0b8401045feb883e48f3c02187d51e56d7ccbdfee3",
-      "bytes": 6289
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "ef064e71e560105232c37cde3ad2708e0b35e872b7923db1d28669554a0159d8",
-      "bytes": 172
     }
   ],
   "usesGeometry": true,
@@ -86,10 +72,6 @@
   },
   "provenance": {
     "method": "authored",
-    "licenseNote": "Original artwork created for Under the Canopy.",
-    "generation": {
-      "role": "generation",
-      "index": 1
-    }
+    "licenseNote": "Original artwork created for Under the Canopy."
   }
 }

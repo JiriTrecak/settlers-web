@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { content } from "../../src/content/builtin";
+import { testContent } from "../fixtures/content";
 import { commandCard } from "../../src/presentation/commands";
-import { putEntity } from "../../src/editor/world/entityAuthoring";
+import { validatePlacements } from "../../src/content/map";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { game, placed, run, worker } from "./helpers";
 
@@ -9,14 +9,14 @@ const neutral = (id: string, definition: string, x: number, y: number) => ({
   ...placed(id, definition, x, y),
   owner: "none" as const,
 });
-const mine = () => neutral("mine", "building.neutral.amber-mine", 220, 205);
+const mine = () => neutral("mine", "building.test.neutral-amber-mine", 220, 205);
 
 describe("direct gathering", () => {
   it("makes mines neutral selectable buildings with an uncapped persistent gather assignment", () => {
     const g = game([
       mine(),
       ...Array.from({ length: 7 }, (_, i) =>
-        placed(`extra.${i}`, "unit.ants.settler", 212 + i, 233),
+        placed(`extra.${i}`, "unit.test.settler", 212 + i, 233),
       ),
     ]);
     const m = g.entities.find((e) => e.placement === "mine")!,
@@ -63,9 +63,9 @@ describe("direct gathering", () => {
   it("counts a carrying worker at its current source until it completes the trip", () => {
     const g = game([
       mine(),
-      neutral("next", "building.neutral.amber-mine", 205, 210),
+      neutral("next", "building.test.neutral-amber-mine", 205, 210),
       ...Array.from({ length: 7 }, (_, i) =>
-        placed(`extra.${i}`, "unit.ants.settler", 212 + i, 233),
+        placed(`extra.${i}`, "unit.test.settler", 212 + i, 233),
       ),
     ]);
     const first = g.entities.find((e) => e.placement === "mine")!;
@@ -100,51 +100,35 @@ describe("direct gathering", () => {
     ).toBe(1);
   });
   it("can build on explored unclaimed land and keeps water, footprint and mine-clearance restrictions", () => {
-    const g = game([placed("pioneer", "unit.ants.settler", 128, 128)]),
+    const g = game([placed("pioneer", "unit.test.settler", 128, 128)]),
       w = g.entities.find((e) => e.placement === "pioneer")!;
     expect(
-      g.canBuild("player.1", "building.ants.house", { x: 135.5, y: 127.5 }, w.id),
+      g.canBuild("player.1", "building.test.house", { x: 135.5, y: 127.5 }, w.id),
     ).toBeNull();
     expect(
       g.command("player.1", {
         type: "build",
         actors: [w.id],
-        definition: "building.ants.house",
+        definition: "building.test.house",
         position: { x: 135.5, y: 127.5 },
       }).accepted,
     ).toBe(true);
-    expect(g.view(0)).not.toHaveProperty("territory");
     expect(
-      g.canBuild("player.1", "building.ants.house", { x: 163.5, y: 163.5 }, w.id),
+      g.canBuild("player.1", "building.test.house", { x: 163.5, y: 163.5 }, w.id),
     ).toBeNull();
   });
-  it("removes retired chains, forbids currency ground objects, and keeps hero loot", () => {
-    for (const id of [
-      "item.plank",
-      "resource.stone.deposit",
-      "building.ants.lumberjack",
-      "building.ants.sawmill",
-      "building.ants.stonemason",
-    ])
-      expect(content.find(id)).toBeUndefined();
-    expect(() => putEntity(emptyUtcMap(), placed("wood", "item.wood"))).toThrow(
-      /currencies/,
-    );
-    expect(() =>
-      putEntity(emptyUtcMap(), placed("amber", "item.amber")),
-    ).toThrow(/currencies/);
-    expect(() =>
-      putEntity(emptyUtcMap(), neutral("loot", "item.barkguard", 128, 128)),
-    ).not.toThrow();
-    expect(() =>
-      putEntity(emptyUtcMap(), placed("mine", "building.neutral.amber-mine")),
-    ).toThrow(/neutral/);
+  it("forbids currency ground objects and owned neutral deposits, keeps hero loot, and refunds without a drop-off", () => {
+    const authored = (...entities: ReturnType<typeof placed>[]) => () => validatePlacements({...emptyUtcMap(), entities}, testContent);
+    expect(authored(placed("wood", "item.test.wood"))).toThrow(/currencies/);
+    expect(authored(placed("amber", "item.test.amber"))).toThrow(/currencies/);
+    expect(authored(neutral("loot", "item.test.barkguard", 128, 128))).not.toThrow();
+    expect(authored(placed("mine", "building.test.neutral-amber-mine"))).toThrow(/neutral/);
     const g = game(),
       w = worker(g);
     g.command("player.1", {
       type: "build",
       actors: [w.id],
-      definition: "building.ants.house",
+      definition: "building.test.house",
       position: { x: 205, y: 210 },
     });
     const b = g.entities.at(-1)!;
@@ -152,7 +136,7 @@ describe("direct gathering", () => {
     g.economy.remove(g.context.get(g.state.objectives["player.1"])!);
     g.economy.remove(b, true);
     expect(g.entities.some((e) => e.item)).toBe(false);
-    expect(g.state.accounting.lost["item.wood"] ?? 0).toBe(0);
-    expect(g.state.wallets["player.1"]["item.wood"]).toBe(g.registry.rules.startingSetup.inventory["item.wood"]);
+    expect(g.state.accounting.lost["item.test.wood"] ?? 0).toBe(0);
+    expect(g.state.wallets["player.1"]["item.test.wood"]).toBe(g.registry.rules.startingSetup.inventory["item.test.wood"]);
   });
 });

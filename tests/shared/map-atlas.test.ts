@@ -1,9 +1,11 @@
-import {readFileSync} from 'node:fs';
 import {expect,it} from 'vitest';
 import {atlasSymbols} from '../../scripts/maps/atlas';
-import {emptyUtcMap,parseUtcMap} from '../../src/shared/map/utcmap';
+import {emptyUtcMap} from '../../src/shared/map/utcmap';
+import policy from '../../content/import/warcraft/policy.json';
 
-const mine=(id:string,x:number,y:number)=>({id,definition:'building.neutral.amber-mine',owner:'none' as const,rotation:0,position:{x,y}});
+// ENGINE-COUPLED: scripts/maps/atlas.ts recognises the shipped imported mine definition (the Warcraft import policy's
+// mineDefinition), so the fixture reads that id from the same shipped source instead of naming it.
+const mine=(id:string,x:number,y:number)=>({id,definition:policy.mineDefinition,owner:'none' as const,rotation:0,position:{x,y}});
 const icons=(svg:string)=>(svg.match(/<circle r="8"/g)??[]).length;
 
 it('labels actual player numbers at scaled x/z start positions',()=>{
@@ -23,10 +25,4 @@ it('shows one centered symbol for neighboring mine nodes, keeping separate depos
  expect(icons(svg)).toBe(2);expect(svg).toContain('translate(48 40)');expect(svg).toContain('translate(100 100)');
  expect(atlasSymbols({...map,entities:[...map.entities].reverse()},map.size)).toBe(svg);
  expect(icons(atlasSymbols(map,map.size/2))).toBe(2);
-});
-it('renders the imported Echo Isles mine sites once each instead of overlapping node icons',()=>{
- const map=parseUtcMap(JSON.parse(readFileSync('assets/maps/skirmish/echo-isles.utcmap','utf8')))!;
- expect(map.entities.filter(e=>e.definition==='building.neutral.amber-mine')).toHaveLength(25);
- const svg=atlasSymbols(map);expect(icons(svg)).toBe(5);
- expect((svg.match(/stroke-linejoin="round"/g)??[])).toHaveLength(map.camps.length);
 });

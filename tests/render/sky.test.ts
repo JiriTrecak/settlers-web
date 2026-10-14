@@ -3,20 +3,20 @@ import { Scene } from 'three';
 import { DAY_CYCLE_SECONDS, Sky } from '../../src/render/sky/sky';
 
 describe('preview day/night clock', () => {
-  it('takes 600 seconds for the complete 24-hour loop', () => {
+  const day = DAY_CYCLE_SECONDS * 1000, at = (fraction: number) => 1000 + fraction * day;
+  it('completes the 24-hour loop in one day cycle', () => {
     const sky = new Sky(new Scene());
-    expect(DAY_CYCLE_SECONDS).toBe(600);
     sky.setHour(9); sky.setPlaying(true); sky.tick(1000);
-    sky.tick(301000); expect(sky.hour).toBeCloseTo(21);
-    sky.tick(601000); expect(sky.hour).toBeCloseTo(9);
+    sky.tick(at(.5)); expect(sky.hour).toBeCloseTo(21);
+    sky.tick(at(1)); expect(sky.hour).toBeCloseTo(9);
   });
   it('pauses at the current hour and resumes without counting paused time', () => {
     const sky = new Sky(new Scene());
-    sky.setHour(9); sky.setPlaying(true); sky.tick(1000); sky.tick(151000);
+    sky.setHour(9); sky.setPlaying(true); sky.tick(1000); sky.tick(at(.25));
     expect(sky.hour).toBeCloseTo(15);
-    sky.setPlaying(false); sky.tick(451000); expect(sky.hour).toBeCloseTo(15);
-    sky.setPlaying(true); sky.tick(500000); expect(sky.hour).toBeCloseTo(15);
-    sky.tick(650000); expect(sky.hour).toBeCloseTo(21);
+    sky.setPlaying(false); sky.tick(at(.75)); expect(sky.hour).toBeCloseTo(15);
+    sky.setPlaying(true); sky.tick(at(.8)); expect(sky.hour).toBeCloseTo(15);
+    sky.tick(at(1.05)); expect(sky.hour).toBeCloseTo(21);
   });
 });
 

@@ -1,25 +1,22 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,type Effect} from '../../src/content/abilities/schema';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {abilityAimScore} from '../../src/sim/abilities/ai';
-import {Room,Lockstep,MemoryChannel} from '../../src/net';
-import {World} from '../../src/sim/world/world';
-import {localMatch} from '../../src/shared';
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource,runLockstep} from './encounter-harness';
 
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.blink')!;
-const presentation=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.blink')!;
+const presentation=testAbilities.presentations.find(p=>p.id===base.presentation)!;
 const blink=base.onRelease[0] as Effect;
 const query=(center:'caster'|'target'|'point')=>({center,radius:4,relations:['enemy'],allowSelf:false,includeBuildings:false,excludePrimary:true,maxTargets:8,order:'nearest'} as const);
 const burst=(center:'caster'|'target'|'point')=>({op:'damage',target:'target',amount:70,damageType:'spell',query:query(center)});
 function fixture(ops:unknown[],patch={},settings={}){
  const a=abilitySchema.parse({...base,onRelease:ops,...patch});
- const f=createAbilityEncounter(a,presentation,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:500,distance:12,mana:1000,...settings}));
+ const f=createAbilityEncounter(a,presentation,testSettings({relationship:'enemy',targetHealth:500,distance:12,mana:1000,...settings}),false,encounterSource());
  return {...f,a,c:()=>f.game.context.get(f.caster)!,t:()=>f.game.context.get(f.target)!};
 }
 function step(f:ReturnType<typeof fixture>,n=30){for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});}
-function enemy(f:ReturnType<typeof fixture>,id:string,x:number,y=120){return f.game.context.create({id,definition:'unit.ants.warrior',owner:'player.2',position:{x,y},rotation:0});}
+function enemy(f:ReturnType<typeof fixture>,id:string,x:number,y=120){return f.game.context.create({id,definition:'unit.test.warrior',owner:'player.2',position:{x,y},rotation:0});}
 
 it('selects a caster-centered follow-up at the actual landing location and replays it',()=>{
  const f=fixture([blink,burst('caster')]),copy=fixture([blink,burst('caster')]),departure=enemy(f,'departure',122);
@@ -61,23 +58,9 @@ it('predicts an airborne caster filter after a flight form',()=>{
 });
 it('replays blink then landing burst through delayed multiplayer commands and a mid-cast restore',()=>{
  const f=fixture([blink,burst('caster')]),departure=enemy(f,'departure',122);f.game.observation.update();
- const opts={map:f.game.map,slots:f.game.slots,registry:f.game.registry,seed:42};
- const worlds=[new World(opts),new World(opts)];for(const w of worlds)w.settlement.restore(f.game.snapshot());
- const room=new Room({...localMatch({mapId:'composition',mapRevision:'test',seed:42,slotCount:2,me:0,delay:3}),slots:[...f.game.slots]});
- const channels=[new MemoryChannel(room,0),new MemoryChannel(room,1)],peers=channels.map((c,i)=>new Lockstep(c,i,3));
- peers[0].send({type:'castAbility',actor:f.caster,binding:'preview',target:{kind:'point',position:{x:132,y:120}}});
  const damaged=new Map<number,number>();
- try{
-  for(let tick=1;tick<=35;tick++){
-   peers[tick%2].confirm(tick);peers[1-tick%2].confirm(tick);
-   for(let i=0;i<2;i++){
-    const commit=peers[i].take(tick)!;expect(commit).toBeTruthy();
-    for(const slot of commit.slots)slot.actions.forEach((action,seq)=>worlds[i].enqueue(action,commit.tick,{player:slot.player,seq}));worlds[i].tick();
-   }
-   for(const e of worlds[0].settlement.abilities.observedEvents())if(e.ability===f.a.id&&e.event==='damaged'){damaged.set(e.target!,e.amount!);expect(e.origin.x).toBeGreaterThan(128);}
-   if([3,18].includes(tick)){const save=JSON.parse(JSON.stringify(worlds[1].snapshot()));worlds[1]=new World(opts);worlds[1].restore(save);}
-   expect(worlds[1].checksum(),`tick ${tick}`).toBe(worlds[0].checksum());
-  }
-  expect(damaged.get(f.target!)).toBe(70);expect(damaged.has(departure.id)).toBe(false);
- }finally{channels.forEach(c=>c.destroy());}
+ runLockstep(f.game,{type:'castAbility',actor:f.caster,binding:'preview',target:{kind:'point',position:{x:132,y:120}}},35,{restoreAt:[3,18],onTick:(_,world)=>{
+  for(const e of world.settlement.abilities.observedEvents())if(e.ability===f.a.id&&e.event==='damaged'){damaged.set(e.target!,e.amount!);expect(e.origin.x).toBeGreaterThan(128);}
+ }});
+ expect(damaged.get(f.target!)).toBe(70);expect(damaged.has(departure.id)).toBe(false);
 });

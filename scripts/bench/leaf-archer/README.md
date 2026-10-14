@@ -4,6 +4,6 @@ Loads the published Archer GLB with canonical animation capabilities and the sha
 
 Open `/scripts/bench/leaf-archer/index.html`. Switch overhead angle, facing, team colors, animation and distance. The held arrow disappears at the authored release (41/71 of the attack clip).
 
-This is a pose review, not a simulation or projectile-flight test. Gameplay verification remains separate. Editable source, Tripo original, reference and reproducible Blender recipes are in `art/assets/asset.models.units.ants-leaf-archer/`.
+This is a pose review, not a simulation or projectile-flight test. Gameplay verification remains separate. The editable `source.blend` master is in `art/assets/asset.models.units.ants-leaf-archer/`.
 
 `prepare-preview.ts` is only for inspecting future unpublished iterations; the default page loads the canonical published asset.

@@ -17,13 +17,6 @@
       "format": "bin",
       "sha256": "03b4427311670cf4488ddf515b3fd5542daa8ad2941ddf369f4d4dd3e1f7805d",
       "bytes": 4101
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "98f87fec6aa253a332918853984d0fa2d8079703462151cedc1626e91bad6bad",
-      "bytes": 600
     }
   ],
   "usesGeometry": false,
@@ -45,10 +38,6 @@
   "capabilities": {},
   "provenance": {
     "method": "generated",
-    "licenseNote": "Original ImageGen terrain texture; packed into renderer channels.",
-    "generation": {
-      "role": "generation",
-      "index": 1
-    }
+    "licenseNote": "Original ImageGen terrain texture; packed into renderer channels."
   }
 }

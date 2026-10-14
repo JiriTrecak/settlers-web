@@ -44,13 +44,13 @@ Four checked JSON profiles live in `art/profiles/images.json`:
 - **Interface fill:** separate textured HP/MP fill. The reviewer shows it clipped at 100%, 75%, 50%, 25% and 0% without squeezing the texture.
 - **Interface image:** general image with a declared export size.
 
-The reviewer supports checkerboard, white and near-black backdrops. Validation examines decoded alpha. A painted checkerboard or a transparent corner cannot qualify a solid-center image as a rim. The current migrated opaque selection artwork remains an **interface image**, not a validated transparent rim. This migration does not regenerate the HUD.
+The reviewer supports checkerboard, white and near-black backdrops. Validation examines decoded alpha. A painted checkerboard or a transparent corner cannot qualify a solid-center image as a rim.
 
 Mechanical validation is not an aesthetic verdict. Check silhouette, legibility, material treatment and framing before approval. The current validator does not detect baked text or evaluate visual quality automatically.
 
 ## Storage and publication
 
-The canonical [publication contract](publication.md) defines working versus released state. Definitions and role-named resources live in `art/assets/<id>/`; released resources live in `assets/library/<id>/` and snapshots in `assets/authoring/published.json`. Editable Blender sources, original image masters, build recipes and their manifests live in the same canonical asset folders. Profiles and curated style references live in `art/profiles/` and `art/styles/`.
+The canonical [publication contract](publication.md) defines working versus released state. Definitions and role-named resources live in `art/assets/<id>/`; released resources live in `assets/library/<id>/` and snapshots in `assets/authoring/published.json`. Each canonical asset folder keeps one master (an editable Blender source or original image) next to its definition. Profiles and curated style references live in `art/profiles/` and `art/styles/`.
 
 Use `npm run assets:compile` to validate released bytes and regenerate deterministic indexes. It does not publish working drafts. Reload a game/editor page deliberately after publication; do not replace an in-progress map document through asset hot reload.
 
@@ -90,7 +90,7 @@ The Studio and game Vite servers use separate dependency caches. Meshy generatio
 
 ## Generated woodland HUD
 
-The HUD's new woodland textures were generated using Asset Studio with the uploaded approved interface screenshot. Exact prompts, source images, hashes, dimensions and approvals are retained in the six `art/assets/image.woodland-*` revisions. No artwork was copied directly into the runtime outside the Studio publication transaction.
+The HUD's new woodland textures were generated using Asset Studio with the uploaded approved interface screenshot. Each `art/assets/image.woodland-*` package keeps its original `source.png` and published `image.png`. No artwork was copied directly into the runtime outside the Studio publication transaction.
 
 The runtime now uses `woodland-connected-hud.png`, generated from the approved connected concept through Asset Studio. Its exterior has real alpha; its minimap opening, uninterrupted center and twelve command cells retain matching dark textured interiors. The minimap is drawn into its opening at runtime. Separate square rims remain for inventory and production queue items, with a horizontal frame for resources/vitals/learning, two textured vital fills, and subdued leather behind four inventory slots.
 

@@ -1,6 +1,6 @@
 import {snapPlacement} from '../../src/shared/spatial/placement';
-import { builtinSource, content } from "../../src/content/builtin";
 import { ContentRegistry } from "../../src/content/registry";
+import { testContent, testSource } from "../fixtures/content";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { Game } from "../../src/sim/game/game";
 import type { Placement, Rules, AuthoredDefinition } from "../../src/content/schema";
@@ -8,7 +8,8 @@ export const slots = [
   { player: 0, kind: "human" as const },
   { player: 1, kind: "human" as const },
 ];
-export const source = () => structuredClone(builtinSource);
+/** A fresh copy of the test-owned content world (tests/fixtures/content). */
+export const source = () => testSource();
 export function game(
   entities: Placement[] = [],
   edit?: (draft: ReturnType<typeof source>) => void,
@@ -28,7 +29,7 @@ export function game(
 export function compactBodySource(draft: ReturnType<typeof source>) {
   for(const d of draft.definitions as AuthoredDefinition[])if(d.kind==='unit') {
     d.dimensions={radius:.2,height:2,formationSpacing:1};
-    const resolved=content.get(d.id).behaviors;
+    const resolved=testContent.get(d.id).behaviors;
     d.behaviors??={};
     if(resolved.movement)d.behaviors.movement={...resolved.movement,speed:4,...(resolved.movement.walkSpeed?{walkSpeed:2}:{})};
     if(resolved.combat&&!resolved.combat.projectile&&!resolved.combat.shell)d.behaviors.combat={...resolved.combat,range:1.5,attack:{...resolved.combat.attack,rangeBuffer:.75}};
@@ -48,7 +49,7 @@ export function placed(
     id,
     definition,
     // Custom fixture definitions supply their own legal coordinates.
-    position: content.find(definition) ? snapPlacement(content.get(definition), {x,y}) : {x,y},
+    position: testContent.find(definition) ? snapPlacement(testContent.get(definition), {x,y}) : {x,y},
     rotation: 0,
     owner: "player.1",
     ...(initialState ? { initialState } : {}),
@@ -75,9 +76,9 @@ export function physical(g: Game, item: string) {
 
 /** An explicit healing/channel loadout for cast lifecycle fixtures, independent of hero balance. */
 export function castLifecycleSource(draft: ReturnType<typeof source>) {
- const hero=(draft.definitions as AuthoredDefinition[]).find(d=>d.id==='unit.ants.marshal')!;
+ const hero=(draft.definitions as AuthoredDefinition[]).find(d=>d.id==='unit.test.marshal')!;
  hero.behaviors!.abilities!.bindings=[
-  {id:'holy-light',ability:'ability.core.holy-light-lite',initialRank:1,controls:['player'],command:{hotkey:'Q',column:1}},
-  {id:'blizzard',ability:'ability.core.blizzard',initialRank:1,controls:['player'],command:{hotkey:'W',column:2}},
+  {id:'holy-light',ability:'ability.test.holy-light-lite',initialRank:1,controls:['player'],command:{hotkey:'Q',column:1}},
+  {id:'blizzard',ability:'ability.test.blizzard',initialRank:1,controls:['player'],command:{hotkey:'W',column:2}},
  ];
 }

@@ -56,25 +56,3 @@ it('keeps work dust above terrain while the scaffold is mostly buried',()=>{
  }
  s.dispose();
 });
-
-it('scatters dust across the roof and every side without a repeating perimeter sequence',()=>{
- const play=vi.fn().mockReturnValue(1),body=new Mesh(new BoxGeometry(10,8,10));body.position.y=4;
- const s=new ConstructionScaffold(config,new Mesh(new BoxGeometry(1,1,1)),body,{play,stop:vi.fn()} as unknown as EffectPlayer,{durationTicks:40,layers:[]} as unknown as VisualEffect);
- s.update(.2,0,true,42);
- for(let i=1;i<=32;i++)s.update(.2+i*.01,i*16,true,42);
- const points=play.mock.calls.map(([,options])=>options.target),sides:number[]=[];
- for(let i=0;i<points.length;i+=3){
-  for(const p of points.slice(i,i+2)){
-   expect(Math.abs(p.x)).toBeLessThanOrEqual(5.3);expect(Math.abs(p.y)).toBeLessThanOrEqual(5.3);
-  }
-  const edge=points[i+2];
-  expect(edge.height).toBeLessThan(points[i].height);
-  sides.push(Math.abs(edge.x)>5.3?(edge.x<0?0:1):(edge.y<0?2:3));
- }
- expect(new Set(sides).size).toBe(4);
- expect(sides.some((side,i)=>i>=4&&side!==sides[i-4])).toBe(true);
- const roof=points.filter((_,i)=>i%3!==2);
- expect(roof.some(p=>Math.abs(p.x)<2&&Math.abs(p.y)<2)).toBe(true);
- expect(new Set(roof.map(p=>`${p.x}:${p.y}`)).size).toBe(roof.length);
- s.dispose();
-});

@@ -10,7 +10,7 @@ it('uses the same pinned-root deformation and clock for foliage and its depth sh
  layer.attach(root,{amplitude:.15,speed:.2},2);layer.tick(2500);
  const shader=()=>({uniforms:{} as Record<string,{value:unknown}>,vertexShader:'#include <common>\n#include <begin_vertex>',fragmentShader:''});
  const color=shader(),depth=shader();m.onBeforeCompile(color as never,{} as never);mesh.customDepthMaterial!.onBeforeCompile(depth as never,{} as never);
- expect(depth.vertexShader).toBe(color.vertexShader);expect(color.vertexShader).toContain('clamp(position.y/uFoliageWind.z,0.,1.)');
+ expect(depth.vertexShader).not.toBe(shader().vertexShader);expect(depth.vertexShader).toBe(color.vertexShader);
  expect(color.uniforms.uFoliageClock).toBe(depth.uniforms.uFoliageClock);expect(color.uniforms.uFoliageClock.value).toBe(2.5);
  layer.dispose();mesh.geometry.dispose();m.dispose();
 });

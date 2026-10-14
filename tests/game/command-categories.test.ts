@@ -10,18 +10,18 @@ describe("command categories", () => {
     const root = commandMenu(bindings, null, g.registry).entries;
     expect(root.map(b => b.id)).toEqual(["move", "stop", "hold", "patrol", "follow", "category:category.build", "category:category.build-advanced"]);
     expect(shortcutCommand(root, 0, "b")?.type).toBe("category");
-    expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.find(b => b.targetDefinition === "building.ants.bombardier-workshop")).toMatchObject({enabled: false, reason: "Requires Great Acorn Hall"});
+    // Locked purchases stay visible with their prerequisite as the reason.
+    expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.some(b => b.type === "build" && !b.enabled && /^Requires /.test(b.reason ?? ""))).toBe(true);
     const basic = commandMenu(bindings, "category.build", g.registry).entries;
-    expect(basic.filter(b => b.type === "build").map(b => b.targetDefinition)).toEqual(
-      ["fort", "house", "barracks", "sanctuary", "ironroot-forge", "rootworks"].map(id => `building.ants.${id}`),
-    );
-    expect(bindings.some(b => b.targetDefinition === "building.ants.forester")).toBe(false);
-    expect(commandMenu(bindings, "category.build-advanced", g.registry).entries.some(b => b.targetDefinition === "building.ants.tower")).toBe(true);
-    const barracks = basic.find(b => b.targetDefinition === "building.ants.barracks")!;
-    expect(barracks.actors).toEqual([w.id]);
-    expect(barracks.costs.map(c => c.amount)).toEqual([200, 60]);
+    const builds = g.registry.get(w.definition).behaviors.work!.builds;
+    expect(basic.filter(b => b.type === "build").length).toBeGreaterThan(0);
+    // Only definitions the worker can construct are offered.
+    expect(bindings.filter(b => b.type === "build").every(b => builds.includes(b.targetDefinition!))).toBe(true);
+    const site = basic.find(b => b.type === "build")!;
+    expect(site.actors).toEqual([w.id]);
+    expect(site.costs.filter(c => c.kind === "item").map(c => c.amount)).toEqual(g.registry.get(site.targetDefinition!).creation!.items.map(i => i.amount));
     expect(commandPage(basic, 0).find(s => s.binding.type === "back")).toMatchObject({column: 1, row: 3, binding: {destination: null}});
-    const soldier = g.entities.find(e => e.definition === "unit.ants.marshal")!;
+    const soldier = g.entities.find(e => e.owner === "player.1" && g.registry.get(e.definition).hero)!;
     const army = commandCard(g.view("player.1"), [soldier.id], "player.1", g.registry);
     expect(commandMenu(army, "category.build", g.registry).category).toBeNull();
     expect(commandMenu(army, null, g.registry).entries.filter(b => b.type === "category").map(b=>b.id)).toEqual(["category:category.hero.skills"]);
@@ -31,15 +31,15 @@ describe("command categories", () => {
   it("supports nested categories, explicit ungrouping, and command-specific overrides", () => {
     const s = source() as any;
     s.actions.categories["category.build-advanced"].parent = "category.build";
-    s.actions.overrides["build:building.ants.tower"].hidden = false;
-    s.actions.overrides["build:building.ants.house"] = {category: null};
-    s.actions.overrides["build:building.ants.barracks"] = {category: "category.build"};
+    s.actions.overrides["build:building.test.tower"].hidden = false;
+    s.actions.overrides["build:building.test.house"] = {category: null};
+    s.actions.overrides["build:building.test.barracks"] = {category: "category.build"};
     const registry = new ContentRegistry(s), g = game();
     const bindings = commandCard(g.view("player.1"), [worker(g).id], "player.1", registry);
-    expect(commandMenu(bindings, null, registry).entries.map(b => b.id)).toContain("build:building.ants.house");
+    expect(commandMenu(bindings, null, registry).entries.map(b => b.id)).toContain("build:building.test.house");
     const basic = commandMenu(bindings, "category.build", registry).entries;
     expect(basic.map(b => b.id)).toContain("category:category.build-advanced");
-    expect(basic.map(b => b.id)).toContain("build:building.ants.barracks");
+    expect(basic.map(b => b.id)).toContain("build:building.test.barracks");
     expect(commandMenu(bindings, "category.build-advanced", registry).entries.find(b => b.type === "back")).toMatchObject({destination: "category.build"});
   });
 
@@ -77,9 +77,9 @@ describe("command categories", () => {
     for (const edit of [
       (s: any) => {s.actions.actions.build.category = "category.missing";},
       (s: any) => {s.definitions[0].category = "category.missing";},
-      (s: any) => {s.actions.overrides["build:building.ants.house"] = {category: "category.missing"};},
+      (s: any) => {s.actions.overrides["build:building.test.house"] = {category: "category.missing"};},
       (s: any) => {s.actions.categories["category.build"].parent = "category.build-advanced"; s.actions.categories["category.build-advanced"].parent = "category.build";},
-      (s: any) => {s.actions.categories["category.build"].icon = "asset.ants.warrior";},
+      (s: any) => {s.actions.categories["category.build"].icon = "asset.test.warrior";},
       (s: any) => {s.actions.categories["category.build"].hotkey = "A";},
     ]) {
       const s = source(); edit(s);

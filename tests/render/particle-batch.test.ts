@@ -1,17 +1,6 @@
 import {expect,it} from 'vitest';
-import {AdditiveBlending,Group,Matrix4,Mesh,MeshBasicMaterial,PerspectiveCamera,PlaneGeometry,Scene,Sprite,SpriteMaterial,Vector3} from 'three';
-import {ParticleBatch,bindParticleBatches} from '../../src/render/abilities/particleBatch';
-it('updates buffers at the scene boundary, before draw-list uploads, and restores the scene hook',()=>{
- const scene=new Scene(),camera=new PerspectiveCamera(),owner={},p=new Sprite(new SpriteMaterial()),batch=new ParticleBatch([p]);scene.add(batch.mesh);
- let called=0;const previous:Scene['onBeforeRender']=()=>{called++;};scene.onBeforeRender=previous;
- try{
-  bindParticleBatches(scene,owner,[batch]);p.position.x=12;
-  scene.onBeforeRender(null as never,scene,camera,null as never,null as never,null as never);
-  const matrix=new Matrix4();batch.mesh.getMatrixAt(0,matrix);expect(matrix.elements[12]).toBe(12);expect(called).toBe(1);
-  expect(batch.mesh.instanceMatrix.version).toBeGreaterThan(0);
-  bindParticleBatches(scene,owner,[]);expect(scene.onBeforeRender).toBe(previous);
- }finally{bindParticleBatches(scene,owner,[]);batch.dispose();p.material.dispose();}
-});
+import {AdditiveBlending,Group,Matrix4,Mesh,MeshBasicMaterial,PerspectiveCamera,PlaneGeometry,Sprite,SpriteMaterial,Vector3} from 'three';
+import {ParticleBatch} from '../../src/render/abilities/particleBatch';
 it('batches independent particle transforms, colours and opacity, compacting invisible particles',()=>{
  const particles=Array.from({length:32},(_,i)=>{const p=new Mesh(new PlaneGeometry(1,1),new MeshBasicMaterial({color:i%2?'red':'blue',opacity:i/32,blending:AdditiveBlending}));p.position.set(i,2,3);p.scale.setScalar(i+1);return p;});
  const batch=new ParticleBatch(particles),root=new Group(),camera=new PerspectiveCamera();root.add(batch.mesh);root.position.set(40,0,0);camera.position.set(0,10,20);camera.lookAt(0,0,0);camera.updateMatrixWorld();

@@ -18,6 +18,6 @@ it('never places beyond map boundaries and preserves drops if no nearby ground i
  const g=game([]),p=dropPosition(g.context,{x:0,y:0});
  expect(p.x).toBeGreaterThanOrEqual(0);expect(p.y).toBeGreaterThanOrEqual(0);
  // An impassable local area returns the original site rather than losing a reward.
- g.spatial.terrain.fill(0);
+ g.spatial.terrain.fill(0);g.spatial.rebuild();
  expect(dropPosition(g.context,{x:100,y:100})).toEqual({x:100,y:100});
 });

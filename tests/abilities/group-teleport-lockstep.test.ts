@@ -2,15 +2,17 @@ import {expect,it} from 'vitest';
 import {Room,Lockstep,MemoryChannel} from '../../src/net';
 import {World} from '../../src/sim/world/world';
 import {localMatch} from '../../src/shared';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import type {AbilityEvent} from '../../src/sim/abilities/runtime';
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
 
 it('transports the actual allied group through lockstep, preserving exclusions, costs and restore boundaries',()=>{
- const ability=coreAbilities.abilities.find(a=>a.id==='ability.core.mass-teleport')!;
- const presentation=coreAbilities.presentations.find(p=>p.id===ability.presentation)!;
- const f=createAbilityEncounter(ability,presentation,encounterSettingsSchema.parse({relationship:'ally',targetCount:3,distance:3,targetSpacing:2,mana:1000,targetHealth:400}));
+ const ability=testAbilities.abilities.find(a=>a.id==='ability.test.mass-teleport')!;
+ const presentation=testAbilities.presentations.find(p=>p.id===ability.presentation)!;
+ const f=createAbilityEncounter(ability,presentation,encounterSettingsSchema.parse({...encounterUnits,relationship:'ally',targetCount:3,distance:3,targetSpacing:2,mana:1000,targetHealth:400}),false,testSource());
  // Keep full-size passenger bodies separated inside the group radius.
  for(const [i,e] of f.game.entities.filter(e=>e.id!==f.caster).entries()){e.x=124;e.y=116+i*4;}
  const passengers=f.game.entities.map(e=>({id:e.id,x:e.x,y:e.y,hp:e.hp}));

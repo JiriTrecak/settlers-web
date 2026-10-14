@@ -1,4 +1,5 @@
-/** Prepare a smaller canonical draft, retaining exact original GLBs as sources.
+/** Prepare a smaller canonical draft. The original GLB becomes the master source only when
+ * the package has no master yet (an existing source.blend keeps full-resolution textures).
  * Usage: node --import tsx scripts/assets/texture-size.ts asset.id 512 */
 import {readFile} from 'node:fs/promises';
 import {resizeModelTextures} from '../../tooling/asset-studio/server/authoring/textureExport';
@@ -14,7 +15,7 @@ await withWorkspaceWriteLock(process.cwd(),async()=>{
  const policyChanged=asset.exportSettings?.textureSize!==limit;asset.exportSettings={textureSize:limit as 512};
  for(const r of [...asset.resources].filter(r=>r.role==='geometry'&&r.format==='glb')){
   const filename=assetFolder(asset.id)+'/'+resourceFilename(r),original=await readFile(filename),bytes=await resizeModelTextures(original,limit);if(bytes===original)continue;
-  if(!asset.resources.some(s=>s.role==='source'&&s.sha256===hash(original))){const source={...r,role:'source' as const,index:1+Math.max(0,...asset.resources.filter(r=>r.role==='source').map(r=>r.index))};asset.resources.push(source);writes.push({path:assetFolder(asset.id)+'/'+resourceFilename(source),bytes:original});}
+  if(!asset.resources.some(s=>s.role==='source')){const source={...r,role:'source' as const,index:1};asset.resources.push(source);writes.push({path:assetFolder(asset.id)+'/'+resourceFilename(source),bytes:original});}
   r.bytes=bytes.length;r.sha256=hash(bytes);writes.push({path:filename,bytes});console.log(`${asset.id}: ${original.length} → ${bytes.length} bytes`);
  }
  if(writes.length||policyChanged){asset.revision++;writes.push({path:assetFolder(asset.id)+'/asset.json',bytes:definitionBytes(asset)});await commitFiles(process.cwd(),writes);}

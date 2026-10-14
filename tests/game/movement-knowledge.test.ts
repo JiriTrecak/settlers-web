@@ -3,8 +3,8 @@ import {game,placed} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
 import type {AuthoredDefinition} from '../../src/content/schema';
 
-const placements=[placed('mover','unit.ants.warrior',40,100),
- {...placed('hidden','unit.ants.warrior',140,100),owner:'player.2' as const}];
+const placements=[placed('mover','unit.test.warrior',40,100),
+ {...placed('hidden','unit.test.warrior',140,100),owner:'player.2' as const}];
 const find=(g:ReturnType<typeof game>,id:string)=>g.entities.find(e=>e.placement===id)!;
 
 it.each([false,true])('does not reveal distant occupancy through a move route (attack move: %s)',attackMove=>{
@@ -40,9 +40,9 @@ it('separates planning knowledge from physical collision and still avoids known 
 });
 
 it('can plan scripted neutral movement without requiring a combat behavior',()=>{
- const g=game([{...placed('neutral','unit.ants.settler',100,100),owner:'none'},
-  placed('occupant','unit.ants.warrior',105,100)],draft=>{
-   const worker=(draft.definitions as AuthoredDefinition[]).find(d=>d.id==='unit.ants.settler')!;
+ const g=game([{...placed('neutral','unit.test.settler',100,100),owner:'none'},
+  placed('occupant','unit.test.warrior',105,100)],draft=>{
+   const worker=(draft.definitions as AuthoredDefinition[]).find(d=>d.id==='unit.test.settler')!;
    worker.disabledBehaviors=[...(worker.disabledBehaviors??[]),'combat'];
   });
  const mover=find(g,'neutral');

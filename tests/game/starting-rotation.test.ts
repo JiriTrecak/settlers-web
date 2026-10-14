@@ -1,8 +1,8 @@
 import {captureTerrain} from '../../src/shared/authoring/captureTerrain';
 import {expect,it} from 'vitest';
-import {content} from '../../src/content/builtin';
+import {testContent as content} from '../fixtures/content';
 import {expandMap} from '../../src/content/map';
-import {startingUnitPosition} from '../../src/content/startingHero';
+import {startingUnitPosition,startingUnits} from '../../src/content/startingHero';
 import {emptyUtcMap,parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
 import {mapRevision,playableMapError} from '../../src/shared/map/playable';
 import {World} from '../../src/sim/world/world';
@@ -14,7 +14,9 @@ it.each([0,90,180,270] as const)('keeps the complete formation point-symmetric o
   rotation:(i?(rotation+180)%360:rotation) as 0|90|180|270}))};
  expect(playableMapError(map)).toBeNull();
  const placements=expandMap(map,content),a=placements.filter(p=>p.owner==='player.1'),b=placements.filter(p=>p.owner==='player.2');
- expect(a).toHaveLength(7);expect(b).toHaveLength(7);
+ // The Hall plus every starting unit (workers and the default hero).
+ const expected=1+startingUnits(content.rules.startingSetup).length;
+ expect(a).toHaveLength(expected);expect(b).toHaveLength(expected);
  for(let i=0;i<a.length;i++){
   expect(b[i].position).toEqual({x:511-a[i].position.x,y:511-a[i].position.y});
   expect(b[i].rotation).toBe((a[i].rotation+180)%360);
@@ -48,7 +50,7 @@ it('validates clearance for the rotated units, not just the Hall footprint',()=>
 it('includes start facing in match identity and preserves it through deterministic save continuation',()=>{
  const map=emptyUtcMap();map.playerStarts[1].rotation=180;
  expect(mapRevision(map)).not.toBe(mapRevision(emptyUtcMap()));
- const options={map,slots,seed:103},a=new World(options),b=new World(options);
+ const options={map,slots,seed:103,registry:content},a=new World(options),b=new World(options);
  for(let i=0;i<20;i++)a.tick();b.restore(a.snapshot());
  for(let i=0;i<40;i++){a.tick();b.tick();expect(b.checksum('full')).toBe(a.checksum('full'));}
  expect(b.snapshot()).toEqual(a.snapshot());

@@ -55,6 +55,13 @@ describe('embedded authoring agent',()=>{
    expect(authoringSchema('commands')).toContain('effects.preview.seek');expect(authoringSchema('effects.save')).toHaveProperty('properties.document');
   }finally{await rm(root,{recursive:true,force:true});}
  });
+ it('serves the engine reference topics through studio_schema without filesystem access',async()=>{
+  const toolkit=new AuthoringToolkit(new SpellEditorService(os.tmpdir()),new Credentials(os.tmpdir(),memoryEntry()),new CanvasBridge());
+  const index=await toolkit.execute('studio_schema',{section:'reference'}) as {topics:{section:string;title:string}[]};
+  expect(index.topics.map(t=>t.section)).toEqual(expect.arrayContaining(['reference.definition','reference.operations','reference.runtime','reference.presentation','reference.examples']));
+  for(const topic of index.topics){const result=await toolkit.execute('studio_schema',{section:topic.section}) as {text:string};expect(result.text).toContain('# '+topic.title);}
+  await expect(toolkit.execute('studio_schema',{section:'reference.../SKILL'})).rejects.toThrow('Unknown reference topic');
+ });
  it.each(['icon','texture'] as const)('imports generated %s images through the canonical pipeline with game-compatible dimensions and bindings',async(kind)=>{
   const size=kind==='icon'?128:512;
   const root=await mkdtemp(path.join(os.tmpdir(),'studio-image-'));try{
@@ -68,7 +75,7 @@ describe('embedded authoring agent',()=>{
    const pending=toolkit.execute('studio_image',input);
    await expect(toolkit.execute('studio_image',input)).rejects.toThrow('already being generated');
    const result=await pending as any;expect(result.published).toBe(true);expect(result.width).toBe(size);expect(result.transparent).toBe(true);
-   expect(JSON.parse(fetcher.mock.calls[0][1]!.body as string)).toMatchObject({model:'gpt-image-2.5-sunburst',background:'transparent',output_format:'png'});
+   expect(JSON.parse(fetcher.mock.calls[0][1]!.body as string)).toMatchObject({background:'transparent',output_format:'png'});
    const definition=JSON.parse(await readFile(path.join(root,'art/assets/asset.test.aura/asset.json'),'utf8'));expect(definition.resources.map((r:any)=>r.role).sort()).toEqual(['generation','image','source']);
    expect(definition.bindings.render).toHaveLength(kind==='icon'?1:0);
    expect(await readFile(path.join(root,'art/assets/asset.test.aura/source.png'))).toEqual(png);

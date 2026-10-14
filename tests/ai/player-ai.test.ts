@@ -1,9 +1,9 @@
 import { entityStats } from "../../src/sim/game/stats";
 import { economy } from "../../src/sim/ai/economy";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { World } from "../../src/sim/world/world";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
-import { content } from "../../src/content/builtin";
+import { testContent } from "../fixtures/content";
 import { PlayerAI } from "../../src/sim/ai/playerAI";
 import { createMapBriefing } from "../../src/sim/ai/briefing";
 import { Geography, Frame, playerObservation } from "../../src/sim/ai/frame";
@@ -23,7 +23,7 @@ const campMap = () => ({
   entities: [
     {
       id: "camp-wolf",
-      definition: "unit.neutral.webling",
+      definition: "unit.test.neutral-webling",
       position: { x: 110, y: 110 },
       rotation: 0,
       owner: "none" as const,
@@ -42,9 +42,9 @@ const campMap = () => ({
 });
 function fixture() {
   const map = campMap(),
-    world = new World({ map, slots, seed: 5 }),
-    geo = new Geography(createMapBriefing(map, content));
-  return { map, world, geo, brain: new PlayerAI("player.1", content, geo, 5) };
+    world = new World({ map, slots, seed: 5, registry: testContent }),
+    geo = new Geography(createMapBriefing(map, testContent));
+  return { map, world, geo, brain: new PlayerAI("player.1", testContent, geo, 5) };
 }
 function acknowledge(
   brain: PlayerAI,
@@ -61,7 +61,7 @@ function soldier(
   y: number,
   hp?: number,
 ): EntityView {
-  const d = content.get(definition);
+  const d = testContent.get(definition);
   return {
     id,
     definition,
@@ -70,7 +70,7 @@ function soldier(
     y,
     rotation: 0,
     hp: hp ?? d.body!.maxHp,
-    stats: entityStats(d, {}, content),
+    stats: entityStats(d, {}, testContent),
     unit: {
       moving: false,
       contained: false,
@@ -102,9 +102,9 @@ function seen(base: SettlementView, entities: EntityView[]): SettlementView {
 describe("player AI information and authority boundary", () => {
   it('lets moving reinforcements approach the join area while recovering a stalled reinforcement',()=>{
     const {brain,world}=fixture(),base=world.settlement.view(0);
-    const guards=Array.from({length:content.rules.ai.army.homeGuard},(_,i)=>soldier(9000+i,'unit.ants.warrior',60+i,60));
-    const squad=Array.from({length:24},(_,i)=>soldier(9100+i,'unit.ants.warrior',200+i%4,110+Math.floor(i/4)));
-    const progressing=soldier(9200,'unit.ants.warrior',100,130),stalled=soldier(9201,'unit.ants.warrior',100,132);
+    const guards=Array.from({length:testContent.rules.ai.army.homeGuard},(_,i)=>soldier(9000+i,'unit.test.warrior',60+i,60));
+    const squad=Array.from({length:24},(_,i)=>soldier(9100+i,'unit.test.warrior',200+i%4,110+Math.floor(i/4)));
+    const progressing=soldier(9200,'unit.test.warrior',100,130),stalled=soldier(9201,'unit.test.warrior',100,132);
     for(const e of [progressing,stalled])e.control!.order={type:'move',destination:{x:195,y:110},attackMove:true};
     progressing.unit!.moving=true;
     const state=brain.snapshot();
@@ -122,7 +122,7 @@ describe("player AI information and authority boundary", () => {
 
   it("knows authored camp sites without knowing an unseen camp was cleared", () => {
     const { map, world: a } = fixture(),
-      b = new World({ map, slots, seed: 5 });
+      b = new World({ map, slots, seed: 5, registry: testContent });
     const hidden = b.settlement.entities.find(
       (e) => e.placement === "camp-wolf",
     )!;
@@ -150,17 +150,17 @@ describe("player AI information and authority boundary", () => {
         mapKnowledge: "hidden" as const,
       })),
     };
-    expect(createMapBriefing(hidden, content).camps).toHaveLength(0);
+    expect(createMapBriefing(hidden, testContent).camps).toHaveLength(0);
   });
   it("strips private enemy cooldowns, cargo, orders, effects and simulation cues", () => {
     const { world } = fixture(),
       base = world.settlement.view(0),
-      enemy = soldier(900, "unit.ants.warrior", 220, 220);
+      enemy = soldier(900, "unit.test.warrior", 220, 220);
     enemy.owner = "player.2";
     enemy.unit!.cooldown = 999;
-    enemy.unit!.cargo = { item: "item.wood", amount: 4 };
+    enemy.unit!.cargo = { item: "item.test.wood", amount: 4 };
     enemy.abilities = {mana:100,regeneration:0,ranks:{},cooldowns:{},pending:null};
-    enemy.inventory = { "item.amber": 999 };
+    enemy.inventory = { "item.test.amber": 999 };
     const view = playerObservation(
       { ...base, entities: [enemy], deaths: [enemy] },
       "player.1",
@@ -179,7 +179,7 @@ describe("player AI information and authority boundary", () => {
     const { brain, world } = fixture(),
       commands = brain.decide(10, world.settlement.view(0));
     expect(commands.length).toBeLessThanOrEqual(
-      content.rules.ai.limits.commandsPerBeat,
+      testContent.rules.ai.limits.commandsPerBeat,
     );
     const actors = commands.flatMap((c) =>
       "actors" in c.action
@@ -199,7 +199,7 @@ describe("player AI information and authority boundary", () => {
   it("retains pending intentions, knowledge, missions and cooldowns through arbitrary-tick saves", () => {
     const { map, world: a } = fixture();
     for (let t = 0; t < 377; t++) a.tick();
-    const b = new World({ map, slots, seed: 5 });
+    const b = new World({ map, slots, seed: 5, registry: testContent });
     b.restore(JSON.parse(JSON.stringify(a.snapshot())));
     expect(a.checksum()).toBe(b.checksum());
     for (let t = 0; t < 1000; t++) {
@@ -217,11 +217,11 @@ describe("hero and tactical decisions", () => {
   it("uses healing items and revives the same fallen hero", () => {
     const { world, geo } = fixture(),
       base = world.settlement.view(0),
-      hero = soldier(900, "unit.ants.marshal", 205, 205, 140);
-    hero.equipment = ["item.resin-salve", null, null, null, null, null];
+      hero = soldier(900, "unit.test.marshal", 205, 205, 140);
+    hero.equipment = ["item.test.resin-salve", null, null, null, null, null];
     hero.abilities = {
       mana: 225,regeneration:0,
-      ranks: {'holy-light':1},
+      ranks: {},
       cooldowns: {},
       pending: null,
     };
@@ -233,17 +233,17 @@ describe("hero and tactical decisions", () => {
         return true;
       };
     heroActions(
-      new Frame(seen(base, [hero]), "player.1", content, geo, 100),
+      new Frame(seen(base, [hero]), "player.1", testContent, geo, 100),
       state,
       emit,
     );
     expect(actions[0]).toEqual({ type: "useItem", actor: 900, slot: 0 });
     const actual = world.settlement.entities.find(
-      (e) => content.get(e.definition).hero && e.owner === "player.1",
+      (e) => testContent.get(e.definition).hero && e.owner === "player.1",
     )!;
     world.settlement.context.create({
       id: "sanctuary",
-      definition: "building.ants.sanctuary",
+      definition: "building.test.sanctuary",
       position: { x: 193.5, y: 237.5 },
       rotation: 0,
       owner: "player.1",
@@ -261,8 +261,8 @@ describe("hero and tactical decisions", () => {
   it("evacuates a damaged worker and remembers its harvest target instead of chasing the attacker", () => {
     const { world, geo } = fixture(),
       base = world.settlement.view(0),
-      worker = soldier(900, "unit.ants.settler", 205, 205, 20),
-      enemy = soldier(901, "unit.neutral.webling", 206, 205);
+      worker = soldier(900, "unit.test.settler", 205, 205, 20),
+      enemy = soldier(901, "unit.test.neutral-webling", 206, 205);
     worker.control!.order = { type: "gather", target: 999 };
     enemy.hostile = true;
     enemy.owner = "none";
@@ -271,7 +271,7 @@ describe("hero and tactical decisions", () => {
     state.damage[900] = { hp: 20, seen: 100, reactAt: 90 };
     const actions: Action[] = [];
     reactions(
-      new Frame(seen(base, [worker, enemy]), "player.1", content, geo, 100),
+      new Frame(seen(base, [worker, enemy]), "player.1", testContent, geo, 100),
       state,
       (a) => {
         actions.push(a);
@@ -287,10 +287,10 @@ describe("disruption and scaling gates", () => {
   it("puts the last broke worker back to harvesting instead of reserving the whole workforce", () => {
     const { world, geo } = fixture(),
       base = world.settlement.view(0),
-      worker = soldier(900, "unit.ants.settler", 218, 223);
+      worker = soldier(900, "unit.test.settler", 218, 223);
     const resource: EntityView = {
       id: 901,
-      definition: "building.neutral.amber-mine",
+      definition: "building.test.neutral-amber-mine",
       owner: "none",
       x: 230,
       y: 223,
@@ -300,7 +300,7 @@ describe("disruption and scaling gates", () => {
     };
     const actions: Action[] = [];
     economy(
-      new Frame(seen({...base, goods: base.goods!.map(g => ({...g, available: 0, stored: 0}))}, [worker, resource, {...base.entities.find(e=>e.owner==="player.1" && e.definition==="building.ants.fort")!, inventory:{}}]), "player.1", content, geo, 100),
+      new Frame(seen({...base, goods: base.goods!.map(g => ({...g, available: 0, stored: 0}))}, [worker, resource, {...base.entities.find(e=>e.owner==="player.1" && e.definition==="building.test.fort")!, inventory:{}}]), "player.1", testContent, geo, 100),
       newAIState(geo.map.fingerprint, 1),
       (a) => {
         actions.push(a);
@@ -314,27 +314,26 @@ describe("disruption and scaling gates", () => {
     });
   });
 
-  it("skips harvesting searches when every worker is occupied, then assigns immediately when one is free",()=>{
+  it("leaves occupied workers alone, then assigns harvesting immediately when one is free",()=>{
     const {world,geo}=fixture(),base=world.settlement.view(0);
-    const worker=soldier(900,"unit.ants.settler",218,223);
+    const worker=soldier(900,"unit.test.settler",218,223);
     worker.control!.order={type:'gather',target:901};
-    const resource:EntityView={id:901,definition:'building.neutral.amber-mine',owner:'none',x:230,y:223,rotation:0,hp:null,resource:{amount:1000,growingUntil:null}};
-    const view=seen({...base,goods:base.goods!.map(g=>({...g,available:0,stored:0}))},[worker,resource,{...base.entities.find(e=>e.owner==='player.1'&&e.definition==='building.ants.fort')!,inventory:{}}]);
-    const f=new Frame(view,'player.1',content,geo,100),state=newAIState(geo.map.fingerprint,1);
-    const search=vi.spyOn(f,'nearestResource'),actions:Action[]=[];
+    const resource:EntityView={id:901,definition:'building.test.neutral-amber-mine',owner:'none',x:230,y:223,rotation:0,hp:null,resource:{amount:1000,growingUntil:null}};
+    const view=seen({...base,goods:base.goods!.map(g=>({...g,available:0,stored:0}))},[worker,resource,{...base.entities.find(e=>e.owner==='player.1'&&e.definition==='building.test.fort')!,inventory:{}}]);
+    const f=new Frame(view,'player.1',testContent,geo,100),state=newAIState(geo.map.fingerprint,1);
+    const actions:Action[]=[];
     const emit=(a:Action)=>{actions.push(a);return true;};
     economy(f,state,emit);
-    expect(search).not.toHaveBeenCalled();expect(actions).toEqual([]);
+    expect(actions).toEqual([]);
     worker.control!.order=null;
     economy(f,state,emit);
-    expect(search).toHaveBeenCalled();
     expect(actions).toContainEqual({type:'gather',actors:[900],target:901});
   });
 
   it("nearest-resource selection matches full sorting, including equal distances and rejected candidates",()=>{
     const {world,geo}=fixture(),base=world.settlement.view(0);
-    const resources:EntityView[]=Array.from({length:100},(_,i)=>({id:1000-i,definition:'resource.forest.tree',owner:'none',x:120+(i%5)*2,y:120+Math.floor(i/5)%5*2,rotation:0,hp:null,resource:{amount:100,growingUntil:null}}));
-    const f=new Frame(seen(base,resources),'player.1',content,geo,100);
+    const resources:EntityView[]=Array.from({length:100},(_,i)=>({id:1000-i,definition:'resource.test.forest-tree',owner:'none',x:120+(i%5)*2,y:120+Math.floor(i/5)%5*2,rotation:0,hp:null,resource:{amount:100,growingUntil:null}}));
+    const f=new Frame(seen(base,resources),'player.1',testContent,geo,100);
     for(const tieById of [true,false])for(let i=0;i<25;i++){
       const p={x:115+i/2,y:120+i%7},accept=(e:EntityView)=>e.id%(i+2)===0;
       const expected=f.resources.filter(accept).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y)||(tieById?a.id-b.id:0))[0];
@@ -347,11 +346,11 @@ describe("disruption and scaling gates", () => {
     const { world, brain } = fixture(),
       g = world.settlement,
       hero = g.entities.find(
-        (e) => content.get(e.definition).hero && e.owner === "player.1",
+        (e) => testContent.get(e.definition).hero && e.owner === "player.1",
       )!;
     const enemy = g.context.create({
       id: "near-wolf",
-      definition: "unit.neutral.webling",
+      definition: "unit.test.neutral-webling",
       position: { x: hero.x + 3, y: hero.y },
       rotation: 0,
       owner: "none",
@@ -380,6 +379,7 @@ describe("disruption and scaling gates", () => {
     const opts = {
         map,
         seed: 8,
+        registry: testContent,
         slots: map.playerStarts.map((p) => ({
           player: p.player - 1,
           kind: "ai" as const,
@@ -390,7 +390,7 @@ describe("disruption and scaling gates", () => {
     expect(a.aiSummary()).toHaveLength(8);
     for (const state of a.snapshot().ai)
       expect(state.state.pending.length).toBeLessThanOrEqual(
-        content.rules.ai.limits.commandsPerBeat,
+        testContent.rules.ai.limits.commandsPerBeat,
       );
     const b = new World(opts);
     b.restore(a.snapshot());

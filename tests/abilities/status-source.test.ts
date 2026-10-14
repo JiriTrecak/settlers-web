@@ -1,14 +1,14 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {UNTIL_DEATH} from '../../src/sim/abilities/state';
 import type {Entity} from '../../src/sim/game/state';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.doom')!;
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource} from './encounter-harness';
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.doom')!;
 function fixture(patch={},settings={}){
- const a=abilitySchema.parse({...base,...patch}),f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:85,distance:3,combat:false,mana:200,...settings}));
+ const a=abilitySchema.parse({...base,...patch}),f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,testSettings({relationship:'enemy',targetHealth:85,distance:3,combat:false,mana:200,...settings}),false,encounterSource());
  return {...f,a,c:f.game.context.get(f.caster)!,t:f.game.context.get(f.target)!};
 }
 function step(f:ReturnType<typeof fixture>,n=1){for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});}
@@ -55,7 +55,7 @@ it('source-owned grants do not expose applier positions through observation or h
  const g=fixture();cast(g);g.t.x=180;g.game.observation.update();die(g);step(g);expect(g.game.abilities.observedEvents('player.1').some(e=>e.event==='death')).toBe(false);
 });
 it('rejects corrupted saved ownership contexts atomically',()=>{
- const f=fixture();cast(f);const before=f.game.checksum();for(const patch of [{owner:'player.2'},{source:f.game.state.nextId},{definition:'item.amber'},{position:{x:999,y:999}}]){const save=f.game.snapshot();Object.assign(save.state.entities.find(e=>e.id===f.target)!.spellStatuses![0].sourceContext!,patch);expect(()=>f.game.restore(save)).toThrow();expect(f.game.checksum()).toBe(before);}
+ const f=fixture();cast(f);const before=f.game.checksum();for(const patch of [{owner:'player.2'},{source:f.game.state.nextId},{definition:'item.test.amber'},{position:{x:999,y:999}}]){const save=f.game.snapshot();Object.assign(save.state.entities.find(e=>e.id===f.target)!.spellStatuses![0].sourceContext!,patch);expect(()=>f.game.restore(save)).toThrow();expect(f.game.checksum()).toBe(before);}
  const missing=f.game.snapshot();delete missing.state.entities.find(e=>e.id===f.target)!.spellStatuses![0].sourceContext;expect(()=>f.game.restore(missing)).toThrow();
  const expiry=f.game.snapshot();expiry.state.entities.find(e=>e.id===f.target)!.spellStatuses![0].expires=9999;expect(()=>f.game.restore(expiry)).toThrow();expect(f.game.checksum()).toBe(before);
 });
@@ -80,7 +80,7 @@ it('rejects incompatible executor and until-death declarations',()=>{
 it('cannot target heroes, mechanical units or high-level units',()=>{
  const f=fixture({},{targetNature:'mechanical'});expect(f.game.abilities.cast(f.caster,'preview',f.target)).not.toBeNull();
  // Preview clones deliberately strip hero progression; use real definitions for these gates.
- for(const definition of ['unit.ants.marshal','unit.neutral.hollow-stag']){
+ for(const definition of ['unit.test.marshal','unit.test.neutral-hollow-stag']){
   const g=fixture(),target=g.game.context.create({id:'ineligible',definition,owner:'player.2',position:{x:125,y:122},rotation:0});g.game.observation.update();
   expect(g.game.abilities.cast(g.caster,'preview',target.id)).not.toBeNull();
  }

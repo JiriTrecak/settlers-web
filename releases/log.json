@@ -33,7 +33,10 @@
       "Army route repairs reject obstructed candidates earlier while preserving path choices; navigation diagnostics now separate the repair stages.",
       "Performance captures now account for asynchronous building-placement previews and navigation-overlay replies, making input-related stalls easier to diagnose.",
       "Reduced army-routing stalls by reusing terrain-clearance proofs before exact footprint checks, without changing collision or route choices.",
-      "Reduced AI group-order validation cost by accelerating short terrain-clearance checks; added detailed destination and corridor timings to performance diagnostics."
+      "Reduced AI group-order validation cost by accelerating short terrain-clearance checks; added detailed destination and corridor timings to performance diagnostics.",
+      "Spell Studio assistant and MCP clients can read a complete spell engine reference (fields, runtime rules, events, validated examples) through studio_schema, without relying on example spells.",
+      "The spell and effect library now contains only content the game uses: unused prototype spells, their effects and summons, and the abandoned Briar faction were removed.",
+      "Smaller install: unused art was removed from the game and map editor, including unused Warcraft-derived ground textures (the shipped maps' eight remain), superseded buildings and props, unused icons and old interface artwork."
     ],
     "fixed": [
       "Avoid duplicate scene and minimap redraws when scrolling or focusing the camera during matches."

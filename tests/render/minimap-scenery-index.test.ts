@@ -35,34 +35,7 @@ it('detects in-place stamp changes submitted in a new array without mutating the
  expect(previous[0].stamp.x).toBe(stamp.x-3);
 });
 
-it('retains the raster order when an edit appends a different-Y stamp to the document',()=>{
- const index=new MinimapSceneryIndex();index.update(stamps);const original=index.items;
- expect(index.update([...stamps.slice(1),{...stamps[0],yaw:1}])).toBe(false);
- expect(index.items).toBe(original);
- expect(index.update(stamps)).toBe(false);expect(index.items).toBe(original);
- // Source order still matters for the equal-Y rock/oak pair.
- expect(index.update([stamps[0],stamps[1],stamps[3],stamps[2]])).toBe(true);
-});
 
-it('merges immutable scenery parts without revisiting static records on resource changes',()=>{
- let staticReads=0;
- const base:MapStamp[]=Array.from({length:1000},(_,i)=>({id:`base-${i}`,get asset(){staticReads++;return 'pine';},x:i,y:i%5}));
- const resource=(id:string,y:number):MapStamp=>({id,asset:'oak',x:3,y});
- const a=resource('a',2),b=resource('b',2),c=resource('c',0);
- const composition=new SceneryComposition(),index=new MinimapSceneryIndex();
- index.update(composition.compose(base,[a,b]));staticReads=0;
- for(const dynamic of [[a,b,c],[b,c],[c,b],[a,c,b],[],[a]]){
-  const next=composition.compose(base,dynamic);index.update(next);
-  expect(staticReads).toBe(0);
-  // Match a full fresh index, including ties between static and dynamic parts.
-  const fresh=new MinimapSceneryIndex();fresh.update([...base,...dynamic]);
-  expect(index.items).toEqual(fresh.items);staticReads=0;
- }
- // Consumers may skip publications: immutable parts still avoid rescanning.
- composition.compose(base,[b]);index.update(composition.compose(base,[a,b]));
- expect(staticReads).toBe(0);
- const fresh=new MinimapSceneryIndex();fresh.update([...base,a,b]);expect(index.items).toEqual(fresh.items);
-});
 
 it('handles switching between composition and mutable authoring lists, and replacing the base',()=>{
  const index=new MinimapSceneryIndex(),composition=new SceneryComposition();

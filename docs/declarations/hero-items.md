@@ -28,7 +28,7 @@ Pools declare `maxTier`; validation rejects entries above it. Easy camps draw T1
 
 All thirty icons ship as painted 128 × 128 PNGs on black backgrounds in `assets/ui/icons/items-v2/`. High-resolution masters and generation metadata are retained in canonical `art/assets/<id>/` source roles. Use the Asset Workbench for current exports.
 
-Coverage: `tests/game/hero-items.test.ts` exercises every item, aura relationships/range/death, charges, drop/pickup, save/load determinism, shields, roots, immunity, rescue, triggers, lifesteal, cooldowns and UI state. `tests/game/item-assets.test.ts` checks the actual PNGs and legendary map restrictions. Existing inventory, spells, balance, AI and camp tests remain relevant.
+Coverage: `tests/game/hero-items.test.ts` exercises every item, aura relationships/range/death, charges, drop/pickup, save/load determinism, shields, roots, immunity, rescue, triggers, lifesteal, cooldowns and UI state. Existing inventory, spells, balance, AI and camp tests remain relevant.
 
 ## Tier 1
 

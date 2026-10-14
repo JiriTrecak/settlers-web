@@ -1,15 +1,17 @@
 import {it,expect} from 'vitest';
 import {SpellEditorService} from '../../tooling/spell-editor/server/service';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {UNTIL_DEATH} from '../../src/sim/abilities/state';
 import type {PreviewState} from '../../tooling/spell-editor/shared/view';
 import type {SpellDocument} from '../../tooling/spell-editor/shared/protocol';
+import {testAbilities} from '../fixtures/content';
+import {testSettings,useEditorWorkspace} from './encounter-harness';
+const workspace=useEditorWorkspace();
 async function fixture(name:string,settings:Record<string,unknown>={}){
- const definition=structuredClone(coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!);
- const presentation=structuredClone(coreAbilities.presentations.find(p=>p.id===definition.presentation)!);
+ const definition=structuredClone(testAbilities.abilities.find(a=>a.id==='ability.test.'+name)!);
+ const presentation=structuredClone(testAbilities.presentations.find(p=>p.id===definition.presentation)!);
  delete presentation.icon;presentation.effects=[];
- const document:SpellDocument={definition,presentation},service=new SpellEditorService('/tmp');
- await service.execute({op:'preview.load',document,settings:{relationship:'enemy',targetHealth:500,...settings}});
+ const document:SpellDocument={definition,presentation},service=new SpellEditorService(workspace());
+ await service.execute({op:'preview.load',document,settings:testSettings({relationship:'enemy',targetHealth:500,...settings})});
  return {service,document,state:()=>service.state() as PreviewState};
 }
 it('displaces an explicit caster, replays the intervention, and rejects a missing subject without recording it',async()=>{
@@ -117,9 +119,10 @@ it('Cast aims point spells, fires self spells and auras immediately, and Reset c
   expect(await g.service.execute({op:'preview.beginCast'})).toMatchObject({accepted:true,state:{targeting:false,active:true}});
  }
 });
+// ENGINE-COUPLED: presets name the engine's default (shipped) target unit, aliased in the editor workspace.
 it('keeps the chosen formation across spell loads and respawns it on Cast',async()=>{
- const {applyEncounterPreset,encounterSettingsSchema}=await import('../../src/content/abilities/encounter');
- const settings=applyEncounterPreset(encounterSettingsSchema.parse({}),'ally-group');
+ const {applyEncounterPreset}=await import('../../src/content/abilities/encounter');
+ const settings=applyEncounterPreset(testSettings(),'ally-group');
  const f=await fixture('holy-light-lite',settings);
  const before=f.state().entities.map(e=>({owner:e.owner,x:e.x,y:e.y,hp:e.hp,model:e.modelDefinition}));
  const g=await fixture('feral-spirit',settings);
@@ -129,11 +132,14 @@ it('keeps the chosen formation across spell loads and respawns it on Cast',async
  await f.service.execute({op:'preview.kill',subject:'target'});await f.service.execute({op:'preview.beginCast'});
  expect(f.state().entities.map(e=>({owner:e.owner,x:e.x,y:e.y,hp:e.hp,model:e.modelDefinition}))).toEqual(before);
 });
+// ENGINE-COUPLED: the neutral-camp preset and its roster are hard-coded shipped ids in src/content/abilities/encounter.ts;
+// the editor workspace aliases them onto test neutral units.
 it('spawns a mixed neutral camp that enemy spells can hit and reset restores',async()=>{
- const {applyEncounterPreset,encounterSettingsSchema}=await import('../../src/content/abilities/encounter');
- const settings=applyEncounterPreset(encounterSettingsSchema.parse({}),'neutral-camp');
+ const {applyEncounterPreset,neutralEncounterModels}=await import('../../src/content/abilities/encounter');
+ const settings=applyEncounterPreset(testSettings(),'neutral-camp');
  const f=await fixture('storm-bolt',settings);const targets=f.state().entities.filter(e=>e.id!==f.state().caster);
- expect(targets).toHaveLength(5);expect(targets.every(e=>e.owner==='none')).toBe(true);expect(new Set(targets.map(e=>e.modelDefinition)).size).toBe(3);
+ expect(targets).toHaveLength(settings.targetCount);expect(targets.every(e=>e.owner==='none')).toBe(true);
+ expect(targets.map(e=>e.modelDefinition)).toEqual(neutralEncounterModels.slice(0,settings.targetCount));
  await f.service.execute({op:'preview.beginCast'});
  expect(await f.service.execute({op:'preview.confirmTarget',target:{kind:'unit',entity:targets[0].id}})).toMatchObject({accepted:true});
  await f.service.execute({op:'preview.seek',tick:80});expect(f.state().events.find(e=>e.event==='damaged')?.target).toBe(targets[0].id);
@@ -160,14 +166,14 @@ it('projects transformed attacks and ordinary arrows through the shared preview,
  const f=await fixture('metamorphosis',{combat:true,distance:8});await f.service.execute({op:'preview.cast'});
  await f.service.execute({op:'preview.seek',tick:30});
  const caster=f.state().entities.find(e=>e.id===f.state().caster)!;
- expect(caster.appearance?.asset).toBe('asset.ants.archer');expect(caster.attack?.profile).toBe('unit.ants.archer');
+ expect(caster.appearance?.asset).toBe('asset.test.leaf-archer');expect(caster.attack?.profile).toBe('unit.test.archer');
  await f.service.execute({op:'preview.seek',tick:46});
- expect(f.state().missiles?.some(m=>m.definition==='unit.ants.archer'&&!m.resolved)).toBe(true);
+ expect(f.state().missiles?.some(m=>m.definition==='unit.test.archer'&&!m.resolved)).toBe(true);
  const shots=structuredClone(f.state().missiles);await f.service.execute({op:'preview.seek',tick:2});await f.service.execute({op:'preview.seek',tick:46});expect(f.state().missiles).toEqual(shots);
  await f.service.execute({op:'preview.reset'});expect(f.state().missiles).toEqual([]);expect(f.state().entities.every(e=>!e.attack)).toBe(true);
 });
 it('exposes protected target eligibility and keeps targeting open after rejection',async()=>{
- const f=await fixture('storm-bolt',{initialStatuses:['ability.core.spell-ward']});
+ const f=await fixture('storm-bolt',{initialStatuses:['ability.test.spell-ward']});
  await f.service.execute({op:'preview.beginCast'});const target=f.state().entities.find(e=>e.id!==f.state().caster)!;
  expect(target.eligibility).toMatchObject({hero:false,summoned:false,spellImmunity:'hostile'});
  const rejected=await f.service.execute({op:'preview.confirmTarget',target:{kind:'unit',entity:target.id}});
@@ -200,7 +206,7 @@ it('combat modifier previews activate on Cast, emit timeline events and scrub re
  }
 });
 it('a mana-paid weapon toggle uses the selected archer and reconstructs flight, hits and reset',async()=>{
- const f=await fixture('searing-arrows',{combat:true,casterDefinition:'unit.ants.archer',distance:10,targetHealth:500});
+ const f=await fixture('searing-arrows',{combat:true,casterDefinition:'unit.test.archer',distance:10,targetHealth:500});
  expect(f.state().entities.every(e=>!e.spellStatuses?.length)).toBe(true);
  expect(await f.service.execute({op:'preview.beginCast'})).toMatchObject({accepted:true});
  for(let tick=1;tick<=100&&!f.state().missiles?.some(m=>m.enhancement);tick++)await f.service.execute({op:'preview.seek',tick});
@@ -214,12 +220,12 @@ it('a mana-paid weapon toggle uses the selected archer and reconstructs flight, 
  await f.service.execute({op:'preview.reset'});expect(f.state().entities.every(e=>!e.spellStatuses?.length)).toBe(true);expect(f.state().deliveries).toEqual([]);
 });
 it('control prevention previews expose immunity, preserve poison damage and rewind the same ward lifetime',async()=>{
- const f=await fixture('unstoppable',{relationship:'ally',initialStatuses:['ability.core.entangling-roots'],targetHealth:500,distance:6});
+ const f=await fixture('unstoppable',{relationship:'ally',initialStatuses:['ability.test.entangling-roots'],targetHealth:500,distance:6});
  expect(f.state().entities.find(e=>e.id===f.state().target)?.eligibility?.controlImmunity).toEqual([]);
  const target=f.state().entities.find(e=>e.id!==f.state().caster)!.id;
  await f.service.execute({op:'preview.beginCast'});expect(await f.service.execute({op:'preview.confirmTarget',target:{kind:'unit',entity:target}})).toMatchObject({accepted:true});
  await f.service.execute({op:'preview.seek',tick:50});const protectedTarget=f.state().entities.find(e=>e.id===f.state().target)!;
- expect(protectedTarget.eligibility?.controlImmunity).toContain('root');expect(protectedTarget.hp).toBeLessThan(500);expect(protectedTarget.spellStatuses?.some(s=>s.ability==='ability.core.entangling-roots')).toBe(true);
+ expect(protectedTarget.eligibility?.controlImmunity).toContain('root');expect(protectedTarget.hp).toBeLessThan(500);expect(protectedTarget.spellStatuses?.some(s=>s.ability==='ability.test.entangling-roots')).toBe(true);
  await f.service.execute({op:'preview.seek',tick:200});const hash=f.state().checksum;expect(f.state().entities.find(e=>e.id===f.state().target)?.eligibility?.controlImmunity).toEqual([]);
  await f.service.execute({op:'preview.seek',tick:20});await f.service.execute({op:'preview.seek',tick:200});expect(f.state().checksum).toBe(hash);
  await f.service.execute({op:'preview.reset'});expect(f.state().entities.find(e=>e.id===f.state().target)?.eligibility?.controlImmunity).toEqual([]);
@@ -253,7 +259,7 @@ it('previews kill passives through actual combat and reproduces rewards after re
 });
 
 it('previews paid weapon marks and source-owned death summons with deterministic scrubbing',async()=>{
- const f=await fixture('black-arrow',{combat:true,casterDefinition:'unit.ants.archer',distance:10,targetHealth:5});
+ const f=await fixture('black-arrow',{combat:true,casterDefinition:'unit.test.archer',distance:10,targetHealth:5});
  await f.service.execute({op:'preview.cast'});await f.service.execute({op:'preview.seek',tick:180});const hash=f.state().checksum;
  expect(f.state().events.some(e=>e.event==='statusApplied'&&e.statusId==='shadowMark')).toBe(true);
  expect(f.state().events.some(e=>e.event==='death')).toBe(true);expect(f.state().entities.some(e=>e.eligibility?.summoned)).toBe(true);
@@ -264,15 +270,15 @@ it('previews paid weapon marks and source-owned death summons with deterministic
 it('rank selection controls summoned definitions and the timeline lifetime through rewind',async()=>{
  const f=await fixture('feral-spirit',{relationship:'self'}),op=f.document.definition.onRelease[0];if(op.op!=='summon')throw Error();
  f.document.definition.ranks=[{duration:80},{duration:160}];f.document.definition.cast.cost.amount=0;f.document.definition.cast.cooldown.ticks=0;
- op.amount=1;op.durationTicks={rankParameter:'duration'};op.definition={byRank:['unit.spell.shadow-spirit-lesser','unit.spell.shadow-spirit-greater']};
+ op.amount=1;op.durationTicks={rankParameter:'duration'};op.definition={byRank:['unit.test.spell-shadow-spirit-lesser','unit.test.spell-shadow-spirit-greater']};
  await f.service.execute({op:'preview.load',document:f.document,settings:f.state().settings});
  await f.service.execute({op:'preview.rank',rank:2});await f.service.execute({op:'preview.cast'});await f.service.execute({op:'preview.seek',tick:40});
- expect(f.state().entities.find(e=>e.eligibility?.summoned)).toMatchObject({definition:'unit.spell.shadow-spirit-greater',maxHp:405});
+ expect(f.state().entities.find(e=>e.eligibility?.summoned)).toMatchObject({definition:'unit.test.spell-shadow-spirit-greater',maxHp:405});
  expect(f.state().events.find(e=>e.event==='summoned')).toMatchObject({durationTicks:160});
  const hash=f.state().checksum;await f.service.execute({op:'preview.seek',tick:1});await f.service.execute({op:'preview.seek',tick:40});expect(f.state().checksum).toBe(hash);
  await f.service.execute({op:'preview.seek',tick:180});expect(f.state().entities.some(e=>e.eligibility?.summoned)).toBe(false);
  await f.service.execute({op:'preview.rank',rank:1});await f.service.execute({op:'preview.cast'});await f.service.execute({op:'preview.seek',tick:40});
- expect(f.state().entities.find(e=>e.eligibility?.summoned)).toMatchObject({definition:'unit.spell.shadow-spirit-lesser',maxHp:215});
+ expect(f.state().entities.find(e=>e.eligibility?.summoned)).toMatchObject({definition:'unit.test.spell-shadow-spirit-lesser',maxHp:215});
 });
 
 it('previews sacrifice and resource rewards with independent fixture pools and repeatable casts',async()=>{
@@ -299,7 +305,7 @@ it('previews percentage channel damage with interrupted waves and deterministic 
 it('keeps a post-expiry inspection window for persistent effects with zero recovery',async()=>{
  const f=await fixture('flame-strike');f.document.definition.cast.recoverTicks=0;
  f.document.definition.persistent!.durationTicks=240;f.document.definition.persistent!.intervalTicks=40;
- await f.service.execute({op:'preview.load',document:f.document,settings:{relationship:'enemy',targetHealth:500}});
+ await f.service.execute({op:'preview.load',document:f.document,settings:testSettings({relationship:'enemy',targetHealth:500})});
  await f.service.execute({op:'preview.cast'});await f.service.execute({op:'preview.seek',tick:400});
  const state=f.state(),start=state.events.find(e=>e.event==='released')!,end=state.events.find(e=>e.event==='finished'&&e.reason==='Expired')!;
  expect(end.tick-start.tick).toBe(240);expect(state.tick).toBeGreaterThan(end.tick+40);
@@ -337,4 +343,13 @@ it('toggles the live published flight form off without resetting and replays lan
  await f.service.execute({op:'preview.seek',tick:59});expect(f.state().toggleActive).toBe(true);
  await f.service.execute({op:'preview.seek',tick:80});expect(f.state().checksum).toBe(landed.checksum);
  await f.service.execute({op:'preview.cast'});await f.service.execute({op:'preview.seek',tick:80});expect(f.state().toggleActive).toBe(true);
+});
+it('preview clones render the model of the definition they were cloned from',async()=>{
+ const {previewModelDefinition}=await import('../../tooling/spell-editor/shared/view');
+ const settings=testSettings({casterDefinition:'unit.test.marshal',targetDefinition:'unit.test.archer'});
+ const entity=(definition:string,modelDefinition?:string)=>({id:1,owner:'player.1',x:120,y:120,rotation:0,hp:500,maxHp:500,definition,modelDefinition}) as Parameters<typeof previewModelDefinition>[0];
+ expect(previewModelDefinition(entity('unit.preview.caster'),settings)).toBe('unit.test.marshal');
+ expect(previewModelDefinition(entity('unit.preview.target'),settings)).toBe('unit.test.archer');
+ expect(previewModelDefinition(entity('unit.preview.target-2','unit.test.neutral-twigcaster'),settings)).toBe('unit.test.neutral-twigcaster');
+ expect(previewModelDefinition(entity('unit.test.spell-feral-spirit'),settings)).toBe('unit.test.spell-feral-spirit');
 });

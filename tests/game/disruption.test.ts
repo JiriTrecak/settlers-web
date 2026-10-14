@@ -3,29 +3,29 @@ import { describe, it, expect } from "vitest";
 import { game, placed, physical, run, worker, slots } from "./helpers";
 import { Game } from "../../src/sim/game/game";
 
-// Preserve generic automatic-work coverage using explicit custom content.
+// Automatic forester work with explicit custom regrowth content (planting lifecycle lives in forester-lifecycle).
 function regrowth(draft:Parameters<NonNullable<Parameters<typeof game>[1]>>[0]) {
- const defs=draft.definitions as AuthoredDefinition[],tree=defs.find(d=>d.id==='resource.forest.tree')!;
+ const defs=draft.definitions as AuthoredDefinition[],tree=defs.find(d=>d.id==='resource.test.forest-tree')!;
  tree.regrowthTicks=1600;tree.creation={method:'plant',items:[],workTicks:80};
- defs.find(d=>d.id==='building.ants.forester')!.behaviors!.production={mode:'automatic',outputs:[tree.id],workerSlots:1,workRadius:28,jobName:'Forester'};
+ defs.find(d=>d.id==='building.test.forester')!.behaviors!.production={mode:'automatic',outputs:[tree.id],workerSlots:1,workRadius:28,jobName:'Forester'};
 }
 describe("work disruption and capacity", () => {
   it("S05 protects a nearly full queue-head bill from tail demand", () => {
-    const g = game([placed("supply", "building.ants.house", 245, 240), placed("b", "building.ants.barracks")], (s) => {
+    const g = game([placed("supply", "building.test.house", 245, 240), placed("b", "building.test.barracks")], (s) => {
         const b = s.definitions.find(
-          (d: any) => d.id === "building.ants.barracks",
+          (d: any) => d.id === "building.test.barracks",
         ) as any;
         b.behaviors.storage.capacity=16;
-        b.behaviors.production.outputs=["unit.ants.warrior","unit.ants.archer"];
+        b.behaviors.production.outputs=["unit.test.warrior","unit.test.archer"];
         (s.rules as Rules).ai.composition=(s.rules as Rules).ai.composition.filter(c=>b.behaviors.production.outputs.includes(c.definition));
-        const a = s.definitions.find((d:any) => d.id === "unit.ants.archer") as any;
-        a.creation.items=[{item:"item.wood",amount:5},{item:"item.amber",amount:10}];
+        const a = s.definitions.find((d:any) => d.id === "unit.test.archer") as any;
+        a.creation.items=[{item:"item.test.wood",amount:5},{item:"item.test.amber",amount:10}];
         const w = s.definitions.find(
-          (d: any) => d.id === "unit.ants.warrior",
+          (d: any) => d.id === "unit.test.warrior",
         ) as any;
         w.creation.items = [
-          { item: "item.wood", amount: 7 },
-          { item: "item.amber", amount: 7 },
+          { item: "item.test.wood", amount: 7 },
+          { item: "item.test.amber", amount: 7 },
         ];
         w.creation.workTicks = 4;
       }),
@@ -33,12 +33,12 @@ describe("work disruption and capacity", () => {
     g.command("player.1", {
       type: "produce",
       actor: b.id,
-      definition: "unit.ants.warrior",
+      definition: "unit.test.warrior",
     });
     g.command("player.1", {
       type: "produce",
       actor: b.id,
-      definition: "unit.ants.archer",
+      definition: "unit.test.archer",
     });
     run(g, 1100);
     expect(b.production!.produced).toBe(2);
@@ -46,32 +46,33 @@ describe("work disruption and capacity", () => {
   });
   it("S08 hall destruction preserves the wallet and funded construction", () => {
     const g = game([
-        placed("store", "building.ants.fort", 235, 235, {
-          inventory: { "item.wood": 32, "item.amber": 100 },
+        placed("store", "building.test.fort", 235, 235, {
+          inventory: { "item.test.wood": 32, "item.test.amber": 100 },
         }),
       ]),
       w = worker(g),
       fort = g.entities.find((e) => e.placement === "store")!;
-    g.state.wallets["player.1"] = {"item.wood": 32, "item.amber": 100};
+    g.state.wallets["player.1"] = {"item.test.wood": 32, "item.test.amber": 100};
     expect(
       g.command("player.1", {
         type: "build",
         actors: [w.id],
-        definition: "building.ants.house",
+        definition: "building.test.house",
         position: { x: 199.5, y: 239.5 },
       }).accepted,
     ).toBe(true);
     g.economy.remove(fort);
     run(g, 20);
     expect(g.state.jobs.some((j) => j.source === fort.id)).toBe(false);
-    expect(g.state.accounting.lost["item.wood"] ?? 0).toBe(0);
-    expect(g.state.wallets["player.1"]["item.wood"]).toBe(7);
-    expect(physical(g, "item.wood")).toBe(g.registry.rules.startingSetup.inventory["item.wood"]+32);
+    expect(g.state.accounting.lost["item.test.wood"] ?? 0).toBe(0);
+    const cost = g.registry.get("building.test.house").creation!.items.find(i => i.item === "item.test.wood")!.amount;
+    expect(g.state.wallets["player.1"]["item.test.wood"]).toBe(32 - cost);
+    expect(physical(g, "item.test.wood")).toBe(g.registry.rules.startingSetup.inventory["item.test.wood"]+32);
   });
   it("S12 harvest reservations prevent two gatherers duplicating the last resource unit", () => {
     const g = game([
       {
-        ...placed("tree", "resource.forest.tree", 207, 200, { amount: 1 }),
+        ...placed("tree", "resource.test.forest-tree", 207, 200, { amount: 1 }),
         owner: "none",
       },
     ]);
@@ -79,43 +80,11 @@ describe("work disruption and capacity", () => {
     for (const w of g.entities.filter(e=>e.owner==='player.1'&&e.unit&&g.registry.get(e.definition).behaviors.work))
       g.command('player.1',{type:'gather',actors:[w.id],target:tree.id});
     run(g, 700);
-    expect(g.state.accounting.produced["item.wood"]).toBe(1);
-    expect(physical(g, "item.wood")).toBe(2*g.registry.rules.startingSetup.inventory["item.wood"]+1);
+    expect(g.state.accounting.produced["item.test.wood"]).toBe(1);
+    expect(physical(g, "item.test.wood")).toBe(2*g.registry.rules.startingSetup.inventory["item.test.wood"]+1);
     expect(
       g.entities.find((e) => e.placement === "tree")!.resource!.amount,
     ).toBe(0);
-  });
-  it("S13 planting survives restore and occupied growing sites delay maturity", () => {
-    const g = game([
-        placed("f", "building.ants.forester", 193.5, 237.5),
-        {
-          ...placed("tree", "resource.forest.tree", 200, 220, { amount: 0 }),
-          owner: "none",
-        },
-      ],regrowth),
-      tree = g.entities.find((e) => e.placement === "tree")!;
-    for (let n = 0; n < 500 && tree.resource!.growingUntil === null; n++)
-      g.tick();
-    expect(tree.resource!.growingUntil).not.toBeNull();
-    const restored = new Game(g.map, slots, g.registry);
-    restored.restore(g.snapshot());
-    expect(restored.checksum()).toBe(g.checksum());
-    const w = worker(g);
-    w.x = tree.x;
-    w.y = tree.y;
-    w.unit!.order = null;
-    w.unit!.route = [];
-    w.unit!.goal = null;
-    g.context.setRegrowth(tree,g.state.tick + 1);
-    g.tick();
-    expect(tree.resource!.amount).toBe(0);
-    // The regrown tree reclaims its whole collision disc, so the worker must leave all of it.
-    w.x += 6;
-    w.unit!.position = null;
-    w.unit!.route = [];
-    w.unit!.goal = null;
-    g.tick();
-    expect(tree.resource!.amount).toBe(g.registry.get(tree.definition).yield);
   });
   it("rejects corrupt snapshots before changing live state", () => {
     const g = game(),
@@ -130,7 +99,7 @@ describe("work disruption and capacity", () => {
     expect(g.checksum()).toBe(before);
   });
   it("dead staff can be replaced and the resulting snapshot remains valid", () => {
-    const g = game([placed("mill", "building.ants.forester",193.5,237.5), {...placed("tree", "resource.forest.tree", 200, 220, {amount:0}),owner:"none"}],regrowth),
+    const g = game([placed("mill", "building.test.forester",193.5,237.5), {...placed("tree", "resource.test.forest-tree", 200, 220, {amount:0}),owner:"none"}],regrowth),
       b = g.entities.find((e) => e.placement === "mill")!;
     g.tick();
     const staff = g.context.get(b.production!.staff)!;

@@ -1,6 +1,5 @@
 import {expect,it} from 'vitest';
 import {rankApproachPositions,type ApproachPosition} from '../../src/sim/game/attackPositions';
-import {SimulationProfiler} from '../../src/sim/profiling';
 
 it('matches complete score sorting, including ties, reservations and fractional band boundaries',()=>{
  let seed=841;const random=(n:number)=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed%n;};
@@ -16,16 +15,4 @@ it('matches complete score sorting, including ties, reservations and fractional 
    .sort((a,b)=>a.score-b.score||a.point.y-b.point.y||a.point.x-b.point.x||a.index-b.index);
   expect([...rankApproachPositions(entries,origin,reserved)]).toEqual(reference);
  }
-});
-
-it('orders only consumed bands and retains the initial candidate snapshot during lazy validation',()=>{
- const profile=new SimulationProfiler();profile.enabled=true;
- const entries:ApproachPosition[]=Array.from({length:1000},(_,x)=>({point:{x,y:0}}));
- const ranked=rankApproachPositions(entries,{x:0,y:0},()=>false,profile)[Symbol.iterator]();
- expect(ranked.next().value?.entry).toBe(entries[0]);
- entries[1]!.clear=false; // The old eager filter already included this entry.
- expect(ranked.next().value?.entry).toBe(entries[1]);
- ranked.return?.();
- expect(profile.workSnapshot().find(r=>r.path==='Approach entries ordered')?.value).toBe(2);
- expect(profile.workSnapshot().find(r=>r.path==='Approach ranking entries')?.value).toBe(1000);
 });

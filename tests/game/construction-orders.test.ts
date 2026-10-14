@@ -5,7 +5,7 @@ import { commandCard } from "../../src/presentation/commands";
 
 const workers = (g: Game) => g.entities.filter(e => e.owner === "player.1" && g.registry.get(e.definition).behaviors.work);
 function build(g: Game, actors: number[], x: number, y: number) {
-  const result = g.command("player.1", {type: "build", actors, definition: "building.ants.house", position: placed('site','building.ants.house',x,y).position});
+  const result = g.command("player.1", {type: "build", actors, definition: "building.test.house", position: placed('site','building.test.house',x,y).position});
   expect(result.accepted, result.reason).toBe(true);
   return {building: g.entities.at(-1)!, builder: result.actors[0]};
 }
@@ -15,7 +15,7 @@ describe("selected construction workers", () => {
     const g = game(), [first, second] = workers(g).slice(0, 2).reverse();
     const selection = [first.id, second.id];
     const binding = commandCard(g.view("player.1"), selection, "player.1", g.registry)
-      .find(b => b.type === "build" && b.targetDefinition === "building.ants.house")!;
+      .find(b => b.type === "build" && b.targetDefinition === "building.test.house")!;
     expect(binding.actors).toEqual(selection);
     const a = build(g, selection, 205, 210);
     const b = build(g, selection, 230, 210);
@@ -46,7 +46,7 @@ describe("selected construction workers", () => {
   });
 
   it("keeps the selected carrier reserved until their harvest reaches the hall", () => {
-    const g = game([{...placed("tree", "resource.forest.tree", 217, 228), owner: "none"}]);
+    const g = game([{...placed("tree", "resource.test.forest-tree", 217, 228), owner: "none"}]);
     const w = workers(g).at(-1)!, tree = g.entities.find(e => e.placement === "tree")!;
     g.command("player.1", {type: "gather", actors: [w.id], target: tree.id});
     for (let i = 0; i < 1200 && !w.unit!.cargo; i++) g.tick();

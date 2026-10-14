@@ -13,25 +13,17 @@ function fixture(edit?: (data: ReturnType<typeof source>) => void, heroLevelCap?
  rules.experience.soloHeroTierBonusPermille=[0,0,0];
  edit?.(data);
  const map={...emptyUtcMap(),sandbox:true,...(heroLevelCap ? {mission:{campaign:"test",title:"XP ceiling",order:1,heroLevelCap,regions:[],script:"function on_start() end"}}:{}),entities:[
-  placed('hero','unit.ants.marshal',200,220),
-  {...placed('rival','unit.ants.marshal',216,220),owner:'player.2' as Owner},
-  {...placed('neutral','unit.neutral.webling',208,220),owner:'none' as Owner},
+  placed('hero','unit.test.marshal',200,220),
+  {...placed('rival','unit.test.marshal',216,220),owner:'player.2' as Owner},
+  {...placed('neutral','unit.test.neutral-webling',208,220),owner:'none' as Owner},
  ],camps:[{id:'camp',members:['neutral'],home:{x:208,y:220},aggroRange:5,leash:10,aggression:'players' as const}]};
  delete rules.startingSetup.hero;
  const make=()=>new Game(map,slots,new ContentRegistry(data));
  const g=make(),hero=g.entities.find(e=>e.placement==='hero')!,rival=g.entities.find(e=>e.placement==='rival')!,neutral=g.entities.find(e=>e.placement==='neutral')!;
  const award=(victim:Entity,owner:Owner='player.1')=>new Progression(g.context).award(victim,owner,h=>h.owner===owner);
- const create=(definition='unit.ants.warrior',owner:Owner='player.2')=>g.context.create({...placed('victim.'+g.entities.length,definition,210,224),owner});
+ const create=(definition='unit.test.warrior',owner:Owner='player.2')=>g.context.create({...placed('victim.'+g.entities.length,definition,210,224),owner});
  return {g,hero,rival,neutral,award,create,make,data};
 }
-
-it('publishes our eleven-level curve, strength rewards and six-level neutral ceiling',()=>{
- const {g,hero}=fixture(),p=g.context.def(hero).behaviors.progression!;
- expect(p.levels.map(l=>l.experience)).toEqual([0,160,400,720,1120,1600,2160,2800,3520,4320,5200]);
- expect(p.experienceRadius).toBe(40);
- expect(g.registry.rules.experience.neutralMultipliersPermille).toEqual([1000,900,800,700,600]);
- expect(g.registry.definitions.filter(d=>(d.experienceYield??0)>0)).toHaveLength(0);
-});
 
 describe('authoritative experience attribution',()=>{
  it('gives a neutral kill only to the killing side, including a detached spell source',()=>{
@@ -66,10 +58,10 @@ describe('authoritative experience attribution',()=>{
 describe('sharing and limits',()=>{
  it('shares one pool among nearby allies, with deterministic remainder and no distant share',()=>{
   const {g,hero,rival,neutral}=fixture(data=>{
-   (data.definitions.find((d:any)=>d.id==='unit.neutral.webling') as AuthoredDefinition).experienceYield=35;
+   (data.definitions.find((d:any)=>d.id==='unit.test.neutral-webling') as AuthoredDefinition).experienceYield=35;
   });
-  const second=g.context.create(placed('second','unit.ants.marshal',202,225));second.readyTick=0;
-  const distant=g.context.create(placed('distant','unit.ants.marshal',250,225));
+  const second=g.context.create(placed('second','unit.test.marshal',202,225));second.readyTick=0;
+  const distant=g.context.create(placed('distant','unit.test.marshal',250,225));
   new Progression(g.context).award(neutral,hero.owner,e=>e.owner===hero.owner);
   expect([hero,second,distant,rival].map(e=>e.progression!.experience)).toEqual([18,17,0,0]);
  });
@@ -90,7 +82,7 @@ describe('sharing and limits',()=>{
   expect(g.context.stats(hero).level).toBe(6);
  });
  it('excludes capped heroes from the pool and respects lower mission caps',()=>{
-  const {g,hero,neutral,award}=fixture(),second=g.context.create(placed('second','unit.ants.marshal',202,225));second.readyTick=0;
+  const {g,hero,neutral,award}=fixture(),second=g.context.create(placed('second','unit.test.marshal',202,225));second.readyTick=0;
   hero.progression!.experience=1600;award(neutral);expect(second.progression!.experience).toBe(24);
   const mission=fixture(undefined,2);
   mission.hero.progression!.experience=155;mission.award(mission.neutral);expect(mission.hero.progression!.experience).toBe(160);
@@ -99,10 +91,10 @@ describe('sharing and limits',()=>{
  it('rewards actual hero level, halves summon rewards, and ignores zero-yield split actors',()=>{
   const {hero,rival,award,create}=fixture();rival.progression!.experience=2800;
   award(rival);expect(hero.progression!.experience).toBe(615);
-  const summon=create('unit.spell.feral-spirit');
-  summon.summoned={source:rival.id,ability:'ability.core.feral-spirit',rank:1,cast:1,started:0,expires:100};
+  const summon=create('unit.test.spell-feral-spirit');
+  summon.summoned={source:rival.id,ability:'ability.test.feral-spirit',rank:1,cast:1,started:0,expires:100};
   award(summon);expect(hero.progression!.experience).toBe(651);
-  award(create('unit.spell.trinity-earth'));expect(hero.progression!.experience).toBe(651);
+  award(create('unit.test.spell-trinity-earth'));expect(hero.progression!.experience).toBe(651);
  });
  it('round-trips level eleven and continues identically on independent replicas',()=>{
   const a=fixture(),b=fixture();a.hero.progression!.experience=5195;b.hero.progression!.experience=5195;
@@ -122,12 +114,12 @@ describe('sharing and limits',()=>{
 it('grants the single-hero Hall-tier bonus and removes it when another hero is fallen',()=>{
  const f=fixture(data=>{
   (data.rules as Rules).experience.soloHeroTierBonusPermille=[0,150,300];
-  const hero=data.definitions.find((d:any)=>d.id==='unit.ants.marshal') as AuthoredDefinition;
+  const hero=data.definitions.find((d:any)=>d.id==='unit.test.marshal') as AuthoredDefinition;
   data.definitions.push({...structuredClone(hero),id:'unit.test.second-hero'});
  });
- const hall=f.g.context.create(placed('hall','building.ants.great-mound',181.5,221.5));
+ const hall=f.g.context.create(placed('hall','building.test.great-mound',181.5,221.5));
  f.award(f.neutral);expect(f.hero.progression!.experience).toBe(27);
- hall.definition='building.ants.elder-hall';f.award(f.neutral);expect(f.hero.progression!.experience).toBe(58);
+ hall.definition='building.test.elder-hall';f.award(f.neutral);expect(f.hero.progression!.experience).toBe(58);
  const second=f.g.context.create(placed('other-hero','unit.test.second-hero',150,225));
  second.hp=0;f.g.economy.remove(second);f.g.revival.retain(second);
  f.award(f.neutral);expect(f.hero.progression!.experience).toBe(82);

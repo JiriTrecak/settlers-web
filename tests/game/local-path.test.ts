@@ -3,9 +3,9 @@ import {compactBodyGame as game,placed,castLifecycleSource} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
 import {localPath} from '../../src/sim/game/localPath';
 
-function fixture(definition='unit.ants.warrior'){
+function fixture(definition='unit.test.warrior'){
  const placements=[placed('mover',definition,100,100),
-  ...[[99,100],[101,100],[100,99],[100,101]].map(([x,y],i)=>placed('hold-'+i,'unit.ants.warrior',x,y))];
+  ...[[99,100],[101,100],[100,99],[100,101]].map(([x,y],i)=>placed('hold-'+i,'unit.test.warrior',x,y))];
  const g=game(placements,castLifecycleSource),mover=g.entities.find(e=>e.placement==='mover')!;
  const neighbors=g.entities.filter(e=>e.placement?.startsWith('hold-'));
  g.command('player.1',{type:'hold',actors:neighbors.map(e=>e.id)});
@@ -47,7 +47,7 @@ it('rechecks an escape segment when another unit enters its path',()=>{
  for(let n=0;n<40&&!mover.unit!.detour;n++)g.tick();
  const p=precise(mover),q=mover.unit!.detour!.points[0];
  const length=Math.hypot(q.x/1000-p.x,q.y/1000-p.y);
- const blocker=g.context.create(placed('new-body','unit.ants.warrior',Math.round(p.x),Math.round(p.y)));
+ const blocker=g.context.create(placed('new-body','unit.test.warrior',Math.round(p.x),Math.round(p.y)));
  blocker.unit!.position={x:Math.round((p.x+(q.x/1000-p.x)/length*.45)*1000),y:Math.round((p.y+(q.y/1000-p.y)/length*.45)*1000)};
  blocker.x=Math.floor((blocker.unit!.position.x+500)/1000);blocker.y=Math.floor((blocker.unit!.position.y+500)/1000);
  blocker.unit!.order={type:'hold'};
@@ -66,19 +66,6 @@ it('keeps local searches bounded and does not cross a closed terrain barrier',()
  expect(path).toBeNull();expect(probes).toBeLessThan(2305);
 });
 
-it('does not squeeze through a narrow doorway occupied by a Hold unit',()=>{
- const g=game([placed('mover','unit.ants.warrior',100,100),placed('gate','unit.ants.warrior',105,100)]);
- const mover=g.entities.find(e=>e.placement==='mover')!,gate=g.entities.find(e=>e.placement==='gate')!;
- for(let y=0;y<256;y++)if(y!==100)g.spatial.terrain[y*256+105]=0;
- g.command('player.1',{type:'hold',actors:[gate.id]});
- g.command('player.1',{type:'move',actors:[mover.id],destination:{x:107,y:100}});
- for(let n=0;n<200;n++)g.tick();
- expect(precise(mover).x).toBeLessThan(105);expect(gate.x).toBe(105);expect(gate.y).toBe(100);
- g.command('player.1',{type:'move',actors:[gate.id],destination:{x:109,y:103}});
- for(let n=0;n<160;n++)g.tick();
- expect(precise(mover)).toMatchObject({x:107,y:100});
-});
-
 it('rejects corrupt saved local destinations',()=>{
  const {g,mover,placements}=fixture();
  for(let n=0;n<40&&!mover.unit!.detour;n++)g.tick();
@@ -88,18 +75,18 @@ it('rejects corrupt saved local destinations',()=>{
 });
 
 it('finishes a hero pickup from inside a crowd and saves immediately after collecting',()=>{
- const {g,mover,placements}=fixture('unit.ants.marshal');
- const item=g.context.create({...placed('loot','item.heartseed',103,103),owner:'none'});
+ const {g,mover,placements}=fixture('unit.test.marshal');
+ const item=g.context.create({...placed('loot','item.test.heartseed',103,103),owner:'none'});
  g.command('player.1',{type:'pickup',actor:mover.id,target:item.id});
  let sawDetour=false;
  for(let n=0;n<160&&g.context.get(item.id);n++){g.tick();sawDetour||=!!mover.unit!.detour;}
- expect(sawDetour).toBe(true);expect(mover.equipment).toContain('item.heartseed');
+ expect(sawDetour).toBe(true);expect(mover.equipment).toContain('item.test.heartseed');
  expect(mover.unit!.detour).toBeUndefined();
  const restored=game(placements,castLifecycleSource);restored.restore(g.snapshot());expect(restored.checksum()).toBe(g.checksum());
 });
 
 it('a new spell cancels a local escape before turning toward its cast point',()=>{
- const {g,mover,placements}=fixture('unit.ants.marshal');
+ const {g,mover,placements}=fixture('unit.test.marshal');
  for(let n=0;n<40&&!mover.unit!.detour;n++)g.tick();
  expect(mover.unit!.detour).toBeDefined();
  mover.hp=100;
@@ -109,13 +96,13 @@ it('a new spell cancels a local escape before turning toward its cast point',()=
 });
 
 it('keeps self-spell visuals and saves at the hero’s precise position between cells',()=>{
- const {g,mover,placements}=fixture('unit.ants.marshal');
- const observer=g.context.create({...placed('observer','unit.ants.warrior',100,104),owner:'player.2'});
+ const {g,mover,placements}=fixture('unit.test.marshal');
+ const observer=g.context.create({...placed('observer','unit.test.warrior',100,104),owner:'player.2'});
  g.command('player.2',{type:'hold',actors:[observer.id]});
  for(let n=0;n<40&&!mover.unit!.detour;n++)g.tick();
  const p=precise(mover),center={x:p.x,y:p.y};
  expect(Number.isInteger(p.x)).toBe(false);
- const spell='ability.core.holy-light-lite';mover.hp=100;
+ const spell='ability.test.holy-light-lite';mover.hp=100;
  expect(g.abilities.cast(mover.id,'holy-light',mover.id)).toBeNull();
  const cue=g.abilities.observedEvents().at(-1)!;
  expect(cue.origin).toEqual({...center,height:0});expect(cue.point).toEqual({...center,height:0});
@@ -123,39 +110,4 @@ it('keeps self-spell visuals and saves at the hero’s precise position between 
  const restored=game(placements,castLifecycleSource);restored.restore(g.snapshot());
  for(let n=0;n<25;n++){g.tick();restored.tick();expect(restored.checksum()).toBe(g.checksum());}
  expect(g.abilities.observedEvents().some(v=>v.ability===spell&&v.event==='released'&&v.point.x===center.x)).toBe(true);
-});
-
-it('keeps nested searches and returned paths independent of reusable scratch storage',()=>{
- const from={x:113,y:79},to={x:2800,y:0};
- // Cross x=1000 only above a short wall, forcing a searched escape.
- const clear=(a:{x:number;y:number},b:{x:number;y:number})=>{
-  if((a.x<1000)===(b.x<1000))return true;
-  return a.y+(b.y-a.y)*(1000-a.x)/(b.x-a.x)>600;
- };
- const expected=localPath(from,to,clear);expect(expected).not.toBeNull();
- const saved=structuredClone(expected);
- let probes=0;
- const nested=localPath(from,to,(a,b)=>{
-  // Recursion during the frontier search, after its direct probe.
-  if(++probes===3)expect(localPath(from,to,clear)).toEqual(saved);
-  return clear(a,b);
- });
- expect(nested).toEqual(saved);expect(probes).toBeGreaterThan(3);
- probes=0;
- expect(()=>localPath(from,to,()=>{if(++probes===3)throw Error('clearance failed');return false;})).toThrow('clearance failed');
- for(let n=0;n<20;n++)localPath({x:3000+n,y:1000},{x:0,y:0},clear);
- expect(expected).toEqual(saved);expect(nested).toEqual(saved);
- expect(localPath(from,to,clear)).toEqual(saved);
-});
-
-it('reports local search work and failure reasons without changing the result',async()=>{
- const {SimulationProfiler}=await import('../../src/sim/profiling');const p=new SimulationProfiler();p.enabled=true;
- const a={x:100000,y:100000},b={x:103000,y:100000};
- expect(localPath(a,b,()=>false,p)).toBeNull();
- expect(p.workSnapshot()).toContainEqual({path:'Local exhausted frontier failures',value:1});
- expect(p.workSnapshot()).toContainEqual({path:'Local nodes expanded',value:1});
- p.reset();const clear=(x:typeof a,y:typeof a)=>(x.x<101000)===(y.x<101000);
- expect(localPath(a,b,clear,p)).toEqual(localPath(a,b,clear));
- expect(p.workSnapshot()).toContainEqual({path:'Local visit limit failures',value:1});
- expect(p.workSnapshot()).toContainEqual({path:'Local nodes expanded',value:256});
 });

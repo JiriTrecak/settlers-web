@@ -4,7 +4,7 @@ import {game,placed} from '../game/helpers';
 import type {Action} from '../../src/shared/types/types';
 
 it('retains progressing units when squad membership changes but retries a stalled member',()=>{
- const g=game([placed('one','unit.ants.warrior',110,110),placed('two','unit.ants.warrior',111,110)]);
+ const g=game([placed('one','unit.test.warrior',110,110),placed('two','unit.test.warrior',111,110)]);
  const [one,two]=['one','two'].map(name=>g.view().entities.find(e=>g.context.get(e.id)?.placement===name)!);
  const action:Action={type:'move',actors:[one.id,two.id],destination:{x:200,y:200},attackMove:true};
  const intent=orderIntent(action),progress={signature:intent,tick:10,point:{x:100,y:100},hp:one.hp!};
@@ -20,7 +20,7 @@ it('retains progressing units when squad membership changes but retries a stalle
 });
 
 it('keeps a progressing reinforcement route useful as its leader moves, but retargets outside the join area',()=>{
- const g=game([placed('one','unit.ants.warrior',110,110)]);
+ const g=game([placed('one','unit.test.warrior',110,110)]);
  const one=g.view(0).entities.find(e=>g.context.get(e.id)?.placement==='one')!;
  one.control!.order={type:'move',destination:{x:330,y:110},attackMove:true};
  one.unit!.moving=true;
@@ -33,7 +33,7 @@ it('keeps a progressing reinforcement route useful as its leader moves, but reta
 });
 
 it('does not suppress recovery, floor changes, retreat orders or a different active intention',()=>{
- const g=game([placed('one','unit.ants.warrior',110,110)]);
+ const g=game([placed('one','unit.test.warrior',110,110)]);
  const one=g.view(0).entities.find(e=>g.context.get(e.id)?.placement==='one')!,leader={x:336,y:108};
  one.control!.order={type:'move',destination:{x:330,y:110},attackMove:true};
  one.unit!.moving=false;expect(approachingArmy(one,leader)).toBe(false);

@@ -1,15 +1,15 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {reconcileTaunt} from '../../src/sim/abilities/taunt';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.unstoppable')!;
+import {testAbilities,testContent} from '../fixtures/content';
+import {testSettings,encounterSource} from './encounter-harness';
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.unstoppable')!;
 const taunt={op:'status',target:'target',id:'challenge',amount:60,polarity:'negative',dispel:true,modifiers:{},taunt:true};
 function fixture(ops:unknown[]=[taunt],settings={}){
  const a=abilitySchema.parse({...base,targeting:{...base.targeting,relations:['ally','enemy']},onRelease:ops});
- const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',combat:true,distance:4,targetHealth:500,...settings}));
+ const f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,testSettings({relationship:'enemy',combat:true,distance:4,targetHealth:500,...settings}),false,encounterSource());
  const statuses=new SpellStatuses(f.game),c=f.game.context.get(f.caster)!,t=f.game.context.get(f.target)!;
  c.unit!.order={type:'hold'};
  const apply=(index=0,source=f.caster,target=f.target)=>statuses.apply(source,target,a,1,f.game.state.nextCast++,releaseEffects(a,1,'enemy')[index]);
@@ -79,16 +79,15 @@ it('interrupts an enemy cast, blocks recasting, and retains non-control payload 
 });
 it('a worker preserves its job, pauses production, and returns before work resumes',async()=>{
  const {game,placed}=await import('../game/helpers');
- const {content}=await import('../../src/content/builtin');
- const {authoredDefinitionSchema}=await import('../../src/content/schema');
+  const {authoredDefinitionSchema}=await import('../../src/content/schema');
  const {emptyUtcMap}=await import('../../src/shared/map/utcmap');
  const a=abilitySchema.parse({...base,onRelease:[{...taunt,amount:80}]});
  const start=emptyUtcMap().playerStarts[1];
- const g=game([{...placed('tree','resource.forest.tree',start.x+10,start.z+4,{amount:10}),owner:'none'}],draft=>{
-  const worker=authoredDefinitionSchema.parse(draft.definitions.find(x=>(x as {id:string}).id==='unit.ants.settler'));
-  worker.behaviors??={};worker.behaviors.combat=structuredClone(content.get('unit.ants.warrior').behaviors.combat);worker.disabledBehaviors=worker.disabledBehaviors?.filter(b=>b!=='combat');
+ const g=game([{...placed('tree','resource.test.forest-tree',start.x+10,start.z+4,{amount:10}),owner:'none'}],draft=>{
+  const worker=authoredDefinitionSchema.parse(draft.definitions.find(x=>(x as {id:string}).id==='unit.test.settler'));
+  worker.behaviors??={};worker.behaviors.combat=structuredClone(testContent.get('unit.test.warrior').behaviors.combat);worker.disabledBehaviors=worker.disabledBehaviors?.filter(b=>b!=='combat');
   draft.definitions=draft.definitions.filter(x=>(x as {id:string}).id!==worker.id).concat(worker);
-  const library=draft.abilityLibrary as typeof coreAbilities;
+  const library=draft.abilityLibrary as typeof testAbilities;
   library.abilities=library.abilities.filter(x=>x.id!==a.id).concat(a);
  });
  const workers=g.entities.filter(e=>e.owner==='player.2'&&g.registry.get(e.definition).behaviors.work),w=workers[0],tree=g.entities.find(e=>e.placement==='tree')!;
@@ -97,7 +96,7 @@ it('a worker preserves its job, pauses production, and returns before work resum
  for(let i=0;i<800&&!g.state.jobs.some(j=>j.worker===w.id&&j.phase==='work');i++)g.tick();
  const job=g.state.jobs.find(j=>j.worker===w.id)!;expect(job.phase).toBe('work');
  const home={x:w.x,y:w.y},goal=w.unit!.goal??g.spatial.cell(w);
- const enemy=g.context.create(placed('challenger','unit.ants.warrior',w.x+6,w.y));enemy.unit!.order={type:'hold'};
+ const enemy=g.context.create(placed('challenger','unit.test.warrior',w.x+6,w.y));enemy.unit!.order={type:'hold'};
  const statuses=new SpellStatuses(g),progress=job.progress;
  expect(statuses.apply(enemy.id,w.id,a,1,g.state.nextCast++,releaseEffects(a,1,'enemy')[0])).toBe(80);
  expect(w.unit!.taunt?.resumeGoal).toBe(goal);

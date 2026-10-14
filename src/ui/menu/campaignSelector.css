@@ -26,9 +26,6 @@
 .campaign-footer { display:flex;align-items:center;gap:24px;margin:18px auto 0;width:min(1180px,100%); }
 .campaign-back-action { width:170px;height:46px;font-size:17px;padding:0 20px;flex-shrink:0; }
 .campaign-footer>span { font:12px Georgia,serif;color:#a4aaa3;text-shadow:0 2px 5px #000; }
-.campaign-missions { background:linear-gradient(120deg,#141817f0,#080c0be8);border:1px solid #72746b;padding:clamp(24px,4vw,48px);margin:auto;width:min(850px,100%);box-sizing:border-box;box-shadow:0 15px 55px #0008; }
-.campaign-missions .campaign-intro { font-size:17px;margin-bottom:24px; }
-.campaign-missions .campaign-chapter { width:100%; }
 @media(max-width:720px) {
  .campaign-content { padding:26px 16px 24px; }
  .campaign-factions { grid-template-columns:1fr;max-width:340px;gap:20px; }
@@ -36,8 +33,6 @@
  .faction-copy h2 { font-size:38px; }
  .campaign-footer { max-width:340px; }
  .campaign-footer>span { font-size:11px; }
- .campaign-missions .campaign-chapter { gap:12px;padding:15px; }
- .campaign-missions .campaign-play { display:none; }
 }
 @keyframes canopy-reveal { from {opacity:0} to {opacity:1} }
 .canopy-menu { animation:canopy-reveal .3s ease-out; }

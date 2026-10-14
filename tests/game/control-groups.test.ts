@@ -15,10 +15,15 @@ it('persists overrides, supports unbinding and recovers from corrupted preferenc
 });
 
 import {SettlementHud} from '../../src/ui/settlement/settlementHud';
-import {game,placed} from './helpers';
+import {placed,slots} from './helpers';
 import {vi} from 'vitest';
+import {content} from '../../src/content/builtin';
+import {Game} from '../../src/sim/game/game';
+import {emptyUtcMap} from '../../src/shared/map/utcmap';
+// ENGINE-COUPLED: SettlementHud reads the global shipped `content`; use the shipped starting worker generically.
 it('refuses enemy membership and restores saved groups without pruning against the old world',()=>{
- const g=game([placed('own','unit.ants.warrior',170,170),{...placed('enemy','unit.ants.warrior',171,170),owner:'player.2'}]);
+ const unit=content.rules.startingSetup.units[0]!.definition;
+ const g=new Game({...emptyUtcMap(),entities:[placed('own',unit,170,170),{...placed('enemy',unit,171,170),owner:'player.2'}]},slots,content);
  const own=g.entities.find(e=>e.placement==='own')!,enemy=g.entities.find(e=>e.placement==='enemy')!;
  const hud=Object.assign(Object.create(SettlementHud.prototype),{controlGroups:new ControlGroups(),current:g.view('player.1'),owner:'player.1',readOnly:false,selectedIds:[own.id,enemy.id],renderGroups:vi.fn(),hooks:{mode(){}},hint:{textContent:''}});
  hud.groupInput(1,'assign');expect(hud.saveControls()[1]).toEqual([own.id]);

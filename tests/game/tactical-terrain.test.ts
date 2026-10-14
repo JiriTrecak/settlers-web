@@ -7,6 +7,7 @@ import {emptyUtcMap} from '../../src/shared/map/utcmap';
 import {Game} from '../../src/sim/game/game';
 import {slots,placed,source,run,game} from './helpers';
 import {ContentRegistry} from '../../src/content/registry';
+import {testContent} from '../fixtures/content';
 import type {Rules} from '../../src/content/schema';
 import {heading} from '../../src/sim/game/facing';
 function terrain(){
@@ -17,8 +18,8 @@ function terrain(){
 function scenario(f=terrain()){
  const src=source();(src.rules as Rules).startingSetup.gathering=[];
  return new Game({...emptyUtcMap(),authoring:{version:1,objects:[],terrain:captureTerrain(f)},entities:[
-  placed('low','unit.ants.archer',108,110),{...placed('high','unit.ants.warrior',110,110),owner:'player.2'},
-  placed('scout','unit.ants.warrior',112,116)
+  placed('low','unit.test.archer',108,110),{...placed('high','unit.test.warrior',110,110),owner:'player.2'},
+  placed('scout','unit.test.warrior',112,116)
  ]},slots,new ContentRegistry(src));
 }
 describe('tactical heights',()=>{
@@ -61,12 +62,11 @@ describe('tactical heights',()=>{
   expect(g.view('player.1').fog!.cells[cell]).toBe(1);
   expect(g.view('player.1').entities.some(e=>e.id===high.id)).toBe(false);
  });
- it('has bounded reusable views and leaves flat-ground sight unchanged',()=>{
+ it('sees the full radius disk on flat ground, independent of earlier queries',()=>{
   const t=new TacticalTerrain(32,new Int16Array(32*32));
-  const cells=t.visibleCells({x:16,y:16},4);expect(cells).toHaveLength(49);
-  expect(t.visibleCells({x:16,y:16},4)).toBe(cells);
+  const cells=[...t.visibleCells({x:16,y:16},4)];expect(cells).toHaveLength(49);
   for(let i=0;i<300;i++)t.visibleCells({x:i%32,y:Math.floor(i/32)},3);
-  expect(t.visibleCells({x:16,y:16},4)).toEqual(cells);
+  expect([...t.visibleCells({x:16,y:16},4)]).toEqual(cells);
  });
  it('matches height visibility and an unaccelerated weapon march on fractional, elevated and boundary rays',()=>{
   const size=64,heights=Int16Array.from({length:size*size},(_,i)=>
@@ -103,25 +103,25 @@ it('shares allied cliff-top vision without granting it to another team',()=>{
   {player:1,x:37.5,z:37.5,setup:'setup.ants',mainFort:'start.player.1/main-fort'},
   {player:2,x:217.5,z:217.5,setup:'setup.ants',mainFort:'start.player.2/main-fort'},
   {player:3,x:37.5,z:217.5,setup:'setup.ants',mainFort:'start.player.3/main-fort'}],entities:[
-  placed('low','unit.ants.archer',108,110),{...placed('ally','unit.ants.warrior',112,116),owner:'player.2' as const},
-  {...placed('enemy','unit.ants.warrior',112,110),owner:'player.3' as const}]};
- const g=new Game(map,[{player:0,kind:'human',team:1},{player:1,kind:'human',team:1},{player:2,kind:'human',team:2}]);
+  placed('low','unit.test.archer',108,110),{...placed('ally','unit.test.warrior',112,116),owner:'player.2' as const},
+  {...placed('enemy','unit.test.warrior',112,110),owner:'player.3' as const}]};
+ const g=new Game(map,[{player:0,kind:'human',team:1},{player:1,kind:'human',team:1},{player:2,kind:'human',team:2}],testContent);
  const enemy=g.entities.find(e=>e.placement==='enemy')!,ally=g.entities.find(e=>e.placement==='ally')!;
  expect(g.observation.visible('player.1',enemy)).toBe(true);
  ally.x=80;ally.y=80;ally.unit!.position={x:80000,y:80000};g.observation.update();
  expect(g.observation.visible('player.1',enemy)).toBe(false);
- const copy=new Game(map,g.slots);copy.restore(g.snapshot());run(g,20);run(copy,20);expect(copy.snapshot()).toEqual(g.snapshot());
+ const copy=new Game(map,g.slots,testContent);copy.restore(g.snapshot());run(g,20);run(copy,20);expect(copy.snapshot()).toEqual(g.snapshot());
 });
 
 it('keeps remembered trees immutable while visible harvest changes refresh immediately',()=>{
- const g=game([placed('scout','unit.ants.warrior',110,110),
-  {...placed('tree','resource.forest.tree',112,110),owner:'none'}]);
+ const g=game([placed('scout','unit.test.warrior',110,110),
+  {...placed('tree','resource.test.forest-tree',112,110),owner:'none'}]);
  const scout=g.entities.find(e=>e.placement==='scout')!,tree=g.entities.find(e=>e.placement==='tree')!;
  const read=()=>g.view('player.1').entities.find(e=>e.id===tree.id)!;
  const original=read(),originalAmount=original.resource!.amount;
  expect(g.view().entities.find(e=>e.id===tree.id)).toMatchObject({inventory:{},job:'Available',resource:{amount:originalAmount}});
  tree.resource!.felling!.hp=9;tree.resource!.felling!.lastHitTick=0;g.observation.update();
- expect(read().resource!.felling!.hp).toBe(9);expect(original.resource!.felling!.hp).toBe(50);
+ expect(read().resource!.felling!.hp).toBe(9);expect(original.resource!.felling!.hp).toBe(originalAmount);
  scout.x=80;scout.y=80;scout.unit!.position={x:80000,y:80000};g.observation.update();
  tree.resource!.amount=0;tree.resource!.felling!.hp=0;tree.resource!.felling!.fallTick=0;g.observation.update();
  expect(read().remembered).toBe(true);expect(read().resource!.amount).toBe(originalAmount);expect(read().resource!.felling!.hp).toBe(9);

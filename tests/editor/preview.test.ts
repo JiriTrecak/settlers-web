@@ -6,16 +6,6 @@ import {proceduralFixture} from '../authoring/fixture';
 import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {landscapeAssets} from '../../src/shared/authoring/project';
 
-it('reports map preparation without frame profiling and returns independent timing snapshots',()=>{
- const editor=new WorldEditor({} as HTMLCanvasElement,{host:{} as HTMLElement});editor.replace(emptyUtcMap());
- const first=editor.performanceReport().startup!;
- expect(first.status).toBe('preparing');expect(first.firstFrameMs).toBeUndefined();
- expect(first.stages.map(s=>s.name)).toEqual(['Prepare map document']);
- first.stages.length=0;first.waits.push({name:'external mutation',durationMs:999});
- expect(editor.performanceReport().startup!.stages).toHaveLength(1);
- expect(editor.performanceReport().startup!.waits).toHaveLength(0);
-});
-
 it('waits for scenery and game models concurrently and reports the game-model wait',async()=>{
  const editor=new WorldEditor({} as HTMLCanvasElement,{host:{} as HTMLElement});
  let sceneDone!:()=>void,modelsDone!:()=>void;

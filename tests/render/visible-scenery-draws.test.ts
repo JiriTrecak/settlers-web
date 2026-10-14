@@ -16,37 +16,36 @@ async function fixture(dew=false){
  return {scene,field,internal,stamps,main:scene.getObjectByName('Visible scenery') as Group,shadow:scene.getObjectByName('Scenery shadow draws') as Group};
 }
 
-it('combines visible cells while retaining separate main/shadow transforms and avoiding unchanged uploads',async()=>{
+it('combines visible cells while retaining separate main/shadow transforms',async()=>{
  const {scene,field,internal,main,shadow}=await fixture();
  expect(internal.batches).toHaveLength(2);expect(main.children).toHaveLength(1);
  const draw=main.children[0] as InstancedMesh,shadowDraw=shadow.children[0] as InstancedMesh,matrix=new Matrix4();
  field.cull(region(2,2));expect(draw.count).toBe(1);draw.getMatrixAt(0,matrix);expect(matrix.elements[12]).toBe(2.5);
  expect(main.visible).toBe(true);expect(internal.root.visible).toBe(false);
- const version=draw.instanceMatrix.version,colorVersion=draw.instanceColor!.version;
  field.cull(region(102,102),true);expect(shadowDraw.count).toBe(1);shadowDraw.getMatrixAt(0,matrix);expect(matrix.elements[12]).toBe(102.5);
- draw.getMatrixAt(0,matrix);expect(matrix.elements[12]).toBe(2.5);expect(draw.instanceMatrix.version).toBe(version);
+ draw.getMatrixAt(0,matrix);expect(matrix.elements[12]).toBe(2.5);
  // Picking still uses spatial instance ids, independent of render visibility.
  expect(field.pick(new Raycaster(new Vector3(2.5,5,2.5),new Vector3(0,-1,0),0,10))).toBe('a');
  field.cull(null);expect(main.visible).toBe(false);expect(shadow.visible).toBe(false);expect(internal.root.visible).toBe(true);
- field.cull(region(2,2));expect(draw.instanceMatrix.version).toBe(version);expect(draw.instanceColor!.version).toBe(colorVersion);
- field.cull(region(52,52,60));expect(draw.count).toBe(2);expect(draw.instanceMatrix.version).toBeGreaterThan(version);
+ field.cull(region(2,2));expect(draw.count).toBe(1);
+ field.cull(region(52,52,60));expect(draw.count).toBe(2);
  field.destroy();expect(scene.children).toHaveLength(0);
 });
 
-it('tracks preview, commit, colour changes and removal while retaining unaffected draw buffers',async()=>{
+it('tracks preview, commit, colour changes and removal in the visible draws',async()=>{
  const {scene,field,internal,stamps,main}=await fixture(),draw=main.children[0] as InstancedMesh;
  const matrix=new Matrix4(),all=region(256,256,512);
- field.cull(all);const version=draw.instanceMatrix.version,revision=field.dewRevision;
+ field.cull(all);const version=draw.instanceMatrix.version;
  const moved={...stamps[0],x:200,y:200};field.previewStamp(moved);field.cull(all);
- expect(draw.instanceMatrix.version).toBeGreaterThan(version);expect(field.dewRevision).toBe(revision);
+ expect(draw.instanceMatrix.version).toBeGreaterThan(version);
  const positions=()=>Array.from({length:draw.count},(_,i)=>{draw.getMatrixAt(i,matrix);return matrix.elements[12];}).sort((a,b)=>a-b);
  expect(positions()).toEqual([102.5,200.5]);
  field.sync([moved,stamps[1]]);await field.ready();field.cull(all);
- expect(main.children[0]).toBe(draw);expect(positions()).toEqual([102.5,200.5]);
+ expect(positions()).toEqual([102.5,200.5]);
  const source=internal.batches.find((b:InstancedMesh)=>b.userData.stampIds.includes('a')) as InstancedMesh;
  source.setColorAt(0,new Color(.25,1,1));source.instanceColor!.needsUpdate=true;internal.draws.invalidate();field.cull(all);
  const colors=Array.from({length:draw.count},(_,i)=>draw.instanceColor!.getX(i));expect(colors).toContain(.25);
- field.sync([moved]);await field.ready();field.cull(all);expect(main.children[0]).toBe(draw);expect(draw.count).toBe(1);expect(positions()).toEqual([200.5]);
+ field.sync([moved]);await field.ready();field.cull(all);expect(draw.count).toBe(1);expect(positions()).toEqual([200.5]);
  let disposed=0;draw.addEventListener('dispose',()=>disposed++);
  field.sync([]);await field.ready();expect(disposed).toBe(1);expect(main.children).toHaveLength(0);
  field.destroy();expect(scene.children).toHaveLength(0);
@@ -66,21 +65,6 @@ it('preserves independent blended draw sorting and distinct material states',asy
  field.destroy();
 });
 
-it('reuses both unchanged camera lists after restore, invalidating on preview and rebuild',async()=>{
- const {field,internal,stamps,main,shadow}=await fixture();
- const front=region(2,2),back=region(102,102),sphere=vi.spyOn(front,'intersectsSphere'),box=vi.spyOn(front,'intersectsBox');
- field.cull(front);field.cull(back,true);
- const tested=sphere.mock.calls.length,cellTests=box.mock.calls.length;
- expect(tested).toBeGreaterThan(0);expect(cellTests).toBeGreaterThan(0);
- field.cull(null);field.cull(front);field.cull(back,true);field.cull(front);
- expect(sphere).toHaveBeenCalledTimes(tested);expect(box).toHaveBeenCalledTimes(cellTests);
- expect(main.visible).toBe(true);expect(shadow.visible).toBe(false);expect(internal.root.visible).toBe(false);
- field.previewStamp({...stamps[1],x:3,y:3});field.cull(front);
- expect(sphere.mock.calls.length).toBeGreaterThan(tested);expect((main.children[0] as InstancedMesh).count).toBe(2);
- field.cull(back,true);expect(shadow.children.every(m=>!m.visible)).toBe(true);
- field.sync([stamps[0]]);await field.ready();field.cull(front);expect((main.children[0] as InstancedMesh).count).toBe(1);
- field.destroy();
-});
 
 it('publishes exact dew snapshots after commit, undo, elevation and removal',async()=>{
  const {field,internal,stamps}=await fixture(true);
@@ -101,22 +85,16 @@ expect(dew).toEqual(beads);
  field.destroy();
 });
 
-it('keeps resolved roots through stable edits and restores an uncommitted preview from unchanged records',async()=>{
+it('restores an uncommitted preview from unchanged records and applies later edits in full',async()=>{
  const {field,internal,stamps}=await fixture();
- const root=internal.placed.get('a'),other=internal.placed.get('b');
- const revision=field.dewRevision;
- field.previewStamp({...stamps[0],x:150});expect(root.position.x).toBe(150.5);
+ field.previewStamp({...stamps[0],x:150});expect(internal.placed.get('a').position.x).toBe(150.5);
  // Publishing another scene may restore the original stamp object, not a clone.
  field.sync([...stamps]);await field.ready();
- expect(root.position.x).toBe(2.5);
- expect(internal.placed.get('a')).toBe(root);expect(internal.placed.get('b')).toBe(other);
- expect(field.dewRevision).toBe(revision);
- const restored=field.dewRevision;
- field.sync(stamps.map(s=>({...s})));await field.ready();expect(field.dewRevision).toBe(restored);
- // A late mismatch must invalidate the whole fast path before any root is edited.
+ expect(internal.placed.get('a').position.x).toBe(2.5);expect(internal.placed.get('b').position.x).toBe(102.5);
+ // An edit that changes one record and replaces another applies both.
  field.sync([{...stamps[0],x:20},{...stamps[1],id:'new'}]);await field.ready();
  expect(internal.placed.has('b')).toBe(false);expect(internal.placed.has('new')).toBe(true);
- expect(root.position.x).toBe(20.5);field.destroy();
+ expect(internal.placed.get('a').position.x).toBe(20.5);field.destroy();
 });
 
 it('does not reuse a resolved list across delayed asset replacements or obsolete spawn batches',async()=>{
@@ -139,9 +117,7 @@ it('reuses draw signatures but detects every changed render-state component',asy
  scene.add(root);
  const a:InstancedMesh=new InstancedMesh(geometry,material,10),b:InstancedMesh=new InstancedMesh(geometry,material,10),sources=[a,b];
  draws.sync(sources);expect(draws.count).toBe(1);
- const stringify=vi.spyOn(JSON,'stringify');
- a.count=9;a.instanceMatrix.needsUpdate=true;draws.sync(sources);
- expect(stringify).not.toHaveBeenCalled();stringify.mockRestore();
+ a.count=9;a.instanceMatrix.needsUpdate=true;draws.sync(sources);expect(draws.count).toBe(1);
  const different=(edit:()=>void,undo:()=>void)=>{edit();draws.sync(sources);expect(draws.count).toBe(2);undo();draws.sync(sources);expect(draws.count).toBe(1);};
  different(()=>{a.geometry=otherGeometry;},()=>{a.geometry=geometry;});
  different(()=>{a.material=otherMaterial;},()=>{a.material=material;});

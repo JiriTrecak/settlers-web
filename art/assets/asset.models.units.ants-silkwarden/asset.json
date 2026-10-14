@@ -20,13 +20,6 @@
       "bytes": 2636990
     },
     {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "8a9678a66f6024a541697c5f3bb6b98cb2e7db9a64c62497f2fa20d3e9cf341a",
-      "bytes": 857
-    },
-    {
       "role": "geometry",
       "index": 1,
       "format": "glb",
@@ -41,67 +34,11 @@
       "bytes": 13608
     },
     {
-      "role": "preview",
-      "index": 1,
-      "format": "png",
-      "sha256": "37784d1980549326053f0e1806b50d2957e721997de930ed9bf0b0d7a69711de",
-      "bytes": 618023
-    },
-    {
-      "role": "preview",
-      "index": 2,
-      "format": "png",
-      "sha256": "fbd84088aec982785cb1d8b6b65e378a5fd6a108999252bae302546c2ed93b7a",
-      "bytes": 617082
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "69124f6d14d5463e54814288716974b1517e944332c4bc2ab2f087964d7eb692",
-      "bytes": 8324
-    },
-    {
-      "role": "recipe",
-      "index": 2,
-      "format": "py",
-      "sha256": "202ab8a3cd452b9ae2b6312ff94781fe8308ff2c23a3764692e75a272103a2f0",
-      "bytes": 7473
-    },
-    {
-      "role": "recipe",
-      "index": 3,
-      "format": "py",
-      "sha256": "35da7fae14d036acaa6464b09c5b413356acdde6f461f4a2ec5a6e2501ee7062",
-      "bytes": 1979
-    },
-    {
-      "role": "reference",
-      "index": 1,
-      "format": "png",
-      "sha256": "c2e2a2f5ece1fda1c9158d8d7274c1cfab048877d40f3bda0d5e6bcceabe9f21",
-      "bytes": 1591555
-    },
-    {
       "role": "source",
       "index": 1,
       "format": "blend",
       "sha256": "d50cc683c339d18b95032690ceaeeb62f291ac8e59658017ab858eb9f376a493",
       "bytes": 41485906
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "glb",
-      "sha256": "4ca1f4aefa04a60507cd45fc8011db24b1e8d97afbc5d3cdb08a0be74699c6f6",
-      "bytes": 10336812
-    },
-    {
-      "role": "source",
-      "index": 3,
-      "format": "json",
-      "sha256": "d6163bda418c9175df6afabaf4c8e45615d6419bae6e165669d53ccbbceed3a0",
-      "bytes": 6277
     },
     {
       "role": "team_mask",

@@ -4,8 +4,8 @@ import {fixed,precise} from '../../src/sim/game/motion';
 import {commandCard} from '../../src/presentation/commands';
 
 const owner='player.1' as const;
-const platformHeight=(g:ReturnType<typeof game>)=>g.registry.get('building.ants.tower').garrison!.height;
-const placements=()=>[placed('tower','building.ants.tower',180,180),placed('a','unit.ants.archer',180,185),placed('b','unit.ants.archer',184,185),placed('w','unit.ants.warrior',186,180)];
+const platformHeight=(g:ReturnType<typeof game>)=>g.registry.get('building.test.tower').garrison!.height;
+const placements=()=>[placed('tower','building.test.tower',180,180),placed('a','unit.test.archer',180,185),placed('b','unit.test.archer',184,185),placed('w','unit.test.warrior',186,180)];
 function setup(){const g=game(placements());return {g,t:g.entities.find(e=>e.placement==='tower')!,a:g.entities.find(e=>e.placement==='a')!,b:g.entities.find(e=>e.placement==='b')!,w:g.entities.find(e=>e.placement==='w')!};}
 
 it('reserves one lookout, walks to it, and rejects non-archers and foreign owners',()=>{
@@ -23,7 +23,7 @@ it('reserves one lookout, walks to it, and rejects non-archers and foreign owner
 
 it('fires from the elevated origin without chasing, and survives deterministic save/load',()=>{
  const {g,t,a}=setup();g.command(owner,{type:'garrison',actors:[a.id],target:t.id});run(g,140);
- const enemy=g.context.create({...placed('enemy','unit.ants.warrior',187,180),owner:'player.2'});g.command('player.2',{type:'hold',actors:[enemy.id]});g.observation.update();
+ const enemy=g.context.create({...placed('enemy','unit.test.warrior',187,180),owner:'player.2'});g.command('player.2',{type:'hold',actors:[enemy.id]});g.observation.update();
  const hp=enemy.hp!;let shot=false;
  for(let i=0;i<120;i++){g.tick();if(g.state.missiles.some(m=>m.source===a.id)){shot=true;expect(g.state.missiles.find(m=>m.source===a.id)!.origin.elevation).toBe(platformHeight(g));}}
  expect(shot).toBe(true);expect(enemy.hp!).toBeLessThan(hp);expect(precise(a)).toEqual(precise(t));
@@ -51,7 +51,7 @@ it('cancelling approach frees the reservation and queued entry activates after M
 
 it.each([0,1,2,3])('uses a body-clear doorway approach after tower rotation %i',rotation=>{
  const turn=(x:number,y:number)=>{for(let n=0;n<rotation;n++)[x,y]=[255-y,x];return{x,y};};
- const base=[placed('tower','building.ants.tower',180,180),placed('archer','unit.ants.archer',180,195)]
+ const base=[placed('tower','building.test.tower',180,180),placed('archer','unit.test.archer',180,195)]
   .map(p=>({...p,position:turn(p.position.x,p.position.y),rotation:(360-rotation*90)%360}));
  const g=game(base),copy=game(base),tower=g.entities.find(e=>e.placement==='tower')!,archer=g.entities.find(e=>e.placement==='archer')!;
  expect(g.spatial.unitWalkable(g.spatial.entrance(tower),archer)).toBe(false);

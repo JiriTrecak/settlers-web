@@ -1,7 +1,7 @@
 # Character assets
 
 The canonical package is `art/assets/<asset-id>/asset.json`, with role-named
-resources (`geometry.glb`, `source.blend`, `reference.png`, and numbered variants).
+resources: the `source.blend` master and its published `geometry.glb`, portrait and masks.
 Publish through the asset workbench or the shared `asset.publish` command. Never
 copy a model directly into the runtime library: publication validates its geometry,
 triangle budget, skin weights, clips, events, sockets, material slots and hashes.

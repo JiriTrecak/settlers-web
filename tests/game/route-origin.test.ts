@@ -2,17 +2,17 @@ import {expect,it} from 'vitest';
 import {game,placed} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
 
-function scenario(definition='unit.ants.warrior',rotation=0){
+function scenario(definition='unit.test.warrior',rotation=0){
  const turn=(p:{x:number;y:number})=>{let{x,y}=p;for(let n=0;n<rotation;n++)[x,y]=[255-y,x];return{x,y};};
  const obstacle=turn({x:111.5,y:99.5}),start=turn({x:100,y:100});
- const placements=[placed('obstacle','building.ants.house',obstacle.x,obstacle.y),placed('mover',definition,start.x,start.y)];
+ const placements=[placed('obstacle','building.test.house',obstacle.x,obstacle.y),placed('mover',definition,start.x,start.y)];
  const g=game(placements),e=g.entities.find(e=>e.placement==='mover')!;
  const p=turn({x:107.5-g.spatial.dimensions(e).radius-.3,y:100});
  e.x=Math.round(p.x);e.y=Math.round(p.y);e.unit!.position=fixed(p);
  return {g,e,placements,destination:turn({x:140,y:100})};
 }
 
-it.each(['unit.ants.warrior','unit.ants.bombardier'].flatMap(definition=>[0,1,2,3].map(rotation=>({definition,rotation}))))(
+it.each(['unit.test.warrior','unit.test.bombardier'].flatMap(definition=>[0,1,2,3].map(rotation=>({definition,rotation}))))(
  'joins a valid route from beside an obstacle without snapping, $definition rotation $rotation',({definition,rotation})=>{
  const {g,e,placements,destination}=scenario(definition,rotation),before={...precise(e)};
  expect(g.spatial.clearSegment(fixed(before),fixed(before),undefined,e)).toBe(true);

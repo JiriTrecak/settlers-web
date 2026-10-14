@@ -1,14 +1,14 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {resolveDamage} from '../../src/sim/game/damage';
 import {enhanceWeapon} from '../../src/sim/abilities/combatModifiers';
-const spell=coreAbilities.abilities.find(a=>a.id==='ability.core.searing-arrows')!;
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource} from './encounter-harness';
+const spell=testAbilities.abilities.find(a=>a.id==='ability.test.searing-arrows')!;
 function fixture(settings:Record<string,unknown>={},patch={}){
- const a=abilitySchema.parse({...spell,...patch}),f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({combat:true,casterDefinition:'unit.ants.archer',relationship:'enemy',distance:10,targetHealth:500,mana:40,...settings}));
+ const a=abilitySchema.parse({...spell,...patch}),f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,testSettings({combat:true,casterDefinition:'unit.test.archer',relationship:'enemy',distance:10,targetHealth:500,mana:40,...settings}),false,encounterSource());
  const c=f.game.context.get(f.caster)!,t=f.game.context.get(f.target)!;f.game.command('player.2',{type:'hold',actors:[f.target]});
  return {...f,a,c,t};
 }
@@ -47,13 +47,13 @@ it('toggle-off removes the grant but leaves paid arrows in flight unchanged, wit
  expect(f.game.abilities.observedEvents()).toContainEqual(expect.objectContaining({event:'enhancedHit',cast:m.enhancement!.cast}));
 });
 it('projectile-only enhancements ignore melee and siege weapons',()=>{
- for(const casterDefinition of ['unit.ants.warrior','unit.ants.bombardier']){
+ for(const casterDefinition of ['unit.test.warrior','unit.test.bombardier']){
   const f=fixture({casterDefinition,distance:3});enable(f);until(f,()=>f.t.hp!<500||f.game.state.shells.length>0);
   expect(f.c.abilities!.mana).toBe(40);expect(f.game.abilities.observedEvents().some(e=>e.event==='weaponEnhanced'||e.event==='projectile')).toBe(false);
  }
 });
 it('silence suppresses paid enhancements without disarming the ordinary weapon',()=>{
- const f=fixture();enable(f);f.game.tick();const silence=coreAbilities.abilities.find(a=>a.id==='ability.core.silence')!;
+ const f=fixture();enable(f);f.game.tick();const silence=testAbilities.abilities.find(a=>a.id==='ability.test.silence')!;
  for(const op of releaseEffects(silence,1,'enemy'))new SpellStatuses(f.game).apply(f.target,f.caster,silence,1,f.game.state.nextCast++,op);
  const m=firstShot(f);expect(m.enhancement).toBeUndefined();expect(f.c.abilities!.mana).toBe(40);
 });
@@ -84,7 +84,7 @@ it('selects the strongest affordable grant and resolves rank values at release',
  const g=fixture({mana:50}, {onRelease:[small,big]});enable(g);expect(firstShot(g).enhancement?.bonus).toBe(60);expect(g.c.abilities!.mana).toBe(0);
 });
 it('a shield absorbs the entire enhanced hit without refunding release mana or emitting impact damage',()=>{
- const f=fixture();enable(f);const shield=coreAbilities.abilities.find(a=>a.id==='ability.core.absorption-shield')!;
+ const f=fixture();enable(f);const shield=testAbilities.abilities.find(a=>a.id==='ability.test.absorption-shield')!;
  for(const op of releaseEffects(shield,1,'ally'))new SpellStatuses(f.game).apply(f.target,f.target,shield,1,f.game.state.nextCast++,op);
  const pool=f.t.spellStatuses![0].shield!,m=firstShot(f);
  while(f.game.state.tick<=m.impact)f.game.tick();

@@ -31,8 +31,9 @@ async function directTint(field:HeightField){
  return data;
 }
 
-it.each(['vibrant-forest','frozen-forest','autumn-forest'])('matches ordered direct tinting byte-for-byte in %s',async biome=>{
- const field=new HeightField(32);field.biome=biome;
+// ENGINE-COUPLED: biomes (src/content/biomes.ts) name shipped terrain tiles, read from assets/library via sourceAssetFetch.
+it('matches ordered direct tinting byte-for-byte, ignoring unsupported paint materials',async()=>{
+ const field=new HeightField(32),biome=field.biome;
  field.grassCoverage=Float32Array.from(field.samples,(_,i)=>(i*37%101)/100);
  const kinds=['rock','grass','stones','soil','waterbed','dirt','grass'] as const;
  field.surfacePaint=kinds.map((kind,j)=>({owner:String(j),material:biomeTerrainTile(biomeById(biome),kind).ar,weights:Float32Array.from(field.samples,(_,i)=>(i+j)%3===0?0:((i*17+j*13)%101)/100)}));

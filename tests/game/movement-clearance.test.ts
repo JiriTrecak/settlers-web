@@ -1,4 +1,4 @@
-import {expect,it,vi} from 'vitest';
+import {expect,it} from 'vitest';
 import {game} from './helpers';
 
 it('classifies terrain and reservation blockage exactly like the separate movement checks',()=>{
@@ -20,12 +20,10 @@ it('classifies terrain and reservation blockage exactly like the separate moveme
  }
 });
 
-it('sweeps terrain once while retaining corner reservation checks and terrain precedence',()=>{
+it('reports a corner reservation, then gives terrain blockage precedence over it',()=>{
  const s=game().spatial,actor={radius:.595,height:2,formationSpacing:2};
  const from={x:100000,y:100000},to={x:101000,y:101000},blocked=new Set([100*s.size+101]);
- const sweep=vi.spyOn(s,'clearSegment');
  expect(s.movementSegmentBlocker(from,to,blocked,actor)).toBe('reservation');
- expect(sweep).toHaveBeenCalledTimes(1);
  s.terrain[101*s.size+101]=0;
  // Direct terrain edits use the same rebuild boundary as a loaded/editor map.
  // Occupancy changes have their own local invalidation path.

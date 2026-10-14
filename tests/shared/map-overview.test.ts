@@ -33,7 +33,7 @@ describe('published map browsing',()=>{
   const info=mapOverview(emptyUtcMap());
   expect(hasPlayableSlots({...info,playable:false})).toBe(false);
   expect(hasPlayableSlots({...info,starts:[]})).toBe(false);
-  expect(hasPlayableSlots({...info,starts:[{player:1,x:30,z:30,setup:'default',mainFort:'building.ants.hall'},{player:2,x:90,z:90,setup:'default',mainFort:'building.ants.hall'}]})).toBe(true);
-  expect(hasPlayableSlots({...info,sandbox:true,starts:[{player:1,x:30,z:30,setup:'default',mainFort:'building.ants.hall'}]})).toBe(true);
+  expect(hasPlayableSlots({...info,starts:[{player:1,x:30,z:30,setup:'default',mainFort:'start.player.1/main-fort'},{player:2,x:90,z:90,setup:'default',mainFort:'start.player.2/main-fort'}]})).toBe(true);
+  expect(hasPlayableSlots({...info,sandbox:true,starts:[{player:1,x:30,z:30,setup:'default',mainFort:'start.player.1/main-fort'}]})).toBe(true);
  });
 });

@@ -1,6 +1,7 @@
 import {it,expect} from 'vitest';
 import {Scene} from 'three';
 import {FogOfWar} from '../../src/render/visibility/fogOfWar';
+import {FogRaster} from '../../src/render/visibility/fogRaster';
 it('incremental fog blur matches a full two-dimensional blur through reveal, memory and disappearance',()=>{
  const n=24,f=new FogOfWar(n),scene=new Scene(),cells=new Uint8Array(n*n);
  for(let revision=0;revision<8;revision++){
@@ -14,4 +15,11 @@ it('incremental fog blur matches a full two-dimensional blur through reveal, mem
   }
  }
  f.dispose();
+});
+it('updates only affected blur rows after scattered single-cell changes with the same result as a full recompute',()=>{
+ const size=16,cells=new Uint8Array(size*size),raster=new FogRaster(size);raster.update(cells);
+ for(let i=0;i<80;i++){
+  const cell=(i*37+13)%cells.length;cells[cell]=i%3;raster.update(cells);
+  const fresh=new FogRaster(size);fresh.update(cells);expect(raster.light).toEqual(fresh.light);
+ }
 });

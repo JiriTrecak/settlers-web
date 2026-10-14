@@ -9,7 +9,7 @@ const categories={added:{label:'New',icon:Sparkles,tone:'violet'},improved:{labe
 function el<K extends keyof HTMLElementTagNameMap>(tag:K,text?:string,className?:string){const e=document.createElement(tag);if(text)e.textContent=text;if(className)e.className=className;return e;}
 function icon(node:IconNode){return createElement(node,{width:18,height:18,'stroke-width':1.75,'aria-hidden':'true'});}
 function button(text:string,node?:IconNode){const b=el('button',undefined,'release-button');b.type='button';if(node)b.append(icon(node));b.append(el('span',text));return b;}
-export function renderRelease(entry:ReleaseEntry):HTMLElement {
+function renderRelease(entry:ReleaseEntry):HTMLElement {
  const milestone=entry.version.endsWith('.0');
  const section=el('article',undefined,'release-entry');
  const marker=el('div',undefined,`release-marker release-tone-${milestone?'violet':'emerald'}`);marker.append(icon(milestone?Rocket:Wrench));

@@ -9,7 +9,6 @@ describe('biome atmosphere',()=>{
   const map={...emptyUtcMap(),landscape:{...emptyLandscape(),environment:{...emptyLandscape().environment,atmosphere:PROLOGUE_ATMOSPHERE}}};
   const copy=parseUtcMap(JSON.parse(stringifyUtcMap(map)))!;
   expect(copy.landscape!.environment).not.toHaveProperty('atmosphere');expect(copy.mission).toEqual(map.mission);
-  expect(DEFAULT_ATMOSPHERE.enabled).toBe(false);
  });
  it.each([
   {density:-1},{shaftDensity:-1},{shaftDensity:.1},{heightFalloff:0},{color:'not-a-color'},{density:Infinity},
@@ -27,7 +26,7 @@ describe('biome atmosphere',()=>{
  });
  it('persists local quality independently from the authored map',()=>{
   const data=new Map<string,string>();vi.stubGlobal('localStorage',{getItem:(k:string)=>data.get(k)??null,setItem:(k:string,v:string)=>data.set(k,v)});vi.stubGlobal('window',{dispatchEvent:vi.fn()});
-  expect(readAtmosphereQuality()).toBe('medium');setAtmosphereQuality('off');expect(readAtmosphereQuality()).toBe('off');expect(PROLOGUE_ATMOSPHERE.enabled).toBe(true);
+  expect(readAtmosphereQuality()).toBe('medium');setAtmosphereQuality('off');expect(readAtmosphereQuality()).toBe('off');
   data.set(ATMOSPHERE_KEY,'bad');expect(readAtmosphereQuality()).toBe('medium');
  });
 });

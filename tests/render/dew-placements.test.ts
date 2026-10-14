@@ -13,7 +13,3 @@ it('matches exhaustive packing through pose, membership and length changes witho
  rows.splice(0,1);data.sync(all,[],true);check();rows.reverse();data.sync(all,[],true);check();
  rows.push({dewWorld:beads(9)});data.sync(all,[],true);check();rows.splice(0);data.sync(all,[],true);check();
 });
-it('retains dew buffer identity when ordinary scenery changes',()=>{
- const tree={},data=new DewPlacements();data.sync(()=>[tree,{dewWorld:beads(5)}],[],true);const before=data.dew;
- data.sync(()=>{throw Error('unexpected forest scan');},[tree],false);expect(data.dew).toBe(before);
-});

@@ -45,51 +45,6 @@
     "scenery": []
   },
   {
-    "id": "asset.models.buildings.ants-barracks",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "teamColor": {
-        "mode": "mask",
-        "slots": [
-          "TC_TeamColor"
-        ],
-        "mask": {
-          "role": "team_mask",
-          "index": 1
-        }
-      },
-      "blocker": {
-        "shape": "box",
-        "size": [
-          9,
-          7
-        ],
-        "offset": [
-          0,
-          0
-        ]
-      },
-      "vegetationClearance": 4.5,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.buildings.ants-barracks/geometry.glb"
-    ],
-    "scenery": []
-  },
-  {
     "id": "asset.models.buildings.ants-bombardier-workshop",
     "transform": {
       "scale": 1,
@@ -131,51 +86,6 @@
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.buildings.ants-bombardier-workshop/geometry.glb"
-    ],
-    "scenery": []
-  },
-  {
-    "id": "asset.models.buildings.ants-chitin-works",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "teamColor": {
-        "mode": "mask",
-        "slots": [
-          "TC_TeamColor"
-        ],
-        "mask": {
-          "role": "team_mask",
-          "index": 1
-        }
-      },
-      "blocker": {
-        "shape": "box",
-        "size": [
-          9,
-          9
-        ],
-        "offset": [
-          0,
-          0
-        ]
-      },
-      "vegetationClearance": 4.5,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.buildings.ants-chitin-works/geometry.glb"
     ],
     "scenery": []
   },
@@ -266,92 +176,6 @@
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.buildings.ants-leaf-garrison/geometry.glb"
-    ],
-    "scenery": []
-  },
-  {
-    "id": "asset.models.buildings.ants-mandible-hall",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "teamColor": {
-        "mode": "material",
-        "slots": [
-          "TC_TeamColor"
-        ]
-      },
-      "blocker": {
-        "shape": "box",
-        "size": [
-          9,
-          9
-        ],
-        "offset": [
-          0,
-          0
-        ]
-      },
-      "vegetationClearance": 4.5,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.buildings.ants-mandible-hall/geometry.glb"
-    ],
-    "scenery": []
-  },
-  {
-    "id": "asset.models.buildings.ants-mound",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "teamColor": {
-        "mode": "mask",
-        "slots": [
-          "TC_TeamColor"
-        ],
-        "mask": {
-          "role": "team_mask",
-          "index": 1
-        }
-      },
-      "blocker": {
-        "shape": "box",
-        "size": [
-          7,
-          7
-        ],
-        "offset": [
-          0,
-          0
-        ]
-      },
-      "vegetationClearance": 3.5,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.buildings.ants-mound/geometry.glb"
     ],
     "scenery": []
   },
@@ -1517,32 +1341,6 @@
     ]
   },
   {
-    "id": "asset.models.environment.frost-rock-ledge",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.frost-rock-ledge/geometry.glb"
-    ],
-    "scenery": [
-      "frost-rock-ledge"
-    ]
-  },
-  {
     "id": "asset.models.environment.frost-snow-grass",
     "transform": {
       "scale": 1,
@@ -1756,86 +1554,6 @@
     ]
   },
   {
-    "id": "asset.models.environment.mega-acorn",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 8,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.mega-acorn/geometry.glb"
-    ],
-    "scenery": [
-      "mega-acorn"
-    ]
-  },
-  {
-    "id": "asset.models.environment.mega-clover",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 8,
-      "canopy": true,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "canopy": true,
-    "geometry": [
-      "assets/library/asset.models.environment.mega-clover/geometry.glb"
-    ],
-    "scenery": [
-      "mega-clover"
-    ]
-  },
-  {
-    "id": "asset.models.environment.mega-fallen-leaf",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 9,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.mega-fallen-leaf/geometry.glb"
-    ],
-    "scenery": [
-      "mega-fallen-leaf"
-    ]
-  },
-  {
     "id": "asset.models.environment.mega-fallen-log",
     "transform": {
       "scale": 1,
@@ -1915,32 +1633,6 @@
     ],
     "scenery": [
       "mega-oak-trunk"
-    ]
-  },
-  {
-    "id": "asset.models.environment.mega-pine-cone",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 9,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.mega-pine-cone/geometry.glb"
-    ],
-    "scenery": [
-      "mega-pine-cone"
     ]
   },
   {
@@ -2596,84 +2288,6 @@
     ]
   },
   {
-    "id": "asset.models.environment.woodland-abandoned-camp",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-abandoned-camp/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-abandoned-camp"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-acorn-cache",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-acorn-cache/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-acorn-cache"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-amber-deposit",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-amber-deposit/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-amber-deposit"
-    ]
-  },
-  {
     "id": "asset.models.environment.woodland-amber-lantern",
     "transform": {
       "scale": 1,
@@ -2697,84 +2311,6 @@
     ],
     "scenery": [
       "woodland-amber-lantern"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-bank-slabs",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 1.7,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-bank-slabs/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-bank-slabs"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-broken-leaf-raft",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 1.4,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-broken-leaf-raft/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-broken-leaf-raft"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-broken-trader-cart",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 2,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-broken-trader-cart/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-broken-trader-cart"
     ]
   },
   {
@@ -2834,37 +2370,6 @@
     ]
   },
   {
-    "id": "asset.models.environment.woodland-daisies",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "wind": {
-        "mode": "grass",
-        "strength": 0.12,
-        "speed": 0.2,
-        "stiffness": 0.75
-      },
-      "groundContact": {
-        "mode": "terrain"
-      }
-    },
-    "groundContact": "terrain",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-daisies/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-daisies"
-    ]
-  },
-  {
     "id": "asset.models.environment.woodland-drift-log",
     "transform": {
       "scale": 1,
@@ -2888,32 +2393,6 @@
     ],
     "scenery": [
       "woodland-drift-log"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-drift-scraps",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.1,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-drift-scraps/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-drift-scraps"
     ]
   },
   {
@@ -2992,32 +2471,6 @@
     ],
     "scenery": [
       "woodland-giant-mushroom-russet"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-giant-stump",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 2,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-giant-stump/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-giant-stump"
     ]
   },
   {
@@ -3223,32 +2676,6 @@
     ]
   },
   {
-    "id": "asset.models.environment.woodland-leaf-shelter",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-leaf-shelter/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-leaf-shelter"
-    ]
-  },
-  {
     "id": "asset.models.environment.woodland-lily-a",
     "transform": {
       "scale": 1,
@@ -3296,32 +2723,6 @@
     ],
     "scenery": [
       "woodland-lily-b"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-log-bench",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-log-bench/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-log-bench"
     ]
   },
   {
@@ -3374,32 +2775,6 @@
     ],
     "scenery": [
       "woodland-mushroom-cluster"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-mushroom-lantern",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-mushroom-lantern/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-mushroom-lantern"
     ]
   },
   {
@@ -3625,32 +3000,6 @@
     ]
   },
   {
-    "id": "asset.models.environment.woodland-rain-barrel",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-rain-barrel/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-rain-barrel"
-    ]
-  },
-  {
     "id": "asset.models.environment.woodland-reed-tuft",
     "transform": {
       "scale": 1,
@@ -3755,32 +3104,6 @@
     ]
   },
   {
-    "id": "asset.models.environment.woodland-root-snag",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 1.1,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-root-snag/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-root-snag"
-    ]
-  },
-  {
     "id": "asset.models.environment.woodland-ruined-watchtower",
     "transform": {
       "scale": 1,
@@ -3804,136 +3127,6 @@
     ],
     "scenery": [
       "woodland-ruined-watchtower"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-snapped-root",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-snapped-root/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-snapped-root"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-stone-spring",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-stone-spring/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-stone-spring"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-supply-crate",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-supply-crate/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-supply-crate"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-trail-sign",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-trail-sign/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-trail-sign"
-    ]
-  },
-  {
-    "id": "asset.models.environment.woodland-woodpile",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "vegetationClearance": 0.25,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.environment.woodland-woodpile/geometry.glb"
-    ],
-    "scenery": [
-      "woodland-woodpile"
     ]
   },
   {
@@ -4213,111 +3406,6 @@
     "groundContact": "pivot",
     "geometry": [
       "assets/library/asset.models.resources.amber-deposit/geometry.glb"
-    ],
-    "scenery": []
-  },
-  {
-    "id": "asset.models.resources.amber-deposit-empty",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "blocker": {
-        "shape": "box",
-        "size": [
-          15,
-          15
-        ],
-        "offset": [
-          0,
-          0
-        ]
-      },
-      "vegetationClearance": 7.5,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.resources.amber-deposit-empty/geometry.glb"
-    ],
-    "scenery": []
-  },
-  {
-    "id": "asset.models.resources.amber-deposit-one-third",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "blocker": {
-        "shape": "box",
-        "size": [
-          15,
-          15
-        ],
-        "offset": [
-          0,
-          0
-        ]
-      },
-      "vegetationClearance": 7.5,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.resources.amber-deposit-one-third/geometry.glb"
-    ],
-    "scenery": []
-  },
-  {
-    "id": "asset.models.resources.amber-deposit-two-thirds",
-    "transform": {
-      "scale": 1,
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "up": "Y",
-      "forward": "+Z"
-    },
-    "capabilities": {
-      "blocker": {
-        "shape": "box",
-        "size": [
-          15,
-          15
-        ],
-        "offset": [
-          0,
-          0
-        ]
-      },
-      "vegetationClearance": 7.5,
-      "groundContact": {
-        "mode": "pivot"
-      }
-    },
-    "groundContact": "pivot",
-    "geometry": [
-      "assets/library/asset.models.resources.amber-deposit-two-thirds/geometry.glb"
     ],
     "scenery": []
   },

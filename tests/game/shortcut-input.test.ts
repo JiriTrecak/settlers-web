@@ -2,24 +2,22 @@ import {expect,it,vi} from 'vitest';
 import {MapInput} from '../../src/render/input/mapInput';
 import {shortcuts,SHORTCUTS_CHANGED,commandMatches,commandShortcut} from '../../src/shared/input/shortcuts';
 import {shortcutCatalog} from '../../src/shared/input/catalog';
-import {content} from '../../src/content/builtin';
-import {perf} from '../../src/debug/performance';
+import {testContent as content} from '../fixtures/content';
 
-it('measures real canvas callbacks between frames and removes those same listeners on destroy',()=>{
+it('delivers canvas pointer callbacks and removes those same listeners on destroy',()=>{
  const win=new EventTarget();vi.stubGlobal('window',win);
  vi.stubGlobal('document',{createElement:()=>({style:{},remove(){}}),body:{append(){}}});
  const canvas=Object.assign(new EventTarget(),{setPointerCapture(){},hasPointerCapture:()=>false});
- const command=vi.fn(),span=vi.spyOn(perf,'cpuSpan'),measuring=vi.spyOn(perf,'measuringCpu','get').mockReturnValue(true);
+ const command=vi.fn();
  const input=new MapInput(canvas as any,{} as any,{rts:true,onChanged(){},onRightClick:command});
  const pointer=()=>Object.assign(new Event('pointerdown'),{button:2,clientX:12,clientY:34,shiftKey:true,pointerId:1});
  try{
   canvas.dispatchEvent(pointer());
   expect(command).toHaveBeenCalledExactlyOnceWith(12,34,true);
-  expect(span).toHaveBeenCalledWith('Canvas input',expect.any(Number));
-  input.destroy();command.mockClear();span.mockClear();
+  input.destroy();command.mockClear();
   canvas.dispatchEvent(pointer());
-  expect(command).not.toHaveBeenCalled();expect(span).not.toHaveBeenCalled();
- }finally{input.destroy();measuring.mockRestore();span.mockRestore();vi.unstubAllGlobals();}
+  expect(command).not.toHaveBeenCalled();
+ }finally{input.destroy();vi.unstubAllGlobals();}
 });
 it('pans with an override, releases using physical key even after modifiers change, and ignores dialogs',()=>{
  const win=new EventTarget();let dialog=false;
@@ -45,8 +43,12 @@ it('allows Shift+command for queued targeting without making Ctrl or Alt acciden
 it('catalog contains unique ids and declared abilities, buildings, recruitment and navigation bindings',()=>{
  const c=shortcutCatalog(content);expect(new Set(c.map(s=>s.id)).size).toBe(c.length);
  expect(c.find(s=>s.id==='command.navigation:back')?.key).toBe('Escape');
- expect(c.some(s=>s.id==='command.produce:unit.ants.archer')).toBe(true);
- expect(c.some(s=>s.id==='command.build:building.ants.barracks')).toBe(true);
+ const creatable=content.definitions.filter(d=>d.creation&&['construct','train'].includes(d.creation.method));
+ expect(creatable.some(d=>d.creation!.method==='construct')).toBe(true);expect(creatable.some(d=>d.creation!.method==='train')).toBe(true);
+ for(const d of creatable){
+  const id=`${d.creation!.method==='construct'?'build':'produce'}:${d.id}`;
+  if(!content.actions.overrides[id]?.hidden)expect(c.some(s=>s.id===`command.${id}`),id).toBe(true);
+ }
  for(const d of content.definitions)for(const binding of d.behaviors.abilities?.bindings??[])if(binding.command)expect(c.some(s=>s.id===`command.cast:${binding.id}`&&s.key===`Key${binding.command!.hotkey}`)).toBe(true);
 });
 

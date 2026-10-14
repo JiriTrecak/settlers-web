@@ -3,6 +3,8 @@ import {SpriteMaterial,Texture,TextureLoader,ShaderLib,type Material,type Sprite
 import {configureFlipbook,flipbookFrame,type Flipbook} from '../../src/render/abilities/flipbook';
 import {EffectPlayer} from '../../src/render/abilities/effectPlayer';
 import {visualEffectSchema} from '../../src/content/effects/schema';
+// Published resource lookup reads the shipped asset manifest; this test owns its effect, so the image resource is synthetic.
+vi.mock('../../src/content/abilities/resources',async importOriginal=>({...await importOriginal<object>(),effectImage:(ref:{asset:string})=>({path:ref.asset+'.png',bytes:100,sha256:'test'})}));
 const atlas:Flipbook={columns:4,rows:4,firstFrame:3,frames:5,frameTicks:2,mode:'once',randomStart:false};
 function compile(material:Material){const shader={vertexShader:ShaderLib.sprite.vertexShader,fragmentShader:ShaderLib.sprite.fragmentShader,uniforms:{}} as Parameters<Material['onBeforeCompile']>[0];material.onBeforeCompile(shader,undefined as never);return shader;}
 it('samples atlas frame intervals, holds the last frame, loops and ping-pongs without an incremental clock',()=>{
@@ -15,11 +17,11 @@ it('samples atlas frame intervals, holds the last frame, loops and ping-pongs wi
 it('keeps frame UVs local to each material while sharing one image and composing shader hooks',async()=>{
  const texture=new Texture(),a=new SpriteMaterial({map:texture}),b=new SpriteMaterial({map:texture});
  const original=vi.fn();a.onBeforeCompile=original;configureFlipbook(a,atlas);configureFlipbook(b,{...atlas,firstFrame:4});
- const sa=compile(a),sb=compile(b);expect(original).toHaveBeenCalledTimes(1);expect(sa.vertexShader).toContain('vMapUv = vMapUv * uEffectAtlas.xy + uEffectAtlas.zw');
+ const sa=compile(a),sb=compile(b);expect(original).toHaveBeenCalledTimes(1);
  expect(sa.uniforms.uEffectAtlas.value.toArray()).toEqual([.25,.25,.75,.75]);expect(sb.uniforms.uEffectAtlas.value.toArray()).toEqual([.25,.25,0,.5]);
  expect(a.map).toBe(b.map);expect(texture.offset.toArray()).toEqual([0,0]);a.dispose();b.dispose();texture.dispose();
 });
-const effect=()=>visualEffectSchema.parse({schemaVersion:1,id:'effect.test.atlas',name:'Atlas',durationTicks:40,layers:[{id:'sprite',shape:'particles',colour:'#ffffff',accent:'#ffffff',durationTicks:40,count:2,size:1,height:1,texture:{asset:'asset.effects.holy-light-spark',role:'image',index:1},flipbook:{...atlas,firstFrame:0,frames:16,frameTicks:1},emitter:{mode:'continuous',lifetimeTicks:20,rate:40,speed:1,speedVariation:0,direction:{x:0,y:1,z:0},coneDegrees:0,gravity:0,drag:0,spawnRadius:0,startSize:1,endSize:1,spin:0,fadeIn:0,fadeOut:0}}]});
+const effect=()=>visualEffectSchema.parse({schemaVersion:1,id:'effect.test.atlas',name:'Atlas',durationTicks:40,layers:[{id:'sprite',shape:'particles',colour:'#ffffff',accent:'#ffffff',durationTicks:40,count:2,size:1,height:1,texture:{asset:'asset.test.atlas',role:'image',index:1},flipbook:{...atlas,firstFrame:0,frames:16,frameTicks:1},emitter:{mode:'continuous',lifetimeTicks:20,rate:40,speed:1,speedVariation:0,direction:{x:0,y:1,z:0},coneDegrees:0,gravity:0,drag:0,spawnRadius:0,startSize:1,endSize:1,spin:0,fadeIn:0,fadeOut:0}}]});
 it('samples continuous particles from their individual births and reproduces frames after rewind',()=>{
  const loader=vi.spyOn(TextureLoader.prototype,'load').mockReturnValue(new Texture()),player=new EffectPlayer();
  try{player.play(effect());player.update(2);const materials=player.root.children[0].children.map(p=>(p as Sprite).material),shaders=materials.map(compile);const rects=()=>shaders.map(s=>s.uniforms.uEffectAtlas.value.toArray());expect(rects()).toEqual([[.25,.25,0,.75],[.25,.25,.25,.75]]);const before=rects();player.update(17);player.update(2);expect(rects()).toEqual(before);}finally{player.dispose();loader.mockRestore();}

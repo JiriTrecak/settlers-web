@@ -7,7 +7,8 @@ import {
 } from "../../src/shared";
 import { Room, Lockstep, MemoryChannel } from "../../src/net";
 import { World } from "../../src/sim/world/world";
-const map = {...emptyUtcMap(), entities: [{id: "supply", definition: "building.ants.house", position: {x:243.5,y:239.5}, rotation:0, owner:"player.1" as const}]};
+import { testContent } from "../fixtures/content";
+const map = {...emptyUtcMap(), entities: [{id: "supply", definition: "building.test.house", position: {x:243.5,y:239.5}, rotation:0, owner:"player.1" as const}]};
 const config = {
   ...localMatch({
     mapId: "test",
@@ -48,47 +49,55 @@ describe("declarative lockstep integration", () => {
       channels = [new MemoryChannel(room, 0), new MemoryChannel(room, 1)],
       peers = channels.map((c, i) => new Lockstep(c, i, 3)),
       worlds = [0, 1].map(
-        () => new World({ map, slots: config.slots, seed: 4 }),
+        () => new World({ map, slots: config.slots, seed: 4, registry: testContent }),
       );
     const actor = worlds[0]!.settlement!.entities.find(
-      (e) => e.owner === "player.1" && e.definition === "unit.ants.settler",
+      (e) => e.owner === "player.1" && e.definition === "unit.test.settler",
     )!.id;
     peers[0]!.send({
       type: "build",
       actors: [actor],
-      definition: "building.ants.barracks",
+      definition: "building.test.barracks",
       position: { x: 197.5, y: 233.5 },
     });
-    for (let tick = 1; tick <= 3400; tick++) {
+    // Budget from the declared construction and training times, plus travel and lockstep margin.
+    const work = (id: string) => testContent.get(id).creation!.workTicks!;
+    const limit = work("building.test.barracks") + work("unit.test.warrior") + 1200;
+    let ordered = 0;
+    for (let tick = 1; tick <= limit; tick++) {
       if (tick === 100) peers[0]!.send({type:'stop',actors:[actor]});
       if (tick === 200) {
-        const site=worlds[0]!.settlement!.entities.find(e=>e.definition==='building.ants.barracks')!;
+        const site=worlds[0]!.settlement!.entities.find(e=>e.definition==='building.test.barracks')!;
         peers[0]!.send({type:'construct',actors:[actor],target:site.id});
       }
-      if (tick === 2300) {
-        const b = worlds[0]!.settlement!.entities.find(
-          (e) => e.definition === "building.ants.barracks",
-        )!;
+      const barracks = worlds[0]!.settlement!.entities.find(
+        (e) => e.definition === "building.test.barracks",
+      );
+      if (!ordered && tick > 200 && barracks && !barracks.construction) {
+        ordered = tick;
         peers[0]!.send({
           type: "produce",
-          actor: b.id,
-          definition: "unit.ants.warrior",
+          actor: barracks.id,
+          definition: "unit.test.warrior",
         });
       }
       peers[tick % 2]!.confirm(tick);
       peers[1 - (tick % 2)]!.confirm(tick);
       for (let i = 0; i < 2; i++) apply(worlds[i]!, peers[i]!.take(tick)!);
-      if (tick === 150 || tick === 2350) {
-        const restored = new World({ map, slots: config.slots, seed: 4 });
+      // Restore one peer before construction resumes and again while a future produce command is in flight.
+      if (tick === 150 || (ordered && tick === ordered + 2)) {
+        const restored = new World({ map, slots: config.slots, seed: 4, registry: testContent });
         restored.restore(worlds[1]!.snapshot());
         worlds[1] = restored;
       }
       if (tick % 200 === 0)
         expect(worlds[0]!.checksum()).toBe(worlds[1]!.checksum());
     }
+    expect(ordered).toBeGreaterThan(0);
+    expect(worlds[0]!.checksum()).toBe(worlds[1]!.checksum());
     expect(
       worlds[0]!.settlement!.entities.filter(
-        (e) => e.owner === "player.1" && e.definition === "unit.ants.warrior",
+        (e) => e.owner === "player.1" && e.definition === "unit.test.warrior",
       ),
     ).toHaveLength(1);
     channels.forEach((c) => c.destroy());
@@ -98,7 +107,7 @@ describe("declarative lockstep integration", () => {
       action: Action = {
         type: "build",
         actors: [2],
-        definition: "building.ants.house",
+        definition: "building.test.house",
         position: { x: 200, y: 210 },
       };
     room.confirm(0, 1, [
@@ -113,27 +122,7 @@ describe("declarative lockstep integration", () => {
     room.confirm(1, 2, []);
     expect(room.snapshot().held).toEqual([]);
   });
-  it("future AI intentions are enqueued and survive a world snapshot", () => {
-    const opts = {
-        map,
-        seed: 8,
-        slots: [
-          { player: 0, kind: "human" as const },
-          { player: 1, kind: "ai" as const },
-        ],
-      },
-      a = new World(opts);
-    for (let i = 0; i < 400 && a.snapshot().pending.length===0; i++) a.tick();
-    expect(a.snapshot().pending.length).toBeGreaterThan(0);
-    const b = new World(opts);
-    b.restore(a.snapshot());
-    for (let i = 0; i < 200; i++) {
-      a.tick();
-      b.tick();
-    }
-    expect(a.checksum()).toBe(b.checksum());
-  });
-  it("S21 resumes unapplied commits, room-held commands and the unsent client outbox together", () => {
+  it("resumes unapplied commits, room-held commands and the unsent client outbox together", () => {
     function harness() {
       const room = new Room(config),
         channels = [0, 1].map((p) => new MemoryChannel(room, p));
@@ -141,7 +130,7 @@ describe("declarative lockstep integration", () => {
         room,
         channels,
         peers: channels.map((c, p) => new Lockstep(c, p, config.delay)),
-        world: new World({ map, slots: config.slots, seed: 4 }),
+        world: new World({ map, slots: config.slots, seed: 4, registry: testContent }),
       };
     }
     const uninterrupted = harness();
@@ -151,7 +140,7 @@ describe("declarative lockstep integration", () => {
       uninterrupted.peers[1]!.take(tick);
     }
     const soldier = uninterrupted.world.settlement!.entities.find(
-      (e) => e.owner === "player.1" && e.definition === "unit.ants.marshal",
+      (e) => e.owner === "player.1" && e.definition === "unit.test.marshal",
     )!;
     uninterrupted.peers[0]!.send({
       type: "move",

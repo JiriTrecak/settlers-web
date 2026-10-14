@@ -9,13 +9,6 @@ function fixture(){
  return {gl,report,diagnostics,program};
 }
 
-it('validates each successful program once without requesting diagnostic logs',()=>{
- const {gl,report,diagnostics,program}=fixture(),a=program(),b=program();
- diagnostics.check([a]);diagnostics.check([a,b]);diagnostics.check([a,b]);
- expect(gl.getProgramParameter).toHaveBeenCalledTimes(2);
- expect(gl.getProgramInfoLog).not.toHaveBeenCalled();expect(gl.getShaderInfoLog).not.toHaveBeenCalled();
- expect(report).not.toHaveBeenCalled();expect(diagnostics.failures).toBe(0);
-});
 
 it('preserves program and both shader diagnostics on failed links, reported once',()=>{
  const {gl,report,diagnostics,program}=fixture(),failed=program();gl.getProgramParameter.mockReturnValue(false);

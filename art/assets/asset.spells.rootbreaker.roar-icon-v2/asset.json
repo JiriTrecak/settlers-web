@@ -11,13 +11,6 @@
   ],
   "resources": [
     {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "1c7f2b53f6b0431b66450f4e29c444f79aba791cc6f1e55009e6f966079cc77a",
-      "bytes": 815
-    },
-    {
       "role": "image",
       "index": 1,
       "format": "png",

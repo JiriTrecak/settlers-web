@@ -2,10 +2,10 @@
 
 Visual review now lives in the single Asset Workbench: `npm run dev:tools`, then http://127.0.0.1:5175/.
 
-Editable assets live in `art/assets/<id>/`. `source.blend`, numbered source resources, `recipe.py`, and `build.json` preserve the full authoring inputs. The adapter materializes tool-facing filenames only under ignored `.asset-work/build/`.
+Editable assets live in `art/assets/<id>/`; each published model keeps a single `source.blend` master next to its runtime outputs (see [publication](../../docs/asset-pipeline/publication.md)). Staging works only for a package that declares a `build.json` manifest (new work in progress); existing published packages no longer carry one. The adapter materializes tool-facing filenames only under ignored `.asset-work/build/`.
 
 - Stage: `python3 experiments/building-studio/source_workspace.py <asset-id>`.
-- Render an existing building: `npm run building:studio -- render <asset-id> --quick`.
+- Render a staged build: `npm run building:studio -- render <asset-id> --quick`.
 - Rebuild: `npm run building:studio -- build <asset-id>`.
 - Character builds also accept `--category characters`.
 - Manual staging edits: `node --import tsx scripts/assets/capture-build.ts <asset-id>` immediately after finishing.

@@ -1,5 +1,4 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
@@ -8,11 +7,14 @@ import {CONTROL_KINDS,controlImmunities} from '../../src/sim/abilities/controlPo
 import {itemFlag} from '../../src/sim/game/itemModifiers';
 import {abilityAimScore} from '../../src/sim/abilities/ai';
 import {isStunned} from '../../src/sim/game/effects';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.unstoppable')!;
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.unstoppable')!;
 const mixed={op:'status',target:'target',id:'poisonRoot',amount:160,polarity:'negative',dispel:true,modifiers:{rooted:true,armor:-5,moveSpeedPermille:-400,attackSpeedPermille:-400},disarm:true,periodic:{intervalTicks:40,damage:10,damageType:'spell'}};
 function fixture(ward={},ops:unknown[]=[mixed]){
  const a=abilitySchema.parse({...base,onRelease:[{...base.onRelease[0],...ward},...ops]});
- const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'ally',targetHealth:500,distance:6,mana:200}));
+ const f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,relationship:'ally',targetHealth:500,distance:6,mana:200}),false,testSource());
  const statuses=new SpellStatuses(f.game),c=f.game.context.get(f.caster)!,t=f.game.context.get(f.target)!;
  const apply=(index=0,target=f.target)=>statuses.apply(f.caster,target,a,1,f.game.state.nextCast++,releaseEffects(a,1,'ally')[index]);
  return {...f,a,c,t,apply,statuses};
@@ -79,7 +81,7 @@ it('the actual movement system can move an already rooted target while the ward 
 });
 it('AI skips fully prevented control programs but still values a damaging mixed debuff',()=>{
  const f=fixture(),caster={id:1,x:0,y:0,hp:500,maxHp:500,alive:true,targetable:true,unit:true},target={...caster,id:2,x:3,controlImmunity:[...CONTROL_KINDS]};
- const silence=coreAbilities.abilities.find(a=>a.id==='ability.core.silence')!,relation=(e:{id:number})=>e.id===1?'ally' as const:'enemy' as const;
+ const silence=testAbilities.abilities.find(a=>a.id==='ability.test.silence')!,relation=(e:{id:number})=>e.id===1?'ally' as const:'enemy' as const;
  expect(abilityAimScore(silence,1,caster,target,[caster,target],relation,'enemy')).toBe(0);
  const poison=abilitySchema.parse({...f.a,targeting:{...f.a.targeting,relations:['enemy']},onRelease:[mixed]});
  expect(abilityAimScore(poison,1,caster,target,[caster,target],relation,'enemy')).toBeGreaterThan(0);

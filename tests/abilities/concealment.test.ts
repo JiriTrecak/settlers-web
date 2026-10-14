@@ -1,14 +1,16 @@
 import {it,expect} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {releaseEffects} from '../../src/content/abilities/schema';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {spellHidden,concealmentOpacity} from '../../src/sim/abilities/concealment';
 import {Game} from '../../src/sim/game/game';
-const spell=(id:string)=>coreAbilities.abilities.find(a=>a.id==='ability.core.'+id)!;
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const spell=(id:string)=>testAbilities.abilities.find(a=>a.id==='ability.test.'+id)!;
 function fixture(id='wind-walk',settings:Record<string,unknown>={}){
- const a=spell(id),f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',combat:true,distance:3,targetHealth:500,...settings}));
+ const a=spell(id),f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',combat:true,distance:3,targetHealth:500,...settings}),false,testSource());
  return {...f,c:()=>f.game.context.get(f.caster)!,t:()=>f.game.context.get(f.target)!};
 }
 function run(f:ReturnType<typeof fixture>,n:number){for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});}

@@ -220,7 +220,7 @@ A complete agent batch can create a draft, import generated texture(s), referenc
 
 ## 7. Design validation against real spell patterns
 
-These are architecture walkthroughs, not executable syntax examples. The sketches use typed selectors, ordered operations and lifecycle contracts; published definitions and the strict schemas are the authority for supported fields. Category tests exercise the implemented contracts, including two-peer lockstep and mid-cast restore. Numerical balance and complete patch-specific Warcraft behaviour are deliberately not claimed to be reproduced.
+These are architecture walkthroughs, not executable syntax examples. Apart from Holy Light Lite, the reference spells named here are no longer shipped; mechanic tests keep test-owned copies in [tests/fixtures/content](../../tests/fixtures/content/index.ts). The sketches use typed selectors, ordered operations and lifecycle contracts; published definitions and the strict schemas are the authority for supported fields. Category tests exercise the implemented contracts, including two-peer lockstep and mid-cast restore. Numerical balance and complete patch-specific Warcraft behaviour are deliberately not claimed to be reproduced.
 
 ### A. Holy Light Lite — direct, conditional target effect
 

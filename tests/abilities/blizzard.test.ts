@@ -1,13 +1,14 @@
 import {it,expect} from 'vitest';
-import {abilitySchema,presentationSchema} from '../../src/content/abilities/schema';
-import definition from '../../content/abilities/ability.core.blizzard/definition.json';
-import presentation from '../../content/abilities/ability.core.blizzard/presentation.json';
+import {abilitySchema} from '../../src/content/abilities/schema';
+import {testAbilities,testSource} from '../fixtures/content';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {abilityOutline} from '../../src/render/settlement/abilityTarget';
-const spell=abilitySchema.parse(definition),look=presentationSchema.parse(presentation);
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const spell=testAbilities.abilities.find(a=>a.id==='ability.test.blizzard')!,look=testAbilities.presentations.find(p=>p.id===spell.presentation)!;
 function setup(relationship:'ally'|'enemy'='enemy'){
- const fixture=createAbilityEncounter(spell,look,encounterSettingsSchema.parse({relationship,targetCount:4,targetHealth:500}));
+ const fixture=createAbilityEncounter(spell,look,encounterSettingsSchema.parse({...encounterUnits,relationship,targetCount:4,targetHealth:500}),false,testSource());
  const {game,caster}=fixture;
  return {...fixture,cast:(x=126,y=120)=>game.command('player.1',{type:'castAbility',actor:caster,binding:'preview',target:{kind:'point',position:{x,y}}})};
 }

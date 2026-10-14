@@ -3,9 +3,9 @@ import {AuthoringHistory} from '../../src/shared/authoring/history';
 import {authoredObjectSchema,proceduralLayerSchema} from '../../src/shared/authoring/layers';
 import {proceduralFixture} from './fixture';
 import {compileMapScene} from '../../src/shared/authoring/mapScene';
-import {landscapeAssets} from '../../src/shared/authoring/project';
+import {testLandscape} from './landscape';
 it('applies a complete preview with exact undo and redo and no source ownership',()=>{
- const map=proceduralFixture(),h=new AuthoringHistory(map.authoring!),compiled=compileMapScene(map,landscapeAssets);
+ const map=proceduralFixture(),h=new AuthoringHistory(map.authoring!),compiled=compileMapScene(map,testLandscape);
  const object=compiled.generated!.objects.find(o=>o.owner==='forest')!;
  h.selectGenerated(object.id,compiled.generated!);expect(h.selection).toEqual({kind:'layer',id:'forest'});
  const original=h.scene;h.apply(compiled);const applied=h.scene;

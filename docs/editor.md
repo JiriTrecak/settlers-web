@@ -38,7 +38,7 @@ Shallow and deep water have separate bed and surface heights. Shallow crossings 
 
 Vibrant Forest and Amberleaf Forest offer **Woodland mushroom patches** in Foliage: paint an additive/subtractive mask and adjust density as with other ground cover. Place **Ancient canopy oak**, **Spreading canopy oak**, **Great broken trunk**, **Great fallen hollow log**, and the two **Giant umbrella** mushrooms individually. These are sparse landmarks; their normal scale already dwarfs harvestable pines. Only assets with `capabilities.canopy` (the two canopy oaks and the ancient canopy tree) dissolve around observed units behind them. Buildings, ordinary trees, mushrooms and rocks stay solid so they still hide units. Everything casts full shadows. Collision covers trunks/stems, not overhangs; the fallen log is a solid obstacle.
 
-The editable source and geometry live in each canonical asset package. `scripts/assets/build-forest-giants.py` rebuilds the models in background Blender; `scripts/assets/publish-forest-giants.ts` publishes them. Painted bark and mushroom albedos, including their ImageGen prompts, are in `art/assets/asset.textures.forest-giants-*`. Temporary renders stay outside the repository.
+The editable source and geometry live in each canonical asset package. Republish changed models from their `source.blend` through the Asset Studio. Painted bark and mushroom albedos, including their ImageGen prompts, are in `art/assets/asset.textures.forest-giants-*`. Temporary renders stay outside the repository.
 
 ## New map composition
 

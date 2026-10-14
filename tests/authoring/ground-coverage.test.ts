@@ -1,13 +1,13 @@
 import {expect,it} from 'vitest';
 import {biomeById} from '../../src/content/biomes';
 import {compileMapScene} from '../../src/shared/authoring/mapScene';
-import {landscapeAssets} from '../../src/shared/authoring/project';
+import {testLandscape} from './landscape';
 import {proceduralFixture} from './fixture';
 
 it('matches unpruned vegetation max-blending exactly across dense trees, meadow grass and river banks',()=>{
  const map=proceduralFixture(),forest=map.authoring!.layers.find(l=>l.id==='forest')!;
  map.authoring!.layers.push({...forest,id:'meadow',recipe:'recipe.meadow.woodland-edge',order:10});
- const {field,generated}=compileMapScene(map,landscapeAssets),assets=new Map(landscapeAssets.map(a=>[a.id,a]));
+ const {field,generated}=compileMapScene(map,testLandscape),assets=new Map(testLandscape.map(a=>[a.id,a]));
  const grass=generated!.landformSurface?.grass.slice()??new Float32Array(field.samples.length),trees=new Float32Array(grass.length);
  if(generated!.meadow)for(let i=0;i<grass.length;i++)grass[i]=Math.max(grass[i],generated!.meadow[i]);
  const cover=biomeById(field.biome).groundCover;

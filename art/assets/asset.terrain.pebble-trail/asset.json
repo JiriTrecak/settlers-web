@@ -19,13 +19,6 @@
       "bytes": 2027394
     },
     {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "98f87fec6aa253a332918853984d0fa2d8079703462151cedc1626e91bad6bad",
-      "bytes": 600
-    },
-    {
       "role": "albedo",
       "index": 1,
       "format": "png",
@@ -52,10 +45,6 @@
   "capabilities": {},
   "provenance": {
     "method": "generated",
-    "licenseNote": "Original ImageGen terrain texture; packed into renderer channels.",
-    "generation": {
-      "role": "generation",
-      "index": 1
-    }
+    "licenseNote": "Original ImageGen terrain texture; packed into renderer channels."
   }
 }

@@ -40,10 +40,10 @@ it('incremental moves, removals, duplicates and undo preserve exact full-raster 
  }
 });
 
-it('invalidates layouts/range, handles empty and off-grid influences, and can reuse unchanged positions',()=>{
+it('invalidates layouts/range, handles empty, reordered and off-grid influences',()=>{
  const grid:TerrainGrid={originX:-16,originZ:-16,step:1,width:33,height:49,samples:new Float32Array(33*49)},trees=[{x:-16.2,z:-16.1},{x:16,z:32}];
  const first=updateNearestTrees(grid,trees,3);
- expect(updateNearestTrees(grid,trees.slice().reverse(),3,first).values).toBe(first.values);
+ expect(updateNearestTrees(grid,trees.slice().reverse(),3,first).values).toEqual(nearestTrees(grid,trees,3));
  for(const nextGrid of [grid,{...grid,originX:-15.5},{...grid,step:.75},{...grid,width:34}])for(const range of [0,.01,3,7]){
   const nextTrees=[...trees,{x:10000,z:-10000}];
   expect(updateNearestTrees(nextGrid,nextTrees,range,first).values).toEqual(nearestTrees(nextGrid,nextTrees,range));

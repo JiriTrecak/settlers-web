@@ -5,25 +5,25 @@ import {
   matchSpeed,
 } from "../../src/session/session/presentationView";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
-import {
-  defaultSlots,
-  createSkirmishMatch,
-} from "../../src/shared/match/skirmish";
+import { defaultSlots } from "../../src/shared/match/skirmish";
+import { localMatch } from "../../src/shared/match/match";
 import { playerObservation } from "../../src/sim/ai/frame";
 import { FogOfWar } from "../../src/render/visibility/fogOfWar";
 import { Scene } from "three";
 import type {MemoryChannel} from "../../src/net";
+import {testContent,testSource} from '../fixtures/content';
+const content={source:testSource(),fingerprint:testContent.fingerprint};
 
 afterEach(() => vi.unstubAllGlobals());
 const map = emptyUtcMap();
 function fixture(player: number | null = 0, speed = 1) {
-  const { match } = createSkirmishMatch(
-    { mapId: "test", slots: defaultSlots(map.playerStarts, player) },
-    map.playerStarts,
-    "rev",
-  );
+  // createSkirmishMatch validates races against the shipped rules, so the local match is built directly.
+  const match = {
+    ...localMatch({ mapId: "test", mapRevision: "rev", seed: 1, slotCount: map.playerStarts.length, me: 0 }),
+    slots: defaultSlots(map.playerStarts, player),
+  };
   const receive=vi.fn();
-  const session=new SimulationRuntime({map,match:{...match,seed:1},player,remote:false},undefined,{chat:receive});
+  const session=new SimulationRuntime({map,match,player,remote:false,content},undefined,{chat:receive});
   session.speed=speed;
   return {world:session.world,session,peers:session.locksteps,channels:session.channels,receive};
 }

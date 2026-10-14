@@ -1,7 +1,9 @@
 import {expect,it} from 'vitest';
 import {authoringResponse} from '../../tooling/spell-editor/server/toolResponses';
 import {SpellEditorService} from '../../tooling/spell-editor/server/service';
-import {coreAbilities} from '../../src/content/abilities/core';
+import {testAbilities} from '../fixtures/content';
+import {testSettings,useEditorWorkspace} from './encounter-harness';
+const workspace=useEditorWorkspace();
 const options={response:'compact' as const,offset:0,limit:2};
 it('searches all catalogue entries before pagination and exposes an explicit full escape hatch',()=>{
  const data={icons:Array.from({length:30},(_,i)=>({id:`asset.icon.${i}`,name:i>24?'Blue ice':'Fire',keywords:['magic']}))};
@@ -19,9 +21,9 @@ it('folder mutations return the exact created ID and next revision without echoi
  expect(read.folders.items).toEqual([{...tree.folders[1],path:'/Trials/Trials'}]);
 });
 it('compact preview retains real health, shield lifetime, cast state and checksum, while full/read retain complete data',async()=>{
- const definition=structuredClone(coreAbilities.abilities.find(a=>a.id==='ability.core.absorption-shield')!);
- const presentation=structuredClone(coreAbilities.presentations.find(p=>p.id===definition.presentation)!);delete presentation.icon;presentation.effects=[];
- const service=new SpellEditorService('/tmp');await service.execute({op:'preview.load',document:{definition,presentation},settings:{relationship:'ally'}});
+ const definition=structuredClone(testAbilities.abilities.find(a=>a.id==='ability.test.absorption-shield')!);
+ const presentation=structuredClone(testAbilities.presentations.find(p=>p.id===definition.presentation)!);delete presentation.icon;presentation.effects=[];
+ const service=new SpellEditorService(workspace());await service.execute({op:'preview.load',document:{definition,presentation},settings:testSettings({relationship:'ally'})});
  await service.execute({op:'preview.cast'});const state=await service.execute({op:'preview.seek',tick:30}) as any;
  const compact=authoringResponse({op:'preview.state'},state,options) as any;
  expect(compact.entities).toEqual(state.entities);expect(compact.checksum).toBe(state.checksum);expect(compact.events).toEqual(state.events);

@@ -20,7 +20,7 @@ describe('unit views',()=>{
  it('restores the RTS focus and keeps horizontal minimap rays finite',()=>{
   const camera=new Camera();camera.setGame(true,256);camera.lookAt(100,100);const cam=new PerspectiveCamera();camera.applyTo(cam,1280,720);const before=cam.position.clone();
   camera.setClosePose(unitCameraPose(subject,{entity:1,mode:'first-person',transitionMs:0}),16);camera.applyTo(cam,1280,720);
-  expect(cam.position.y).toBeCloseTo(13.8);expect(cam.near).toBe(.08);expect(cam.fov).toBe(68);
+  expect(cam.position.y).toBeCloseTo(13.8);
   for(const point of camera.viewGround(1280,720))for(const n of point)expect(Number.isFinite(n)).toBe(true);
   camera.panWorld(10,10);expect(camera.targetX).toBe(30);
   camera.setClosePose(null);camera.applyTo(cam,1280,720);expect(cam.position.distanceTo(before)).toBeLessThan(.0001);

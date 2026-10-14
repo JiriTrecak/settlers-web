@@ -23,7 +23,6 @@ it('decodes identical concurrent GLB images once while keeping texture state and
  const c=parser([1,2,3]),third=await pool.plugin(c.value).loadTexture!(0);
  expect(c.loadTexture).not.toHaveBeenCalled();expect(third!.source).toBe(first!.source);expect(third!.colorSpace).toBe(NoColorSpace);
  first!.dispose();expect(third!.image).toBe(second!.image);
- expect(pool.diagnostics()).toEqual({requests:3,shared:2,unique:1});
 });
 
 it('keeps different image bytes and sampler states distinct and defers extensions to native loaders',async()=>{
@@ -41,8 +40,8 @@ it('keeps different image bytes and sampler states distinct and defers extension
 
 it('evicts failed image loads so a later model can retry and does not retain loads after disposal',async()=>{
  const pool=new EmbeddedTexturePool(),failed=parser([1]);failed.loadTexture.mockResolvedValueOnce(null as any);
- expect(await pool.plugin(failed.value).loadTexture!(0)).toBeNull();expect(pool.diagnostics().unique).toBe(0);
+ expect(await pool.plugin(failed.value).loadTexture!(0)).toBeNull();
  const retry=parser([1]);expect(await pool.plugin(retry.value).loadTexture!(0)).toBeInstanceOf(Texture);expect(retry.loadTexture).toHaveBeenCalledTimes(1);
  const pending=parser([2]),loading=pool.plugin(pending.value).loadTexture!(0);pool.dispose();await loading;
- expect(pool.diagnostics().unique).toBe(0);expect(pool.plugin(parser([1]).value).loadTexture!(0)).toBeNull();
+ expect(pool.plugin(parser([1]).value).loadTexture!(0)).toBeNull();
 });

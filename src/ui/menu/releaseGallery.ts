@@ -3,7 +3,7 @@ import {releaseBaseUrl} from '../../shared/release/installed';
 import {releaseImage,releaseVersion,type ReleaseEntry,type ReleaseImage} from '../../shared/release/schema';
 // Local copies are bundled by Vite, so installed release galleries work offline.
 const bundled=import.meta.glob<string>('../../../releases/media/*.webp',{eager:true,query:'?url',import:'default'});
-export function releaseImageUrl(version:string,image:ReleaseImage){
+function releaseImageUrl(version:string,image:ReleaseImage){
  releaseVersion.parse(version);releaseImage.parse(image);
  return bundled[`../../../releases/media/${image.file}`]??`${releaseBaseUrl}/releases/${version}/media/${image.file}`;
 }

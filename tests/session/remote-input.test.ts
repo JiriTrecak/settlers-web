@@ -4,6 +4,8 @@ import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { localMatch, type ServerMsg } from "../../src/shared";
 import { Room, type Channel } from "../../src/net";
 import {connectionDelay} from '../../src/net/latency';
+import {testContent,testSource} from '../fixtures/content';
+const content={source:testSource(),fingerprint:testContent.fingerprint};
 
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
@@ -37,7 +39,7 @@ function fixture(latency: (packet: number) => number = () => 0, delay=8) {
       },
       onMessage(fn) { receive = fn; },
     };
-    const runtime=new SimulationRuntime({map,match,player:me,remote:true},channel);
+    const runtime=new SimulationRuntime({map,match,player:me,remote:true,content},channel);
     return {world:runtime.world,runtime,lockstep:runtime.locksteps.get(me)!};
   });
   function deliver(time = now) {
@@ -56,7 +58,7 @@ it.each([5,25,75,150])('executes movement promptly and identically with a pipeli
   const delay=connectionDelay([oneWay*2,oneWay*2]);
   const {peers,deliver}=fixture(()=>oneWay,delay);
   const time=vi.spyOn(performance,'now').mockReturnValue(0);
-  const actors=peers.map(p=>p.world.settlement.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.marshal')!);
+  const actors=peers.map(p=>p.world.settlement.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.test.marshal')!);
   const rotations=actors.map(e=>e.rotation),responded=[0,0];
   for(let ms=0;ms<=2500;ms+=5){
     time.mockReturnValue(ms);deliver(ms);

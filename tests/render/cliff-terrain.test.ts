@@ -7,11 +7,15 @@ import {HeightField} from '../../src/shared/map/height';
 import {authoredTerrain} from '../../src/render/terrain/authoredTerrain';
 import {terrainMaskBytes} from '../../src/render/terrain/terrainMasks';
 import {terrainLayerTable} from '../../src/render/terrain/terrainLayerTable';
-import {groundTextures} from '../../src/shared/authoring/groundTextures';
+import {groundTextures,isCliffMaterial} from '../../src/shared/authoring/groundTextures';
 
-const dirt='asset.terrain.warcraft-ldrt',grass='asset.terrain.warcraft-lgrs',cliff='asset.terrain.warcraft-cliff-cldi',otherCliff='asset.terrain.warcraft-cliff-clgr';
+// ENGINE-COUPLED: terrain editing and rendering resolve materials through the shipped ground catalogue with no injection
+// point, so the test selects generic catalogue entries by kind instead of naming shipped materials.
+const grounds=[...groundTextures.keys()].filter(id=>!isCliffMaterial(id)),cliffs=[...groundTextures.keys()].filter(isCliffMaterial);
+const [dirt,grass]=grounds as [string,string],[cliff,otherCliff]=cliffs as [string,string];
 const selection={type:'rectangle' as const,from:{x:2,z:2},to:{x:4,z:4}};
 it('paints cliffs and ground independently, with undo, reload and later shape edits',()=>{
+ expect(grounds.length).toBeGreaterThanOrEqual(2);expect(cliffs.length).toBeGreaterThanOrEqual(2);
  const map=emptyUtcMap(256),history=new AuthoringHistory({...map.authoring,layers:[]});
  const paint=(material:string)=>history.setTerrain(editTerrainGrid(history.document.terrain,{selection,operation:{type:'material',material}}).terrain);
  paint(dirt);const base=history.document.terrain.paint[0].weights;paint(cliff);

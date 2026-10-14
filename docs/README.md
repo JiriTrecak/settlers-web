@@ -24,7 +24,8 @@ These pages describe the maintained game and tools. Gameplay values come from `c
 
 ## Proposed changes
 
-- [Queensguard campaign draft](../art/campaign/queensguard-take-3/storyboard.md): proposed twelve-mission Ant story and comic beats, building on the agreed [campaign cornerstones](wiki/factions/story.md).
+- [Repository structure](design/repository-structure.md): proposed one-pass restructure into per-app folders (game, each editor as its own app, server), Rust crates and LFS-backed art.
+- [Native renderer](design/native-renderer.md): proposed Rust + wgpu renderer replacing Three.js, based on an audit of the current renderer. The current render code remains the implementation until the migration lands.
 - [Declarative abilities architecture](design/abilities.md): proposed replacement for spells, including external publication, authoring, campaign bindings and lockstep. The current spell-effects page describes the implementation until this migration lands.
 
 ## Documentation policy

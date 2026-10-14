@@ -1,14 +1,17 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
-import {SpellEditorService} from '../../tooling/spell-editor/server/service';
 import type {PreviewState} from '../../tooling/spell-editor/shared/view';
-const a=coreAbilities.abilities.find(a=>a.id==='ability.core.grove-nursery')!,p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
-const fixture=()=>createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:500,distance:10,mana:1000}));
+import {testAbilities,testSource} from '../fixtures/content';
+import {testWorkspace} from '../fixtures/content/workspace';
+import {editorService} from './encounter-harness';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const a=testAbilities.abilities.find(a=>a.id==='ability.test.grove-nursery')!,p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+const fixture=()=>createAbilityEncounter(a,p,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',targetHealth:500,distance:10,mana:1000}),false,testSource());
 const step=(f:ReturnType<typeof fixture>,n=1)=>{for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});};
-const nursery=(f:ReturnType<typeof fixture>)=>f.game.entities.find(e=>e.definition==='unit.spell.grove-nursery')!;
-const children=(f:ReturnType<typeof fixture>)=>f.game.entities.filter(e=>e.definition==='unit.spell.feral-spirit');
+const nursery=(f:ReturnType<typeof fixture>)=>f.game.entities.find(e=>e.definition==='unit.test.spell-grove-nursery')!;
+const children=(f:ReturnType<typeof fixture>)=>f.game.entities.filter(e=>e.definition==='unit.test.spell-feral-spirit');
 function cast(f:ReturnType<typeof fixture>,rank=1,position={x:128,y:122}){const c=f.game.context.get(f.caster)!;c.abilities!.ranks.preview=rank;c.abilities!.mana=1000;c.abilities!.cooldowns={};expect(f.game.command('player.1',{type:'castAbility',actor:c.id,binding:'preview',target:{kind:'point',position}}).accepted).toBe(true);step(f,11);}
 it.each([1,2,3])('published rank %i produces at its declared interval, caps children and retains its captured rank',rank=>{
  const f=fixture();cast(f,rank);const factory=nursery(f),period=[200,160,120][rank-1];expect(factory).toBeTruthy();expect(f.game.context.def(factory).behaviors.movement).toBeUndefined();expect(factory.spellStatuses?.map(s=>s.status)).toEqual(['producing']);
@@ -18,7 +21,7 @@ it.each([1,2,3])('published rank %i produces at its declared interval, caps chil
 });
 it('survives the original summoner but child lifetime is tied to the nursery',()=>{
  const f=fixture();cast(f);step(f,210);const factory=nursery(f),caster=f.game.context.get(f.caster)!;caster.hp=0;f.game.onCombatDeath(caster);step(f,200);expect(nursery(f)).toBe(factory);expect(children(f)).toHaveLength(2);
- factory.hp=0;f.game.onCombatDeath(factory);step(f);expect(children(f)).toHaveLength(0);expect(nursery(f)).toBeUndefined();expect(f.game.state.corpses.some(c=>c.definition.startsWith('unit.spell.'))).toBe(false);
+ factory.hp=0;f.game.onCombatDeath(factory);step(f);expect(children(f)).toHaveLength(0);expect(nursery(f)).toBeUndefined();expect(f.game.state.corpses.some(c=>c.definition.startsWith('unit.test.spell-'))).toBe(false);
 });
 it('child death executes its ranked area burst and nursery expiry clears the whole dependency group',()=>{
  const f=fixture();cast(f,3);step(f,120);const child=children(f)[0],target=f.game.context.get(f.target)!;target.x=child.x+1;target.y=child.y;target.unit!.position=null;
@@ -31,11 +34,11 @@ it('replays command-created factories, timers, child bursts and replacement iden
  const old=nursery(f).id;cast(f,1,{x:120,y:114});cast(g,1,{x:120,y:114});step(f,20);step(g,20);expect(g.game.checksum()).toBe(f.game.checksum());expect(nursery(f).id).not.toBe(old);expect(children(f)).toHaveLength(0);
 });
 it('the independent workbench renders the timer-driven timeline and repeatedly rewinds the shared simulation',async()=>{
- const s=new SpellEditorService(process.cwd());await s.execute({op:'preview.load',document:{definition:a,presentation:p},settings:{relationship:'enemy',targetHealth:500,distance:10}});
+ const w=await testWorkspace(),s=editorService(w.root);try{await s.execute({op:'preview.load',document:{definition:a,presentation:p},settings:{...encounterUnits,relationship:'enemy',targetHealth:500,distance:10}});
  for(let i=0;i<3;i++){await s.execute({op:'preview.aim',position:{x:128,y:122}});await s.execute({op:'preview.cast'});await s.execute({op:'preview.seek',tick:430});const state=s.state() as PreviewState;
- expect(state.events.filter(e=>e.event==='interval')).toHaveLength(2);expect(state.entities.filter(e=>e.eligibility?.summoned)).toHaveLength(3);expect(state.effects?.some(e=>e.id==='effect.core.grove-nursery.pulse')).toBe(true);
+ expect(state.events.filter(e=>e.event==='interval')).toHaveLength(2);expect(state.entities.filter(e=>e.eligibility?.summoned)).toHaveLength(3);expect(state.effects?.some(e=>e.id==='effect.test.grove-nursery.pulse')).toBe(true);
  const hash=state.checksum;await s.execute({op:'preview.seek',tick:1});await s.execute({op:'preview.seek',tick:430});expect((s.state() as PreviewState).checksum).toBe(hash);}
-});
+}finally{await w.dispose();}});
 it('runs through delayed lockstep commits and a World restore while children fight normally',async()=>{
  const {Room,Lockstep,MemoryChannel}=await import('../../src/net');const {World}=await import('../../src/sim/world/world');const {localMatch}=await import('../../src/shared');
  const f=fixture(),opts={map:f.game.map,slots:f.game.slots,registry:f.game.registry,seed:23};
@@ -46,7 +49,7 @@ it('runs through delayed lockstep commits and a World restore while children fig
  try{for(let tick=1;tick<=520;tick++){
   peers[tick%2].confirm(tick);peers[1-tick%2].confirm(tick);
   for(let i=0;i<2;i++){const commit=peers[i].take(tick)!;expect(commit).toBeTruthy();for(const slot of commit.slots)slot.actions.forEach((action,seq)=>worlds[i].enqueue(action,commit.tick,{player:slot.player,seq}));worlds[i].tick();}
-  produced ||= worlds[0].settlement.entities.some(e=>e.definition==='unit.spell.feral-spirit');fought ||= (worlds[0].settlement.context.get(f.target)?.hp??0)<initialHp;
+  produced ||= worlds[0].settlement.entities.some(e=>e.definition==='unit.test.spell-feral-spirit');fought ||= (worlds[0].settlement.context.get(f.target)?.hp??0)<initialHp;
   if(tick===250){const snapshot=JSON.parse(JSON.stringify(worlds[1].snapshot()));worlds[1]=new World(opts);worlds[1].restore(snapshot);}
   expect(worlds[1].checksum(),`lockstep tick ${tick}`).toBe(worlds[0].checksum());
  }expect(produced).toBe(true);expect(fought).toBe(true);}finally{channels.forEach(c=>c.destroy());}

@@ -1,7 +1,0 @@
-{
-  "method": "built-in imagegen",
-  "originalPixels": true,
-  "brief": "Snow drift ground cover.",
-  "source": "exec-c34b1dee-cb29-4d7a-9ed4-b2b07f83fe36.png",
-  "packing": "Periodic normal/height derived from luminance; original colors retained."
-}

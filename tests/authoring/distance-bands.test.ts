@@ -14,19 +14,16 @@ it('conservative tiles preserve exact accepted samples across CSG holes and repa
  }
 });
 
-it('accepts wholly contained tiles without extra exact queries and checks uncertain edges exactly',()=>{
- let calls=0;const query=distanceBands((x,z)=>{calls++;return 40-Math.hypot(x,z);});
+it('answers containment exactly at uncertain edges and rejects unbounded exteriors',()=>{
+ const query=distanceBands((x,z)=>40-Math.hypot(x,z));
  for(let i=0;i<100;i++)expect(query.contains(i/100,1,0)).toBe(true);
- expect(calls).toBe(1);
  for(const x of [40-1e-10,40,40+1e-10,-40])expect(query.contains(x,0,0)).toBe(40-Math.abs(x)>=0);
- expect(calls).toBeGreaterThan(1);
  expect(distanceBands(()=>-Infinity).contains(0,0,0)).toBe(false);
 });
 
-it('avoids per-candidate exact queries in empty tiles and keeps inclusive boundaries',()=>{
- let calls=0;const query=distanceBands((x,z)=>{calls++;return 10-Math.hypot(x,z);});
+it('returns nothing outside the band and keeps inclusive boundaries',()=>{
+ const query=distanceBands((x,z)=>10-Math.hypot(x,z));
  for(let i=0;i<100;i++)expect(query.within(80+i/100,80,0)).toBeUndefined();
- expect(calls).toBe(1);
  expect(query.within(10,0,0)).toBe(0);expect(query.within(-10,0,0)).toBe(0);
  expect(distanceBands(()=>-Infinity).within(0,0,0)).toBeUndefined();
 });

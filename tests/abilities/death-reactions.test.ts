@@ -1,13 +1,16 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
+import {encounterSource} from './encounter-harness';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import type {Entity} from '../../src/sim/game/state';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.death-burst')!;
+import {testAbilities} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.death-burst')!;
 function fixture(patch={},settings={}){
- const a=abilitySchema.parse({...base,...patch}),f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:500,distance:3,combat:false,...settings}));
+ const a=abilitySchema.parse({...base,...patch}),f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',targetHealth:500,distance:3,combat:false,...settings}),false,encounterSource());
  return {...f,a,c:f.game.context.get(f.caster)!,t:f.game.context.get(f.target)!};
 }
 function die(f:ReturnType<typeof fixture>,e:Entity=f.c){e.hp=0;f.game.onCombatDeath(e);}
@@ -46,13 +49,13 @@ it('limits death programs per tick while carrying the durable remainder forward'
 });
 it('rejects malformed queued trigger references and positions atomically',()=>{
  const f=fixture();die(f);const before=f.game.checksum();
- for(const patch of [{trigger:'missing'},{cast:f.game.state.nextCast},{tick:100},{position:{x:999,y:999}},{definition:'item.amber'}]){const save=f.game.snapshot();Object.assign(save.state.spellLifecycleReactions[0],patch);expect(()=>f.game.restore(save)).toThrow();expect(f.game.checksum()).toBe(before);}
+ for(const patch of [{trigger:'missing'},{cast:f.game.state.nextCast},{tick:100},{position:{x:999,y:999}},{definition:'item.test.amber'}]){const save=f.game.snapshot();Object.assign(save.state.spellLifecycleReactions[0],patch);expect(()=>f.game.restore(save)).toThrow();expect(f.game.checksum()).toBe(before);}
 });
 it('hidden deaths do not broadcast an effect to an enemy observer',()=>{
  const f=fixture();f.t.x=180;f.game.observation.update();die(f);expect(f.game.state.spellLifecycleReactions[0].viewers).not.toContain('player.2');step(f);expect(f.game.abilities.observedEvents('player.2').some(e=>e.event==='death')).toBe(false);
 });
 it('death-triggered point summons retain their dead holder owner and appear around the captured point',()=>{
- const summon={op:'summon',target:'point',amount:1,definition:'unit.spell.feral-spirit',durationTicks:80,replace:false,radius:2};
+ const summon={op:'summon',target:'point',amount:1,definition:'unit.test.spell-feral-spirit',durationTicks:80,replace:false,radius:2};
  const f=fixture({triggers:[{...base.triggers![0],operations:[summon]}]});die(f);step(f);
  const spirit=f.game.entities.find(e=>e.summoned);expect(spirit?.owner).toBe('player.1');expect(spirit?.summoned?.source).toBe(f.caster);expect(Math.hypot(spirit!.x-120,spirit!.y-120)).toBeLessThanOrEqual(4);
 });

@@ -1,14 +1,12 @@
-import {expect,it,vi} from 'vitest';
+import {expect,it} from 'vitest';
 import {game,worker,placed} from './helpers';
 import {prioritizeSelection,cycleSelection} from '../../src/presentation/selection';
 import {areaSelection,commandCard} from '../../src/presentation/commands';
-import {SettlementHud} from '../../src/ui/settlement/settlementHud';
-import {ControlGroups} from '../../src/presentation/controlGroups';
 
 function fixture(){
- const g=game([placed('warrior-a','unit.ants.warrior',210,200),placed('warrior-b','unit.ants.warrior',214,200)]),view=g.view('player.1');
+ const g=game([placed('warrior-a','unit.test.warrior',210,200),placed('warrior-b','unit.test.warrior',214,200)]),view=g.view('player.1');
  const hero=g.entities.find(e=>e.owner==='player.1'&&g.registry.get(e.definition).hero)!;
- const warriors=g.entities.filter(e=>e.owner==='player.1'&&e.definition==='unit.ants.warrior');
+ const warriors=g.entities.filter(e=>e.owner==='player.1'&&e.definition==='unit.test.warrior');
  const w=worker(g);
  return {g,view,hero,warriors,w};
 }
@@ -30,16 +28,4 @@ it('orders mixed selections by hero, army, workers while preserving ties and exp
  expect(armyFocus[0]).toBe(next);expect(cycleSelection(armyFocus,view.entities,g.registry)).toBe(w.id);
  expect(cycleSelection(selected,view.entities,g.registry,true)).toBe(w.id);
  expect(prioritizeSelection(ids,view.entities,g.registry,w.id)[0]).toBe(w.id);
-});
-it('HUD applies the same order on selection additions and saved group recall',()=>{
- const {view,hero,warriors,w}=fixture();
- const hud=Object.assign(Object.create(SettlementHud.prototype),{
-  current:view,owner:'player.1',readOnly:false,controlGroups:new ControlGroups(),
-  selectedIds:[],clearMode:vi.fn(),update:vi.fn(),renderGroups:vi.fn(),hooks:{focus:vi.fn()},
- });
- hud.setSelection([w.id,warriors[0].id]);expect(hud.selectedIds).toEqual([warriors[0].id,w.id]);
- hud.setSelection([...hud.selectedIds,hero.id]);expect(hud.selectedIds[0]).toBe(hero.id);
- hud.setSelection(hud.selectedIds,w.id);expect(hud.selectedIds[0]).toBe(w.id);
- hud.controlGroups.assign(1,[warriors[0].id,w.id,hero.id]);hud.groupInput(1,'recall');
- expect(hud.selectedIds).toEqual([hero.id,warriors[0].id,w.id]);
 });

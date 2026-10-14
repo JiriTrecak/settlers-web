@@ -1,13 +1,13 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {resolveDamage} from '../../src/sim/game/damage';
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource} from './encounter-harness';
 
-function setup(targetDefinition='unit.ants.warrior',relationship='enemy'){
- const a=coreAbilities.abilities.find(a=>a.id==='ability.core.thorns-aura')!;
- const p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
- const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({combat:true,relationship,distance:6,targetDefinition,targetHealth:500}));
+function setup(targetDefinition='unit.test.warrior',relationship='enemy'){
+ const a=testAbilities.abilities.find(a=>a.id==='ability.test.thorns-aura')!;
+ const p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+ const f=createAbilityEncounter(a,p,testSettings({combat:true,relationship,distance:6,targetDefinition,targetHealth:500}),false,encounterSource());
  f.game.tick(undefined,{passiveUnits:true});
  const caster=f.game.context.get(f.caster)!,target=f.game.context.get(f.target)!;
  return {...f,c:caster,t:target};
@@ -23,7 +23,7 @@ it('reflects actual mitigated melee damage once, and never reflects spell damage
  const before=t.hp;game.combat.abilityHit({source:t.id,target:c.id,damage:100,damageType:'spell'});expect(t.hp).toBe(before);
 });
 it('does not reflect ranged weapons or zero damage',()=>{
- const f=setup('unit.ants.archer'),{game,c,t}=f;
+ const f=setup('unit.test.archer'),{game,c,t}=f;
  game.combat.resolve([{source:t.id,target:c.id,damage:100,damageType:game.context.def(t).behaviors.combat!.damageType,weapon:true}]);
  expect(t.hp).toBe(500);expect(c.hp).toBeLessThan(500);
  const melee=setup();melee.game.combat.resolve([{source:melee.t.id,target:melee.c.id,damage:0,damageType:'spell',weapon:true}]);expect(melee.t.hp).toBe(500);
@@ -35,10 +35,10 @@ it('caps reflection at remaining health and resolves reflected deaths through or
  expect(f.c.hp).toBe(0);expect(f.t.hp).toBe(0);
 });
 it('does not stack aura copies, affects ranged allies, clears outside range, and restores deterministically',()=>{
- const f=setup('unit.ants.archer','ally');
+ const f=setup('unit.test.archer','ally');
  f.game.context.create({id:'second',definition:'unit.preview.caster',owner:'player.1',position:{x:120,y:124},rotation:90});
  f.game.tick(undefined,{passiveUnits:true});expect(f.game.context.stats(f.t).meleeReflectionPermille).toBe(200);
- const other=setup('unit.ants.archer','ally');other.game.restore(f.game.snapshot());
+ const other=setup('unit.test.archer','ally');other.game.restore(f.game.snapshot());
  for(let i=0;i<20;i++){f.game.tick(undefined,{passiveUnits:true});other.game.tick(undefined,{passiveUnits:true});expect(f.game.checksum()).toBe(other.game.checksum());}
  f.t.x=155;f.game.tick(undefined,{passiveUnits:true});expect(f.game.context.stats(f.t).meleeReflectionPermille).toBe(0);
 });

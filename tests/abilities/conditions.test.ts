@@ -1,17 +1,18 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
 import {abilityConditionSchema,matchesAbilityCondition,type UnitNature} from '../../src/content/abilities/conditions';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {abilityAimScore} from '../../src/sim/abilities/ai';
 import {matchesSpellTarget,unitNature} from '../../src/sim/abilities/eligibility';
-import {builtinSource} from '../../src/content/builtin';
 import {ContentRegistry} from '../../src/content/registry';
-const spell=(id:string)=>coreAbilities.abilities.find(a=>a.id==='ability.core.'+id)!;
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const spell=(id:string)=>testAbilities.abilities.find(a=>a.id==='ability.test.'+id)!;
 function fixture(id:string,settings:Record<string,unknown>={},patch={}){
  const a=abilitySchema.parse({...spell(id),...patch});
- const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:200,distance:6,...settings}));
+ const f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',targetHealth:200,distance:6,...settings}),false,testSource());
  return {...f,a,c:f.game.context.get(f.caster)!,t:f.game.context.get(f.target)!};
 }
 function classify(f:ReturnType<typeof fixture>,definition:string,nature:UnitNature){
@@ -72,12 +73,12 @@ it('restores a conditional projectile without changing its outcome or model',()=
  expect(f.game.state.spellDeliveries.length).toBeGreaterThan(0);
  const restored=fixture('death-coil',{targetNature:'undead',relationship:'ally',distance:12});restored.game.restore(f.game.snapshot());
  for(let i=0;i<80;i++){ticks(f,1);ticks(restored,1);expect(restored.game.checksum()).toBe(f.game.checksum());}
- expect(f.t.hp).toBe(400);expect(f.models.get(f.t.definition)).toBe(encounterSettingsSchema.parse({}).targetDefinition);
+ expect(f.t.hp).toBe(400);expect(f.models.get(f.t.definition)).toBe(encounterSettingsSchema.parse({...encounterUnits,}).targetDefinition);
  expect(unitNature({kind:'unit'})).toBe('organic');expect(unitNature({kind:'building'})).toBeUndefined();
 });
 
 it('rejects unit nature on buildings and includes classification in the content fingerprint',()=>{
- const source=structuredClone(builtinSource),unit=source.definitions.find((d:any)=>d.kind==='unit') as any;
+ const source=structuredClone(testSource()),unit=source.definitions.find((d:any)=>d.kind==='unit') as any;
  const original=new ContentRegistry(source).fingerprint;unit.unitNature='undead';expect(new ContentRegistry(source).fingerprint).not.toBe(original);
  const building=source.definitions.find((d:any)=>d.kind==='building') as any;building.unitNature='mechanical';expect(()=>new ContentRegistry(source)).toThrow(/unit nature requires a unit/);
 });

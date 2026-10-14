@@ -2,14 +2,15 @@ import {expect,it} from 'vitest';
 import {Room,Lockstep,MemoryChannel} from '../../src/net';
 import {World} from '../../src/sim/world/world';
 import {localMatch} from '../../src/shared';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {encounterSettingsSchema,type EncounterSettings} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
 
 type Scenario={name:string;id?:string;ticks?:number;event:string;status?:string;healing?:number[];damage?:number;armorBonus?:number;settings?:Partial<EncounterSettings>};
 // Published content runs unchanged through real network commits, not direct interpreter calls.
 const scenarios:Scenario[]=[
- {name:'holy-light-lite',event:'healed',settings:{relationship:'ally',targetHealth:100}},
  {name:'holy-light',event:'healed',settings:{relationship:'ally',targetHealth:100}},
  {name:'death-coil',event:'damaged',settings:{targetNature:'organic'}},
  {name:'storm-bolt',event:'damaged'},
@@ -19,8 +20,8 @@ const scenarios:Scenario[]=[
  {name:'healing-wave',event:'healed',settings:{relationship:'ally',targetCount:4,targetHealth:100}},
  {name:'entangling-roots',event:'statusApplied'},
  {name:'absorption-shield',event:'statusApplied',settings:{relationship:'ally'}},
- {name:'unstoppable',event:'statusApplied',settings:{relationship:'ally',initialStatuses:['ability.core.entangling-roots']}},
- {name:'dispel-magic',event:'dispelled',settings:{relationship:'ally',initialStatuses:['ability.core.entangling-roots']}},
+ {name:'unstoppable',event:'statusApplied',settings:{relationship:'ally',initialStatuses:['ability.test.entangling-roots']}},
+ {name:'dispel-magic',event:'dispelled',settings:{relationship:'ally',initialStatuses:['ability.test.entangling-roots']}},
  {name:'life-drain',event:'drained',settings:{casterHealth:100}},
  {name:'flame-strike',event:'damaged'},
  {name:'immolation',event:'damaged',settings:{distance:2}},
@@ -51,18 +52,18 @@ const scenarios:Scenario[]=[
  {name:'cleaving-attack',event:'cleaved',settings:{combat:true,distance:2,targetCount:4,targetSpacing:1}},
  {name:'bash',event:'statusApplied',settings:{combat:true,distance:2}},
  {name:'battle-rhythm',event:'statusApplied',settings:{combat:true,distance:2}},
- {name:'searing-arrows',event:'enhancedHit',settings:{combat:true,casterDefinition:'unit.ants.archer',distance:8}},
- {name:'frost-arrows',event:'statusApplied',settings:{combat:true,casterDefinition:'unit.ants.archer',distance:8}},
- {name:'black-arrow',event:'summoned',settings:{combat:true,casterDefinition:'unit.ants.archer',distance:8,targetHealth:25}},
+ {name:'searing-arrows',event:'enhancedHit',settings:{combat:true,casterDefinition:'unit.test.archer',distance:8}},
+ {name:'frost-arrows',event:'statusApplied',settings:{combat:true,casterDefinition:'unit.test.archer',distance:8}},
+ {name:'black-arrow',event:'summoned',settings:{combat:true,casterDefinition:'unit.test.archer',distance:8,targetHealth:25}},
  {name:'death-burst',event:'damaged',settings:{combat:true,distance:2,casterHealth:10}},
  {name:'soul-harvest',event:'healed',settings:{combat:true,distance:2,casterHealth:100,targetHealth:10}},
  {name:'reincarnation',ticks:400,event:'revived',settings:{combat:true,distance:2,casterHero:true,casterHealth:10}},
- {name:'rallying-spark',id:'ability.custom.rallying-spark',event:'healed',healing:[100,75,56,42],armorBonus:2,settings:{relationship:'ally',targetCount:4,targetHealth:100}},
- {name:'ashstep',id:'ability.custom.ashstep',event:'damaged',damage:70,settings:{targetCount:3}},
+ {name:'rallying-spark',id:'ability.test.rallying-spark',event:'healed',healing:[100,75,56,42],armorBonus:2,settings:{relationship:'ally',targetCount:4,targetHealth:100}},
+ {name:'ashstep',id:'ability.test.ashstep',event:'damaged',damage:70,settings:{targetCount:3}},
 ];
 it.each(scenarios)('$name agrees across delayed peers and JSON save/restore at three lifecycle boundaries',({name,id,event,status,settings,ticks=300,healing,damage,armorBonus})=>{
- const a=coreAbilities.abilities.find(a=>a.id===(id??'ability.core.'+name))!,p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
- const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:500,mana:1000,distance:6,...settings}));
+ const a=testAbilities.abilities.find(a=>a.id===(id??'ability.test.'+name))!,p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+ const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',targetHealth:500,mana:1000,distance:6,...settings}),false,testSource());
  const opts={map:f.game.map,slots:f.game.slots,registry:f.game.registry,seed:42};
  const worlds=[new World(opts),new World(opts)];for(const world of worlds)world.settlement.restore(f.game.snapshot());
  const config={...localMatch({mapId:'spell-category',mapRevision:'test',seed:42,slotCount:2,me:0,delay:3}),slots:[...f.game.slots]};

@@ -13,7 +13,7 @@ class Element {
 afterEach(()=>vi.unstubAllGlobals());
 function fixture(custom=false){
  vi.stubGlobal('document',{createElement:(tag:string)=>new Element(tag),createElementNS:(_:string,tag:string)=>new Element(tag)});
- const info=mapOverview(emptyUtcMap());info.starts=[{player:1,x:30,z:30,setup:'default',mainFort:'building.ants.hall'},{player:2,x:90,z:90,setup:'default',mainFort:'building.ants.hall'}];info.custom=custom;
+ const info=mapOverview(emptyUtcMap());info.starts=[{player:1,x:30,z:30,setup:'default',mainFort:'start.player.1/main-fort'},{player:2,x:90,z:90,setup:'default',mainFort:'start.player.2/main-fort'}];info.custom=custom;
  return {id:'test',name:'Test',players:2,source:'project',overview:info,previewUrl:'/published.webp'} satisfies MapEntry;
 }
 it('composes a static image and selection markers using only published metadata',()=>{

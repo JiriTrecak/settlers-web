@@ -45,11 +45,11 @@ describe("per-unit order queues", () => {
     expect(actors[0].unit!.orderQueue).toHaveLength(0);
     expect(actors[1].unit!.orderQueue).toHaveLength(1);
   });
-  for (const definition of ["resource.forest.tree", "building.neutral.amber-mine"]) {
+  for (const definition of ["resource.test.forest-tree", "building.test.neutral-amber-mine"]) {
     it(`finishes one ${definition} load and deposits it before the next order`, () => {
       const g = game([{...placed("source", definition, 228, 229), owner: "none"}]), w = worker(g);
       const resource = g.entities.find(e => e.placement === "source")!, hall = g.context.get(g.state.objectives["player.1"])!;
-      const item = definition === "resource.forest.tree" ? "item.wood" : "item.amber", before = g.state.wallets[hall.owner][item];
+      const item = definition === "resource.test.forest-tree" ? "item.test.wood" : "item.test.amber", before = g.state.wallets[hall.owner][item];
       expect(g.command("player.1", {type: "gather", actors: [w.id], target: resource.id}).accepted).toBe(true);
       move(g, w.id, 240, 238, true);
       until(g, () => w.unit!.order?.type === "move");
@@ -62,10 +62,10 @@ describe("per-unit order queues", () => {
   it("reserves consecutive build sites for the selected worker and pays only once", () => {
     const g = game(), w = worker(g), hall = g.context.get(g.state.objectives["player.1"])!;
     for (const [i, x] of [199.5, 235.5].entries()) {
-      const r = g.command("player.1", {type: "build", actors: [w.id], definition: "building.ants.house", position: {x, y: 239.5}, append: i > 0});
+      const r = g.command("player.1", {type: "build", actors: [w.id], definition: "building.test.house", position: {x, y: 239.5}, append: i > 0});
       expect(r.accepted, r.reason).toBe(true);
     }
-    const [a, b] = g.entities.filter(e => e.construction), amber = g.state.wallets[hall.owner]["item.amber"];
+    const [a, b] = g.entities.filter(e => e.construction), amber = g.state.wallets[hall.owner]["item.test.amber"];
     expect(w.unit!.orderQueue).toEqual([{type: "construct", target: b.id}]);
     run(g, 120);
     expect(g.state.jobs.some(j => j.target === b.id)).toBe(false);
@@ -73,10 +73,10 @@ describe("per-unit order queues", () => {
     until(g, () => !a.construction);
     until(g, () => g.state.jobs.some(j => j.target === b.id && j.worker === w.id));
     until(g, () => !b.construction);
-    expect(g.state.wallets[hall.owner]["item.amber"]).toBe(amber);
+    expect(g.state.wallets[hall.owner]["item.test.amber"]).toBe(amber);
   });
   it("continues after an explicit attack target is removed and skips stale pending targets", () => {
-    const g = game(), a = g.entities.find(e => e.owner === "player.1" && e.definition === "unit.ants.marshal")!;
+    const g = game(), a = g.entities.find(e => e.owner === "player.1" && e.definition === "unit.test.marshal")!;
     const target = worker(g);
     expect(g.command("player.1", {type: "attack", actors: [a.id], target: target.id, force: true}).accepted).toBe(true);
     g.command("player.1", {type: "attack", actors: [a.id], target: target.id, force: true, append: true});

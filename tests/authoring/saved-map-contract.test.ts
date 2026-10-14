@@ -4,6 +4,7 @@ import {WorldEditor} from '../../src/editor/world/worldEditor';
 import {projectScene} from '../../src/shared/authoring/project';
 import * as generator from '../../src/shared/authoring/generate';
 
+// ENGINE-COUPLED: WorldEditor generates previews from the shipped landscape catalogue (no injection point).
 describe('saved maps contain finished editable data only',()=>{
  it('keeps generator previews outside both the map and export; Apply commits normal objects',async()=>{
   const editor=new WorldEditor({} as HTMLCanvasElement,{host:{} as HTMLElement});editor.replace(emptyUtcMap(256));

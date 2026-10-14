@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { emptyUtcMap } from "../../src/shared/map/utcmap";
 import { World } from "../../src/sim/world/world";
+import { testContent as registry } from "../fixtures/content";
 const slots = [
   { player: 0, kind: "human" as const },
   { player: 1, kind: "ai" as const },
@@ -8,13 +9,13 @@ const slots = [
 describe("map-backed match", () => {
   it("requires one declared start for every participant and rejects duplicate slots", () => {
     const map = emptyUtcMap();
-    expect(() => new World({ map, slots: slots.slice(0, 1), seed: 1 })).toThrow(
+    expect(() => new World({ map, slots: slots.slice(0, 1), seed: 1, registry })).toThrow(
       /starts/,
     );
     expect(
-      () => new World({ map, slots: [slots[0]!, slots[0]!], seed: 1 }),
+      () => new World({ map, slots: [slots[0]!, slots[0]!], seed: 1, registry }),
     ).toThrow(/starts/);
-    const world = new World({ map, slots, seed: 1 });
+    const world = new World({ map, slots, seed: 1, registry });
     expect(world.slots).toEqual(slots);
     for (const start of map.playerStarts) {
       const fort = world.settlement.entities.find(
@@ -25,8 +26,8 @@ describe("map-backed match", () => {
   });
   it("participant order does not change allocation or future simulation", () => {
     const map = emptyUtcMap();
-    const a = new World({ map, slots, seed: 7 }),
-      b = new World({ map, slots: [...slots].reverse(), seed: 7 });
+    const a = new World({ map, slots, seed: 7, registry }),
+      b = new World({ map, slots: [...slots].reverse(), seed: 7, registry });
     expect(a.checksum()).toBe(b.checksum());
     for (let i = 0; i < 10; i++) {
       a.tick();
@@ -36,11 +37,12 @@ describe("map-backed match", () => {
   });
   it("a changed team is a different match and cannot load its state", () => {
     const map = emptyUtcMap();
-    const a = new World({ map, slots, seed: 7 });
+    const a = new World({ map, slots, seed: 7, registry });
     const b = new World({
       map,
       slots: slots.map((s) => ({ ...s, team: 0 })),
       seed: 7,
+      registry,
     });
     expect(a.checksum()).not.toBe(b.checksum());
     expect(() => b.restore(a.snapshot())).toThrow(/world save/);

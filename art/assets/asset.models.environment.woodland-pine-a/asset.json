@@ -26,20 +26,6 @@
       "bytes": 2116207
     },
     {
-      "role": "build",
-      "index": 1,
-      "format": "json",
-      "sha256": "b194673cbd5687d9aacf337cb8d355980f65458a6db08afc912af69a44c79c70",
-      "bytes": 1533
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "8e2c77b8fcbdc4ed0ed4b2bdeac6b7097c5f94fd090ca43b8fb2cbe0c8642626",
-      "bytes": 3764
-    },
-    {
       "role": "geometry",
       "index": 1,
       "format": "glb",
@@ -47,67 +33,11 @@
       "bytes": 845096
     },
     {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "5c41ebed829e7f52325a0c9e78aee671c0685eb129dfda6af4a13148521b8b8f",
-      "bytes": 196
-    },
-    {
       "role": "source",
       "index": 1,
       "format": "blend",
       "sha256": "c2e3f19dd6ad2edf1caff42c2bf503570ffedfb0446d57e2d189dea42b1d09f8",
       "bytes": 3414865
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "json",
-      "sha256": "d813e87cb534786b95129da5087a951a05040e4eee80b9fe2717abe98c6bc0eb",
-      "bytes": 486
-    },
-    {
-      "role": "source",
-      "index": 3,
-      "format": "glb",
-      "sha256": "c6dd8748bfdb04c4e1d3672105d77ff8a335837d87e5f7ac6c131dc14a2fae1c",
-      "bytes": 3010140
-    },
-    {
-      "role": "source",
-      "index": 4,
-      "format": "glb",
-      "sha256": "c3d5205969085a99fe360b733c5cbaa24ba899b3cfa9390a621aeb35bce0c17e",
-      "bytes": 2974088
-    },
-    {
-      "role": "source",
-      "index": 5,
-      "format": "json",
-      "sha256": "499700be562e905ad656df7cd15c4098b71906e96de7276a3e4d5e48ab21a250",
-      "bytes": 5673
-    },
-    {
-      "role": "source",
-      "index": 6,
-      "format": "png",
-      "sha256": "9c4567a1de193c0b5c7c14ad30656c7d677dec845b23ec8b578ea85af1760c99",
-      "bytes": 505625
-    },
-    {
-      "role": "source",
-      "index": 7,
-      "format": "png",
-      "sha256": "ac9069611404d6d5a9a5fd139de1492265483c8f74a571f2b925acdd1fa7459e",
-      "bytes": 268249
-    },
-    {
-      "role": "source",
-      "index": 8,
-      "format": "json",
-      "sha256": "183ce662b7a9f0ca05c2b4639444fa95eec034dea00aba9caa2310e1ff045a04",
-      "bytes": 198
     }
   ],
   "usesGeometry": true,

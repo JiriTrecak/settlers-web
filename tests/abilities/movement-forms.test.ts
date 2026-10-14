@@ -1,17 +1,17 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects,resolveEffect} from '../../src/content/abilities/schema';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {fixed,precise} from '../../src/sim/game/motion';
 import {spellSource,sourceActor} from '../../src/sim/abilities/source';
 import {snapPlacement} from '../../src/shared/spatial/placement';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.avatar')!;
-const presentation=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource} from './encounter-harness';
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.avatar')!;
+const presentation=testAbilities.presentations.find(p=>p.id===base.presentation)!;
 function fixture(native=false){
  const a=abilitySchema.parse({...base,cast:{...base.cast,prepareTicks:0,recoverTicks:0,cost:{...base.cast.cost,amount:0}},onRelease:[{op:'status',id:'soaring',target:'caster',amount:20,polarity:'positive',dispel:true,form:{movement:{locomotion:'air',flightHeight:7}}}],statuses:[{op:'status',id:'grounded',target:'target',amount:5,polarity:'negative',dispel:true,form:{movement:{locomotion:'ground'}}}]});
- const f=createAbilityEncounter(a,presentation,encounterSettingsSchema.parse({relationship:'ally',distance:8,casterLocomotion:native?'air':'ground'}));return {...f,a,c:f.game.context.get(f.caster)!};
+ const f=createAbilityEncounter(a,presentation,testSettings({relationship:'ally',distance:8,casterLocomotion:native?'air':'ground'}),false,encounterSource());return {...f,a,c:f.game.context.get(f.caster)!};
 }
 function takeoff(f:ReturnType<typeof fixture>){for(const op of releaseEffects(f.a,1,'ally'))expect(new SpellStatuses(f.game).apply(f.caster,f.caster,f.a,1,f.game.state.nextCast++,op)).toBe(20);}
 const ticks=(f:ReturnType<typeof fixture>,n=1)=>{for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});};
@@ -22,12 +22,12 @@ it('changes actual clearance, targeting, observation and source snapshots, then 
  ticks(f,21);expect(f.game.spatial.airborne(f.c)).toBe(false);expect(f.c.unit!.flight).toBeUndefined();expect(sourceActor(source,f.game.registry).locomotion).toBe('air');
 });
 it('safely relocates to nearby clear ground when reverting above a blocker',()=>{
- const f=fixture();takeoff(f);const s=f.game.spatial,old={x:f.c.x,y:f.c.y};s.occupied[s.cell(old)]=999;
+ const f=fixture();takeoff(f);const s=f.game.spatial,old={x:f.c.x,y:f.c.y};s.terrain[s.cell(old)]=0;s.rebuild();
  ticks(f,21);expect(s.airborne(f.c)).toBe(false);expect(precise(f.c)).not.toMatchObject(old);expect(s.unitWalkable(precise(f.c),f.c)).toBe(true);
 });
 it('keeps a blocked landing airborne and targetable, restoring deterministically until ground opens',()=>{
  const f=fixture();takeoff(f);const s=f.game.spatial;
- const obstacle=f.game.context.create({id:'landing-blocker',definition:'building.ants.house',owner:'player.1',position:snapPlacement(f.game.registry.get('building.ants.house'),{x:120,y:120}),rotation:0});
+ const obstacle=f.game.context.create({id:'landing-blocker',definition:'building.test.house',owner:'player.1',position:snapPlacement(f.game.registry.get('building.test.house'),{x:120,y:120}),rotation:0});
  s.appendOccupancy(obstacle);
  ticks(f,21);expect(f.c.spellStatuses).toBeUndefined();expect(f.c.unit!.flight).toBeTruthy();expect(s.airborne(f.c)).toBe(true);
  const clone=fixture();clone.game.restore(f.game.snapshot());
@@ -57,8 +57,8 @@ it('landing checks the ground unit footprint, not the former air collision layer
  ticks(f,21);expect(f.game.spatial.airborne(f.c)).toBe(false);expect(precise(f.c)).not.toMatchObject(precise(target));
 });
 it('published Flight Form toggles real flight and replays its landing from an active-instance save',()=>{
- const a=coreAbilities.abilities.find(a=>a.id==='ability.core.flight-form')!,p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
- const make=()=>createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'self',mana:1000}));
+ const a=testAbilities.abilities.find(a=>a.id==='ability.test.flight-form')!,p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+ const make=()=>createAbilityEncounter(a,p,testSettings({relationship:'self',mana:1000}),false,encounterSource());
  const f=make(),other=make();expect(f.game.abilities.cast(f.caster,'preview',f.caster)).toBeNull();for(let i=0;i<40;i++)f.game.tick(undefined,{passiveUnits:true});
  expect(f.game.spatial.airborne(f.game.context.get(f.caster)!)).toBe(true);other.game.restore(f.game.snapshot());
  for(const g of [f,other])expect(g.game.abilities.cast(g.caster,'preview',g.caster)).toBeNull();
@@ -66,27 +66,27 @@ it('published Flight Form toggles real flight and replays its landing from an ac
  expect(f.game.spatial.airborne(f.game.context.get(f.caster)!)).toBe(false);
 });
 it('published Web rejects ground targets, lands native flyers and restores them after expiry',()=>{
- const a=coreAbilities.abilities.find(a=>a.id==='ability.core.web')!,p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
- for(const mode of ['ground','air'] as const){const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',targetLocomotion:mode,distance:5,targetHealth:500,mana:1000}));
+ const a=testAbilities.abilities.find(a=>a.id==='ability.test.web')!,p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+ for(const mode of ['ground','air'] as const){const f=createAbilityEncounter(a,p,testSettings({relationship:'enemy',targetLocomotion:mode,distance:5,targetHealth:500,mana:1000}),false,encounterSource());
   const result=f.game.abilities.cast(f.caster,'preview',f.target!);if(mode==='ground'){expect(result).toBeTruthy();continue;}expect(result).toBeNull();for(let i=0;i<24;i++)f.game.tick(undefined,{passiveUnits:true});const target=f.game.context.get(f.target!)!;
   expect(f.game.spatial.airborne(target)).toBe(false);expect(target.spellStatuses?.some(s=>s.status==='webbed')).toBe(true);
   for(let i=0;i<260;i++)f.game.tick(undefined,{passiveUnits:true});expect(f.game.spatial.airborne(target)).toBe(true);
  }
 });
 it('independent preview fixtures can use neutral models as ordinary air targets without camp AI',()=>{
- const a=coreAbilities.abilities.find(a=>a.id==='ability.core.web')!,p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
- const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',targetDefinition:'unit.neutral.needle-wasp',targetLocomotion:'air',targetHealth:500}),true),target=f.game.context.get(f.target!)!;
+ const a=testAbilities.abilities.find(a=>a.id==='ability.test.web')!,p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+ const f=createAbilityEncounter(a,p,testSettings({relationship:'enemy',targetDefinition:'unit.test.neutral-needle-wasp',targetLocomotion:'air',targetHealth:500}),true,encounterSource()),target=f.game.context.get(f.target!)!;
  expect(f.game.context.def(target).behaviors.campDefense).toBeUndefined();expect(f.game.spatial.airborne(target)).toBe(true);
- expect(()=>createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'neutral',combat:false}),false)).not.toThrow();
+ expect(()=>createAbilityEncounter(a,p,testSettings({relationship:'neutral',combat:false}),false,encounterSource())).not.toThrow();
 });
 
 it('neutral spell sight lets airborne observers see higher ground for unit and point targets',async()=>{
  const {vi}=await import('vitest'),{TacticalTerrain}=await import('../../src/shared/map/tacticalTerrain');
  for(const kind of ['unit','point'] as const)for(const mode of ['ground','air'] as const){
-  const original=coreAbilities.abilities.find(a=>a.id==='ability.core.storm-bolt')!;
+  const original=testAbilities.abilities.find(a=>a.id==='ability.test.storm-bolt')!;
   const a=abilitySchema.parse({...original,targeting:kind==='unit'?{...original.targeting,relations:['enemy']}:{...original.targeting,kind:'point',range:18,radius:2},delivery:undefined});
-  const p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
-  const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'neutral',distance:6,casterLocomotion:mode,targetLocomotion:'ground',mana:1000}));
+  const p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+  const f=createAbilityEncounter(a,p,testSettings({relationship:'neutral',distance:6,casterLocomotion:mode,targetLocomotion:'ground',mana:1000}),false,encounterSource());
   const caster=f.game.context.get(f.caster)!;caster.owner='none';caster.unit!.camp='preview-camp';f.game.context.get(f.target!)!.owner='player.2';
   const heights=new Int16Array(256*256);for(let y=0;y<256;y++)for(let x=122;x<256;x++)heights[y*256+x]=400;
   const terrain=new TacticalTerrain(256,heights);
@@ -100,8 +100,8 @@ it('neutral spell sight lets airborne observers see higher ground for unit and p
 it('neutral weapon acquisition uses the same elevated sight as neutral spell targeting',async()=>{
  const {vi}=await import('vitest'),{TacticalTerrain}=await import('../../src/shared/map/tacticalTerrain');
  for(const mode of ['ground','air'] as const){
-  const a=coreAbilities.abilities.find(a=>a.id==='ability.core.storm-bolt')!,p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
-  const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'neutral',distance:6,casterDefinition:'unit.ants.archer',casterLocomotion:mode,targetLocomotion:'ground',combat:true}));
+  const a=testAbilities.abilities.find(a=>a.id==='ability.test.storm-bolt')!,p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+  const f=createAbilityEncounter(a,p,testSettings({relationship:'neutral',distance:6,casterDefinition:'unit.test.archer',casterLocomotion:mode,targetLocomotion:'ground',combat:true}),false,encounterSource());
   const caster=f.game.context.get(f.caster)!,target=f.game.context.get(f.target!)!;
   caster.owner='none';caster.unit!.camp='preview-camp';target.owner='player.2';
   caster.unit!.order={type:'attack',target:target.id,force:false};

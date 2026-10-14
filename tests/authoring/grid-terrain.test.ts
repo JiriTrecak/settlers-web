@@ -5,7 +5,7 @@ import {restoreTerrain,decodeFloats} from '../../src/shared/map/terrainData';
 import {editTerrainGrid} from '../../src/shared/authoring/gridTerrain';
 import {emptyUtcMap,parseUtcMap,stringifyUtcMap} from '../../src/shared/map/utcmap';
 import {Spatial} from '../../src/sim/game/spatial';
-import {content} from '../../src/content/builtin';
+import {testContent as content} from '../fixtures/content';
 import {AuthoringHistory} from '../../src/shared/authoring/history';
 import {authoredTerrain} from '../../src/render/terrain/authoredTerrain';
 const rectangle=(x:number,z:number,w:number,h:number)=>({type:'rectangle' as const,from:{x,z},to:{x:x+w,z:z+h}});

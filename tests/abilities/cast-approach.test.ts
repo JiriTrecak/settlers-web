@@ -1,28 +1,37 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {precise} from '../../src/sim/game/motion';
-import {value} from '../../src/content/abilities/schema';
-function fixture(name='skullcrack'){
- const spell=structuredClone(coreAbilities.abilities.find(a=>a.id==='ability.rootbreaker.'+name)!);
- spell.targeting.range=8;
- const presentation=coreAbilities.presentations.find(p=>p.id===spell.presentation)!;
- const f=createAbilityEncounter(spell,presentation,encounterSettingsSchema.parse({casterDefinition:'unit.ants.rootbreaker',targetHealth:500,mana:1000,relationship:'enemy',distance:16}));
+import {abilitySchema} from '../../src/content/abilities/schema';
+import {testAbilities,testSource} from '../fixtures/content';
+const RANGE=8,MANA=65;
+const cast={prepareTicks:28,recoverTicks:20,cost:{resource:'mana',amount:MANA,commit:'release'},cooldown:{ticks:360,start:'release',scope:'ability'},cancelBeforeRelease:'refund',revalidateAtRelease:['caster','target','range','visibility','relationship']};
+/** Melee-range spells cast from outside their range: one aimed at a unit, one at a ground point. */
+const spells={
+ unit:abilitySchema.parse({schemaVersion:1,id:'ability.test.approach-unit',name:'Unit strike',description:'',activation:'targeted',ranks:[{}],cast,
+  targeting:{filter:{locomotion:['ground']},kind:'unit',alive:true,visible:true,relations:['enemy'],allowSelf:false,range:RANGE,outOfRange:'reject'},
+  onRelease:[{op:'damage',target:'target',amount:120,damageType:'hero'}],presentation:'presentation.test.rootbreaker-skullcrack'}),
+ point:abilitySchema.parse({schemaVersion:1,id:'ability.test.approach-point',name:'Ground slam',description:'',activation:'targeted',ranks:[{}],cast,
+  targeting:{filter:{locomotion:['ground']},kind:'point',radius:8,maxTargets:32,alive:true,visible:true,relations:['enemy'],allowSelf:false,range:RANGE,outOfRange:'reject'},
+  onRelease:[{op:'damage',target:'target',amount:220,damageType:'hero'}],presentation:'presentation.test.rootbreaker-uproot'}),
+};
+function fixture(kind:keyof typeof spells='unit'){
+ const spell=spells[kind],presentation=testAbilities.presentations.find(p=>p.id===spell.presentation)!;
+ const f=createAbilityEncounter(spell,presentation,encounterSettingsSchema.parse({casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior',targetHealth:500,mana:1000,relationship:'enemy',distance:2*RANGE}),false,testSource());
  const c=f.game.context.get(f.caster)!,t=f.game.context.get(f.target)!;
  const aim=spell.targeting.kind==='point'?{kind:'point' as const,position:{x:t.x,y:t.y}}:{kind:'unit' as const,entity:t.id};
  return {...f,spell,c,t,aim,cast:()=>f.game.command(c.owner,{type:'castAbility',actor:c.id,binding:'preview',target:aim})};
 }
-it.each(['skullcrack','uproot'])('%s moves into range before spending mana or casting, then releases once',name=>{
- const f=fixture(name),g=f.game,mana=f.c.abilities!.mana,start=precise(f.c);
+it.each(['unit','point'] as const)('a %s-aimed cast moves into range before spending mana or casting, then releases once',kind=>{
+ const f=fixture(kind),g=f.game,mana=f.c.abilities!.mana,start=precise(f.c);
  expect(f.cast()).toMatchObject({accepted:true});expect(f.c.unit!.order?.type).toBe('castAbility');
  expect(f.c.abilities!.pending).toBeNull();expect(f.c.abilities!.mana).toBe(mana);expect(f.c.abilities!.cooldowns).toEqual({});
  for(let i=0;i<200&&!f.c.abilities!.pending;i++)g.tick();
  expect(f.c.abilities!.pending).not.toBeNull();
  const p=precise(f.c);expect(p.x).toBeGreaterThan(start.x);
- expect(Math.hypot(p.x-f.t.x,p.y-f.t.y)).toBeLessThanOrEqual(8);
- expect(Math.hypot(p.x-f.t.x,p.y-f.t.y)).toBeGreaterThan(7.5);
- expect(f.c.abilities!.mana).toBe(mana-value(f.spell.cast.cost.amount,f.spell.ranks[0]));
+ expect(Math.hypot(p.x-f.t.x,p.y-f.t.y)).toBeLessThanOrEqual(RANGE);
+ expect(Math.hypot(p.x-f.t.x,p.y-f.t.y)).toBeGreaterThan(RANGE-.5);
+ expect(f.c.abilities!.mana).toBe(mana-MANA);
  for(let i=0;i<90;i++)g.tick();expect(f.t.hp).toBeLessThan(500);
  expect(g.abilities.observedEvents().filter(e=>e.ability===f.spell.id&&e.event==='released')).toHaveLength(1);
 });

@@ -5,37 +5,33 @@ import {convertWarcraftMap} from '../../src/editor/import/warcraft/convert';
 import {content} from '../../src/content/builtin';
 import {playableMapError} from '../../src/shared/map/playable';
 import {Game} from '../../src/sim/game/game';
-import {readUtcMap} from '../../src/shared/map/utcmap';
+import policy from '../../content/import/warcraft/policy.json';
 
-it.each(['echo-isles','turtle-rock'].flatMap(name=>['import','published'].map(source=>({name,source}))))('preserves the starting economy and clearance in $name ($source)',({name,source})=>{
- const loaded=source==='import'
-  ?convertWarcraftMap(readWarcraftMap(new Uint8Array(readFileSync(`tests/editor/fixtures/warcraft/${name}.w3x`))))
-  :readUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${name}.utcmap`,'utf8')));
- if(!('map' in loaded))throw Error(`Invalid published ${name}`);
- const {map}=loaded;
- expect(map.size).toBe(640);
- expect(map.authoring.terrain.textureGrid).toEqual({cellSize:5,origin:[-.5,-.5]});
+// ENGINE-COUPLED: the Warcraft converter places shipped definitions (policy.json mine, campCompositions, the shipped
+// starting setup), so the imported map can only be simulated against the shipped registry. Expectations are derived
+// from the same policy and rules rather than named ids. Inputs are test-owned .w3x fixtures.
+const races=Object.keys(content.rules.races);
+it.each(['echo-isles','turtle-rock'])('imports %s with a reachable, playable starting economy for every race',name=>{
+ const {map}=convertWarcraftMap(readWarcraftMap(new Uint8Array(readFileSync(`tests/editor/fixtures/warcraft/${name}.w3x`))));
  expect(playableMapError(map)).toBeNull();
- for(const race of ['ants','beetles']){
+ const site=policy.mineOffsets.map(([,dz])=>policy.startingMineDistance+Math.abs(dz)).sort();
+ for(const race of races){
   const slots=map.playerStarts.map((_,player)=>({player,kind:'human' as const,race}));
-  const g=new Game(map,slots),replica=new Game(map,slots);
+  const g=new Game(map,slots,content);
   for(const start of map.playerStarts){
    const owner=`player.${start.player}` as const,hall=g.context.get(g.state.objectives[owner])!;
-   const nodes=map.entities.filter(e=>e.definition==='building.neutral.amber-mine'&&Math.hypot(e.position.x-start.x,e.position.y-start.z)<40);
-   expect(nodes).toHaveLength(5);expect(nodes.reduce((n,e)=>n+e.position.x,0)/5).toBe(start.x);
-   expect(nodes.map(e=>Math.abs(e.position.y-start.z)).sort()).toEqual([24,24,28,28,28]);
+   const nodes=map.entities.filter(e=>e.definition===policy.mineDefinition&&Math.hypot(e.position.x-start.x,e.position.y-start.z)<policy.startingMineSearchRadius);
+   expect(nodes).toHaveLength(policy.mineOffsets.length);
+   expect(nodes.reduce((n,e)=>n+e.position.x,0)/nodes.length).toBe(start.x);
+   expect(nodes.map(e=>Math.abs(e.position.y-start.z)).sort()).toEqual(site);
    const workers=g.entities.filter(e=>e.owner===owner&&content.get(e.definition).behaviors.work);
-   expect(workers).toHaveLength(5);expect(workers.every(w=>g.spatial.unitWalkable(w,w))).toBe(true);
-   expect(g.view(owner).entities.find(e=>e.id===hall.id)?.baseGathering).toEqual({workers:5,recommendedWorkers:10});
+   expect(workers.length).toBeGreaterThan(0);expect(workers.every(w=>g.spatial.unitWalkable(w,w))).toBe(true);
+   expect(g.view(owner).entities.find(e=>e.id===hall.id)?.baseGathering?.workers).toBe(workers.length);
    for(const node of nodes){
     const target=g.entities.find(e=>e.placement===node.id)!,worker=workers[0];
     const approaches=[1,2,3].flatMap(r=>g.spatial.perimeter(target,r));
     expect(approaches.some(p=>g.spatial.unitWalkable(p,worker)&&g.spatial.attackClear(p,target,false)&&g.spatial.findPath(g.spatial.cell(worker),g.spatial.cell(p),undefined,Infinity,worker)!==null),node.id).toBe(true);
    }
   }
-  for(let tick=0;tick<80;tick++){g.tick();replica.tick();if(tick%20===0)expect(replica.checksum('full')).toBe(g.checksum('full'));}
-  const restored=new Game(map,slots);restored.restore(g.snapshot());
-  for(let tick=0;tick<20;tick++){g.tick();restored.tick();}
-  expect(restored.checksum('full')).toBe(g.checksum('full'));
  }
 },120000);

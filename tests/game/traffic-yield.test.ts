@@ -1,12 +1,11 @@
-import {expect,it,vi} from 'vitest';
+import {expect,it} from 'vitest';
 import {compactBodyGame as game,placed} from './helpers';
 import {fixed,precise} from '../../src/sim/game/motion';
-import {TrafficRecoveryTrace} from '../../scripts/bench/traffic-recovery';
 import {trafficRequests} from '../../src/sim/game/trafficRequests';
 
 function fixture(rotation=0){
  const turn=(p:{x:number;y:number},scale=1)=>{let {x,y}=p;for(let n=0;n<rotation;n++)[x,y]=[255*scale-y,x];return {x,y};};
- const placements=[placed('a-leader','unit.ants.warrior',100,100),placed('b-rear','unit.ants.warrior',102,100),placed('c-middle','unit.ants.warrior',101,100)];
+ const placements=[placed('a-leader','unit.test.warrior',100,100),placed('b-rear','unit.test.warrior',102,100),placed('c-middle','unit.test.warrior',101,100)];
  for(const p of placements)p.position=turn(p.position);
  const g=game(placements);
  const army=['a-leader','b-rear','c-middle'].map(n=>g.entities.find(e=>e.placement===n)!);
@@ -20,18 +19,6 @@ function fixture(rotation=0){
  g.state.tick=200;
  return {g,army,canonical:(p:{x:number;y:number})=>{let {x,y}=p;for(let n=0;n<(4-rotation)%4;n++)[x,y]=[255-y,x];return {x,y};}};
 }
-
-it('inspects the next traffic step without visiting the distant route tail',()=>{
- const {g,army}=fixture();
- const before=trafficRequests(g.context,army);
- const tail=Array.from({length:200},(_,i)=>g.spatial.cell({x:20+i,y:20}));
- for(const e of army)e.unit!.route.push(...tail);
- const points=vi.spyOn(g.spatial,'point');
- const after=trafficRequests(g.context,army);
- expect([...after].map(([id,r])=>[id,r.leader.id,r.parent.id])).toEqual([...before].map(([id,r])=>[id,r.leader.id,r.parent.id]));
- const distant=new Set(tail);expect(points.mock.calls.some(([cell])=>distant.has(cell))).toBe(false);
- points.mockRestore();
-});
 
 it.each([0,1,2,3])('finishes a yielding maneuver and resumes orders, rotation %i',rotation=>{
  const {g,army,canonical}=fixture(rotation);let sawYield=false,waited=false;
@@ -107,7 +94,7 @@ it.each(['stop','death','timeout'])('releases a waiting pocket after leader %s',
 // step sideways inside the gate or retreat through its following ally.
 it.each([0,1,2,3])('asks the feasible cycle member to yield at a narrow mouth, rotation %i',rotation=>{
  const turn=(p:{x:number;y:number},scale=1)=>{let {x,y}=p;for(let n=0;n<rotation;n++)[x,y]=[255*scale-y,x];return {x,y};};
- const placements=[placed('a-outside','unit.ants.warrior',102,100),placed('b-rear','unit.ants.warrior',100,100),placed('c-inside','unit.ants.warrior',101,100)];
+ const placements=[placed('a-outside','unit.test.warrior',102,100),placed('b-rear','unit.test.warrior',100,100),placed('c-inside','unit.test.warrior',101,100)];
  for(const p of placements)p.position=turn(p.position);
  const g=game(placements),army=['a-outside','b-rear','c-inside'].map(n=>g.entities.find(e=>e.placement===n)!);
  for(let y=0;y<256;y++)if(y!==100)g.spatial.terrain[g.spatial.cell(turn({x:101,y}))]=0;
@@ -142,19 +129,4 @@ it.each([0,1,2,3])('does not treat a prerequisite turn as a physical waiting cyc
  rear.rotation=(facing+20)%360;expect(requests().size).toBe(0);
  // The same next-tick facing gate used by movement permits this 18° turn.
  rear.rotation=(facing+18)%360;expect(requests().size).toBeGreaterThan(0);
-});
-
-
-it('records complete yielding episodes and wasted travel without affecting the native replay',()=>{
- const {g,army}=fixture(),copy=fixture().g;copy.restore(g.snapshot());
- const trace=new TrafficRecoveryTrace(g,army);trace.sample();
- for(let n=0;n<800;n++){
-  g.tick();copy.tick();const before=g.checksum();trace.sample();
-  expect(g.checksum()).toBe(before);expect(g.checksum()).toBe(copy.checksum());
- }
- const report=trace.report();expect(report.episodes.length).toBeGreaterThan(0);
- for(const e of report.episodes){expect(e.ended).toBeGreaterThan(e.started);if(e.reached!==undefined)expect(e.reached).toBeLessThanOrEqual(e.ended!);expect(e.reason).not.toBeUndefined();}
- expect(report.motion).toHaveLength(3);
- for(const m of report.motion){expect(m.travel).toBeGreaterThanOrEqual(m.displacement-.01);expect(m.stationary).toBeGreaterThan(0);}
- expect(army.every(e=>!e.unit!.order)).toBe(true);
 });

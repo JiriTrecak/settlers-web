@@ -1,7 +1,7 @@
 import {expect,it} from 'vitest';
 import {game,placed,run} from './helpers';
 it('preserves a half-cell building center in last-seen pursuit through save/load',()=>{
- const make=()=>game([placed('attacker','unit.ants.warrior',120,101),{...placed('enemy-hall','building.ants.fort',101.5,101.5),owner:'player.2'}]);
+ const make=()=>game([placed('attacker','unit.test.warrior',120,101),{...placed('enemy-hall','building.test.fort',101.5,101.5),owner:'player.2'}]);
  const g=make(),actor=g.entities.find(e=>e.placement==='attacker')!,target=g.entities.find(e=>e.placement==='enemy-hall')!;
  expect(g.command('player.1',{type:'attack',actors:[actor.id],target:target.id}).accepted).toBe(true);g.tick();
  expect(actor.unit!.pursuit?.position).toEqual({x:101.5,y:101.5});

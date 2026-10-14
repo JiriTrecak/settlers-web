@@ -1,13 +1,15 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects,statusDefinition} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses,spellControl} from '../../src/sim/abilities/statuses';
 import {spellAppearance,activeSpellFormEntry} from '../../src/sim/abilities/forms';
-const spell=(id:string)=>coreAbilities.abilities.find(a=>a.id==='ability.core.'+id)!;
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const spell=(id:string)=>testAbilities.abilities.find(a=>a.id==='ability.test.'+id)!;
 function fixture(id='hex'){
- const a=spell(id),f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',combat:true,distance:3,targetHealth:500}));
+ const a=spell(id),f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',combat:true,distance:3,targetHealth:500}),false,testSource());
  return {...f,c:()=>f.game.context.get(f.caster)!,t:()=>f.game.context.get(f.target)!};
 }
 function run(f:ReturnType<typeof fixture>,n:number){for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});}
@@ -16,8 +18,8 @@ it('Hex changes appearance and capabilities without replacing identity or author
  const f=fixture(),t=f.t(),definition=t.definition,owner=t.owner;t.appearance={scale:1.2};t.inventory={};
  expect(f.game.abilities.cast(f.caster,'preview',t.id)).toBeNull();run(f,20);
  expect(t.definition).toBe(definition);expect(t.owner).toBe(owner);expect(t.appearance).toEqual({scale:1.2});
- expect(spellAppearance(t,f.game.registry)).toEqual({asset:'asset.neutral.tree-frog',scale:.78});
- expect(f.game.view('player.1').entities.find(e=>e.id===t.id)?.appearance?.asset).toBe('asset.neutral.tree-frog');
+ expect(spellAppearance(t,f.game.registry)).toEqual({asset:'asset.test.neutral-tree-frog',scale:.78});
+ expect(f.game.view('player.1').entities.find(e=>e.id===t.id)?.appearance?.asset).toBe('asset.test.neutral-tree-frog');
  expect(spellControl(t,f.game.registry,'disarm')).toBe(true);expect(spellControl(t,f.game.registry,'silence')).toBe(true);expect(spellControl(t,f.game.registry,'itemBlocked')).toBe(true);
  expect(f.game.context.stats(t).moveSpeedPermille).toBe(300);
  run(f,320);expect(spellAppearance(t,f.game.registry)).toEqual({scale:1.2});expect(f.game.context.stats(t).moveSpeedPermille).toBe(1000);
@@ -31,7 +33,7 @@ it('Avatar changes stats and health through normal operations, then caps health 
 });
 it('dispel restores Hex immediately and overlapping forms reveal their predecessor',()=>{
  const f=fixture();apply(f,'avatar',f.target);run(f,10);apply(f,'hex',f.target);
- expect(spellAppearance(f.t(),f.game.registry)?.asset).toBe('asset.neutral.tree-frog');
+ expect(spellAppearance(f.t(),f.game.registry)?.asset).toBe('asset.test.neutral-tree-frog');
  apply(f,'dispel-magic',f.target);expect(spellAppearance(f.t(),f.game.registry)).toEqual({scale:1.6});
  run(f,800);expect(spellAppearance(f.t(),f.game.registry)).toBeUndefined();
 });
@@ -45,13 +47,13 @@ it('preserves transformed state and restoration across lockstep save/load',()=>{
 });
 it('rejects unknown model assets and continuously reapplied passive forms',()=>{
  const a=structuredClone(spell('hex'));a.onRelease[0]={...a.onRelease[0],form:{asset:'asset.missing.form',scale:1}} as typeof a.onRelease[0];
- expect(()=>createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({}))).toThrow(/asset/i);
+ expect(()=>createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,}),false,testSource())).toThrow(/asset/i);
  const passive={...a,activation:'passive',aura:{radius:2,meleeOnly:false},targeting:{...a.targeting,kind:'self'}};
  expect(abilitySchema.safeParse(passive).success).toBe(false);
 });
 it('does not clamp away health during the transient removal/rebuild of a health aura',()=>{
  const a=abilitySchema.parse({...spell('true-sight'),id:'ability.test.vitality',onRelease:[{op:'status',id:'vitality',target:'caster',amount:1,polarity:'positive',dispel:false,modifiers:{maxHp:100}}]});
- const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({}));
+ const f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,}),false,testSource());
  f.game.tick(undefined,{passiveUnits:true});const c=f.game.context.get(f.caster)!;c.hp=600;
  for(let i=0;i<10;i++)f.game.tick(undefined,{passiveUnits:true});expect(c.hp).toBe(600);
  c.abilities!.ranks.preview=0;f.game.tick(undefined,{passiveUnits:true});expect(c.hp).toBe(500);

@@ -6,7 +6,7 @@ import {heading,turnDifference} from '../../src/sim/game/facing';
 function fixture(rotation=0){
  const turn=(x:number,y:number)=>{for(let n=0;n<rotation;n++)[x,y]=[255-y,x];return {x,y};};
  const positions=[[100,100],[99,100],[101,100],[100,99],[100,101]];
- const placements=positions.map(([x,y],i)=>{const p=turn(x,y);return placed(i?'guard-'+i:'mover','unit.ants.warrior',p.x,p.y);});
+ const placements=positions.map(([x,y],i)=>{const p=turn(x,y);return placed(i?'guard-'+i:'mover','unit.test.warrior',p.x,p.y);});
  const g=game(placements),mover=g.entities.find(e=>e.placement==='mover')!,guards=g.entities.filter(e=>e.placement?.startsWith('guard-'));
  const destination=turn(120,100);
  g.command('player.1',{type:'hold',actors:guards.map(e=>e.id)});
@@ -75,7 +75,7 @@ it.each([0,1,2,3].flatMap(rotation=>[false,true].map(occupiedGoal=>({rotation,oc
  'repairs occupied intermediate waypoints, rotation $rotation, occupied goal $occupiedGoal',({rotation,occupiedGoal})=>{
   const turn=(p:{x:number;y:number},scale=1)=>{let {x,y}=p;for(let n=0;n<rotation;n++)[x,y]=[255*scale-y,x];return {x,y};};
   const positions=[[100,100],[101,100],...(occupiedGoal?[[110,100]]:[])];
-  const placements=positions.map(([x,y],i)=>{const p=turn({x,y});return placed(i?`guard-${i}`:'mover','unit.ants.warrior',p.x,p.y);});
+  const placements=positions.map(([x,y],i)=>{const p=turn({x,y});return placed(i?`guard-${i}`:'mover','unit.test.warrior',p.x,p.y);});
   const g=game(placements),mover=g.entities.find(e=>e.placement==='mover')!,guards=g.entities.filter(e=>e.placement?.startsWith('guard-'));
   g.command('player.1',{type:'hold',actors:guards.map(e=>e.id)});
   const destination=turn({x:110,y:100}),alternative=turn({x:110,y:occupiedGoal?99:100});
@@ -103,7 +103,7 @@ it.each([0,1,2,3])('finds a local rejoin outside a fully occupied projected squa
  const turn=(p:{x:number;y:number},scale=1)=>{let {x,y}=p;for(let n=0;n<rotation;n++)[x,y]=[255*scale-y,x];return {x,y};};
  const crowd=[[146,117],[147,119],[149,121],[146,121],[147,122],[147,121],[148,122],[149,122],[146,123],[145,122],[148,119],[147,123],[148,123],[149,123],[149,120],[149,119],[146,120],[147,120],[148,121],[146,122]];
  const start=turn({x:145,y:121});
- const placements=[placed('mover','unit.ants.bombardier',start.x,start.y),...crowd.map(([x,y],i)=>{const p=turn({x,y});return placed(`guard-${i}`,'unit.ants.warrior',p.x,p.y);})];
+ const placements=[placed('mover','unit.test.bombardier',start.x,start.y),...crowd.map(([x,y],i)=>{const p=turn({x,y});return placed(`guard-${i}`,'unit.test.warrior',p.x,p.y);})];
  const g=game(placements),mover=g.entities.find(e=>e.placement==='mover')!,guards=g.entities.filter(e=>e.placement?.startsWith('guard-'));
  g.command('player.1',{type:'hold',actors:guards.map(e=>e.id)});
  const goal=turn({x:150,y:122});g.command('player.1',{type:'move',actors:[mover.id],destination:goal});

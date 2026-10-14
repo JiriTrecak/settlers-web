@@ -7,13 +7,13 @@ import { game, placed, run, slots, source } from './helpers';
 
 const pool=(g:Game,owner='player.1')=>colonySupply(g.entities,owner,g.registry);
 function fillInitialSupply(g:Game){
- for(let i=0,missing=15-pool(g).used;i<missing;i++)g.context.create(placed(`fill-${i}`,'unit.ants.warrior',140+i*4,200));
+ for(let i=0,missing=15-pool(g).used;i<missing;i++)g.context.create(placed(`fill-${i}`,'unit.test.warrior',140+i*4,200));
 }
 function setup(){
- const g=game([placed('mound','building.ants.house',245,240),placed('b','building.ants.barracks',160,180),placed('c','building.ants.barracks',184,180)]);
+ const g=game([placed('mound','building.test.house',245,240),placed('b','building.test.barracks',160,180),placed('c','building.test.barracks',184,180)]);
  const b=g.entities.find(e=>e.placement==='b')!,c=g.entities.find(e=>e.placement==='c')!,mound=g.entities.find(e=>e.placement==='mound')!,hall=g.context.get(g.state.objectives['player.1'])!;
- g.state.wallets[hall.owner]={'item.amber':10000,'item.wood':10000,'item.root':1000};
- const train=(actor=b.id,definition='unit.ants.warrior')=>g.command('player.1',{type:'produce',actor,definition});
+ g.state.wallets[hall.owner]={'item.test.amber':10000,'item.test.wood':10000,'item.test.root':1000};
+ const train=(actor=b.id,definition='unit.test.warrior')=>g.command('player.1',{type:'produce',actor,definition});
  return {g,b,c,mound,hall,train};
 }
 
@@ -21,7 +21,7 @@ describe('definition-driven colony supply and direct training',()=>{
  it('starts at 9/15 and has no automatic births; mounds only add capacity',()=>{
   const g=game();expect(pool(g)).toMatchObject({used:9,reserved:0,capacity:15,available:6,limit:100});
   run(g,1000);expect(pool(g).used).toBe(9);
-  const h=g.context.create(placed('mound','building.ants.house',245,240));
+  const h=g.context.create(placed('mound','building.test.house',245,240));
   expect(h.production).toBeUndefined();expect(pool(g).capacity).toBe(23);
   expect(pool(g,'player.2').capacity).toBe(15);
  });
@@ -36,59 +36,59 @@ describe('definition-driven colony supply and direct training',()=>{
   expect(pool(g)).toMatchObject({used:15,reserved:8,committed:23,available:0});
   const inventory=structuredClone(g.state.wallets[hall.owner]),next=g.state.nextQueue;
   expect(train(c.id)).toMatchObject({accepted:false});expect(g.state.wallets[hall.owner]).toEqual(inventory);expect(g.state.nextQueue).toBe(next);
-  expect(commandCard(g.view('player.1'),[c.id],'player.1',g.registry).find(c=>c.targetDefinition==='unit.ants.warrior')).toMatchObject({enabled:false,reason:expect.stringContaining('supply')});
+  expect(commandCard(g.view('player.1'),[c.id],'player.1',g.registry).find(c=>c.targetDefinition==='unit.test.warrior')).toMatchObject({enabled:false,reason:expect.stringContaining('supply')});
   const q=b.production!.queue[3].id;g.command('player.1',{type:'cancel',actor:b.id,queue:q});
   expect(pool(g).available).toBe(1);expect(train(c.id).accepted).toBe(true);
  });
  it('trains at a distant barracks without claiming or converting any worker',()=>{
-  const {g,b,train}=setup();const workers=g.entities.filter(e=>e.definition==='unit.ants.settler');
+  const {g,b,train}=setup();const workers=g.entities.filter(e=>e.definition==='unit.test.settler');
   for(const w of workers)w.unit!.order={type:'hold'};
   b.x=128;b.y=128;g.spatial.rebuild();
-  const ids=new Set(g.entities.map(e=>e.id));expect(train().accepted).toBe(true);run(g,g.registry.get('unit.ants.warrior').creation!.workTicks);
+  const ids=new Set(g.entities.map(e=>e.id));expect(train().accepted).toBe(true);run(g,g.registry.get('unit.test.warrior').creation!.workTicks);
   expect(b.production!.produced).toBe(1);
-  expect(g.entities.filter(e=>!ids.has(e.id))).toMatchObject([{definition:'unit.ants.warrior',owner:'player.1'}]);
-  expect(workers.every(w=>w.definition==='unit.ants.settler'&&w.unit!.order?.type==='hold')).toBe(true);
+  expect(g.entities.filter(e=>!ids.has(e.id))).toMatchObject([{definition:'unit.test.warrior',owner:'player.1'}]);
+  expect(workers.every(w=>w.definition==='unit.test.settler'&&w.unit!.order?.type==='hold')).toBe(true);
   expect(g.state.jobs.some(j=>j.target===b.id)).toBe(false);
   expect(pool(g)).toMatchObject({used:10,reserved:0});
  });
  it('finishes active training after capacity loss but blocks the next unit until supply is restored',()=>{
   const {g,b,mound,train}=setup();fillInitialSupply(g);train();train();run(g,10);expect(b.production!.active?.progress).toBe(10);
   g.economy.remove(mound);expect(pool(g)).toMatchObject({capacity:15,used:15,reserved:2});
-  run(g,g.registry.get('unit.ants.warrior').creation!.workTicks-10);expect(b.production!.produced).toBe(1);expect(pool(g)).toMatchObject({used:16,reserved:1});
+  run(g,g.registry.get('unit.test.warrior').creation!.workTicks-10);expect(b.production!.produced).toBe(1);expect(pool(g)).toMatchObject({used:16,reserved:1});
   run(g,20);expect(b.production!.active).toBeNull();expect(b.production!.status).toContain('Supply blocked');
-  g.context.create(placed('replacement','building.ants.house',245,240));run(g,g.registry.get('unit.ants.warrior').creation!.workTicks);expect(b.production!.produced).toBe(2);
+  g.context.create(placed('replacement','building.test.house',245,240));run(g,g.registry.get('unit.test.warrior').creation!.workTicks);expect(b.production!.produced).toBe(2);
  });
  it('rechecks supply between enqueue and training start, admitting only as many simultaneous starts as fit',()=>{
   const {g,b,c,mound,train}=setup();fillInitialSupply(g);train();train(c.id);g.economy.remove(mound);
-  const warrior=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.warrior')!;g.economy.remove(warrior);
+  const warrior=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.test.warrior')!;g.economy.remove(warrior);
   g.tick();expect([b,c].filter(e=>e.production!.active)).toHaveLength(1);expect(pool(g)).toMatchObject({used:14,training:1,reserved:2});
-  run(g,g.registry.get('unit.ants.warrior').creation!.workTicks*2);expect(b.production!.produced+c.production!.produced).toBe(1);
+  run(g,g.registry.get('unit.test.warrior').creation!.workTicks*2);expect(b.production!.produced+c.production!.produced).toBe(1);
  });
  it('does not reclaim a paused active reservation after capacity loss',()=>{
   const {g,b,mound,train}=setup();train();run(g,10);g.economy.pause(b,true);g.economy.remove(mound);
   run(g,50);expect(b.production!.active?.progress).toBe(10);expect(pool(g).training).toBe(1);
-  g.economy.pause(b,false);run(g,g.registry.get('unit.ants.warrior').creation!.workTicks-10);expect(b.production!.produced).toBe(1);
+  g.economy.pause(b,false);run(g,g.registry.get('unit.test.warrior').creation!.workTicks-10);expect(b.production!.produced).toBe(1);
  });
  it('releases supply on unit death and trainer destruction without affecting other players',()=>{
   const {g,b,train}=setup();train();train();expect(pool(g).reserved).toBe(2);
   g.economy.remove(b);expect(pool(g).reserved).toBe(0);
-  const w=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.settler')!;g.economy.remove(w);
+  const w=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.test.settler')!;g.economy.remove(w);
   expect(pool(g).used).toBe(8);expect(pool(g,'player.2')).toMatchObject({used:9,reserved:0});
  });
  it('hall worker escrow cannot be spent twice and cancel makes it available exactly once',()=>{
-  const {g,b,hall,train}=setup();g.state.wallets[hall.owner]={'item.amber':150};
-  expect(train(hall.id,'unit.ants.settler').accepted).toBe(true);
-  expect(g.economy.balance(hall.owner,'item.amber')).toBe(50);
+  const {g,b,hall,train}=setup();g.state.wallets[hall.owner]={'item.test.amber':150};
+  expect(train(hall.id,'unit.test.settler').accepted).toBe(true);
+  expect(g.economy.balance(hall.owner,'item.test.amber')).toBe(50);
   expect(train(b.id).accepted).toBe(false);
   const id=hall.production!.queue[0].id;expect(g.command('player.1',{type:'cancel',actor:hall.id,queue:id}).accepted).toBe(true);
-  expect(g.economy.balance(hall.owner,'item.amber')).toBe(150);
+  expect(g.economy.balance(hall.owner,'item.test.amber')).toBe(150);
   expect(g.command('player.1',{type:'cancel',actor:hall.id,queue:id}).accepted).toBe(false);
   expect(train(b.id).accepted).toBe(true);
  });
  it('trains paid workers at the hall and obeys its rally point',()=>{
   const {g,hall,train}=setup();hall.production!.rally={x:230,y:233};
-  expect(train(hall.id,'unit.ants.settler').accepted).toBe(true);run(g,g.registry.get('unit.ants.settler').creation!.workTicks-1);expect(hall.production!.produced).toBe(0);
-  g.tick();expect(hall.production!.produced).toBe(1);expect(g.state.accounting.consumed['item.amber']).toBe(100);
+  expect(train(hall.id,'unit.test.settler').accepted).toBe(true);run(g,g.registry.get('unit.test.settler').creation!.workTicks-1);expect(hall.production!.produced).toBe(0);
+  g.tick();expect(hall.production!.produced).toBe(1);expect(g.state.accounting.consumed['item.test.amber']).toBe(100);
   expect(g.entities.at(-1)!.unit!.order).toMatchObject({type:'move',destination:{x:230,y:233}});
  });
  it('sets and clears the rally through the command channel',()=>{
@@ -99,9 +99,9 @@ describe('definition-driven colony supply and direct training',()=>{
   expect(hall.production!.rally).toBeNull();
  });
  it('counts garrisoned units and reserves fallen hero revival once; started revival survives supply loss',()=>{
-  const {g,mound}=setup();const hero=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.ants.marshal')!;
+  const {g,mound}=setup();const hero=g.entities.find(e=>e.owner==='player.1'&&e.definition==='unit.test.marshal')!;
   hero.hp=0;hero.fallen=true;expect(pool(g).used).toBe(5);
-  const altar=g.context.create(placed('altar','building.ants.sanctuary',200,240));altar.readyTick=0;
+  const altar=g.context.create(placed('altar','building.test.sanctuary',200,240));altar.readyTick=0;
   expect(g.revival.enqueue(altar,hero.id)).toBeNull();expect(pool(g)).toMatchObject({used:5,reserved:4});
   expect(g.revival.enqueue(altar,hero.id)).toContain('already');
   g.revival.tick();expect(pool(g).training).toBe(4);g.economy.remove(mound);
@@ -117,9 +117,9 @@ describe('definition-driven colony supply and direct training',()=>{
   run(g,900);run(restored,900);expect(restored.snapshot()).toEqual(g.snapshot());expect(pool(restored)).toEqual(pool(g));expect(b.production!.produced).toBe(1);
  });
  it('validates supply declarations and exposes costs without worker inputs',()=>{
-  const draft=source();const warrior=(draft.definitions as any[]).find(d=>d.id==='unit.ants.warrior');
+  const draft=source();const warrior=(draft.definitions as any[]).find(d=>d.id==='unit.test.warrior');
   delete warrior.supplyCost;expect(()=>new ContentRegistry(draft)).toThrow(/supplyCost/);
-  const g=game();expect(costs(g.registry,'unit.ants.archer').at(-1)).toMatchObject({kind:'supply',amount:1});
+  const g=game();expect(costs(g.registry,'unit.test.archer').at(-1)).toMatchObject({kind:'supply',amount:1});
   for(const d of g.registry.definitions){if(d.kind==='unit')expect(d.supplyCost).toBeGreaterThanOrEqual(0);expect(d.creation??{}).not.toHaveProperty('unitInput');}
  });
 });

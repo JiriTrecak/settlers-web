@@ -1,18 +1,20 @@
 import {expect,it,vi} from 'vitest';
 import {abilitySchema,type Effect} from '../../src/content/abilities/schema';
-import {coreAbilities} from '../../src/content/abilities/core';
-import {encounterSettingsSchema,applyEncounterPreset,encounterPresetId} from '../../src/content/abilities/encounter';
+import {applyEncounterPreset,encounterPresetId} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellCorpses,selectCorpses,type CorpseView,CORPSE_TICKS} from '../../src/sim/abilities/corpses';
 import {abilityAimScore,corpseAbilityAims} from '../../src/sim/abilities/ai';
 import {colonySupply} from '../../src/sim/game/supply';
 import {SpellEditorService} from '../../tooling/spell-editor/server/service';
 import type {PreviewState} from '../../tooling/spell-editor/shared/view';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.feral-spirit')!;
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource,useEditorWorkspace} from './encounter-harness';
+const workspace=useEditorWorkspace();
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.feral-spirit')!;
 const operation:Extract<Effect,{op:'resurrect'}>={op:'resurrect',target:'caster',amount:6,corpses:{radius:12,relations:['ally'],order:'strongest'},healthPermille:1000,manaPermille:0,placementRadius:3,supply:'allow-over-cap'};
 function definition(op:Partial<typeof operation>={}){return abilitySchema.parse({...base,cast:{...base.cast,cost:{...base.cast.cost,amount:0},cooldown:{...base.cast.cooldown,ticks:0}},onRelease:[{...operation,...op}]});}
-const presentation=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
-function fixture(op:Partial<typeof operation>={},settings={}){const a=definition(op);const f=createAbilityEncounter(a,presentation,encounterSettingsSchema.parse({relationship:'ally',targetCount:6,distance:5,fallenTargets:true,combat:false,...settings}));return {...f,a,store:new SpellCorpses(f.game.context)};}
+const presentation=testAbilities.presentations.find(p=>p.id===base.presentation)!;
+function fixture(op:Partial<typeof operation>={},settings={}){const a=definition(op);const f=createAbilityEncounter(a,presentation,testSettings({relationship:'ally',targetCount:6,distance:5,fallenTargets:true,combat:false,...settings}),false,encounterSource());return {...f,a,store:new SpellCorpses(f.game.context)};}
 function cast(f:ReturnType<typeof fixture>){expect(f.game.abilities.cast(f.caster,'preview',f.caster)).toBeNull();for(let i=0;i<30;i++)f.game.tick();}
 const raise=(f:ReturnType<typeof fixture>,op=operation,visible=(_:CorpseView)=>true)=>f.store.resurrect(op,f.a,1,{x:120,y:120},visible,c=>c.owner==='player.1'?'ally':'enemy');
 it('raises six allied corpses with fresh identities, full health and one event each',()=>{
@@ -57,17 +59,17 @@ it('rejects out-of-bounds or missing ranked resurrection parameters',()=>{
  for(const patch of [{amount:9},{amount:0},{healthPermille:0},{healthPermille:1001},{manaPermille:1001},{corpses:{...operation.corpses,radius:33}},{healthPermille:{rankParameter:'absent'}}])expect(()=>definition(patch)).toThrow();
 });
 it('workbench fallen fixture resets and scrubs resurrection deterministically',async()=>{
- const a=definition(),service=new SpellEditorService('/tmp'),p={...presentation,effects:[],icon:undefined};
- await service.execute({op:'preview.load',document:{definition:a,presentation:p},settings:{relationship:'ally',targetCount:6,fallenTargets:true,distance:5}});
+ const a=definition(),service=new SpellEditorService(workspace()),p={...presentation,effects:[],icon:undefined};
+ await service.execute({op:'preview.load',document:{definition:a,presentation:p},settings:testSettings({relationship:'ally',targetCount:6,fallenTargets:true,distance:5})});
  const state=()=>service.state() as PreviewState;expect(state().corpses).toHaveLength(6);expect(state().entities).toHaveLength(1);
  for(let i=0;i<2;i++){await service.execute({op:'preview.cast'});await service.execute({op:'preview.seek',tick:30});expect(state().entities).toHaveLength(7);expect(state().corpses).toHaveLength(0);const hash=state().checksum;await service.execute({op:'preview.seek',tick:0});expect(state().corpses).toHaveLength(6);await service.execute({op:'preview.seek',tick:30});expect(state().checksum).toBe(hash);}
 });
 
-it('fallen setup is independent of spells and selecting another setup clears it',()=>{const settings=applyEncounterPreset(encounterSettingsSchema.parse({}),'fallen-allies');expect(encounterPresetId(settings)).toBe('fallen-allies');expect(applyEncounterPreset(settings,'ally-group').fallenTargets).toBe(false);});
+it('fallen setup is independent of spells and selecting another setup clears it',()=>{const settings=applyEncounterPreset(testSettings({}),'fallen-allies');expect(encounterPresetId(settings)).toBe('fallen-allies');expect(applyEncounterPreset(settings,'ally-group').fallenTargets).toBe(false);});
 
 it('point resurrection samples corpse positions and raises from the selected area',()=>{
  const a=abilitySchema.parse({...definition({target:'point',corpses:{...operation.corpses,radius:3}}),targeting:{...base.targeting,kind:'point',range:24,radius:3}});
- const f=createAbilityEncounter(a,presentation,encounterSettingsSchema.parse({relationship:'ally',fallenTargets:true,targetCount:1,distance:10}));const store=new SpellCorpses(f.game.context);
+ const f=createAbilityEncounter(a,presentation,testSettings({relationship:'ally',fallenTargets:true,targetCount:1,distance:10}),false,encounterSource());const store=new SpellCorpses(f.game.context);
  expect(corpseAbilityAims(a,store.views())).toEqual([{id:f.target,x:130,y:120}]);expect(corpseAbilityAims(base,store.views())).toEqual([]);
  expect(f.game.abilities.cast(f.caster,'preview',{x:130,y:120})).toBeNull();for(let i=0;i<30;i++)f.game.tick();expect(f.game.state.corpses).toEqual([]);expect(f.game.entities).toHaveLength(2);
 });

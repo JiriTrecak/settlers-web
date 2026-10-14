@@ -27,7 +27,7 @@ function context(profile:Profile,bridge=false) {
 it('requires explicit unit dimensions and does not derive gameplay from model or asset metadata',()=>{
  const raw=source(),before=JSON.stringify(raw),baseline=new ContentRegistry(raw);
  expect(JSON.stringify(raw)).toBe(before);
- const edited=source(),unit=(edited.definitions as AuthoredDefinition[]).find(d=>d.id==='unit.ants.warrior')!;
+ const edited=source(),unit=(edited.definitions as AuthoredDefinition[]).find(d=>d.id==='unit.test.warrior')!;
  unit.modelScale=4;
  const changed=new ContentRegistry(edited),a=baseline.get(unit.id),b=changed.get(unit.id);
  expect(b.dimensions).toEqual(a.dimensions);expect(b.behaviors).toEqual(a.behaviors);
@@ -41,7 +41,7 @@ it('requires explicit unit dimensions and does not derive gameplay from model or
 it('moves at its authored speed regardless of body and presentation size',()=>{
  const travel=(profile:Profile,speed:number,modelScale:number)=>{
   const raw=source();setBody(raw,profile);
-  const d=(raw.definitions as AuthoredDefinition[]).find(d=>d.id==='unit.ants.warrior')!;
+  const d=(raw.definitions as AuthoredDefinition[]).find(d=>d.id==='unit.test.warrior')!;
   d.behaviors!.movement!.speed=speed;d.modelScale=modelScale;
   const c=new GameContext(emptyState(),new ContentRegistry(raw),emptyUtcMap()),e=c.create({...placed('runner',d.id,100,100),rotation:90});
   c.spatial.rebuild();expect(c.spatial.route(e,{x:140,y:100},false)).toBe(true);
@@ -55,8 +55,8 @@ it('moves at its authored speed regardless of body and presentation size',()=>{
 
 it('uses declared bodies for terrain, actual unit collisions, indexed broad phase and free spawn positions', () => {
   for(const profile of ['small','standard'] as const){
-    const c=context(profile), mover=c.create(placed('mover','unit.ants.warrior',100,100));
-    const other=c.create(placed('other','unit.ants.warrior',101,100));
+    const c=context(profile), mover=c.create(placed('mover','unit.test.warrior',100,100));
+    const other=c.create(placed('other','unit.test.warrior',101,100));
     other.unit!.position=fixed({x:100.6,y:100});
     c.spatial.rebuild();
     expect(c.spatial.unitRadius).toBe(Math.round(profiles[profile].radius*1000));
@@ -77,7 +77,7 @@ it('plans around an undersized gate instead of returning a route the enlarged bo
     const c=context(profile,layered), s=c.spatial;
     // One short single-cell gate and a wider alternative farther south.
     for(let y=0;y<s.size;y++)if(y!==10&&(y<20||y>22))s.terrain[y*s.size+20]=0;
-    s.navigation.invalidate();s.sectors.invalidate();s.sectors.prepare();
+    s.rebuild();
     const from=s.cell({x:10,y:10}), to=s.cell({x:30,y:10});
     const path=s.findPath(from,to)!;expect(path).not.toBeNull();
     expect(path.some(id=>s.point(id).x===20&&s.point(id).y===(profile==='small'?10:21))).toBe(true);
@@ -90,7 +90,7 @@ it('replans wide-body clearance when an adjacent building appears and disappears
   const c=context('wide'),s=c.spatial,from=s.cell({x:10,y:10}),to=s.cell({x:30,y:10});
   expect(s.findPath(from,to)).toContain(s.cell({x:20,y:10}));
   // A one-cell resource next to (not on) the route still clips a 1.2-wide body.
-  const tree=c.create({...placed('obstacle','resource.forest.tree',20,11),owner:'none'});
+  const tree=c.create({...placed('obstacle','resource.test.forest-tree',20,11),owner:'none'});
   s.rebuild();const diverted=s.findPath(from,to)!;
   expect(diverted).not.toContain(s.cell({x:20,y:10}));
   c.remove(tree);s.rebuild();expect(s.findPath(from,to)).toContain(s.cell({x:20,y:10}));
@@ -110,7 +110,7 @@ it('requires authored headroom under bridges and spreads formation slots for lar
 });
 
 it('preserves deterministic movement through a save and rejects saves from a different body definition',()=>{
-  const entities=[placed('walker','unit.ants.warrior',100,100)];
+  const entities=[placed('walker','unit.test.warrior',100,100)];
   const setup=(profile:Profile)=>game(entities,raw=>setBody(raw,profile));
   const a=setup('standard'),b=setup('standard'),e=a.entities.find(e=>e.placement==='walker')!;
   expect(a.command(e.owner,{type:'move',actors:[e.id],destination:{x:130,y:110}}).accepted).toBe(true);
@@ -120,7 +120,7 @@ it('preserves deterministic movement through a save and rejects saves from a dif
 });
 
 it('moves two enlarged armies through a passage without overlaps or stranded units',()=>{
-  const placements=Array.from({length:24},(_,i)=>placed('army.'+i,'unit.ants.warrior',i<12?100+i%3:130+i%3,98+Math.floor(i%12/3)*2));
+  const placements=Array.from({length:24},(_,i)=>placed('army.'+i,'unit.test.warrior',i<12?100+i%3:130+i%3,98+Math.floor(i%12/3)*2));
   const g=game(placements,raw=>setBody(raw,'standard')),army=g.entities.filter(e=>e.placement?.startsWith('army.'));
   for(let y=0;y<256;y++)if(y<100||y>102)g.spatial.terrain[y*256+116]=0;
   g.spatial.navigation.invalidate();g.spatial.sectors.invalidate();g.spatial.sectors.prepare();
@@ -141,8 +141,8 @@ it('moves two enlarged armies through a passage without overlaps or stranded uni
 it('uses individual dimensions for mixed-size collisions, gates and bridge headroom',()=>{
  const raw=source();
  const definitions=raw.definitions as any[];
- const small=definitions.find(d=>d.id==='unit.ants.warrior');
- const tall=definitions.find(d=>d.id==='unit.ants.archer');
+ const small=definitions.find(d=>d.id==='unit.test.warrior');
+ const tall=definitions.find(d=>d.id==='unit.test.archer');
  small.dimensions={radius:.2,height:1.5,formationSpacing:1};
  tall.dimensions={radius:.65,height:5,formationSpacing:1.4};
  const c=new GameContext(emptyState(),new ContentRegistry(raw),{...emptyUtcMap(),stamps:[{id:'arch',asset:'leafbound-twig-bridge',x:40,y:40}]});
@@ -152,7 +152,7 @@ it('uses individual dimensions for mixed-size collisions, gates and bridge headr
  b.unit!.position=fixed({x:100.8,y:100});
  for(const indexed of [false,true]){if(indexed)c.spatial.beginUnitMovement();expect(c.spatial.unitSegmentClear(fixed(a),fixed(a),a.id)).toBe(false);expect(c.spatial.unitSegmentClear(fixed(precise(b)),fixed(precise(b)),b.id)).toBe(false);c.spatial.endUnitMovement();}
  const s=c.spatial;for(let y=0;y<s.size;y++)if(y!==10&&(y<20||y>22))s.terrain[y*s.size+20]=0;
- s.navigation.invalidate();s.sectors.invalidate();s.sectors.prepare();
+ s.rebuild();
  const from=s.cell({x:10,y:10}),to=s.cell({x:30,y:10});
  expect(s.findPath(from,to,undefined,Infinity,a)).toContain(s.cell({x:20,y:10}));
  const wide=s.findPath(from,to,undefined,Infinity,b)!;expect(wide).not.toContain(s.cell({x:20,y:10}));expect(wide).toContain(s.cell({x:20,y:21}));

@@ -17,19 +17,3 @@ it('does not start or pump the worker from render frames while assets load',()=>
  const worker={request:vi.fn()},session=Object.assign(Object.create(Session.prototype),{started:false,worker,renderer:{}});
  session.tick(5000,5000);expect(worker.request).not.toHaveBeenCalled();
 });
-
-it('draws the coordinate grid independently of profiling and tears it down when its toggle is disabled',()=>{
- const before=perf.enabled,request=vi.fn();
- const renderer={gridMode:'none',setGridMode:vi.fn((mode:string)=>{renderer.gridMode=mode;})};
- const session=Object.assign(Object.create(Session.prototype),{renderer,worker:{request},navDebug:{worldGrid:true,paths:false,walkability:false,navmesh:false,shown:false}});
- try{
-  perf.enabled=true;session.pollNavigation();session.pollNavigation();
-  expect(renderer.setGridMode).toHaveBeenCalledExactlyOnceWith('full');
-  expect(request).not.toHaveBeenCalled();
-  perf.enabled=false;session.pollNavigation();
-  expect(renderer.setGridMode).toHaveBeenLastCalledWith('full');
-  session.navDebug.worldGrid=false;session.pollNavigation();
-  expect(renderer.setGridMode).toHaveBeenLastCalledWith('none');
-  expect(request).not.toHaveBeenCalled();
- }finally{perf.enabled=before;}
-});

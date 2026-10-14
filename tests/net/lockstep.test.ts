@@ -8,6 +8,7 @@ import {
 } from "../../src/shared";
 import { Lockstep, MemoryChannel, Room } from "../../src/net";
 import { World } from "../../src/sim/world/world";
+import { testContent } from "../fixtures/content";
 
 function kit(seed: number, slotCount: number): World {
   const config = localMatch({
@@ -29,7 +30,7 @@ function kit(seed: number, slotCount: number): World {
         mainFort: `start.player.${s.player + 1}/main-fort`,
       })),
     };
-  return new World({ map, slots: config.slots, seed });
+  return new World({ map, slots: config.slots, seed, registry: testContent });
 }
 
 function apply(world: World, commit: Commit): void {

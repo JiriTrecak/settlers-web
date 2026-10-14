@@ -20,13 +20,6 @@
       "bytes": 2312618
     },
     {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "f354e9905b1537a280c79dbee6155c3abf1b752eeb7956f68a9c48992fc590b7",
-      "bytes": 946
-    },
-    {
       "role": "geometry",
       "index": 1,
       "format": "glb",
@@ -41,60 +34,11 @@
       "bytes": 16676
     },
     {
-      "role": "preview",
-      "index": 1,
-      "format": "png",
-      "sha256": "b57471e5261e2370e52fc909cf3ac52b18f316e49577b85f2b2f04136a1101cb",
-      "bytes": 613706
-    },
-    {
-      "role": "preview",
-      "index": 2,
-      "format": "png",
-      "sha256": "a0c7815dce2fb27fb8fa19551eb76ae046f4bb0aa8ef822e34e292eb62bc23f0",
-      "bytes": 594299
-    },
-    {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "11888d18320a98975688d2e26f186418bd7dc04f4d4b479e9e5e1036b0387cb8",
-      "bytes": 8456
-    },
-    {
-      "role": "recipe",
-      "index": 2,
-      "format": "py",
-      "sha256": "7632508b1a96c9356213149ea278c98c1739327efcaf5cc417a1c3b45068b05e",
-      "bytes": 4807
-    },
-    {
-      "role": "recipe",
-      "index": 3,
-      "format": "py",
-      "sha256": "083d5fabcf4fc86a6b691587a788bf515172ce9dff934cb0f9aa38eae69b7f0f",
-      "bytes": 7513
-    },
-    {
-      "role": "reference",
-      "index": 1,
-      "format": "png",
-      "sha256": "787cc88e35ab18415aa087c08485566b1bdfe8e1ed594df4112e80b0fe16bfa1",
-      "bytes": 1336850
-    },
-    {
       "role": "source",
       "index": 1,
       "format": "blend",
       "sha256": "aba93b0b4cbcc8b0784aeb01b6f4f137f4b23b8afef138fc4ca1a6144bb8464d",
       "bytes": 42887987
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "glb",
-      "sha256": "6848e9d587fc1aae76cedf5c65f819acf30e63d70fc5290a69a34df44e4f872e",
-      "bytes": 8793004
     },
     {
       "role": "team_mask",

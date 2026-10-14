@@ -2,16 +2,16 @@ import {expect,it} from 'vitest';
 import {source} from '../game/helpers';
 import type {AuthoredDefinition} from '../../src/content/schema';
 import {abilitySchema,type AbilityDefinition} from '../../src/content/abilities/schema';
-import {coreAbilities} from '../../src/content/abilities/core';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {abilityAimScore} from '../../src/sim/abilities/ai';
 import {SpellEditorService} from '../../tooling/spell-editor/server/service';
 import type {PreviewState} from '../../tooling/spell-editor/shared/view';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.spirit-swarm')!,p=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
+import {testAbilities} from '../fixtures/content';
+import {testSettings,editorWorkspace,runLockstep} from './encounter-harness';
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.spirit-swarm')!,p=testAbilities.presentations.find(p=>p.id===base.presentation)!;
 function fixture(delivery:Record<string,unknown>={},settings:Record<string,unknown>={},extra:Partial<AbilityDefinition>={},baseSource=source()){
  const a=abilitySchema.parse({...base,cast:{...base.cast,prepareTicks:0,recoverTicks:0,cost:{...base.cast.cost,amount:0}},delivery:{...base.delivery,count:1,speed:8,launchIntervalTicks:0,maxHitsPerTrip:1,returnPermille:1000,...delivery},...extra});
- const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',targetCount:1,targetHealth:500,distance:8,mana:1000,...settings}),false,baseSource);
+ const f=createAbilityEncounter(a,p,testSettings({relationship:'enemy',targetCount:1,targetHealth:500,distance:8,mana:1000,...settings}),false,baseSource);
  return {...f,a,c:()=>f.game.context.get(f.caster)!,t:()=>f.game.context.get(f.target)!};
 }
 type Fixture=ReturnType<typeof fixture>;
@@ -49,7 +49,7 @@ it('carries actual overkill-limited damage and never restores the authored maxim
 });
 it('mana payloads use the same delayed return and clamp to capacity',()=>{
  const f=fixture({}, {},{onRelease:[{op:'drain',target:'target',amount:30,resource:'mana',restoreCaster:true,damageType:'spell',damagePerDrainedPermille:0}]});
- const t=f.game.context.create({id:'mage',definition:'unit.ants.marshal',owner:'player.2',position:{x:125,y:120},rotation:270});t.abilities!.mana=17;f.game.context.remove(f.t());f.c().abilities!.mana=100;cast(f);
+ const t=f.game.context.create({id:'mage',definition:'unit.test.marshal',owner:'player.2',position:{x:125,y:120},rotation:270});t.abilities!.mana=17;f.game.context.remove(f.t());f.c().abilities!.mana=100;cast(f);
  until(f,()=>t.abilities!.mana===0);expect(f.c().abilities!.mana).toBe(100);until(f,()=>f.c().abilities!.mana>100);expect(f.c().abilities!.mana).toBe(117);
 });
 it('damage-only payloads return after their bounded trip without healing',()=>{
@@ -81,9 +81,9 @@ it('scores observed enemy payloads, never the self-cast target',()=>{
  expect(abilityAimScore(f.a,1,c,c,[c,t],relation,'enemy')).toBeGreaterThan(0);expect(abilityAimScore(f.a,1,c,c,[c],relation,'enemy')).toBe(0);
 });
 it('publishes a reusable proof and rewinds repeated workbench casts with saved seeker poses',async()=>{
- const s=new SpellEditorService(process.cwd());await s.execute({op:'preview.load',document:{definition:base,presentation:p},settings:{relationship:'enemy',targetCount:3,targetHealth:500,distance:8}});
+ const w=await editorWorkspace(),s=new SpellEditorService(w.root);try{await s.execute({op:'preview.load',document:{definition:base,presentation:p},settings:testSettings({relationship:'enemy',targetCount:3,targetHealth:500,distance:8})});
  for(let i=0;i<3;i++){await s.execute({op:'preview.cast'});await s.execute({op:'preview.seek',tick:190});const state=s.state() as PreviewState;expect(state.events.some(e=>e.event==='returned')).toBe(true);expect(state.deliveries?.length).toBeGreaterThan(0);const hash=state.checksum;await s.execute({op:'preview.seek',tick:1});await s.execute({op:'preview.seek',tick:190});expect((s.state() as PreviewState).checksum).toBe(hash);}
-});
+}finally{await w.dispose();}});
 it('prevents admission beyond the world delivery budget without partial groups or spending mana',()=>{
  const f=fixture({count:32,speed:1},{targetCount:0});
  for(let i=0;i<16;i++){f.c().abilities!.cooldowns={};cast(f);}expect(f.game.state.spellDeliveries).toHaveLength(512);
@@ -98,28 +98,21 @@ it('forgets unseen targets instead of following their hidden positions',()=>{
 it('cannot bite through a newly applied spell immunity',async()=>{
  const {SpellStatuses}=await import('../../src/sim/abilities/statuses');const {releaseEffects}=await import('../../src/content/abilities/schema');
  const f=fixture({speed:1});cast(f);tick(f,5);
- const protection=coreAbilities.abilities.find(a=>a.id==='ability.core.avatar')!;
+ const protection=testAbilities.abilities.find(a=>a.id==='ability.test.avatar')!;
  for(const op of releaseEffects(protection,1,'ally'))new SpellStatuses(f.game).apply(f.target,f.target,protection,1,f.game.state.nextCast++,op);
  tick(f,120);expect(f.t().hp).toBeGreaterThanOrEqual(500);expect(f.game.abilities.observedEvents().some(e=>e.event==='drained')).toBe(false);
 });
 it('expires even if the source keeps outrunning the returning seeker',()=>{
  const f=fixture({durationTicks:60,returnTimeoutTicks:10,speed:1});cast(f);tick(f,59);f.c().x-=20;tick(f,11);expect(f.game.state.spellDeliveries).toHaveLength(0);
 });
-it('uses real delayed multiplayer commits with a mid-flight World restore',async()=>{
- const {Room,Lockstep,MemoryChannel}=await import('../../src/net');const {World}=await import('../../src/sim/world/world');const {localMatch}=await import('../../src/shared');
- const f=fixture({count:8,launchIntervalTicks:8},{targetCount:3}),opts={map:f.game.map,slots:f.game.slots,registry:f.game.registry,seed:23};
- const worlds=[new World(opts),new World(opts)],config={...localMatch({mapId:'swarm-proof',mapRevision:'test',seed:23,slotCount:2,me:0,delay:3}),slots:[...f.game.slots]};
- const room=new Room(config),channels=[new MemoryChannel(room,0),new MemoryChannel(room,1)],peers=channels.map((c,i)=>new Lockstep(c,i,3));
- peers[0].send({type:'castAbility',actor:f.caster,binding:'preview',target:{kind:'unit',entity:f.caster}});
- let launched=false,hit=false;try{for(let tick=1;tick<=350;tick++){
-  peers[tick%2].confirm(tick);peers[1-tick%2].confirm(tick);
-  for(let i=0;i<2;i++){const commit=peers[i].take(tick)!;expect(commit).toBeTruthy();for(const slot of commit.slots)slot.actions.forEach((action,seq)=>worlds[i].enqueue(action,commit.tick,{player:slot.player,seq}));worlds[i].tick();}
-  launched ||= worlds[0].settlement.state.spellDeliveries.length>0;hit ||= worlds[0].settlement.abilities.observedEvents().some(e=>e.event==='drained');
-  if(tick===70){const snapshot=JSON.parse(JSON.stringify(worlds[1].snapshot()));worlds[1]=new World(opts);worlds[1].restore(snapshot);}
-  expect(worlds[1].checksum(),`lockstep tick ${tick}`).toBe(worlds[0].checksum());
- }expect(launched).toBe(true);expect(hit).toBe(true);}finally{channels.forEach(c=>c.destroy());}
+it('uses real delayed multiplayer commits with a mid-flight World restore',()=>{
+ const f=fixture({count:8,launchIntervalTicks:8},{targetCount:3});let launched=false,hit=false;
+ runLockstep(f.game,{type:'castAbility',actor:f.caster,binding:'preview',target:{kind:'unit',entity:f.caster}},350,{seed:23,restoreAt:[70],onTick:(_,world)=>{
+  launched||=world.settlement.state.spellDeliveries.length>0;hit||=world.settlement.abilities.observedEvents().some(e=>e.event==='drained');
+ }});
+ expect(launched).toBe(true);expect(hit).toBe(true);
 });
 it('ends editor delivery tracks when the caster disappears, not at the maximum return timeout',async()=>{
- const s=new SpellEditorService(process.cwd());await s.execute({op:'preview.load',document:{definition:base,presentation:p},settings:{relationship:'enemy',distance:8}});await s.execute({op:'preview.cast'});await s.execute({op:'preview.seek',tick:80});await s.execute({op:'preview.kill',subject:'caster'});await s.execute({op:'preview.step',ticks:2});const state=s.state() as PreviewState;
+ const w=await editorWorkspace(),s=new SpellEditorService(w.root);try{await s.execute({op:'preview.load',document:{definition:base,presentation:p},settings:testSettings({relationship:'enemy',distance:8})});await s.execute({op:'preview.cast'});await s.execute({op:'preview.seek',tick:80});await s.execute({op:'preview.kill',subject:'caster'});await s.execute({op:'preview.step',ticks:2});const state=s.state() as PreviewState;
  expect(state.deliveries).toHaveLength(0);const tracks=state.timelineEvents.filter(e=>e.event==='projectile');expect(tracks.length).toBeGreaterThan(0);expect(tracks.every(e=>e.endedTick!==undefined&&e.endedTick<=82)).toBe(true);
-});
+}finally{await w.dispose();}});

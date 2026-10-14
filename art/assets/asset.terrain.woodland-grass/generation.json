@@ -1,7 +1,0 @@
-{
-  "method": "imagegen (user-provided) graded by art/recipes/grade_terrain_tile.py 30 54 21",
-  "originalPixels": true,
-  "brief": "Painted leafy meadow ground; seamless; luminance doubles as clump height for the grass-over-dirt blend.",
-  "source": "gen-grass-graded.png",
-  "packing": "Periodic normal/height derived from luminance; original colors retained."
-}

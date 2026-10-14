@@ -20,9 +20,4 @@ describe("declared interface artwork", () => {
       expect(html).not.toContain("background-position:");
     }
   });
-  it("keeps basic/advanced build and raw/processed timber distinct", () => {
-    expect(content.actions.categories["category.build"].icon).toBe("icon.action.build");
-    expect(content.actions.categories["category.build-advanced"].icon).toBe("icon.action.build-advanced");
-    expect(content.asset("icon.item.wood").image).not.toBe(content.asset("icon.item.plank").image);
-  });
 });

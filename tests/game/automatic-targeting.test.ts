@@ -4,28 +4,28 @@ import {heading} from '../../src/sim/game/facing';
 afterEach(()=>vi.restoreAllMocks());
 
 function pursuit(explicit=false){
-  const g=game([placed('actor','unit.ants.warrior',100,100),
-    {...placed('far','unit.ants.warrior',110,100),owner:'player.2'}]);
+  const g=game([placed('actor','unit.test.warrior',100,100),
+    {...placed('far','unit.test.warrior',110,100),owner:'player.2'}]);
   const actor=g.entities.find(e=>e.placement==='actor')!,far=g.entities.find(e=>e.placement==='far')!;
   actor.rotation=90;
   g.command('player.2',{type:'hold',actors:[far.id]});
   g.command('player.1',explicit?{type:'attack',actors:[actor.id],target:far.id}:
     {type:'move',actors:[actor.id],destination:{x:110,y:100},attackMove:true});
   g.tick();expect(actor.unit!.target).toBe(far.id);
-  const near=g.context.create({...placed('near','unit.ants.warrior',103,103),owner:'player.2'});
+  const near=g.context.create({...placed('near','unit.test.warrior',103,103),owner:'player.2'});
   g.command('player.2',{type:'hold',actors:[near.id]});g.observation.update();
   return {g,actor,far,near};
 }
 
 it('engages an enemy in weapon range instead of pursuing a distant automatic target',()=>{
-  const {g,actor,near}=pursuit();
+  const {g,actor,near}=pursuit(),hp=near.hp!;
   for(let i=0;i<8;i++)g.tick();
   expect(actor.unit!.target).toBe(near.id);
   expect(actor.unit!.pursuit?.target).toBe(near.id);
   expect(actor.unit!.route).toEqual([]);
   expect(actor.unit!.order?.type).toBe('move');
   for(let i=0;i<50;i++)g.tick();
-  expect(near.hp).toBeLessThan(300);
+  expect(near.hp).toBeLessThan(hp);
 });
 
 it('keeps explicit focus fire even when another enemy is closer',()=>{
@@ -59,15 +59,15 @@ it('does not replace a target with a hidden nearby enemy',()=>{
 });
 
 it('retains a committed swing when its victim retreats and another enemy enters range',()=>{
-  const g=game([placed('actor','unit.ants.warrior',100,100),
-    {...placed('victim','unit.ants.warrior',103,100),owner:'player.2'}]);
+  const g=game([placed('actor','unit.test.warrior',100,100),
+    {...placed('victim','unit.test.warrior',103,100),owner:'player.2'}]);
   const actor=g.entities.find(e=>e.placement==='actor')!,victim=g.entities.find(e=>e.placement==='victim')!;
   actor.rotation=heading(actor,victim);
   g.command('player.2',{type:'hold',actors:[victim.id]});
   g.command('player.1',{type:'move',actors:[actor.id],destination:{x:110,y:100},attackMove:true});
   g.tick();const strike={...actor.unit!.attack!};expect(strike.target).toBe(victim.id);
   victim.x=107;victim.unit!.position=null;victim.unit!.segment=null;
-  const near=g.context.create({...placed('near','unit.ants.warrior',103,103),owner:'player.2'});
+  const near=g.context.create({...placed('near','unit.test.warrior',103,103),owner:'player.2'});
   g.command('player.2',{type:'hold',actors:[near.id]});g.observation.update();
   while(g.state.tick<strike.ends-1){g.tick();expect(actor.unit!.target).toBe(victim.id);expect(actor.unit!.attack?.started).toBe(strike.started);}
 });

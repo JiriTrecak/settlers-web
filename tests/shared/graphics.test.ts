@@ -24,9 +24,8 @@ describe('render resolution',()=>{
   expect(dispatchEvent.mock.lastCall![0]).toMatchObject({type:GRAPHICS_CHANGED,detail:'2560x1440'});
   setRenderResolution('native');expect(readRenderResolution()).toBe('native');
  });
- it('ignores obsolete percentages and damaged preferences',()=>{
-  const {data,dispatchEvent}=storage();data.set('utc.graphics.resolution-scale','0.5');
-  expect(readRenderResolution()).toBe('native');
+ it('ignores damaged preferences',()=>{
+  const {data,dispatchEvent}=storage();
   data.set(RESOLUTION_KEY,'garbage');expect(readRenderResolution()).toBe('native');
   setRenderResolution('garbage' as RenderResolution);expect(dispatchEvent).not.toHaveBeenCalled();
  });

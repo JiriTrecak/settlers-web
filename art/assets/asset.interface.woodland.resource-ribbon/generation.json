@@ -1,6 +1,0 @@
-{
-  "tool": "built-in image_gen",
-  "prompt": "Use case: stylized-concept. Asset type: transparent game HUD resource ribbon. Create ONE finished horizontal woodland resource panel to sit just above the right-hand command buttons in the supplied interface. Input image is STYLE REFERENCE ONLY, do not recreate whole interface. Hand-painted carved intertwined warm brown roots, lush olive-green oak leaves, small amber resin beads, matching the reference's painterly shaded highlights and crisp contours. Single continuous shallow horizontal dark charcoal bark inset, wide unobstructed blank interior for four resource counters laid out in a row. NO dividers, NO vertical bars, NO boxes, NO icons, NO letters, NO numbers. Thin organic woody rim, leaf clusters concentrated at ends, modest leaves and resin along top/bottom; keep center 85 percent width and 60 percent height dark and unobstructed. Ribbon must occupy almost entire canvas width with small transparent margin; approximate silhouette width to height ratio 4.5:1. Orthographic front view, symmetrical balance but natural asymmetry. Actual transparent background outside the ribbon. This is a UI asset, not a scene or mockup.\n",
-  "reference": "image.woodland-connected-hud",
-  "processing": "Trim transparent exterior; resize to 1024px wide; WebP quality 94 with alpha preserved."
-}

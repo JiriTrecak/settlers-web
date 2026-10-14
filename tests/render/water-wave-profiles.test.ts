@@ -7,7 +7,8 @@ import {flatTerrainData,restoreTerrain} from '../../src/shared/map/terrainData';
 import {biomeById} from '../../src/content/biomes';
 
 it('validates authored wave controls and rejects inverted depth transitions',()=>{
- const profile=landscapeAssets.find(a=>a.id==='water.clear-forest')!.water!;
+ // ENGINE-COUPLED: water profiles live in the shipped landscape catalogue; start from the default biome's water.
+ const profile=landscapeAssets.find(a=>a.id===biomeById().waterProfile)!.water!;
  expect(waterProfileSchema.parse(profile).waves).toEqual(profile.waves);
  for(const patch of [{height:-1},{length:0},{speed:Infinity},{depthEnd:.2,depthStart:.5},{shallowStrength:2},{shoreWidth:0},{crestStrength:NaN}]){
   expect(waterProfileSchema.safeParse({...profile,waves:{...DEFAULT_WATER_WAVES,...patch}}).success).toBe(false);
@@ -16,9 +17,10 @@ it('validates authored wave controls and rejects inverted depth transitions',()=
 
 it('packs independent default and local wave settings without changing saved water or topology',()=>{
  const field=new HeightField(32);restoreTerrain(field,flatTerrainData(32,-2,0));
- field.cellWater!.profiles=['water.muddy'];field.cellWater!.flow[3]=1;
+ const local=landscapeAssets.find(a=>a.water&&a.id!==biomeById(field.biome).waterProfile)!;
+ field.cellWater!.profiles=[local.id];field.cellWater!.flow[3]=1;
  const original=structuredClone(field.cellWater),heights=field.samples.slice(),first=waterSurface(field);
- const profiles=[landscapeAssets.find(a=>a.id===biomeById(field.biome).waterProfile)!.water!,landscapeAssets.find(a=>a.id==='water.muddy')!.water!];
+ const profiles=[landscapeAssets.find(a=>a.id===biomeById(field.biome).waterProfile)!.water!,local.water!];
  expect(first.profiles).toHaveLength(256*WATER_PROFILE_ROWS*4);
  profiles.forEach((p,id)=>{
   const w=p.waves??DEFAULT_WATER_WAVES;

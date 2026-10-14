@@ -1,14 +1,16 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {entityStats} from '../../src/sim/game/stats';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.metamorphosis')!;
-function fixture(profile='unit.ants.archer'){
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.metamorphosis')!;
+function fixture(profile='unit.test.archer'){
  const a=abilitySchema.parse({...base,onRelease:base.onRelease.map(op=>op.op==='status'?{...op,form:{...op.form,combatProfile:profile}}:op)});
- const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({combat:true,relationship:'enemy',distance:8,targetHealth:500}));
+ const f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,combat:true,relationship:'enemy',distance:8,targetHealth:500}),false,testSource());
  const c=f.game.context.get(f.caster)!,t=f.game.context.get(f.target)!;
  // Hold the victim so range and projectile travel assertions remain independent of pursuit.
  f.game.command('player.2',{type:'hold',actors:[t.id]});
@@ -19,13 +21,13 @@ function until(f:ReturnType<typeof fixture>,predicate:()=>boolean){for(let i=0;i
 it('replaces only the weapon policy and shares resolved stats without changing identity or body',()=>{
  const f=fixture(),original=f.game.registry.get(f.c.definition);transform(f);
  expect(f.c.definition).toBe('unit.preview.caster');expect(f.game.context.def(f.c).body).toBe(original.body);
- expect(f.game.context.def(f.c).behaviors.combat).toBe(f.game.registry.get('unit.ants.archer').behaviors.combat);
+ expect(f.game.context.def(f.c).behaviors.combat).toBe(f.game.registry.get('unit.test.archer').behaviors.combat);
  expect(f.game.context.stats(f.c).damage).toBe(35);
  expect(entityStats(original,f.c,f.game.registry)).toEqual(f.game.context.stats(f.c));
  until(f,()=>f.game.state.missiles.length>0);
- expect(f.c.x).toBe(120);expect(f.game.state.missiles[0]).toMatchObject({definition:'unit.ants.archer',damage:35,resolved:false});
+ expect(f.c.x).toBe(120);expect(f.game.state.missiles[0]).toMatchObject({definition:'unit.test.archer',damage:35,resolved:false});
 });
-it.each(['unit.ants.archer','unit.ants.bombardier'])('retains %s flights and deterministic saves after form expiry',profile=>{
+it.each(['unit.test.archer','unit.test.bombardier'])('retains %s flights and deterministic saves after form expiry',profile=>{
  const f=fixture(profile);transform(f);until(f,()=>f.game.state.missiles.length+f.game.state.shells.length>0);
  const shot=(f.game.state.missiles[0]??f.game.state.shells[0])!,hp=f.t.hp!;
  // Expire the form while a released shot is in flight; the shot owns its damage and weapon definition.
@@ -48,13 +50,13 @@ it('restores a saved transformed windup and releases the same projectile',()=>{
  expect(f.t.hp).toBeLessThan(500);
 });
 it('a newer visual-only form temporarily restores the original weapon, then exposes the previous profile',()=>{
- const f=fixture();transform(f);const avatar=coreAbilities.abilities.find(a=>a.id==='ability.core.avatar')!;
+ const f=fixture();transform(f);const avatar=testAbilities.abilities.find(a=>a.id==='ability.test.avatar')!;
  for(const op of releaseEffects(avatar,1,'ally'))new SpellStatuses(f.game).apply(f.caster,f.caster,avatar,1,f.game.state.nextCast++,op);
  expect(f.game.context.weaponDefinition(f.c)).toBe(f.c.definition);
  f.c.spellStatuses=f.c.spellStatuses!.filter(s=>s.ability!==avatar.id);
- expect(f.game.context.weaponDefinition(f.c)).toBe('unit.ants.archer');
+ expect(f.game.context.weaponDefinition(f.c)).toBe('unit.test.archer');
 });
 it('rejects missing and non-unit weapon profiles before publication',()=>{
  expect(()=>fixture('unit.missing')).toThrow(/combat profile/i);
- expect(()=>fixture('building.ants.fort')).toThrow(/combat profile/i);
+ expect(()=>fixture('building.test.fort')).toThrow(/combat profile/i);
 });

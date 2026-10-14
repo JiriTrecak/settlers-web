@@ -62,14 +62,14 @@ BC5 normal XY reconstructs positive Z. No height is inferred from diffuse color.
 Three compressed RGBA resources supply uniform-resolution GPU arrays: albedo
 with roughness, normal with transition opacity, and occlusion with metalness.
 Source channels retain their native resolutions (Definitive normals can be twice
-the diffuse resolution). Channels are resized independently to avoid alpha premultiplication. Original
+the diffuse resolution). Channels are resized independently to avoid alpha premultiplication. The diffuse
 source bytes and full-size PNGs remain available; the scalar reflectance is
 lighting calibration, not a hue adjustment. The renderer does not multiply
 these atlases by an unrelated macro color texture.
 
-Numbered `source.bin` resources contain the extracted DDS or declared neutral
-channel bytes. `source_4.json` records graphics set, per-channel origin, paths,
-hashes, packing and source definition. Existing aliases and map material IDs
+The importer extracts each channel's DDS or declared neutral bytes plus a
+metadata record (graphics set, per-channel origin, paths, hashes, packing). Only
+the diffuse `source.bin` is kept as the package master after import. Existing aliases and map material IDs
 survive refresh. Imported images retain their respective ownership.
 
 For visual acceptance, compare source atlas pixels and the live editor first,

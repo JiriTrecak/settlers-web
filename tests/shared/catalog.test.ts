@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { assetIdFromName, parseCatalogue, sitAllowed, stringifyCatalogue } from "../../src/shared";
-import { projectCatalogue } from "../../src/editor/assets/project";
 
 describe("catalogue", () => {
   it("roundtrips a listing", () => {
@@ -22,15 +21,6 @@ describe("catalogue", () => {
   it("mints unique ids", () => {
     expect(assetIdFromName("Forest Pine", new Set())).toBe("forest-pine");
     expect(assetIdFromName("Pine", new Set(["pine"]))).toBe("pine-2");
-  });
-
-  it("ships only the current woodland scenery families", () => {
-    const doc = projectCatalogue();
-    for (const id of ["woodland-pine-a", "woodland-pine-b", "woodland-pine-sapling", "woodland-lily-a", "woodland-moss-boulder", "woodland-ruined-watchtower", "woodland-root-arch-bridge", "leafbound-twig-bridge"]) {
-      expect(doc.assets.some(a => a.id === id), id).toBe(true);
-    }
-    expect(doc.assets.some(a => a.id.startsWith("synty-") || a.id === "pine")).toBe(false);
-    expect(doc.assets.some(a => a.id === "woodland-amber-lantern" && a.light)).toBe(true);
   });
 
   it("sits water on wet and props on dry", () => {

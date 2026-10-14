@@ -1,15 +1,15 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,resolveEffect,type Effect} from '../../src/content/abilities/schema';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {effectMagnitude} from '../../src/sim/abilities/magnitudes';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {abilityAimScore} from '../../src/sim/abilities/ai';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.holy-light')!;
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource} from './encounter-harness';
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.holy-light')!;
 const heal={op:'heal',target:'target',amount:0,scale:{source:'recipient',stat:'maxHealth',permille:{rankParameter:'factor'}}};
 function fixture(ops:unknown[]=[heal],settings={},patch={}){
- const a=abilitySchema.parse({...base,ranks:[{factor:500}],targeting:{...base.targeting,condition:undefined,filter:undefined,relations:['ally','enemy'],allowSelf:false,range:20},cast:{...base.cast,prepareTicks:0,recoverTicks:0,cost:{...base.cast.cost,amount:0},cooldown:{...base.cast.cooldown,ticks:0}},onRelease:ops,...patch}),p=coreAbilities.presentations.find(p=>p.id===a.presentation)!,f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'ally',targetHealth:40,mana:100,...settings}));
+ const a=abilitySchema.parse({...base,ranks:[{factor:500}],targeting:{...base.targeting,condition:undefined,filter:undefined,relations:['ally','enemy'],allowSelf:false,range:20},cast:{...base.cast,prepareTicks:0,recoverTicks:0,cost:{...base.cast.cost,amount:0},cooldown:{...base.cast.cooldown,ticks:0}},onRelease:ops,...patch}),p=testAbilities.presentations.find(p=>p.id===a.presentation)!,f=createAbilityEncounter(a,p,testSettings({relationship:'ally',targetHealth:40,mana:100,...settings}),false,encounterSource());
  const c=f.game.context.get(f.caster)!,t=f.game.context.get(f.target)!;c.hp=100;return {...f,a,p,c,t};
 }
 function cast(f:ReturnType<typeof fixture>){expect(f.game.abilities.cast(f.caster,'preview',f.target)).toBeNull();}
@@ -48,7 +48,7 @@ it('records actual post-mitigation damage and caps overkill before a later caste
 });
 it('full absorption records no health, capacity or successful recipient count',()=>{
  for(const stat of ['applied','health','maxHealth','count']){const f=fixture([{op:'damage',target:'target',amount:20,damageType:'spell',record:'offering'},reward('heal',stat)],{relationship:'enemy'});
- const a=coreAbilities.abilities.find(a=>a.id==='ability.core.absorption-shield')!;new SpellStatuses(f.game).apply(f.target,f.target,a,1,f.game.state.nextCast++,a.onRelease[0] as any);cast(f);step(f);expect(f.c.hp).toBe(100);expect(f.t.hp).toBe(40);}
+ const a=testAbilities.abilities.find(a=>a.id==='ability.test.absorption-shield')!;new SpellStatuses(f.game).apply(f.target,f.target,a,1,f.game.state.nextCast++,a.onRelease[0] as any);cast(f);step(f);expect(f.c.hp).toBe(100);expect(f.t.hp).toBe(40);}
 });
 it('aggregates queried results once and keeps results local to each release',()=>{
  const query={center:'target',radius:5,relations:['enemy'],maxTargets:8};
@@ -64,7 +64,7 @@ it('sacrifices an owned non-hero and converts its saved capacity after normal de
  expect(f.game.abilities.observedEvents().some(e=>e.event==='sacrificed')).toBe(true);
 });
 it('sacrifice bypasses damage protection but still respects spell immunity and ownership',()=>{
- const f=fixture([sacrifice,reward()]);const ward=coreAbilities.abilities.find(a=>a.id==='ability.core.anti-magic-shell')!;new SpellStatuses(f.game).apply(f.target,f.target,ward,1,f.game.state.nextCast++,ward.onRelease[0] as any);cast(f);step(f);expect(f.c.hp).toBe(350);
+ const f=fixture([sacrifice,reward()]);const ward=testAbilities.abilities.find(a=>a.id==='ability.test.anti-magic-shell')!;new SpellStatuses(f.game).apply(f.target,f.target,ward,1,f.game.state.nextCast++,ward.onRelease[0] as any);cast(f);step(f);expect(f.c.hp).toBe(350);
  for(const settings of [{relationship:'enemy'},{targetHero:true}]){const g=fixture([sacrifice,reward()],settings);expect(g.game.abilities.cast(g.caster,'preview',g.target)).toMatch(/Sacrifice/);}
  const g=fixture([sacrifice,reward()]);g.t.owner='player.3';g.game.abilities.invoke(g.caster,g.target,g.a,1,g.a.onRelease);expect(g.t.hp).toBe(40);expect(g.c.hp).toBe(100);
 });
@@ -81,7 +81,7 @@ it('recipient percentages update each channel wave and results reset between wav
 it('same cast commands, mid-preparation restore and detached boosted sources replay identically',()=>{
  const patch={delivery:{kind:'projectile',speed:5},cast:{...base.cast,prepareTicks:8,recoverTicks:0,cost:{...base.cast.cost,amount:0},cooldown:{...base.cast.cooldown,ticks:0}}};
  const f=fixture([{op:'damage',target:'target',amount:0,damageType:'spell',scale:{source:'caster',stat:'maxHealth',permille:200}}],{relationship:'enemy',targetHealth:500},patch),g=fixture(f.a.onRelease,{relationship:'enemy',targetHealth:500},patch);
- const avatar=coreAbilities.abilities.find(a=>a.id==='ability.core.avatar')!,op=avatar.onRelease[0];if(op.op!=='status')throw Error();
+ const avatar=testAbilities.abilities.find(a=>a.id==='ability.test.avatar')!,op=avatar.onRelease[0];if(op.op!=='status')throw Error();
  for(const h of [f,g]){new SpellStatuses(h.game).apply(h.caster,h.caster,avatar,1,h.game.state.nextCast++,resolveEffect(op,1,avatar.ranks[0]));expect(h.game.context.stats(h.c).maxHp).toBe(800);expect(h.game.command('player.1',{type:'castAbility',actor:h.caster,binding:'preview',target:{kind:'unit',entity:h.target}}).accepted).toBe(true);}
  step(f);step(g);g.game.restore(f.game.snapshot());
  for(let i=0;i<7;i++){step(f,1);step(g,1);expect(g.game.checksum()).toBe(f.game.checksum());}

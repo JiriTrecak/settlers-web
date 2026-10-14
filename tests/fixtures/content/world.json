@@ -1,0 +1,7485 @@
+{
+ "behaviorSets": [
+  {
+   "id": "behavior-set.worker",
+   "behaviors": {
+    "movement": {
+     "speed": 4,
+     "walkSpeed": 2,
+     "idleWander": true,
+     "turnRate": 720
+    },
+    "playerControl": {},
+    "work": {
+     "carryCapacity": 10,
+     "builds": []
+    }
+   }
+  },
+  {
+   "id": "behavior-set.ground-army",
+   "behaviors": {
+    "movement": {
+     "speed": 4,
+     "turnRate": 720
+    },
+    "playerControl": {}
+   }
+  },
+  {
+   "id": "behavior-set.neutral",
+   "behaviors": {
+    "movement": {
+     "speed": 8,
+     "turnRate": 720
+    },
+    "campDefense": {},
+    "playerControl": {}
+   }
+  },
+  {
+   "id": "behavior-set.player-building",
+   "behaviors": {
+    "playerControl": {}
+   }
+  }
+ ],
+ "actions": {
+  "actions": {
+   "move": {
+    "name": "Move",
+    "description": "Move eligible selected units to a destination.",
+    "icon": "icon.test.action-move",
+    "priority": 200,
+    "hotkey": "M"
+   },
+   "attack": {
+    "name": "Attack",
+    "description": "Attack-move on ground, or force attack a visible damageable target, including friendlies.",
+    "icon": "icon.test.action-attack",
+    "priority": 190,
+    "hotkey": "A"
+   },
+   "stop": {
+    "name": "Stop",
+    "description": "Cancel orders and return to autonomous activity. Carried goods remain physical.",
+    "icon": "icon.test.action-stop",
+    "priority": 180,
+    "hotkey": "S"
+   },
+   "build": {
+    "name": "Build",
+    "description": "Place a construction project on explored, clear ground.",
+    "icon": "icon.test.action-build",
+    "priority": 60,
+    "category": "category.build"
+   },
+   "produce": {
+    "name": "Produce",
+    "description": "Train a unit. Reserves its resources and supply immediately.",
+    "icon": "icon.test.action-produce",
+    "priority": 60
+   },
+   "rally": {
+    "name": "Rally point",
+    "description": "Choose where newly produced units assemble.",
+    "icon": "icon.test.action-rally",
+    "priority": 40
+   },
+   "pause": {
+    "name": "Pause production",
+    "description": "Finish committed work, then release staffing. Resume to request work again.",
+    "icon": "icon.test.action-pause",
+    "priority": 30
+   },
+   "cancel": {
+    "name": "Cancel construction",
+    "description": "Cancel this project and refund its reserved resources to an owned Mound with space.",
+    "icon": "icon.test.action-cancel",
+    "priority": 20
+   },
+   "upgrade": {
+    "name": "Upgrade building",
+    "description": "Upgrade this building in place.",
+    "icon": "icon.test.fort",
+    "priority": 110,
+    "hotkey": "U"
+   },
+   "cancelUpgrade": {
+    "name": "Cancel upgrade",
+    "description": "Cancel the upgrade and refund the full price.",
+    "icon": "icon.test.action-cancel",
+    "priority": 20,
+    "hotkey": "C"
+   },
+   "research": {
+    "name": "Research",
+    "description": "Research a permanent colony upgrade.",
+    "icon": "icon.test.fort",
+    "priority": 100
+   },
+   "cancelResearch": {
+    "name": "Cancel research",
+    "description": "Cancel this research and refund its full price.",
+    "icon": "icon.test.action-cancel",
+    "priority": 20
+   },
+   "hold": {
+    "name": "Hold Position",
+    "description": "Stand your ground. Attack enemies within weapon range without chasing.",
+    "icon": "icon.test.action-hold",
+    "priority": 170,
+    "hotkey": "H"
+   },
+   "patrol": {
+    "name": "Patrol",
+    "description": "Patrol between the current position and a destination. Engage enemies, then resume patrol.",
+    "icon": "icon.test.action-patrol",
+    "priority": 160,
+    "hotkey": "P"
+   },
+   "follow": {
+    "name": "Follow",
+    "description": "Follow a friendly unit. Right-click a friendly unit to follow it.",
+    "icon": "icon.test.action-follow",
+    "priority": 150
+   },
+   "unload": {
+    "name": "Leave watchtower",
+    "description": "Release the archer at the tower entrance. A move order also leaves the lookout.",
+    "icon": "icon.test.action-move",
+    "priority": 100
+   },
+   "garrison": {
+    "name": "Enter watchtower",
+    "description": "Walk to a friendly watchtower and occupy its single lookout.",
+    "icon": "icon.test.tower",
+    "priority": 100
+   }
+  },
+  "overrides": {
+   "build:building.test.forester": {
+    "priority": 70,
+    "hidden": true
+   },
+   "build:building.test.house": {
+    "priority": 90
+   },
+   "build:building.test.barracks": {
+    "category": "category.build",
+    "priority": 80
+   },
+   "build:building.test.sanctuary": {
+    "category": "category.build",
+    "priority": 70
+   },
+   "build:building.test.tower": {
+    "priority": 90,
+    "category": "category.build-advanced"
+   },
+   "build:building.test.ironroot-forge": {
+    "priority": 30,
+    "category": "category.build"
+   },
+   "build:building.test.rootworks": {
+    "priority": 25,
+    "category": "category.build"
+   },
+   "build:building.test.bombardier-workshop": {
+    "category": "category.build-advanced",
+    "priority": 100
+   },
+   "build:building.test.fort": {
+    "category": "category.build",
+    "priority": 100
+   }
+  },
+  "categories": {
+   "category.build": {
+    "name": "Build",
+    "description": "Open economy and settlement buildings.",
+    "icon": "icon.test.action-build",
+    "priority": 60,
+    "hotkey": "B"
+   },
+   "category.build-advanced": {
+    "name": "Advanced Build",
+    "description": "Open military and support buildings.",
+    "icon": "icon.test.action-build-advanced",
+    "priority": 50,
+    "hotkey": "V"
+   },
+   "category.hero.skills": {
+    "name": "New spell available",
+    "description": "Spend a skill point to learn or improve an ability.",
+    "icon": "icon.test.marshal",
+    "priority": 106,
+    "hotkey": "K",
+    "placement": "banner"
+   }
+  },
+  "navigation": {
+   "back": {
+    "name": "Back",
+    "description": "Return to the previous command category.",
+    "icon": "icon.test.action-cancel",
+    "priority": 0,
+    "hotkey": "Escape"
+   },
+   "camera": {
+    "name": "Cycle camera",
+    "description": "Follow the selected unit. Cycle RTS, third person and first person. Escape returns to RTS.",
+    "icon": "icon.test.action-camera",
+    "priority": 55,
+    "hotkey": "J"
+   }
+  }
+ },
+ "rules": {
+  "id": "rules.test",
+  "maxUnits": 160,
+  "maxBuildings": 160,
+  "constructionHpPermille": 100,
+  "repairTicks": 4,
+  "damageMultipliers": {
+   "melee": {
+    "light": 1500,
+    "heavy": 1000,
+    "hero": 1000,
+    "structure": 700
+   },
+   "piercing": {
+    "light": 750,
+    "heavy": 900,
+    "hero": 500,
+    "structure": 350
+   },
+   "hero": {
+    "light": 1000,
+    "heavy": 1000,
+    "hero": 1000,
+    "structure": 500
+   },
+   "spell": {
+    "light": 1000,
+    "heavy": 1000,
+    "hero": 700,
+    "structure": 250
+   },
+   "siege": {
+    "light": 1000,
+    "heavy": 1000,
+    "hero": 1000,
+    "structure": 1000
+   }
+  },
+  "startingSetup": {
+   "fort": "building.test.fort",
+   "inventory": {
+    "item.test.amber": 500,
+    "item.test.wood": 150
+   },
+   "units": [
+    {
+     "definition": "unit.test.settler",
+     "offset": {
+      "x": -6,
+      "y": 14
+     }
+    },
+    {
+     "definition": "unit.test.settler",
+     "offset": {
+      "x": -3,
+      "y": 14
+     }
+    },
+    {
+     "definition": "unit.test.settler",
+     "offset": {
+      "x": 0,
+      "y": 14
+     }
+    },
+    {
+     "definition": "unit.test.settler",
+     "offset": {
+      "x": 3,
+      "y": 14
+     }
+    },
+    {
+     "definition": "unit.test.settler",
+     "offset": {
+      "x": 6,
+      "y": 14
+     }
+    }
+   ],
+   "id": "setup.ants",
+   "gathering": [
+    {
+     "item": "item.test.amber",
+     "workers": 5,
+     "radius": 40
+    }
+   ],
+   "hero": {
+    "default": "unit.test.marshal",
+    "choices": [
+     "unit.test.marshal",
+     "unit.test.rootbreaker"
+    ],
+    "offset": {
+     "x": 0,
+     "y": -16
+    }
+   }
+  },
+  "ai": {
+   "revision": 2,
+   "decisionTicks": 10,
+   "economyTicks": 80,
+   "strategyTicks": 200,
+   "operationTicks": 40,
+   "reactionTicks": 20,
+   "orderIntervalTicks": 40,
+   "workers": {
+    "minimum": 6,
+    "target": 16,
+    "maximum": 28,
+    "reserve": 2
+   },
+   "army": {
+    "minimum": 6,
+    "maximum": 44,
+    "homeGuard": 2,
+    "engagePermille": 1100,
+    "campPermille": 1400,
+    "retreatHealthPermille": 280,
+    "pursuitRadius": 20
+   },
+   "limits": {
+    "commandsPerBeat": 4,
+    "placementCandidates": 24,
+    "spellCandidates": 16
+   },
+   "composition": [
+    {
+     "definition": "unit.test.warrior",
+     "weight": 40
+    },
+    {
+     "definition": "unit.test.archer",
+     "weight": 30
+    },
+    {
+     "definition": "unit.test.hunter",
+     "weight": 20
+    },
+    {
+     "definition": "unit.test.bombardier",
+     "weight": 10
+    }
+   ],
+   "skillPreference": []
+  },
+  "armorTypes": {
+   "light": {
+    "name": "Light armor",
+    "icon": "icon.test.armor-light"
+   },
+   "heavy": {
+    "name": "Heavy armor",
+    "icon": "icon.test.armor-heavy"
+   },
+   "structure": {
+    "name": "Building armor",
+    "icon": "icon.test.armor-structure"
+   },
+   "hero": {
+    "name": "Hero armor",
+    "icon": "icon.test.armor-heavy"
+   }
+  },
+  "lootPools": {
+   "loot.test.camp-easy": {
+    "rolls": 1,
+    "maxTier": 1,
+    "entries": [
+     {
+      "item": "item.test.resin-salve",
+      "weight": 10
+     },
+     {
+      "item": "item.test.moon-dew",
+      "weight": 10
+     },
+     {
+      "item": "item.test.trailkeeper-flask",
+      "weight": 10
+     },
+     {
+      "item": "item.test.heartseed",
+      "weight": 10
+     },
+     {
+      "item": "item.test.thornband",
+      "weight": 10
+     },
+     {
+      "item": "item.test.barkguard",
+      "weight": 10
+     }
+    ]
+   },
+   "loot.test.camp-medium": {
+    "rolls": 1,
+    "maxTier": 2,
+    "entries": [
+     {
+      "item": "item.test.ancient-heartwood",
+      "weight": 10
+     },
+     {
+      "item": "item.test.royal-crest",
+      "weight": 10
+     },
+     {
+      "item": "item.test.moonwell-chalice",
+      "weight": 10
+     },
+     {
+      "item": "item.test.predator-talon",
+      "weight": 10
+     },
+     {
+      "item": "item.test.amber-carapace",
+      "weight": 10
+     },
+     {
+      "item": "item.test.broodkeeper-lantern",
+      "weight": 10
+     },
+     {
+      "item": "item.test.warcaller-standard",
+      "weight": 10
+     },
+     {
+      "item": "item.test.stormwing-spurs",
+      "weight": 10
+     },
+     {
+      "item": "item.test.rootbinder-idol",
+      "weight": 10
+     }
+    ]
+   },
+   "loot.test.camp-hard": {
+    "rolls": 1,
+    "maxTier": 2,
+    "entries": [
+     {
+      "item": "item.test.ancient-heartwood",
+      "weight": 10
+     },
+     {
+      "item": "item.test.royal-crest",
+      "weight": 10
+     },
+     {
+      "item": "item.test.moonwell-chalice",
+      "weight": 10
+     },
+     {
+      "item": "item.test.predator-talon",
+      "weight": 10
+     },
+     {
+      "item": "item.test.amber-carapace",
+      "weight": 10
+     },
+     {
+      "item": "item.test.broodkeeper-lantern",
+      "weight": 10
+     },
+     {
+      "item": "item.test.warcaller-standard",
+      "weight": 10
+     },
+     {
+      "item": "item.test.stormwing-spurs",
+      "weight": 10
+     },
+     {
+      "item": "item.test.rootbinder-idol",
+      "weight": 10
+     }
+    ]
+   },
+   "loot.test.camp-legendary": {
+    "rolls": 1,
+    "maxTier": 3,
+    "entries": [
+     {
+      "item": "item.test.worldroot-heart",
+      "weight": 10
+     },
+     {
+      "item": "item.test.tempest-antennae",
+      "weight": 10
+     },
+     {
+      "item": "item.test.phoenix-chrysalis",
+      "weight": 10
+     },
+     {
+      "item": "item.test.deep-moon-scepter",
+      "weight": 10
+     },
+     {
+      "item": "item.test.endless-brood-banner",
+      "weight": 10
+     },
+     {
+      "item": "item.test.amber-hourglass",
+      "weight": 10
+     },
+     {
+      "item": "item.test.winter-heart",
+      "weight": 10
+     }
+    ]
+   }
+  },
+  "armorCoefficient": 0.06,
+  "heroStunDurationPermille": 500,
+  "damageTypes": {
+   "melee": {
+    "name": "Melee",
+    "appliesArmor": true
+   },
+   "piercing": {
+    "name": "Piercing",
+    "appliesArmor": true
+   },
+   "hero": {
+    "name": "Hero attack",
+    "appliesArmor": true
+   },
+   "spell": {
+    "name": "Spell",
+    "appliesArmor": false
+   },
+   "siege": {
+    "name": "Siege",
+    "appliesArmor": true
+   }
+  },
+  "research": {
+   "research.test.serrated-tools": {
+    "name": "Serrated Tools",
+    "description": "Workers extract wood twice as fast. Each tree still contains fifty Wood.",
+    "icon": "icon.test.settler",
+    "priority": 100,
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 100
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 60
+     }
+    ],
+    "workTicks": 1200,
+    "effects": [
+     {
+      "units": [
+       "unit.test.settler"
+      ],
+      "treeWorkRate": 2
+     }
+    ]
+   },
+   "research.test.reinforced-carapace": {
+    "name": "Reinforced Carapace",
+    "description": "Warriors gain 150 maximum health and 2 armor. Existing wounds are preserved.",
+    "icon": "icon.test.warrior",
+    "priority": 90,
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 150
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 80
+     }
+    ],
+    "workTicks": 1600,
+    "effects": [
+     {
+      "units": [
+       "unit.test.warrior"
+      ],
+      "maxHp": 150,
+      "armor": 2
+     }
+    ]
+   },
+   "research.test.broadheads": {
+    "name": "Broadheads",
+    "description": "Archers deal 35% more attack damage.",
+    "icon": "icon.test.archer",
+    "priority": 80,
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 150
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 60
+     }
+    ],
+    "workTicks": 1600,
+    "effects": [
+     {
+      "units": [
+       "unit.test.archer"
+      ],
+      "damagePermille": 350
+     }
+    ]
+   },
+   "research.test.campaign-harness": {
+    "name": "Campaign Harness",
+    "description": "The Marshal gains 200 maximum health. Existing wounds are preserved; the improvement remains through death and revival.",
+    "icon": "icon.test.marshal",
+    "priority": 50,
+    "requires": [
+     "building.test.great-mound"
+    ],
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 200
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 80
+     },
+     {
+      "item": "item.test.root",
+      "amount": 60
+     }
+    ],
+    "workTicks": 2000,
+    "effects": [
+     {
+      "units": [
+       "unit.test.marshal"
+      ],
+      "maxHp": 200
+     }
+    ]
+   },
+   "research.test.driving-spear": {
+    "name": "Driving Spear",
+    "description": "Hunters can charge every 4 seconds instead of 8. Requires a fresh approach; remaining in melee never triggers another charge.",
+    "icon": "icon.test.hunter",
+    "priority": 70,
+    "requires": [
+     "building.test.great-mound"
+    ],
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 180
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 80
+     },
+     {
+      "item": "item.test.root",
+      "amount": 40
+     }
+    ],
+    "workTicks": 1800,
+    "effects": [
+     {
+      "units": [
+       "unit.test.hunter"
+      ],
+      "chargeCooldownPermille": 500
+     }
+    ]
+   },
+   "research.test.saturating-shells": {
+    "name": "Saturating Shells",
+    "description": "Bombardier blast radius grows from 2 to 3 cells, and its two-second slow strengthens from 20% to 35%. Slows do not add together.",
+    "icon": "icon.test.bombardier",
+    "priority": 60,
+    "requires": [
+     "building.test.great-mound"
+    ],
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 200
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 100
+     },
+     {
+      "item": "item.test.root",
+      "amount": 60
+     }
+    ],
+    "workTicks": 2000,
+    "effects": [
+     {
+      "units": [
+       "unit.test.bombardier"
+      ],
+      "splashRadius": 3,
+      "splashSlowPermille": 350
+     }
+    ]
+   },
+   "research.test.beetles-serrated-tools": {
+    "name": "Serrated Tools",
+    "description": "Workers extract wood twice as fast. Each tree still contains fifty Wood.",
+    "icon": "icon.test.item-root",
+    "priority": 100,
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 100
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 60
+     }
+    ],
+    "workTicks": 1200,
+    "effects": [
+     {
+      "units": [
+       "unit.test.beetles-worker"
+      ],
+      "treeWorkRate": 2
+     }
+    ]
+   },
+   "research.test.beetles-reinforced-carapace": {
+    "name": "Reinforced Carapace",
+    "description": "Horn Guards gain 150 maximum health and 2 armor. Existing wounds are preserved.",
+    "icon": "icon.test.item-root",
+    "priority": 90,
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 150
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 80
+     }
+    ],
+    "workTicks": 1600,
+    "effects": [
+     {
+      "units": [
+       "unit.test.beetles-horn-guard"
+      ],
+      "maxHp": 150,
+      "armor": 2
+     }
+    ]
+   },
+   "research.test.beetles-broadheads": {
+    "name": "Broadheads",
+    "description": "Stone Slingers deal 35% more attack damage.",
+    "icon": "icon.test.item-root",
+    "priority": 80,
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 150
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 60
+     }
+    ],
+    "workTicks": 1600,
+    "effects": [
+     {
+      "units": [
+       "unit.test.beetles-stone-slinger"
+      ],
+      "damagePermille": 350
+     }
+    ]
+   },
+   "research.test.beetles-campaign-harness": {
+    "name": "Campaign Harness",
+    "description": "The Hornbreaker gains 200 maximum health. Existing wounds are preserved; the improvement remains through death and revival.",
+    "icon": "icon.test.item-root",
+    "priority": 50,
+    "requires": [
+     "building.test.beetles-great-bastion"
+    ],
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 200
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 80
+     },
+     {
+      "item": "item.test.root",
+      "amount": 60
+     }
+    ],
+    "workTicks": 2000,
+    "effects": [
+     {
+      "units": [
+       "unit.test.beetles-hornbreaker"
+      ],
+      "maxHp": 200
+     }
+    ]
+   }
+  },
+  "maxSupply": 100,
+  "supplyIcon": "icon.test.resource-supply",
+  "constructionRefundPermille": 750,
+  "experience": {
+   "unitRewards": [
+    24,
+    44,
+    72,
+    108,
+    152,
+    204,
+    264,
+    332,
+    408,
+    492,
+    584
+   ],
+   "heroRewards": [
+    90,
+    120,
+    165,
+    225,
+    300,
+    390,
+    495,
+    615,
+    750,
+    900,
+    1065
+   ],
+   "neutralLevelCap": 6,
+   "neutralMultipliersPermille": [
+    1000,
+    900,
+    800,
+    700,
+    600
+   ],
+   "summonMultiplierPermille": 500,
+   "globalFallback": true,
+   "soloHeroTierBonusPermille": [
+    0,
+    150,
+    300
+   ]
+  },
+  "defaultRace": "alpha",
+  "races": {
+   "alpha": {
+    "name": "Ants",
+    "description": "Versatile colony with quick infantry and a broad combined-arms roster.",
+    "roster": [
+     "unit.test.settler",
+     "unit.test.warrior",
+     "unit.test.thornblade",
+     "unit.test.archer",
+     "unit.test.silkwarden",
+     "building.test.fort",
+     "building.test.great-mound",
+     "building.test.elder-hall",
+     "building.test.barracks",
+     "building.test.forester",
+     "building.test.house",
+     "building.test.tower",
+     "unit.test.marshal",
+     "building.test.sanctuary",
+     "building.test.ironroot-forge",
+     "building.test.rootworks",
+     "unit.test.hunter",
+     "unit.test.bombardier",
+     "building.test.bombardier-workshop",
+     "unit.test.nectarist",
+     "unit.test.banneret",
+     "unit.test.amber-adept",
+     "unit.test.queensguard",
+     "unit.test.winglancer",
+     "unit.test.rootweaver",
+     "unit.test.rootbreaker"
+    ],
+    "construction": {
+     "scaffold": "asset.test.construction-ants",
+     "padding": 0.4,
+     "revealAt": 0.95,
+     "retractUntil": 0.985,
+     "dustEffect": "effect.test.construction-dust",
+     "dustIntervalTicks": 8
+    }
+   },
+   "beta": {
+    "name": "Beetles",
+    "description": "Stout, expensive infantry and a relentless frontline champion. Economy follows the same rules as ants.",
+    "startingSetup": {
+     "fort": "building.test.beetles-bastion",
+     "inventory": {
+      "item.test.amber": 500,
+      "item.test.wood": 150
+     },
+     "units": [
+      {
+       "definition": "unit.test.beetles-worker",
+       "offset": {
+        "x": -6,
+        "y": 14
+       }
+      },
+      {
+       "definition": "unit.test.beetles-worker",
+       "offset": {
+        "x": -3,
+        "y": 14
+       }
+      },
+      {
+       "definition": "unit.test.beetles-worker",
+       "offset": {
+        "x": 0,
+        "y": 14
+       }
+      },
+      {
+       "definition": "unit.test.beetles-worker",
+       "offset": {
+        "x": 3,
+        "y": 14
+       }
+      },
+      {
+       "definition": "unit.test.beetles-worker",
+       "offset": {
+        "x": 6,
+        "y": 14
+       }
+      }
+     ],
+     "id": "setup.beetles",
+     "gathering": [
+      {
+       "item": "item.test.amber",
+       "workers": 5,
+       "radius": 40
+      }
+     ],
+     "hero": {
+      "default": "unit.test.beetles-hornbreaker",
+      "choices": [
+       "unit.test.beetles-hornbreaker"
+      ],
+      "offset": {
+       "x": 0,
+       "y": -16
+      }
+     }
+    },
+    "roster": [
+     "unit.test.beetles-worker",
+     "unit.test.beetles-horn-guard",
+     "unit.test.beetles-stone-slinger",
+     "unit.test.beetles-hornbreaker",
+     "building.test.beetles-bastion",
+     "building.test.beetles-great-bastion",
+     "building.test.beetles-elder-bastion",
+     "building.test.beetles-brood-den",
+     "building.test.beetles-war-lodge",
+     "building.test.beetles-shell-forge",
+     "building.test.beetles-ancestor-shrine",
+     "building.test.beetles-rootworks",
+     "building.test.beetles-hornwatch"
+    ],
+    "ai": {
+     "composition": [
+      {
+       "definition": "unit.test.beetles-horn-guard",
+       "weight": 65
+      },
+      {
+       "definition": "unit.test.beetles-stone-slinger",
+       "weight": 35
+      }
+     ],
+     "skillPreference": [
+      "ability.test.hornbreaker-colossus",
+      "ability.test.hornbreaker-overwhelm",
+      "ability.test.hornbreaker-horn-rush",
+      "ability.test.hornbreaker-steadfast"
+     ]
+    },
+    "construction": {
+     "scaffold": "asset.test.construction-beetles",
+     "padding": 0.4,
+     "revealAt": 0.95,
+     "retractUntil": 0.985,
+     "dustEffect": "effect.test.construction-dust",
+     "dustIntervalTicks": 8
+    }
+   }
+  },
+  "campaigns": {
+   "vanguard": {
+    "name": "The Ant Vanguard",
+    "race": "alpha"
+   }
+  }
+ },
+ "definitions": [
+  {
+   "id": "unit.test.settler",
+   "kind": "unit",
+   "name": "Worker",
+   "description": "Gather resources and construct buildings. Trained at the main hall; uses 1 supply.",
+   "asset": "asset.test.colony-worker",
+   "icon": "icon.test.colony-worker",
+   "selectionClass": "worker",
+   "body": {
+    "maxHp": 240,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 28,
+   "behaviorSets": [
+    "behavior-set.worker"
+   ],
+   "behaviors": {
+    "work": {
+     "harvests": [
+      "item.test.wood",
+      "item.test.amber",
+      "item.test.root"
+     ],
+     "builds": [
+      "building.test.fort",
+      "building.test.barracks",
+      "building.test.house",
+      "building.test.tower",
+      "building.test.sanctuary",
+      "building.test.ironroot-forge",
+      "building.test.rootworks",
+      "building.test.bombardier-workshop"
+     ]
+    },
+    "movement": {
+     "speed": 12,
+     "walkSpeed": 6
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 100
+     }
+    ],
+    "workTicks": 600
+   },
+   "level": 1,
+   "supplyCost": 1,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 4.8,
+    "formationSpacing": 3.25
+   },
+   "modelScale": 2.4
+  },
+  {
+   "id": "unit.test.warrior",
+   "kind": "unit",
+   "name": "Warrior",
+   "description": "Armored ant infantry. Protects the colony and fights at close range.",
+   "asset": "asset.test.cleaver-warrior",
+   "icon": "icon.test.cleaver-warrior",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 300,
+    "armor": 2,
+    "armorType": "heavy"
+   },
+   "vision": 32,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 9,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 54,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    },
+    "movement": {
+     "speed": 12
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 135
+     }
+    ],
+    "workTicks": 800
+   },
+   "level": 1,
+   "supplyCost": 1,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 4.8,
+    "formationSpacing": 3.25
+   },
+   "modelScale": 2.4
+  },
+  {
+   "id": "unit.test.queensguard",
+   "kind": "unit",
+   "name": "Queensguard",
+   "description": "Elite armored protector. Shields nearby allies and braces behind a tower shield for additional armor at reduced speed.",
+   "asset": "asset.test.queensguard",
+   "icon": "icon.test.queensguard",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 720,
+    "armor": 4,
+    "armorType": "heavy"
+   },
+   "vision": 32,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 26,
+     "damageType": "melee",
+     "range": 1.2,
+     "cooldownTicks": 64,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 16,
+      "recoveryTicks": 18,
+      "rangeBuffer": 0.75
+     }
+    },
+    "movement": {
+     "speed": 10
+    },
+    "abilities": {
+     "maxMana": 100,
+     "manaRegenPerSecond": 1,
+     "bindings": [
+      {
+       "id": "royal-guard",
+       "ability": "ability.test.royal-guard",
+       "initialRank": 1,
+       "controls": [
+        "scenario"
+       ]
+      },
+      {
+       "id": "shield-brace",
+       "ability": "ability.test.shield-brace",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       }
+      }
+     ]
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 280
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 80
+     }
+    ],
+    "workTicks": 1280
+   },
+   "level": 3,
+   "supplyCost": 3,
+   "dimensions": {
+    "radius": 2,
+    "height": 6.4,
+    "formationSpacing": 4.4
+   },
+   "modelScale": 3.2,
+   "requires": [
+    "building.test.great-mound"
+   ]
+  },
+  {
+   "id": "unit.test.winglancer",
+   "kind": "unit",
+   "name": "Winglancer",
+   "description": "Fast flying lancer. Crosses rough terrain and strikes ground targets with an ivory lance; vulnerable to ranged anti-air fire.",
+   "asset": "asset.test.winglancer",
+   "icon": "icon.test.winglancer",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 340,
+    "armor": 1,
+    "armorType": "light"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 28,
+     "damageType": "melee",
+     "range": 2.5,
+     "targets": [
+      "ground"
+     ],
+     "cooldownTicks": 56,
+     "aggroRange": 24,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 14,
+      "rangeBuffer": 0.75
+     }
+    },
+    "movement": {
+     "speed": 18,
+     "turnRate": 540,
+     "locomotion": "air",
+     "flightHeight": 3
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 230
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 70
+     }
+    ],
+    "workTicks": 1120
+   },
+   "level": 3,
+   "supplyCost": 3,
+   "dimensions": {
+    "radius": 1.6,
+    "height": 5,
+    "formationSpacing": 5.5
+   },
+   "modelScale": 2.5,
+   "requires": [
+    "building.test.great-mound"
+   ]
+  },
+  {
+   "id": "unit.test.rootweaver",
+   "kind": "unit",
+   "name": "Rootweaver",
+   "description": "Fragile root caster with a broad leaf fan. Entangles ground enemies and grows slowing briar patches to control the battlefield.",
+   "asset": "asset.test.rootweaver",
+   "icon": "icon.test.rootweaver",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 260,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 14,
+     "damageType": "spell",
+     "range": 18,
+     "cooldownTicks": 64,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 16,
+      "recoveryTicks": 16,
+      "rangeBuffer": 0.75
+     },
+     "projectile": {
+      "speed": 32
+     },
+     "targets": [
+      "ground",
+      "air"
+     ]
+    },
+    "movement": {
+     "speed": 10
+    },
+    "abilities": {
+     "maxMana": 200,
+     "manaRegenPerSecond": 1.5,
+     "bindings": [
+      {
+       "id": "root-bind",
+       "ability": "ability.test.root-bind",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 16
+       }
+      },
+      {
+       "id": "briar-patch",
+       "ability": "ability.test.briar-patch",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "W",
+        "column": 2
+       }
+      }
+     ]
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 240
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 100
+     }
+    ],
+    "workTicks": 1200
+   },
+   "level": 3,
+   "supplyCost": 3,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 6.4,
+    "formationSpacing": 4.5
+   },
+   "modelScale": 3.2,
+   "requires": [
+    "building.test.great-mound"
+   ]
+  },
+  {
+   "id": "unit.test.thornblade",
+   "kind": "unit",
+   "name": "Thornblade",
+   "description": "Agile paired-dagger infantry. Automatically rushes visible ground enemies; can disable autocast for controlled engagements.",
+   "asset": "asset.test.thornblade",
+   "icon": "icon.test.thornblade",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 280,
+    "armor": 1,
+    "armorType": "light"
+   },
+   "vision": 32,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 15,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 40,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 10,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    },
+    "movement": {
+     "speed": 14
+    },
+    "abilities": {
+     "maxMana": 60,
+     "manaRegenPerSecond": 2,
+     "bindings": [
+      {
+       "id": "thorn-rush",
+       "ability": "ability.test.thorn-rush",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 8
+       }
+      }
+     ]
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 180
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 35
+     }
+    ],
+    "workTicks": 960
+   },
+   "level": 2,
+   "supplyCost": 2,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 4.8,
+    "formationSpacing": 3.25
+   },
+   "modelScale": 2.4
+  },
+  {
+   "id": "unit.test.archer",
+   "kind": "unit",
+   "name": "Archer",
+   "description": "Ranged support. Keep enemies at a distance and protect archers with infantry.",
+   "asset": "asset.test.leaf-archer",
+   "icon": "icon.test.leaf-archer",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 375,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 15,
+     "damageType": "piercing",
+     "range": 20,
+     "cooldownTicks": 60,
+     "aggroRange": 24,
+     "attack": {
+      "windupTicks": 20,
+      "recoveryTicks": 16,
+      "rangeBuffer": 0.75
+     },
+     "projectile": {
+      "speed": 32
+     }
+    },
+    "movement": {
+     "speed": 12
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 150
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 20
+     }
+    ],
+    "workTicks": 960
+   },
+   "level": 1,
+   "supplyCost": 1,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 4.8,
+    "formationSpacing": 3.25
+   },
+   "modelScale": 2.4
+  },
+  {
+   "id": "unit.test.silkwarden",
+   "kind": "unit",
+   "name": "Silkwarden",
+   "description": "Silk support caster. Launches silk shots and automatically ensnares enemies, rooting ground units and grounding flyers.",
+   "asset": "asset.test.silkwarden",
+   "icon": "icon.test.silkwarden",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 300,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 8,
+     "damageType": "piercing",
+     "range": 14,
+     "cooldownTicks": 64,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 16,
+      "recoveryTicks": 16,
+      "rangeBuffer": 0.75
+     },
+     "projectile": {
+      "speed": 26
+     }
+    },
+    "movement": {
+     "speed": 12
+    },
+    "abilities": {
+     "maxMana": 100,
+     "manaRegenPerSecond": 1.5,
+     "bindings": [
+      {
+       "id": "silken-snare",
+       "ability": "ability.test.silken-snare",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 12
+       }
+      }
+     ]
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 160
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 45
+     }
+    ],
+    "workTicks": 1000
+   },
+   "level": 2,
+   "supplyCost": 2,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 4.8,
+    "formationSpacing": 3.25
+   },
+   "modelScale": 2.4
+  },
+  {
+   "id": "unit.test.nectarist",
+   "kind": "unit",
+   "name": "Nectarist",
+   "description": "Restorative support. Automatically sends nectar to wounded allies and can cleanse harmful effects.",
+   "asset": "asset.test.nectarist",
+   "icon": "icon.test.nectarist",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 280,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 5,
+     "damageType": "spell",
+     "range": 14,
+     "cooldownTicks": 72,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 18,
+      "recoveryTicks": 16,
+      "rangeBuffer": 0.75
+     },
+     "projectile": {
+      "speed": 26
+     }
+    },
+    "movement": {
+     "speed": 12
+    },
+    "abilities": {
+     "maxMana": 140,
+     "manaRegenPerSecond": 2,
+     "bindings": [
+      {
+       "id": "nectar-mend",
+       "ability": "ability.test.nectar-mend",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       },
+       "ai": {
+        "preference": "wounded-ally",
+        "intervalTicks": 12
+       }
+      },
+      {
+       "id": "nectar-cleanse",
+       "ability": "ability.test.nectar-cleanse",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "W",
+        "column": 2
+       }
+      }
+     ]
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 170
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 50
+     }
+    ],
+    "workTicks": 1000
+   },
+   "level": 2,
+   "supplyCost": 2,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 4.8,
+    "formationSpacing": 3.25
+   },
+   "modelScale": 2.4
+  },
+  {
+   "id": "unit.test.amber-adept",
+   "kind": "unit",
+   "name": "Amber Adept",
+   "description": "Disruption caster. Seals enemy spellcasters and strips their temporary magical protection.",
+   "asset": "asset.test.amber-adept",
+   "icon": "icon.test.amber-adept",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 320,
+    "armor": 1,
+    "armorType": "light"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 12,
+     "damageType": "spell",
+     "range": 18,
+     "cooldownTicks": 64,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 16,
+      "recoveryTicks": 16,
+      "rangeBuffer": 0.75
+     },
+     "projectile": {
+      "speed": 32
+     }
+    },
+    "movement": {
+     "speed": 12
+    },
+    "abilities": {
+     "maxMana": 160,
+     "manaRegenPerSecond": 2,
+     "bindings": [
+      {
+       "id": "amber-seal",
+       "ability": "ability.test.amber-seal",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 12
+       }
+      },
+      {
+       "id": "amber-sever",
+       "ability": "ability.test.amber-sever",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "W",
+        "column": 2
+       }
+      }
+     ]
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 180
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 60
+     }
+    ],
+    "workTicks": 1100
+   },
+   "level": 2,
+   "supplyCost": 2,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 4.8,
+    "formationSpacing": 3.25
+   },
+   "modelScale": 2.7
+  },
+  {
+   "id": "unit.test.banneret",
+   "kind": "unit",
+   "name": "Banneret",
+   "description": "Standard bearer. Rallies nearby allies for increased attack damage and defends itself with a baton.",
+   "asset": "asset.test.banneret",
+   "icon": "icon.test.banneret",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 440,
+    "armor": 2,
+    "armorType": "light"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 10,
+     "damageType": "melee",
+     "range": 1,
+     "cooldownTicks": 56,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 14,
+      "recoveryTicks": 16,
+      "rangeBuffer": 0.75
+     }
+    },
+    "movement": {
+     "speed": 12
+    },
+    "abilities": {
+     "maxMana": 120,
+     "manaRegenPerSecond": 1.5,
+     "bindings": [
+      {
+       "id": "rallying-standard",
+       "ability": "ability.test.rallying-standard",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 16
+       }
+      }
+     ]
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 150
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 45
+     }
+    ],
+    "workTicks": 1000
+   },
+   "level": 2,
+   "supplyCost": 2,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 4.8,
+    "formationSpacing": 3.25
+   },
+   "modelScale": 3.3
+  },
+  {
+   "id": "building.test.fort",
+   "kind": "building",
+   "name": "Queensguard Hall",
+   "description": "The colony main hall stores resources, trains workers and provides 15 supply.",
+   "asset": "asset.test.queensguard-hall",
+   "icon": "icon.test.queensguard-hall",
+   "body": {
+    "maxHp": 1800,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 42,
+   "footprint": {
+    "width": 20,
+    "depth": 20
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 10.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 400
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 150
+     }
+    ],
+    "workTicks": 3600,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "storage": {
+     "capacity": 100000,
+     "accepts": [
+      "item.test.wood",
+      "item.test.amber"
+     ],
+     "dropoff": true,
+     "gathering": {
+      "item": "item.test.amber",
+      "radius": 40
+     }
+    },
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.settler"
+     ],
+     "workerSlots": 0,
+     "queueCapacity": 6
+    }
+   },
+   "level": 1,
+   "upgrade": {
+    "target": "building.test.great-mound",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 450
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 200
+     }
+    ],
+    "workTicks": 3200
+   },
+   "supplyProvided": 15,
+   "heroCapacity": 1,
+   "modelScale": 1.25
+  },
+  {
+   "id": "building.test.great-mound",
+   "kind": "building",
+   "name": "Great Acorn Hall",
+   "description": "The colony main hall stores resources, trains workers and provides 15 supply.",
+   "asset": "asset.test.queensguard-hall",
+   "icon": "icon.test.queensguard-hall",
+   "body": {
+    "maxHp": 2400,
+    "armor": 6,
+    "armorType": "structure"
+   },
+   "vision": 42,
+   "footprint": {
+    "width": 20,
+    "depth": 20
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 10.5
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "storage": {
+     "capacity": 100000,
+     "accepts": [
+      "item.test.wood",
+      "item.test.amber"
+     ],
+     "dropoff": true,
+     "gathering": {
+      "item": "item.test.amber",
+      "radius": 40
+     }
+    },
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.settler"
+     ],
+     "workerSlots": 0,
+     "queueCapacity": 6
+    }
+   },
+   "level": 2,
+   "supplyProvided": 15,
+   "heroCapacity": 2,
+   "upgrade": {
+    "target": "building.test.elder-hall",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 600
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 250
+     }
+    ],
+    "workTicks": 4000
+   },
+   "modelScale": 1.25
+  },
+  {
+   "id": "building.test.elder-hall",
+   "kind": "building",
+   "name": "Elder Hall",
+   "description": "Tier 3 Acorn Hall. Supports a roster of three distinct heroes.",
+   "asset": "asset.test.queensguard-hall",
+   "icon": "icon.test.queensguard-hall",
+   "body": {
+    "maxHp": 3000,
+    "armor": 6,
+    "armorType": "structure"
+   },
+   "vision": 42,
+   "footprint": {
+    "width": 20,
+    "depth": 20
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 10.5
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "storage": {
+     "capacity": 100000,
+     "accepts": [
+      "item.test.wood",
+      "item.test.amber"
+     ],
+     "dropoff": true,
+     "gathering": {
+      "item": "item.test.amber",
+      "radius": 40
+     }
+    },
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.settler"
+     ],
+     "workerSlots": 0,
+     "queueCapacity": 6
+    }
+   },
+   "level": 3,
+   "supplyProvided": 15,
+   "heroCapacity": 3,
+   "modelScale": 1.25
+  },
+  {
+   "id": "building.test.barracks",
+   "kind": "building",
+   "name": "Barracks",
+   "description": "Trains the colony’s infantry and ranged troops.",
+   "asset": "asset.test.leaf-garrison",
+   "icon": "icon.test.leaf-garrison",
+   "body": {
+    "maxHp": 1200,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 200
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 60
+     }
+    ],
+    "workTicks": 2000,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "storage": {
+     "capacity": 500,
+     "accepts": [
+      "item.test.wood",
+      "item.test.amber",
+      "item.test.root"
+     ]
+    },
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.warrior",
+      "unit.test.archer",
+      "unit.test.hunter",
+      "unit.test.thornblade",
+      "unit.test.silkwarden",
+      "unit.test.nectarist",
+      "unit.test.banneret",
+      "unit.test.bombardier",
+      "unit.test.amber-adept",
+      "unit.test.queensguard",
+      "unit.test.winglancer",
+      "unit.test.rootweaver"
+     ],
+     "workerSlots": 0,
+     "queueCapacity": 6
+    }
+   },
+   "category": "category.build-advanced",
+   "level": 1,
+   "modelScale": 1.25
+  },
+  {
+   "id": "building.test.forester",
+   "kind": "building",
+   "name": "Forester lodge",
+   "description": "Decorative forest lodge. Ranked forests do not regrow.",
+   "asset": "asset.test.forester",
+   "icon": "icon.test.forester",
+   "body": {
+    "maxHp": 750,
+    "armor": 3,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 120
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 80
+     }
+    ],
+    "workTicks": 220,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {},
+   "level": 1
+  },
+  {
+   "id": "building.test.house",
+   "kind": "building",
+   "name": "Mound",
+   "description": "A compact colony mound that provides 8 supply when completed.",
+   "asset": "asset.test.silk-brood-house",
+   "icon": "icon.test.silk-brood-house",
+   "body": {
+    "maxHp": 600,
+    "armor": 3,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 8,
+    "depth": 8
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 4.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 100
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 25
+     }
+    ],
+    "workTicks": 1000,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {},
+   "level": 1,
+   "supplyProvided": 8,
+   "modelScale": 1.1
+  },
+  {
+   "id": "building.test.tower",
+   "kind": "building",
+   "name": "Watchtower",
+   "description": "A raised acorn lookout for one Archer. Right-click it with an Archer to enter; fire from the top using that unit’s own weapon and upgrades.",
+   "asset": "asset.test.tower",
+   "icon": "icon.test.tower",
+   "body": {
+    "maxHp": 500,
+    "armor": 2,
+    "armorType": "structure"
+   },
+   "vision": 25,
+   "footprint": {
+    "width": 8,
+    "depth": 8
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 4.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 100
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 50
+     }
+    ],
+    "workTicks": 1400,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {},
+   "category": "category.build-advanced",
+   "level": 1,
+   "garrison": {
+    "capacity": 1,
+    "accepts": [
+     "unit.test.archer"
+    ],
+    "height": 5.8,
+    "lookoutRadius": 1.35
+   },
+   "modelScale": 1.25
+  },
+  {
+   "id": "item.test.wood",
+   "kind": "item",
+   "name": "Wood",
+   "description": "Ten wood per load, carried to a colony drop-off.",
+   "asset": "asset.test.item-wood",
+   "icon": "icon.test.item-wood",
+   "stackLimit": 16,
+   "behaviors": {},
+   "creation": {
+    "method": "harvest",
+    "items": [],
+    "workTicks": 320,
+    "source": "resource.test.forest-tree",
+    "workAnimation": "chop",
+    "amount": 10,
+    "impactTick": 22,
+    "animationTicks": 40
+   },
+   "currency": true,
+   "displayOrder": 20
+  },
+  {
+   "id": "item.test.amber",
+   "kind": "item",
+   "name": "Amber",
+   "description": "Precious forest resin mined from ancient roots and carried to the Mound.",
+   "asset": "asset.test.item-amber",
+   "icon": "icon.test.item-amber",
+   "stackLimit": 16,
+   "behaviors": {},
+   "creation": {
+    "method": "harvest",
+    "items": [],
+    "workTicks": 80,
+    "source": "building.test.neutral-amber-mine",
+    "workAnimation": "chop",
+    "amount": 10
+   },
+   "currency": true,
+   "displayOrder": 10
+  },
+  {
+   "id": "resource.test.forest-tree",
+   "kind": "resource",
+   "name": "Forest tree",
+   "description": "Fifty wood, collected in ten-wood loads. Falls when depleted.",
+   "asset": "asset.test.resource-tree-primary",
+   "icon": "icon.test.item-wood",
+   "collisionRadius": 2,
+   "behaviors": {},
+   "yield": 50,
+   "felling": {
+    "maxHp": 50,
+    "fallTicks": 72,
+    "decayTicks": 240
+   },
+   "harvesting": {
+    "activeWorkers": 1,
+    "recommendedWorkers": 1,
+    "searchRadius": 32
+   }
+  },
+  {
+   "id": "unit.test.marshal",
+   "kind": "unit",
+   "name": "Ant Marshal",
+   "description": "A seasoned colony champion armed with a heavy flanged mace. Gains experience from nearby enemy defeats.",
+   "asset": "asset.test.marshal",
+   "icon": "icon.test.marshal",
+   "hero": true,
+   "level": 1,
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 700,
+    "armor": 2,
+    "armorType": "hero"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 31,
+     "damageType": "hero",
+     "range": 0.6,
+     "cooldownTicks": 73,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 18,
+      "recoveryTicks": 14,
+      "rangeBuffer": 0.6
+     }
+    },
+    "progression": {
+     "experienceRadius": 40,
+     "levels": [
+      {
+       "experience": 0,
+       "maxHp": 700,
+       "damage": 31,
+       "armor": 2,
+       "maxMana": 225,
+       "cooldownTicks": 73,
+       "healthRegenPerSecond": 1.45,
+       "manaRegenPerSecond": 0.76
+      },
+      {
+       "experience": 160,
+       "maxHp": 775,
+       "damage": 34,
+       "armor": 3,
+       "maxMana": 240,
+       "cooldownTicks": 72,
+       "healthRegenPerSecond": 1.6,
+       "manaRegenPerSecond": 0.81
+      },
+      {
+       "experience": 400,
+       "maxHp": 850,
+       "damage": 37,
+       "armor": 3,
+       "maxMana": 270,
+       "cooldownTicks": 69,
+       "healthRegenPerSecond": 1.75,
+       "manaRegenPerSecond": 0.91
+      },
+      {
+       "experience": 720,
+       "maxHp": 925,
+       "damage": 40,
+       "armor": 4,
+       "maxMana": 285,
+       "cooldownTicks": 68,
+       "healthRegenPerSecond": 1.9,
+       "manaRegenPerSecond": 0.96
+      },
+      {
+       "experience": 1120,
+       "maxHp": 1000,
+       "damage": 43,
+       "armor": 4,
+       "maxMana": 315,
+       "cooldownTicks": 66,
+       "healthRegenPerSecond": 2.05,
+       "manaRegenPerSecond": 1.06
+      },
+      {
+       "experience": 1600,
+       "maxHp": 1075,
+       "damage": 46,
+       "armor": 4,
+       "maxMana": 330,
+       "cooldownTicks": 65,
+       "healthRegenPerSecond": 2.2,
+       "manaRegenPerSecond": 1.11
+      },
+      {
+       "experience": 2160,
+       "maxHp": 1150,
+       "damage": 49,
+       "armor": 5,
+       "maxMana": 360,
+       "cooldownTicks": 63,
+       "healthRegenPerSecond": 2.35,
+       "manaRegenPerSecond": 1.21
+      },
+      {
+       "experience": 2800,
+       "maxHp": 1225,
+       "damage": 52,
+       "armor": 5,
+       "maxMana": 375,
+       "cooldownTicks": 63,
+       "healthRegenPerSecond": 2.5,
+       "manaRegenPerSecond": 1.26
+      },
+      {
+       "experience": 3520,
+       "maxHp": 1300,
+       "damage": 55,
+       "armor": 6,
+       "maxMana": 405,
+       "cooldownTicks": 61,
+       "healthRegenPerSecond": 2.65,
+       "manaRegenPerSecond": 1.36
+      },
+      {
+       "experience": 4320,
+       "maxHp": 1375,
+       "damage": 58,
+       "armor": 6,
+       "maxMana": 420,
+       "cooldownTicks": 60,
+       "healthRegenPerSecond": 2.8,
+       "manaRegenPerSecond": 1.41
+      },
+      {
+       "experience": 5200,
+       "maxHp": 1450,
+       "damage": 61,
+       "armor": 6,
+       "maxMana": 450,
+       "cooldownTicks": 59,
+       "healthRegenPerSecond": 2.95,
+       "manaRegenPerSecond": 1.51
+      }
+     ]
+    },
+    "inventory": {
+     "slots": 4,
+     "pickupRange": 1.5
+    },
+    "abilities": {
+     "maxMana": 225,
+     "manaRegenPerSecond": 0.76,
+     "bindings": [
+      {
+       "id": "faultline",
+       "ability": "ability.test.marshal-faultline",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       },
+       "learning": {
+        "requiredLevels": [
+         1,
+         3,
+         5
+        ]
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 20
+       }
+      },
+      {
+       "id": "rally",
+       "ability": "ability.test.marshal-rally",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "W",
+        "column": 2
+       },
+       "learning": {
+        "requiredLevels": [
+         1,
+         3,
+         5
+        ]
+       },
+       "ai": {
+        "preference": "wounded-ally",
+        "intervalTicks": 20
+       }
+      },
+      {
+       "id": "carapace",
+       "ability": "ability.test.marshal-carapace",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "E",
+        "column": 3
+       },
+       "learning": {
+        "requiredLevels": [
+         1,
+         3,
+         5
+        ]
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 20
+       }
+      },
+      {
+       "id": "crownfall",
+       "ability": "ability.test.marshal-crownfall",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "R",
+        "column": 4
+       },
+       "learning": {
+        "requiredLevels": [
+         5,
+         8
+        ]
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 20
+       }
+      }
+     ]
+    },
+    "movement": {
+     "speed": 13
+    }
+   },
+   "supplyCost": 4,
+   "dimensions": {
+    "radius": 3,
+    "height": 9.6,
+    "formationSpacing": 6.5
+   },
+   "modelScale": 4.8,
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 425
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 100
+     }
+    ],
+    "workTicks": 2200
+   }
+  },
+  {
+   "id": "item.test.barkguard",
+   "kind": "item",
+   "itemTier": 1,
+   "name": "Barkguard Charm",
+   "description": "+2 armor.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-barkguard",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 2,
+    "maxHp": 0
+   }
+  },
+  {
+   "id": "item.test.thornband",
+   "kind": "item",
+   "itemTier": 1,
+   "name": "Thornband",
+   "description": "+6 attack damage.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-thornband",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 6,
+    "armor": 0,
+    "maxHp": 0
+   }
+  },
+  {
+   "id": "item.test.heartseed",
+   "kind": "item",
+   "itemTier": 1,
+   "name": "Heartseed",
+   "description": "+120 maximum health.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-heartseed",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 120
+   }
+  },
+  {
+   "id": "item.test.resin-salve",
+   "kind": "item",
+   "itemTier": 1,
+   "name": "Resin Salve",
+   "description": "Consume to restore 160 health.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-resin-salve",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "consumable",
+    "heal": 160,
+    "active": {
+     "target": "self",
+     "radius": 0,
+     "cooldownTicks": 400,
+     "heal": 160
+    }
+   }
+  },
+  {
+   "id": "item.test.royal-crest",
+   "kind": "item",
+   "itemTier": 2,
+   "name": "Royal Crest",
+   "description": "+10 damage, +3 armor and +100 maximum health.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-royal-crest",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 10,
+    "armor": 3,
+    "maxHp": 100
+   }
+  },
+  {
+   "id": "item.test.moon-dew",
+   "kind": "item",
+   "itemTier": 1,
+   "name": "Moon Dew",
+   "description": "Restore 80 mana. Consumed on use.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-moon-dew",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "consumable",
+    "heal": 0,
+    "active": {
+     "target": "self",
+     "radius": 0,
+     "cooldownTicks": 400,
+     "mana": 80
+    }
+   }
+  },
+  {
+   "id": "building.test.neutral-amber-mine",
+   "kind": "building",
+   "name": "Amber Node",
+   "description": "One miner extracts ten amber at a time; other workers queue. Five nodes form a standard amber site.",
+   "asset": "asset.test.resource-amber-crystal-1",
+   "icon": "icon.test.neutral-amber-deposit",
+   "footprint": {
+    "width": 4,
+    "depth": 4
+   },
+   "constructionClearance": 3,
+   "behaviors": {},
+   "yield": 4500,
+   "entrance": {
+    "x": 0.5,
+    "y": 2.5
+   },
+   "body": {
+    "maxHp": 1500,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "gatheringUnitCollision": false,
+   "harvesting": {
+    "activeWorkers": 1,
+    "recommendedWorkers": 2,
+    "searchRadius": 24
+   },
+   "modelScale": 0.28,
+   "resourceVisuals": {
+    "variants": [
+     "asset.test.resource-amber-crystal-1",
+     "asset.test.resource-amber-crystal-2",
+     "asset.test.resource-amber-crystal-3",
+     "asset.test.resource-amber-crystal-4",
+     "asset.test.resource-amber-crystal-5"
+    ],
+    "stages": [
+     {
+      "remaining": 0,
+      "asset": "asset.test.resource-amber-crystal-empty"
+     },
+     {
+      "remaining": 0.3333333333333333,
+      "asset": "asset.test.resource-amber-crystal-low"
+     }
+    ]
+   }
+  },
+  {
+   "id": "building.test.sanctuary",
+   "kind": "building",
+   "name": "Amber Sanctuary",
+   "description": "Calls fallen heroes back to the colony, preserving their experience, abilities and inventory.",
+   "asset": "asset.test.sanctuary",
+   "icon": "icon.test.item-amber",
+   "body": {
+    "maxHp": 1000,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 180
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 60
+     }
+    ],
+    "workTicks": 1600,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "revival": {
+     "items": [
+      {
+       "item": "item.test.amber",
+       "amount": 200
+      }
+     ],
+     "itemsPerLevel": [
+      {
+       "item": "item.test.amber",
+       "amount": 50
+      }
+     ],
+     "workTicksPerLevel": 200,
+     "workTicks": 1200,
+     "queueCapacity": 4
+    },
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.marshal",
+      "unit.test.rootbreaker"
+     ],
+     "queueCapacity": 4,
+     "workerSlots": 0
+    },
+    "storage": {
+     "capacity": 100000,
+     "accepts": [
+      "item.test.amber",
+      "item.test.wood"
+     ]
+    }
+   },
+   "level": 1,
+   "category": "category.build-advanced"
+  },
+  {
+   "id": "item.test.trailkeeper-flask",
+   "kind": "item",
+   "itemTier": 1,
+   "name": "Trailkeeper’s Flask",
+   "description": "3 charges: restore 70 health and 25 mana. 10s cooldown between uses.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-trailkeeper-flask",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "consumable",
+    "heal": 70,
+    "active": {
+     "target": "self",
+     "radius": 0,
+     "cooldownTicks": 400,
+     "charges": 3,
+     "heal": 70,
+     "mana": 25
+    }
+   }
+  },
+  {
+   "id": "item.test.ancient-heartwood",
+   "kind": "item",
+   "itemTier": 2,
+   "name": "Ancient Heartwood",
+   "description": "+280 maximum health and +2 health per second.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-ancient-heartwood",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 280,
+    "modifiers": {
+     "healthRegenPerSecond": 2
+    }
+   }
+  },
+  {
+   "id": "item.test.moonwell-chalice",
+   "kind": "item",
+   "itemTier": 2,
+   "name": "Moonwell Chalice",
+   "description": "+140 maximum mana and +1.5 mana per second.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-moonwell-chalice",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 0,
+    "modifiers": {
+     "maxMana": 140,
+     "manaRegenPerSecond": 1.5
+    }
+   }
+  },
+  {
+   "id": "item.test.predator-talon",
+   "kind": "item",
+   "itemTier": 2,
+   "name": "Predator’s Talon",
+   "description": "+10 damage. Basic attacks restore 10% of damage dealt as health.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-predator-talon",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 10,
+    "armor": 0,
+    "maxHp": 0,
+    "modifiers": {
+     "lifestealPermille": 100
+    }
+   }
+  },
+  {
+   "id": "item.test.amber-carapace",
+   "kind": "item",
+   "itemTier": 2,
+   "name": "Amber Carapace",
+   "description": "+4 armor. Activate: absorb 180 damage for up to 8s. 45s cooldown.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-amber-carapace",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 4,
+    "maxHp": 0,
+    "active": {
+     "cooldownTicks": 1800,
+     "target": "self",
+     "radius": 0,
+     "status": {
+      "durationTicks": 320,
+      "modifiers": {},
+      "shield": 180
+     }
+    }
+   }
+  },
+  {
+   "id": "item.test.broodkeeper-lantern",
+   "kind": "item",
+   "itemTier": 2,
+   "name": "Broodkeeper’s Lantern",
+   "description": "Aura: allied living units within 6 tiles regenerate 2 health per second.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-broodkeeper-lantern",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 0,
+    "aura": {
+     "target": "allies",
+     "radius": 6,
+     "modifiers": {
+      "healthRegenPerSecond": 2
+     }
+    }
+   }
+  },
+  {
+   "id": "item.test.warcaller-standard",
+   "kind": "item",
+   "itemTier": 2,
+   "name": "Warcaller’s Standard",
+   "description": "Aura: allied units within 6 tiles gain 10% attack damage.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-warcaller-standard",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 0,
+    "aura": {
+     "target": "allies",
+     "radius": 6,
+     "modifiers": {
+      "damagePermille": 100
+     }
+    }
+   }
+  },
+  {
+   "id": "item.test.stormwing-spurs",
+   "kind": "item",
+   "itemTier": 2,
+   "name": "Stormwing Spurs",
+   "description": "+10% movement speed and +12% attack speed.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-stormwing-spurs",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 0,
+    "modifiers": {
+     "moveSpeedPermille": 100,
+     "attackSpeedPermille": 120
+    }
+   }
+  },
+  {
+   "id": "item.test.rootbinder-idol",
+   "kind": "item",
+   "itemTier": 2,
+   "name": "Rootbinder’s Idol",
+   "description": "Activate: enemies within 4 tiles take 60 magic damage and are rooted for 2s (they can still attack). 35s cooldown.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-rootbinder-idol",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 0,
+    "active": {
+     "cooldownTicks": 1400,
+     "target": "enemies",
+     "radius": 4,
+     "damage": 60,
+     "damageType": "spell",
+     "status": {
+      "durationTicks": 80,
+      "modifiers": {
+       "rooted": true
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": "item.test.worldroot-heart",
+   "kind": "item",
+   "itemTier": 3,
+   "name": "Worldroot Heart",
+   "description": "+450 maximum health and +4 health per second. Activate: restore 20% maximum health. 70s cooldown.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-worldroot-heart",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 450,
+    "modifiers": {
+     "healthRegenPerSecond": 4
+    },
+    "active": {
+     "cooldownTicks": 2800,
+     "target": "self",
+     "radius": 0,
+     "healMaxPermille": 200
+    }
+   }
+  },
+  {
+   "id": "item.test.tempest-antennae",
+   "kind": "item",
+   "itemTier": 3,
+   "name": "Tempest Antennae",
+   "description": "+15% attack speed. Every third basic hit arcs 45 magic damage to up to 3 enemies within 4 tiles of the target.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-tempest-antennae",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 0,
+    "modifiers": {
+     "attackSpeedPermille": 150
+    },
+    "onHit": {
+     "every": 3,
+     "radius": 4,
+     "targets": 3,
+     "damage": 45,
+     "damageType": "spell"
+    }
+   }
+  },
+  {
+   "id": "item.test.phoenix-chrysalis",
+   "kind": "item",
+   "itemTier": 3,
+   "name": "Phoenix Chrysalis",
+   "description": "+120 maximum health. Once: prevent a lethal hit, restore 35% health and become invulnerable for 1.5s. The chrysalis then breaks.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-phoenix-chrysalis",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 120,
+    "rescue": {
+     "healMaxPermille": 350,
+     "invulnerableTicks": 60,
+     "charges": 1
+    }
+   }
+  },
+  {
+   "id": "item.test.deep-moon-scepter",
+   "kind": "item",
+   "itemTier": 3,
+   "name": "Scepter of the Deep Moon",
+   "description": "+220 maximum mana, +2 mana per second and 20% shorter hero ability cooldowns. Does not affect items.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-deep-moon-scepter",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 0,
+    "modifiers": {
+     "maxMana": 220,
+     "manaRegenPerSecond": 2,
+     "cooldownReductionPermille": 200
+    }
+   }
+  },
+  {
+   "id": "item.test.endless-brood-banner",
+   "kind": "item",
+   "itemTier": 3,
+   "name": "Banner of the Endless Brood",
+   "description": "Aura: allied units within 7 tiles gain 15% attack speed. Activate: nearby allies ignore roots and stuns for 4s. 90s cooldown.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-endless-brood-banner",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 0,
+    "aura": {
+     "target": "allies",
+     "radius": 7,
+     "modifiers": {
+      "attackSpeedPermille": 150
+     }
+    },
+    "active": {
+     "cooldownTicks": 3600,
+     "target": "allies",
+     "radius": 7,
+     "status": {
+      "durationTicks": 160,
+      "modifiers": {
+       "controlImmune": true
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": "item.test.amber-hourglass",
+   "kind": "item",
+   "itemTier": 3,
+   "name": "Hourglass of Amber",
+   "description": "+100 maximum mana. Activate: reduce remaining hero ability cooldowns by 12s. Does not affect items. 100s cooldown.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-amber-hourglass",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 0,
+    "modifiers": {
+     "maxMana": 100
+    },
+    "active": {
+     "cooldownTicks": 4000,
+     "target": "self",
+     "radius": 0,
+     "reduceAbilityCooldownTicks": 480
+    }
+   }
+  },
+  {
+   "id": "item.test.winter-heart",
+   "kind": "item",
+   "itemTier": 3,
+   "name": "Heart of Winter",
+   "description": "+180 maximum health. Aura: enemies within 5 tiles move 15% slower. Activate: deal 120 magic damage within 5 tiles and slow attack speed by 20% for 4s. 60s cooldown.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-winter-heart",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "equipment",
+    "damage": 0,
+    "armor": 0,
+    "maxHp": 180,
+    "aura": {
+     "target": "enemies",
+     "radius": 5,
+     "modifiers": {
+      "moveSpeedPermille": -150
+     }
+    },
+    "active": {
+     "cooldownTicks": 2400,
+     "target": "enemies",
+     "radius": 5,
+     "damage": 120,
+     "damageType": "spell",
+     "status": {
+      "durationTicks": 160,
+      "modifiers": {
+       "attackSpeedPermille": -200
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": "building.test.ironroot-forge",
+   "kind": "building",
+   "name": "Chitin Works",
+   "description": "Researches permanent improvements for the colony. Existing and future units benefit from completed research.",
+   "asset": "asset.test.chitin-workshop",
+   "icon": "icon.test.chitin-workshop",
+   "body": {
+    "maxHp": 1100,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 150
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 75
+     }
+    ],
+    "workTicks": 1600,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "research": {
+     "outputs": [
+      "research.test.serrated-tools",
+      "research.test.reinforced-carapace",
+      "research.test.broadheads",
+      "research.test.campaign-harness",
+      "research.test.driving-spear",
+      "research.test.saturating-shells"
+     ],
+     "queueCapacity": 3
+    }
+   },
+   "category": "category.build",
+   "level": 1,
+   "modelScale": 1.25
+  },
+  {
+   "id": "item.test.root",
+   "kind": "item",
+   "name": "Root",
+   "description": "Fibrous heartwood from contested Corrupted Root deposits. Workers deliver it only to a Rootworks.",
+   "asset": "asset.test.item-root",
+   "icon": "icon.test.item-root",
+   "stackLimit": 16,
+   "behaviors": {},
+   "creation": {
+    "method": "harvest",
+    "items": [],
+    "workTicks": 200,
+    "source": "building.test.neutral-corrupted-root",
+    "workAnimation": "chop",
+    "amount": 10
+   },
+   "currency": true,
+   "displayOrder": 30
+  },
+  {
+   "id": "building.test.neutral-corrupted-root",
+   "kind": "building",
+   "name": "Corrupted Root",
+   "description": "One miner extracts ten Root at a time; other workers queue. Deliver to a Rootworks.",
+   "asset": "asset.test.resource-corrupted-root",
+   "icon": "icon.test.item-root",
+   "footprint": {
+    "width": 8,
+    "depth": 8
+   },
+   "constructionClearance": 3,
+   "behaviors": {},
+   "yield": 1500,
+   "entrance": {
+    "x": 0.5,
+    "y": 4.5
+   },
+   "body": {
+    "maxHp": 1500,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "gatheringUnitCollision": false,
+   "harvesting": {
+    "activeWorkers": 1,
+    "recommendedWorkers": 2,
+    "searchRadius": 0
+   },
+   "modelScale": 0.55
+  },
+  {
+   "id": "building.test.rootworks",
+   "kind": "building",
+   "name": "Rootworks",
+   "description": "Receives Root from nearby Corrupted Root deposits. Delivered Root becomes spendable colony currency. Does not accept Amber or Wood.",
+   "asset": "asset.test.rootworks",
+   "icon": "icon.test.rootworks",
+   "body": {
+    "maxHp": 1000,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 150
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 75
+     }
+    ],
+    "workTicks": 1600,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "storage": {
+     "capacity": 100000,
+     "accepts": [
+      "item.test.root"
+     ],
+     "dropoff": true
+    }
+   },
+   "placementNear": {
+    "source": "building.test.neutral-corrupted-root",
+    "radius": 20
+   },
+   "category": "category.build",
+   "level": 1,
+   "modelScale": 1.1
+  },
+  {
+   "id": "unit.test.hunter",
+   "kind": "unit",
+   "name": "Hunter",
+   "description": "Spear infantry that charges enemy units from 3–8 building cells away. A clear approach grants double speed and a double-damage first hit, once every 8 seconds.",
+   "asset": "asset.test.hunter",
+   "icon": "icon.test.hunter",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 600,
+    "armor": 2,
+    "armorType": "light"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 24,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 56,
+     "aggroRange": 20,
+     "charge": {
+      "minRange": 12,
+      "maxRange": 32,
+      "cooldownTicks": 320,
+      "durationTicks": 100,
+      "speedPermille": 2000,
+      "damagePermille": 2000
+     },
+     "attack": {
+      "windupTicks": 14,
+      "recoveryTicks": 12,
+      "rangeBuffer": 0.6
+     }
+    },
+    "movement": {
+     "speed": 14
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 200
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 40
+     }
+    ],
+    "workTicks": 1200
+   },
+   "requires": [
+    "building.test.great-mound"
+   ],
+   "level": 2,
+   "supplyCost": 2,
+   "dimensions": {
+    "radius": 2,
+    "height": 5.2,
+    "formationSpacing": 4.25
+   },
+   "modelScale": 2.6
+  },
+  {
+   "id": "unit.test.bombardier",
+   "kind": "unit",
+   "name": "Bombardier",
+   "description": "Back-mounted mortar fires arcing shells that damage enemies in a two-cell radius and slow movement by 20% for two seconds. Shells can be dodged.",
+   "asset": "asset.test.bombardier",
+   "icon": "icon.test.bombardier",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 500,
+    "armor": 1,
+    "armorType": "light"
+   },
+   "vision": 40,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "movement": {
+     "speed": 10,
+     "turnRate": 720
+    },
+    "combat": {
+     "damage": 42,
+     "damageType": "siege",
+     "range": 32,
+     "cooldownTicks": 120,
+     "aggroRange": 36,
+     "shell": {
+      "flightTicks": 40,
+      "radius": 2,
+      "slowPermille": 200,
+      "slowTicks": 80
+     },
+     "attack": {
+      "windupTicks": 22,
+      "recoveryTicks": 14,
+      "rangeBuffer": 0.75
+     }
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 220
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 60
+     },
+     {
+      "item": "item.test.root",
+      "amount": 30
+     }
+    ],
+    "workTicks": 1280
+   },
+   "requires": [
+    "building.test.great-mound"
+   ],
+   "level": 3,
+   "supplyCost": 3,
+   "dimensions": {
+    "radius": 2.5,
+    "height": 4.8,
+    "formationSpacing": 5.25
+   },
+   "modelScale": 3.2
+  },
+  {
+   "id": "building.test.bombardier-workshop",
+   "kind": "building",
+   "name": "Bombardier Workshop",
+   "description": "Equips free workers with Root-loaded mortars. Requires a Great Mound; each Bombardier consumes Amber, Wood, Root and one worker.",
+   "asset": "asset.test.bombardier-workshop",
+   "icon": "icon.test.bombardier-workshop",
+   "body": {
+    "maxHp": 1400,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 220
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 120
+     }
+    ],
+    "workTicks": 2000,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.bombardier"
+     ],
+     "workerSlots": 0,
+     "queueCapacity": 6
+    },
+    "storage": {
+     "capacity": 500,
+     "accepts": [
+      "item.test.amber",
+      "item.test.wood",
+      "item.test.root"
+     ]
+    }
+   },
+   "category": "category.build-advanced",
+   "requires": [
+    "building.test.great-mound"
+   ],
+   "level": 2,
+   "modelScale": 1.15
+  },
+  {
+   "id": "unit.test.neutral-webling",
+   "kind": "unit",
+   "name": "Webling",
+   "description": "Hungry Weblings · melee forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+   "asset": "asset.test.neutral-webling",
+   "icon": "icon.test.neutral-webling",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.5661,
+    "height": 1.7,
+    "formationSpacing": 1.275
+   },
+   "body": {
+    "maxHp": 180,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 10,
+   "behaviorSets": [
+    "behavior-set.neutral"
+   ],
+   "behaviors": {
+    "movement": {
+     "speed": 11.9
+    },
+    "combat": {
+     "damage": 12,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 50,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 14,
+      "recoveryTicks": 12,
+      "rangeBuffer": 0.6
+     }
+    }
+   },
+   "level": 1,
+   "supplyCost": 1,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.neutral-spitter",
+   "kind": "unit",
+   "name": "Spitter",
+   "description": "Hungry Weblings · ranged forest creature. A webbed hollow with rushing spiders and a silk-spitting defender.",
+   "asset": "asset.test.neutral-spitter",
+   "icon": "icon.test.neutral-spitter",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.5661,
+    "height": 2.21,
+    "formationSpacing": 1.275
+   },
+   "body": {
+    "maxHp": 160,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 10,
+   "behaviorSets": [
+    "behavior-set.neutral"
+   ],
+   "behaviors": {
+    "movement": {
+     "speed": 11.9
+    },
+    "combat": {
+     "damage": 12,
+     "damageType": "piercing",
+     "range": 8,
+     "cooldownTicks": 60,
+     "aggroRange": 12,
+     "attack": {
+      "windupTicks": 17,
+      "recoveryTicks": 14,
+      "rangeBuffer": 0.75
+     },
+     "projectile": {
+      "speed": 32
+     }
+    }
+   },
+   "level": 1,
+   "supplyCost": 1,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.neutral-rootling",
+   "kind": "unit",
+   "name": "Rootling",
+   "description": "Rootbound Guardians · melee forest creature. Ancient roots defending an overgrown grove.",
+   "asset": "asset.test.neutral-rootling",
+   "icon": "icon.test.neutral-rootling",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.714,
+    "height": 4.76,
+    "formationSpacing": 1.6065
+   },
+   "body": {
+    "maxHp": 520,
+    "armor": 2,
+    "armorType": "heavy"
+   },
+   "vision": 12,
+   "behaviorSets": [
+    "behavior-set.neutral"
+   ],
+   "behaviors": {
+    "movement": {
+     "speed": 10.2
+    },
+    "combat": {
+     "damage": 22,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 66,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 14,
+      "recoveryTicks": 12,
+      "rangeBuffer": 0.6
+     }
+    }
+   },
+   "level": 4,
+   "supplyCost": 1,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.neutral-twigcaster",
+   "kind": "unit",
+   "name": "Twigcaster",
+   "description": "Rootbound Guardians · ranged forest creature. Ancient roots defending an overgrown grove.",
+   "asset": "asset.test.neutral-twigcaster",
+   "icon": "icon.test.neutral-twigcaster",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.714,
+    "height": 4.08,
+    "formationSpacing": 1.6065
+   },
+   "body": {
+    "maxHp": 330,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 10,
+   "behaviorSets": [
+    "behavior-set.neutral"
+   ],
+   "behaviors": {
+    "movement": {
+     "speed": 11.9
+    },
+    "combat": {
+     "damage": 18,
+     "damageType": "piercing",
+     "range": 8,
+     "cooldownTicks": 60,
+     "aggroRange": 12,
+     "attack": {
+      "windupTicks": 17,
+      "recoveryTicks": 14,
+      "rangeBuffer": 0.75
+     },
+     "projectile": {
+      "speed": 32
+     }
+    }
+   },
+   "level": 3,
+   "supplyCost": 1,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.neutral-needle-wasp",
+   "kind": "unit",
+   "name": "Needle Wasp",
+   "description": "Hornet Raiders · ranged forest creature. Wild hornets patrolling a paper nest.",
+   "asset": "asset.test.neutral-needle-wasp",
+   "icon": "icon.test.neutral-needle-wasp",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.714,
+    "height": 3.74,
+    "formationSpacing": 1.6065
+   },
+   "body": {
+    "maxHp": 310,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 10,
+   "behaviorSets": [
+    "behavior-set.neutral"
+   ],
+   "behaviors": {
+    "movement": {
+     "speed": 13.6
+    },
+    "combat": {
+     "damage": 19,
+     "damageType": "piercing",
+     "range": 8,
+     "cooldownTicks": 60,
+     "aggroRange": 12,
+     "attack": {
+      "windupTicks": 17,
+      "recoveryTicks": 14,
+      "rangeBuffer": 0.75
+     },
+     "projectile": {
+      "speed": 32
+     }
+    }
+   },
+   "level": 3,
+   "supplyCost": 1,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.neutral-hollow-stag",
+   "kind": "unit",
+   "name": "Hollow Stag",
+   "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+   "asset": "asset.test.neutral-hollow-stag",
+   "icon": "icon.test.neutral-hollow-stag",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 2.2627,
+    "height": 6.8,
+    "formationSpacing": 5.0915
+   },
+   "body": {
+    "maxHp": 2500,
+    "armor": 6,
+    "armorType": "heavy"
+   },
+   "vision": 12,
+   "behaviorSets": [
+    "behavior-set.neutral"
+   ],
+   "behaviors": {
+    "movement": {
+     "speed": 10.2
+    },
+    "combat": {
+     "damage": 65,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 66,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 14,
+      "recoveryTicks": 12,
+      "rangeBuffer": 0.6
+     }
+    }
+   },
+   "level": 9,
+   "supplyCost": 1,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.neutral-barkguard",
+   "kind": "unit",
+   "name": "Barkguard",
+   "description": "The Hollow Stag · melee forest creature. A sacred forest guardian and its bark-and-willow retinue.",
+   "asset": "asset.test.neutral-barkguard",
+   "icon": "icon.test.neutral-barkguard",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 1.5606,
+    "height": 4.25,
+    "formationSpacing": 3.5122
+   },
+   "body": {
+    "maxHp": 650,
+    "armor": 3,
+    "armorType": "heavy"
+   },
+   "vision": 10,
+   "behaviorSets": [
+    "behavior-set.neutral"
+   ],
+   "behaviors": {
+    "movement": {
+     "speed": 11.9
+    },
+    "combat": {
+     "damage": 28,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 50,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 14,
+      "recoveryTicks": 12,
+      "rangeBuffer": 0.6
+     }
+    }
+   },
+   "level": 6,
+   "supplyCost": 1,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.neutral-root-seer",
+   "kind": "unit",
+   "name": "Root Seer",
+   "description": "The Rotwood Court · ranged forest creature. A corrupted ancient surrounded by rootbeasts and violet spores.",
+   "asset": "asset.test.neutral-root-seer",
+   "icon": "icon.test.neutral-root-seer",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 1.156,
+    "height": 4.76,
+    "formationSpacing": 2.601
+   },
+   "body": {
+    "maxHp": 620,
+    "armor": 2,
+    "armorType": "heavy"
+   },
+   "vision": 12,
+   "behaviorSets": [
+    "behavior-set.neutral"
+   ],
+   "behaviors": {
+    "movement": {
+     "speed": 10.2
+    },
+    "combat": {
+     "damage": 31,
+     "damageType": "piercing",
+     "range": 10,
+     "cooldownTicks": 60,
+     "aggroRange": 12,
+     "attack": {
+      "windupTicks": 17,
+      "recoveryTicks": 14,
+      "rangeBuffer": 0.75
+     },
+     "projectile": {
+      "speed": 32
+     }
+    },
+    "abilities": {
+     "maxMana": 200,
+     "manaRegenPerSecond": 1,
+     "bindings": [
+      {
+       "id": "holy-light",
+       "ability": "ability.test.holy-light-lite",
+       "initialRank": 1,
+       "controls": [
+        "ai",
+        "scenario"
+       ],
+       "ai": {
+        "preference": "wounded-ally",
+        "intervalTicks": 12
+       }
+      }
+     ]
+    }
+   },
+   "level": 7,
+   "supplyCost": 1,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.beetles-worker",
+   "kind": "unit",
+   "name": "Worker",
+   "description": "Gather resources and construct beetle buildings. Same gathering, movement and training rules as ant workers.",
+   "asset": "asset.test.placeholder-missing-model",
+   "icon": "icon.test.item-root",
+   "selectionClass": "worker",
+   "body": {
+    "maxHp": 240,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 28,
+   "behaviorSets": [
+    "behavior-set.worker"
+   ],
+   "behaviors": {
+    "work": {
+     "harvests": [
+      "item.test.wood",
+      "item.test.amber",
+      "item.test.root"
+     ],
+     "builds": [
+      "building.test.beetles-bastion",
+      "building.test.beetles-war-lodge",
+      "building.test.beetles-brood-den",
+      "building.test.beetles-hornwatch",
+      "building.test.beetles-ancestor-shrine",
+      "building.test.beetles-shell-forge",
+      "building.test.beetles-rootworks"
+     ]
+    },
+    "movement": {
+     "speed": 12,
+     "walkSpeed": 6
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 100
+     }
+    ],
+    "workTicks": 600
+   },
+   "level": 1,
+   "supplyCost": 1,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 4.8,
+    "formationSpacing": 3.25
+   },
+   "modelScale": 2.4
+  },
+  {
+   "id": "unit.test.beetles-horn-guard",
+   "kind": "unit",
+   "name": "Horn Guard",
+   "description": "Durable heavy infantry. Slower and more expensive than ant Warriors; uses 1 supply.",
+   "asset": "asset.test.placeholder-missing-model",
+   "icon": "icon.test.item-root",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 440,
+    "armor": 3,
+    "armorType": "heavy"
+   },
+   "vision": 32,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 15,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 64,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    },
+    "movement": {
+     "speed": 11
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 195
+     }
+    ],
+    "workTicks": 1120
+   },
+   "level": 1,
+   "supplyCost": 1,
+   "dimensions": {
+    "radius": 1.75,
+    "height": 4.8,
+    "formationSpacing": 3.75
+   },
+   "modelScale": 2.4
+  },
+  {
+   "id": "unit.test.beetles-stone-slinger",
+   "kind": "unit",
+   "name": "Stone Slinger",
+   "description": "Heavy thrown stones strike ground and flying enemies. Shorter reach than ant Archers; uses 1 supply.",
+   "asset": "asset.test.beetles-stone-slinger",
+   "icon": "icon.test.item-root",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 330,
+    "armor": 1,
+    "armorType": "light"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 20,
+     "damageType": "piercing",
+     "range": 16,
+     "cooldownTicks": 76,
+     "aggroRange": 24,
+     "attack": {
+      "windupTicks": 20,
+      "recoveryTicks": 16,
+      "rangeBuffer": 0.75
+     },
+     "projectile": {
+      "speed": 32
+     }
+    },
+    "movement": {
+     "speed": 11
+    }
+   },
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 180
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 25
+     }
+    ],
+    "workTicks": 1120
+   },
+   "level": 1,
+   "supplyCost": 1,
+   "dimensions": {
+    "radius": 1.75,
+    "height": 4.8,
+    "formationSpacing": 3.75
+   },
+   "modelScale": 2.4
+  },
+  {
+   "id": "unit.test.beetles-hornbreaker",
+   "kind": "unit",
+   "name": "Hornbreaker",
+   "description": "Beetle champion. Charges into battle, overwhelms a chosen enemy, sustains nearby allies and becomes a Colossus.",
+   "asset": "asset.test.placeholder-missing-model",
+   "icon": "icon.test.item-root",
+   "hero": true,
+   "level": 1,
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 820,
+    "armor": 3,
+    "armorType": "hero"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 37,
+     "damageType": "hero",
+     "range": 0.6,
+     "cooldownTicks": 84,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 18,
+      "recoveryTicks": 14,
+      "rangeBuffer": 0.6
+     }
+    },
+    "progression": {
+     "experienceRadius": 40,
+     "levels": [
+      {
+       "experience": 0,
+       "maxHp": 820,
+       "damage": 37,
+       "armor": 3,
+       "maxMana": 200,
+       "cooldownTicks": 84,
+       "healthRegenPerSecond": 1.6,
+       "manaRegenPerSecond": 0.7
+      },
+      {
+       "experience": 160,
+       "maxHp": 905,
+       "damage": 41,
+       "armor": 3,
+       "maxMana": 220,
+       "cooldownTicks": 82,
+       "healthRegenPerSecond": 1.75,
+       "manaRegenPerSecond": 0.77
+      },
+      {
+       "experience": 400,
+       "maxHp": 990,
+       "damage": 45,
+       "armor": 4,
+       "maxMana": 240,
+       "cooldownTicks": 80,
+       "healthRegenPerSecond": 1.9000000000000001,
+       "manaRegenPerSecond": 0.84
+      },
+      {
+       "experience": 720,
+       "maxHp": 1075,
+       "damage": 49,
+       "armor": 4,
+       "maxMana": 260,
+       "cooldownTicks": 78,
+       "healthRegenPerSecond": 2.05,
+       "manaRegenPerSecond": 0.91
+      },
+      {
+       "experience": 1120,
+       "maxHp": 1160,
+       "damage": 53,
+       "armor": 5,
+       "maxMana": 280,
+       "cooldownTicks": 76,
+       "healthRegenPerSecond": 2.2,
+       "manaRegenPerSecond": 0.98
+      },
+      {
+       "experience": 1600,
+       "maxHp": 1245,
+       "damage": 57,
+       "armor": 5,
+       "maxMana": 300,
+       "cooldownTicks": 74,
+       "healthRegenPerSecond": 2.35,
+       "manaRegenPerSecond": 1.05
+      },
+      {
+       "experience": 2160,
+       "maxHp": 1330,
+       "damage": 61,
+       "armor": 6,
+       "maxMana": 320,
+       "cooldownTicks": 72,
+       "healthRegenPerSecond": 2.5,
+       "manaRegenPerSecond": 1.12
+      },
+      {
+       "experience": 2800,
+       "maxHp": 1415,
+       "damage": 65,
+       "armor": 6,
+       "maxMana": 340,
+       "cooldownTicks": 70,
+       "healthRegenPerSecond": 2.6500000000000004,
+       "manaRegenPerSecond": 1.19
+      },
+      {
+       "experience": 3520,
+       "maxHp": 1500,
+       "damage": 69,
+       "armor": 7,
+       "maxMana": 360,
+       "cooldownTicks": 68,
+       "healthRegenPerSecond": 2.8,
+       "manaRegenPerSecond": 1.26
+      },
+      {
+       "experience": 4320,
+       "maxHp": 1585,
+       "damage": 73,
+       "armor": 7,
+       "maxMana": 380,
+       "cooldownTicks": 68,
+       "healthRegenPerSecond": 2.95,
+       "manaRegenPerSecond": 1.33
+      },
+      {
+       "experience": 5200,
+       "maxHp": 1670,
+       "damage": 77,
+       "armor": 8,
+       "maxMana": 400,
+       "cooldownTicks": 68,
+       "healthRegenPerSecond": 3.1,
+       "manaRegenPerSecond": 1.4
+      }
+     ]
+    },
+    "inventory": {
+     "slots": 4,
+     "pickupRange": 1.5
+    },
+    "abilities": {
+     "maxMana": 200,
+     "manaRegenPerSecond": 0.7,
+     "bindings": [
+      {
+       "id": "horn-rush",
+       "ability": "ability.test.hornbreaker-horn-rush",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       },
+       "learning": {
+        "requiredLevels": [
+         1,
+         3,
+         5
+        ]
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 20
+       }
+      },
+      {
+       "id": "overwhelm",
+       "ability": "ability.test.hornbreaker-overwhelm",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "W",
+        "column": 2
+       },
+       "learning": {
+        "requiredLevels": [
+         1,
+         3,
+         5
+        ]
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 20
+       }
+      },
+      {
+       "id": "steadfast",
+       "ability": "ability.test.hornbreaker-steadfast",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "E",
+        "column": 3
+       },
+       "learning": {
+        "requiredLevels": [
+         1,
+         3,
+         5
+        ]
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 20
+       }
+      },
+      {
+       "id": "colossus",
+       "ability": "ability.test.hornbreaker-colossus",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "R",
+        "column": 4
+       },
+       "learning": {
+        "requiredLevels": [
+         5,
+         8
+        ]
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 20
+       }
+      }
+     ]
+    },
+    "movement": {
+     "speed": 12
+    }
+   },
+   "supplyCost": 4,
+   "dimensions": {
+    "radius": 2,
+    "height": 5.6,
+    "formationSpacing": 4.25
+   },
+   "modelScale": 2.8,
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 425
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 100
+     }
+    ],
+    "workTicks": 2200
+   }
+  },
+  {
+   "id": "building.test.beetles-bastion",
+   "kind": "building",
+   "name": "Bastion",
+   "description": "The beetle colony’s iron-clad main hall stores resources, trains workers and provides supply.",
+   "asset": "asset.test.beetles-carapace-hall",
+   "icon": "icon.test.beetles-carapace-hall",
+   "body": {
+    "maxHp": 1800,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 42,
+   "footprint": {
+    "width": 20,
+    "depth": 20
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 10.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 400
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 150
+     }
+    ],
+    "workTicks": 3600,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "storage": {
+     "capacity": 100000,
+     "accepts": [
+      "item.test.wood",
+      "item.test.amber"
+     ],
+     "dropoff": true,
+     "gathering": {
+      "item": "item.test.amber",
+      "radius": 40
+     }
+    },
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.beetles-worker"
+     ],
+     "workerSlots": 0,
+     "queueCapacity": 6
+    }
+   },
+   "level": 1,
+   "upgrade": {
+    "target": "building.test.beetles-great-bastion",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 450
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 200
+     }
+    ],
+    "workTicks": 3200
+   },
+   "supplyProvided": 15,
+   "heroCapacity": 1,
+   "modelScale": 1.25
+  },
+  {
+   "id": "building.test.beetles-great-bastion",
+   "kind": "building",
+   "name": "Great Bastion",
+   "description": "Great Bastion of the beetle colony. Model pending.",
+   "asset": "asset.test.placeholder-missing-model",
+   "icon": "icon.test.item-root",
+   "body": {
+    "maxHp": 2400,
+    "armor": 6,
+    "armorType": "structure"
+   },
+   "vision": 42,
+   "footprint": {
+    "width": 20,
+    "depth": 20
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 10.5
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "storage": {
+     "capacity": 100000,
+     "accepts": [
+      "item.test.wood",
+      "item.test.amber"
+     ],
+     "dropoff": true,
+     "gathering": {
+      "item": "item.test.amber",
+      "radius": 40
+     }
+    },
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.beetles-worker"
+     ],
+     "workerSlots": 0,
+     "queueCapacity": 6
+    }
+   },
+   "level": 2,
+   "supplyProvided": 15,
+   "heroCapacity": 2,
+   "upgrade": {
+    "target": "building.test.beetles-elder-bastion",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 600
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 250
+     }
+    ],
+    "workTicks": 4000
+   },
+   "modelScale": 1
+  },
+  {
+   "id": "building.test.beetles-elder-bastion",
+   "kind": "building",
+   "name": "Elder Bastion",
+   "description": "Elder Bastion of the beetle colony. Model pending.",
+   "asset": "asset.test.placeholder-missing-model",
+   "icon": "icon.test.item-root",
+   "body": {
+    "maxHp": 3000,
+    "armor": 6,
+    "armorType": "structure"
+   },
+   "vision": 42,
+   "footprint": {
+    "width": 20,
+    "depth": 20
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 10.5
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "storage": {
+     "capacity": 100000,
+     "accepts": [
+      "item.test.wood",
+      "item.test.amber"
+     ],
+     "dropoff": true,
+     "gathering": {
+      "item": "item.test.amber",
+      "radius": 40
+     }
+    },
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.beetles-worker"
+     ],
+     "workerSlots": 0,
+     "queueCapacity": 6
+    }
+   },
+   "level": 3,
+   "supplyProvided": 15,
+   "heroCapacity": 3,
+   "modelScale": 1
+  },
+  {
+   "id": "building.test.beetles-brood-den",
+   "kind": "building",
+   "name": "Brood Den",
+   "description": "An iron-banded shell nursery that provides eight supply for the beetle colony.",
+   "asset": "asset.test.beetles-armored-brood-den",
+   "icon": "icon.test.beetles-armored-brood-den",
+   "body": {
+    "maxHp": 600,
+    "armor": 3,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 8,
+    "depth": 8
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 4.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 100
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 25
+     }
+    ],
+    "workTicks": 1000,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {},
+   "level": 1,
+   "supplyProvided": 8,
+   "modelScale": 1
+  },
+  {
+   "id": "building.test.beetles-war-lodge",
+   "kind": "building",
+   "name": "War Lodge",
+   "description": "Iron-clad training hall for the beetle colony’s infantry and ranged troops.",
+   "asset": "asset.test.beetles-iron-garrison",
+   "icon": "icon.test.beetles-iron-garrison",
+   "body": {
+    "maxHp": 1200,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 200
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 60
+     }
+    ],
+    "workTicks": 2000,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "storage": {
+     "capacity": 500,
+     "accepts": [
+      "item.test.wood",
+      "item.test.amber"
+     ]
+    },
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.beetles-horn-guard",
+      "unit.test.beetles-stone-slinger"
+     ],
+     "workerSlots": 0,
+     "queueCapacity": 6
+    }
+   },
+   "category": "category.build-advanced",
+   "level": 1,
+   "modelScale": 1
+  },
+  {
+   "id": "building.test.beetles-shell-forge",
+   "kind": "building",
+   "name": "Shell Forge",
+   "description": "Forges stronger weapons and armor for the beetle colony. Completed research benefits existing and future units.",
+   "asset": "asset.test.beetles-shell-foundry",
+   "icon": "icon.test.beetles-shell-foundry",
+   "body": {
+    "maxHp": 1100,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 150
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 75
+     }
+    ],
+    "workTicks": 1600,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "research": {
+     "outputs": [
+      "research.test.beetles-serrated-tools",
+      "research.test.beetles-reinforced-carapace",
+      "research.test.beetles-broadheads",
+      "research.test.beetles-campaign-harness"
+     ],
+     "queueCapacity": 3
+    }
+   },
+   "category": "category.build",
+   "level": 1,
+   "modelScale": 1
+  },
+  {
+   "id": "building.test.beetles-ancestor-shrine",
+   "kind": "building",
+   "name": "Ancestor Shrine",
+   "description": "Ancestor Shrine of the beetle colony. Model pending.",
+   "asset": "asset.test.placeholder-missing-model",
+   "icon": "icon.test.item-root",
+   "body": {
+    "maxHp": 1000,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 180
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 60
+     }
+    ],
+    "workTicks": 1600,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "revival": {
+     "items": [
+      {
+       "item": "item.test.amber",
+       "amount": 200
+      }
+     ],
+     "itemsPerLevel": [
+      {
+       "item": "item.test.amber",
+       "amount": 50
+      }
+     ],
+     "workTicksPerLevel": 200,
+     "workTicks": 1200,
+     "queueCapacity": 4
+    },
+    "production": {
+     "mode": "queued",
+     "outputs": [
+      "unit.test.beetles-hornbreaker"
+     ],
+     "queueCapacity": 4,
+     "workerSlots": 0
+    },
+    "storage": {
+     "capacity": 100000,
+     "accepts": [
+      "item.test.amber",
+      "item.test.wood"
+     ]
+    }
+   },
+   "level": 1,
+   "category": "category.build-advanced",
+   "modelScale": 1
+  },
+  {
+   "id": "building.test.beetles-rootworks",
+   "kind": "building",
+   "name": "Rootworks",
+   "description": "Rootworks of the beetle colony. Model pending.",
+   "asset": "asset.test.placeholder-missing-model",
+   "icon": "icon.test.item-root",
+   "body": {
+    "maxHp": 1000,
+    "armor": 5,
+    "armorType": "structure"
+   },
+   "vision": 14,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 150
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 75
+     }
+    ],
+    "workTicks": 1600,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {
+    "storage": {
+     "capacity": 100000,
+     "accepts": [
+      "item.test.root"
+     ],
+     "dropoff": true
+    }
+   },
+   "placementNear": {
+    "source": "building.test.neutral-corrupted-root",
+    "radius": 20
+   },
+   "category": "category.build",
+   "level": 1,
+   "modelScale": 1
+  },
+  {
+   "id": "building.test.beetles-hornwatch",
+   "kind": "building",
+   "name": "Hornwatch",
+   "description": "Hornwatch of the beetle colony. Model pending.",
+   "asset": "asset.test.placeholder-missing-model",
+   "icon": "icon.test.item-root",
+   "body": {
+    "maxHp": 500,
+    "armor": 2,
+    "armorType": "structure"
+   },
+   "vision": 25,
+   "footprint": {
+    "width": 8,
+    "depth": 8
+   },
+   "entrance": {
+    "x": 0.5,
+    "y": 4.5
+   },
+   "creation": {
+    "method": "construct",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 100
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 50
+     }
+    ],
+    "workTicks": 1400,
+    "workAnimation": "build"
+   },
+   "behaviorSets": [
+    "behavior-set.player-building"
+   ],
+   "behaviors": {},
+   "category": "category.build-advanced",
+   "level": 1,
+   "garrison": {
+    "capacity": 1,
+    "accepts": [
+     "unit.test.beetles-stone-slinger"
+    ],
+    "height": 5.8,
+    "lookoutRadius": 1.35
+   },
+   "modelScale": 1
+  },
+  {
+   "id": "unit.test.rootbreaker",
+   "kind": "unit",
+   "name": "Rootbreaker",
+   "description": "A towering ant bruiser with a massive root club. Weakens enemy armor, crushes individual foes, draws attacks with his roar, and erupts roots across the battlefield.",
+   "asset": "asset.test.rootbreaker",
+   "icon": "icon.test.rootbreaker",
+   "hero": true,
+   "level": 1,
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 900,
+    "armor": 3,
+    "armorType": "hero"
+   },
+   "vision": 36,
+   "behaviorSets": [
+    "behavior-set.ground-army"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 38,
+     "damageType": "hero",
+     "range": 1.2,
+     "cooldownTicks": 88,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 26,
+      "recoveryTicks": 26,
+      "rangeBuffer": 0.6
+     }
+    },
+    "progression": {
+     "experienceRadius": 40,
+     "levels": [
+      {
+       "experience": 0,
+       "maxHp": 900,
+       "damage": 38,
+       "armor": 3,
+       "maxMana": 250,
+       "cooldownTicks": 88,
+       "healthRegenPerSecond": 1.8,
+       "manaRegenPerSecond": 0.85
+      },
+      {
+       "experience": 160,
+       "maxHp": 990,
+       "damage": 42,
+       "armor": 3,
+       "maxMana": 270,
+       "cooldownTicks": 86,
+       "healthRegenPerSecond": 1.98,
+       "manaRegenPerSecond": 0.92
+      },
+      {
+       "experience": 400,
+       "maxHp": 1080,
+       "damage": 46,
+       "armor": 4,
+       "maxMana": 290,
+       "cooldownTicks": 84,
+       "healthRegenPerSecond": 2.16,
+       "manaRegenPerSecond": 0.99
+      },
+      {
+       "experience": 720,
+       "maxHp": 1170,
+       "damage": 50,
+       "armor": 4,
+       "maxMana": 310,
+       "cooldownTicks": 82,
+       "healthRegenPerSecond": 2.34,
+       "manaRegenPerSecond": 1.06
+      },
+      {
+       "experience": 1120,
+       "maxHp": 1260,
+       "damage": 54,
+       "armor": 5,
+       "maxMana": 330,
+       "cooldownTicks": 80,
+       "healthRegenPerSecond": 2.52,
+       "manaRegenPerSecond": 1.13
+      },
+      {
+       "experience": 1600,
+       "maxHp": 1350,
+       "damage": 58,
+       "armor": 5,
+       "maxMana": 350,
+       "cooldownTicks": 78,
+       "healthRegenPerSecond": 2.7,
+       "manaRegenPerSecond": 1.2
+      },
+      {
+       "experience": 2160,
+       "maxHp": 1440,
+       "damage": 62,
+       "armor": 6,
+       "maxMana": 370,
+       "cooldownTicks": 76,
+       "healthRegenPerSecond": 2.88,
+       "manaRegenPerSecond": 1.27
+      },
+      {
+       "experience": 2800,
+       "maxHp": 1530,
+       "damage": 66,
+       "armor": 6,
+       "maxMana": 390,
+       "cooldownTicks": 74,
+       "healthRegenPerSecond": 3.06,
+       "manaRegenPerSecond": 1.34
+      },
+      {
+       "experience": 3520,
+       "maxHp": 1620,
+       "damage": 70,
+       "armor": 7,
+       "maxMana": 410,
+       "cooldownTicks": 72,
+       "healthRegenPerSecond": 3.24,
+       "manaRegenPerSecond": 1.41
+      },
+      {
+       "experience": 4320,
+       "maxHp": 1710,
+       "damage": 74,
+       "armor": 7,
+       "maxMana": 430,
+       "cooldownTicks": 70,
+       "healthRegenPerSecond": 3.42,
+       "manaRegenPerSecond": 1.48
+      },
+      {
+       "experience": 5200,
+       "maxHp": 1800,
+       "damage": 78,
+       "armor": 8,
+       "maxMana": 450,
+       "cooldownTicks": 70,
+       "healthRegenPerSecond": 3.6,
+       "manaRegenPerSecond": 1.55
+      }
+     ]
+    },
+    "inventory": {
+     "slots": 4,
+     "pickupRange": 1.5
+    },
+    "abilities": {
+     "maxMana": 250,
+     "manaRegenPerSecond": 0.85,
+     "bindings": [
+      {
+       "id": "skullcrack",
+       "ability": "ability.test.rootbreaker-skullcrack",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       },
+       "learning": {
+        "requiredLevels": [
+         1,
+         3,
+         5
+        ]
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 20
+       }
+      },
+      {
+       "id": "roar",
+       "ability": "ability.test.rootbreaker-roar",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "W",
+        "column": 2
+       },
+       "learning": {
+        "requiredLevels": [
+         1,
+         3,
+         5
+        ]
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 20
+       }
+      },
+      {
+       "id": "presence",
+       "ability": "ability.test.rootbreaker-presence",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "E",
+        "column": 3
+       },
+       "learning": {
+        "requiredLevels": [
+         1,
+         3,
+         5
+        ]
+       }
+      },
+      {
+       "id": "uproot",
+       "ability": "ability.test.rootbreaker-uproot",
+       "initialRank": 0,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "R",
+        "column": 4
+       },
+       "learning": {
+        "requiredLevels": [
+         5,
+         8
+        ]
+       },
+       "ai": {
+        "preference": "enemy",
+        "intervalTicks": 20
+       }
+      }
+     ]
+    },
+    "movement": {
+     "speed": 11
+    }
+   },
+   "supplyCost": 4,
+   "dimensions": {
+    "radius": 3,
+    "height": 9.6,
+    "formationSpacing": 6.5
+   },
+   "modelScale": 3.84,
+   "creation": {
+    "method": "train",
+    "items": [
+     {
+      "item": "item.test.amber",
+      "amount": 425
+     },
+     {
+      "item": "item.test.wood",
+      "amount": 100
+     }
+    ],
+    "workTicks": 2200
+   },
+   "displayOrder": 1
+  },
+  {
+   "id": "unit.test.briar-cutthroat",
+   "kind": "unit",
+   "name": "Briar Cutthroat",
+   "description": "Briarwatch campaign character.",
+   "asset": "asset.test.cleaver-warrior",
+   "icon": "icon.test.cleaver-warrior",
+   "selectionClass": "army",
+   "body": {
+    "maxHp": 200,
+    "armor": 1,
+    "armorType": "heavy"
+   },
+   "vision": 32,
+   "behaviorSets": [
+    "behavior-set.neutral"
+   ],
+   "behaviors": {
+    "combat": {
+     "damage": 10,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 54,
+     "aggroRange": 20,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    },
+    "movement": {
+     "speed": 12,
+     "turnRate": 720
+    }
+   },
+   "level": 1,
+   "supplyCost": 1,
+   "dimensions": {
+    "radius": 1.5,
+    "height": 4.8,
+    "formationSpacing": 3.25
+   },
+   "modelScale": 2.4
+  },
+  {
+   "id": "building.test.briar-cottage",
+   "kind": "building",
+   "name": "Bark Cottage",
+   "description": "Briarwatch settlement.",
+   "asset": "asset.test.silk-brood-house",
+   "icon": "icon.test.silk-brood-house",
+   "body": {
+    "maxHp": 450,
+    "armor": 0,
+    "armorType": "structure"
+   },
+   "vision": 0,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "behaviors": {},
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   }
+  },
+  {
+   "id": "item.test.briar-healing-scroll",
+   "kind": "item",
+   "name": "Resin Poultice Bundle",
+   "description": "Restore 150 health to nearby allies.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-barkguard",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "consumable",
+    "heal": 0,
+    "active": {
+     "target": "allies",
+     "radius": 12,
+     "cooldownTicks": 0,
+     "heal": 150
+    }
+   }
+  },
+  {
+   "id": "item.test.briar-vigor-seed",
+   "kind": "item",
+   "name": "Seed of Vigor",
+   "description": "Pick up to permanently gain 25 maximum health and 1 attack damage. Does not occupy an inventory slot.",
+   "asset": "asset.test.item-chest",
+   "icon": "icon.test.item-barkguard",
+   "stackLimit": 1,
+   "behaviors": {},
+   "itemEffect": {
+    "type": "consumable",
+    "heal": 0,
+    "permanent": {
+     "maxHp": 25,
+     "damage": 1
+    },
+    "onPickup": true
+   }
+  },
+  {
+   "id": "building.test.briar-ruined-cottage",
+   "kind": "building",
+   "name": "Ruined Cottage",
+   "description": "The broken remains of a raided home.",
+   "asset": "asset.test.silk-brood-house",
+   "icon": "icon.test.silk-brood-house",
+   "body": {
+    "maxHp": 120,
+    "armor": 0,
+    "armorType": "structure"
+   },
+   "vision": 0,
+   "footprint": {
+    "width": 12,
+    "depth": 12
+   },
+   "behaviors": {},
+   "entrance": {
+    "x": 0.5,
+    "y": 6.5
+   }
+  },
+  {
+   "id": "unit.test.spell-feral-spirit",
+   "kind": "unit",
+   "name": "Feral Spirit",
+   "description": "A temporary, controllable forest spirit summoned by magic.",
+   "asset": "asset.test.neutral-tadpole-spirit",
+   "icon": "icon.test.neutral-tadpole-spirit",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.714,
+    "height": 2.21,
+    "formationSpacing": 1.6065
+   },
+   "body": {
+    "maxHp": 200,
+    "armor": 0,
+    "armorType": "light"
+   },
+   "vision": 10,
+   "behaviorSets": [],
+   "behaviors": {
+    "playerControl": {},
+    "movement": {
+     "speed": 11.9,
+     "turnRate": 720
+    },
+    "combat": {
+     "damage": 14,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 48,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    }
+   },
+   "level": 3,
+   "supplyCost": 0,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.spell-shadow-spirit-lesser",
+   "kind": "unit",
+   "name": "Lesser Shadow Spirit",
+   "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+   "asset": "asset.test.neutral-tadpole-spirit",
+   "icon": "icon.test.neutral-tadpole-spirit",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.714,
+    "height": 2.21,
+    "formationSpacing": 1.6065
+   },
+   "body": {
+    "maxHp": 215,
+    "armor": 0,
+    "armorType": "heavy"
+   },
+   "vision": 10,
+   "behaviorSets": [],
+   "behaviors": {
+    "playerControl": {},
+    "movement": {
+     "speed": 11.9,
+     "turnRate": 720
+    },
+    "combat": {
+     "damage": 10,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 80,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    }
+   },
+   "level": 2,
+   "supplyCost": 0,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.spell-shadow-spirit-standard",
+   "kind": "unit",
+   "name": "Shadow Spirit",
+   "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+   "asset": "asset.test.neutral-tadpole-spirit",
+   "icon": "icon.test.neutral-tadpole-spirit",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.714,
+    "height": 2.21,
+    "formationSpacing": 1.6065
+   },
+   "body": {
+    "maxHp": 290,
+    "armor": 0,
+    "armorType": "heavy"
+   },
+   "vision": 10,
+   "behaviorSets": [],
+   "behaviors": {
+    "playerControl": {},
+    "movement": {
+     "speed": 11.9,
+     "turnRate": 720
+    },
+    "combat": {
+     "damage": 16,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 80,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    }
+   },
+   "level": 3,
+   "supplyCost": 0,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.spell-shadow-spirit-greater",
+   "kind": "unit",
+   "name": "Greater Shadow Spirit",
+   "description": "A temporary forest spirit raised by a cursed enemy’s death.",
+   "asset": "asset.test.neutral-tadpole-spirit",
+   "icon": "icon.test.neutral-tadpole-spirit",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.714,
+    "height": 2.21,
+    "formationSpacing": 1.6065
+   },
+   "body": {
+    "maxHp": 405,
+    "armor": 0,
+    "armorType": "heavy"
+   },
+   "vision": 10,
+   "behaviorSets": [],
+   "behaviors": {
+    "playerControl": {},
+    "movement": {
+     "speed": 11.9,
+     "turnRate": 720
+    },
+    "combat": {
+     "damage": 18,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 80,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    }
+   },
+   "level": 4,
+   "supplyCost": 0,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.spell-grove-nursery",
+   "kind": "unit",
+   "name": "Grove Nursery",
+   "description": "An immobile summoned nursery. Its producing status is granted by the spell, with no built-in spell behavior.",
+   "asset": "asset.test.silk-brood-house",
+   "icon": "icon.test.silk-brood-house",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 1.87,
+    "height": 4.42,
+    "formationSpacing": 4.25
+   },
+   "body": {
+    "maxHp": 500,
+    "armor": 2,
+    "armorType": "structure"
+   },
+   "vision": 10,
+   "behaviorSets": [],
+   "behaviors": {
+    "playerControl": {}
+   },
+   "level": 1,
+   "supplyCost": 0,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.spell-trinity-earth",
+   "kind": "unit",
+   "name": "Earth Spirit",
+   "description": "A linked, controllable spirit body. Its retained caster returns through surviving bodies in Earth, Storm, Fire order.",
+   "asset": "asset.test.neutral-tadpole-spirit",
+   "icon": "icon.test.neutral-tadpole-spirit",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.714,
+    "height": 2.21,
+    "formationSpacing": 1.6065
+   },
+   "body": {
+    "maxHp": 650,
+    "armor": 0,
+    "armorType": "heavy"
+   },
+   "vision": 10,
+   "behaviorSets": [],
+   "behaviors": {
+    "playerControl": {},
+    "movement": {
+     "speed": 8.5,
+     "turnRate": 720
+    },
+    "combat": {
+     "damage": 25,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 80,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    },
+    "abilities": {
+     "maxMana": 300,
+     "manaRegenPerSecond": 2,
+     "bindings": [
+      {
+       "id": "gift",
+       "ability": "ability.test.war-stomp",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       }
+      }
+     ]
+    }
+   },
+   "level": 3,
+   "experienceYield": 0,
+   "supplyCost": 0,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.spell-trinity-storm",
+   "kind": "unit",
+   "name": "Storm Spirit",
+   "description": "A linked, controllable spirit body. Its retained caster returns through surviving bodies in Earth, Storm, Fire order.",
+   "asset": "asset.test.neutral-tadpole-spirit",
+   "icon": "icon.test.neutral-tadpole-spirit",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.714,
+    "height": 2.21,
+    "formationSpacing": 1.6065
+   },
+   "body": {
+    "maxHp": 420,
+    "armor": 0,
+    "armorType": "heavy"
+   },
+   "vision": 10,
+   "behaviorSets": [],
+   "behaviors": {
+    "playerControl": {},
+    "movement": {
+     "speed": 13.6,
+     "turnRate": 720
+    },
+    "combat": {
+     "damage": 17,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 80,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    },
+    "abilities": {
+     "maxMana": 300,
+     "manaRegenPerSecond": 2,
+     "bindings": [
+      {
+       "id": "gift",
+       "ability": "ability.test.chain-lightning",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       }
+      }
+     ]
+    }
+   },
+   "level": 3,
+   "experienceYield": 0,
+   "supplyCost": 0,
+   "modelScale": 1.7
+  },
+  {
+   "id": "unit.test.spell-trinity-fire",
+   "kind": "unit",
+   "name": "Fire Spirit",
+   "description": "A linked, controllable spirit body. Its retained caster returns through surviving bodies in Earth, Storm, Fire order.",
+   "asset": "asset.test.neutral-tadpole-spirit",
+   "icon": "icon.test.neutral-tadpole-spirit",
+   "selectionClass": "army",
+   "dimensions": {
+    "radius": 0.714,
+    "height": 2.21,
+    "formationSpacing": 1.6065
+   },
+   "body": {
+    "maxHp": 340,
+    "armor": 0,
+    "armorType": "heavy"
+   },
+   "vision": 10,
+   "behaviorSets": [],
+   "behaviors": {
+    "playerControl": {},
+    "movement": {
+     "speed": 17,
+     "turnRate": 720
+    },
+    "combat": {
+     "damage": 23,
+     "damageType": "melee",
+     "range": 0.6,
+     "cooldownTicks": 80,
+     "aggroRange": 10,
+     "attack": {
+      "windupTicks": 12,
+      "recoveryTicks": 10,
+      "rangeBuffer": 0.6
+     }
+    },
+    "abilities": {
+     "maxMana": 300,
+     "manaRegenPerSecond": 2,
+     "bindings": [
+      {
+       "id": "gift",
+       "ability": "ability.test.immolation",
+       "initialRank": 1,
+       "controls": [
+        "player",
+        "ai",
+        "scenario"
+       ],
+       "command": {
+        "hotkey": "Q",
+        "column": 1
+       }
+      }
+     ]
+    }
+   },
+   "level": 3,
+   "experienceYield": 0,
+   "supplyCost": 0,
+   "modelScale": 1.7
+  }
+ ],
+ "assets": [
+  {
+   "id": "asset.test.amber-adept",
+   "file": "assets/library/asset.models.units.ants-amber-adept/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "projectile": "effect.test.weapon-amber-bolt",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "castContact": 0.5
+  },
+  {
+   "id": "asset.test.archer",
+   "file": "assets/library/asset.models.units.ants-archer/geometry.glb",
+   "dimensions": {
+    "radius": 0.2,
+    "height": 2,
+    "formationSpacing": 1
+   },
+   "character": "archer",
+   "scale": 1,
+   "healthHeight": 2.15,
+   "projectile": "effect.test.weapon-arrow",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "back",
+     "node": "socket_back",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.avatar-command-icon",
+   "image": "assets/library/asset.custom.avatar-command-icon/image.png"
+  },
+  {
+   "id": "asset.test.banneret",
+   "file": "assets/library/asset.models.units.ants-banneret/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "castContact": 0.325
+  },
+  {
+   "id": "asset.test.bash-command-icon",
+   "image": "assets/library/asset.custom.bash-command-icon/image.png"
+  },
+  {
+   "id": "asset.test.beetles-armored-brood-den",
+   "file": "assets/library/asset.models.buildings.beetles-armored-brood-den/geometry.glb",
+   "scale": 8,
+   "healthHeight": 4.613282680511475
+  },
+  {
+   "id": "asset.test.beetles-carapace-hall",
+   "file": "assets/library/asset.models.buildings.beetles-carapace-hall/geometry.glb",
+   "scale": 1,
+   "healthHeight": 10.840951919555664
+  },
+  {
+   "id": "asset.test.beetles-iron-garrison",
+   "file": "assets/library/asset.models.buildings.beetles-iron-garrison/geometry.glb",
+   "scale": 12,
+   "healthHeight": 8.469104051589966
+  },
+  {
+   "id": "asset.test.beetles-shell-foundry",
+   "file": "assets/library/asset.models.buildings.beetles-shell-foundry/geometry.glb",
+   "scale": 12,
+   "healthHeight": 8.228070735931396
+  },
+  {
+   "id": "asset.test.beetles-stone-slinger",
+   "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
+   "scale": 1,
+   "healthHeight": 2.8,
+   "projectile": "effect.test.weapon-stone"
+  },
+  {
+   "id": "asset.test.blink-command-icon",
+   "image": "assets/library/asset.custom.blink-command-icon/image.png"
+  },
+  {
+   "id": "asset.test.bombardier",
+   "file": "assets/library/asset.models.units.ants-bombardier/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "projectile": "effect.test.weapon-resin-bomb",
+   "impactEffect": "effect.test.resin-explosion",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "castContact": 0.3076923076923077
+  },
+  {
+   "id": "asset.test.bombardier-workshop",
+   "file": "assets/library/asset.models.buildings.ants-bombardier-workshop/geometry.glb",
+   "scale": 1,
+   "healthHeight": 7.1
+  },
+  {
+   "id": "asset.test.chitin-workshop",
+   "file": "assets/library/asset.models.buildings.ants-chitin-workshop/geometry.glb",
+   "scale": 9.6,
+   "healthHeight": 8.254242658615112
+  },
+  {
+   "id": "asset.test.cleaver-warrior",
+   "file": "assets/library/asset.models.units.ants-cleaver-warrior/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.colony-worker",
+   "file": "assets/library/asset.models.units.ants-colony-worker/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "sockets": [
+    {
+     "name": "back",
+     "node": "socket_back",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.construction-ants",
+   "file": "assets/library/asset.models.construction.ants/geometry.glb"
+  },
+  {
+   "id": "asset.test.construction-beetles",
+   "file": "assets/library/asset.models.construction.beetles/geometry.glb"
+  },
+  {
+   "id": "asset.test.forester",
+   "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
+   "scale": 1,
+   "healthHeight": 3.2
+  },
+  {
+   "id": "asset.test.frost-armor-command",
+   "image": "assets/library/asset.custom.frost-armor-command/image.png"
+  },
+  {
+   "id": "asset.test.hunter",
+   "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
+   "scale": 1,
+   "healthHeight": 2.7,
+   "cameraAnchor": {
+    "height": 1.5,
+    "forward": 0.15,
+    "distance": 7
+   }
+  },
+  {
+   "id": "asset.test.icons-spell-dispel-magic",
+   "image": "assets/library/asset.icons.spell-dispel-magic/image.png"
+  },
+  {
+   "id": "asset.test.icons-spell-entangling-roots",
+   "image": "assets/library/asset.icons.spell-entangling-roots/image.png"
+  },
+  {
+   "id": "asset.test.icons-spell-holy-light",
+   "image": "assets/library/asset.icons.spell-holy-light/image.png"
+  },
+  {
+   "id": "asset.test.icons-spell-thorns-aura",
+   "image": "assets/library/asset.icons.spell-thorns-aura/image.png"
+  },
+  {
+   "id": "asset.test.item-amber",
+   "file": "assets/library/asset.models.units.ants-worker/geometry_3.glb",
+   "dimensions": {
+    "radius": 0.2,
+    "height": 2,
+    "formationSpacing": 1
+   },
+   "scale": 1,
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "back",
+     "node": "socket_back",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.item-chest",
+   "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
+   "scale": 1
+  },
+  {
+   "id": "asset.test.item-plank",
+   "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
+   "scale": 1,
+   "healthHeight": 2.5,
+   "stackHeight": 0.19,
+   "stackColumns": 1
+  },
+  {
+   "id": "asset.test.item-root",
+   "file": "assets/library/asset.models.units.ants-worker/geometry_4.glb",
+   "dimensions": {
+    "radius": 0.2,
+    "height": 2,
+    "formationSpacing": 1
+   },
+   "scale": 1,
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "back",
+     "node": "socket_back",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.item-wood",
+   "file": "assets/library/asset.models.units.ants-worker/geometry_2.glb",
+   "dimensions": {
+    "radius": 0.2,
+    "height": 2,
+    "formationSpacing": 1
+   },
+   "scale": 1,
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "back",
+     "node": "socket_back",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.leaf-archer",
+   "file": "assets/library/asset.models.units.ants-leaf-archer/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "projectile": "effect.test.weapon-arrow",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.leaf-garrison",
+   "file": "assets/library/asset.models.buildings.ants-leaf-garrison/geometry.glb",
+   "scale": 9.6,
+   "healthHeight": 8.595534086227417
+  },
+  {
+   "id": "asset.test.marshal",
+   "file": "assets/library/asset.models.units.ants-marshal/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "castContact": 0.5384615384615384
+  },
+  {
+   "id": "asset.test.nectarist",
+   "file": "assets/library/asset.models.units.ants-nectarist/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "projectile": "effect.test.weapon-nectar",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "castContact": 0.3611111111111111
+  },
+  {
+   "id": "asset.test.neutral-barkguard",
+   "file": "assets/library/asset.models.units.neutral-barkguard/geometry.glb",
+   "dimensions": {
+    "radius": 0.918,
+    "height": 2.5,
+    "formationSpacing": 2.066
+   },
+   "character": "base",
+   "scale": 1,
+   "healthHeight": 2.75
+  },
+  {
+   "id": "asset.test.neutral-hollow-stag",
+   "file": "assets/library/asset.models.units.neutral-hollow-stag/geometry.glb",
+   "dimensions": {
+    "radius": 1.331,
+    "height": 4,
+    "formationSpacing": 2.995
+   },
+   "character": "base",
+   "scale": 1,
+   "healthHeight": 4.4
+  },
+  {
+   "id": "asset.test.neutral-needle-wasp",
+   "file": "assets/library/asset.models.units.neutral-needle-wasp/geometry.glb",
+   "dimensions": {
+    "radius": 0.42,
+    "height": 2.2,
+    "formationSpacing": 0.945
+   },
+   "character": "base",
+   "scale": 1,
+   "healthHeight": 2.4200000000000004,
+   "projectile": "effect.test.weapon-thorn",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.neutral-root-seer",
+   "file": "assets/library/asset.models.units.neutral-root-seer/geometry.glb",
+   "dimensions": {
+    "radius": 0.68,
+    "height": 2.8,
+    "formationSpacing": 1.53
+   },
+   "character": "base",
+   "scale": 1,
+   "healthHeight": 3.08,
+   "projectile": "effect.test.weapon-thorn",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.neutral-rootling",
+   "file": "assets/library/asset.models.units.neutral-rootling/geometry.glb",
+   "dimensions": {
+    "radius": 0.42,
+    "height": 2.8,
+    "formationSpacing": 0.945
+   },
+   "character": "base",
+   "scale": 1,
+   "healthHeight": 3.08
+  },
+  {
+   "id": "asset.test.neutral-spitter",
+   "file": "assets/library/asset.models.units.neutral-spitter/geometry.glb",
+   "dimensions": {
+    "radius": 0.333,
+    "height": 1.3,
+    "formationSpacing": 0.75
+   },
+   "character": "base",
+   "scale": 1,
+   "healthHeight": 1.4300000000000002,
+   "projectile": "effect.test.weapon-thorn",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.neutral-tadpole-spirit",
+   "file": "assets/library/asset.models.units.neutral-tadpole-spirit/geometry.glb",
+   "dimensions": {
+    "radius": 0.42,
+    "height": 1.3,
+    "formationSpacing": 0.945
+   },
+   "character": "base",
+   "scale": 1,
+   "healthHeight": 1.4300000000000002,
+   "projectile": "effect.test.weapon-thorn",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.neutral-tree-frog",
+   "file": "assets/library/asset.models.units.neutral-tree-frog/geometry.glb",
+   "dimensions": {
+    "radius": 0.567,
+    "height": 1.6,
+    "formationSpacing": 1.276
+   },
+   "character": "base",
+   "scale": 1,
+   "healthHeight": 1.7600000000000002,
+   "projectile": "effect.test.weapon-thorn",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.neutral-twigcaster",
+   "file": "assets/library/asset.models.units.neutral-twigcaster/geometry.glb",
+   "dimensions": {
+    "radius": 0.42,
+    "height": 2.4,
+    "formationSpacing": 0.945
+   },
+   "character": "base",
+   "scale": 1,
+   "healthHeight": 2.64,
+   "projectile": "effect.test.weapon-thorn",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.neutral-webling",
+   "file": "assets/library/asset.models.units.neutral-webling/geometry.glb",
+   "dimensions": {
+    "radius": 0.333,
+    "height": 1,
+    "formationSpacing": 0.75
+   },
+   "character": "base",
+   "scale": 1,
+   "healthHeight": 1.1
+  },
+  {
+   "id": "asset.test.placeholder-missing-model",
+   "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
+   "scale": 1,
+   "healthHeight": 2.8
+  },
+  {
+   "id": "asset.test.queensguard",
+   "file": "assets/library/asset.models.units.ants-queensguard/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.1,
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "castContact": 0.5
+  },
+  {
+   "id": "asset.test.queensguard-hall",
+   "file": "assets/library/asset.models.buildings.ants-queensguard-hall/geometry.glb",
+   "scale": 1,
+   "healthHeight": 9.677464485168457
+  },
+  {
+   "id": "asset.test.resource-amber-crystal-1",
+   "file": "assets/library/asset.models.resources.amber-crystal-1/geometry.glb",
+   "scale": 2,
+   "healthHeight": 9.96568775177002
+  },
+  {
+   "id": "asset.test.resource-amber-crystal-2",
+   "file": "assets/library/asset.models.resources.amber-crystal-2/geometry.glb",
+   "scale": 2,
+   "healthHeight": 11.645654678344727
+  },
+  {
+   "id": "asset.test.resource-amber-crystal-3",
+   "file": "assets/library/asset.models.resources.amber-crystal-3/geometry.glb",
+   "scale": 2,
+   "healthHeight": 14.322617530822754
+  },
+  {
+   "id": "asset.test.resource-amber-crystal-4",
+   "file": "assets/library/asset.models.resources.amber-crystal-4/geometry.glb",
+   "scale": 2,
+   "healthHeight": 11.883901596069336
+  },
+  {
+   "id": "asset.test.resource-amber-crystal-5",
+   "file": "assets/library/asset.models.resources.amber-crystal-5/geometry.glb",
+   "scale": 2,
+   "healthHeight": 8.587546348571777
+  },
+  {
+   "id": "asset.test.resource-amber-crystal-empty",
+   "file": "assets/library/asset.models.resources.amber-crystal-empty/geometry.glb",
+   "scale": 2,
+   "healthHeight": 2.311389446258545
+  },
+  {
+   "id": "asset.test.resource-amber-crystal-low",
+   "file": "assets/library/asset.models.resources.amber-crystal-low/geometry.glb",
+   "scale": 2,
+   "healthHeight": 4.501642227172852
+  },
+  {
+   "id": "asset.test.resource-corrupted-root",
+   "file": "assets/library/asset.models.resources.corrupted-root/geometry.glb",
+   "scale": 2,
+   "healthHeight": 7.6
+  },
+  {
+   "id": "asset.test.resource-tree-primary",
+   "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
+   "harvestAnimation": "assets/library/asset.placeholder.missing-model/geometry.glb",
+   "scale": 1,
+   "sceneryAsset": "missing-model"
+  },
+  {
+   "id": "asset.test.roar-command-icon",
+   "image": "assets/library/asset.custom.roar-command-icon/image.png"
+  },
+  {
+   "id": "asset.test.rootbreaker",
+   "file": "assets/library/asset.models.units.ants-rootbreaker/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "castContact": 0.47368421052631576
+  },
+  {
+   "id": "asset.test.rootweaver",
+   "file": "assets/library/asset.models.units.ants-rootweaver/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "projectile": "effect.test.weapon-thorn",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "castContact": 0.5
+  },
+  {
+   "id": "asset.test.rootworks",
+   "file": "assets/library/asset.models.buildings.ants-rootworks/geometry.glb",
+   "scale": 1,
+   "healthHeight": 4.6
+  },
+  {
+   "id": "asset.test.sanctuary",
+   "file": "assets/library/asset.placeholder.missing-model/geometry.glb",
+   "scale": 1,
+   "healthHeight": 4.9
+  },
+  {
+   "id": "asset.test.scenery-woodland-pine-a",
+   "file": "assets/library/asset.models.environment.woodland-pine-a/geometry.glb",
+   "harvestAnimation": "assets/library/asset.models.environment.woodland-pine-a/geometry.glb",
+   "sceneryAsset": "woodland-pine-a"
+  },
+  {
+   "id": "asset.test.silence-command-icon",
+   "image": "assets/library/asset.custom.silence-command-icon/image.png"
+  },
+  {
+   "id": "asset.test.silk-brood-house",
+   "file": "assets/library/asset.models.buildings.ants-silk-brood-house/geometry.glb",
+   "scale": 7.2727272727272725,
+   "healthHeight": 4.9093828201293945
+  },
+  {
+   "id": "asset.test.silkwarden",
+   "file": "assets/library/asset.models.units.ants-silkwarden/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "projectile": "effect.test.weapon-silk",
+   "projectileSocket": "socket_projectile",
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "castContact": 0.36666666666666664
+  },
+  {
+   "id": "asset.test.spells-marshal.carapace-icon",
+   "image": "assets/library/asset.spells.marshal.carapace-icon/image.png"
+  },
+  {
+   "id": "asset.test.spells-marshal.crownfall-icon",
+   "image": "assets/library/asset.spells.marshal.crownfall-icon/image.png"
+  },
+  {
+   "id": "asset.test.spells-marshal.faultline-icon",
+   "image": "assets/library/asset.spells.marshal.faultline-icon/image.png"
+  },
+  {
+   "id": "asset.test.spells-marshal.rally-icon",
+   "image": "assets/library/asset.spells.marshal.rally-icon/image.png"
+  },
+  {
+   "id": "asset.test.spells-rootbreaker.presence-icon-v2",
+   "image": "assets/library/asset.spells.rootbreaker.presence-icon-v2/image.png"
+  },
+  {
+   "id": "asset.test.spells-rootbreaker.roar-icon-v2",
+   "image": "assets/library/asset.spells.rootbreaker.roar-icon-v2/image.png"
+  },
+  {
+   "id": "asset.test.spells-rootbreaker.skullcrack-icon",
+   "image": "assets/library/asset.spells.rootbreaker.skullcrack-icon/image.png"
+  },
+  {
+   "id": "asset.test.spells-rootbreaker.uproot-icon-v2",
+   "image": "assets/library/asset.spells.rootbreaker.uproot-icon-v2/image.png"
+  },
+  {
+   "id": "asset.test.thornblade",
+   "file": "assets/library/asset.models.units.ants-thornblade/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.15,
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.tower",
+   "file": "assets/library/asset.models.buildings.ants-watchtower/geometry.glb",
+   "scale": 1,
+   "healthHeight": 13.1
+  },
+  {
+   "id": "asset.test.warrior",
+   "file": "assets/library/asset.models.units.ants-warrior/geometry.glb",
+   "dimensions": {
+    "radius": 0.2,
+    "height": 2,
+    "formationSpacing": 1
+   },
+   "character": "warrior",
+   "scale": 1,
+   "healthHeight": 2.3,
+   "sockets": [
+    {
+     "name": "left-hand",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "right-hand",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "blade-base",
+     "node": "socket_blade_base",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "blade-tip",
+     "node": "socket_blade_tip",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "asset.test.web-command-icon",
+   "image": "assets/library/asset.custom.web-command-icon/image.png"
+  },
+  {
+   "id": "asset.test.winglancer",
+   "file": "assets/library/asset.models.units.ants-winglancer/geometry.glb",
+   "character": "base",
+   "scale": 2,
+   "healthHeight": 2.1,
+   "sockets": [
+    {
+     "name": "handL",
+     "node": "socket_handL",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "handR",
+     "node": "socket_handR",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "projectile",
+     "node": "socket_projectile",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "cast",
+     "node": "socket_cast",
+     "offset": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "castContact": 0.4722222222222222
+  },
+  {
+   "id": "icon.test.action-attack",
+   "image": "assets/library/asset.icons.command-attack/image.png"
+  },
+  {
+   "id": "icon.test.action-build",
+   "image": "assets/library/asset.icons.command-build/image.png"
+  },
+  {
+   "id": "icon.test.action-build-advanced",
+   "image": "assets/library/asset.icons.command-build-advanced/image.png"
+  },
+  {
+   "id": "icon.test.action-camera",
+   "image": "assets/library/asset.icons.command-camera/image.png"
+  },
+  {
+   "id": "icon.test.action-cancel",
+   "image": "assets/library/asset.icons.command-cancel/image.png"
+  },
+  {
+   "id": "icon.test.action-follow",
+   "image": "assets/library/asset.icons.command-follow/image.png"
+  },
+  {
+   "id": "icon.test.action-hold",
+   "image": "assets/library/asset.icons.command-hold/image.png"
+  },
+  {
+   "id": "icon.test.action-move",
+   "image": "assets/library/asset.icons.command-move/image.png"
+  },
+  {
+   "id": "icon.test.action-patrol",
+   "image": "assets/library/asset.icons.command-patrol/image.png"
+  },
+  {
+   "id": "icon.test.action-pause",
+   "image": "assets/library/asset.icons.command-pause/image.png"
+  },
+  {
+   "id": "icon.test.action-produce",
+   "image": "assets/library/asset.icons.command-produce/image.png"
+  },
+  {
+   "id": "icon.test.action-rally",
+   "image": "assets/library/asset.icons.command-rally/image.png"
+  },
+  {
+   "id": "icon.test.action-stop",
+   "image": "assets/library/asset.icons.command-stop/image.png"
+  },
+  {
+   "id": "icon.test.amber-adept",
+   "image": "assets/library/asset.models.units.ants-amber-adept/image.png"
+  },
+  {
+   "id": "icon.test.archer",
+   "image": "assets/library/asset.models.units.ants-archer/image.png"
+  },
+  {
+   "id": "icon.test.armor-heavy",
+   "image": "assets/library/asset.icons.stat-armor-heavy/image.png"
+  },
+  {
+   "id": "icon.test.armor-light",
+   "image": "assets/library/asset.icons.stat-armor-light/image.png"
+  },
+  {
+   "id": "icon.test.armor-structure",
+   "image": "assets/library/asset.icons.stat-armor-structure/image.png"
+  },
+  {
+   "id": "icon.test.banneret",
+   "image": "assets/library/asset.models.units.ants-banneret/image.png"
+  },
+  {
+   "id": "icon.test.beetles-armored-brood-den",
+   "image": "assets/library/asset.models.buildings.beetles-armored-brood-den/image.png"
+  },
+  {
+   "id": "icon.test.beetles-carapace-hall",
+   "image": "assets/library/asset.models.buildings.beetles-carapace-hall/image.png"
+  },
+  {
+   "id": "icon.test.beetles-iron-garrison",
+   "image": "assets/library/asset.models.buildings.beetles-iron-garrison/image.png"
+  },
+  {
+   "id": "icon.test.beetles-shell-foundry",
+   "image": "assets/library/asset.models.buildings.beetles-shell-foundry/image.png"
+  },
+  {
+   "id": "icon.test.bombardier",
+   "image": "assets/library/asset.models.units.ants-bombardier/image.png"
+  },
+  {
+   "id": "icon.test.bombardier-workshop",
+   "image": "assets/library/asset.models.buildings.ants-bombardier-workshop/image.png"
+  },
+  {
+   "id": "icon.test.chitin-workshop",
+   "image": "assets/library/asset.models.buildings.ants-chitin-workshop/image.png"
+  },
+  {
+   "id": "icon.test.cleaver-warrior",
+   "image": "assets/library/asset.models.units.ants-cleaver-warrior/image.png"
+  },
+  {
+   "id": "icon.test.colony-worker",
+   "image": "assets/library/asset.models.units.ants-colony-worker/image.png"
+  },
+  {
+   "id": "icon.test.forester",
+   "image": "assets/library/asset.icons.building-ants-forester/image.png"
+  },
+  {
+   "id": "icon.test.fort",
+   "image": "assets/library/asset.models.buildings.ants-acorn-hall/image.png"
+  },
+  {
+   "id": "icon.test.hunter",
+   "image": "assets/library/asset.icons.unit-ants-hunter/image.png"
+  },
+  {
+   "id": "icon.test.item-amber",
+   "image": "assets/library/asset.icons.resource-amber/image.png"
+  },
+  {
+   "id": "icon.test.item-amber-carapace",
+   "image": "assets/library/asset.icons.item-amber-carapace/image.png"
+  },
+  {
+   "id": "icon.test.item-amber-hourglass",
+   "image": "assets/library/asset.icons.item-amber-hourglass/image.png"
+  },
+  {
+   "id": "icon.test.item-ancient-heartwood",
+   "image": "assets/library/asset.icons.item-ancient-heartwood/image.png"
+  },
+  {
+   "id": "icon.test.item-barkguard",
+   "image": "assets/library/asset.icons.item-barkguard/image.png"
+  },
+  {
+   "id": "icon.test.item-broodkeeper-lantern",
+   "image": "assets/library/asset.icons.item-broodkeeper-lantern/image.png"
+  },
+  {
+   "id": "icon.test.item-deep-moon-scepter",
+   "image": "assets/library/asset.icons.item-deep-moon-scepter/image.png"
+  },
+  {
+   "id": "icon.test.item-endless-brood-banner",
+   "image": "assets/library/asset.icons.item-endless-brood-banner/image.png"
+  },
+  {
+   "id": "icon.test.item-heartseed",
+   "image": "assets/library/asset.icons.item-heartseed/image.png"
+  },
+  {
+   "id": "icon.test.item-moon-dew",
+   "image": "assets/library/asset.icons.item-moon-dew/image.png"
+  },
+  {
+   "id": "icon.test.item-moonwell-chalice",
+   "image": "assets/library/asset.icons.item-moonwell-chalice/image.png"
+  },
+  {
+   "id": "icon.test.item-phoenix-chrysalis",
+   "image": "assets/library/asset.icons.item-phoenix-chrysalis/image.png"
+  },
+  {
+   "id": "icon.test.item-plank",
+   "image": "assets/library/asset.icons.item-plank/image.png"
+  },
+  {
+   "id": "icon.test.item-predator-talon",
+   "image": "assets/library/asset.icons.item-predator-talon/image.png"
+  },
+  {
+   "id": "icon.test.item-resin-salve",
+   "image": "assets/library/asset.icons.item-resin-salve/image.png"
+  },
+  {
+   "id": "icon.test.item-root",
+   "image": "assets/library/asset.icons.resource-root/image.png"
+  },
+  {
+   "id": "icon.test.item-rootbinder-idol",
+   "image": "assets/library/asset.icons.item-rootbinder-idol/image.png"
+  },
+  {
+   "id": "icon.test.item-royal-crest",
+   "image": "assets/library/asset.icons.item-royal-crest/image.png"
+  },
+  {
+   "id": "icon.test.item-stormwing-spurs",
+   "image": "assets/library/asset.icons.item-stormwing-spurs/image.png"
+  },
+  {
+   "id": "icon.test.item-tempest-antennae",
+   "image": "assets/library/asset.icons.item-tempest-antennae/image.png"
+  },
+  {
+   "id": "icon.test.item-thornband",
+   "image": "assets/library/asset.icons.item-thornband/image.png"
+  },
+  {
+   "id": "icon.test.item-trailkeeper-flask",
+   "image": "assets/library/asset.icons.item-trailkeeper-flask/image.png"
+  },
+  {
+   "id": "icon.test.item-warcaller-standard",
+   "image": "assets/library/asset.icons.item-warcaller-standard/image.png"
+  },
+  {
+   "id": "icon.test.item-winter-heart",
+   "image": "assets/library/asset.icons.item-winter-heart/image.png"
+  },
+  {
+   "id": "icon.test.item-wood",
+   "image": "assets/library/asset.icons.resource-lumber/image.png"
+  },
+  {
+   "id": "icon.test.item-worldroot-heart",
+   "image": "assets/library/asset.icons.item-worldroot-heart/image.png"
+  },
+  {
+   "id": "icon.test.leaf-archer",
+   "image": "assets/library/asset.models.units.ants-leaf-archer/image.png"
+  },
+  {
+   "id": "icon.test.leaf-garrison",
+   "image": "assets/library/asset.models.buildings.ants-leaf-garrison/image.png"
+  },
+  {
+   "id": "icon.test.marshal",
+   "image": "assets/library/asset.models.units.ants-marshal/image.png"
+  },
+  {
+   "id": "icon.test.nectarist",
+   "image": "assets/library/asset.models.units.ants-nectarist/image.png"
+  },
+  {
+   "id": "icon.test.neutral-amber-deposit",
+   "image": "assets/library/asset.models.resources.amber-deposit/image.png"
+  },
+  {
+   "id": "icon.test.neutral-barkguard",
+   "image": "assets/library/asset.models.units.neutral-barkguard/image.png"
+  },
+  {
+   "id": "icon.test.neutral-hollow-stag",
+   "image": "assets/library/asset.models.units.neutral-hollow-stag/image.png"
+  },
+  {
+   "id": "icon.test.neutral-needle-wasp",
+   "image": "assets/library/asset.models.units.neutral-needle-wasp/image.png"
+  },
+  {
+   "id": "icon.test.neutral-root-seer",
+   "image": "assets/library/asset.models.units.neutral-root-seer/image.png"
+  },
+  {
+   "id": "icon.test.neutral-rootling",
+   "image": "assets/library/asset.models.units.neutral-rootling/image.png"
+  },
+  {
+   "id": "icon.test.neutral-spitter",
+   "image": "assets/library/asset.models.units.neutral-spitter/image.png"
+  },
+  {
+   "id": "icon.test.neutral-tadpole-spirit",
+   "image": "assets/library/asset.models.units.neutral-tadpole-spirit/image.png"
+  },
+  {
+   "id": "icon.test.neutral-twigcaster",
+   "image": "assets/library/asset.models.units.neutral-twigcaster/image.png"
+  },
+  {
+   "id": "icon.test.neutral-webling",
+   "image": "assets/library/asset.models.units.neutral-webling/image.png"
+  },
+  {
+   "id": "icon.test.queensguard",
+   "image": "assets/library/asset.models.units.ants-queensguard/image.png"
+  },
+  {
+   "id": "icon.test.queensguard-hall",
+   "image": "assets/library/asset.models.buildings.ants-queensguard-hall/image.png"
+  },
+  {
+   "id": "icon.test.resource-supply",
+   "image": "assets/library/asset.icons.resource-supply/image.png"
+  },
+  {
+   "id": "icon.test.rootbreaker",
+   "image": "assets/library/asset.models.units.ants-rootbreaker/image.png"
+  },
+  {
+   "id": "icon.test.rootweaver",
+   "image": "assets/library/asset.models.units.ants-rootweaver/image.png"
+  },
+  {
+   "id": "icon.test.rootworks",
+   "image": "assets/library/asset.models.buildings.ants-rootworks/image.png"
+  },
+  {
+   "id": "icon.test.settler",
+   "image": "assets/library/asset.models.units.ants-worker/image.png"
+  },
+  {
+   "id": "icon.test.silk-brood-house",
+   "image": "assets/library/asset.models.buildings.ants-silk-brood-house/image.png"
+  },
+  {
+   "id": "icon.test.silkwarden",
+   "image": "assets/library/asset.models.units.ants-silkwarden/image.png"
+  },
+  {
+   "id": "icon.test.thornblade",
+   "image": "assets/library/asset.models.units.ants-thornblade/image.png"
+  },
+  {
+   "id": "icon.test.tower",
+   "image": "assets/library/asset.models.buildings.ants-watchtower/image.png"
+  },
+  {
+   "id": "icon.test.warrior",
+   "image": "assets/library/asset.models.units.ants-warrior/image.png"
+  },
+  {
+   "id": "icon.test.winglancer",
+   "image": "assets/library/asset.models.units.ants-winglancer/image.png"
+  }
+ ]
+}

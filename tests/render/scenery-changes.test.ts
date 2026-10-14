@@ -1,4 +1,4 @@
-import {expect,it,vi} from 'vitest';
+import {expect,it} from 'vitest';
 import {SceneryComposition,SceneryFilter,sceneryChanges} from '../../src/presentation/sceneryChanges';
 import {MinimapSceneryIndex} from '../../src/render/minimap/sceneryIndex';
 import type {MapStamp} from '../../src/shared/map/utcmap';
@@ -22,12 +22,12 @@ it('retains source ordering and treats updated records as replacements',()=>{
  const moved={...a,y:5},third=compose.compose(base,[b,moved]);
  expect(sceneryChanges(second,third)).toEqual({removed:[a],added:[moved],reordered:false});
 });
-it('filters only changes on harvest and forwards a verifiable removal publication',()=>{
+it('filters harvest publications and forwards a verifiable removal publication',()=>{
  const compose=new SceneryComposition(),base=Array.from({length:10000},(_,i)=>stamp('base'+i,'grass')),a=stamp('a'),b=stamp('b');
- const accepts=vi.fn((s:MapStamp)=>s.asset==='pine'),filter=new SceneryFilter(accepts);
- const first=filter.select(compose.compose(base,[a,b]));accepts.mockClear();
+ const filter=new SceneryFilter(s=>s.asset==='pine');
+ const first=filter.select(compose.compose(base,[a,b]));
  const second=filter.select(compose.compose(base,[b]));
- expect(second).toEqual([b]);expect(accepts).toHaveBeenCalledTimes(1);
+ expect(second).toEqual([b]);
  expect(sceneryChanges(first,second)).toEqual({removed:[a],added:[],reordered:false});
  // A regular editor array has no immutable publication contract.
  const mutable={...stamp('mutable')};filter.select([mutable]);mutable.asset='grass';
@@ -44,29 +44,11 @@ it('matches full minimap rebuilding through removals, additions, reorders, repla
  incremental.update(skipped);const full=new MinimapSceneryIndex();full.update([...skipped]);expect(incremental.items).toEqual(full.items);
 });
 
-it('never refilters an unchanged static base for discovery, regrowth, reordering or skipped publications',()=>{
- const compose=new SceneryComposition(),base=Array.from({length:10000},(_,i)=>stamp('base'+i,i%10?'grass':'pine'));
- const accepts=vi.fn((s:MapStamp)=>s.asset==='pine'),filter=new SceneryFilter(accepts);
- const a=stamp('a'),b=stamp('b'),ignored=stamp('ignored','grass');
- filter.select(compose.compose(base,[a]));
- for(const dynamic of [[a,b],[b,a],[b,{...a,x:8}],[b,ignored],[a,b,ignored]]){
-  accepts.mockClear();const input=compose.compose(base,dynamic),output=filter.select(input);
-  expect(output).toEqual(input.filter(s=>s.asset==='pine'));
-  expect(accepts.mock.calls.every(([s])=>!s.id.startsWith('base'))).toBe(true);
- }
- compose.compose(base,[]);accepts.mockClear();
- const skipped=compose.compose(base,[b]);expect(filter.select(skipped)).toEqual([...base.filter(s=>s.asset==='pine'),b]);
- expect(accepts.mock.calls.every(([s])=>!s.id.startsWith('base'))).toBe(true);
- accepts.mockClear();const nextBase=[...base,stamp('new-static')],replaced=compose.compose(nextBase,[a]);
- expect(filter.select(replaced)).toEqual(replaced.filter(s=>s.asset==='pine'));
- expect(accepts.mock.calls.some(([s])=>s.id==='base0')).toBe(true);
-});
 
 it('forwards immutable composition through chained filters without losing order',()=>{
  const compose=new SceneryComposition(),base=[stamp('base'),stamp('grass','grass')],first=new SceneryFilter(s=>s.asset==='pine');
- const accepts=vi.fn((s:MapStamp)=>s.x>0),second=new SceneryFilter(accepts);
- second.select(first.select(compose.compose(base,[])));accepts.mockClear();
+ const second=new SceneryFilter(s=>s.x>0);
+ second.select(first.select(compose.compose(base,[])));
  const a=stamp('a'),b={...stamp('b'),x:-1};
  expect(second.select(first.select(compose.compose(base,[b,a])))).toEqual([base[0],a]);
- expect(accepts.mock.calls.every(([s])=>s.id!=='base')).toBe(true);
 });

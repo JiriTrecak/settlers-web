@@ -1,10 +1,29 @@
 import { describe, expect, it, vi } from "vitest";
 import { Session } from "../../src/session/session/session";
 import { MapInput } from "../../src/render/input/mapInput";
-import { game, worker } from "./helpers";
+import { content, builtinSource } from "../../src/content/builtin";
+import { ContentRegistry } from "../../src/content/registry";
+import type { Rules } from "../../src/content/schema";
+import { emptyUtcMap } from "../../src/shared/map/utcmap";
+import { snapPlacement } from "../../src/shared/spatial/placement";
+import { Game } from "../../src/sim/game/game";
+import { slots, worker } from "./helpers";
+
+// ENGINE-COUPLED: Session resolves definitions through the global shipped `content`, so these client-intent tests run
+// on shipped content and pick every definition generically (no shipped ids are named).
+function shippedGame() {
+  const source = structuredClone(builtinSource);
+  (source.rules as Rules).startingSetup.gathering = [];
+  return new Game({...emptyUtcMap(), entities: []}, slots, new ContentRegistry(source));
+}
+/** The smallest building the starting worker can construct. */
+const buildable = (g: Game) => content.get(worker(g).definition).behaviors.work!.builds
+  .filter(id => content.get(id).kind === "building" && content.get(id).footprint)
+  .sort((a, b) => { const fa = content.get(a).footprint!, fb = content.get(b).footprint!; return fa.width * fa.depth - fb.width * fb.depth || (a < b ? -1 : 1); })[0]!;
+const snapped = (definition: string, x: number, y: number, rotation = 0) => snapPlacement(content.get(definition), {x, y}, rotation);
 
 function setup() {
-  const g = game(), unit = worker(g);
+  const g = shippedGame(), unit = worker(g), building = buildable(g);
   const hud = {
     selectedIds: [unit.id], selected: unit.id as number | null,
     targeting: null as any, mode: null, attackMode: false, rallyMode: false,
@@ -15,22 +34,22 @@ function setup() {
     renderer: {gamePreview:vi.fn(),gameAbilityTarget:vi.fn(), pickWalk: () => ({x:245,z:245}), pickGround: () => ({x: 245, z: 245}), pickGameEntity: () => undefined },
     send: vi.fn(),
   });
-  return {g, unit, hud, session:session as any};
+  return {g, unit, hud, building, session:session as any};
 }
 
 describe("RTS click intentions", () => {
   it('coalesces placement queries and never paints a stale validation over the current cursor',async()=>{
-    const {session,hud,unit}=setup();
-    Object.assign(hud,{mode:'building.ants.barracks',targeting:{type:'build',actors:[unit.id]},buildingActor:unit.id,placementRotation:0});
+    const {session,hud,unit,building}=setup();
+    Object.assign(hud,{mode:building,targeting:{type:'build',actors:[unit.id]},buildingActor:unit.id,placementRotation:0});
     const replies:((error:string|null)=>void)[]=[];
     session.worker.request.mockImplementation(()=>new Promise(resolve=>replies.push(resolve)));
     session.onHover({clientX:0,clientY:0});
     session.renderer.pickGround=()=>({x:240,z:245});session.onHover({clientX:1,clientY:0});
     expect(session.worker.request).toHaveBeenCalledTimes(1);
     replies[0](null);await vi.waitFor(()=>expect(session.worker.request).toHaveBeenCalledTimes(2));
-    expect(session.renderer.gamePreview.mock.calls.some((args:any[])=>args[1]===245.5&&args[3]===true)).toBe(false);
+    expect(session.renderer.gamePreview.mock.calls.some((args:any[])=>args[1]===snapped(building,245,245).x&&args[3]===true)).toBe(false);
     replies[1]('Blocked');await vi.waitFor(()=>expect(hud.placement).toHaveBeenCalledWith('Blocked'));
-    expect(session.renderer.gamePreview).toHaveBeenLastCalledWith('building.ants.barracks',241.5,245.5,false,0,0);
+    expect(session.renderer.gamePreview).toHaveBeenLastCalledWith(building,snapped(building,240,245).x,snapped(building,240,245).y,false,0,0);
   });
   it("routes right-button gestures to commands in play and retains editor orbit", () => {
     vi.stubGlobal("window", new EventTarget());
@@ -66,23 +85,23 @@ describe("RTS click intentions", () => {
     } finally { vi.unstubAllGlobals(); }
   });
   it("submits the chosen building orientation and validates its preview through the worker", async () => {
-    const {session, hud, g, unit} = setup();
-    Object.assign(hud, { mode: "building.ants.barracks", targeting: {type: "build", actors: hud.selectedIds}, buildingActor: unit.id, placementRotation: 270 });
+    const {session, hud, g, unit, building} = setup(), position = snapped(building, 245, 245, 270);
+    Object.assign(hud, { mode: building, targeting: {type: "build", actors: hud.selectedIds}, buildingActor: unit.id, placementRotation: 270 });
     const validate = vi.spyOn(g, "canBuild").mockReturnValue(null);
     session.onHover({clientX:0,clientY:0});await Promise.resolve();
     session.click(0, 0);
-    expect(validate).toHaveBeenCalledWith("player.1", "building.ants.barracks", {x: 245.5, y: 245.5}, unit.id, 270);
+    expect(validate).toHaveBeenCalledWith("player.1", building, position, unit.id, 270);
     expect(session.send).toHaveBeenCalledWith({
-      type: "build", actors: [unit.id], definition: "building.ants.barracks",
-      position: {x: 245.5, y: 245.5}, rotation: 270,
+      type: "build", actors: [unit.id], definition: building,
+      position, rotation: 270,
     });
   });
   it("retains all selected workers after placement; Shift retains placement mode too", () => {
     for (const shift of [false, true]) {
-      const {session, hud, g, unit} = setup();
-      const workers = g.entities.filter(e => e.definition === "unit.ants.settler").slice(0, 3).map(e => e.id);
+      const {session, hud, g, unit, building} = setup();
+      const workers = g.entities.filter(e => e.definition === unit.definition).slice(0, 3).map(e => e.id);
       hud.selectedIds = workers;
-      Object.assign(hud, {mode: "building.ants.barracks", targeting: {type: "build", actors: hud.selectedIds}, buildingActor: unit.id, placementRotation: 0});
+      Object.assign(hud, {mode: building, targeting: {type: "build", actors: hud.selectedIds}, buildingActor: unit.id, placementRotation: 0});
       // This test covers selection intent; terrain exploration has separate placement coverage.
       vi.spyOn(g.observation, 'explored').mockReturnValue(true);
       session.renderer.pickGround = () => ({x: 190, z: 230});
@@ -113,8 +132,8 @@ describe("RTS click intentions", () => {
     expect(session.send).not.toHaveBeenCalled();
   });
   for (const shift of [false,true]) it(`right-click ${shift?'queues':'issues'} construction resumption on an owned foundation`,()=>{
-    const {session,g,unit}=setup();
-    expect(g.command('player.1',{type:'build',actors:[unit.id],definition:'building.ants.house',position:{x:235.5,y:239.5}}).accepted).toBe(true);
+    const {session,g,unit,building}=setup();
+    expect(g.command('player.1',{type:'build',actors:[unit.id],definition:building,position:snapped(building,235,239)}).accepted).toBe(true);
     const site=g.entities.find(e=>e.construction)!;g.observation.update();
     session.renderer.pickGameEntity=()=>site.id;
     session.click(0,0,shift,true);
@@ -129,8 +148,8 @@ describe("RTS click intentions", () => {
   });
   it("left click inspects enemies; right click orders the selected army to attack", () => {
     const {session, hud, g} = setup();
-    const own = g.entities.find(e => e.owner === "player.1" && e.definition === "unit.ants.marshal")!;
-    const enemy = g.entities.find(e => e.owner === "player.2" && e.definition === "unit.ants.marshal")!;
+    const own = g.entities.find(e => e.owner === "player.1" && content.get(e.definition).hero)!;
+    const enemy = g.entities.find(e => e.owner === "player.2" && content.get(e.definition).hero)!;
     enemy.x = own.x + 1; enemy.y = own.y;
     // Refresh authoritative visibility after placing the enemy within friendly sight.
     g.tick();

@@ -1,7 +1,5 @@
 import {expect,it,vi} from 'vitest';
 import {abilitySchema,resolveEffect} from '../../src/content/abilities/schema';
-import {coreAbilities} from '../../src/content/abilities/core';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {abilityAimScore} from '../../src/sim/abilities/ai';
 import {SpellSummons} from '../../src/sim/abilities/summons';
@@ -10,11 +8,14 @@ import {UNTIL_DEATH} from '../../src/sim/abilities/state';
 import {UnitOwnership} from '../../src/sim/game/ownership';
 import {SpellEditorService} from '../../tooling/spell-editor/server/service';
 import type {PreviewState} from '../../tooling/spell-editor/shared/view';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.feral-spirit')!;
-const look=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
-const summon={op:'summon',target:'caster',amount:2,definition:'unit.spell.feral-spirit',radius:3,replace:true};
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource,useEditorWorkspace} from './encounter-harness';
+const workspace=useEditorWorkspace();
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.feral-spirit')!;
+const look=testAbilities.presentations.find(p=>p.id===base.presentation)!;
+const summon={op:'summon',target:'caster',amount:2,definition:'unit.test.spell-feral-spirit',radius:3,replace:true};
 function fixture(patch={},settings={}){
- const a=abilitySchema.parse({...base,ranks:[{}],cast:{...base.cast,prepareTicks:0,recoverTicks:0,cost:{...base.cast.cost,amount:0},cooldown:{...base.cast.cooldown,ticks:0}},onRelease:[{...summon,...patch}]}),f=createAbilityEncounter(a,look,encounterSettingsSchema.parse({relationship:'enemy',targetCount:1,distance:15,targetHealth:500,...settings}));
+ const a=abilitySchema.parse({...base,ranks:[{}],cast:{...base.cast,prepareTicks:0,recoverTicks:0,cost:{...base.cast.cost,amount:0},cooldown:{...base.cast.cooldown,ticks:0}},onRelease:[{...summon,...patch}]}),f=createAbilityEncounter(a,look,testSettings({relationship:'enemy',targetCount:1,distance:15,targetHealth:500,...settings}),false,encounterSource());
  return {...f,a,c:f.game.context.get(f.caster)!};
 }
 const step=(f:ReturnType<typeof fixture>,n=1)=>{for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});};
@@ -54,7 +55,7 @@ it('successful replacement removes only the old owned group; failed placement pr
  cast(f);expect(pets(f)).toHaveLength(2);expect(pets(f).every(e=>!first.includes(e.id))).toBe(true);
 });
 it('ordinary hostile dispel damages a permanent summon through the same summon eligibility',()=>{
- const f=fixture();cast(f);const pet=pets(f)[0],enemy=f.game.context.get(f.target)!;const a=coreAbilities.abilities.find(a=>a.id==='ability.core.dismiss-summon')!,op=a.onRelease[0];if(op.op==='branch')throw Error();
+ const f=fixture();cast(f);const pet=pets(f)[0],enemy=f.game.context.get(f.target)!;const a=testAbilities.abilities.find(a=>a.id==='ability.test.dismiss-summon')!,op=a.onRelease[0];if(op.op==='branch')throw Error();
  new SpellStatuses(f.game).apply(enemy.id,pet.id,a,1,f.game.state.nextCast++,resolveEffect(op,1,a.ranks[0]));expect(f.game.context.get(pet.id)).toBeUndefined();
 });
 it('saved lifetime and link policy must match a declared operation and cannot form a cycle',()=>{
@@ -64,8 +65,8 @@ it('saved lifetime and link policy must match a declared operation and cannot fo
  }
 });
 it('workbench lifetime tracks actual summon membership and rewinds source-loss cleanup',async()=>{
- const f=fixture({endsWithCaster:true}),service=new SpellEditorService('/tmp'),presentation={...look,effects:[],icon:undefined};
- await service.execute({op:'preview.load',document:{definition:f.a,presentation},settings:{relationship:'self'}});await service.execute({op:'preview.cast'});await service.execute({op:'preview.seek',tick:10});
+ const f=fixture({endsWithCaster:true}),service=new SpellEditorService(workspace()),presentation={...look,effects:[],icon:undefined};
+ await service.execute({op:'preview.load',document:{definition:f.a,presentation},settings:testSettings({relationship:'self'})});await service.execute({op:'preview.cast'});await service.execute({op:'preview.seek',tick:10});
  let state=service.state() as PreviewState;expect(state.duration).toBeGreaterThanOrEqual(1200);expect(state.entities.filter(e=>e.eligibility?.summoned)).toHaveLength(2);
  await service.execute({op:'preview.kill',subject:'caster'});await service.execute({op:'preview.seek',tick:12});state=service.state() as PreviewState;expect(state.entities).toHaveLength(0);expect(state.timelineEvents.find(e=>e.event==='summoned')?.endedTick).toBe(11);const hash=state.checksum;
  await service.execute({op:'preview.seek',tick:1});await service.execute({op:'preview.seek',tick:12});expect((service.state() as PreviewState).checksum).toBe(hash);
@@ -94,17 +95,17 @@ it('AI scores only available summon capacity using observed provenance',()=>{
 });
 
 it.each([1,2,3])('published Carrion Spirits rank %i consumes corpses, caps at five and survives source death',rank=>{
- const a=coreAbilities.abilities.find(a=>a.id==='ability.core.carrion-spirits')!,p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
- const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({fallenTargets:true,targetCount:6,targetSpacing:1,distance:8})),c=f.game.context.get(f.caster)!;
+ const a=testAbilities.abilities.find(a=>a.id==='ability.test.carrion-spirits')!,p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+ const f=createAbilityEncounter(a,p,testSettings({fallenTargets:true,targetCount:6,targetSpacing:1,distance:8}),false,encounterSource()),c=f.game.context.get(f.caster)!;
  c.abilities!.ranks.preview=rank;
  for(let i=0;i<6;i++){c.abilities!.mana=1000;c.abilities!.cooldowns={};expect(f.game.command('player.1',{type:'castAbility',actor:c.id,binding:'preview',target:{kind:'point',position:{x:128,y:120}}}).accepted).toBe(true);for(let t=0;t<25;t++)f.game.tick(undefined,{passiveUnits:true});}
  const pets=f.game.entities.filter(e=>e.summoned);expect(pets).toHaveLength(5);expect(f.game.state.corpses).toHaveLength(1);expect(pets.every(e=>e.summoned!.expires===UNTIL_DEATH)).toBe(true);
- expect(pets.every(e=>e.definition===['unit.spell.shadow-spirit-lesser','unit.spell.shadow-spirit-standard','unit.spell.shadow-spirit-greater'][rank-1])).toBe(true);
+ expect(pets.every(e=>e.definition===['unit.test.spell-shadow-spirit-lesser','unit.test.spell-shadow-spirit-standard','unit.test.spell-shadow-spirit-greater'][rank-1])).toBe(true);
  c.hp=0;f.game.onCombatDeath(c);f.game.tick(undefined,{passiveUnits:true});expect(f.game.entities.filter(e=>e.summoned)).toHaveLength(5);f.game.restore(f.game.snapshot());
 });
 it('published companion rewinds its entire source-dependent lifetime and repeated casts',async()=>{
- const a=coreAbilities.abilities.find(a=>a.id==='ability.core.spirit-companion')!,p=coreAbilities.presentations.find(p=>p.id===a.presentation)!,service=new SpellEditorService(process.cwd());
- await service.execute({op:'preview.load',document:{definition:a,presentation:p},settings:{relationship:'self'}});
+ const a=testAbilities.abilities.find(a=>a.id==='ability.test.spirit-companion')!,p=testAbilities.presentations.find(p=>p.id===a.presentation)!,service=new SpellEditorService(workspace());
+ await service.execute({op:'preview.load',document:{definition:a,presentation:p},settings:testSettings({relationship:'self'})});
  for(let i=0;i<3;i++){
   await service.execute({op:'preview.cast'});await service.execute({op:'preview.seek',tick:40});expect((service.state() as PreviewState).entities.filter(e=>e.eligibility?.summoned)).toHaveLength(1);
   await service.execute({op:'preview.kill',subject:'caster'});await service.execute({op:'preview.seek',tick:42});expect((service.state() as PreviewState).entities).toHaveLength(0);const hash=(service.state() as PreviewState).checksum;
@@ -119,7 +120,7 @@ it('source-linked neutral summons inherit camp allegiance and end when the sourc
  const restored=f.game.context.get(source.id)!;restored.unit!.camp=null;step(f);expect(pets(f)).toHaveLength(0);
 });
 it('changing ranks does not open a separate summon-cap pool',()=>{
- const a=abilitySchema.parse({...base,ranks:[{cap:2},{cap:3}],cast:{...base.cast,prepareTicks:0,recoverTicks:0,cost:{...base.cast.cost,amount:0},cooldown:{...base.cast.cooldown,ticks:0}},onRelease:[{...summon,replace:false,maxActive:{rankParameter:'cap'}}]}),raw=createAbilityEncounter(a,look,encounterSettingsSchema.parse({relationship:'self'})),f={...raw,a,c:raw.game.context.get(raw.caster)!};
+ const a=abilitySchema.parse({...base,ranks:[{cap:2},{cap:3}],cast:{...base.cast,prepareTicks:0,recoverTicks:0,cost:{...base.cast.cost,amount:0},cooldown:{...base.cast.cooldown,ticks:0}},onRelease:[{...summon,replace:false,maxActive:{rankParameter:'cap'}}]}),raw=createAbilityEncounter(a,look,testSettings({relationship:'self'}),false,encounterSource()),f={...raw,a,c:raw.game.context.get(raw.caster)!};
  cast(f);expect(pets(f)).toHaveLength(2);f.c.abilities!.ranks.preview=2;cast(f);expect(pets(f)).toHaveLength(3);expect(pets(f).map(e=>e.summoned!.rank)).toEqual([1,1,2]);
  f.c.abilities!.ranks.preview=1;cast(f);expect(pets(f)).toHaveLength(3);f.game.restore(f.game.snapshot());
 });

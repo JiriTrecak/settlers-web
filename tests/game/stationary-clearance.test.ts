@@ -27,7 +27,7 @@ it('updates cached standing clearance after local placement, removal and terrain
   expect(s.unitWalkable(p,body)).toBe(expected);return expected;
  });
  expect(check().every(Boolean)).toBe(true);
- const obstacle=g.context.create(placed('obstacle','building.ants.house',110,110));
+ const obstacle=g.context.create(placed('obstacle','building.test.house',110,110));
  s.appendOccupancy(obstacle);expect(check().some(v=>!v)).toBe(true);
  g.context.remove(obstacle);s.refreshAfterRemoval(obstacle.id);
  expect(check().every(Boolean)).toBe(true);

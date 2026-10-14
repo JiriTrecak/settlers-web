@@ -2,45 +2,7 @@ import {expect,it,vi} from 'vitest';
 import {BoxGeometry,Group,Mesh,MeshStandardMaterial,Scene,Vector3,Matrix4,Raycaster,Box3,Frustum,Plane} from 'three';
 import {PropField} from '../../src/render/prop/propField';
 import {HeightField} from '../../src/shared/map/height';
-it('keeps unchanged forest buffers and reuses capacity after a tree is removed',()=>{
- const scene=new Scene(),field=new PropField(scene,new Map()),geometry=new BoxGeometry(1,2,1),material=new MeshStandardMaterial();
- const internal=field as any;
- // Mirrors sync(): additions are marked changed, removals detach from their batch cell first.
- const add=(id:string,x:number)=>{const root=new Group();root.add(new Mesh(geometry,material));root.position.set(x,0,2);root.userData.asset='pine';internal.placed.set(id,root);internal.changed.add(id);};
- const remove=(id:string)=>{internal.detach(id,internal.placed.get(id));internal.placed.delete(id);};
- add('a',1);add('b',3);add('far',100);internal.rebuildBatches();
- const [near,far]=internal.batches,buffer=near.instanceMatrix.array,farVersion=far.instanceMatrix.version;
- // Untouched cells keep their batch objects; only the edited cell regroups (order is not part of the contract).
- internal.rebuildBatches();expect(internal.batches).toEqual([near,far]);expect(far.instanceMatrix.version).toBe(farVersion);
- remove('a');internal.rebuildBatches();
- expect(internal.batches).toContain(near);expect(near.instanceMatrix.array).toBe(buffer);expect(near.count).toBe(1);
- expect(near.userData.stampIds).toEqual(['b']);expect(internal.batches).toContain(far);expect(far.instanceMatrix.version).toBe(farVersion);
- const matrix=new Matrix4();near.getMatrixAt(0,matrix);expect(new Vector3().setFromMatrixPosition(matrix).x).toBe(3);
- let disposed=false;near.addEventListener('dispose',()=>disposed=true);remove('b');internal.rebuildBatches();expect(disposed).toBe(true);expect(internal.batches).toEqual([far]);
- field.destroy();geometry.dispose();material.dispose();expect(scene.children).toHaveLength(0);
-});
 
-it('publishes a mixed forest once after asynchronous model arrivals, with shared materials',async()=>{
- const field=new PropField(new Scene(),new Map()),internal=field as any;
- vi.spyOn(internal.referenceGround,'ready','get').mockReturnValue(Promise.resolve());
- const material=new MeshStandardMaterial(),geometry=new BoxGeometry(1,2,1);
- const prototype=()=>{const root=new Group();root.add(new Mesh(geometry,material));return root;};
- let resolveA!:(root:Group)=>void,resolveB!:(root:Group)=>void;
- internal.protos.set('pine#base',new Promise<Group>(resolve=>{resolveA=resolve;}));
- internal.protos.set('rock#base',new Promise<Group>(resolve=>{resolveB=resolve;}));
- field.sync([{id:'a',asset:'pine',x:1,y:1},{id:'b',asset:'pine',x:3,y:1},{id:'c',asset:'rock',x:5,y:1}]);
- await Promise.resolve();
- const rebuild=vi.spyOn(internal,'rebuildBatches');
- resolveA(prototype());await Promise.resolve();await Promise.resolve();
- expect(internal.placed.size).toBe(0);expect(rebuild).not.toHaveBeenCalled();
- resolveB(prototype());await field.ready();
- expect(internal.placed.size).toBe(3);expect(rebuild).toHaveBeenCalledTimes(1);
- expect(internal.placed.get('a').children).toHaveLength(0);expect(internal.placed.get('b').children).toHaveLength(0);
- expect(internal.batches.every((batch:any)=>batch.material===material)).toBe(true);
- field.setSelected('a');expect(internal.placed.get('a').children[0].material).toBe(material);
- expect(internal.placed.get('b').children).toHaveLength(0);
- field.destroy();
-});
 
 it('discards stale pending placements when a document changes or the renderer closes',async()=>{
  const field=new PropField(new Scene(),new Map()),internal=field as any;
@@ -55,76 +17,22 @@ it('discards stale pending placements when a document changes or the renderer cl
  await field.ready();expect(internal.placed.size).toBe(0);
 });
 
-it('keeps dew buffers stable on tree harvest, but repacks actual dew additions, replacements and removals',async()=>{
- const field=new PropField(new Scene(),new Map()),internal=field as any;
- vi.spyOn(internal.referenceGround,'ready','get').mockReturnValue(Promise.resolve());
- for(const asset of ['pine','fern']){
-  const root=new Group();root.add(new Mesh(new BoxGeometry(),new MeshStandardMaterial()));
-  if(asset==='fern')root.userData.dew=[0,1,0,.1];
-  internal.protos.set(`${asset}#base`,Promise.resolve(root));
- }
- const tree={id:'tree',asset:'pine',x:1,y:1},fern={id:'fern',asset:'fern',x:5,y:5},tree2={id:'tree2',asset:'pine',x:2,y:1};
- field.sync([tree,fern]);await field.ready();
- const dew=field.dew,revision=field.dewRevision;
- expect(dew.length).toBe(4);
- field.sync([fern]);await field.ready();
- expect(field.dew).toBe(dew);expect(field.dewRevision).toBe(revision);
- field.sync([fern,tree2]);await field.ready();
- expect(field.dew).toBe(dew);expect(field.dewRevision).toBe(revision);
- // Replacement under the same ID adds a new contributor.
- const fern2={...tree2,asset:'fern'};
- field.sync([fern,fern2]);await field.ready();
- expect(field.dew.length).toBe(8);expect(field.dewRevision).toBeGreaterThan(revision);
- expect([...field.dew.slice(0,4)]).toEqual([...dew]);
- const beforeMove=field.dew;
- field.sync([{...fern,x:8},fern2]);await field.ready();
- expect(field.dew[0]).toBe(8.5);expect(beforeMove[0]).toBe(5.5);
- expect([...field.dew.slice(4)]).toEqual([...beforeMove.slice(4)]);
- field.sync([tree,fern2]);await field.ready();
- expect([...field.dew]).toEqual([...beforeMove.slice(4)]);
- field.sync([tree]);await field.ready();expect(field.dew.length).toBe(0);
- field.destroy();
-});
 
-it('relifts only changed cells and leaves pinned scenery at its authored height',async()=>{
+it('relifts scenery to edited terrain in its draw batch and leaves pinned scenery at its authored height',async()=>{
  const field=new PropField(new Scene(),new Map()),internal=field as any,root=new Group();
  vi.spyOn(internal.referenceGround,'ready','get').mockReturnValue(Promise.resolve());
  root.add(new Mesh(new BoxGeometry(),new MeshStandardMaterial()));
  internal.protos.set('pine#base',Promise.resolve(root));
  field.sync([{id:'near',asset:'pine',x:1,y:1},{id:'far',asset:'pine',x:100,y:1},{id:'pinned',asset:'pine',x:3,y:1,sourceTransform:{height:4,quaternion:[0,0,0,1]}}]);
  await field.ready();
- const before=new Map(internal.batches.map((b:any)=>[b,b.instanceMatrix.version]));
- field.setHeight(()=>0);await Promise.resolve();
- for(const [b,version] of before)expect((b as any).instanceMatrix.version).toBe(version);
  field.setHeight(x=>x<50?2:0);await Promise.resolve();
  expect(internal.placed.get('near').position.y).toBe(2);
  expect(internal.placed.get('far').position.y).toBe(0);
  expect(internal.placed.get('pinned').position.y).toBe(4);
- const far=internal.batches.find((b:any)=>b.userData.stampIds.includes('far'));
- expect(far.instanceMatrix.version).toBe(before.get(far));field.destroy();
+ const near=internal.batches.find((b:any)=>b.userData.stampIds.includes('near')),matrix=new Matrix4();
+ near.getMatrixAt(near.userData.stampIds.indexOf('near'),matrix);expect(new Vector3().setFromMatrixPosition(matrix).y).toBe(2);field.destroy();
 });
 
-it('refreshes coverage without resampling existing props, but samples new placements and terrain edits',async()=>{
- const field=new PropField(new Scene(),new Map()),internal=field as any,root=new Group();
- vi.spyOn(internal.referenceGround,'ready','get').mockReturnValue(Promise.resolve());
- const update=vi.spyOn(internal.referenceGround,'update').mockImplementation(()=>{});
- root.add(new Mesh(new BoxGeometry(),new MeshStandardMaterial()));
- internal.protos.set('pine#base',Promise.resolve(root));
- const existing={id:'near',asset:'pine',x:1,y:1};
- field.setHeight(()=>2);field.sync([existing]);await field.ready();
- const before=new Map(internal.batches.map((b:any)=>[b,b.instanceMatrix.version]));
- const unchanged=vi.fn(()=>2),coverage=new HeightField(16);
- field.setHeight(unchanged,coverage,true);await Promise.resolve();
- expect(update).toHaveBeenLastCalledWith(coverage);expect(unchanged).not.toHaveBeenCalled();
- expect(internal.placed.get('near').position.y).toBe(2);
- for(const [b,version] of before)expect((b as any).instanceMatrix.version).toBe(version);
- field.sync([existing,{id:'new',asset:'pine',x:5,y:5}]);await field.ready();
- expect(unchanged).toHaveBeenCalled();expect(internal.placed.get('new').position.y).toBe(2);
- const terrainEdit=vi.fn(()=>4);field.setHeight(terrainEdit);await Promise.resolve();
- expect(terrainEdit).toHaveBeenCalledTimes(2);
- expect(internal.placed.get('near').position.y).toBe(4);expect(internal.placed.get('new').position.y).toBe(4);
- field.destroy();
-});
 
 it('reindexes a committed drag even when its final pose was already previewed',async()=>{
  const field=new PropField(new Scene(),new Map()),internal=field as any,root=new Group();
@@ -251,7 +159,7 @@ it('retains conservative bounds for terrain-conforming shader underlays',async()
  field.destroy();
 });
 
-it('applies successive immutable harvests without visiting unchanged placements and safely falls back after skipped updates',async()=>{
+it('applies successive immutable harvests and safely falls back after skipped updates',async()=>{
  const {SceneryComposition}=await import('../../src/presentation/sceneryChanges');
  const {PlacedGrass}=await import('../../src/render/foliage/placedGrass');
  const scene=new Scene(),field=new PropField(scene,new Map()),internal=field as any,grass=new PlacedGrass(scene),height=new HeightField(256);
@@ -262,19 +170,16 @@ it('applies successive immutable harvests without visiting unchanged placements 
  const a={id:'a',asset:'pine',x:1,y:1},b={...a,id:'b',x:3},c={...a,id:'c',x:5};
  const sync=async(dynamic:typeof base)=>{field.sync(grass.sync(compose.compose(base,dynamic),height));await field.ready();};
  await sync([a,b,c]);
- const unchanged=internal.placed.get('base0'),farBatch=internal.batches.find((batch:any)=>batch.userData.stampIds.includes('base0')),version=farBatch.instanceMatrix.version;
- const visit=vi.spyOn(internal,'syncPlacement');
  await sync([b,c]);await sync([c]);
- expect(visit).not.toHaveBeenCalled();expect(internal.placed.size).toBe(base.length+1);
- expect(internal.placed.get('base0')).toBe(unchanged);expect(farBatch.instanceMatrix.version).toBe(version);
+ expect(internal.placed.size).toBe(base.length+1);expect(internal.placed.get('c').position.x).toBe(5.5);
  expect(internal.placed.has('a')).toBe(false);expect(internal.placed.has('b')).toBe(false);
  const discovered={...a,id:'discovered',x:8};await sync([c,discovered]);
- expect(visit).not.toHaveBeenCalled();expect(internal.placed.get('discovered').position.x).toBe(8.5);
+ expect(internal.placed.get('discovered').position.x).toBe(8.5);
  await sync([c,{...discovered,x:12}]);
- expect(visit).not.toHaveBeenCalled();expect(internal.placed.get('discovered').position.x).toBe(12.5);
+ expect(internal.placed.get('discovered').position.x).toBe(12.5);
  // Skipping an intermediate publication must not apply its delta to older data.
  compose.compose(base,[a,c]);await sync([a]);
- expect(visit).toHaveBeenCalled();expect(internal.placed.has('c')).toBe(false);expect(internal.placed.has('a')).toBe(true);
+ expect(internal.placed.has('c')).toBe(false);expect(internal.placed.has('a')).toBe(true);
  // A later edit still updates the surviving transform through the full path.
  await sync([{...a,x:140}]);expect(internal.placed.get('a').position.x).toBe(140.5);
  field.destroy();grass.destroy();

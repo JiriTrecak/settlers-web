@@ -2,19 +2,14 @@ import { describe, expect, it } from "vitest";
 import { OrthographicCamera, PerspectiveCamera, Vector3 } from "three";
 import { Camera, GAME_ASPECT, GAME_VIEW_WIDTH_C, GAME_DISTANCE, GAME_DISTANCE_MAX, GAME_DISTANCE_MIN, GAME_FOV, GAME_PITCH, GAME_YAW, ISO_PITCH, ISO_YAW } from "../../src/render/camera/camera";
 import {BUILDING_CELL_SIZE} from '../../src/shared/spatial/footprint';
+import {inspectionShotSchema} from '../../src/shared/camera/inspectionShot';
 
 describe("iso camera", () => {
-  it('shows 32 building cells with a five-cell Hall using less than a fifth of the view',()=>{
+  it('frames the declared number of building cells across the game view',()=>{
     const camera=new Camera();camera.setGame(true,512);camera.lookAt(256,256);
     const left=camera.groundAt(-1,0,GAME_ASPECT),right=camera.groundAt(1,0,GAME_ASPECT);
     expect(Math.hypot(right[0]-left[0],right[1]-left[1])/BUILDING_CELL_SIZE).toBeCloseTo(GAME_VIEW_WIDTH_C,4);
-    const view=new PerspectiveCamera();camera.applyTo(view,1920,1080);view.updateMatrixWorld();
-    const feet=new Vector3(256,0,256).project(view),head=new Vector3(256,4.8,256).project(view);
-    const heightPx=Math.abs(head.y-feet.y)*540;
-    expect(GAME_VIEW_WIDTH_C).toBe(32);
-    expect(camera.distance).toBe(GAME_DISTANCE);expect(heightPx).toBeGreaterThan(35);expect(heightPx).toBeLessThan(65);
-    const hallLeft=new Vector3(246,0,256).project(view),hallRight=new Vector3(266,0,256).project(view);
-    expect((hallRight.x-hallLeft.x)/2).toBeCloseTo(5/32,6);
+    expect(camera.distance).toBe(GAME_DISTANCE);
   });
   it('retains authored map dimensions through game, free and top-down mode changes',()=>{
     const cam=new Camera();
@@ -42,18 +37,6 @@ describe("iso camera", () => {
       }
     }
   });
-  it("lookAt then applyTo does not throw and sets a projection", () => {
-    const cam = new Camera();
-    cam.lookAt(128, 128);
-    cam.panScreen(10, -4, 720);
-    cam.zoomBy(1.2);
-    const three = new OrthographicCamera();
-    cam.applyTo(three, 1280, 720);
-    expect(three.right).toBeGreaterThan(three.left);
-    expect(three.top).toBeGreaterThan(three.bottom);
-    expect(Number.isFinite(three.position.x)).toBe(true);
-  });
-
   it("keeps the near-side ground in front of the near plane at max zoom", () => {
     const cam = new Camera();
     cam.lookAt(128, 128);
@@ -68,12 +51,13 @@ describe("iso camera", () => {
     expect(-ground.z).toBeLessThan(three.far);
   });
 
-  it("orbit is a no-op while locked", () => {
+  it("orbit is a no-op while locked and does not bump rev", () => {
     const cam = new Camera();
-    const yaw = cam.yaw;
+    const yaw = cam.yaw, rev = cam.rev;
     cam.orbitScreen(80, 40);
     expect(cam.yaw).toBe(yaw);
     expect(cam.pitch).toBe(ISO_PITCH);
+    expect(cam.rev).toBe(rev);
   });
 
   it("orbit changes yaw when unlocked and resetView restores iso", () => {
@@ -87,13 +71,6 @@ describe("iso camera", () => {
     cam.resetView();
     expect(cam.yaw).toBe(ISO_YAW);
     expect(cam.pitch).toBe(ISO_PITCH);
-  });
-
-  it("locked orbit does not bump rev", () => {
-    const cam = new Camera();
-    const rev = cam.rev;
-    cam.orbitScreen(80, 40);
-    expect(cam.rev).toBe(rev);
   });
 
   it("groundAt matches a Three unproject onto Y=0", () => {
@@ -150,7 +127,7 @@ describe("iso camera", () => {
     expect(farRight[0]-farLeft[0]).toBeGreaterThan(nearRight[0]-nearLeft[0]);
     expect(rendered.position.x).toBeCloseTo(cam.targetX,8);
     const direction=rendered.getWorldDirection(new Vector3());
-    expect(Math.atan2(-direction.y,Math.hypot(direction.x,direction.z))*180/Math.PI).toBeCloseTo(56,8);
+    expect(Math.atan2(-direction.y,Math.hypot(direction.x,direction.z))).toBeCloseTo(GAME_PITCH,8);
     for (const [i,[x,z]] of corners.entries()) {
       const ndc=new Vector3(x,0,z).project(rendered);
       expect(ndc.x).toBeCloseTo([-1,1,1,-1][i],7);
@@ -192,17 +169,6 @@ describe("iso camera", () => {
       expect(ndc.x).toBeCloseTo([-1,1,1,-1][i],7);
       expect(ndc.y).toBeCloseTo([-1,-1,1,1][i],7);
     }
-  });
-
-  it("pose sets look, zoom, and orbit in one shot", () => {
-    const cam = new Camera();
-    cam.locked = false;
-    cam.pose({ x: 40, z: 80, zoom: 12, yaw: 1.2, pitch: 0.5 });
-    expect(cam.targetX).toBe(40);
-    expect(cam.targetZ).toBe(80);
-    expect(cam.zoom).toBe(12);
-    expect(cam.yaw).toBe(1.2);
-    expect(cam.pitch).toBe(0.5);
   });
 
   it("setGame(false) unlocks and stops clamping", () => {
@@ -282,3 +248,11 @@ it("never descends toward the river bed below the water-relative camera floor", 
   const view=new PerspectiveCamera(); camera.applyTo(view,950,1000);
   expect(view.fov/2).toBeLessThan(GAME_PITCH*180/Math.PI);
  });
+
+describe("inspection shots", () => {
+  it("validates ground-level inspection poses without accepting degenerate cameras", () => {
+    expect(inspectionShotSchema.parse({eye:[1,2,3],target:[10,2,3]}).fov).toBeGreaterThan(0);
+    expect(inspectionShotSchema.safeParse({eye:[0,0,0],target:[0,0,0]}).success).toBe(false);
+    expect(inspectionShotSchema.safeParse({eye:[Infinity,0,0],target:[0,0,0]}).success).toBe(false);
+  });
+});

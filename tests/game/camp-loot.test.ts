@@ -8,11 +8,11 @@ import { placed, slots, source } from "./helpers";
 function setup() {
   const data = source();
   (data.rules as Rules).lootPools = { "loot.test": {rolls: 2, entries: [
-    {item: "item.barkguard", weight: 3}, {item: "item.thornband", weight: 1},
+    {item: "item.test.barkguard", weight: 3}, {item: "item.test.thornband", weight: 1},
   ]} };
   const map = {...emptyUtcMap(), entities: [
-    {...placed("wolf.1", "unit.neutral.webling", 100, 100), owner: "none" as const},
-    {...placed("wolf.2", "unit.neutral.webling", 102, 100), owner: "none" as const},
+    {...placed("wolf.1", "unit.test.neutral-webling", 100, 100), owner: "none" as const},
+    {...placed("wolf.2", "unit.test.neutral-webling", 102, 100), owner: "none" as const},
   ], camps: [{id: "den", members: ["wolf.1", "wolf.2"], home: {x:100,y:100},
     aggroRange: 8, leash: 18, aggression: "players" as const, lootPool:"loot.test"}]};
   return new Game(map, slots, new ContentRegistry(data));
@@ -47,7 +47,7 @@ describe("camp completion rewards", () => {
     expect(() => new Game({...g.map, camps:g.map.camps.map(c=>({...c,lootPool:"loot.missing"}))},slots,g.registry)).toThrow(/unknown loot pool/);
     const saved = g.snapshot(); saved.state.clearedCamps.push("den");
     expect(()=>g.restore(saved)).toThrow(/camp rewards/);
-    const data = source(); (data.rules as Rules).lootPools={"loot.invalid":{rolls:1,entries:[{item:"unit.ants.warrior",weight:1}]}};
+    const data = source(); (data.rules as Rules).lootPools={"loot.invalid":{rolls:1,entries:[{item:"unit.test.warrior",weight:1}]}};
     expect(()=>new ContentRegistry(data)).toThrow(/expected item/);
   });
 });

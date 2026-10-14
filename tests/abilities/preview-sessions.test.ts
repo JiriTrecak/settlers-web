@@ -3,21 +3,23 @@ import {mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {PreviewSessions} from '../../tooling/spell-editor/server/previewSessions';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {visualEffectSchema} from '../../src/content/effects/schema';
+import {testAbilities} from '../fixtures/content';
+import {testSettings,useEditorWorkspace} from './encounter-harness';
+const workspace=useEditorWorkspace();
 
 function document(id:string){
- const definition=structuredClone(coreAbilities.abilities.find(a=>a.id===id)!);
- const presentation=structuredClone(coreAbilities.presentations.find(p=>p.id===definition.presentation)!);
+ const definition=structuredClone(testAbilities.abilities.find(a=>a.id===id)!);
+ const presentation=structuredClone(testAbilities.presentations.find(p=>p.id===definition.presentation)!);
  delete presentation.icon;presentation.effects=[];return {definition,presentation};
 }
 it('keeps casts, scrubbing and visual playback isolated while unambiguous MCP controls the live tab',async()=>{
- let now=1000;const sessions=new PreviewSessions('/tmp',()=>now),a=sessions.resolve('a');
+ let now=1000;const sessions=new PreviewSessions(workspace(),()=>now),a=sessions.resolve('a');
  expect(sessions.resolve()).toBe(a);
- await a.execute({op:'preview.load',document:document('ability.core.holy-light-lite'),settings:{relationship:'ally'}});
+ await a.execute({op:'preview.load',document:document('ability.test.holy-light-lite'),settings:testSettings({relationship:'ally'})});
  await a.execute({op:'preview.cast'});await a.execute({op:'preview.seek',tick:40});const before=a.state();
  const b=sessions.resolve('b');expect(()=>sessions.resolve()).toThrow('Multiple Spell Studio tabs');
- await b.execute({op:'preview.load',document:document('ability.core.absorption-shield'),settings:{relationship:'ally'}});
+ await b.execute({op:'preview.load',document:document('ability.test.absorption-shield'),settings:testSettings({relationship:'ally'})});
  await b.execute({op:'preview.cast'});await b.execute({op:'preview.seek',tick:15});
  expect(a.state()).toEqual(before);expect(b.state()).not.toEqual(before);
  const visual=visualEffectSchema.parse({schemaVersion:1,id:'effect.test.session',name:'Session',durationTicks:80,layers:[]});

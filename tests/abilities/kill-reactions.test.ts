@@ -1,13 +1,16 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
+import {encounterSource} from './encounter-harness';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.death-burst')!;
+import {testAbilities} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.death-burst')!;
 const harvest={id:'harvest',event:'kill',filter:{summoned:false,natures:['organic','undead']},operations:[{op:'heal',target:'caster',amount:60},{op:'mana',target:'caster',amount:20}]};
 function fixture(patch={},settings={}){
- const a=abilitySchema.parse({...base,ranks:[{}],triggers:[harvest],...patch}),f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:30,distance:3,combat:false,mana:20,...settings}));
+ const a=abilitySchema.parse({...base,ranks:[{}],triggers:[harvest],...patch}),f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',targetHealth:30,distance:3,combat:false,mana:20,...settings}),false,encounterSource());
  const c=f.game.context.get(f.caster)!,t=f.game.context.get(f.target)!;c.hp=100;
  return {...f,a,c,t};
 }
@@ -32,7 +35,7 @@ it('uses the existing neutral camp hostility rules',()=>{
  const f=fixture({}, {relationship:'neutral',combat:true});hit(f);expect(f.game.state.spellLifecycleReactions).toHaveLength(1);step(f);expect(f.c.hp).toBe(160);
 });
 it('filters summoned and mechanical victims before counting the trigger',()=>{
- for(const settings of [{targetNature:'mechanical'},{}]){const f=fixture({},settings);if(!('targetNature' in settings))f.t.summoned={source:f.caster,ability:'ability.core.feral-spirit',rank:1,cast:1,started:0,expires:100};hit(f);expect(f.game.state.spellLifecycleReactions).toEqual([]);expect(f.c.spellCounters).toBeUndefined();}
+ for(const settings of [{targetNature:'mechanical'},{}]){const f=fixture({},settings);if(!('targetNature' in settings))f.t.summoned={source:f.caster,ability:'ability.test.feral-spirit',rank:1,cast:1,started:0,expires:100};hit(f);expect(f.game.state.spellLifecycleReactions).toEqual([]);expect(f.c.spellCounters).toBeUndefined();}
 });
 it('resumes pending kill effects identically after their victim was removed',()=>{
  const f=fixture();hit(f);const g=fixture();g.game.restore(f.game.snapshot());step(f);step(g);expect(g.game.checksum()).toBe(f.game.checksum());
@@ -44,14 +47,14 @@ it('honors timed status grants and deterministic every-N kill counters',()=>{
  const other=f.game.context.create({id:'victim',definition:f.t.definition,owner:'player.2',position:{x:124,y:120},rotation:0});hit(f,f.caster,other.id);expect(f.game.state.spellLifecycleReactions).toHaveLength(1);step(f);expect(f.c.hp).toBe(160);
 });
 it('projectiles keep launch-owner credit and cannot give kill rewards after source conversion or death',()=>{
- for(const change of ['owner','death','none']){const f=fixture({}, {casterDefinition:'unit.ants.archer',combat:true,distance:8});const missile=f.game.combat.missiles.launch(f.c,f.t,1000);
+ for(const change of ['owner','death','none']){const f=fixture({}, {casterDefinition:'unit.test.archer',combat:true,distance:8});const missile=f.game.combat.missiles.launch(f.c,f.t,1000);
  if(change==='owner')f.c.owner='player.2';if(change==='death'){f.c.hp=0;f.game.onCombatDeath(f.c);}
  f.game.state.tick=missile.impact;for(const d of f.game.combat.resolve())f.game.onCombatDeath(d);
  expect(f.game.context.get(f.target)).toBeUndefined();expect(f.game.state.spellLifecycleReactions).toHaveLength(change==='none'?1:0);
  }
 });
 it('kill programs can summon at the saved victim point with killer ownership',()=>{
- const f=fixture({triggers:[{...harvest,operations:[{op:'summon',target:'point',amount:1,definition:'unit.spell.feral-spirit',durationTicks:80,replace:false,radius:2}]}]});hit(f);step(f);
+ const f=fixture({triggers:[{...harvest,operations:[{op:'summon',target:'point',amount:1,definition:'unit.test.spell-feral-spirit',durationTicks:80,replace:false,radius:2}]}]});hit(f);step(f);
  const spirit=f.game.entities.find(e=>e.summoned);expect(spirit?.owner).toBe('player.1');expect(spirit?.summoned?.source).toBe(f.caster);expect(Math.hypot(spirit!.x-f.t.x,spirit!.y-f.t.y)).toBeLessThanOrEqual(4);
 });
 it('refuses invalid lifecycle destinations and corrupt saved victim points atomically',()=>{
@@ -61,7 +64,7 @@ it('refuses invalid lifecycle destinations and corrupt saved victim points atomi
 });
 
 it('does not count an item rescue as a kill',()=>{
- const f=fixture({}, {targetDefinition:'unit.ants.marshal'});f.t.equipment=['item.phoenix-chrysalis'];f.t.equipmentState=[null];
+ const f=fixture({}, {targetDefinition:'unit.test.marshal'});f.t.equipment=['item.test.phoenix-chrysalis'];f.t.equipmentState=[null];
  expect(hit(f).dead).toEqual([]);expect(f.t.hp).toBeGreaterThan(0);expect(f.game.state.spellLifecycleReactions).toEqual([]);
 });
 it('does not transfer a queued reward to a converted caster or resurrect a dead caster',()=>{

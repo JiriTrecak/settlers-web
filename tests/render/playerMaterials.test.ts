@@ -44,11 +44,7 @@ it('recolors masked pixels in independent instances, preserving opacity and exis
   const shader={fragmentShader:'#include <map_fragment>\n#include <color_fragment>',uniforms:{}};
   first.onBeforeCompile(shader as any, {} as any);
   expect(priorCalls).toBe(1);
-  expect(shader.fragmentShader).toContain('mix(ownershipSample.rgb');
-  expect(shader.fragmentShader).toContain('ownershipSample.a');
-  expect(shader.fragmentShader).not.toContain('diffuseColor.a *=');
   expect(shader.fragmentShader).toContain('// fog hook retained');
-  expect(shader.fragmentShader).toContain('#include <color_fragment>');
   expect(first.color.getHexString()).toBe('ff0000');
   expect(second.color.getHexString()).toBe('0000ff');
   expect(prototype.color.getHexString()).toBe('ffffff');

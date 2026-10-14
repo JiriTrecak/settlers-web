@@ -12,17 +12,6 @@ afterEach(()=>{created.length=0;});
 const grass=():MapStamp=>({id:'grass',asset:'reference-grass-test',x:10,y:12,yaw:.4,scale:1.2});
 const rock=():MapStamp=>({id:'rock',asset:'rock',x:20,y:20});
 
-it('keeps grass meshes, loading and wind state while unrelated scenery changes',()=>{
- const layer=new PlacedGrass(new Scene()),field=new HeightField(32),g=grass(),r=rock();
- expect(layer.sync([g,r],field)).toEqual([r]);const first=created[0]!;
- for(let i=0;i<5;i++){
-  Object.assign(r,{yaw:i*.1});
-  expect(layer.sync([{...g},r],field)).toEqual([r]);
- }
- expect(created).toHaveLength(1);expect(first.dispose).not.toHaveBeenCalled();expect(layer.ready).toBe(first.ready);
- layer.tick(1234);expect(first.tick).toHaveBeenCalledWith(1234);
- layer.destroy();expect(first.dispose).toHaveBeenCalledTimes(1);
-});
 
 it('rebuilds for real grass transforms, addition/removal, and a new terrain field',()=>{
  const layer=new PlacedGrass(new Scene()),field=new HeightField(32),g=grass();

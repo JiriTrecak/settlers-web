@@ -4,8 +4,8 @@ import {Game} from '../../src/sim/game/game';
 
 const owner = 'player.1';
 const setup = () => game([
-  placed('supply', 'building.ants.house', 245, 240),
-  placed('barracks', 'building.ants.barracks', 205, 210),
+  placed('supply', 'building.test.house', 245, 240),
+  placed('barracks', 'building.test.barracks', 205, 210),
 ]);
 
 it('credits authored starting funds once, without storing them inside a building', () => {
@@ -23,21 +23,29 @@ it('retains funds after the last Hall is destroyed and can fund a replacement pr
   g.economy.remove(g.context.get(g.state.objectives[owner])!);
   expect(g.state.wallets[owner]).toEqual(before);
   expect(g.state.accounting.lost).toEqual({});
-  const project = g.context.create(placed('replacement', 'building.ants.house', 230, 230), false);
+  const project = g.context.create(placed('replacement', 'building.test.house', 230, 230), false);
   const payment = g.economy.reserveBill(owner, project.definition);
   expect(payment).not.toBeNull();
   g.economy.admitProject(project, payment!);
   g.economy.remove(project, true);
-  expect(g.state.wallets[owner]).toEqual({'item.amber':475,'item.wood':143});
-  expect(g.state.accounting.lost).toEqual({'item.amber':25,'item.wood':7});
+  // Cancelling an unfinished project refunds the declared fraction of its bill, rounded down; the rest is lost.
+  const permille = g.registry.rules.constructionRefundPermille, wallet = {...before}, lost: Record<string, number> = {};
+  for (const p of g.registry.get(project.definition).creation!.items) {
+    const refunded = Math.floor(p.amount * permille / 1000);
+    wallet[p.item] -= p.amount - refunded;
+    if (p.amount > refunded) lost[p.item] = p.amount - refunded;
+  }
+  expect(permille).toBeLessThan(1000);
+  expect(g.state.wallets[owner]).toEqual(wallet);
+  expect(g.state.accounting.lost).toEqual(lost);
 });
 
 it('separates paid queue escrow from spending money and refunds it without a Hall', () => {
   const g = setup(), b = g.entities.find(e => e.placement === 'barracks')!;
   const before = structuredClone(g.state.wallets[owner]);
-  const q = g.economy.queue(b, 'unit.ants.archer')!;
+  const q = g.economy.queue(b, 'unit.test.archer')!;
   expect(q).not.toBeNull();
-  const bill = g.registry.get('unit.ants.archer').creation!.items;
+  const bill = g.registry.get('unit.test.archer').creation!.items;
   for (const p of bill) {
     expect(g.economy.balance(owner, p.item)).toBe(before[p.item] - p.amount);
     expect(b.inventory[p.item]).toBe(p.amount);
@@ -50,7 +58,7 @@ it('separates paid queue escrow from spending money and refunds it without a Hal
 
 it('loses destroyed production escrow, but not the rest of the wallet', () => {
   const g = setup(), b = g.entities.find(e => e.placement === 'barracks')!;
-  g.economy.queue(b, 'unit.ants.archer');
+  g.economy.queue(b, 'unit.test.archer');
   const funds = structuredClone(g.state.wallets[owner]), escrow = {...b.inventory};
   g.economy.remove(b);
   expect(g.state.wallets[owner]).toEqual(funds);
@@ -59,19 +67,19 @@ it('loses destroyed production escrow, but not the rest of the wallet', () => {
 
 it('does not debit any currency for an unaffordable bill or leak another player’s wallet', () => {
   const g = setup(), before = structuredClone(g.state.wallets);
-  expect(g.economy.reserveCost(owner, {'item.amber': 1, 'item.root': 999})).toBeNull();
+  expect(g.economy.reserveCost(owner, {'item.test.amber': 1, 'item.test.root': 999})).toBeNull();
   expect(g.state.wallets).toEqual(before);
   const ownView = structuredClone(g.view(owner));
-  g.state.wallets['player.2']['item.amber'] = 9876;
-  const amber = g.view(owner).goods!.find(r => r.item === 'item.amber')!;
-  expect(amber.available).toBe(before[owner]['item.amber']);
+  g.state.wallets['player.2']['item.test.amber'] = 9876;
+  const amber = g.view(owner).goods!.find(r => r.item === 'item.test.amber')!;
+  expect(amber.available).toBe(before[owner]['item.test.amber']);
   expect(g.view(owner)).toEqual(ownView);
-  expect(g.view('player.2').goods!.find(r => r.item === 'item.amber')!.available).toBe(9876);
+  expect(g.view('player.2').goods!.find(r => r.item === 'item.test.amber')!.available).toBe(9876);
 });
 
 it('fingerprints wallets in both checksum modes independently of key order and replays purchases after restore', () => {
   const g = setup(), before = [g.checksum(), g.checksum('full')];
-  g.state.wallets[owner]['item.amber']++;
+  g.state.wallets[owner]['item.test.amber']++;
   expect(g.checksum()).not.toBe(before[0]);
   expect(g.checksum('full')).not.toBe(before[1]);
   const restored = new Game(g.map, slots, g.registry);
@@ -81,7 +89,7 @@ it('fingerprints wallets in both checksum modes independently of key order and r
   expect(restored.checksum('full')).toBe(g.checksum('full'));
   for (const match of [g, restored]) {
     const b = match.entities.find(e => e.placement === 'barracks')!;
-    expect(match.command(owner, {type: 'produce', actor: b.id, definition: 'unit.ants.archer'}).accepted).toBe(true);
+    expect(match.command(owner, {type: 'produce', actor: b.id, definition: 'unit.test.archer'}).accepted).toBe(true);
     run(match, 80);
   }
   expect(restored.checksum('full')).toBe(g.checksum('full'));
@@ -91,12 +99,12 @@ it('fingerprints wallets in both checksum modes independently of key order and r
 it('rejects invalid wallet owners, non-currency items, negatives and fractional currency in saves', () => {
   const g = setup();
   const invalid: Game['state']['wallets'][] = [
-    {'none': {'item.amber': 1}},
-    {'player.8': {'item.amber': 1}},
-    {[owner]: {'item.barkguard': 1}},
+    {'none': {'item.test.amber': 1}},
+    {'player.8': {'item.test.amber': 1}},
+    {[owner]: {'item.test.barkguard': 1}},
     {[owner]: {'item.missing': 1}},
-    {[owner]: {'item.amber': -1}},
-    {[owner]: {'item.amber': 1.5}},
+    {[owner]: {'item.test.amber': -1}},
+    {[owner]: {'item.test.amber': 1.5}},
   ];
   for (const wallets of invalid) {
     const save = g.snapshot(); save.state.wallets = wallets;

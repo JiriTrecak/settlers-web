@@ -7,36 +7,43 @@ import {revivalTerms} from '../../src/content/revival';
 import {commandCard,queueCard} from '../../src/presentation/commands';
 import {Room,Lockstep,MemoryChannel} from '../../src/net';
 import {localMatch} from '../../src/shared/match/match';
+/** The revival price list under test: level one pays 200 amber over 1200 ticks; each further level adds 50 and 200. */
+const policy={items:[{item:'item.test.amber',amount:200}],itemsPerLevel:[{item:'item.test.amber',amount:50}],workTicks:1200,workTicksPerLevel:200,queueCapacity:4};
 function setup(level=1){
- const g=game([placed('shrine','building.ants.sanctuary',193.5,237.5),placed('supply','building.ants.house',245,240)]);
+ const g=game([placed('shrine','building.test.sanctuary',193.5,237.5),placed('supply','building.test.house',245,240)],draft=>{
+  (draft.definitions as AuthoredDefinition[]).find(d=>d.id==='building.test.sanctuary')!.behaviors!.revival=structuredClone(policy);
+ });
  const hero=g.entities.find(e=>e.owner==='player.1'&&g.registry.get(e.definition).hero)!,shrine=g.entities.find(e=>e.placement==='shrine')!;
  hero.progression!.experience=g.registry.get(hero.definition).behaviors.progression!.levels[level-1].experience;
- g.economy.remove(hero);g.revival.retain(hero);g.state.wallets['player.1']={'item.amber':2000,'item.wood':500};g.observation.update();
+ g.economy.remove(hero);g.revival.retain(hero);g.state.wallets['player.1']={'item.test.amber':2000,'item.test.wood':500};g.observation.update();
  const cast=()=>g.command('player.1',{type:'revive',actor:shrine.id,hero:hero.id});
  return {g,hero,shrine,cast};
 }
-it('declares level-based prices and durations once for all consumers',()=>{
- const {g,shrine}=setup(),policy=g.registry.get(shrine.definition).behaviors.revival!;
- expect(revivalTerms(policy,1)).toEqual({items:[{item:'item.amber',amount:200}],workTicks:1200});
- expect(revivalTerms(policy,4)).toEqual({items:[{item:'item.amber',amount:350}],workTicks:1800});
- expect(revivalTerms(policy,10)).toEqual({items:[{item:'item.amber',amount:650}],workTicks:3000});
+it('derives level-based prices and durations from the base plus per-level increments',()=>{
+ expect(revivalTerms(policy,1)).toEqual({items:[{item:'item.test.amber',amount:200}],workTicks:1200});
+ expect(revivalTerms(policy,4)).toEqual({items:[{item:'item.test.amber',amount:350}],workTicks:1800});
+ expect(revivalTerms(policy,10)).toEqual({items:[{item:'item.test.amber',amount:650}],workTicks:3000});
+ // An increment-only currency appears from level two; zero amounts are omitted.
+ const mixed={...policy,itemsPerLevel:[...policy.itemsPerLevel,{item:'item.test.wood',amount:10}]};
+ expect(revivalTerms(mixed,1).items).toEqual([{item:'item.test.amber',amount:200}]);
+ expect(revivalTerms(mixed,3).items).toEqual([{item:'item.test.amber',amount:300},{item:'item.test.wood',amount:20}]);
 });
 it('pays exactly once, shows held funds and refunds the paid level on cancellation',()=>{
  const {g,shrine,hero,cast}=setup(4);
  const button=commandCard(g.view('player.1'),[shrine.id],'player.1',g.registry).find(c=>c.type==='revive')!;
- expect(button.costs).toMatchObject([{kind:'item',amount:350},{kind:'supply',amount:4}]);expect(button.description).toContain('45s');
+ expect(button.costs).toMatchObject([{kind:'item',amount:350},{kind:'supply',amount:g.registry.get(hero.definition).supplyCost}]);expect(button.description).toContain('45s');
  expect(cast().accepted).toBe(true);expect(cast().accepted).toBe(false);run(g,100);
- expect(g.state.wallets['player.1']['item.amber']).toBe(1650);
- expect(g.view('player.1').goods!.find(g=>g.item==='item.amber')).toMatchObject({available:1650,reserved:350,stored:2000});
+ expect(g.state.wallets['player.1']['item.test.amber']).toBe(1650);
+ expect(g.view('player.1').goods!.find(g=>g.item==='item.test.amber')).toMatchObject({available:1650,reserved:350,stored:2000});
  const queue=queueCard(g.view('player.1'),shrine.id,'player.1',g.registry);expect(queue[0].progress).toBeCloseTo(100/1800);expect(queue[0].costs[0].amount).toBe(350);
  expect(g.command('player.1',{type:'cancelRevival',actor:shrine.id,hero:hero.id}).accepted).toBe(true);
  expect(g.command('player.1',{type:'cancelRevival',actor:shrine.id,hero:hero.id}).accepted).toBe(false);
- expect(g.state.wallets['player.1']['item.amber']).toBe(2000);expect(hero.fallen).toBe(true);
+ expect(g.state.wallets['player.1']['item.test.amber']).toBe(2000);expect(hero.fallen).toBe(true);
 });
 it('rejects unaffordable revival atomically and displays the same reason',()=>{
- const {g,shrine,cast}=setup(4);g.state.wallets['player.1']['item.amber']=349;g.observation.update();
+ const {g,shrine,cast}=setup(4);g.state.wallets['player.1']['item.test.amber']=349;g.observation.update();
  expect(cast()).toMatchObject({accepted:false,reason:'Insufficient resources'});expect(shrine.revival!.queue).toEqual([]);
- expect(g.state.wallets['player.1']['item.amber']).toBe(349);
+ expect(g.state.wallets['player.1']['item.test.amber']).toBe(349);
  expect(commandCard(g.view('player.1'),[shrine.id],'player.1',g.registry).find(c=>c.type==='revive')).toMatchObject({enabled:false,reason:'Insufficient resources'});
 });
 it('finishes at the declared tick, preserving identity, XP and learned state across restore',()=>{
@@ -44,19 +51,19 @@ it('finishes at the declared tick, preserving identity, XP and learned state acr
  cast();run(g,500);const restored=new Game(g.map,slots,g.registry);restored.restore(g.snapshot());
  run(g,1299);run(restored,1299);expect(hero.fallen).toBe(true);g.tick();restored.tick();
  expect(hero.id).toBe(id);expect(hero.fallen).toBeUndefined();expect(hero.progression!.experience).toBe(xp);expect(hero.abilities!.ranks).toEqual(ranks);
- expect(shrine.revival!.queue).toEqual([]);expect(g.state.accounting.consumed['item.amber']).toBe(350);expect(restored.snapshot()).toEqual(g.snapshot());
+ expect(shrine.revival!.queue).toEqual([]);expect(g.state.accounting.consumed['item.test.amber']).toBe(350);expect(restored.snapshot()).toEqual(g.snapshot());
 });
 it('loses paid revival escrow on sanctuary destruction without erasing the hero or wallet',()=>{
  const {g,hero,shrine,cast}=setup(4);cast();run(g,20);g.economy.remove(shrine);
- expect(hero.fallen).toBe(true);expect(g.state.wallets['player.1']['item.amber']).toBe(1650);expect(g.state.accounting.lost['item.amber']).toBe(350);
- const backup=g.context.create(placed('backup','building.ants.sanctuary',193.5,237.5));
- expect(g.command('player.1',{type:'revive',actor:backup.id,hero:hero.id}).accepted).toBe(true);expect(g.state.wallets['player.1']['item.amber']).toBe(1300);
+ expect(hero.fallen).toBe(true);expect(g.state.wallets['player.1']['item.test.amber']).toBe(1650);expect(g.state.accounting.lost['item.test.amber']).toBe(350);
+ const backup=g.context.create(placed('backup','building.test.sanctuary',193.5,237.5));
+ expect(g.command('player.1',{type:'revive',actor:backup.id,hero:hero.id}).accepted).toBe(true);expect(g.state.wallets['player.1']['item.test.amber']).toBe(1300);
 });
 it('holds a finished revival behind blocked exits and resumes the same reservation',()=>{
  const {g,shrine,hero,cast}=setup();cast();const nearest=vi.spyOn(g.spatial,'nearest').mockReturnValue(null);
  run(g,1300);expect(hero.fallen).toBe(true);expect(shrine.revival!.queue[0].progress).toBe(1200);
- expect(g.state.accounting.consumed['item.amber']??0).toBe(0);expect(()=>new Game(g.map,slots,g.registry).restore(g.snapshot())).not.toThrow();
- nearest.mockRestore();g.tick();expect(hero.fallen).toBeUndefined();expect(g.state.accounting.consumed['item.amber']).toBe(200);
+ expect(g.state.accounting.consumed['item.test.amber']??0).toBe(0);expect(()=>new Game(g.map,slots,g.registry).restore(g.snapshot())).not.toThrow();
+ nearest.mockRestore();g.tick();expect(hero.fallen).toBeUndefined();expect(g.state.accounting.consumed['item.test.amber']).toBe(200);
 });
 it('rejects invalid paid levels/progress without modifying live state',()=>{
  const {g,shrine,cast}=setup();cast();const before=g.checksum('full');
@@ -66,19 +73,19 @@ it('rejects invalid paid levels/progress without modifying live state',()=>{
  }
 });
 it('validates declared revival prices as unique currencies',()=>{
- for(const items of [[{item:'unit.ants.warrior',amount:1}],[{item:'item.amber',amount:1},{item:'item.amber',amount:2}]]){
-  const s=source(),d=(s.definitions as AuthoredDefinition[]).find(d=>d.id==='building.ants.sanctuary')!;
+ for(const items of [[{item:'unit.test.warrior',amount:1}],[{item:'item.test.amber',amount:1},{item:'item.test.amber',amount:2}]]){
+  const s=source(),d=(s.definitions as AuthoredDefinition[]).find(d=>d.id==='building.test.sanctuary')!;
   d.behaviors!.revival!.items=items;expect(()=>new ContentRegistry(s)).toThrow();
  }
 });
 it('retains a paid revival after capacity loss once its work has started',()=>{
  const {g,hero,shrine,cast}=setup();
- for(let i=0;i<7;i++)g.context.create(placed('extra-'+i,'unit.ants.warrior',100+i*4,100));
+ for(let i=0;i<7;i++)g.context.create(placed('extra-'+i,'unit.test.warrior',100+i*4,100));
  expect(cast().accepted).toBe(true);g.tick();expect(shrine.revival!.queue[0].progress).toBe(1);
  g.economy.remove(g.entities.find(e=>e.placement==='supply')!);
  const restored=new Game(g.map,slots,g.registry);restored.restore(g.snapshot());
  run(g,1199);run(restored,1199);expect(hero.fallen).toBeUndefined();expect(restored.snapshot()).toEqual(g.snapshot());
- expect(g.view('player.1').supply).toMatchObject({used:16,capacity:15,reserved:0});
+ const pool=g.view('player.1').supply!;expect(pool.used).toBeGreaterThan(pool.capacity);expect(pool.reserved).toBe(0);
 });
 
 it('replays paid cancellation and revival through independent multiplayer mailboxes and a cold restore',()=>{
@@ -97,7 +104,20 @@ it('replays paid cancellation and revival through independent multiplayer mailbo
   if(tick===800){const restored=new Game(b.g.map,slots,b.g.registry);restored.restore(games[1].snapshot());games[1]=restored;}
   if(tick%40===0)expect(games[1].checksum('full')).toBe(games[0].checksum('full'));
  }
- expect(a.hero.fallen).toBeUndefined();expect(a.g.state.wallets['player.1']['item.amber']).toBe(1650);
- expect(a.g.state.accounting.consumed['item.amber']).toBe(350);expect(games[1].snapshot()).toEqual(games[0].snapshot());
+ expect(a.hero.fallen).toBeUndefined();expect(a.g.state.wallets['player.1']['item.test.amber']).toBe(1650);
+ expect(a.g.state.accounting.consumed['item.test.amber']).toBe(350);expect(games[1].snapshot()).toEqual(games[0].snapshot());
  channels.forEach(c=>c.destroy());
+});
+function twoSanctuaries(){const g=game([placed('shrine','building.test.sanctuary',193.5,237.5),placed('backup','building.test.sanctuary',245.5,233.5)]),hero=g.entities.find(e=>e.equipment&&e.owner==='player.1')!;hero.hp=0;g.economy.remove(hero);g.revival.retain(hero);g.tick();return {g,hero,shrine:g.entities.find(e=>e.placement==='shrine')!,backup:g.entities.find(e=>e.placement==='backup')!};}
+it('exposes owner-only revival commands and cancellation, and prevents duplicate queues',()=>{
+ const {g,hero,shrine,backup}=twoSanctuaries();
+ const command=commandCard(g.view('player.1'),[shrine.id],'player.1',g.registry).find(b=>b.type==='revive')!;
+ expect(command.immediate).toEqual({type:'revive',actor:shrine.id,hero:hero.id});
+ expect(g.command('player.2',command.immediate!).accepted).toBe(false);
+ expect(g.command('player.1',command.immediate!).accepted).toBe(true);g.tick();
+ expect(g.command('player.1',{type:'revive',actor:backup.id,hero:hero.id}).reason).toMatch(/already/);
+ const queue=queueCard(g.view('player.1'),shrine.id,'player.1',g.registry);expect(queue).toHaveLength(1);
+ expect(g.command('player.1',queue[0].cancel!).accepted).toBe(true);
+ expect(hero.fallen).toBe(true);expect(g.command('player.1',{type:'revive',actor:backup.id,hero:hero.id}).accepted).toBe(true);
+ const saved=g.snapshot();saved.state.entities.find(e=>e.id===shrine.id)!.revival!.queue=[{id:saved.state.nextQueue++,hero:hero.id,level:1,progress:0}];expect(()=>g.restore(saved)).toThrow(/Duplicate hero revival/);
 });

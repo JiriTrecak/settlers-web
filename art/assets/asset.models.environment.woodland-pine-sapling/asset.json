@@ -26,20 +26,6 @@
       "bytes": 2116207
     },
     {
-      "role": "build",
-      "index": 1,
-      "format": "json",
-      "sha256": "7400e7b8be2c9058997edb5eb380cbc7fc6c74643e65e2a8c5d2475bcb31c7e6",
-      "bytes": 1476
-    },
-    {
-      "role": "generation",
-      "index": 1,
-      "format": "json",
-      "sha256": "8e2c77b8fcbdc4ed0ed4b2bdeac6b7097c5f94fd090ca43b8fb2cbe0c8642626",
-      "bytes": 3764
-    },
-    {
       "role": "geometry",
       "index": 1,
       "format": "glb",
@@ -47,53 +33,11 @@
       "bytes": 828268
     },
     {
-      "role": "recipe",
-      "index": 1,
-      "format": "py",
-      "sha256": "5c41ebed829e7f52325a0c9e78aee671c0685eb129dfda6af4a13148521b8b8f",
-      "bytes": 196
-    },
-    {
       "role": "source",
       "index": 1,
       "format": "blend",
       "sha256": "f6a8a6eeb8e29ce980e288865fd897557fc4f884ece5351d9b190c90634b4f87",
       "bytes": 3423439
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "json",
-      "sha256": "2523749f682105b8e502cce940f10cf905bdc36c9fdfe92df1a48ff00ceb9008",
-      "bytes": 503
-    },
-    {
-      "role": "source",
-      "index": 3,
-      "format": "glb",
-      "sha256": "d958c9b8876ee18b5a635a12f772c7f5c8c7e9b1b0783d3e8d27ecbf6b4bfd95",
-      "bytes": 2993300
-    },
-    {
-      "role": "source",
-      "index": 4,
-      "format": "glb",
-      "sha256": "18a7f5981c946882b9a5621e0115ecf09ec50750383394c23f4b2cca7979b528",
-      "bytes": 2967492
-    },
-    {
-      "role": "source",
-      "index": 5,
-      "format": "png",
-      "sha256": "24aa5df655274f60445a694487c8ad01174de644c505ecdefce67fb60484945b",
-      "bytes": 232028
-    },
-    {
-      "role": "source",
-      "index": 6,
-      "format": "json",
-      "sha256": "183ce662b7a9f0ca05c2b4639444fa95eec034dea00aba9caa2310e1ff045a04",
-      "bytes": 198
     }
   ],
   "usesGeometry": true,

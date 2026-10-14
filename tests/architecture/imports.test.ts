@@ -29,48 +29,27 @@ function importSpecs(text: string): string[] {
 }
 
 function importsArea(spec: string, area: string): boolean {
-  if (area === "pixi") return spec === "pixi.js" || spec.startsWith("pixi.js/");
   if (area === "three") return spec === "three" || spec.startsWith("three/");
   return spec.split("/").includes(area);
 }
 
 describe("architecture", () => {
-  it("src game layers do not import pixi.js", async () => {
-    for (const layer of ["sim", "net", "ui", "render", "session", "app", "editor"]) {
-      const files = await walkTs(join(repoRoot, "src", layer));
-      expect(files.length).toBeGreaterThan(0);
-      for (const file of files) {
-        const text = await readFile(file, "utf8");
-        expect(text, file).not.toMatch(/pixi\.js/);
-      }
-    }
-  });
-
-  it("src does not import original_conv", async () => {
-    const files = await walkTs(join(repoRoot, "src"));
-    expect(files.length).toBeGreaterThan(0);
-    for (const file of files) {
-      const text = await readFile(file, "utf8");
-      expect(text, file).not.toMatch(/from\s+["'][^"']*original_conv/);
-    }
-  });
-
   it("layer imports stay one-way", async () => {
     const bans: Record<string, string[]> = {
-      sim: ["pixi", "three", "app", "session", "ui", "render", "net", "editor"],
-      net: ["pixi", "three", "app", "session", "ui", "render", "sim", "editor"],
-      ui: ["pixi", "three", "app", "session", "render", "net", "editor"],
-      render: ["pixi", "app", "session", "ui", "net", "editor"],
-      session: ["pixi", "app", "editor"],
-      editor: ["pixi", "app", "session", "net"],
-      app: ["pixi", "sim", "render"],
+      sim: ["three", "app", "session", "ui", "render", "net", "editor"],
+      net: ["three", "app", "session", "ui", "render", "sim", "editor"],
+      ui: ["three", "app", "session", "render", "net", "editor"],
+      render: ["app", "session", "ui", "net", "editor"],
+      session: ["app", "editor"],
+      editor: ["app", "session", "net"],
+      app: ["sim", "render"],
     };
     const extra = join(repoRoot, "server");
     const extraFiles = await walkTs(extra).catch(() => [] as string[]);
     for (const file of extraFiles) {
       const specs = importSpecs(await readFile(file, "utf8"));
       for (const spec of specs) {
-        for (const area of ["pixi", "app", "session", "ui", "render"]) {
+        for (const area of ["app", "session", "ui", "render"]) {
           expect(importsArea(spec, area), `${relative(repoRoot, file)} → ${spec}`).toBe(false);
         }
       }

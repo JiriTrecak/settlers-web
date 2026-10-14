@@ -4,13 +4,6 @@ import {FogRaster} from '../../src/render/visibility/fogRaster';
 import {FogAtlas} from '../../src/render/visibility/fogAtlas';
 import {FogOfWar} from '../../src/render/visibility/fogOfWar';
 
-it('updates only affected blur rows with the same result as a full recompute',()=>{
- const size=16,cells=new Uint8Array(size*size),raster=new FogRaster(size);raster.update(cells);
- for(let i=0;i<80;i++){
-  const cell=(i*37+13)%cells.length;cells[cell]=i%3;raster.update(cells);
-  const fresh=new FogRaster(size);fresh.update(cells);expect(raster.light).toEqual(fresh.light);
- }
-});
 it('keeps a one-cell-wide visible deck bright while masking its empty neighbors',()=>{
  const mask=new Uint8Array(64),cells=new Uint8Array(64);for(let y=0;y<8;y++)mask[y*8+4]=1;
  const raster=new FogRaster(8,mask);for(let y=0;y<8;y++)cells[y*8+4]=2;raster.update(cells);

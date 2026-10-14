@@ -1,20 +1,17 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,type Effect} from '../../src/content/abilities/schema';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {abilityAimScore} from '../../src/sim/abilities/ai';
-import {Room,Lockstep,MemoryChannel} from '../../src/net';
-import {World} from '../../src/sim/world/world';
-import {localMatch} from '../../src/shared';
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource,runLockstep} from './encounter-harness';
 
 const convert:Effect={op:'convert',target:'target',amount:1,supply:'allow-over-cap'};
 const sacrifice:Effect={op:'sacrifice',target:'target',amount:1,record:'offering'};
 const heal:Effect={op:'heal',target:'caster',amount:100};
 function fixture(name:string,onRelease:unknown[],settings={}){
- const base=coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!;
- const a=abilitySchema.parse({...base,onRelease}),p=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
- return {...createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',distance:6,mana:1000,casterHealth:100,targetHealth:500,...settings})),a};
+ const base=testAbilities.abilities.find(a=>a.id==='ability.test.'+name)!;
+ const a=abilitySchema.parse({...base,onRelease}),p=testAbilities.presentations.find(p=>p.id===base.presentation)!;
+ return {...createAbilityEncounter(a,p,testSettings({relationship:'enemy',distance:6,mana:1000,casterHealth:100,targetHealth:500,...settings}),false,encounterSource()),a};
 }
 function tick(f:ReturnType<typeof fixture>,count=1){for(let i=0;i<count;i++)f.game.tick(undefined,{passiveUnits:true});}
 
@@ -42,9 +39,9 @@ it('keeps an earlier successful effect when a later world operation fails its li
  expect(f.game.abilities.observedEvents().some(e=>e.event==='sacrificed')).toBe(false);
 });
 it('uses the current flight form when landing a later teleport above blocked ground',()=>{
- const blink=coreAbilities.abilities.find(a=>a.id==='ability.core.blink')!.onRelease[0];
+ const blink=testAbilities.abilities.find(a=>a.id==='ability.test.blink')!.onRelease[0];
  const f=fixture('blink',[{op:'status',id:'flight',target:'caster',amount:200,polarity:'positive',dispel:true,form:{movement:{locomotion:'air',flightHeight:7}}},blink]);
- for(let y=124;y<=132;y++)for(let x=124;x<=132;x++)f.game.spatial.occupied[y*256+x]=999;
+ for(let y=124;y<=132;y++)for(let x=124;x<=132;x++)f.game.spatial.terrain[y*256+x]=0;f.game.spatial.rebuild();
  expect(f.game.abilities.cast(f.caster,'preview',{x:128,y:128})).toBeNull();tick(f,30);
  const caster=f.game.context.get(f.caster)!;
  expect(f.game.spatial.airborne(caster)).toBe(true);expect(caster).toMatchObject({x:128,y:128});
@@ -68,23 +65,9 @@ it('queries predicted allies after conversion',()=>{
 
 it('runs conversion then sacrifice through delayed two-peer commands and a pending-cast restore',()=>{
  const f=fixture('charm',[convert,sacrifice,{op:'heal',target:'caster',amount:0,scale:{source:'result',id:'offering',stat:'maxHealth',permille:1000}}]);
- const opts={map:f.game.map,slots:f.game.slots,registry:f.game.registry,seed:42};
- const worlds=[new World(opts),new World(opts)];for(const w of worlds)w.settlement.restore(f.game.snapshot());
- const room=new Room({...localMatch({mapId:'sequential',mapRevision:'test',seed:42,slotCount:2,me:0,delay:3}),slots:[...f.game.slots]});
- const channels=[new MemoryChannel(room,0),new MemoryChannel(room,1)],peers=channels.map((c,i)=>new Lockstep(c,i,3));
- peers[0].send({type:'castAbility',actor:f.caster,binding:'preview',target:{kind:'unit',entity:f.target!}});
  const events=new Map<number,string>();
- try{
-  for(let tick=1;tick<=40;tick++){
-   peers[tick%2].confirm(tick);peers[1-tick%2].confirm(tick);
-   for(let i=0;i<2;i++){
-    const commit=peers[i].take(tick)!;expect(commit).toBeTruthy();
-    for(const slot of commit.slots)slot.actions.forEach((action,seq)=>worlds[i].enqueue(action,commit.tick,{player:slot.player,seq}));worlds[i].tick();
-   }
-   for(const e of worlds[0].settlement.abilities.observedEvents())if(e.ability===f.a.id&&['converted','sacrificed','healed'].includes(e.event))events.set(e.id,e.event);
-   if([3,18].includes(tick)){const save=JSON.parse(JSON.stringify(worlds[1].snapshot()));worlds[1]=new World(opts);worlds[1].restore(save);}
-   expect(worlds[1].checksum(),`tick ${tick}`).toBe(worlds[0].checksum());
-  }
-  expect([...events.values()]).toEqual(['converted','sacrificed','healed']);expect(worlds[0].settlement.context.get(f.caster)!.hp).toBeGreaterThanOrEqual(500);
- }finally{channels.forEach(c=>c.destroy());}
+ const leader=runLockstep(f.game,{type:'castAbility',actor:f.caster,binding:'preview',target:{kind:'unit',entity:f.target!}},40,{restoreAt:[3,18],onTick:(_,world)=>{
+  for(const e of world.settlement.abilities.observedEvents())if(e.ability===f.a.id&&['converted','sacrificed','healed'].includes(e.event))events.set(e.id,e.event);
+ }});
+ expect([...events.values()]).toEqual(['converted','sacrificed','healed']);expect(leader.settlement.context.get(f.caster)!.hp).toBeGreaterThanOrEqual(500);
 });

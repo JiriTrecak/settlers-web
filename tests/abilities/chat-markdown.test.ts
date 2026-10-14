@@ -5,8 +5,8 @@ import {ChatMarkdown} from '../../tooling/spell-editor/src/chatMarkdown';
 
 const render=(text:string)=>renderToStaticMarkup(createElement(ChatMarkdown,{text}));
 it('renders assistant asset reports and checklists as accessible Markdown rather than raw pipes',()=>{
- const html=render('| Spell | Asset |\n|---|---|\n| Blink | `asset.custom.blink-command-icon` |\n\n- [x] Published\n- [ ] Inspect thumbnail');
- expect(html).toContain('<table>');expect(html).toContain('<th>Spell</th>');expect(html).toContain('<td><code>asset.custom.blink-command-icon</code></td>');
+ const html=render('| Spell | Asset |\n|---|---|\n| Blink | `asset.test.blink-command-icon` |\n\n- [x] Published\n- [ ] Inspect thumbnail');
+ expect(html).toContain('<table>');expect(html).toContain('<th>Spell</th>');expect(html).toContain('<td><code>asset.test.blink-command-icon</code></td>');
  expect(html).toContain('aria-label="Scrollable table"');expect(html).toContain('tabindex="0"');
  expect(html).toContain('type="checkbox"');expect(html).toContain('disabled=""');expect(html).not.toContain('|---|');
 });

@@ -3,9 +3,9 @@ import { fixed } from "../../src/sim/game/motion";
 import { game, placed, worker } from "./helpers";
 
 it("amber assignments pass through units in planning and motion, but still respect solid terrain", () => {
-  const g = game([{...placed("mine", "building.neutral.amber-mine", 228, 229), owner: "none"}]);
+  const g = game([{...placed("mine", "building.test.neutral-amber-mine", 228, 229), owner: "none"}]);
   const w = worker(g), mine = g.entities.find(e => e.placement === "mine")!;
-  const blocker = g.entities.find(e => e.owner === w.owner && e.definition === "unit.ants.marshal")!;
+  const blocker = g.entities.find(e => e.owner === w.owner && e.definition === "unit.test.marshal")!;
   expect(g.command(w.owner, {type: "gather", actors: [w.id], target: mine.id}).accepted).toBe(true);
   w.x = 100; w.y = 100; blocker.x = 101; blocker.y = 100;
   w.unit!.position=fixed(w);w.unit!.segment=null;blocker.unit!.position=fixed(blocker);
@@ -15,7 +15,8 @@ it("amber assignments pass through units in planning and motion, but still respe
   expect(w.unit!.route).toEqual([g.spatial.cell({x: 102, y: 100})]);
   for (let i = 0; i < 30; i++) g.context.move();
   expect(w.x).toBe(102);
-  g.spatial.occupied[g.spatial.cell({x: 103, y: 100})] = 999;
+  g.spatial.terrain[g.spatial.cell({x: 103, y: 100})] = 0;
+  g.spatial.rebuild();
   expect(g.spatial.clearSegment(fixed(w), fixed({x: 104, y: 100}))).toBe(false);
   g.command(w.owner, {type: "move", actors: [w.id], destination: {x: 100, y: 100}});
   expect(g.spatial.free(blocker, w.id)).toBe(false);
@@ -24,11 +25,11 @@ it("amber assignments pass through units in planning and motion, but still respe
 
 it("wood gatherers pass through units too; a queued mine order does not grant passing early", () => {
   const g = game([
-    {...placed("mine", "building.neutral.amber-mine", 228, 229), owner: "none"},
-    {...placed("tree", "resource.forest.tree", 228, 235), owner: "none"},
+    {...placed("mine", "building.test.neutral-amber-mine", 228, 229), owner: "none"},
+    {...placed("tree", "resource.test.forest-tree", 228, 235), owner: "none"},
   ]), w = worker(g);
   const tree = g.entities.find(e => e.placement === "tree")!, mine = g.entities.find(e => e.placement === "mine")!;
-  const blocker = g.entities.find(e => e.owner === w.owner && e.definition === "unit.ants.marshal")!;
+  const blocker = g.entities.find(e => e.owner === w.owner && e.definition === "unit.test.marshal")!;
   g.command(w.owner, {type: "gather", actors: [w.id], target: tree.id});
   expect(g.spatial.free(blocker, w.id)).toBe(true);
   g.command(w.owner, {type: "move", actors: [w.id], destination: {x: 150, y: 150}});

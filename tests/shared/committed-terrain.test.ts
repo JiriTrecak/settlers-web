@@ -6,12 +6,12 @@ import {compileMapScene} from '../../src/shared/authoring/mapScene';
 import {editTerrainGrid} from '../../src/shared/authoring/gridTerrain';
 import {createMapBriefing} from '../../src/sim/ai/briefing';
 import {Spatial} from '../../src/sim/game/spatial';
-import {content} from '../../src/content/builtin';
+import {testContent} from '../fixtures/content';
 
 it.each([undefined,{version:1,objects:[]}])('rejects a map without committed terrain in every loading path',authoring=>{
  const map={...emptyUtcMap(),authoring} as unknown as UtcMap;
  expect(parseUtcMap(map)).toBeNull();
- for(const read of [()=>stringifyUtcMap(map),()=>compileMapScene(map,landscapeAssets),()=>projectScene(map),()=>new Spatial(map,content,()=>[]),()=>createMapBriefing(map,content)]){
+ for(const read of [()=>stringifyUtcMap(map),()=>compileMapScene(map,landscapeAssets),()=>projectScene(map),()=>new Spatial(map,testContent,()=>[]),()=>createMapBriefing(map,testContent)]){
   expect(read).toThrow(/committed terrain/);
  }
 });
@@ -30,7 +30,7 @@ it('uses the same saved local water and elevation in rendering, navigation and A
  }
  const original={...emptyUtcMap(),authoring:{version:1 as const,terrain,objects:[]}};
  const map=parseUtcMap(JSON.parse(stringifyUtcMap(original)))!;
- const rendered=projectScene(map).field,spatial=new Spatial(map,content,()=>[]),briefing=createMapBriefing(map,content);
+ const rendered=projectScene(map).field,spatial=new Spatial(map,testContent,()=>[]),briefing=createMapBriefing(map,testContent);
  expect(briefing.heights).toEqual(Array.from(spatial.heights));
  expect(briefing.land).toEqual(Array.from(spatial.terrain));
  for(const [x,z] of [[10,10],[110,90],[110,126],[96,126],[129,90]]){

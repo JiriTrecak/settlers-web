@@ -5,13 +5,13 @@ import {game, placed, run, slots} from './helpers';
 
 const owner='player.1';
 function site(count=8, amount?:number) {
- const g=game([205.5,213.5,221.5,229.5].map((x,i)=>({...placed(`node.${i}`,'building.neutral.amber-mine',x,241.5,amount===undefined?undefined:{amount}),owner:'none' as const})), draft => {
+ const g=game([205.5,213.5,221.5,229.5].map((x,i)=>({...placed(`node.${i}`,'building.test.neutral-amber-mine',x,241.5,amount===undefined?undefined:{amount}),owner:'none' as const})), draft => {
   for(const u of (draft.rules as Rules).startingSetup.units)u.offset.y=-u.offset.y;
   (draft.rules as Rules).startingSetup.hero!.offset={x:16,y:-16};
  });
  const nodes=g.entities.filter(e=>e.placement?.startsWith('node.'));
  const workers=g.entities.filter(e=>e.owner===owner&&g.registry.get(e.definition).behaviors.work);
- for(let i=workers.length;i<count;i++)workers.push(g.context.create(placed('extra.'+i,'unit.ants.settler',200+(i%8)*4,253-Math.floor(i/8)*4)));
+ for(let i=workers.length;i<count;i++)workers.push(g.context.create(placed('extra.'+i,'unit.test.settler',200+(i%8)*4,253-Math.floor(i/8)*4)));
  g.spatial.rebuild();g.observation.update();
  for(const w of workers)expect(g.spatial.unitWalkable(w,w)).toBe(true);
  expect(g.command(owner,{type:'gather',actors:workers.slice(0,count).map(w=>w.id),target:nodes[1].id}).actors).toHaveLength(count);
@@ -25,12 +25,9 @@ function queued() {
 }
 
 describe('competitive harvesting',()=>{
- it('declares four independent finite nodes, one active miner, and no assignment cap',()=>{
-  const {g,nodes}=site(16),d=g.registry.get(nodes[0].definition);
-  expect(nodes.map(n=>n.resource!.amount)).toEqual([4500,4500,4500,4500]);
-  expect(d.footprint).toEqual({width:4,depth:4});
-  expect(d.harvesting).toEqual({activeWorkers:1,recommendedWorkers:2,searchRadius:24});
-  expect(g.registry.get('item.amber').creation).toMatchObject({workTicks:80,amount:10});
+ it('keeps one active miner per node with no assignment cap',()=>{
+  const {g,nodes}=site(16);
+  expect(g.registry.get(nodes[0].definition).harvesting!.activeWorkers).toBe(1);
   run(g,160);
   for(const node of nodes)expect(g.state.jobs.filter(j=>j.source===node.id&&j.phase==='work').length).toBeLessThanOrEqual(1);
   expect(g.view(owner).entities.filter(e=>nodes.some(n=>n.id===e.id)).reduce((n,e)=>n+e.gathering!.workers,0)).toBe(16);
@@ -70,7 +67,7 @@ describe('competitive harvesting',()=>{
  });
  it('shares extraction capacity across opposing players and replays their commands identically',()=>{
   const {g,nodes}=site(8);
-  const rival=g.context.create({...placed('rival','unit.ants.settler',nodes[1].x+.5,253),owner:'player.2'});
+  const rival=g.context.create({...placed('rival','unit.test.settler',nodes[1].x+.5,253),owner:'player.2'});
   g.spatial.rebuild();g.observation.update();
   const restored=new Game(g.map,slots,g.registry);restored.restore(g.snapshot());
   for(const instance of [g,restored])expect(instance.command('player.2',{type:'gather',actors:[rival.id],target:nodes[1].id}).accepted).toBe(true);
@@ -94,20 +91,19 @@ describe('competitive harvesting',()=>{
   }
  });
  it('conserves a final partial node load with oversaturation and drains exhausted queues',()=>{
-  const {g,nodes}=site(12,17),before=g.state.wallets[owner]['item.amber'];run(g,1400);
+  const {g,nodes}=site(12,17),before=g.state.wallets[owner]['item.test.amber'];run(g,1400);
   expect(nodes.every(n=>n.resource!.amount===0)).toBe(true);
-  expect(g.state.wallets[owner]['item.amber']).toBe(before+68);
+  expect(g.state.wallets[owner]['item.test.amber']).toBe(before+nodes.length*17); // Every unit of every node, partial loads included.
   expect(g.state.jobs.filter(j=>nodes.some(n=>n.id===j.source))).toHaveLength(0);
  });
  it('measures saturation instead of multiplying income by assigned worker count',()=>{
   const measured:number[]=[];
   for(const count of [4,8,12]){
-   const {g}=site(count);run(g,400);const start=g.state.wallets[owner]['item.amber'];run(g,2400);
-   measured.push(g.state.wallets[owner]['item.amber']-start);
+   const {g}=site(count);run(g,400);const start=g.state.wallets[owner]['item.test.amber'];run(g,2400);
+   measured.push(g.state.wallets[owner]['item.test.amber']-start);
   }
-  expect(measured).toEqual([640,1200,1200]);
+  // Doubling under saturation raises income; beyond saturation more workers add (almost) nothing.
   expect(measured[1]).toBeGreaterThan(measured[0]);
-  expect(measured[2]).toBeLessThanOrEqual(1200);
-  expect(measured[2]-measured[1]).toBeLessThanOrEqual(60);
+  expect(measured[2]-measured[1]).toBeLessThanOrEqual(measured[1]*.05);
  },30000);
 });

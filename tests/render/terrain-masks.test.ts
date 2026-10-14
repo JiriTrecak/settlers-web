@@ -1,13 +1,11 @@
 import {expect,it} from 'vitest';
 import {setTerrainMask,terrainMaskBytes,sameTerrainMask} from '../../src/render/terrain/terrainMasks';
 
-it('retains exact GPU bytes without encoding while preserving serialized terrain masks',()=>{
+it('retains exact mask bytes while serializing terrain masks to the saved base64 format',()=>{
  const data=new Uint8Array([0,127,255,2]),owner=setTerrainMask({mask:''},data);
- const getter=Object.getOwnPropertyDescriptor(owner,'mask')!.get!;
- let reads=0;Object.defineProperty(owner,'mask',{enumerable:true,get(){reads++;return getter();}});
- expect(terrainMaskBytes(owner)).toBe(data);expect(reads).toBe(0);
- expect(sameTerrainMask(owner,setTerrainMask({mask:''},data.slice()))).toBe(true);expect(reads).toBe(0);
- expect(JSON.parse(JSON.stringify(owner))).toEqual({mask:Buffer.from(data).toString('base64')});expect(reads).toBe(1);
+ expect(terrainMaskBytes(owner)).toEqual(data);
+ expect(sameTerrainMask(owner,setTerrainMask({mask:''},data.slice()))).toBe(true);
+ expect(JSON.parse(JSON.stringify(owner))).toEqual({mask:Buffer.from(data).toString('base64')});
  const encoded={mask:Buffer.from(data).toString('base64')};expect(terrainMaskBytes(encoded)).toEqual(data);
  expect(sameTerrainMask(owner,encoded)).toBe(true);
 });

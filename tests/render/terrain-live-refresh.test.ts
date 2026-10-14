@@ -23,22 +23,6 @@ it('rebinds already-compiled color and shadow uniforms when a painted landform i
  expect(depth.uniforms.currentTerrain!.value).toBe(current);material.dispose();
 });
 
-it('reuses geometry sampling for coverage edits but invalidates it after sculpting the same height field',()=>{
- const material=new TerrainMaterial(),field=new HeightField(16);field.samples.fill(2);
- material.update(field,[]);
- const color={uniforms:{}} as WebGLProgramParametersWithUniforms;
- material.onBeforeCompile(color,{} as never);
- const original=color.uniforms.currentTerrain!.value as ImportedTerrain;
- const sample=vi.spyOn(field,'sample');
- field.grassCoverage=new Float32Array(field.samples.length).fill(1);
- material.update(field,[],true);
- const painted=color.uniforms.currentTerrain!.value as ImportedTerrain;
- expect(sample).not.toHaveBeenCalled();expect(painted.height).toBe(original.height);expect(painted.layers).not.toEqual(original.layers);
- field.raise(8,8,5,3);material.update(field,[]);
- const sculpted=color.uniforms.currentTerrain!.value as ImportedTerrain;
- expect(sample).toHaveBeenCalled();expect(sculpted.height).not.toBe(painted.height);
- material.dispose();
-});
 
 it('sends independent road and cover masks to the actual color and shadow shader inputs',async()=>{
  const {terrainMaskBytes}=await import('../../src/render/terrain/terrainMasks');

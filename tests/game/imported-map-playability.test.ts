@@ -1,11 +1,20 @@
-import {readFileSync} from 'node:fs';
+/** Content validation: every published skirmish map is playable with the shipped content.
+ * ENGINE-COUPLED: published maps reference shipped definitions, and `playableMapError` reads the global shipped
+ * content, so these games deliberately run on the shipped registry (the `new Game` default). */
+import {readFileSync,readdirSync} from 'node:fs';
 import {expect,it} from 'vitest';
 import {readUtcMap} from '../../src/shared/map/utcmap';
 import {playableMapError} from '../../src/shared/map/playable';
 import {Game} from '../../src/sim/game/game';
-it.each(['echo-isles','turtle-rock'])('%s published map has usable starts and a deterministic save continuation',name=>{
- const loaded=readUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${name}.utcmap`,'utf8')));
- if(!('map' in loaded))throw Error(`Invalid published ${name}`);
+
+const directory='assets/maps/skirmish';
+const published=readdirSync(directory).filter(file=>file.endsWith('.utcmap')).sort();
+
+it('publishes at least one skirmish map',()=>expect(published.length).toBeGreaterThan(0));
+
+it.each(published)('%s has usable starts, reachable camps and a deterministic save continuation',file=>{
+ const loaded=readUtcMap(JSON.parse(readFileSync(`${directory}/${file}`,'utf8')));
+ if(!('map' in loaded))throw Error(`Invalid published ${file}: ${loaded.error}`);
  const {map}=loaded;
  expect(playableMapError(map)).toBeNull();
  const slots=map.playerStarts.map((_,player)=>({player,kind:'human' as const})),game=new Game(map,slots);

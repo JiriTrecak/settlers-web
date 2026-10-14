@@ -1,12 +1,12 @@
 import {it,expect} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
-import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {spellControl} from '../../src/sim/abilities/statuses';
 import {isStunned} from '../../src/sim/game/effects';
+import {testAbilities} from '../fixtures/content';
+import {testSettings,encounterSource} from './encounter-harness';
 function fixture(name:string,extra:Record<string,unknown>={}){
- const a=coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!;
- const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:500,distance:3,combat:true,...extra}));
+ const a=testAbilities.abilities.find(a=>a.id==='ability.test.'+name)!;
+ const f=createAbilityEncounter(a,testAbilities.presentations.find(p=>p.id===a.presentation)!,testSettings({relationship:'enemy',targetHealth:500,distance:3,combat:true,...extra}),false,encounterSource());
  return {...f,a,cast:()=>f.game.abilities.cast(f.caster,'preview',a.targeting.kind==='self'?f.caster:f.target),casterEntity:()=>f.game.context.get(f.caster)!,targetEntity:()=>f.game.context.get(f.target)!};
 }
 function advance(f:ReturnType<typeof fixture>,n:number){for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});}
@@ -30,7 +30,7 @@ it('Sleep breaks on actual damage, not a zero-damage hit',()=>{
 });
 it('Frost Armor reacts to melee weapon damage, never secondary spell damage',()=>{
  const f=fixture('frost-armor',{relationship:'ally'});f.cast();advance(f,12);
- const attacker=f.game.context.create({id:'attacker',definition:'unit.ants.warrior',owner:'player.2',position:{x:124,y:120},rotation:270});
+ const attacker=f.game.context.create({id:'attacker',definition:'unit.test.warrior',owner:'player.2',position:{x:124,y:120},rotation:270});
  f.game.combat.spellEvents.push({source:attacker.id,target:f.target,damage:10,weapon:true,melee:true});
  advance(f,1);expect(attacker.spellStatuses?.map(s=>s.status)).toEqual(['retaliationSlow']);
  delete attacker.spellStatuses;

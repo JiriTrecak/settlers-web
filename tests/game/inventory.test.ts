@@ -7,9 +7,9 @@ import { inventoryCard } from "../../src/presentation/commands";
 function setup() {
   const g=game([{...placed("ring","item.test-ring",219,230),owner:"none"},
     {...placed("salve","item.test-salve",217,230),owner:"none"}],draft=>{
-      draft.definitions.push({id:"item.test-ring",kind:"item",name:"Ring",description:"Armor and might.",asset:"asset.item.plank",icon:"icon.item.plank",stackLimit:1,
+      draft.definitions.push({id:"item.test-ring",kind:"item",name:"Ring",description:"Armor and might.",asset:"asset.test.item-plank",icon:"icon.test.item-plank",stackLimit:1,
         itemEffect:{type:"equipment",damage:9,armor:2,maxHp:100}},
-      {id:"item.test-salve",kind:"item",name:"Salve",description:"Restores health.",asset:"asset.item.plank",icon:"icon.item.plank",stackLimit:1,
+      {id:"item.test-salve",kind:"item",name:"Salve",description:"Restores health.",asset:"asset.test.item-plank",icon:"icon.test.item-plank",stackLimit:1,
         itemEffect:{type:"consumable",heal:100}});
     });
   // Place test loot beside the actual starting hero, independent of hall size.
@@ -45,7 +45,7 @@ describe("hero inventory",()=>{
   });
   it("leaves exactly one owner when two heroes reach a chest and retains hero loot on death",()=>{
     const g=setup(),hero=g.entities.find(e=>e.owner==="player.1"&&e.equipment)!,ring=g.entities.find(e=>e.placement==="ring")!;
-    const other=g.context.create(placed("other","unit.ants.marshal",219,231));other.readyTick=0;
+    const other=g.context.create(placed("other","unit.test.marshal",219,231));other.readyTick=0;
     for(const h of [hero,other])expect(g.command("player.1",{type:"pickup",actor:h.id,target:ring.id}).accepted).toBe(true);
     g.tick();
     expect([hero,other].flatMap(h=>h.equipment!).filter(id=>id==="item.test-ring")).toHaveLength(1);
@@ -70,8 +70,8 @@ it('retains a pickup order through a stun and transfers the chest only after rec
 });
 
 it('revives the same hero with items, XP and skills after real combat death and a queued save/load',()=>{
- const g=setup(),victim=g.context.create(placed('fallen','unit.ants.marshal',230,230,{health:1})),attacker=g.context.create(placed('attacker','unit.ants.warrior',231,230)),shrine=g.context.create(placed('shrine','building.ants.sanctuary',239,230));
- g.context.create(placed('supply','building.ants.house',245,245));
+ const g=setup(),victim=g.context.create(placed('fallen','unit.test.marshal',230,230,{health:1})),attacker=g.context.create(placed('attacker','unit.test.warrior',231,230)),shrine=g.context.create(placed('shrine','building.test.sanctuary',239,230));
+ g.context.create(placed('supply','building.test.house',245,245));
  for(const e of [victim,attacker,shrine])e.readyTick=0;
  victim.equipment!.fill('item.test-ring');victim.progression!.experience=160;
 

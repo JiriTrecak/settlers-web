@@ -14,34 +14,36 @@ import {emptyPipeline} from '../../src/shared/save/save';
 import {source,slots} from './helpers';
 function catalogue(){
  const src=source(),rules=src.rules as Rules;
- const marshal=src.definitions.find(d=>(d as AuthoredDefinition).id==='unit.ants.marshal') as AuthoredDefinition;
+ const marshal=src.definitions.find(d=>(d as AuthoredDefinition).id==='unit.test.marshal') as AuthoredDefinition;
  src.definitions.push({...structuredClone(marshal),id:'unit.test.warden',name:'Test Warden'});
  rules.startingSetup.hero!.choices.push('unit.test.warden');rules.startingSetup.gathering=[];
  return {src,rules,registry:new ContentRegistry(src)};
 }
-const selected=[{...slots[0],hero:'unit.test.warden'},{...slots[1],hero:'unit.ants.marshal'}];
+const selected=[{...slots[0],hero:'unit.test.warden'},{...slots[1],hero:'unit.test.marshal'}];
 it('declares a default hero separately from fixed workers and rejects invalid choice catalogues',()=>{
  const {src,rules,registry}=catalogue();
- expect(startingUnits(registry.rules.startingSetup)).toHaveLength(6);
- expect(registry.rules.startingSetup.units.every(u=>u.definition==='unit.ants.settler')).toBe(true);
- expect(chosenHero(rules.startingSetup.hero)).toBe('unit.ants.marshal');
+ expect(startingUnits(registry.rules.startingSetup)).toHaveLength(registry.rules.startingSetup.units.length+1);
+ expect(registry.rules.startingSetup.units.every(u=>!registry.get(u.definition).hero&&registry.get(u.definition).behaviors.work)).toBe(true);
+ expect(chosenHero(rules.startingSetup.hero)).toBe('unit.test.marshal');
  for(const hero of [{...rules.startingSetup.hero!,default:'unit.test.missing'},
-  {...rules.startingSetup.hero!,choices:['unit.ants.marshal','unit.ants.marshal']},
-  {...rules.startingSetup.hero!,choices:['unit.ants.marshal','unit.ants.settler']}]){
+  {...rules.startingSetup.hero!,choices:['unit.test.marshal','unit.test.marshal']},
+  {...rules.startingSetup.hero!,choices:['unit.test.marshal','unit.test.settler']}]){
   const bad=structuredClone(src);(bad.rules as Rules).startingSetup.hero=hero;expect(()=>new ContentRegistry(bad)).toThrow();
  }
 });
 it('spawns the selected hero once per owner without changing workers, funds or supply',()=>{
- const {registry}=catalogue(),map=emptyUtcMap(),g=new Game(map,selected,registry,10);
+ const {registry}=catalogue(),map=emptyUtcMap(),g=new Game(map,selected,registry,10),defaults=new Game(map,slots,registry,10);
  const heroes=g.entities.filter(e=>registry.get(e.definition).hero);
- expect(heroes.map(e=>[e.owner,e.definition])).toEqual([['player.1','unit.test.warden'],['player.2','unit.ants.marshal']]);
+ expect(heroes.map(e=>[e.owner,e.definition])).toEqual([['player.1','unit.test.warden'],['player.2','unit.test.marshal']]);
  for(const owner of ['player.1','player.2'] as const){
-  expect(g.entities.filter(e=>e.owner===owner&&registry.get(e.definition).behaviors.work)).toHaveLength(5);
-  expect(g.state.wallets[owner]).toEqual({'item.amber':500,'item.wood':150});
-  expect(g.view(owner).supply).toMatchObject({used:9,capacity:15});
+  const workers=(game:Game)=>game.entities.filter(e=>e.owner===owner&&registry.get(e.definition).behaviors.work);
+  expect(workers(g)).toHaveLength(registry.rules.startingSetup.units.length);
+  expect(workers(g).map(e=>e.definition)).toEqual(workers(defaults).map(e=>e.definition));
+  expect(g.state.wallets[owner]).toEqual(registry.rules.startingSetup.inventory);
+  expect(g.view(owner).supply).toEqual(defaults.view(owner).supply);
  }
- expect(expandMap(map,registry).filter(p=>registry.get(p.definition).hero).every(p=>p.definition==='unit.ants.marshal')).toBe(true);
- expect(()=>new Game(map,[{...slots[0],hero:'unit.ants.settler'},slots[1]],registry)).toThrow(/Unavailable starting hero/);
+ expect(expandMap(map,registry).filter(p=>registry.get(p.definition).hero).every(p=>p.definition==='unit.test.marshal')).toBe(true);
+ expect(()=>new Game(map,[{...slots[0],hero:'unit.test.settler'},slots[1]],registry)).toThrow(/Unavailable starting hero/);
 });
 it('retains choices when moving the local seat, freezing a match, renaming players and parsing saves',()=>{
  const map=emptyUtcMap(),changed=setLocalController(selected,1,'human'),{rules}=catalogue();
@@ -58,7 +60,7 @@ it('restores a selected roster deterministically and rejects a different frozen 
  const a=new World(options),b=new World(options);for(let i=0;i<20;i++)a.tick();b.restore(a.snapshot());
  for(let i=0;i<40;i++){a.tick();b.tick();expect(b.checksum('full')).toBe(a.checksum('full'));}
  expect(b.snapshot()).toEqual(a.snapshot());
- const wrong=new World({...options,slots:[{...selected[0],hero:'unit.ants.marshal'},selected[1]]});
+ const wrong=new World({...options,slots:[{...selected[0],hero:'unit.test.marshal'},selected[1]]});
  expect(()=>wrong.restore(a.snapshot())).toThrow();
 });
 it('does not inject a starting hero into authored sandbox entities',()=>{
@@ -69,6 +71,6 @@ it('does not inject a starting hero into authored sandbox entities',()=>{
 it('freezes the declared default for local matches and rejects forged local choices',()=>{
  const map=emptyUtcMap(),{rules}=catalogue();
  const make=(chosen:Slot[]=slots)=>createSkirmishMatch({mapId:'test',slots:chosen},map.playerStarts,'test','',1,false,rules.startingSetup.hero);
- expect(make([{player:0,kind:'human'},{player:1,kind:'ai'}]).match.slots.map(s=>s.hero)).toEqual(['unit.ants.marshal','unit.ants.marshal']);
- expect(()=>make([{...slots[0],hero:'unit.ants.settler'},{...slots[1],kind:'ai'}])).toThrow(/Unavailable starting hero/);
+ expect(make([{player:0,kind:'human'},{player:1,kind:'ai'}]).match.slots.map(s=>s.hero)).toEqual(['unit.test.marshal','unit.test.marshal']);
+ expect(()=>make([{...slots[0],hero:'unit.test.settler'},{...slots[1],kind:'ai'}])).toThrow(/Unavailable starting hero/);
 });

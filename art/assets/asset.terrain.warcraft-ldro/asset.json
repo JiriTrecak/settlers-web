@@ -86,27 +86,6 @@
       "format": "bin",
       "sha256": "3309486e3d6fc92228403f9ffcf94a7872b789f0c5baa154bc100cf7cf8af49f",
       "bytes": 2796368
-    },
-    {
-      "role": "source",
-      "index": 2,
-      "format": "bin",
-      "sha256": "7cc038e747d82b2c9697cc45fd5af2d333b2e9eb393d1c6de4e83c52aaed29ee",
-      "bytes": 2796368
-    },
-    {
-      "role": "source",
-      "index": 3,
-      "format": "bin",
-      "sha256": "ed89dacdea070a2ce62b41892953f11e5d8a605d4cd29125adbb7b0a7a6dbb74",
-      "bytes": 2796368
-    },
-    {
-      "role": "source",
-      "index": 4,
-      "format": "json",
-      "sha256": "a996eb2b43c8f55ea921ba2f3e35c093000bc2d2ab03371e5e99614e28613703",
-      "bytes": 1609
     }
   ],
   "usesGeometry": false,

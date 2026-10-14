@@ -1,17 +1,21 @@
 import {expect,it,vi} from 'vitest';
 import {abilitySchema,resolveEffect,type Effect} from '../../src/content/abilities/schema';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
+import {encounterSource,editorService} from './encounter-harness';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellSummons} from '../../src/sim/abilities/summons';
 import {SpellCorpses} from '../../src/sim/abilities/corpses';
-import {SpellEditorService} from '../../tooling/spell-editor/server/service';
 import type {PreviewState} from '../../tooling/spell-editor/shared/view';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.feral-spirit')!;
-const presentation=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
-const operation:Extract<Effect,{op:'summon'}>={op:'summon',target:'point',amount:2,definition:'unit.spell.feral-spirit',durationTicks:80,replace:false,radius:2,corpses:{radius:3,relations:['ally','enemy'],order:'nearest',maxTargets:1}};
+import {testAbilities} from '../fixtures/content';
+import {useTestWorkspace} from '../fixtures/content/workspace';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const workspace=useTestWorkspace();
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.feral-spirit')!;
+const presentation=testAbilities.presentations.find(p=>p.id===base.presentation)!;
+const operation:Extract<Effect,{op:'summon'}>={op:'summon',target:'point',amount:2,definition:'unit.test.spell-feral-spirit',durationTicks:80,replace:false,radius:2,corpses:{radius:3,relations:['ally','enemy'],order:'nearest',maxTargets:1}};
 function definition(patch:Partial<typeof operation>={},extra={}){return abilitySchema.parse({...base,...extra,targeting:{...base.targeting,kind:'point',range:16,radius:3},cast:{...base.cast,cost:{...base.cast.cost,amount:0},cooldown:{...base.cast.cooldown,ticks:0}},onRelease:[{...operation,...patch}]});}
-function fixture(patch:Partial<typeof operation>={},settings={},extra={}){const a=definition(patch,extra);return {...createAbilityEncounter(a,presentation,encounterSettingsSchema.parse({relationship:'enemy',fallenTargets:true,targetCount:1,distance:8,...settings})),a};}
+function fixture(patch:Partial<typeof operation>={},settings={},extra={}){const a=definition(patch,extra);return {...createAbilityEncounter(a,presentation,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',fallenTargets:true,targetCount:1,distance:8,...settings}),false,encounterSource()),a};}
 const step=(f:ReturnType<typeof fixture>,n:number)=>{for(let i=0;i<n;i++)f.game.tick();};
 const summons=(f:ReturnType<typeof fixture>)=>f.game.entities.filter(e=>e.summoned);
 function cast(f:ReturnType<typeof fixture>,point={x:128,y:120}){expect(f.game.abilities.cast(f.caster,'preview',point)).toBeNull();step(f,19);}
@@ -42,8 +46,8 @@ it('hard unit limits include training reservations and leave unused corpses inta
  const full=vi.spyOn(f.game.context,'populationCandidates').mockReturnValue(Array.from({length:f.game.registry.rules.maxUnits},(_,i)=>({...c,id:1000+i})));expect(spawn(f)).toEqual([]);expect(f.game.state.corpses).toHaveLength(1);full.mockRestore();
 });
 it('ranked corpse count, creature, lifetime and units-per-corpse resolve together',()=>{
- const f=fixture({amount:{rankParameter:'count'},durationTicks:{rankParameter:'life'},definition:{byRank:['unit.spell.shadow-spirit-lesser','unit.spell.shadow-spirit-greater']},corpses:{...operation.corpses!,maxTargets:{rankParameter:'corpses'}}},{targetCount:3,targetSpacing:1},{ranks:[{count:1,life:40,corpses:1},{count:2,life:100,corpses:2}]});
- f.game.context.get(f.caster)!.abilities!.ranks.preview=2;cast(f);expect(summons(f)).toHaveLength(4);expect(f.game.state.corpses).toHaveLength(1);expect(summons(f).every(e=>e.definition==='unit.spell.shadow-spirit-greater'&&e.summoned!.expires-e.summoned!.started===100)).toBe(true);
+ const f=fixture({amount:{rankParameter:'count'},durationTicks:{rankParameter:'life'},definition:{byRank:['unit.test.spell-shadow-spirit-lesser','unit.test.spell-shadow-spirit-greater']},corpses:{...operation.corpses!,maxTargets:{rankParameter:'corpses'}}},{targetCount:3,targetSpacing:1},{ranks:[{count:1,life:40,corpses:1},{count:2,life:100,corpses:2}]});
+ f.game.context.get(f.caster)!.abilities!.ranks.preview=2;cast(f);expect(summons(f)).toHaveLength(4);expect(f.game.state.corpses).toHaveLength(1);expect(summons(f).every(e=>e.definition==='unit.test.spell-shadow-spirit-greater'&&e.summoned!.expires-e.summoned!.started===100)).toBe(true);
 });
 it('restores pending casts and expiration in lockstep after the source dies',()=>{
  const f=fixture(),g=fixture();expect(f.game.abilities.cast(f.caster,'preview',{x:128,y:120})).toBeNull();g.game.restore(f.game.snapshot());
@@ -52,13 +56,13 @@ it('restores pending casts and expiration in lockstep after the source dies',()=
 });
 it('point autocast considers visible corpses only when combat gives the summons utility',()=>{
  const f=fixture({}, {}, {autocast:{intervalTicks:1,enabledByDefault:true}});step(f,5);expect(summons(f)).toEqual([]);
- const threat=f.game.context.create({id:'threat',definition:'unit.ants.warrior',owner:'player.2',position:{x:132,y:120},rotation:270});f.game.command('player.2',{type:'hold',actors:[threat.id]});f.game.observation.update();step(f,20);expect(summons(f)).toHaveLength(2);expect(f.game.state.corpses).toEqual([]);
+ const threat=f.game.context.create({id:'threat',definition:'unit.test.warrior',owner:'player.2',position:{x:132,y:120},rotation:270});f.game.command('player.2',{type:'hold',actors:[threat.id]});f.game.observation.update();step(f,20);expect(summons(f)).toHaveLength(2);expect(f.game.state.corpses).toEqual([]);
 });
 it('rejects excessive ranked products and ambiguous live-recipient queries',()=>{
  for(const patch of [{amount:0},{amount:5,corpses:{...operation.corpses!,maxTargets:2}},{corpses:{...operation.corpses!,maxTargets:0}},{corpses:{...operation.corpses!,radius:33}},{target:'target'},{corpses:{...operation.corpses!,maxTargets:{rankParameter:'unknown'}}}])expect(()=>definition(patch as Partial<typeof operation>)).toThrow();
 });
 it('workbench rewinds consumed corpses, summon effects and repeated casts',async()=>{
- const a=definition(),service=new SpellEditorService('/tmp');await service.execute({op:'preview.load',document:{definition:a,presentation:{...presentation,effects:[],icon:undefined}},settings:{relationship:'enemy',targetCount:1,fallenTargets:true,distance:8}});const state=()=>service.state() as PreviewState;
+ const a=definition(),service=editorService(workspace());await service.execute({op:'preview.load',document:{definition:a,presentation:{...presentation,effects:[],icon:undefined}},settings:{...encounterUnits,relationship:'enemy',targetCount:1,fallenTargets:true,distance:8}});const state=()=>service.state() as PreviewState;
  for(let i=0;i<2;i++){await service.execute({op:'preview.aim',position:{x:128,y:120}});await service.execute({op:'preview.cast'});await service.execute({op:'preview.seek',tick:30});expect(state().corpses).toHaveLength(0);expect(state().entities).toHaveLength(3);const hash=state().checksum;await service.execute({op:'preview.seek',tick:0});expect(state().corpses).toHaveLength(1);await service.execute({op:'preview.seek',tick:30});expect(state().checksum).toBe(hash);}
 });
 

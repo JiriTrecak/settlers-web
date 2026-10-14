@@ -2,7 +2,7 @@ import {heading} from '../../src/sim/game/facing';
 import {describe,it,expect} from 'vitest';
 import {game,placed} from './helpers';
 const setup=()=>{
- const g=game([placed('attacker','unit.ants.warrior',200,210),{...placed('target','unit.ants.warrior',203,210),owner:'player.2'}]);
+ const g=game([placed('attacker','unit.test.warrior',200,210),{...placed('target','unit.test.warrior',203,210),owner:'player.2'}]);
  const a=g.entities.find(e=>e.placement==='attacker')!,b=g.entities.find(e=>e.placement==='target')!;
  a.rotation=heading(a,b);
  g.command('player.1',{type:'attack',actors:[a.id],target:b.id});
@@ -43,9 +43,9 @@ describe('authoritative attack timing',()=>{
 });
 
 it('captures faster attack phases and preserves the committed contact after the bonus is removed',()=>{
- const g=game([placed('hero','unit.ants.marshal',100,100),{...placed('victim','unit.ants.warrior',104,100),owner:'player.2'}]);
+ const g=game([placed('hero','unit.test.marshal',100,100),{...placed('victim','unit.test.warrior',104,100),owner:'player.2'}]);
  const a=g.entities.find(e=>e.placement==='hero')!, b=g.entities.find(e=>e.placement==='victim')!;
- a.equipment![0]='item.stormwing-spurs';a.rotation=heading(a,b);
+ a.equipment![0]='item.test.stormwing-spurs';a.rotation=heading(a,b);
  const base=g.registry.get(a.definition).behaviors.combat!,cycle=g.context.stats(a).cooldownTicks;
  g.command('player.1',{type:'attack',actors:[a.id],target:b.id});g.combat.resolve();
  const phase={...a.unit!.attack!},hp=b.hp!;

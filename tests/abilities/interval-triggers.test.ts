@@ -1,15 +1,17 @@
 import {expect,it} from 'vitest';
-import {coreAbilities} from '../../src/content/abilities/core';
 import {abilitySchema,releaseEffects} from '../../src/content/abilities/schema';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
-const base=coreAbilities.abilities.find(a=>a.id==='ability.core.death-burst')!;
+import {testAbilities,testSource} from '../fixtures/content';
+/** Encounter subjects come from the test world; the schema defaults name shipped units. */
+const encounterUnits={casterDefinition:'unit.test.warrior',targetDefinition:'unit.test.warrior'};
+const base=testAbilities.abilities.find(a=>a.id==='ability.test.death-burst')!;
 const status={op:'status',id:'clock',target:'caster',amount:200,polarity:'positive',dispel:true,modifiers:{}};
 const trigger={id:'pulse',event:'interval',intervalTicks:8,operations:[{op:'heal',target:'caster',amount:25}],manaCost:0};
 function fixture(t={},grant=false){
- const a=abilitySchema.parse({...base,ranks:[{}],triggers:[{...trigger,...(grant?{whileStatus:'clock'}:{}),...t}],...(grant?{activation:'targeted',onRelease:[status]}:{})}),p=coreAbilities.presentations.find(p=>p.id===a.presentation)!;
- const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({relationship:'enemy',targetHealth:500,distance:4,mana:100})),c=f.game.context.get(f.caster)!;c.hp=100;
+ const a=abilitySchema.parse({...base,ranks:[{}],triggers:[{...trigger,...(grant?{whileStatus:'clock'}:{}),...t}],...(grant?{activation:'targeted',onRelease:[status]}:{})}),p=testAbilities.presentations.find(p=>p.id===a.presentation)!;
+ const f=createAbilityEncounter(a,p,encounterSettingsSchema.parse({...encounterUnits,relationship:'enemy',targetHealth:500,distance:4,mana:100}),false,testSource()),c=f.game.context.get(f.caster)!;c.hp=100;
  return {...f,a,c};
 }
 const step=(f:ReturnType<typeof fixture>,n=1)=>{for(let i=0;i<n;i++)f.game.tick(undefined,{passiveUnits:true});};
@@ -40,7 +42,7 @@ it('replays randomized status pulses and rejects forged clocks atomically',()=>{
  const hash=f.game.checksum();for(const patch of [{nextTick:99999},{rank:10},{grant:99999},{started:99999}]){const save=f.game.snapshot();Object.assign(Object.values(save.state.entities.find(e=>e.id===f.caster)!.spellTriggerTimers!)[0],patch);expect(()=>f.game.restore(save)).toThrow();expect(f.game.checksum()).toBe(hash);}
 });
 it('uses normal operations for periodic bounded summons owned by the timer holder',()=>{
- const f=fixture({operations:[{op:'summon',target:'point',definition:'unit.spell.feral-spirit',amount:1,replace:false,maxActive:2,radius:2,durationTicks:200,endsWithCaster:true}]});step(f,40);
+ const f=fixture({operations:[{op:'summon',target:'point',definition:'unit.test.spell-feral-spirit',amount:1,replace:false,maxActive:2,radius:2,durationTicks:200,endsWithCaster:true}]});step(f,40);
  const children=f.game.entities.filter(e=>e.summoned);expect(children).toHaveLength(2);expect(children.every(e=>e.owner===f.c.owner&&e.summoned!.source===f.c.id)).toBe(true);
  f.game.context.remove(f.c);step(f);expect(f.game.entities.some(e=>e.summoned&&e.hp!>0)).toBe(false);
 });
@@ -48,7 +50,7 @@ it('does not silently accept a timer on a continuously reapplied aura grant',()=
  expect(abilitySchema.safeParse({...base,aura:{radius:5,meleeOnly:false},onRelease:[status],triggers:[{...trigger,whileStatus:'clock'}]}).success).toBe(false);
 });
 it('silence stops opted-in pulses without delaying the next cadence',()=>{
- const f=fixture({blockedBySilence:true}),silence=coreAbilities.abilities.find(a=>a.id==='ability.core.silence')!;step(f);
+ const f=fixture({blockedBySilence:true}),silence=testAbilities.abilities.find(a=>a.id==='ability.test.silence')!;step(f);
  new SpellStatuses(f.game).apply(f.target,f.caster,silence,1,f.game.state.nextCast++,silence.onRelease[0] as never);step(f,8);expect(f.c.hp).toBe(100);delete f.c.spellStatuses;step(f,8);expect(f.c.hp).toBe(125);
 });
 it('bounds concurrent pulses, serializes the queue and cancels stale grants before execution',()=>{

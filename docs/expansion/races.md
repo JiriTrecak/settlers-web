@@ -73,4 +73,4 @@ so a converted hero cannot inherit their former controller's damage marks. Stack
 charge position and all clocks are saved and validated by the shared simulation.
 
 Tests: `tests/shared/races.test.ts`, `tests/net/race-selection.test.ts`,
-`tests/abilities/hornbreaker.test.ts`, plus the existing economy, AI, save and lockstep suites.
+`tests/abilities/charge-and-marks.test.ts`, plus the existing economy, AI, save and lockstep suites.

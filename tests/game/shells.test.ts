@@ -2,13 +2,13 @@ import {heading} from '../../src/sim/game/facing';
 import {expect,it} from 'vitest';
 import type {Rules} from '../../src/content/schema';
 import {game,placed,run} from './helpers';
-const definition='unit.ants.archer';
+const definition='unit.test.archer';
 function scene(windupTicks=1){
- const g=game([placed('a',definition,205,210),{...placed('b','unit.ants.warrior',211,210),owner:'player.2'},placed('friend','unit.ants.warrior',212,211)],s=>{
+ const g=game([placed('a',definition,205,210),{...placed('b','unit.test.warrior',211,210),owner:'player.2'},placed('friend','unit.test.warrior',212,211)],s=>{
   const a=s.definitions.find((d:any)=>d.id===definition)! as any;
   a.behaviors.combat.attack.windupTicks=windupTicks;delete a.behaviors.combat.projectile;
   a.behaviors.combat.shell={flightTicks:40,radius:2,slowPermille:200,slowTicks:80};a.behaviors.combat.cooldownTicks=400;
- (s.rules as Rules).research['research.test.shells']={name:'Test shells',description:'',icon:'icon.ants.archer',priority:1,items:[],workTicks:1,effects:[{units:[definition],splashRadius:3,splashSlowPermille:350}]};
+ (s.rules as Rules).research['research.test.shells']={name:'Test shells',description:'',icon:'icon.test.archer',priority:1,items:[],workTicks:1,effects:[{units:[definition],splashRadius:3,splashSlowPermille:350}]};
  });
  const a=g.entities.find(e=>e.placement==='a')!,b=g.entities.find(e=>e.placement==='b')!,friend=g.entities.find(e=>e.placement==='friend')!;
  a.rotation=heading(a,b);
