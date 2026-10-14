@@ -1,5 +1,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    settlers_lib::run();
+    settlers_lib::run_with_context(tauri::generate_context!());
 }

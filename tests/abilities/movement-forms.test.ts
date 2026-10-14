@@ -6,6 +6,7 @@ import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {SpellStatuses} from '../../src/sim/abilities/statuses';
 import {fixed,precise} from '../../src/sim/game/motion';
 import {spellSource,sourceActor} from '../../src/sim/abilities/source';
+import {snapPlacement} from '../../src/shared/spatial/placement';
 const base=coreAbilities.abilities.find(a=>a.id==='ability.core.avatar')!;
 const presentation=coreAbilities.presentations.find(p=>p.id===base.presentation)!;
 function fixture(native=false){
@@ -26,11 +27,13 @@ it('safely relocates to nearby clear ground when reverting above a blocker',()=>
 });
 it('keeps a blocked landing airborne and targetable, restoring deterministically until ground opens',()=>{
  const f=fixture();takeoff(f);const s=f.game.spatial;
- for(let y=116;y<=124;y++)for(let x=116;x<=124;x++)s.occupied[y*s.size+x]=999;
+ const obstacle=f.game.context.create({id:'landing-blocker',definition:'building.ants.house',owner:'player.1',position:snapPlacement(f.game.registry.get('building.ants.house'),{x:120,y:120}),rotation:0});
+ s.appendOccupancy(obstacle);
  ticks(f,21);expect(f.c.spellStatuses).toBeUndefined();expect(f.c.unit!.flight).toBeTruthy();expect(s.airborne(f.c)).toBe(true);
- const clone=fixture();clone.game.restore(f.game.snapshot());for(let y=116;y<=124;y++)for(let x=116;x<=124;x++)clone.game.spatial.occupied[y*s.size+x]=999;
+ const clone=fixture();clone.game.restore(f.game.snapshot());
  for(let i=0;i<10;i++){ticks(f);ticks(clone);expect(clone.game.checksum()).toBe(f.game.checksum());}
- s.occupied.fill(0);clone.game.spatial.occupied.fill(0);ticks(f);ticks(clone);expect(s.airborne(f.c)).toBe(false);expect(clone.game.checksum()).toBe(f.game.checksum());
+ for(const scenario of [f,clone]){scenario.game.context.remove(scenario.game.context.get(obstacle.id)!);scenario.game.spatial.refreshAfterRemoval(obstacle.id);}
+ ticks(f);ticks(clone);expect(s.airborne(f.c)).toBe(false);expect(clone.game.checksum()).toBe(f.game.checksum());
 });
 it('grounds a native flyer and restores flight after that form expires',()=>{
  const f=fixture(true),op=resolveEffect(f.a.statuses![0],1,f.a.ranks[0]);

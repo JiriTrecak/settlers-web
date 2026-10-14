@@ -1,0 +1,7 @@
+.match-result{--result-accent:#d4d4d8;box-sizing:border-box;width:min(460px,calc(100vw - 40px));padding:40px;text-align:center;color:#fafafa;background:linear-gradient(155deg,#27272a,#18181b 70%);border:1px solid #52525b;border-radius:16px;box-shadow:0 24px 100px #0009;font:16px/1.5 system-ui;pointer-events:auto}
+.match-result::backdrop{background:#09090bc9;backdrop-filter:blur(4px)}
+.match-result-victory{--result-accent:#fcd34d}.match-result-defeat{--result-accent:#fca5a5}
+.match-result .match-result-eyebrow{margin:0;color:#a1a1aa;text-transform:uppercase;letter-spacing:.15em;font-size:11px;font-weight:600}
+.match-result h1{margin:18px 0 12px;font:600 clamp(36px,6vw,52px)/1.1 Georgia,serif;color:var(--result-accent)}
+.match-result p{margin:0;color:#d4d4d8}.match-result .match-result-hint{margin:24px 0 18px;color:#a1a1aa;font-size:13px}
+.match-result button{width:100%;padding:12px 20px;background:#fafafa;color:#18181b;border:0;border-radius:8px;font:600 14px/1.5 system-ui;cursor:pointer}.match-result button:hover{background:#e4e4e7}.match-result button:focus-visible{outline:2px solid var(--result-accent);outline-offset:4px}

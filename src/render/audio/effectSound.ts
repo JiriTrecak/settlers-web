@@ -9,19 +9,25 @@ const MAX_VOICES=24,MAX_BUFFERS=24;
 /** A tab owns one lazily unlocked context. Muted/hidden pages never start voices. */
 export class EffectAudioDevice {
  context?:AudioContext;enabled=true;voices=0;
- private buffers=new Map<string,{buffer?:AudioBuffer;failed?:boolean}>();
+ private buffers=new Map<string,{buffer?:AudioBuffer;failed?:boolean;ready?:Promise<void>}>();
  constructor(private factory=()=>new AudioContext()){}
  unlock(){
   if(!this.enabled)return;
   try{this.context??=this.factory();void this.context.resume().catch(()=>{});}catch{/* No browser audio device: visuals remain usable. */}
  }
- buffer(sound:SoundSettings){
-  const context=this.context;if(!context||context.state!=='running')return;
+ /** Decode during loading, even while autoplay keeps the context suspended. */
+ async preload(sounds:readonly SoundSettings[]){
+  if(!sounds.length||!this.enabled)return;
+  try{this.context??=this.factory();}catch{return;}
+  await Promise.all(sounds.map(sound=>{this.buffer(sound,true);const r=effectResource(sound);return this.buffers.get(r.path+':'+r.sha256)?.ready;}));
+ }
+ buffer(sound:SoundSettings,preparing=false){
+  const context=this.context;if(!context||!preparing&&context.state!=='running')return;
   const resource=effectResource(sound),key=resource.path+':'+resource.sha256;
   let cached=this.buffers.get(key);if(cached)return cached.buffer;
   if(this.buffers.size>=MAX_BUFFERS){const disposable=[...this.buffers].find(([,entry])=>entry.buffer||entry.failed);if(!disposable)return;this.buffers.delete(disposable[0]);}
   cached={};this.buffers.set(key,cached);
-  void (async()=>{
+  cached.ready=(async()=>{
    try{
     if(resource.bytes>8_000_000)throw Error('Audio asset exceeds 8 MB');
     const response=await fetch(assetUrls[resource.path]??'/'+resource.path,{signal:AbortSignal.timeout(15000)});

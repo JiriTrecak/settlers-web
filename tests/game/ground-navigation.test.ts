@@ -1,6 +1,77 @@
-import {expect,it} from 'vitest';
+import {expect,it,vi} from 'vitest';
 import {game,placed} from './helpers';
 import {fixed} from '../../src/sim/game/motion';
+import {TerrainClearance} from '../../src/sim/game/terrainClearance';
+
+it('preserves exact mesh paths with clearance proofs enabled or bypassed through local edits and slopes',()=>{
+ const fast=game(),reference=game();
+ const exactProof=TerrainClearance.prototype.provesClear;
+ let enabled=true,certified=0;
+ const proof=vi.spyOn(TerrainClearance.prototype,'provesClear').mockImplementation(function(this:TerrainClearance,from,to,radius){
+  const result=enabled&&exactProof.call(this,from,to,radius);if(result)certified++;return result;
+ });
+ try{
+  for(const g of [fast,reference]){
+   for(let y=95;y<125;y++)g.spatial.terrain[y*g.spatial.size+110]=0;
+   // The route may go beside this cliff, but cannot cut across its height edge.
+   for(let y=80;y<95;y++)for(let x=110;x<130;x++)g.spatial.heights[y*g.spatial.size+x]=200;
+   g.spatial.rebuild();
+  }
+  const check=()=>{
+   for(const radius of [.34,.5,.85,1.5,3])for(const reverse of [false,true]){
+    const a={x:70,y:110},b={x:150,y:110},body={radius,height:5,formationSpacing:radius*2};
+    const route=(g:ReturnType<typeof game>)=>g.spatial.findPath(g.spatial.cell(reverse?b:a),g.spatial.cell(reverse?a:b),undefined,Infinity,body);
+    enabled=true;const actual=route(fast);
+    enabled=false;expect(actual).toEqual(route(reference));expect(actual).not.toBeNull();
+   }
+  };
+  check();check();
+  for(const g of [fast,reference]){const e=g.context.create(placed('proof-obstacle','building.ants.house',110,130));g.spatial.appendOccupancy(e);}
+  check();
+  for(const g of [fast,reference]){const e=g.entities.find(e=>e.placement==='proof-obstacle')!;g.context.remove(e);g.spatial.refreshAfterRemoval(e.id);}
+  check();expect(certified).toBeGreaterThan(0);
+ }finally{proof.mockRestore();}
+});
+
+it('repairs a shoreline endpoint approach in the mesh instead of falling back to a full grid route',()=>{
+ const g=game(),s=g.spatial,body={radius:1.5,height:4.8,formationSpacing:3.25};
+ s.terrain[s.cell({x:98,y:102})]=0;s.rebuild();
+ const start=s.cell({x:60,y:60}),goal=s.cell({x:100,y:100});
+ const path=s.findPath(start,goal,undefined,Infinity,body)!;
+ expect(path).not.toBeNull();expect(path.at(-1)).toBe(goal);
+ expect(s.routing.searches).toBe(0);expect(s.routing.meshAccepted).toBe(1);
+ let prior=start;
+ for(const cell of path){expect(s.clearSegment(fixed(s.point(prior)),fixed(s.point(cell)),undefined,body)).toBe(true);prior=cell;}
+ expect(s.findPath(start,goal,undefined,10_000,body)).toBeNull();
+});
+
+it('attaches legal wall-adjacent endpoints across mesh safety padding without moving them',()=>{
+ const g=game(),s=g.spatial,body={radius:1.5,height:4.8,formationSpacing:3.25};
+ for(let y=80;y<=90;y++)for(let x=80;x<=120;x++)s.terrain[y*s.size+x]=0;
+ s.rebuild();
+ const a=s.cell({x:100,y:92}),b=s.cell({x:180,y:92});
+ for(const [start,goal] of [[a,b],[b,a]] as const){
+  const accepted=s.routing.meshAccepted,path=s.findPath(start,goal,undefined,Infinity,body)!;
+  expect(path.at(-1)).toBe(goal);expect(s.routing.meshAccepted).toBe(accepted+1);
+  expect(s.routing.searches).toBe(0);
+  let prior=start;
+  for(const cell of path){expect(s.clearSegment(fixed(s.point(prior)),fixed(s.point(cell)),undefined,body)).toBe(true);prior=cell;}
+ }
+ expect(s.findPath(b,s.cell({x:100,y:91}),undefined,Infinity,body)).toBeNull();
+});
+
+it('repairs quantized mesh corners around terrain obstacles without a global grid search',()=>{
+ const g=game(),s=g.spatial,body={radius:1.5,height:4.8,formationSpacing:3.25};
+ for(const [x,y] of [[175,241],[174,242],[175,242],[176,242],[175,243]])s.terrain[y!*s.size+x!]=0;
+ s.rebuild();
+ const start=s.cell({x:110,y:240}),goal=s.cell({x:220,y:240});
+ const path=s.findPath(start,goal,undefined,Infinity,body)!;
+ expect(path.at(-1)).toBe(goal);
+ expect(s.routing.meshRasterRepaired).toBe(1);expect(s.routing.searches).toBe(0);
+ let prior=start;
+ for(const cell of path){expect(s.clearSegment(fixed(s.point(prior)),fixed(s.point(cell)),undefined,body)).toBe(true);prior=cell;}
+ expect(s.findPath(start,goal,undefined,path.length*1000-1,body)).toBeNull();
+});
 
 it('uses the live mesh for long orders and preserves every adjacent collision step',()=>{
  const g=game([placed('obstacle','building.ants.house',110,110)]),s=g.spatial;

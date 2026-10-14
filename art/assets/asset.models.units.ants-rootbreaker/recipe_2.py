@@ -31,7 +31,7 @@ for a in list(bpy.data.actions):
   for b in rig.pose.bones:
    name=b.name.split(':')[-1]
    if any(x in name for x in ['Hand','Arm','Shoulder','Head','Neck','Spine']) or name=='Hips' and a.name in ['walk','run'] or a.name in ['walk','run'] and any(x in name for x in ['Leg','Foot','Toe']):
-    keep=(.65 if a.name=='run' else .85) if any(x in name for x in ['Leg','Foot','Toe']) else 0 if any(x in name for x in ['Hand','Arm','Shoulder']) else .25 if name in ['Head','Neck'] else .45
+    keep=(.65 if a.name=='run' else .85) if any(x in name for x in ['Leg','Foot','Toe']) else 0 if any(x in name for x in ['Hand','Arm','Shoulder']) else (.1 if a.name=='run' else .25) if name in ['Head','Neck'] else (.08 if a.name=='run' else .45)
     poses[b.name]=Quaternion().slerp(b.rotation_quaternion,keep)
   poses['Cape']=Quaternion((1,0,0),(.2 if a.name=='run' else .12 if a.name=='walk' else 0)-.025*math.sin((frame-start)/max(1,end-start)*math.tau));samples.append((frame,poses))
  for frame,poses in samples:

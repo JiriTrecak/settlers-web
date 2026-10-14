@@ -3,6 +3,11 @@ import {SnapshotEncoder} from './snapshots';
 import {simulationWakeDelay} from './scheduling';
 import type {Requests,WorkerInput,WorkerOutput} from './protocol';
 
+import {CpuSpanQueue} from '../../debug/cpuBudget';
+const cpu=new CpuSpanQueue();
+let callbackStart=0;
+const absoluteNow=()=>performance.timeOrigin+performance.now();
+
 const port=self as unknown as {postMessage(message:WorkerOutput,transfer?:Transferable[]):void;onmessage:((event:MessageEvent<WorkerInput>)=>void)|null};
 let runtime:SimulationRuntime|undefined,receive:RemoteReceiver=()=>{},running=false,last=performance.now(),timer:ReturnType<typeof setTimeout>|undefined;
 const encoder=new SnapshotEncoder();let inFlight=0,dirty=false,urgent=false,lastPublished=0;
@@ -14,6 +19,7 @@ function publish(force=false){
  const frame=runtime.project(),start=performance.now(),encoded=encoder.encode(frame);
  encoded.packet.timings.encode=performance.now()-start;
  inFlight=encoded.packet.sequence;dirty=false;urgent=false;lastPublished=performance.now();
+ if(cpu.enabled)encoded.packet.cpu=cpu.drain(callbackStart);
  const postStart=runtime.profiling?performance.now():0;
  post({type:'frame',packet:encoded.packet},encoded.transfer);
  if(runtime.profiling)runtime.recordTransportSample(performance.now()-postStart);
@@ -26,8 +32,10 @@ function schedule(waiting=false){
 }
 function pump(){
  timer=undefined;if(!running||!runtime)return;
+ const measured=cpu.enabled;callbackStart=measured?absoluteNow():0;
  try{const now=performance.now(),dt=now-last;last=now;const advanced=runtime.advance(dt,1);if(advanced||dirty)publish();schedule(!advanced&&runtime.acc>=runtime.world.clock.tickMs);}
  catch(error){running=false;post({type:'fatal',error:error instanceof Error?error.message:String(error)});}
+ finally{if(measured)cpu.add({source:'Simulation pump',start:callbackStart,end:absoluteNow(),tick:runtime.world.clock.tickIndex});}
 }
 function request(method:keyof Requests,params:unknown):unknown{
  if(method==='init'){
@@ -45,6 +53,8 @@ function request(method:keyof Requests,params:unknown):unknown{
   case 'pause':runtime.setPaused(params as boolean);last=performance.now();schedule();return;
   case 'configure':{
    const config=params as Requests['configure']['input'];
+   cpu.configure(config.profiling??false,absoluteNow());
+   if(cpu.enabled&&!callbackStart)callbackStart=absoluteNow();
    runtime.speed=config.speed;runtime.configureProfiling(config.profiling??false,config.profilingDetails??true);
    if(!runtime.options.remote&&runtime.match.slots.some(s=>s.player===config.visionPlayer)){runtime.reveal=config.reveal;runtime.visionPlayer=config.visionPlayer;}
    publish(true);schedule();return;
@@ -57,7 +67,9 @@ function request(method:keyof Requests,params:unknown):unknown{
   case 'navigation':return runtime.navigation(params as Requests['navigation']['input']);
  }
 }
-port.onmessage=({data})=>{
+port.onmessage=event=>{
+ const measured=cpu.enabled;callbackStart=measured?absoluteNow():0;
+ const data=event.data;
  try{
   if(data.type==='request'){
    const value=request(data.method,data.params);
@@ -74,4 +86,5 @@ port.onmessage=({data})=>{
    if(runtime?.send(data.action)&&data.action.type!=='noop')pendingCommands.push({id:data.id,sentAt:data.sentAt,key:JSON.stringify(data.action)});
   }
  }catch(error){const message=error instanceof Error?error.message:String(error);post(data.type==='request'?{type:'reply',id:data.id,error:message}:{type:'fatal',error:message});}
+ finally{if(measured)cpu.add({source:`Message ${data.type}`,start:callbackStart,end:absoluteNow()});}
 };

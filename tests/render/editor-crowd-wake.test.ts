@@ -1,3 +1,4 @@
+import {Mesh,Texture,TextureLoader} from 'three';
 import './sourceAssetFetch';
 import {expect,it,vi} from 'vitest';
 import {AnimationClip,Bone,BoxGeometry,Float32BufferAttribute,Frustum,Group,InstancedMesh,MeshStandardMaterial,Plane,Scene,Skeleton,SkinnedMesh,Vector3} from 'three';
@@ -7,7 +8,8 @@ import {HeightField} from '../../src/shared/map/height';
 import {game,placed} from '../game/helpers';
 
 it('camera-only visibility changes restore baked unit draws without an editor edit or simulation tick',async()=>{
- const loader=vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async()=>{
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async(url)=>{
+  if(String(url).includes('asset.models.effects.')){const scene=new Group();scene.add(new Mesh(new BoxGeometry(),new MeshStandardMaterial()));return {scene,animations:[]} as any;}
   const scene=new Group(),bone=new Bone();bone.name='root';
   const geometry=new BoxGeometry(1,1,1),count=geometry.attributes.position!.count;
   geometry.setAttribute('skinIndex',new Float32BufferAttribute(new Float32Array(count*4),4));
@@ -16,6 +18,7 @@ it('camera-only visibility changes restore baked unit draws without an editor ed
   scene.userData.characterProfile={variants:{warrior:{states:{idle:'idle'}},base:{states:{idle:'idle'}}},attackEvents:{}};
   return {scene,animations:[new AnimationClip('idle',1,[])]} as any;
  });
+ vi.spyOn(TextureLoader.prototype,'load').mockImplementation((_url,onLoad)=>{const texture=new Texture({width:64,height:64} as HTMLImageElement);queueMicrotask(()=>onLoad?.(texture));return texture;});
  const scene=new Scene(),layer=new SettlementLayer(scene);
  try{
   const view=game([placed('test-warrior','unit.ants.warrior',205,210)]).view(),state={...view,entities:view.entities.filter(e=>e.definition==='unit.ants.warrior')};
@@ -27,5 +30,5 @@ it('camera-only visibility changes restore baked unit draws without an editor ed
   expect(batches.every(b=>b.count>0&&b.visible)).toBe(true);
   const versions=batches.map(b=>b.instanceMatrix.version);layer.setViewFrustum(null);
   expect(batches.map(b=>b.instanceMatrix.version)).toEqual(versions); // no redundant uploads while idle
- }finally{layer.destroy(scene);loader.mockRestore();}
+ }finally{layer.destroy(scene);vi.restoreAllMocks();}
 });

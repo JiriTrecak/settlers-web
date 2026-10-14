@@ -1,10 +1,10 @@
-import {statusDefinition,value} from '../../content/abilities/schema';
+import {value} from '../../content/abilities/schema';
 import type {ContentRegistry} from '../../content/registry';
 import type {Entity} from '../game/state';
 type Subject=Pick<Entity,'spellStatuses'>;
 function declarations(e:Subject,registry:ContentRegistry,tick:number){
  return (e.spellStatuses??[]).filter(s=>s.expires>tick).flatMap(s=>{
-  const a=registry.findAbility(s.ability),d=a&&statusDefinition(a,s.status);
+  const a=registry.findAbility(s.ability),d=registry.findStatus(s.ability,s.status);
   return a&&d?[{s,d,rank:a.ranks[s.rank-1]}]:[];
  });
 }

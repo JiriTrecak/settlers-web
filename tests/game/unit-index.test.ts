@@ -5,6 +5,22 @@ import {UnitIndex} from '../../src/sim/game/unitIndex';
 import {separateOverlaps} from '../../src/sim/game/separation';
 
 describe('movement broad phase',()=>{
+ it('preserves exact row-major and within-cell ordering for wide sparse queries',()=>{
+  const g=game([placed('late','unit.ants.warrior',200,200),placed('same-a','unit.ants.warrior',100,100),
+   placed('early','unit.ants.warrior',50,50),placed('same-b','unit.ants.warrior',100,100)]);
+  const units=g.entities.filter(e=>e.placement&&['late','same-a','early','same-b'].includes(e.placement));
+  const index=new UnitIndex(units,256,()=>false);
+  const slow=(x0:number,y0:number,x1:number,y1:number)=>{
+   const result:number[]=[];
+   for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)for(const e of index.inCell(x,y))result.push(e.id);
+   return result;
+  };
+  for(const [x0,y0,x1,y1] of [[0,0,255,255],[100,100,200,200],[100,100,100,100]])
+   expect(Array.from(index.within(x0!*1000,y0!*1000,x1!*1000,y1!*1000),e=>e.id)).toEqual(slow(x0!,y0!,x1!,y1!));
+  expect([...index.within(300000,300000,350000,350000)]).toEqual([]);
+  const mover=units[0]!;mover.x=10;mover.y=10;index.update(mover);
+  expect(Array.from(index.within(0,0,255000,255000),e=>e.id)).toEqual(slow(0,0,255,255));
+ });
  it('materializes collision membership only on demand, then follows movement in the same pass',()=>{
   const g=game([placed('a','unit.ants.warrior',100,100),placed('b','unit.ants.warrior',110,100)]);
   const a=g.entities.find(e=>e.placement==='a')!,b=g.entities.find(e=>e.placement==='b')!;
@@ -36,11 +52,34 @@ describe('movement broad phase',()=>{
   for(let round=0;round<3;round++){
    const expected=probes.map(p=>g.spatial.unitSegmentClear(p.from,p.to,mover.id));
    g.spatial.beginUnitMovement();
-   expect(g.spatial.withLocalUnitClearance(origin,4250,mover.id,clear=>probes.map(p=>clear(p.from,p.to)))).toEqual(expected);
+   for(const extent of [4250,60000])expect(g.spatial.withLocalUnitClearance(origin,extent,mover.id,clear=>probes.map(p=>clear(p.from,p.to)))).toEqual(expected);
    g.spatial.endUnitMovement();
    units[1].unit!.contained=round===0?mover.id:null;
    units[2].hp=round===0?0:20;
    units[3].x+=1;units[3].unit!.position=fixed(units[3]);
+  }
+ });
+ it('reuses stationary snapshot sweeps without caching live destination reservations',()=>{
+  const g=game(Array.from({length:20},(_,i)=>placed('probe'+i,'unit.ants.warrior',100+i%5*3,100+Math.floor(i/5)*3)));
+  const units=g.entities.filter(e=>e.placement?.startsWith('probe')),mover=units[0],other=units[1];
+  units.forEach((e,i)=>e.unit!.position={x:e.x*1000+(i%3-1)*400,y:e.y*1000+(i%5-2)*200});
+  const probes=Array.from({length:400},(_,i)=>({x:98+i%20*.75,y:98+Math.floor(i/20)*.75}));
+  probes.push({x:-1,y:100},{x:g.spatial.size,y:100},{x:130,y:100});
+  for(const indexed of [false,true])for(let round=0;round<3;round++){
+   units[2].hp=round===1?0:20;units[3].unit!.contained=round===2?mover.id:null;
+   if(indexed)g.spatial.beginUnitMovement();
+   try{
+    for(const extent of [4250,60000])g.spatial.withLocalUnitClearance(fixed(mover),extent,mover.id,clear=>{
+     for(const p of probes)expect(g.spatial.freeOnWalkable(p,mover.id,mover,clear)).toBe(g.spatial.freeOnWalkable(p,mover.id,mover));
+     const p={x:125,y:110},cell=g.spatial.cell(p);
+     expect(g.spatial.freeOnWalkable(p,mover.id,mover,clear)).toBe(true);
+     other.unit!.detour={goal:cell,waypoint:cell,points:[fixed(p)],yielding:{leader:mover.id,until:100}};
+     if(indexed)g.spatial.updateUnitMovement(other);
+     expect(g.spatial.freeOnWalkable(p,mover.id,mover,clear)).toBe(false);
+     delete other.unit!.detour;if(indexed)g.spatial.updateUnitMovement(other);
+     expect(g.spatial.freeOnWalkable(p,mover.id,mover,clear)).toBe(true);
+    });
+   }finally{if(indexed)g.spatial.endUnitMovement();}
   }
  });
  it('refreshes moved, removed, restored and newly solid bodies plus yield reservations',()=>{

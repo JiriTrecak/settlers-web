@@ -28,6 +28,7 @@ export interface AbilityHost {
  weaponCastReason?(source:number,target:number,spell:AbilityDefinition,rank:number):string|null;
  orderWeaponCast?(source:number,target:number,spell:AbilityDefinition,binding:string,rank:number,cast:number):void;
  weaponOrders?():void;
+ approaching?(id:number):boolean;
  heroReturns?():HeroReturnView[];
  corpses?(caster:AbilityActor):import('./corpses').CorpseView[];
  summon?(caster:AbilityActor,spell:AbilityDefinition,rank:number,cast:number,effect:Extract<ReturnType<typeof resolveEffect>,{op:'summon'}>,point:AbilityPoint):{point:AbilityPoint;amount:number;units:EventTarget[]}[];
@@ -45,6 +46,10 @@ export interface AbilityHost {
  effect?(caster:number,target:number,spell:AbilityDefinition,rank:number,cast:number,effect:ReturnType<typeof releaseEffects>[number],aura?:boolean,owner?:string,point?:AbilityPoint,context?:{aim:AbilityPoint;origin:AbilityPoint&{sourceContext?:SpellSource};creationGrant?:boolean}):number;
  hasStatus?(target:number,ability:string):boolean;
  ambientCasters?():number[]; targets?():number[];
+ /** Live targets within an inclusive horizontal radius, using the same precise
+  * positions as get(). No ownership, visibility, surface or spell filtering.
+  * Hosts may return a superset; the runtime retains the exact radius check. */
+ targetsInRadius?(point:AbilityPoint,radius:number):number[];
  /** Alive targets visible to this caster, in the same order as targets().
   * Hosts can reject candidates before constructing full combat/source records. */
  visibleTargets?(caster:AbilityActor):number[];
@@ -71,6 +76,7 @@ export class AbilityRuntime {
    this.tick=profile.wrap('Caster lifecycle',this.tick.bind(this));
    this.ambient=profile.wrap('Autocast decisions',this.ambient.bind(this));
    this.auras=profile.wrap('Aura recipients',this.auras.bind(this));
+   this.hit=profile.wrap('Effect operations',this.hit.bind(this));
    this.persistent=profile.wrap('Persistent instances',this.persistent.bind(this));
    this.deliver=profile.wrap('Projectiles and chains',this.deliver.bind(this));
   }
@@ -91,7 +97,7 @@ export class AbilityRuntime {
   if(this.events.length>1024)this.events.splice(0,this.events.length-1024);
  }
  private target(p:PendingAbility,fallback:AbilityActor):EventTarget{return p.point?{...p.point,id:0}:this.host.get(p.target)??fallback;}
- private eligibility(caster:AbilityActor,aim:AbilityAim,spell:AbilityDefinition,rank:number,accepting:boolean):string|null{
+ private eligibility(caster:AbilityActor,aim:AbilityAim,spell:AbilityDefinition,rank:number,accepting:boolean,ignoreRange=false):string|null{
   if(!caster.alive||caster.blocked)return 'Caster is unable to cast';
   if(spell.delivery&&(this.host.deliveries?.().length??0)+(spell.delivery.kind==='swarm'?value(spell.delivery.count,spell.ranks[rank-1]):1)>512)return 'Too many active spell deliveries';
   const validateWorld=()=>this.host.validateAim?.(caster.id,aim,spell,rank)??null;
@@ -100,7 +106,7 @@ export class AbilityRuntime {
    if(spell.targeting.kind!=='point'||!this.host.validPoint(aim))return 'Choose a valid ground position';
    if(spell.targeting.visible&&!this.host.visiblePoint(caster.owner,aim,caster))return 'Target is not visible';
    const range=value(spell.targeting.range,spell.ranks[rank-1]);
-   return (aim.x-caster.x)**2+(aim.y-caster.y)**2>range**2?'Target is out of range':validateWorld();
+   return validateWorld()??(!ignoreRange&&(aim.x-caster.x)**2+(aim.y-caster.y)**2>range**2?'Target is out of range':null);
   }
   if(spell.targeting.kind!=='unit')return 'Choose a ground position';
   const target=this.host.get(aim);
@@ -113,12 +119,12 @@ export class AbilityRuntime {
   if(!matchesSpellTarget(target,spell,caster,this.host.relation(caster,target)))return 'Target does not match spell filters';
   if(!acceptsSpell(target,spell,relation))return 'Target is immune to this spell';
   const range=value(spell.targeting.range,spell.ranks[rank-1]);
-  if((target.x-caster.x)**2+(target.y-caster.y)**2>range**2)return 'Target is out of range';
+
   const effects=releaseEffects(spell,rank,relation,{caster,target});
   if(accepting&&effects.length&&effects.every(e=>e.op==='heal')&&target.hp>=target.maxHp)return 'Target is already at full health';
-  return validateWorld();
+  return validateWorld()??(!ignoreRange&&(target.x-caster.x)**2+(target.y-caster.y)**2>range**2?'Target is out of range':null);
  }
- reason(casterId:number,bindingId:string,targetId:AbilityAim,control:Control='player'):string|null{
+ reason(casterId:number,bindingId:string,targetId:AbilityAim,control:Control='player',ignoreRange=false):string|null{
   const access=this.host.caster(casterId),binding=access?.bindings.find(b=>b.id===bindingId);
   const spell=binding&&this.host.definition(binding.ability);
   if(!access||!binding||!spell||spell.activation==='passive'||!binding.controls.includes(control))return 'Cannot cast this ability';
@@ -129,7 +135,7 @@ export class AbilityRuntime {
   if(spell.weaponCast&&!this.host.orderWeaponCast)return 'Weapon casting is not available';
   if((access.state.cooldowns[spell.id]??0)>this.host.tick())return 'Ability is cooling down';
   if(access.state.mana<value(spell.cast.cost.amount,spell.ranks[rank-1]))return 'Not enough mana';
-  return this.eligibility(access.actor,targetId,spell,rank,true)??(spell.weaponCast&&typeof targetId==='number'?(this.host.weaponCastReason?.(casterId,targetId,spell,rank)??null):null);
+  return this.eligibility(access.actor,targetId,spell,rank,true,ignoreRange)??(spell.weaponCast&&typeof targetId==='number'?(this.host.weaponCastReason?.(casterId,targetId,spell,rank)??null):null);
  }
  cast(casterId:number,bindingId:string,targetId:AbilityAim,control:Control='player'):string|null{
   const reason=this.reason(casterId,bindingId,targetId,control);if(reason)return reason;
@@ -184,7 +190,7 @@ export class AbilityRuntime {
  ambient(){
   const ambient=new Set(this.host.ambientCasters?.()??[]);
   for(const id of this.host.casters().sort((a,b)=>a-b)){
-   const data=this.casterBindings(id);if(!data||data.state.pending||data.state.weaponOrder)continue;
+   const data=this.casterBindings(id);if(!data||data.state.pending||data.state.weaponOrder||this.host.approaching?.(id))continue;
    let cachedCaster:CasterAccess|undefined;
    for(const binding of data.bindings){
     const spell=this.host.definition(binding.ability)!,rank=data.state.ranks[binding.id];if(!rank||spell.activation==='passive'||spell.weaponCast)continue;
@@ -260,18 +266,25 @@ export class AbilityRuntime {
   const results:EffectResults=new Map(),liveCaster=this.host.get(caster.id),resources={caster:liveCaster?.owner===caster.owner?liveCaster:caster,target:aim.id?this.host.get(aim.id):undefined};
   const defaultCandidates=areaDefaults&&spell.targeting.radius!==undefined?(this.host.targets?.()??[]).map(id=>this.host.get(id)!).filter(Boolean):[];
   const query=(effect:Effect,current:AbilityActor)=>operationTargets(effect,spell,rank,effect.query||effect.target==='caster'?current:caster,aim,effect.query?(this.host.targets?.()??[]).map(id=>this.host.get(id)!).filter(Boolean):defaultCandidates,t=>this.host.relation(caster,t),areaDefaults);
+  let firstOperation=true;
   for(const operation of operations){
-   const decisions=new Map<number,boolean>(),currentCaster=this.host.get(caster.id),branchCaster={...(currentCaster?.owner===caster.owner?currentCaster:caster)};
+   // No effect runs between the resource snapshot, the first branch check and
+   // its first declaration. Reuse that read only within this mutation-free
+   // boundary; every following operation/declaration still reads live state.
+   const currentCaster=firstOperation?liveCaster:this.host.get(caster.id);firstOperation=false;
+   const decisions=new Map<number,boolean>(),branchCaster=operation.op==='branch'?{...(currentCaster?.owner===caster.owner?currentCaster:caster)}:undefined;
    // A branch evaluates each recipient's traits and relationship, including mixed areas.
    const declarations=operation.op==='branch'?[...operation.then,...operation.else]:[operation];
+   let firstDeclaration=true;
    for(const effect of declarations){
-    const live=this.host.get(caster.id),operationCaster=live?.owner===caster.owner?{...live}:caster;
+    const live=firstDeclaration?currentCaster:this.host.get(caster.id);firstDeclaration=false;
+    const operationCaster=live?.owner===caster.owner?{...live}:caster;
     const operationAim=effect.op==='teleport'&&effect.destination==='target'&&aim.id?{...(this.host.get(aim.id)??aim)}:aim;
     const targets=query(effect,operationCaster);
     for(const target of targets){
      const actor=target.id?this.host.get(target.id):undefined;
      if(operation.op==='branch'){
-      if(!decisions.has(target.id))decisions.set(target.id,matchesAbilityCondition(operation.condition,{relation:this.host.relation(caster,actor??caster),caster:branchCaster,target:actor??{}}));
+      if(!decisions.has(target.id))decisions.set(target.id,matchesAbilityCondition(operation.condition,{relation:this.host.relation(caster,actor??caster),caster:branchCaster!,target:actor??{}}));
       const chosen=decisions.get(target.id)?operation.then:operation.else;
       if(!chosen.includes(effect))continue;
      }
@@ -283,7 +296,10 @@ export class AbilityRuntime {
      if(target.id&&(!actor?.alive||actor.targetable===false||!matchesSpellFilter(actor,operationFilter(effect))||!creationGrant&&!acceptsSpell(actor,spell,this.host.relation(caster,actor))))continue;
      if(effect.target==='caster'&&!effect.query&&actor?.owner!==caster.owner)continue;
      const resolved={...resolveEffect(effect,rank,parameters),amount:effectMagnitude(effect,parameters,{...resources,recipient:actor,results})};
-     const audience=this.host.viewers().filter(owner=>effect.op==='vision'&&owner===caster.owner||(originViewers?originViewers.includes(owner):this.host.visible(owner,caster))&&(actor?this.host.visible(owner,actor):this.host.visiblePoint(owner,target,this.host.get(caster.id))));
+     // Ordinary aura refreshes emit no event below. Audience visibility can
+     // require terrain sight queries; do not compute and discard it per recipient.
+     // Summons/resurrections still publish creation events, including in auras.
+     const audience=aura&&resolved.op!=='summon'&&resolved.op!=='resurrect'?[]:this.host.viewers().filter(owner=>effect.op==='vision'&&owner===caster.owner||(originViewers?originViewers.includes(owner):this.host.visible(owner,caster))&&(actor?this.host.visible(owner,actor):this.host.visiblePoint(owner,target,this.host.get(caster.id))));
      if(resolved.op==='summon'&&this.host.summon){
       for(const group of this.host.summon(caster,spell,rank,cast,resolved,target)){
        this.emit(operationCaster,{id:resolved.corpses?0:target.id,x:group.point.x,y:group.point.y},cast,spell.id,'summoned',{amount:group.amount,spawned:group.units.map(u=>u.id),...(resolved.durationTicks===undefined?{untilDeath:true}:{durationTicks:resolved.durationTicks}),...(visualOrigin?{origin:visualOrigin}:{})},audience.filter(owner=>this.host.visiblePoint(owner,group.point,this.host.get(caster.id))));
@@ -411,7 +427,12 @@ export class AbilityRuntime {
   }
  }
  private candidates(caster:AbilityActor,spell:AbilityDefinition,point:AbilityPoint,radius:number){
-  return (this.host.targets?.()??[]).map(id=>this.host.get(id)!).filter(t=>t?.alive&&matchesSpellTarget(t,spell,caster,this.host.relation(caster,t))&&acceptsSpell(t,spell,this.host.relation(caster,t))&&(t.unit||spell.targeting.includeBuildings)&&t.targetable&&(spell.targeting.allowSelf||t.id!==caster.id)&&spell.targeting.relations.includes(this.host.relation(caster,t) as 'ally'|'enemy')&&(t.x-point.x)**2+(t.y-point.y)**2<=radius**2).sort((a,b)=>a.id-b.id);
+  const ids=this.profile.measure('Area target enumeration',()=>this.host.targetsInRadius?.(point,radius)??this.host.targets?.()??[]);
+  this.profile.count('Area actors materialized',ids.length);
+  const actors=this.profile.measure('Area actor materialization',()=>ids.map(id=>this.host.get(id)!));
+  const selected=this.profile.measure('Area eligibility',()=>actors.filter(t=>t?.alive&&matchesSpellTarget(t,spell,caster,this.host.relation(caster,t))&&acceptsSpell(t,spell,this.host.relation(caster,t))&&(t.unit||spell.targeting.includeBuildings)&&t.targetable&&(spell.targeting.allowSelf||t.id!==caster.id)&&spell.targeting.relations.includes(this.host.relation(caster,t) as 'ally'|'enemy')&&(t.x-point.x)**2+(t.y-point.y)**2<=radius**2).sort((a,b)=>a.id-b.id));
+  this.profile.count('Area recipients selected',selected.length);
+  return selected;
  }
  private launch(access:CasterAccess,p:PendingAbility,spell:AbilityDefinition){
   const queue=this.host.deliveries?.();if(!queue)throw Error('Ability host does not support delivery');

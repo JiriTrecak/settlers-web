@@ -1,6 +1,7 @@
+import {Mesh,Texture,TextureLoader} from 'three';
 import './sourceAssetFetch';
 import {afterEach,expect,it,vi} from 'vitest';
-import {Group,Scene} from 'three';
+import {BoxGeometry,MeshStandardMaterial,Group,Scene} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {SettlementLayer} from '../../src/render/settlement/settlementLayer';
 import {HeightField} from '../../src/shared/map/height';
@@ -8,7 +9,8 @@ import {content} from '../../src/content/builtin';
 import {game,placed} from '../game/helpers';
 afterEach(()=>vi.restoreAllMocks());
 it('renders loose pickups at their selectable position with the declared asset scale',async()=>{
- vi.spyOn(GLTFLoader.prototype,'loadAsync').mockResolvedValue({scene:new Group(),animations:[]} as any);
+ vi.spyOn(GLTFLoader.prototype,'loadAsync').mockImplementation(async()=>{const scene=new Group();scene.add(new Mesh(new BoxGeometry(),new MeshStandardMaterial()));return {scene,animations:[]} as any;});
+ vi.spyOn(TextureLoader.prototype,'load').mockImplementation((_url,onLoad)=>{const texture=new Texture({width:64,height:64} as HTMLImageElement);queueMicrotask(()=>onLoad?.(texture));return texture;});
  const scene=new Scene(),layer=new SettlementLayer(scene);await layer.ready;
  const g=game([{...placed('loot','item.royal-crest',219,230),owner:'none'}]);
  const view=g.view(),pickup=view.entities.find(e=>e.definition==='item.royal-crest')!;

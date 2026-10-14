@@ -3,6 +3,24 @@ import {MapInput} from '../../src/render/input/mapInput';
 import {shortcuts,SHORTCUTS_CHANGED,commandMatches,commandShortcut} from '../../src/shared/input/shortcuts';
 import {shortcutCatalog} from '../../src/shared/input/catalog';
 import {content} from '../../src/content/builtin';
+import {perf} from '../../src/debug/performance';
+
+it('measures real canvas callbacks between frames and removes those same listeners on destroy',()=>{
+ const win=new EventTarget();vi.stubGlobal('window',win);
+ vi.stubGlobal('document',{createElement:()=>({style:{},remove(){}}),body:{append(){}}});
+ const canvas=Object.assign(new EventTarget(),{setPointerCapture(){},hasPointerCapture:()=>false});
+ const command=vi.fn(),span=vi.spyOn(perf,'cpuSpan'),measuring=vi.spyOn(perf,'measuringCpu','get').mockReturnValue(true);
+ const input=new MapInput(canvas as any,{} as any,{rts:true,onChanged(){},onRightClick:command});
+ const pointer=()=>Object.assign(new Event('pointerdown'),{button:2,clientX:12,clientY:34,shiftKey:true,pointerId:1});
+ try{
+  canvas.dispatchEvent(pointer());
+  expect(command).toHaveBeenCalledExactlyOnceWith(12,34,true);
+  expect(span).toHaveBeenCalledWith('Canvas input',expect.any(Number));
+  input.destroy();command.mockClear();span.mockClear();
+  canvas.dispatchEvent(pointer());
+  expect(command).not.toHaveBeenCalled();expect(span).not.toHaveBeenCalled();
+ }finally{input.destroy();measuring.mockRestore();span.mockRestore();vi.unstubAllGlobals();}
+});
 it('pans with an override, releases using physical key even after modifiers change, and ignores dialogs',()=>{
  const win=new EventTarget();let dialog=false;
  vi.stubGlobal('window',win);vi.stubGlobal('HTMLElement',class {});

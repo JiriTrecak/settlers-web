@@ -1,3 +1,4 @@
+import {perf} from "../../debug/performance";
 import { content } from "../../content/builtin";
 import { iconArt } from "./commandArt";
 import type { CostView } from "../../presentation/commands";
@@ -18,7 +19,7 @@ export class CommandTooltips {
     window.addEventListener("keydown", this.key);
     window.addEventListener("resize", this.hide);
   }
-  private over = (event: Event) => {
+  private over = perf.cpuCallback("HUD tooltip input", (event: Event) => {
     const target = (event.target as Element).closest<HTMLElement>(
       "[data-tip-name]",
     );
@@ -27,7 +28,7 @@ export class CommandTooltips {
     this.active = target;
     target.setAttribute("aria-describedby", this.box.id);
     this.render(target);
-  };
+  });
   private render(target: HTMLElement) {
     const name = document.createElement("strong");
     name.textContent = (target.dataset.tipName ?? "") + (target.dataset.tipKey ? ` (${target.dataset.tipKey})` : "");
@@ -60,21 +61,21 @@ export class CommandTooltips {
   refresh(target: HTMLElement) {
     if (this.active === target) this.render(target);
   }
-  private out = (event: Event) => {
+  private out = perf.cpuCallback("HUD tooltip input", (event: Event) => {
     if (
       this.active?.contains((event as MouseEvent).relatedTarget as Node | null)
     )
       return;
     this.hide();
-  };
-  private key = (e: KeyboardEvent) => {
+  });
+  private key = perf.cpuCallback("HUD tooltip input", (e: KeyboardEvent) => {
     if (e.key === "Escape") this.hide();
-  };
-  hide = () => {
+  });
+  hide = perf.cpuCallback("HUD tooltip input", () => {
     this.active?.removeAttribute("aria-describedby");
     this.active = null;
     this.box.hidden = true;
-  };
+  });
   destroy() {
     this.host.removeEventListener("pointerover", this.over);
     this.host.removeEventListener("pointerout", this.out);

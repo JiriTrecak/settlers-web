@@ -82,6 +82,20 @@ export class UnitIndex {
     const x1 = Math.min(this.size - 1, Math.floor((maxX + 500) / 1000));
     const y0 = Math.max(0, Math.floor((minY + 500) / 1000));
     const y1 = Math.min(this.size - 1, Math.floor((maxY + 500) / 1000));
+    if(x0>x1||y0>y1)return;
+    // Long route rectangles are mostly empty. Scan occupied buckets instead
+    // when that is cheaper, retaining the exact row-major/within-cell order.
+    // Local steering keeps direct lookup and avoids allocating a key list.
+    if((x1-x0+1)*(y1-y0+1)>this.buckets.size*2){
+      const cells:number[]=[];
+      for(const cell of this.buckets.keys()){
+        const x=cell%this.size,y=Math.floor(cell/this.size);
+        if(x>=x0&&x<=x1&&y>=y0&&y<=y1)cells.push(cell);
+      }
+      cells.sort((a,b)=>a-b);
+      for(const cell of cells)yield* this.buckets.get(cell)!;
+      return;
+    }
     for (let y = y0; y <= y1; y++) {
       for (let x = x0; x <= x1; x++) {
         // Empty cells need no array or delegated iterator.

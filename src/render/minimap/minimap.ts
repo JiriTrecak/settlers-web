@@ -145,7 +145,7 @@ export class Minimap {
     this.clock = new DayNightIndicator(this.root);
     this.clock.root.style.left = "-66px";
     host.append(this.root);
-    this.onDown = (e) => {
+    this.onDown = perf.cpuCallback("Minimap input", (e: PointerEvent) => {
       if(e.button!==0&&e.button!==2)return;
       const point=this.point(e);if(point&&this.spec.onOrder?.(point[0],point[1],e.button===2,e.shiftKey)){e.preventDefault();return;}
       if (e.button !== 0) return;
@@ -153,16 +153,16 @@ export class Minimap {
       this.canvas.style.cursor = "grabbing";
       this.canvas.setPointerCapture(e.pointerId);
       this.scrub(e);
-    };
-    this.onMove = (e) => {
+    });
+    this.onMove = perf.cpuCallback("Minimap input", (e: PointerEvent) => {
       if (this.dragging) this.scrub(e);
-    };
-    this.onUp = (e) => {
+    });
+    this.onUp = perf.cpuCallback("Minimap input", (e: PointerEvent) => {
       this.dragging = false;
       this.canvas.style.cursor = "grab";
       if (this.canvas.hasPointerCapture(e.pointerId))
         this.canvas.releasePointerCapture(e.pointerId);
-    };
+    });
     this.canvas.addEventListener("contextmenu",this.contextMenu);
     this.canvas.addEventListener("pointerdown", this.onDown);
     this.canvas.addEventListener("pointermove", this.onMove);
@@ -350,7 +350,7 @@ export class Minimap {
     return [(nx * 0.5 + 0.5) * w, (0.5 - ny * 0.5) * h];
   }
 
-  private contextMenu=(e:Event)=>e.preventDefault();
+  private contextMenu=perf.cpuCallback("Minimap input", (e:Event)=>e.preventDefault());
   private scrub(e:PointerEvent):void {const p=this.point(e);if(p)this.spec.onLookAt(p[0],p[1]);}
   private point(e: PointerEvent): [number,number]|null {
     const rect = this.canvas.getBoundingClientRect();

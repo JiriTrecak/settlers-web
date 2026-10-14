@@ -818,7 +818,7 @@ export class Observation {
     const cached = this.cache.get(owner);
     if (cached) return cached;
     const m = this.memories.find((p) => p.owner === owner),
-      known = new Map<number, EntityView>();
+      known:EntityView[] = [];
     if (owner !== undefined && !m) throw new Error("Unknown observation owner");
     const visible = new Map<number, EntityView>();
     const visibleForest=owner&&!this.c.spatial.layers?this.visibleStatics.get(owner):undefined;
@@ -839,7 +839,7 @@ export class Observation {
         .map((cue) => cue.entity),
       ...this.projectColony(owner,actors),
       revision: this.c.state.tick,
-      entities: this.orderEntities(owner ? [...known.values()] : full),
+      entities: this.orderEntities(owner ? known : full),
       ...(m
         ? {
             fog: {
@@ -870,9 +870,10 @@ export class Observation {
     }
     return actors;
   }
-  private projectKnowledge(m:Memory|undefined,owner:Owner|undefined,visible:Map<number,EntityView>,known:Map<number,EntityView>,visibleForest:Set<number>|undefined){
+  private projectKnowledge(m:Memory|undefined,owner:Owner|undefined,visible:Map<number,EntityView>,known:EntityView[],visibleForest:Set<number>|undefined){
     if (m)
-      for (const [id, e] of m.entities) {
+      for (const e of m.entities.values()) {
+        const id=e.id;
         let observed=visible.get(id);
         if(!observed&&this.forestIds.has(id)){
           const entity=this.c.get(id)!;
@@ -885,9 +886,11 @@ export class Observation {
           observed=this.rememberedViews.get(e);
           if(!observed){observed={...structuredClone(e),remembered:true};this.rememberedViews.set(e,observed);}
         }
-        known.set(id,observed);
+        known.push(observed);
       }
-    for (const [id, e] of visible) known.set(id, e);
+    // Visible actors already present in memory were resolved above. Append only
+    // new IDs, avoiding another full map of unchanged remembered scenery.
+    for (const e of visible.values())if(!m?.entities.has(e.id))known.push(e);
   }
   private orderEntities(entities:EntityView[]){return entities.sort((a,b)=>a.id-b.id);}
   private projectColony(owner:Owner|undefined,actors:Entity[]){

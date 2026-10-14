@@ -5,6 +5,7 @@ import {coreAbilities} from '../../src/content/abilities/core';
 import {createAbilityEncounter} from '../../src/sim/abilities/encounter';
 import {encounterSettingsSchema} from '../../src/content/abilities/encounter';
 import {abilitySchema} from '../../src/content/abilities/schema';
+import {snapPlacement} from '../../src/shared/spatial/placement';
 function fixture(name:string,settings:Record<string,unknown>={}){
  const a=coreAbilities.abilities.find(a=>a.id==='ability.core.'+name)!;
  const f=createAbilityEncounter(a,coreAbilities.presentations.find(p=>p.id===a.presentation)!,encounterSettingsSchema.parse({relationship:'ally',targetHealth:500,distance:3,...settings}));
@@ -28,7 +29,8 @@ it('Blink rejects fully blocked arrivals without charging mana or starting coold
 it('Blink rechecks arrival clearance at release and refunds if the destination becomes blocked',()=>{
  const f=fixture('blink'),c=f.c(),mana=c.abilities!.mana;
  expect(f.game.abilities.cast(c.id,'preview',{x:128,y:128})).toBeNull();expect(c.abilities!.mana).toBeLessThan(mana);
- for(let y=124;y<=132;y++)for(let x=124;x<=132;x++)f.game.context.spatial.occupied[y*256+x]=999;
+ const obstacle=f.game.context.create({id:'arrival-blocker',definition:'building.ants.house',owner:'player.1',position:snapPlacement(f.game.registry.get('building.ants.house'),{x:128,y:128}),rotation:0});
+ f.game.spatial.appendOccupancy(obstacle);
  advance(f,30);
  expect({x:c.x,y:c.y}).toEqual({x:120,y:120});expect(c.abilities!.mana).toBe(mana);expect(c.abilities!.cooldowns).toEqual({});
  expect(f.game.abilities.drainEvents().some(e=>e.event==='cancelled'&&e.reason?.includes('arrival'))).toBe(true);

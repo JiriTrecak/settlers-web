@@ -19,7 +19,7 @@ import {fingerprint} from '../../src/content/registry';
 
 const args=process.argv.slice(2);
 const option=(name:string,fallback:string)=>{const at=args.indexOf(name);return at<0?fallback:args[at+1]??fallback;};
-const mapId=option('--map','amberwake-basin'),ticks=Number(option('--ticks','800'));
+const mapId=option('--map','echo-isles'),ticks=Number(option('--ticks','800'));
 const map=parseUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${mapId}.utcmap`,'utf8')));
 if(!map||!Number.isSafeInteger(ticks)||ticks<400)throw Error('Choose a valid map and at least 400 ticks');
 const checkpoint=option('--checkpoint','');

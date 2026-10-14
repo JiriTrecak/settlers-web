@@ -1,3 +1,4 @@
+import {SpellCastOrders} from '../abilities/castOrders';
 import {reconcileTaunts} from '../abilities/taunt';
 import {heroAdmission, heroRoster} from '../../content/heroRoster';
 import {workplaceHead, workplaceQueueSize} from '../../content/workplaceQueue';
@@ -435,7 +436,7 @@ export class Game {
       return {accepted:true,actors:[actor.id]};
     }
     if(action.type==='castAbility'){
-      const error=this.abilities.cast(actor.id,action.binding,action.target.kind==='unit'?action.target.entity:action.target.position,this.slots.find(s=>slotOwner(s.player)===owner)?.kind==='ai'?'ai':'player');
+      const error=new SpellCastOrders(this).issue(actor,action.binding,action.target,this.slots.find(s=>slotOwner(s.player)===owner)?.kind==='ai'?'ai':'player');
       return error?reject(error):{accepted:true,actors:[actor.id]};
     }
     if (action.type === "learnAbility") {
@@ -546,6 +547,7 @@ export class Game {
     if(this.context.def(dead).hero)this.revival.retain(dead);
   }
   private activateQueuedOrder(e: Entity, order: UnitOrder): boolean {
+    if(order.type==='castAbility')return this.command(e.owner,{type:'castAbility',actor:e.id,binding:order.binding,target:order.target}).accepted;
     if (order.type === "construct") {
       const building = this.context.get(order.target);
       if (!building?.construction || !alive(building) || building.owner !== e.owner ||
@@ -585,14 +587,14 @@ export class Game {
       return;
     }
     for(const e of this.state.entities)if(e.stunnedUntil!==undefined&&e.stunnedUntil<=this.state.tick)delete e.stunnedUntil;
-    measure("Ability lifecycle", () => {this.abilities.tick();if(!passiveUnits)this.abilities.ambient();reconcileTaunts(this);});
+    measure("Ability lifecycle", () => {this.abilities.tick();new SpellCastOrders(this).tick();if(!passiveUnits)this.abilities.ambient();reconcileTaunts(this);});
     measure("Item effects", () => this.combat.items.tick());
     measure("Regeneration", () => new Regeneration(this.context).tick());
     if(!passiveUnits)measure("Work assignment", () => {
       measure("Assignment · queued orders", () => this.orders.advance((e, order) => this.activateQueuedOrder(e, order)));
       measure("Assignment · workers", () => this.economy.assign());
     });
-    const weaponActors=passiveUnits?new Set(this.context.activeUnits().filter(e=>e.abilities?.weaponOrder).map(e=>e.id)):undefined;
+    const weaponActors=passiveUnits?new Set(this.context.activeUnits().filter(e=>e.abilities?.weaponOrder||e.unit?.order?.type==='castAbility').map(e=>e.id)):undefined;
     measure("Orders / navigation", () => {
       if(!passiveUnits){
       measure("Orders · garrisons", () => this.garrisons.tick());
@@ -604,6 +606,7 @@ export class Game {
       if(passiveUnits&&weaponActors!.size)this.combat.plan(weaponActors);
       measure("Orders · movement", () => this.context.move(passiveUnits,weaponActors));
     });
+    new SpellCastOrders(this).tick(false);
     measure('Item effects after movement',()=>this.combat.items.tick());
     if(!passiveUnits||weaponActors!.size||this.state.missiles.length||this.state.shells.length)measure("Combat", () => {
       const scripted=this.state.mission?.pendingDamage??[];
@@ -890,6 +893,7 @@ export class Game {
           u.charge.expires > state.tick + chargePolicy.durationTicks))
           throw new Error("Invalid saved charge state");
         for (const order of [u.order, ...u.orderQueue]) {
+          if(order?.type==='castAbility'&&(!d.behaviors.abilities?.bindings.some(b=>b.id===order.binding&&b.controls.includes(order.control))||order.owner!==e.owner||order.target.kind==='point'&&!this.spatial.validPoint(order.target.position)))throw new Error('Invalid saved cast order');
           if ((order?.type === "move" || order?.type === "patrol") && (!this.spatial.validPoint(order.destination)))
             throw new Error("Saved order outside map");
           if(order?.type==='patrol'&&order.origin&&(order.origin.x>=this.map.size||order.origin.y>=this.map.size))throw new Error('Saved patrol origin outside map');

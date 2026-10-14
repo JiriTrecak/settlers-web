@@ -15,6 +15,12 @@ RSYNC_SSH="ssh -i '$EC2_KEY' -o StrictHostKeyChecking=accept-new"
 
 chmod 400 "$EC2_KEY" 2>/dev/null || true
 
+# Never deploy a loopback-only service without its public TLS front end.
+"${SSH[@]}" "$REMOTE" "sudo test -s /etc/letsencrypt/live/canopy-matchhost/fullchain.pem && sudo nginx -t" || {
+  echo 'Configure HTTPS first: infrastructure/multiplayer/README.md' >&2
+  exit 1
+}
+
 "${SSH[@]}" "$REMOTE" "mkdir -p '$REMOTE_DIR/server' '$REMOTE_DIR/src' '$REMOTE_DIR/scripts' '$REMOTE_DIR/content'"
 
 rsync -az --delete -e "$RSYNC_SSH" \
@@ -35,6 +41,9 @@ rsync -az -e "$RSYNC_SSH" \
 rsync -az -e "$RSYNC_SSH" \
   "$PROJECT_ROOT/scripts/settlers-matchhost.service" \
   "$REMOTE:$REMOTE_DIR/scripts/settlers-matchhost.service"
+rsync -az -e "$RSYNC_SSH" \
+  "$PROJECT_ROOT/infrastructure/multiplayer/nginx.conf" \
+  "$REMOTE:$REMOTE_DIR/scripts/matchhost-nginx.conf"
 
 "${SSH[@]}" "$REMOTE" bash -s << 'REMOTE'
 set -euo pipefail
@@ -44,6 +53,10 @@ cp server/tsconfig.json tsconfig.json
 npm install --omit=dev
 sudo cp scripts/settlers-matchhost.service /etc/systemd/system/settlers-matchhost.service
 sudo systemctl daemon-reload
+sudo cp scripts/matchhost-nginx.conf /etc/nginx/sites-available/canopy-matchhost
+sudo ln -sfn /etc/nginx/sites-available/canopy-matchhost /etc/nginx/sites-enabled/canopy-matchhost
+sudo nginx -t
+sudo systemctl reload nginx
 sudo systemctl enable --now settlers-matchhost
 sudo systemctl restart settlers-matchhost
 for attempt in {1..20}; do
@@ -55,16 +68,6 @@ echo
 sudo systemctl is-active settlers-matchhost
 REMOTE
 
-# Redeploys can preserve the existing firewall instead of provisioning ingress.
-if [[ "${MATCHHOST_SKIP_FIREWALL:-0}" != "1" ]] && command -v aws >/dev/null 2>&1; then
-  aws ec2 authorize-security-group-ingress \
-    --region eu-west-2 \
-    --group-id sg-0ae99a69cf8d1d325 \
-    --protocol tcp \
-    --port 8787 \
-    --cidr 0.0.0.0/0 \
-    >/dev/null 2>&1 || true
-fi
-
-echo "MatchHost http://${EC2_HOST}:8787/api/health"
-curl -sf --max-time 5 "http://${EC2_HOST}:8787/api/health" && echo || echo "public 8787 still closed — open TCP 8787 on sg-0ae99a69cf8d1d325"
+echo "MatchHost https://${EC2_HOST}/api/health"
+curl -fsS --max-time 10 "https://${EC2_HOST}/api/health"
+echo

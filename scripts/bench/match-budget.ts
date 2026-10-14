@@ -1,42 +1,79 @@
-/** One human + three AIs through the production runtime and snapshot codecs.
+/** One human + map-supported AIs through the production runtime and snapshot codecs.
  * Headless CPU accounting, not browser FPS or IPC latency. In-process transferable
  * structuredClone approximates transport CPU; actual browser delivery/UI still
  * requires a separate trace before claiming the complete non-render budget. */
 import {readFileSync,writeFileSync} from 'node:fs';
+import {probeLocalTerrain} from './local-terrain-probe';
+import {terrainReuseProbe} from './terrain-reuse-probe';
+import {probeSweepEndpoints} from './sweep-endpoint-probe';
+import {captureSweepClearance,verifySweepClearance} from './sweep-clearance-probe';
+import {captureMeshConversion} from './mesh-conversion-probe';
 import {Session} from 'node:inspector/promises';
 import {PerformanceObserver} from 'node:perf_hooks';
 import {isDeepStrictEqual} from 'node:util';
 import {SimulationRuntime} from '../../src/session/worker/runtime';
 import {SnapshotEncoder,SnapshotDecoder} from '../../src/session/worker/snapshots';
 import {localMatch} from '../../src/shared/match/match';
+import {localSaveSchema} from '../../src/shared/save/localSave';
 import {parseUtcMap} from '../../src/shared/map/utcmap';
+import {mapRevision} from '../../src/shared/map/playable';
 import {fingerprint} from '../../src/content/registry';
 import type {SimulationTiming,SimulationWork} from '../../src/sim/profiling';
 import type {Entity} from '../../src/sim/game/state';
-import {stageHumanArmy} from './match-workload';
+import {stageHumanArmy,stageBattleArmies} from './match-workload';
 import {benchmarkContent} from './content-fixture';
+import {captureAiNavigation} from './ai-navigation-probe';
 const args=process.argv.slice(2),option=(name:string,fallback:string)=>{const i=args.indexOf(name);return i<0?fallback:args[i+1]??fallback;};
-const mapId=option('--map','amberwake-basin'),ticks=Number(option('--ticks','6000'));
+const mapId=option('--map','echo-isles'),ticks=Number(option('--ticks','6000'));
 const paceMs=Number(option('--pace-ms','0'));
 if(!Number.isFinite(paceMs)||paceMs<0||paceMs>1000)throw Error('--pace-ms must be between 0 and 1000');
 const map=parseUtcMap(JSON.parse(readFileSync(`assets/maps/skirmish/${mapId}.utcmap`,'utf8')));
-if(!map||map.playerStarts.length!==4||!Number.isSafeInteger(ticks)||ticks<400)throw Error('Requires a four-player map and >=400 ticks');
-const match=localMatch({mapId,mapRevision:fingerprint(map),seed:731942,slotCount:4,me:0});
+if(!map||map.playerStarts.length<2||map.playerStarts.length>8||!Number.isSafeInteger(ticks)||ticks<400)throw Error('Requires a 2–8 player map and >=400 ticks');
+// A browser setup exported through gameSave preserves its actual names, teams,
+// faction and hero choices. Build the fixture with it; never alter save metadata
+// or relax the production restore guard merely to make a benchmark load.
+const setupPath=option('--match','');
+const match=setupPath?localSaveSchema.shape.match.parse(JSON.parse(readFileSync(setupPath,'utf8')))
+ :localMatch({mapId,mapRevision:fingerprint(map),seed:731942,slotCount:map.playerStarts.length,me:0});
+if(match.mapId!==mapId||match.mapRevision!==(setupPath?mapRevision(map):fingerprint(map))||match.slots.length!==map.playerStarts.length||
+ match.slots.some(s=>s.kind!==(s.player===0?'human':'ai'))||!match.slots.some(s=>s.player===0))
+ throw Error('--match must match this map and have player 0 human with AI opponents');
 const contentInput=option('--content',''),{fixture:contentFixture}=benchmarkContent(contentInput,option('--save-content',''));
 const runtimeOptions={map,match,player:0,remote:false,...(contentInput?{content:contentFixture}:{})};
 const runtime=new SimulationRuntime(runtimeOptions);
+const meshCaptureTick=Number(option('--capture-mesh-conversion','0'));
+if(!Number.isSafeInteger(meshCaptureTick)||meshCaptureTick<0)throw Error('--capture-mesh-conversion requires a nonnegative tick');
+const localTerrainProbe=args.includes('--probe-local-sweeps')?probeLocalTerrain():undefined;
+if(args.includes('--probe-terrain-reuse')&&args.includes('--probe-short-terrain-reuse'))throw Error('Choose one terrain reuse probe');
+const aiCaptureTick=Number(option('--capture-ai-navigation','0'));
+if(!Number.isSafeInteger(aiCaptureTick)||aiCaptureTick<0)throw Error('--capture-ai-navigation requires a nonnegative tick');
+const aiCapture=aiCaptureTick?captureAiNavigation(()=>runtime.world.clock.tickIndex,aiCaptureTick):undefined;
 runtime.reveal=false;runtime.profiling=args.includes('--details');
 const captureTicks=new Set(option('--capture-ticks','').split(',').filter(Boolean).map(Number));
 if([...captureTicks].some(t=>!Number.isSafeInteger(t)||t<0)||captureTicks.size>64)throw Error('--capture-ticks requires at most 64 nonnegative integer tick IDs');
 const verifyProjection=args.includes('--verify-projection'),verifyRestore=args.includes('--verify-restore');
 let restored:SimulationRuntime|undefined;const restoreChecks:{tick:number;fullAuditChecksum:number}[]=[];
 const resume=option('--resume','');if(resume)runtime.restoreLocal(JSON.parse(readFileSync(resume,'utf8')));
-const humanCount=Number(option('--human-army','0')),assault=humanCount?stageHumanArmy(runtime,humanCount):undefined;
+const battleCount=Number(option('--battle-army','0')),humanCount=Number(option('--human-army','0'));
+if([battleCount,humanCount].some(n=>!Number.isSafeInteger(n)||n<0||n>96))throw Error('Army counts must be integers from 0 to 96');
+if(battleCount&&humanCount)throw Error('Choose --human-army or --battle-army');
+const battle=battleCount?stageBattleArmies(runtime,battleCount):undefined;
+const assault=battle??(humanCount?stageHumanArmy(runtime,humanCount):undefined);
+// Local restore replaces the World/Spatial instance. Attach instance probes
+// after restore/staging so resumed captures observe the world that advances.
+const meshCapture=meshCaptureTick?captureMeshConversion(runtime.world.settlement.spatial,()=>runtime.world.clock.tickIndex,meshCaptureTick):undefined;
+const terrainReuse=args.includes('--probe-terrain-reuse')||args.includes('--probe-short-terrain-reuse')
+ ?terrainReuseProbe(runtime.world.settlement.spatial,()=>runtime.world.clock.tickIndex,args.includes('--probe-short-terrain-reuse')?'short':'long'):undefined;
+const sweepEndpoints=args.includes('--probe-sweep-endpoints')?probeSweepEndpoints(runtime.world.settlement.spatial,()=>runtime.world.clock.tickIndex):undefined;
+const sweepCaptureTick=Number(option('--capture-sweep-clearance','0'));
+if(!Number.isSafeInteger(sweepCaptureTick)||sweepCaptureTick<0)throw Error('--capture-sweep-clearance requires a nonnegative integer tick');
+const sweepCapture=sweepCaptureTick?captureSweepClearance(runtime.world.settlement.spatial,()=>runtime.world.clock.tickIndex,sweepCaptureTick):undefined;
+const sweepVerification=args.includes('--verify-sweep-clearance')?verifySweepClearance():undefined;
 const attackStarts=new Map<number,number>(),attackers=new Set<number>(),attacksByOwner:Record<string,number>={};
 let combatTicks=0,humanOrderMs=0;
 // Bounded query evidence for pathological routes. Opt-in: never part of the
 // unprofiled budget measurement, and never changes search limits or decisions.
-const pathQueries:{tick:number;ms:number;actor?:number;definition?:string;order?:string;start:number;goal:number;startPoint:unknown;goalPoint:unknown;blocked:number;maxCost:number|null;result:number|null;expanded:number;fallbacks:number;meshSearches:number;meshExpanded:number;meshRebuiltTiles:number}[]=[];
+const pathQueries:{tick:number;ms:number;actor?:number;definition?:string;order?:string;start:number;goal:number;startPoint:unknown;goalPoint:unknown;blocked:number;maxCost:number|null;result:number|null;expanded:number;fallbacks:number;meshSearches:number;meshExpanded:number;meshRebuiltTiles:number;meshNoCorridor:number;meshSnapRejected:number;meshRasterRejected:number;meshBudgetRejected:number}[]=[];
 const actorRoutes=new Map<number,{actor:number;calls:number;failed:number;repeatedUnchanged:number;maxStalledTicks:number;startX:number;startY:number;goalX:number;goalY:number;revision:number}>();
 const routeDemand={queries:0,failed:0,expanded:0,untrackedQueries:0};
 // Diagnostic shadow solver: compare the mesh with live traffic against the
@@ -92,6 +129,7 @@ if(args.includes('--trace-routes')){
   return route(actor,destination,avoid,maxCost);
  };
  spatial.findPath=(start,goal,blocked,maxCost=Infinity,actor)=>{
+  const rejected={meshNoCorridor:spatial.routing.meshNoCorridor,meshSnapRejected:spatial.routing.meshSnapRejected,meshRasterRejected:spatial.routing.meshRasterRejected,meshBudgetRejected:spatial.routing.meshBudgetRejected};
   const before=spatial.routing.expanded,fallbacks=spatial.routing.fallbacks,meshSearches=spatial.routing.meshSearches,meshExpanded=spatial.routing.meshExpanded,meshRebuiltTiles=spatial.routing.meshRebuiltTiles,began=performance.now();
   const result=find(start,goal,blocked,maxCost,actor),ms=performance.now()-began;
   if(blocked?.size){
@@ -108,7 +146,7 @@ if(args.includes('--trace-routes')){
   }
   if(pathQueries.length<32||ms>pathQueries.at(-1)!.ms){
    const entity=actor&&'id' in actor?actor as Entity:undefined;
-   pathQueries.push({tick:runtime.world.clock.tickIndex,ms,actor:entity?.id,definition:actor&&'definition' in actor?actor.definition:undefined,order:entity?.unit?.order?.type,start,goal,startPoint:spatial.point(start),goalPoint:spatial.point(goal),blocked:blocked?.size??0,maxCost:Number.isFinite(maxCost)?maxCost:null,result:result?.length??null,expanded:spatial.routing.expanded-before,fallbacks:spatial.routing.fallbacks-fallbacks,meshSearches:spatial.routing.meshSearches-meshSearches,meshExpanded:spatial.routing.meshExpanded-meshExpanded,meshRebuiltTiles:spatial.routing.meshRebuiltTiles-meshRebuiltTiles});
+   pathQueries.push({tick:runtime.world.clock.tickIndex,ms,actor:entity?.id,definition:actor&&'definition' in actor?actor.definition:undefined,order:entity?.unit?.order?.type,start,goal,startPoint:spatial.point(start),goalPoint:spatial.point(goal),blocked:blocked?.size??0,maxCost:Number.isFinite(maxCost)?maxCost:null,result:result?.length??null,expanded:spatial.routing.expanded-before,fallbacks:spatial.routing.fallbacks-fallbacks,meshSearches:spatial.routing.meshSearches-meshSearches,meshExpanded:spatial.routing.meshExpanded-meshExpanded,meshRebuiltTiles:spatial.routing.meshRebuiltTiles-meshRebuiltTiles,meshNoCorridor:spatial.routing.meshNoCorridor-rejected.meshNoCorridor,meshSnapRejected:spatial.routing.meshSnapRejected-rejected.meshSnapRejected,meshRasterRejected:spatial.routing.meshRasterRejected-rejected.meshRasterRejected,meshBudgetRejected:spatial.routing.meshBudgetRejected-rejected.meshBudgetRejected});
    pathQueries.sort((a,b)=>b.ms-a.ms);if(pathQueries.length>32)pathQueries.pop();
   }
   return result;
@@ -116,6 +154,8 @@ if(args.includes('--trace-routes')){
 }
 const startTick=runtime.world.clock.tickIndex,encoder=new SnapshotEncoder(),decoder=new SnapshotDecoder();
 if([...captureTicks].some(t=>t<=startTick+200||t>startTick+ticks))throw Error('--capture-ticks must fall inside the measured window, after the 200-tick warm-up');
+if(aiCaptureTick&&(aiCaptureTick<=startTick||aiCaptureTick>startTick+ticks))throw Error('--capture-ai-navigation must fall inside the run');
+if(sweepCaptureTick&&(sweepCaptureTick<=startTick||sweepCaptureTick>startTick+ticks))throw Error('--capture-sweep-clearance must fall inside the run');
 const series=new Map<string,number[]>(),detail=new Map<string,{inclusiveMs:number;selfMs:number;calls:number;activeTicks:number;maxMs:number}>();
 const sample=(key:string,ms:number)=>{let a=series.get(key);if(!a){a=[];series.set(key,a);}a.push(ms);};
 const stats=(a:number[])=>{const sorted=[...a].sort((a,b)=>a-b);return {mean:a.reduce((n,v)=>n+v,0)/a.length,p95:sorted[Math.ceil(a.length*.95)-1],p99:sorted[Math.ceil(a.length*.99)-1],max:sorted.at(-1),samples:a.length};};
@@ -200,6 +240,8 @@ for(let i=0;i<ticks;i++){
  if(fighting)combatTicks++;
  if(i>=200){
   if(threadCpuMs!==undefined){sample('Accounted thread CPU (diagnostic)',threadCpuMs);sample('Off-thread time (diagnostic)',Math.max(0,decoded-start-threadCpuMs));}
+  // Report combat separately so post-victory/idle ticks cannot dilute its tail.
+  if(fighting)sample('Active combat · accounted non-render CPU',decoded-start);
   sample('Accounted non-render CPU',decoded-start);sample('Runtime advance',advanced-start);sample('World tick',runtime.timings.simulation!);
   sample('Lockstep and runtime overhead',Math.max(0,advanced-start-runtime.timings.simulation!));
   sample('Network checksum',hashed-advanced);sample('Projection',projected-hashed);sample('Encode',encodedAt-projected);
@@ -260,16 +302,23 @@ const tailCosts=new Map<string,{selfMs:number;inclusiveMs:number}>();
 for(const tick of slowTicks)for(const row of tick.profile){const cost=tailCosts.get(row.path)??{selfMs:0,inclusiveMs:0};cost.selfMs+=row.selfMs;cost.inclusiveMs+=row.inclusiveMs;tailCosts.set(row.path,cost);}
 const tailProfile=[...tailCosts].map(([path,row])=>({path,selfMean:row.selfMs/slowTicks.length,inclusiveMean:row.inclusiveMs/slowTicks.length})).sort((a,b)=>b.selfMean-a.selfMean);
 const work=[...workTotals].map(([path,row])=>({path,...row,meanPerTick:row.total/n}));
-const report={work,...(args.includes('--trace-routes')?{actorRouteDemand:{scope:'Entire run including warm-up; same actor position, destination and static revision. Moving blockers may still differ; repetition does not prove redundancy.',actors:[...actorRoutes.values()].sort((a,b)=>b.repeatedUnchanged-a.repeatedUnchanged),capped:actorRoutes.size>=2048}}:{}),map:mapId,mapFingerprint:fingerprint(map),contentFingerprint:runtime.world.settlement.registry.fingerprint,slots:runtime.match.slots,
+const report={work,...(localTerrainProbe?{localTerrainProbe}:{}),...(args.includes('--trace-routes')?{actorRouteDemand:{scope:'Entire run including warm-up; same actor position, destination and static revision. Moving blockers may still differ; repetition does not prove redundancy.',actors:[...actorRoutes.values()].sort((a,b)=>b.repeatedUnchanged-a.repeatedUnchanged),capped:actorRoutes.size>=2048}}:{}),map:mapId,mapFingerprint:fingerprint(map),contentFingerprint:runtime.world.settlement.registry.fingerprint,slots:runtime.match.slots,
  ...(args.includes('--trace-routes')?{routeDemand:{...routeDemand,destinationCount:destinationDemand.size,
   destinations:[...destinationDemand].map(([goal,d])=>({goal,point:runtime.world.settlement.spatial.point(goal),queries:d.queries,failed:d.failed,expanded:d.expanded,ms:d.ms,
    distinctStarts:d.starts.size,distinctActors:d.actors.size,staticRevisions:d.revisions.size,distinctCountsCapped:d.distinctCountsCapped})).sort((a,b)=>b.expanded-a.expanded||a.goal-b.goal).slice(0,32)}}:{}),
- workload:assault?'Staged mixed human army attacks nearest enemy hall through production input; three real AI controllers.':'Human slot idle; three real AI controllers. Startup baseline, not a four-army human battle acceptance test.',
- engagement:{humanArmy:humanCount,humanOrderMs,humanSurvivors:assault?.units.filter(id=>(runtime.world.settlement.context.get(id)?.hp??0)>0).length,combatTicks,attackers:attackers.size,attacksByOwner},
+ aiNavigationCapture:aiCapture?{tick:aiCaptureTick,scope:'Diagnostic fixture copying perturbs timing; not budget acceptance.'}:undefined,
+ sweepClearanceCapture:sweepCapture?{tick:sweepCaptureTick,queries:sweepCapture.data.queries.length,omitted:sweepCapture.data.omitted,scope:'Diagnostic fixture copying and repeated proofs perturb timing; not budget acceptance.'}:undefined,
+ sweepClearanceVerification:sweepVerification?.data,
+ workload:battle?'Equal staged mixed armies with one hero each; human attack-moves to the enemy hall, opponent uses unchanged production AI.':assault?`Staged mixed human army attacks nearest enemy hall through production input; ${runtime.match.slots.filter(s=>s.kind==='ai').length} real AI controllers.`:resume?'Restored match; saved human orders and normal AI continue. See engagement counters for combat activity.':`Human slot idle; ${runtime.match.slots.filter(s=>s.kind==='ai').length} real AI controllers. Startup baseline, not a full-army battle acceptance test.`,
+ engagement:{humanArmy:battleCount||humanCount,...(battle?{opponentArmy:battleCount,opponentSurvivors:battle.opponent.units.filter(id=>(runtime.world.settlement.context.get(id)?.hp??0)>0).length}:{}),humanOrderMs,humanSurvivors:assault?.units.filter(id=>(runtime.world.settlement.context.get(id)?.hp??0)>0).length,combatTicks,attackers:attackers.size,attacksByOwner},
  coverage:'Runtime + periodic network checksum + production projection/encode/decode + in-process transfer clone. Excludes browser IPC, main-thread UI/input and rendering. Inclusive parents overlap children; sum self times only.',
- verifyProjection,verifyRestore,restoreChecks,details:args.includes('--details'),budgetTail,threadCpu,paceMs,cpuProfile:cpuProfile||undefined,allocationProfile:allocationProfile?{path:allocationProfile,samplingInterval:65536,includesCollected:true,scope:'After warm-up; includes timed runtime and benchmark bookkeeping. Diagnostic overhead is not acceptance timing.'}:undefined,gc,traceRoutes:args.includes('--trace-routes'),pathQueries,startTick,endTick:runtime.world.clock.tickIndex,ticks,warmupTicks:200,budgetMs:3,budgetPercentile:99,checkpointBudgetMs:.1,wallMs:performance.now()-begin,
+ verifyProjection,verifyRestore,restoreChecks,terrainReuse,sweepEndpoints,details:args.includes('--details'),budgetTail,threadCpu,paceMs,cpuProfile:cpuProfile||undefined,allocationProfile:allocationProfile?{path:allocationProfile,samplingInterval:65536,includesCollected:true,scope:'After warm-up; includes timed runtime and benchmark bookkeeping. Diagnostic overhead is not acceptance timing.'}:undefined,gc,traceRoutes:args.includes('--trace-routes'),pathQueries,startTick,endTick:runtime.world.clock.tickIndex,ticks,warmupTicks:200,budgetMs:3,budgetPercentile:99,checkpointBudgetMs:.1,wallMs:performance.now()-begin,
  runtime:{node:process.version,platform:process.platform,arch:process.arch},timings:Object.fromEntries([...series].map(([k,a])=>[k,stats(a)])),profile,tailProfile,slowTicks,capturedTicks,profileScope:captureTicks.size&&!args.includes('--details')?'Only explicitly captured ticks; profile means are diluted across the run. See capturedTicks for event costs.':'Entire run when --details is enabled',windows,
  trafficMeshProbe:trafficMeshProbe?{...trafficMeshProbe,scope:'Shadow mesh and production grid on identical live traffic requests; duplicate diagnostic work, not budget evidence. Production routes always used.'}:undefined,
  checksum:runtime.world.checksum(),fullAuditChecksum:runtime.world.checksum('full'),outcome:runtime.world.settlement.state.outcome,entities:runtime.world.settlement.state.entities.length,units:runtime.world.settlement.context.liveUnits().length,ai:runtime.world.aiSummary(),routing:runtime.world.settlement.spatial.routing};
 const save=option('--save','');if(save)writeFileSync(save,JSON.stringify(runtime.snapshotLocal()));
+if(aiCapture){writeFileSync(option('--ai-navigation-output','/tmp/ai-navigation-probe.json'),JSON.stringify(aiCapture.data));aiCapture.dispose();}
+if(meshCapture){writeFileSync(option('--mesh-conversion-output','/tmp/mesh-conversion-probe.json'),JSON.stringify(meshCapture.data));meshCapture.dispose();}
+if(sweepCapture){writeFileSync(option('--sweep-clearance-output','/tmp/sweep-clearance-probe.json'),JSON.stringify(sweepCapture.data));sweepCapture.dispose();}
+sweepVerification?.dispose();
 runtime.destroy();restored?.destroy();const path=option('--output','/tmp/match-budget.json');writeFileSync(path,JSON.stringify(report,null,2));console.log(JSON.stringify({path,total:report.timings['Accounted non-render CPU']}));

@@ -2,10 +2,9 @@ import {DoubleSide,FrontSide,InstancedBufferAttribute,InstancedMesh,Mesh,MeshBas
 import {effectTexture} from './effectTextures';
 
 /**
- * Warm-up stand-ins for effects that create materials per cue (spell layers, command rings,
- * billboard effects). three keys programs on map / side / instancing / instance colour, not on
- * colour or blending, so one mesh per combination links every variant before the match
- * starts. Without it, the first spell or mine sighting stalls the frame for 20–100 ms.
+ * Stand-ins for simple command rings and settlement billboards. Spell recipes additionally
+ * prepare their actual resources/custom materials in EffectPlayer.prepare; these generic
+ * meshes cannot cover sprite, flipbook, trail, skinned-model or soft-shape variants.
  */
 export function effectWarmModels(): {models: Object3D[]; dispose: () => void} {
   const geometry = new PlaneGeometry(1, 1), texture = effectTexture('soft'), materials: Material[] = [], models: Object3D[] = [];

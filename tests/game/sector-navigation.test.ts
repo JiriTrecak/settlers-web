@@ -75,3 +75,29 @@ it('falls back outside the preferred corridor when temporary traffic blocks its 
  expect(path.some(id=>!corridor[spatial.sectors.sector(id)])).toBe(true);
  expect(path.every(id=>!bodies.has(id)&&spatial.terrain[id]===1)).toBe(true);
 });
+
+
+it('preserves corridor choices on partial sectors when boundary traversal skips interiors',()=>{
+ for(const size of [1,17,31,33,65]){
+  const blocked=new Set<number>(),walk=(i:number)=>i>=0&&i<size*size&&!blocked.has(i),step=(_a:number,b:number)=>walk(b);
+  const optimized=new SectorNavigation(size,walk,step),reference=new SectorNavigation(size,walk,step);
+  // Original full-sector scan is the independent traversal oracle. Insertion
+  // order matters: equal-cost corridor choices must not change after an edit.
+  Object.defineProperty(reference,'boundaryNodes',{value:function*(sector:number){
+   const width=Math.ceil(size/16),sx=sector%width*16,sy=Math.floor(sector/width)*16;
+   const ex=Math.min(size,sx+16),ey=Math.min(size,sy+16);
+   for(let y=sy;y<ey;y++)for(let x=sx;x<ex;x++)if(x===sx||x===ex-1||y===sy||y===ey-1)yield y*size+x;
+  }});
+  const edits=[[],Array.from({length:size},(_,y)=>y*size+Math.floor(size/2)),[Math.floor(size/2)*size+Math.floor(size/2)]];
+  for(const cells of edits){
+   for(const cell of cells){if(blocked.has(cell))blocked.delete(cell);else blocked.add(cell);}
+   optimized.invalidate(cells);reference.invalidate(cells);optimized.prepare();reference.prepare();
+   expect(optimized.labels).toEqual(reference.labels);
+   const points=[0,size-1,Math.floor(size*size/2),size*(size-1),size*size-1];
+   for(const from of points)for(const to of points){
+    expect(optimized.connected(from,to)).toBe(reference.connected(from,to));
+    expect(optimized.corridor(from,to)).toEqual(reference.corridor(from,to));
+   }
+  }
+ }
+});

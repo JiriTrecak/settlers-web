@@ -1,3 +1,4 @@
+import type {CpuBatch} from '../../debug/cpuBudget';
 import type {Action,ServerMsg} from '../../shared';
 import type {Channel} from '../../net/channel';
 import type {ChatMessage} from '../../shared/chat/chat';
@@ -8,7 +9,7 @@ import type {Requests,WorkerInput,WorkerOutput} from './protocol';
 import {SnapshotDecoder} from './snapshots';
 
 type Port={postMessage(message:WorkerInput):void;terminate():void;onmessage:((event:MessageEvent<WorkerOutput>)=>void)|null;onerror:((event:ErrorEvent)=>void)|null;onmessageerror:((event:MessageEvent)=>void)|null};
-type Hooks={frame:(frame:RuntimeFrame)=>void;chat:(message:ChatMessage)=>void;learned:()=>void;error:(error:Error)=>void;sample:(name:string,ms:number)=>void};
+type Hooks={cpu?:{enabled():boolean;span(source:string,start:number,end:number):void;worker(batch:CpuBatch):void};frame:(frame:RuntimeFrame)=>void;chat:(message:ChatMessage)=>void;learned:()=>void;error:(error:Error)=>void;sample:(name:string,ms:number)=>void};
 /** Main-thread proxy. Rendering only reads `latest`; it never awaits a tick. */
 export class SimulationClient {
  latest:RuntimeFrame|undefined;
@@ -20,17 +21,21 @@ export class SimulationClient {
  private resetVersion=0;
  private resetWaiters:{after:number;resolve:()=>void;reject:(error:Error)=>void}[]=[];
  constructor(private readonly hooks:Hooks,private readonly channel?:Channel,private readonly port:Port=new Worker(new URL('./entry.ts',import.meta.url),{type:'module',name:'utc-simulation'})){
-  port.onmessage=e=>this.receive(e.data);
+  port.onmessage=e=>{
+   const measured=hooks.cpu?.enabled(),start=measured?performance.now():0;
+   try{this.receive(e.data);}
+   finally{if(measured)hooks.cpu!.span('Worker message receive',start,performance.now());}
+  };
   port.onerror=e=>this.fail(new Error(e.message||'Simulation worker failed'));
   port.onmessageerror=()=>this.fail(new Error('Could not decode simulation worker message'));
-  channel?.onMessage(message=>{if(this.stopped)return;if(message.type==='chat')hooks.chat(message.message);if(this.initialized)this.port.postMessage({type:'network',message});else this.networkQueue.push(message);});
+  channel?.onMessage(message=>{if(this.stopped)return;if(message.type==='chat')hooks.chat(message.message);if(this.initialized)this.post({type:'network',message});else this.networkQueue.push(message);});
  }
  request<K extends keyof Requests>(method:K,params:Requests[K]['input']):Promise<Requests[K]['output']>{
   if(this.stopped)return Promise.reject(new Error('Simulation is stopped'));
   const id=++this.nextId;
   return new Promise((resolve,reject)=>{
-   this.pending.set(id,{resolve:resolve as (v:unknown)=>void,reject});this.port.postMessage({type:'request',id,method,params});
-   if(method==='init'){this.initialized=true;for(const message of this.networkQueue)this.port.postMessage({type:'network',message});this.networkQueue=[];}
+   this.pending.set(id,{resolve:resolve as (v:unknown)=>void,reject});this.post({type:'request',id,method,params});
+   if(method==='init'){this.initialized=true;for(const message of this.networkQueue)this.post({type:'network',message});this.networkQueue=[];}
   });
  }
  async load(raw:unknown){
@@ -40,17 +45,23 @@ export class SimulationClient {
   if(this.stopped)throw Error('Simulation stopped');
   await new Promise<void>((resolve,reject)=>this.resetWaiters.push({after,resolve,reject}));
  }
- send(action:Action){if(this.stopped)return false;this.port.postMessage({type:'command',action,id:++this.nextId,sentAt:performance.timeOrigin+performance.now()});return true;}
+ send(action:Action){if(this.stopped)return false;this.post({type:'command',action,id:++this.nextId,sentAt:performance.timeOrigin+performance.now()});return true;}
+ private post(message:WorkerInput){
+  const measured=this.hooks.cpu?.enabled(),start=measured?performance.now():0;
+  try{this.port.postMessage(message);}
+  finally{if(measured)this.hooks.cpu!.span('Worker message send',start,performance.now());}
+ }
  private receive(message:WorkerOutput){
   if(this.stopped)return;
   try{
    switch(message.type){
     case 'reply':{const p=this.pending.get(message.id);this.pending.delete(message.id);if(message.error)p?.reject(new Error(message.error));else p?.resolve(message.value);break;}
     case 'frame':{
+     if(message.packet.cpu)this.hooks.cpu?.worker(message.packet.cpu);
      const start=performance.now();this.latest=this.decoder.decode(message.packet);this.receivedAt=start;
      if(message.packet.reset){this.resetVersion++;const ready=this.resetWaiters.filter(w=>w.after<this.resetVersion);this.resetWaiters=this.resetWaiters.filter(w=>w.after>=this.resetVersion);for(const w of ready)w.resolve();}
      this.hooks.sample('Worker snapshot decode',performance.now()-start);this.hooks.sample('Worker snapshot delivery',performance.timeOrigin+start-message.packet.sentAt);
-     this.hooks.frame(this.latest);this.port.postMessage({type:'ack',sequence:message.packet.sequence});
+     this.hooks.frame(this.latest);this.post({type:'ack',sequence:message.packet.sequence});
      // Inclusive JS receive cost: decode + frame hooks + acknowledgement. This
      // does not measure native deserialization before the message callback.
      this.hooks.sample('Worker snapshot receive (CPU)',performance.now()-start);break;

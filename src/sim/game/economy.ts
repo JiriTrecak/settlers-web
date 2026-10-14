@@ -264,19 +264,23 @@ export class Economy {
       for (let ring = 1; ring <= Math.ceil(this.c.def(worker).dimensions!.radius) + 2; ring++)
         candidates.push(...spatial.perimeter(target, ring).sort((a, b) =>
           distance2(a, origin) - distance2(b, origin) || a.y - b.y || a.x - b.x));
-      return spatial.routeBatch(worker, () => {
+      const from=fixed(origin);
+      let extent=0;
+      for(const p of candidates)extent=Math.max(extent,Math.abs(p.x*1000-from.x),Math.abs(p.y*1000-from.y));
+      return spatial.routeBatch(worker, () => spatial.withLocalUnitClearance(from,extent,worker.id,snapshotClear=>{
         // A work site has many equivalent endpoints. Prefer a directly reachable
         // side over a closer cell behind parked bodies. Keep the existing batched
         // router for sites that genuinely require a detour around terrain.
-        const from = fixed(origin);
+        const clear=this.c.profile.wrap('Moving-body sweep',snapshotClear);
+        const free=(p:Point)=>spatial.unitWalkable(p,worker)&&spatial.freeOnWalkable(p,worker.id,worker,snapshotClear);
         for (const p of candidates)
-          if (spatial.free(p, worker.id) && spatial.attackClear(p,target,false) &&
-              spatial.unitSegmentClear(from,fixed(p),worker.id) && spatial.clearSegment(from,fixed(p),undefined,worker) &&
+          if (free(p) && spatial.attackClear(p,target,false) &&
+              clear(from,fixed(p)) && spatial.clearSegment(from,fixed(p),undefined,worker) &&
               spatial.route(worker,p)) return p;
         for (const p of candidates)
-          if (spatial.free(p, worker.id) && spatial.attackClear(p,target,false) && spatial.route(worker,p)) return p;
+          if (free(p) && spatial.attackClear(p,target,false) && spatial.route(worker,p)) return p;
         return null;
-      });
+      }));
     }
     // Expand the existing collision-cell boundary by the actor's body. Keep
     // routeBatch's cached terrain probes; no new pathfinder or forest scan.

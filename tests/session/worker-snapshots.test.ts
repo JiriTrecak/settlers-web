@@ -178,3 +178,58 @@ it('keeps visual and private selection entity delta streams independent',()=>{
   expect(packet.selection!.patches).toEqual([{id:actor.id,set:{inventory:{amber:23}}}]);
  }finally{runtime.destroy();}
 });
+
+it('tracks pure reorders and same-count replacements without rebuilding entity baselines',()=>{
+ const runtime=setup(),encoder=new SnapshotEncoder(),decoder=new SnapshotDecoder(),base=runtime.project();
+ const actor=base.visual.settlement.entities.find(e=>e.unit)!;
+ let entities=[{...actor,id:80001},{...actor,id:80002},{...actor,id:80003}];
+ const publish=()=>{
+  const view={...base.visual,settlement:{...base.visual.settlement,entities}};
+  const frame={...base,visual:view,selection:view};
+  const {packet,transfer}=encoder.encode(frame);
+  expect(decoder.decode(structuredClone(packet,{transfer}))).toEqual(frame);
+  return packet.visual;
+ };
+ try{
+  const first=publish();expect(first.entities).toHaveLength(3);
+  expect(publish().order).toBeUndefined();
+  // Reuse/mutate the source array: the encoder's order baseline must be owned.
+  entities.reverse();
+  const reordered=publish();expect(reordered.order).toEqual(entities.map(e=>e.id));
+  expect(reordered.entities).toHaveLength(0);expect(reordered.removed).toHaveLength(0);
+  entities[1]={...actor,id:80004};
+  const replaced=publish();expect(replaced.removed).toEqual([80002]);
+  expect(replaced.entities.map(e=>e.id)).toEqual([80004]);
+  entities=[];expect(publish().removed.sort()).toEqual([80001,80003,80004]);
+  expect(publish().order).toBeUndefined();
+  entities=[{...actor,id:80002}];expect(publish().entities).toHaveLength(1);
+  encoder.reset();expect(publish().entities).toHaveLength(1);
+ }finally{runtime.destroy();}
+});
+
+it('patches an owned fog baseline across sparse and dense updates without retaining transferred buffers',()=>{
+ const runtime=setup(),encoder=new SnapshotEncoder(),decoder=new SnapshotDecoder(),base=runtime.project();
+ const cells=new Uint8Array(4096),floor=new Uint8Array(4100);let revision=0;
+ const publish=()=>{
+  const fog={owner:0,revision:++revision,cells,floors:{cells:floor,decks:[{cell:4,height:6}]}};
+  const view={...base.visual,settlement:{...base.visual.settlement,fog}};
+  const frame={...base,visual:view,selection:view},{packet,transfer}=encoder.encode(frame);
+  const received=structuredClone(packet,{transfer});
+  expect(transfer.every(buffer=>buffer.byteLength===0)).toBe(true);
+  expect(decoder.decode(received)).toEqual(frame);
+  expect(cells.byteLength).toBe(4096);expect(floor.byteLength).toBe(4100);
+  return received.visual.fog!;
+ };
+ try{
+  expect(publish().cells).toHaveProperty('full');
+  for(let i=0;i<25;i++){
+   cells[i]=2;floor[4096+i%4]=i%3;
+   const packet=publish();expect(packet.cells).toHaveProperty('changes');
+   cells[i]=0;publish();
+  }
+  cells.fill(1);floor.fill(2);expect(publish().cells).toHaveProperty('full');
+  cells[6]=0;floor[4098]=0;
+  expect(publish().cells).toEqual({changes:new Uint32Array([6*4])});
+  expect(publish().cells).toEqual({changes:new Uint32Array()});
+ }finally{runtime.destroy();}
+});

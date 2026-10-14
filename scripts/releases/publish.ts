@@ -6,6 +6,8 @@ import {resolve,dirname,join} from 'node:path';
 import {parseArgs} from 'node:util';
 import {createHash,randomUUID} from 'node:crypto';
 import {artifactSchema,digestFile,verifySignature} from './artifacts.ts';
+import {multipartUpload} from './multipart.ts';
+import {rangedDigest} from './rangedDigest.ts';
 import {compareVersions,releaseNotes,releaseLog} from '../../src/shared/release/schema.ts';
 const {values}=parseArgs({options:{artifact:{type:'string'},apply:{type:'boolean',default:false},profile:{type:'string'}}});
 if(!values.artifact)throw Error('Use --artifact build/releases/VERSION/PLATFORM/artifact.json [--apply]');
@@ -36,10 +38,25 @@ async function read(key:string):Promise<any|null>{
 }
 async function jsonFile(name:string,value:unknown){const file=join(temp,name);await writeFile(file,JSON.stringify(value,null,2)+'\n');return file;}
 async function immutable(key:string,file:string,type:string){
- const expected=(await digestFile(file)).sha256;
- try{await put(key,file,type,true,true);}catch(e){if(!/PreconditionFailed/.test(String((e as any).stderr)))throw e;}
- const copy=join(temp,randomUUID());aws(['s3api','get-object','--bucket',bucket,'--key',key,copy]);
- if((await digestFile(copy)).sha256!==expected)throw Error(`Immutable release file conflict: ${key}. Use a new release version.`);
+ const digest=await digestFile(file),expected=digest.sha256;
+ let exists=false;
+ try{
+  const head=JSON.parse(aws(['s3api','head-object','--bucket',bucket,'--key',key]));exists=true;
+  if(head.ContentLength!==digest.bytes)throw Error(`Immutable release file conflict: ${key}. Use a new release version.`);
+ }
+ catch(e){if(!/\(404\)|Not Found|NoSuchKey/.test(String((e as any).stderr)))throw e;}
+ try{
+  if(!exists){
+   if(digest.bytes>64*1024*1024)await multipartUpload(aws,bucket,key,file,type,temp);
+   else await put(key,file,type,true,true);
+  }
+ }catch(e){if(!/PreconditionFailed/.test(String((e as any).stderr)))throw e;}
+ const copy=join(temp,randomUUID());
+ const storedHash=await rangedDigest(digest.bytes,async(start,end)=>{
+  aws(['s3api','get-object','--bucket',bucket,'--key',key,'--range',`bytes=${start}-${end}`,copy]);
+  return readFile(copy);
+ },digest.bytes>64*1024*1024?p=>console.log(`Stored package verified ${p}%…`):undefined);
+ if(storedHash!==expected)throw Error(`Immutable release file conflict: ${key}. Use a new release version.`);
 }
 try{
  await put('publishing.lock',await jsonFile('lock.json',{id:randomUUID(),version:artifact.version,startedAt:new Date().toISOString()}),'application/json',false,true);locked=true;
@@ -61,9 +78,12 @@ try{
  await immutable(`${prefix}/${artifact.platform}.json`,file,'application/json');
  // Confirm the exact package is delivered by the public CDN before advertising it.
  console.log('Verifying the public CDN download…');
- const response=await fetch(platform.url,{signal:AbortSignal.timeout(180000)});if(!response.ok||!response.body)throw Error('Public package is not available: '+response.status);
- const publicHash=createHash('sha256');for await(const chunk of response.body as any)publicHash.update(chunk);
- if(publicHash.digest('hex')!==artifact.sha256)throw Error('Public package hash mismatch');
+ const publicHash=await rangedDigest(artifact.bytes,async(start,end)=>{
+  const response=await fetch(platform.url,{headers:{Range:`bytes=${start}-${end}`},signal:AbortSignal.timeout(120000)});
+  if(response.status!==206||response.headers.get('content-range')!==`bytes ${start}-${end}/${artifact.bytes}`)throw Error('Invalid public package range: '+response.status);
+  return new Uint8Array(await response.arrayBuffer());
+ },p=>console.log(`Public download verified ${p}%…`));
+ if(publicHash!==artifact.sha256)throw Error('Public package hash mismatch');
  const entry={version:artifact.version,title:artifact.changelog.title,publishedAt:artifact.changelog.publishedAt,url:`releases/${artifact.version}/changelog.json`};
  const index=await read('updates/changelog.json')??{schemaVersion:1,releases:[]};
  index.releases=[...index.releases.filter((r:any)=>r.version!==entry.version),entry].sort((a:any,b:any)=>compareVersions(b.version,a.version));

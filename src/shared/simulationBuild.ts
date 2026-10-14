@@ -1,1 +1,1 @@
-export const SIMULATION_BUILD = "declarative-sim-115";
+export const SIMULATION_BUILD = "declarative-sim-120";

@@ -49,7 +49,7 @@ export class SpellWeaponCasts {
   const order=e.abilities?.weaponOrder,extras:AttackGrant[]=[];
   const bindings=this.c.def(e).behaviors.abilities?.bindings??[];
   for(const b of bindings){
-   const a=this.c.registry.abilityLibrary.abilities.find(a=>a.id===b.ability),rank=e.abilities?.ranks[b.id]??0;
+   const a=this.c.registry.findAbility(b.ability),rank=e.abilities?.ranks[b.id]??0;
    if(!a?.weaponCast||!rank)continue;
    if(order?order.binding!==b.id:!b.controls.includes('ai')||!a.autocast||!(e.abilities?.autocast?.[b.id]??a.autocast.enabledByDefault))continue;
    if(!this.game.abilities.reason(e.id,b.id,target.id,order?b.controls[0]:'ai'))extras.push(this.grant(a,rank));
@@ -57,7 +57,7 @@ export class SpellWeaponCasts {
   if(order&&(target.id!==order.target||!extras.length)){this.cancel(e,'Weapon ability could not release');return false;}
   const grant=enhanceWeapon(e,target,this.c.registry,this.c.state.tick,projectile,extras,!!order);
   if(!grant)return;
-  const spell=this.c.registry.abilityLibrary.abilities.find(a=>a.id===grant.ability)!;
+  const spell=this.c.registry.findAbility(grant.ability)!;
   const cast=order?.id??this.c.state.nextCast++;
   if(spell.weaponCast){
    e.abilities!.cooldowns[spell.id]=this.c.state.tick+Math.round(value(spell.cast.cooldown.ticks,spell.ranks[grant.rank-1])*(1000-this.c.stats(e).cooldownReductionPermille)/1000);

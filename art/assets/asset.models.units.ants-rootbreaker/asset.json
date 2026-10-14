@@ -3,7 +3,7 @@
   "id": "asset.models.units.ants-rootbreaker",
   "name": "Ant Rootbreaker",
   "kind": "unit",
-  "revision": 4,
+  "revision": 5,
   "status": "published",
   "tags": [
     "ants",
@@ -30,8 +30,8 @@
       "role": "geometry",
       "index": 1,
       "format": "glb",
-      "sha256": "8a82f847d8db4ec85583416c762df7df36ef3ce37f63a51ffc734d5a12a3b97f",
-      "bytes": 4377148
+      "sha256": "ae895825673ac5e7a4d7b00e28f150ea1590da5863a1c33396f8524d8cac733e",
+      "bytes": 4377156
     },
     {
       "role": "image",
@@ -65,8 +65,8 @@
       "role": "recipe",
       "index": 2,
       "format": "py",
-      "sha256": "4c5e58cfcab2e49f5c302e17e71ff1ba6f1265ba7c6a15b0e179614a5e76c76a",
-      "bytes": 7021
+      "sha256": "376d0c687c2bb19996aa1407bd77857e518eaf11b342f2419763db0f6789c1e7",
+      "bytes": 7076
     },
     {
       "role": "recipe",
@@ -170,7 +170,7 @@
       "role": "source",
       "index": 1,
       "format": "blend",
-      "sha256": "645367f1a553c6279e41dbec69edfefcc58aef0c25e74c8650074b3548d2e548",
+      "sha256": "369a932adc75f0ff1775c8a77965bce12ceac1989304de6b964c7890f3f0924d",
       "bytes": 57190638
     }
   ],

@@ -1,3 +1,4 @@
+import {ownershipTexturePlugin} from '../loading/ownershipTextures';
 import {resolveEffectSocket} from '../abilities/effectSocket';
 import {attackPhase} from '../characters/attackPhase';
 import type {AntState} from '../characters/character-player';
@@ -227,8 +228,8 @@ export class SettlementLayer {
   private pendingPreview: (() => void) | null = null;
   private readonly modelLoads=new Map<string,Promise<GLTF>>();
   private readonly bindingLoads=new Map<string,Promise<void>>();
-  private readonly modelLoader=new GLTFLoader();
-  get ready():Promise<void>{return Promise.all([this.harvestTrees.ready,this.projectiles.ready,this.shells.ready,...this.bindingLoads.values()]).then(()=>{});}
+  private readonly modelLoader=new GLTFLoader().register(ownershipTexturePlugin);
+  get ready():Promise<void>{return Promise.all([this.harvestTrees.ready,this.projectiles.ready,this.shells.ready,this.abilityEffects.ready(),this.constructionEffects.ready(),...this.bindingLoads.values()]).then(()=>{});}
   constructor(scene: Scene, private readonly registry:ContentRegistry=content) {
     for(const race of Object.values(registry.rules.races))if(race.construction){
       if(!coreEffects.some(e=>e.id===race.construction!.dustEffect))throw Error(`Unknown construction effect: ${race.construction.dustEffect}`);
@@ -358,6 +359,11 @@ export class SettlementLayer {
    * Factions come from the entities seen at start; neutral camps/mines and items are shared.
    */
   preloadRoster() {
+    // The published catalogue includes AI/neutral/item spells and future summons.
+    // Prepare linked VFX before play, rather than just currently visible abilities.
+    const ids=new Set(this.registry.abilityLibrary.presentations.flatMap(p=>p.effects.map(b=>b.effect)));
+    void this.abilityEffects.prepare(coreEffects.filter(e=>ids.has(e.id))).catch(()=>{});
+    void this.constructionEffects.prepare(coreEffects.filter(e=>[...this.constructionStyles.values()].some(s=>s.dustEffect===e.id))).catch(()=>{});
     for(const style of this.constructionStyles.values())this.requestModel(style.scaffold);
     const factions = new Set(["neutral", ...this.modelEntities.map((e) => e.definition.split(".")[1]!)]);
     for (const d of this.registry.definitions)
@@ -372,6 +378,7 @@ export class SettlementLayer {
     if (this.warmModels.length) return this.warmModels;
     const circle=this.circles.warmModel();this.warmModels.push(circle);this.warmDisposers.push(()=>circle.geometry.dispose());
     for (const model of this.harvestTrees.prepareModels()) this.warmModels.push(model);
+    this.warmModels.push(...this.abilityEffects.preparedModelsForWarmup(),...this.constructionEffects.preparedModelsForWarmup(),...this.shells.preparedModels());
     const effects = effectWarmModels();
     this.warmModels.push(...effects.models); this.warmDisposers.push(effects.dispose);
     this.warmModels.push(...this.crowd.warmModels());
@@ -573,6 +580,7 @@ export class SettlementLayer {
     const heldHealth = this.healthKeys.active();
     this.commandEffects.update(now);
     const {tick: renderTick, delta: dt, smoothingDelta} = this.presentationClock.sample(tick, now, timeScale);
+    const effectsSyncTiming=perf.start();
     if(!this.abilityEffects.root.parent)this.root.add(this.abilityEffects.root);
     if(tick<this.abilityEventTick){this.abilityEffects.clear();this.abilityEventId=0;}
     this.abilityEventTick=tick;
@@ -585,6 +593,7 @@ export class SettlementLayer {
     this.abilityEffects.syncDeliveries(state.abilityDeliveries??[],id=>{const a=this.registry.abilityLibrary.abilities.find(a=>a.id===id);return this.registry.abilityLibrary.presentations.find(p=>p.id===a?.presentation);},(x,y)=>field.sample(x,y));
     this.abilityEffects.syncStatuses(state.entities,renderTick,id=>{const a=this.registry.abilityLibrary.abilities.find(a=>a.id===id);return this.registry.abilityLibrary.presentations.find(p=>p.id===a?.presentation);},(x,y)=>field.sample(x,y));
     this.abilityEffects.syncReturns(state.heroReturns??[],renderTick,id=>{const a=this.registry.abilityLibrary.abilities.find(a=>a.id===id);return this.registry.abilityLibrary.presentations.find(p=>p.id===a?.presentation);},(x,y)=>field.sample(x,y));
+    perf.end('Spell effects · events and status',effectsSyncTiming);
     this.harvestTrees.update(state.entities, field, renderTick);
     const commandedTargets = new Set(
       this.modelEntities
@@ -845,7 +854,10 @@ export class SettlementLayer {
     this.shells.update(state.shells ?? [], field, renderTick, launchPosition);
     this.constructionEffects.update(renderTick);
     this.projectiles.update(renderTick, state.missiles ?? [], field, launchPosition);
+    const effectsAnimationTiming=perf.start();
     this.abilityEffects.update(renderTick,id=>{const e=state.entities.find(e=>e.id===id);return e?{x:e.x,y:e.y,height:field.sample(e.x,e.y)+(e.elevation??0)}:undefined;},this.projectiles.effectPose,(id,name)=>{const e=byId.get(id),root=this.entities.get(id);return e&&root?.visible&&!e.remembered?resolveEffectSocket(root,this.registry.asset(e.appearance?.asset??this.registry.get(e.definition).asset).sockets,name):undefined;});
+    perf.end('Spell effects · animation',effectsAnimationTiming);
+    perf.value('Spell effect layers',this.abilityEffects.liveCues);
     perf.end('Projectiles / shell effects',projectileTiming);
     for (const [id, o] of this.entities)
       if (!seen.has(id)) {

@@ -228,12 +228,24 @@ export class GroundMeshQuery {
   }
   return undefined;
  }
- computePath(start:P,goal:P){
+ computePath(start:P,goal:P){return this.computePathWithEndpointPadding(start,goal,0);}
+ /** Optional padding only attaches endpoints to the conservative mesh. It does
+  * not move either endpoint or prove physical clearance; callers using it must
+  * validate the entire returned polyline against their collision geometry. */
+ computePathWithEndpointPadding(start:P,goal:P,endpointPadding:number){
   // Do not retain retired tiles through old predecessor chains after edits.
   for(const node of this.touched){node.previous=undefined;node.previousPortal=undefined;}
   this.touched=[];
   this.lastExpanded=0;
-  const from=this.locate(start),to=this.locate(goal),heap=this.frontier;heap.reset();
+  const endpoint=(p:P)=>{
+   const exact=this.locate(p);if(exact||endpointPadding<=0)return exact;
+   for(const dz of [-endpointPadding,0,endpointPadding])for(const dx of [-endpointPadding,0,endpointPadding]){
+    if(!dx&&!dz)continue;
+    const nearby=this.locate({x:p.x+dx,z:p.z+dz});if(nearby)return nearby;
+   }
+   return undefined;
+  };
+  const from=endpoint(start),to=endpoint(goal),heap=this.frontier;heap.reset();
   const failure=(name:string)=>({success:false,error:{name},path:[] as {x:number;y:number;z:number}[]});
   if(!from||!to)return failure('endpoint-outside-mesh');
   if(from.region!.component!==to.region!.component)return failure('disconnected');

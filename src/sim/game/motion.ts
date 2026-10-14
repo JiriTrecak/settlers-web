@@ -32,6 +32,29 @@ export function clearRay(from: FixedPoint, to: FixedPoint, step: (a: number, b: 
 export function appendRayCells(from:FixedPoint,to:FixedPoint,step:(a:number,b:number)=>boolean,size:number,path:number[]):boolean {
   return clearRayCoordinates(from.x,from.y,to.x,to.y,step,size,cell=>path.push(cell));
 }
+/** Equivalent center-to-center rasterization, checking the destination end
+ * first so rejected repair candidates need not traverse their whole clear
+ * prefix. Predicates must be pure: edges retain their FORWARD direction, only
+ * evaluation order changes. Successful paths retain forward cell order.
+ * Fractional endpoints keep the original boundary/tie handling. */
+export function appendRayCellsFromEnd(from:FixedPoint,to:FixedPoint,step:(a:number,b:number)=>boolean,size:number,path:number[]):boolean {
+  if(from.x%1000||from.y%1000||to.x%1000||to.y%1000)return appendRayCells(from,to,step,size,path);
+  const x=from.x/1000,y=from.y/1000,tx=to.x/1000,ty=to.y/1000;
+  if(Math.min(x,y,tx,ty)<0||Math.max(x,y,tx,ty)>=size)return false;
+  // Forward DDA tests its origin, not a separate stationary destination. The
+  // reverse traversal must preserve that distinction for directed predicates.
+  if(!step(y*size+x,y*size+x))return false;
+  const offset=path.length;
+  if(!clearRayCoordinates(to.x,to.y,from.x,from.y,(a,b)=>a===b||step(b,a),size,cell=>path.push(cell)))return false;
+  if(path.length>offset){
+    path.pop(); // Reverse DDA emitted the origin rather than the destination.
+    for(let left=offset,right=path.length-1;left<right;left++,right--){
+      const cell=path[left]!;path[left]=path[right]!;path[right]=cell;
+    }
+    path.push(ty*size+tx);
+  }
+  return true;
+}
 function clearRayCoordinates(fromX:number,fromY:number,toX:number,toY:number,step:(a:number,b:number)=>boolean,size:number,visit?:(cell:number)=>void):boolean {
   const dx = toX - fromX, dy = toY - fromY;
   const ax = Math.abs(dx), ay = Math.abs(dy), sx = Math.sign(dx), sy = Math.sign(dy);

@@ -1,11 +1,12 @@
 import {TimingWindow} from './timingWindow';
 import type {DrawCensus} from './drawCensus';
 import {shortcuts,inputCaptured} from '../shared/input/shortcuts';
+import {CpuBudgetCapture,type CpuBatch} from './cpuBudget';
 type TraceEvent={name:string;cat:string;ph:'X'|'C';pid:number;tid:number;ts:number;dur?:number;args?:Record<string,number>};
 const MAX_TRACE_EVENTS=64000;
 const FRAME_BUDGET_MS=1000/120;
 export type ScopeMeasurement={name:string;totalMs:number;maxMs:number;count:number};
-export type PerformanceReport={sampling:{simulationDetails:boolean;quiet:boolean;trace:boolean};series:Record<string,number[]>;frameBudget:{targetMs:number;samples:number;overBudget:number;overBudgetPercent:number;refreshMs:number;missed:number;missedPercent:number};census?:DrawCensus;shaderLinks?:Array<{atMs:number;name:string;key:string}>;note:string;values:Record<string,string|number>;timings:Record<string,ReturnType<TimingWindow['stats']>>;capturedMs?:number;spikes:Array<{atMs:number;frameMs:number;scopes:Record<string,number>}>;comparison?:Record<string,{baselineMean:number|undefined;currentMean:number;changePercent:number|null}>};
+export type PerformanceReport={cpuBudget?:ReturnType<CpuBudgetCapture['report']>;sampling:{simulationDetails:boolean;quiet:boolean;trace:boolean};series:Record<string,number[]>;frameBudget:{targetMs:number;samples:number;overBudget:number;overBudgetPercent:number;refreshMs:number;missed:number;missedPercent:number};census?:DrawCensus;shaderLinks?:Array<{atMs:number;name:string;key:string}>;note:string;values:Record<string,string|number>;timings:Record<string,ReturnType<TimingWindow['stats']>>;capturedMs?:number;spikes:Array<{atMs:number;frameMs:number;scopes:Record<string,number>}>;comparison?:Record<string,{baselineMean:number|undefined;currentMean:number;changePercent:number|null}>};
 export type MatchDebugControls = {
   reveal: boolean;
   speed: number;
@@ -52,6 +53,23 @@ export class PerformanceDebug {
 
   private rows = new Map<string, TimingWindow>();
   private recording:Map<string,TimingWindow>|null=null;
+  private cpuCapture:CpuBudgetCapture|null=null;
+  get measuringCpu(){return this.enabled&&!!this.recording;}
+  cpuSpan(source:string,start:number,end=performance.now()){
+    if(this.measuringCpu)this.cpuCapture?.add('browser',{source,start:performance.timeOrigin+start,end:performance.timeOrigin+end});
+  }
+  /** Measure synchronous callback work, including early returns and throws.
+   * Preserve the receiver/return value; asynchronous continuations need their
+   * own roots. Nested callbacks are unioned by CpuBudgetCapture. */
+  cpuCallback<A extends unknown[],R>(source:string,work:(...args:A)=>R):(...args:A)=>R {
+    const debug=this;
+    return function(this:unknown,...args:A):R {
+      if(!debug.measuringCpu)return work.apply(this,args);
+      const start=performance.now();
+      try{return work.apply(this,args);}finally{debug.cpuSpan(source,start);}
+    };
+  }
+  workerCpu(batch:CpuBatch){if(this.measuringCpu)this.cpuCapture?.worker(batch);}
   private captureStart=0;private captureEnd=0;
   private captureOptions={quiet:false,trace:true,simulationDetails:true};
   private captureResult:PerformanceReport|null=null;
@@ -69,7 +87,7 @@ export class PerformanceDebug {
   private trace(event:TraceEvent){if(this.traceEvents.length<MAX_TRACE_EVENTS)this.traceEvents.push(event);else this.traceDropped++;}
   traceReport(){return {traceEvents:[...this.traceEvents],displayTimeUnit:'ms',otherData:{droppedEvents:this.traceDropped,note:'CPU scopes are measured spans and may nest. Counters are sampled results at delivery time, not execution spans; GPU results arrive asynchronously.'}};}
   setBaseline(){this.baseline=this.captureResult??this.report();}
-  capture(options:{quiet?:boolean;trace?:boolean}={}){this.captureOptions={quiet:options.quiet??false,trace:options.trace??true,simulationDetails:this.detailedSimulation};this.traceEvents=[];this.traceDropped=0;this.recording=new Map();this.captureStart=performance.now();this.captureEnd=this.captureStart+10000;this.spikes=[];this.captureResult=null;}
+  capture(options:{quiet?:boolean;trace?:boolean}={}){this.captureOptions={quiet:options.quiet??false,trace:options.trace??true,simulationDetails:this.detailedSimulation};this.traceEvents=[];this.traceDropped=0;this.recording=new Map();this.captureStart=performance.now();this.captureEnd=this.captureStart+10000;this.cpuCapture=new CpuBudgetCapture(performance.timeOrigin+this.captureStart,performance.timeOrigin+this.captureEnd);this.spikes=[];this.captureResult=null;}
   private snapshot(rows:Map<string,TimingWindow>){return Object.fromEntries([...rows].map(([k,v])=>[k,v.stats()]));}
   private values: Record<string, string | number> = {};
   private presentationToggle:(()=>void)|undefined;
@@ -118,14 +136,14 @@ export class PerformanceDebug {
     if (this.refs===0 || --this.refs > 0) return;
     window.removeEventListener("keydown", this.key);
     this.rows.clear();
-    this.recording=null;this.captureResult=null;this.baseline=null;this.latest={};this.spikes=[];this.traceEvents=[];
+    this.recording=null;this.cpuCapture=null;this.captureResult=null;this.baseline=null;this.latest={};this.spikes=[];this.traceEvents=[];
     this.values = {};
     this.lastFrame = 0;
   }
   toggle() {
     this.enabled = !this.enabled;
     this.rows.clear();
-    this.recording=null;this.latest={};this.spikes=[];
+    this.recording=null;this.cpuCapture=null;this.latest={};this.spikes=[];
     this.lastFrame = 0;
     try {
       localStorage.setItem("utc.debug.performance", String(this.enabled));
@@ -169,6 +187,7 @@ export class PerformanceDebug {
     // real hitches are counted against the median interval (the display's refresh period).
     const refreshMs=[...frames].sort((a,b)=>a-b)[frames.length>>1]??FRAME_BUDGET_MS,missed=frames.filter(ms=>ms>refreshMs*1.5).length;
     return {
+      cpuBudget:this.recording?this.cpuCapture?.report(performance.timeOrigin+performance.now()):undefined,
       sampling:this.recording?{...this.captureOptions}:{simulationDetails:this.detailedSimulation,quiet:false,trace:false},
       series:Object.fromEntries(['Frame interval','App frame total (CPU)','GPU frame'].map(name=>[name,(this.recording??this.rows).get(name)?.values().slice(-120)??[]])),
       frameBudget:{targetMs:FRAME_BUDGET_MS,samples:frames.length,overBudget,overBudgetPercent:frames.length?100*overBudget/frames.length:0,refreshMs,missed,missedPercent:frames.length?100*missed/frames.length:0},

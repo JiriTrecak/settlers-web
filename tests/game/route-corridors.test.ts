@@ -29,7 +29,8 @@ function scenario(){
  const g=game(),e=worker(g),sp=g.spatial,destination={x:220,y:200};
  e.x=20;e.y=21;e.unit!.position={x:20006,y:20869};
  e.unit!.order={type:'move',destination,attackMove:false};
- for(let y=0;y<=180;y++)sp.occupied[y*sp.size+105]=999;
+ for(let y=0;y<=180;y++)sp.terrain[y*sp.size+105]=0;
+ sp.rebuild();
  return {g,e,sp,destination};
 }
 
@@ -48,12 +49,13 @@ it('reuses an actual obstacle corridor only within the pass, including exception
 });
 
 it('does not reuse terrain-only corridors for traffic avoidance, cost budgets or a blocked destination',()=>{
- const {e,sp,destination}=scenario(),search=vi.spyOn(sp,'findPath');
+ const {g,e,sp,destination}=scenario(),search=vi.spyOn(sp,'findPath');
  sp.sharedRoutes(()=>{
   expect(sp.route(e,destination,false)).toBe(true);
   search.mockClear();sp.route(e,destination,true);expect(search).toHaveBeenCalled();
   search.mockClear();sp.route(e,destination,false,1000);expect(search).toHaveBeenCalled();
-  sp.occupied[sp.cell(destination)]=999;
+  const obstacle=g.context.create(placed('destination-blocker','building.ants.house',destination.x,destination.y));
+  sp.appendOccupancy(obstacle);
   expect(sp.route(e,destination,false)).toBe(false);
  });
 });

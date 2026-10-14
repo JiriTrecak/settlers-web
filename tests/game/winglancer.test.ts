@@ -7,7 +7,9 @@ it('flies over blocked terrain and ground occupancy, retains native flight after
  const g=game([placed('flyer','unit.ants.winglancer',100,100),{...placed('enemy','unit.ants.warrior',106,100),owner:'player.2'}, {...placed('ranged','unit.ants.archer',109,100),owner:'player.2'}]);
  const a=g.entities.find(e=>e.placement==='flyer')!,b=g.entities.find(e=>e.placement==='enemy')!,archer=g.entities.find(e=>e.placement==='ranged')!;
  expect(a.unit!.flight).toEqual({height:3});
- const s=g.spatial;for(let y=0;y<s.size;y++){s.occupied[y*s.size+103]=999;s.heights[y*s.size+103]=5000;}
+ const s=g.spatial,wall=g.context.create(placed('wall','building.ants.house',104,100));
+ for(let y=0;y<s.size;y++){s.terrain[y*s.size+103]=0;s.heights[y*s.size+103]=5000;}
+ s.rebuild();expect(s.occupied[s.cell(wall)]).toBe(wall.id);
  expect(s.clearSegment(fixed(a),fixed({x:112,y:100}),undefined,b)).toBe(false);
  expect(s.route(a,{x:112,y:100})).toBe(true);
  expect(g.command('player.2',{type:'attack',actors:[b.id],target:a.id}).accepted).toBe(false);

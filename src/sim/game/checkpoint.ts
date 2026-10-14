@@ -65,7 +65,8 @@ export function gameplayCheckpoint(s:GameState,actors:readonly Entity[]):number 
     h.integer(u?.target);h.integer(u?.goal);h.integer(u?.cooldown);h.integer(u?.contained);
     h.integer(u?.cargo?.amount);h.text(u?.cargo?.item);h.integer(u?.orderQueue.length);
     h.text(order?.type);
-    h.integer(order&&'target' in order?order.target:null);
+    h.integer(order&&'target' in order&&typeof order.target==='number'?order.target:null);
+    if(order?.type==='castAbility'){h.text(order.binding);h.text(order.owner);h.text(order.control);h.text(order.target.kind);if(order.target.kind==='unit')h.integer(order.target.entity);else{h.integer(order.target.position.x);h.integer(order.target.position.y);h.text(order.target.position.surface);}}
     h.integer(order&&'destination' in order?order.destination.x:null);
     h.integer(order&&'destination' in order?order.destination.y:null);
     h.integer(p?.queue.length);h.integer(p?.queue[0]?.id);h.text(p?.queue[0]?.definition);

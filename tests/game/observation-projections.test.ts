@@ -1,5 +1,17 @@
 import {expect,it} from 'vitest';
 import {game,placed,worker} from './helpers';
+it('publishes one live record for visible buildings that also have remembered records',()=>{
+ const g=game([placed('scout','unit.ants.warrior',110,110),placed('hall','building.ants.fort',120,110)]);
+ const hall=g.entities.find(e=>e.placement==='hall')!;
+ // Update static memory first, then change live actor state before projection.
+ g.observation.update();hall.hp=123;
+ for(const owner of ['player.1',undefined] as const){
+  const entities=g.view(owner).entities;
+  expect(entities.filter(e=>e.id===hall.id)).toHaveLength(1);
+  expect(entities.find(e=>e.id===hall.id)).toMatchObject({hp:123});
+  expect(entities.map(e=>e.id)).toEqual([...new Set(entities.map(e=>e.id))].sort((a,b)=>a-b));
+ }
+});
 it('refreshes visible scenery when an entity is replaced without changing the static count or sensors',()=>{
  const g=game([placed('scout','unit.ants.warrior',110,110),{...placed('old','resource.forest.tree',112,110),owner:'none'}]);
  const old=g.entities.find(e=>e.placement==='old')!;

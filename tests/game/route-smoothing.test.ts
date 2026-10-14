@@ -25,7 +25,8 @@ it('only returns checked shortcuts even when visibility is not monotonic',()=>{
 it('smooths a long interrupted movement order without hundreds of long sweeps',()=>{
  const g=game(),actor=worker(g),spatial=g.spatial;
  actor.x=20;actor.y=21;actor.unit!.position={x:20006,y:20869};
- for(let y=0;y<=180;y++)spatial.occupied[y*spatial.size+105]=999;
+ for(let y=0;y<=180;y++)spatial.terrain[y*spatial.size+105]=0;
+ spatial.rebuild();
  const destination={x:220,y:200},clear=spatial.clearSegment.bind(spatial);
  let longQueries=0;
  const spy=vi.spyOn(spatial,'clearSegment').mockImplementation((from,to,...rest)=>{

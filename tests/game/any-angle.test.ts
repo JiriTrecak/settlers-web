@@ -47,7 +47,9 @@ describe('continuous arbitrary-angle movement', () => {
   });
   it('uses clear waypoints around a wall and checks the swept body on every step', () => {
     const {g, w} = setup(), spatial = g.context.spatial;
-    for (let y = 97; y <= 105; y++) spatial.occupied[cell({x: 105, y})] = 999;
+    for (let y = 97; y <= 105; y++) spatial.terrain[cell({x: 105, y})] = 0;
+    // Raw terrain edits must refresh the same navigation data as map loading.
+    spatial.rebuild();
     const destination = {x: 113, y: 102};
     expect(spatial.route(w, destination)).toBe(true);
     expect(w.unit!.route.length).toBeGreaterThan(1);

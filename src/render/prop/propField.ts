@@ -1,3 +1,4 @@
+import {ownershipTexturePlugin} from '../loading/ownershipTextures';
 import {sceneryChanges} from '../../presentation/sceneryChanges';
 import {bridgePlacementHeight} from '../../shared/map/bridgeSurface';
 import {sceneryModels} from '../../shared/assets/models';
@@ -80,7 +81,7 @@ export class PropField {
   private readonly resin=new ResinShimmerLayer();
   tick(now:number){this.wind.tick(now);this.resin.tick(now);}
   private readonly embeddedTextures=new EmbeddedTexturePool();
-  private readonly loader = new GLTFLoader().register(referenceMaterialPlugin).register(parser=>this.embeddedTextures.plugin(parser));
+  private readonly loader = new GLTFLoader().register(ownershipTexturePlugin).register(referenceMaterialPlugin).register(parser=>this.embeddedTextures.plugin(parser));
   private readonly protos = new Map<string, Promise<Object3D | null>>();
   private readonly placed = new Map<string, PlacementRoot>();
   private batches: InstancedMesh[]=[];

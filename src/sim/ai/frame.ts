@@ -6,11 +6,11 @@ import {adjacentSweep} from '../game/adjacentSweep';
 import {ObservedNavigation,type ObservedMover} from './observedNavigation';
 import {placementGeometryError} from '../../shared/spatial/placement';
 import {locomotion} from '../game/locomotion';
-import {footprintCells, footprintBounds, footprintCellBounds, navigationBodyOverlapsBounds} from '../../shared/spatial/footprint';
+import {footprintCells, footprintBounds, footprintCellBounds, navigationBodyOverlapsBounds,type Bounds} from '../../shared/spatial/footprint';
 import {formDefinition} from '../abilities/forms';
 import {SimulationProfiler} from '../profiling';
 import {PlacementSearch} from './placementSearch';
-import {resourceBlocksCell,resourceCollisionCells} from '../../shared/map/resourceClearance';
+import {resourceCollisionCells} from '../../shared/map/resourceClearance';
 import {WalkSurfaces} from '../../shared/map/walkSurfaces';
 import {MAX_GROUND_STEP_CM} from '../../shared/map/tacticalTerrain';
 import {prerequisiteReason} from "../../content/prerequisites";
@@ -51,37 +51,35 @@ export function playerObservation(
     events: [],
     abilityEvents: [],
     deaths: [],
-    entities: view.entities.map((e) =>
-      e.owner === owner
-        ? e
-        : {
-            id: e.id,
-            definition: e.definition,
-            owner: e.owner,
-            x: e.x,
-            y: e.y,
-            ...(e.surface?{surface:e.surface}:{}),
-            rotation: e.rotation,
-            hp: e.hp,
-            stats: e.stats,
-            hostile: e.hostile,
-            remembered: e.remembered,
-            construction: e.construction,
-            resource: e.resource,
-            item: e.item,
-            ...(e.unit
-              ? {
-                  unit: {
-                    moving: e.unit.moving,
-                    contained: e.unit.contained,
-                    cargo: null,
-                    target: null,
-                    cooldown: 0,
-                  },
-                }
-              : {}),
-          },
-    ),
+    entities: view.entities.map((e) => {
+      if(e.owner===owner)return e;
+      const result:EntityView = {
+        id: e.id,
+        definition: e.definition,
+        owner: e.owner,
+        x: e.x,
+        y: e.y,
+        rotation: e.rotation,
+        hp: e.hp,
+        stats: e.stats,
+        hostile: e.hostile,
+        remembered: e.remembered,
+        construction: e.construction,
+        resource: e.resource,
+        item: e.item,
+      };
+      // Keep an explicit privacy whitelist, but avoid spreading temporary
+      // objects for every remembered tree and neutral resource on each beat.
+      if(e.surface)result.surface=e.surface;
+      if(e.unit)result.unit={
+        moving: e.unit.moving,
+        contained: e.unit.contained,
+        cargo: null,
+        target: null,
+        cooldown: 0,
+      };
+      return result;
+    }),
   };
 }
 /** Static, authorized geography. Components use the same slopes/corner rules as movement. */
@@ -156,19 +154,31 @@ export class ObservedBlockers {
   private readonly records=new Map<number,BlockerRecord>();
   private readonly counts=new Map<number,number>();
   private cells=new Set<number>();
+  private readonly navigationChanges=new Set<number>();
   readonly work={checked:0,rebuilt:0,removed:0};
-  private navigation:{geo:Geography;routes:ObservedNavigation}|undefined;
+  private navigation:{geo:Geography;routes:ObservedNavigation;snapshot?:ReadonlySet<number>}|undefined;
   routes(frame:Frame){
     const blocked=frame.blocked;
     if(this.navigation?.geo!==frame.geo)this.navigation={geo:frame.geo,routes:new ObservedNavigation(frame.geo.map,frame.geo.layers,frame.profile)};
-    this.navigation.routes.update(blocked);return this.navigation.routes;
+    const current=blocked===this.cells,previous=this.navigation.snapshot;
+    this.navigation.routes.update(blocked,current&&previous?{previous,cells:this.navigationChanges}:undefined);
+    // Edits accumulate even on frames that only ask placement questions. An
+    // old retained frame may still be queried; it falls back to a full diff,
+    // and the next current frame must reestablish the delta baseline too.
+    this.navigation.snapshot=current?blocked:undefined;
+    this.navigationChanges.clear();return this.navigation.routes;
   }
   update(frame:Frame):ReadonlySet<number>{
     const seen=new Set<number>();let changed=false;
     this.work.checked=0;this.work.rebuilt=0;this.work.removed=0;
-    const ownCells=()=>{if(!changed){this.cells=new Set(this.cells);changed=true;}};
+    const ownCells=()=>{if(!changed){
+      frame.profile.count('Copied blocker cells',this.cells.size);
+      this.cells=frame.profile.measure('Blocker snapshot copy',()=>new Set(this.cells));changed=true;
+    }};
     const remove=(record:BlockerRecord)=>{
-      ownCells();for(const cell of record.cells){const n=this.counts.get(cell)!-1;if(n){this.counts.set(cell,n);}else{this.counts.delete(cell);this.cells.delete(cell);}}
+      ownCells();for(const cell of record.cells){const n=this.counts.get(cell)!-1;if(n){this.counts.set(cell,n);}else{
+        this.counts.delete(cell);this.cells.delete(cell);if(this.navigation)this.navigationChanges.add(cell);
+      }}
     };
     for(const e of frame.view.entities){
       const d=frame.def(e),building=d.kind==='building';
@@ -181,7 +191,11 @@ export class ObservedBlockers {
       const p={x,y};
       const cells=(building?footprint(d,p,e.rotation):resourceCollisionCells(p,d.footprint,radius,scale,e.rotation)).filter(q=>frame.geo.inside(q)).map(q=>frame.geo.index(q));
       this.records.set(e.id,{x:p.x,y:p.y,rotation:e.rotation,building,width,depth,radius,scale,cells});this.work.rebuilt++;
-      for(const cell of cells){this.counts.set(cell,(this.counts.get(cell)??0)+1);this.cells.add(cell);}
+      for(const cell of cells){
+        const count=this.counts.get(cell)??0;
+        this.counts.set(cell,count+1);this.cells.add(cell);
+        if(!count&&this.navigation)this.navigationChanges.add(cell);
+      }
     }
     for(const [id,record] of this.records)if(!seen.has(id)){remove(record);this.records.delete(id);this.work.removed++;}
     return this.cells;
@@ -198,6 +212,7 @@ export class Frame {
   readonly resources: EntityView[];
   readonly bank: Record<string, number> = {};
   private _blocked: ReadonlySet<number> | null = null;
+  private constructionResources?:Bounds[];
   get blocked() {
     if (!this._blocked) {
       this._blocked = this.profile.measure('Known blocker footprints',()=>this.blockers.update(this));
@@ -219,11 +234,12 @@ export class Frame {
     readonly race?:string,
   ) {
     this.placeable=this.profile.wrap('Building site checks',this.placeable.bind(this));
+    this.resourceClear=this.profile.wrap('Resource construction clearance',this.resourceClear.bind(this));
     this.doorReachable=this.profile.wrap('Building approach search',this.doorReachable.bind(this));
     this.nearestSafe=this.profile.wrap('Safe position search',this.nearestSafe.bind(this));
     this.nearestResource=this.profile.wrap('Harvest target selection',this.nearestResource.bind(this));
-    this.byId = new Map(view.entities.map((e) => [e.id, e]));
-    this.own = view.entities.filter((e) => e.owner === owner && e.hp !== 0);
+    this.byId = this.profile.measure('Entity ID index',()=>new Map(view.entities.map((e) => [e.id, e])));
+    this.own = this.profile.measure('Owned entities',()=>view.entities.filter((e) => e.owner === owner && e.hp !== 0));
     this.workers = this.own.filter(
       (e) =>
         e.control &&
@@ -253,12 +269,12 @@ export class Frame {
           homeStore.rotation,
         )
       : integerPoint(this.own[0] ?? geo.map.starts[0]!);
-    this.hostiles = view.entities.filter(
+    this.hostiles = this.profile.measure('Hostile entities',()=>view.entities.filter(
       (e) => !e.remembered && e.hostile && e.hp !== 0,
-    );
-    this.resources = view.entities.filter(
+    ));
+    this.resources = this.profile.measure('Resource entities',()=>view.entities.filter(
       (e) => e.resource && e.resource.amount > 0 && !e.resource.growingUntil,
-    );
+    ));
     // Use the same spendable balance as commands, including hall training escrow.
     for (const goods of view.goods ?? []) this.bank[goods.item] = goods.available;
   }
@@ -355,6 +371,14 @@ export class Frame {
     const movers:ObservedMover[]=actors.map(actor=>{const d=this.def(actor),body=d.dimensions??this.registry.navigationBody;
       return {...actor,radius:body.radius,height:body.height,air:locomotion(d)==='air'};});
     const routes=movers.length?this.blockers.routes(this):undefined;
+    // A ground footprint that is already obstructed cannot begin any sweep.
+    // Reject the shared impossible premise once, instead of testing thousands
+    // of destinations (and tracing their center rays) for this same actor.
+    // Layered portals have endpoint-dependent support, so retain their search.
+    if(routes&&!this.geo.layers&&movers.some(m=>!routes.fits(m,m))){
+      this.profile.count('Obstructed origin rejections');
+      return integerPoint(actors[0]!);
+    }
     const base = integerPoint(p);
     for (let r = 0; r <= (routes?24:8); r++)
       for (let y = base.y - r; y <= base.y + r; y++)
@@ -392,13 +416,10 @@ export class Frame {
       return false;
     if (!foundationTerrainFits(footprintCellBounds(p,d.footprint,r),(x,y)=>heights[y*this.geo.map.size+x]!)) return false;
     const bounds = footprintBounds(p, d.footprint, r);
-    if (this.view.entities.some(e => e.unit && !e.unit.contained && !e.remembered &&
+    if (this.profile.measure('Visible unit clearance',()=>this.view.entities.some(e => e.unit && !e.unit.contained && !e.remembered &&
       locomotion(this.def(e)) === 'ground' &&
-      navigationBodyOverlapsBounds(e, this.def(e).dimensions!.radius, bounds))) return false;
-    for (const res of this.resources) {
-      const definition=this.def(res),clearance=definition.constructionClearance;
-      if(clearance!==undefined&&cells.some(q=>resourceBlocksCell(q,res,definition.footprint,clearance,res.rotation)))return false;
-    }
+      navigationBodyOverlapsBounds(e, this.def(e).dimensions!.radius, bounds)))) return false;
+    if(!this.resourceClear(footprintCellBounds(p,d.footprint,r)))return false;
     // Preserve a lane for the largest trainable ground body, including units
     // unlocked by future upgrades. Compare rectangles rather than every pair
     // of occupied cells for every candidate.
@@ -419,13 +440,42 @@ export class Frame {
     const approach = d.placementNear ? this.nearestSafe({x:p.x,y:p.y+12}) : this.home;
     return this.doorReachable(cells,approach,door,!!d.placementNear);
   }
+  private resourceClear(candidate:Bounds):boolean {
+    // A Frame is one authorized observation. Resolve its resource buffers only
+    // when placement needs them; no geometry survives into the next observation.
+    this.constructionResources??=this.resources.flatMap(res=>{
+      const d=this.def(res),padding=d.constructionClearance;if(padding===undefined)return [];
+      const b=footprintCellBounds(res,d.footprint,res.rotation);
+      return [{minX:b.minX-padding,minY:b.minY-padding,maxX:b.maxX+padding,maxY:b.maxY+padding}];
+    });
+    // footprint() is the complete inclusive integer rectangle. Intersection
+    // gives exactly the former any-cell answer, including touching boundaries.
+    return !this.constructionResources.some(b=>candidate.minX<=b.maxX&&candidate.maxX>=b.minX&&
+      candidate.minY<=b.maxY&&candidate.maxY>=b.minY);
+  }
   private doorReachable(cells:Point[],approach:Point,door:Point,outpost:boolean){
     const map=this.geo.map,body=this.baseBody(),proposed=new Set(cells.map(q=>this.geo.index(q)));
+    const routes=this.geo.layers?undefined:this.blockers.routes(this),radius=Math.round(body.radius*1000);
+    const minX=Math.min(...cells.map(p=>p.x))-.5,maxX=Math.max(...cells.map(p=>p.x))+.5;
+    const minY=Math.min(...cells.map(p=>p.y))-.5,maxY=Math.max(...cells.map(p=>p.y))+.5;
     const baseStep=(a:number,b:number)=>!!map.land[b]&&!this.blocked.has(b)&&Math.abs(map.heights[a]!-map.heights[b]!)<=MAX_GROUND_STEP_CM;
     const sweep=(extra:ReadonlySet<number>)=>this.geo.layers?
       (a:number,b:number)=>clearLayeredSweep(this.geo.layers!,fixed({x:a%map.size,y:Math.floor(a/map.size)}),fixed({x:b%map.size,y:Math.floor(b/map.size)}),body.height,Math.round(body.radius*1000),id=>this.geo.layers!.walkable(id)&&!this.blocked.has(id)&&!extra.has(id)):
-      adjacentSweep(map.size,Math.round(body.radius*1000),(a,b)=>baseStep(a,b)&&!extra.has(b));
-    const current=sweep(new Set()),after=sweep(proposed);
+      adjacentSweep(map.size,Math.round(body.radius*1000),(a,b)=>baseStep(a,b)&&!extra.has(b),this.profile);
+    const certified=(exact:(a:number,b:number)=>boolean,overlay:boolean)=>(a:number,b:number)=>{
+      if(routes){
+        const ax=a%map.size,ay=Math.floor(a/map.size),bx=b%map.size,by=Math.floor(b/map.size),r=radius/1000;
+        // The hypothetical building affects only its local footprint. A proof
+        // against known terrain is valid only when the swept body misses it.
+        const outside=!overlay||Math.max(ax,bx)+r<minX||Math.min(ax,bx)-r>maxX||
+          Math.max(ay,by)+r<minY||Math.min(ay,by)-r>maxY;
+        if(outside&&routes.provesGroundSweep({x:ax*1000,y:ay*1000},{x:bx*1000,y:by*1000},radius)){
+          this.profile.count('Placement sweeps certified clear');return true;
+        }
+      }
+      this.profile.count('Placement sweeps requiring exact checks');return exact(a,b);
+    };
+    const current=certified(sweep(new Set()),false),after=certified(sweep(proposed),true);
     const nearby=(p:Point,radius:number)=>{
       const points:Point[]=[];const center=integerPoint(p);
       for(let y=-radius;y<=radius;y++)for(let x=-radius;x<=radius;x++){
@@ -436,11 +486,11 @@ export class Frame {
     // The rendered entrance sits just outside the footprint. A body must stand
     // farther out; neither the old doorway cell nor the Hall center is a legal
     // origin for this test.
-    const origin=nearby(approach,8).find(p=>current(this.geo.index(p),this.geo.index(p)));
+    const origin=this.profile.measure('Origin clearance',()=>nearby(approach,8).find(p=>current(this.geo.index(p),this.geo.index(p))));
     if(!origin||!after(this.geo.index(origin),this.geo.index(origin)))return false;
-    const goals=new Set(nearby(door,Math.ceil(body.radius)+2).filter(p=>after(this.geo.index(p),this.geo.index(p))).map(p=>this.geo.index(p)));
+    const goals=this.profile.measure('Entrance clearance',()=>new Set(nearby(door,Math.ceil(body.radius)+2).filter(p=>after(this.geo.index(p),this.geo.index(p))).map(p=>this.geo.index(p))));
     if(!goals.size)return false;
-    return this.geo.placementSearch.reachable(map,this.blocked,proposed,origin,door,outpost?32:60,this.profile,{step:after,goals});
+    return this.profile.measure('Approach flood',()=>this.geo.placementSearch.reachable(map,this.blocked,proposed,origin,door,outpost?32:60,this.profile,{step:after,goals}));
 
   }
 }

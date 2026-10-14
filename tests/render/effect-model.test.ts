@@ -68,3 +68,11 @@ it('flies model missiles on an authored arc and shares external poses without an
   player.update(20);expect(model.position.toArray()).toEqual([5,5,0]);player.update(40);expect(player.liveCues).toBe(0);
  }finally{player.dispose();}
 });
+it('keeps prepared model sources ready without spending the live instance budget',async()=>{
+ const loader=vi.fn(async()=>source()),pool=new EffectModels(loader);
+ try{
+  const warm=pool.warm(ref)!;await warm.ready;
+  const active=Array.from({length:16},()=>pool.create(ref));expect(active.every(Boolean)).toBe(true);await pool.ready();expect(loader).toHaveBeenCalledTimes(1);
+  for(const handle of active)handle!.dispose();expect(pool.create(ref)).toBeDefined();expect(loader).toHaveBeenCalledTimes(1);
+ }finally{pool.dispose();}
+});

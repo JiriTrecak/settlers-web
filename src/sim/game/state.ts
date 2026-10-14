@@ -18,6 +18,7 @@ const positive = z.number().int().positive(),
 const point = pointSchema;
 export const MAX_QUEUED_ORDERS = 16;
 export const orderSchema = z.discriminatedUnion("type", [
+  z.object({type:z.literal("castAbility"),binding:idSchema,owner:ownerSchema,control:z.enum(["player","ai","scenario"]),target:z.discriminatedUnion("kind",[z.object({kind:z.literal("unit"),entity:positive}).strict(),z.object({kind:z.literal("point"),position:point}).strict()])}).strict(),
   z.object({type:z.literal("garrison"),target:positive}).strict(),
   z.object({type:z.literal("hold")}).strict(),
   z.object({type:z.literal("patrol"),destination:point,origin:point.optional()}).strict(),

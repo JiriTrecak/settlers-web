@@ -107,7 +107,10 @@ export class World {
             slot.race,
           ),
         );
-      for(const brain of this.brains.values())brain.prepareNavigation(this.settlement.view(brain.owner));
+      for(const brain of this.brains.values()){
+        brain.profile=this.settlement.context.profile;
+        brain.prepareNavigation(this.settlement.view(brain.owner));
+      }
     }
   }
 

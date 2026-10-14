@@ -1,4 +1,5 @@
 import {clearSweep} from './motion';
+import type {SimulationProfiler} from '../profiling';
 
 type Pattern={edges:Int32Array;minX:number;maxX:number;minY:number;maxY:number};
 
@@ -7,10 +8,11 @@ type Pattern={edges:Int32Array;minX:number;maxX:number;minY:number;maxY:number};
  * called against current occupancy on every query. No collision result is saved.
  * Arbitrary sub-cell movement and multi-floor portals still use clearSweep.
  */
-export function adjacentSweep(size:number,radius:number,step:(a:number,b:number)=>boolean):(from:number,to:number)=>boolean {
+export function adjacentSweep(size:number,radius:number,step:(a:number,b:number)=>boolean,profile?:SimulationProfiler):(from:number,to:number)=>boolean {
  const patterns=new Map<number,Pattern>();
  function pattern(dx:number,dy:number):Pattern {
   const key=(dy+1)*3+dx+1,cached=patterns.get(key);if(cached)return cached;
+  const compile=()=>{
   // Compile away from boundaries so all footprint rays can be enumerated.
   const origin=Math.ceil(radius/1000)+2,width=origin*2+3;
   const seen=new Set<string>(),edges:number[]=[];
@@ -22,7 +24,9 @@ export function adjacentSweep(size:number,radius:number,step:(a:number,b:number)
    if(!seen.has(edge)){seen.add(edge);edges.push(ay*size+ax,by*size+bx);}
    return true;
   },width,radius);
-  const result={edges:Int32Array.from(edges),minX,maxX,minY,maxY};patterns.set(key,result);return result;
+  return {edges:Int32Array.from(edges),minX,maxX,minY,maxY};
+  };
+  const result=profile?profile.measure('Sweep pattern compilation',compile):compile();patterns.set(key,result);return result;
  }
  return (from,to)=>{
   if(from<0||to<0||from>=size*size||to>=size*size)return false;

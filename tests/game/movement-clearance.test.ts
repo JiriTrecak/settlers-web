@@ -8,6 +8,7 @@ it('classifies terrain and reservation blockage exactly like the separate moveme
   const x=80+random(24),y=80+random(24),cell=y*s.size+x;
   s.terrain[cell]=random(5)?1:0;s.heights[cell]=random(200);
  }
+ s.rebuild();
  for(const locomotion of ['ground','air'] as const)for(const radius of [.34,.595,1.7])for(let i=0;i<500;i++){
   const actor={radius,height:2,formationSpacing:2,locomotion};
   const from={x:(78+random(28))*1000+random(1000)-500,y:(78+random(28))*1000+random(1000)-500};
@@ -26,5 +27,8 @@ it('sweeps terrain once while retaining corner reservation checks and terrain pr
  expect(s.movementSegmentBlocker(from,to,blocked,actor)).toBe('reservation');
  expect(sweep).toHaveBeenCalledTimes(1);
  s.terrain[101*s.size+101]=0;
+ // Direct terrain edits use the same rebuild boundary as a loaded/editor map.
+ // Occupancy changes have their own local invalidation path.
+ s.rebuild();
  expect(s.movementSegmentBlocker(from,to,blocked,actor)).toBe('terrain');
 });

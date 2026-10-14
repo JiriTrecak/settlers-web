@@ -1,6 +1,6 @@
 /**
  * MatchHost HTTP + WebSocket. Mailbox only — no Pixi, no World.
- * Binds 0.0.0.0:8787. Clients use MATCH_HOST (EC2), not a Vite proxy.
+ * Production binds 127.0.0.1:8787 behind Nginx HTTPS/WSS on port 443.
  */
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { WebSocketServer } from "ws";
@@ -8,7 +8,7 @@ import { MatchHost } from "../src/net/host";
 import type { CreateRoom, JoinRoom } from "../src/shared";
 
 const PORT = Number(process.env.PORT ?? 8787);
-const BIND = process.env.BIND ?? "0.0.0.0";
+const BIND = process.env.BIND ?? "127.0.0.1";
 const VERSION = "0.1.0";
 const CORS = {
   "access-control-allow-origin": "*",

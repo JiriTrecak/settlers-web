@@ -18,10 +18,10 @@ beforeAll(async()=>{
  }}));
  gltf=await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.length),'');
 });
-describe('Published Tripo ant warrior',()=>{
+describe('Retained Tripo ant warrior library asset',()=>{
  it('publishes the approved source with textures, sockets and the enforced triangle budget',()=>{
   expect(bytes.equals(readFileSync('art/assets/asset.models.units.ants-warrior/geometry.glb'))).toBe(true);
-  const asset=content.asset(content.get('unit.ants.warrior').asset);
+  const asset=content.asset('asset.ants.warrior');
   expect(asset.file).toBe(file);expect(asset.character).toBe('warrior');
   const tris=json.meshes.flatMap((m:any)=>m.primitives).reduce((sum:number,p:any)=>sum+json.accessors[p.indices].count/3,0);
   expect(tris).toBeGreaterThan(2500);expect(tris).toBeLessThan(5000);expect(json.images).toHaveLength(7);

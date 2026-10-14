@@ -6,10 +6,17 @@ import type {AbilityEvent} from '../../sim/abilities/runtime';
 import {Vector3} from 'three';
 /** Simulation adapter. Visual playback itself has no simulation dependency. */
 export class AbilityEffects extends EffectPlayer {
+ private compiled=new WeakMap<AbilityPresentation,ReturnType<typeof presentationRecipes>>();
+ private recipes(p:AbilityPresentation){
+  const effects=this.lookupEffects();
+  // Published definitions are immutable. Draft workbenches retain live resolution.
+  if(effects!==coreEffects)return presentationRecipes(p,effects);
+  let recipes=this.compiled.get(p);if(!recipes){recipes=presentationRecipes(p,effects);this.compiled.set(p,recipes);}return recipes;
+ }
  private trailHistory=new TrailHistory();
  override clear(){super.clear();this.trailHistory.clear();}
  constructor(private lookupEffects=()=>coreEffects){super();}
- consume(event:AbilityEvent,presentation:AbilityPresentation,height:(x:number,y:number)=>number=()=>0,anchor?:EffectAnchor){this.emit({...event,origin:{...event.origin,height:event.origin.height??anchor?.(event.caster)?.height},point:{...event.point,height:event.point.height??anchor?.(event.target)?.height}},presentationRecipes(presentation,this.lookupEffects()),height);}
+ consume(event:AbilityEvent,presentation:AbilityPresentation,height:(x:number,y:number)=>number=()=>0,anchor?:EffectAnchor){this.emit({...event,origin:{...event.origin,height:event.origin.height??anchor?.(event.caster)?.height},point:{...event.point,height:event.point.height??anchor?.(event.target)?.height}},this.recipes(presentation),height);}
  syncDeliveries(deliveries:readonly import('../../sim/abilities/runtime').AbilityDeliveryView[],lookup:(id:string)=>AbilityPresentation|undefined,height:(x:number,y:number)=>number=()=>0,history?:readonly TrailSnapshot[]){
   const tick=deliveries[0]?.tick;if(tick!==undefined)this.trailHistory.record(tick,deliveries.map(d=>({cast:d.cast,x:d.position.x,y:d.position.height??height(d.position.x,d.position.y),z:d.position.y})));
   if(!deliveries.length)this.trailHistory.clear();
@@ -35,7 +42,7 @@ export class AbilityEffects extends EffectPlayer {
   this.cues=this.cues.filter(c=>c.root.parent);
   for(const r of returns){
    if(tick>=r.due)continue;const presentation=lookup(r.ability);if(!presentation)continue;
-   const recipes=presentationRecipes(presentation,this.lookupEffects()).filter(recipe=>recipe.event==='revivalStarted'&&!this.cues.some(c=>c.cast===r.cast&&c.recipe.id===recipe.id));
+   const recipes=this.recipes(presentation).filter(recipe=>recipe.event==='revivalStarted'&&!this.cues.some(c=>c.cast===r.cast&&c.recipe.id===recipe.id));
    if(recipes.length)this.emit({id:0,event:'revivalStarted',cast:r.cast,ability:r.ability,tick:r.started,caster:r.id,target:r.id,origin:r,point:r,durationTicks:r.due-r.started,viewers:[]},recipes,height);
   }
  }
@@ -46,7 +53,7 @@ export class AbilityEffects extends EffectPlayer {
   for(const e of entities)for(const s of (e.hp??1)>0?e.spellStatuses??[]:[]){
    if(s.expires<=Math.floor(tick))continue;
    const presentation=lookup(s.ability);
-   const recipes=presentation&&presentationRecipes(presentation,this.lookupEffects()).filter(r=>!this.cues.some(c=>c.status&&c.entity===e.id&&c.ability===s.ability&&c.cast===s.cast&&c.statusId===s.status&&c.recipe.id===r.id));
+   const recipes=presentation&&this.recipes(presentation).filter(r=>!this.cues.some(c=>c.status&&c.entity===e.id&&c.ability===s.ability&&c.cast===s.cast&&c.statusId===s.status&&c.recipe.id===r.id));
    if(recipes)for(const recipe of recipes.filter(r=>r.event==='statusApplied'&&(!r.statusId||r.statusId===s.status)))this.emit({id:0,event:'statusApplied',cast:s.cast,tick:s.aura?(recipe.lifetime==='status'?0:Math.floor(tick/200)*200):s.started,ability:s.ability,statusId:s.status,caster:s.source,target:e.id,origin:{...e,height:height(e.x,e.y)+(e.elevation??0)},point:{...e,height:height(e.x,e.y)+(e.elevation??0)},durationTicks:s.aura?200:s.expires-s.started,viewers:[]},[recipe],height);
   }
  }

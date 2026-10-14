@@ -103,6 +103,7 @@ function reset(){
   for(let y=0;y<256;y++)if(y!==126)game.spatial.terrain[y*256+128]=0;
   for(const [z,depth] of [[119.5,12],[133,13]]){const wall=new Mesh(new BoxGeometry(1,.6,depth),new MeshStandardMaterial({color:'#4d5149'}));wall.position.set(128,.3,z);scene.add(wall);walls.push(wall);}
  }
+ if(select.value==='traffic'||select.value.startsWith('yielding'))game.spatial.rebuild();
  for(const owner of ['player.1','player.2'] as const){const actors=game.entities.filter(e=>e.placement?.startsWith('lab.')&&e.owner===owner).map(e=>e.id);if(actors.length)game.command(owner,{type:'hold',actors});}
  if(select.value==='lookout'){
   const archer=game.entities.find(e=>e.placement==='lab.red.archer')!,tower=game.entities.find(e=>e.placement==='lab.red.tower')!;

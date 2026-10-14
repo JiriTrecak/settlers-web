@@ -48,6 +48,13 @@ npm run release:publish -- --artifact build/releases/0.2.1/darwin-aarch64/artifa
 3. **Publish without `--apply`** checks the signed package, hashes, frozen notes and AWS identity without uploading.
 4. **Publish with `--apply`** takes an S3 publisher lock, refuses downgrades and immutable-file conflicts, uploads versioned files, verifies the public package hash, updates the changelog index, and advances `stable.json` last. A failed partial upload is safe to retry with the **same staged artifact**. Rebuilding produces a different signature/package: use a new version after a package has been published. Do not force overwrite a release.
 
+Packages larger than 64 MiB upload in 32 MiB parts with progress output. Completing
+the multipart upload still requires that the destination key does not exist;
+published packages cannot be overwritten. Failed uploads abort their unfinished
+parts, with the bucket lifecycle as a cleanup fallback. AWS CLI retries transient
+part failures. If publishing exits, rerun it with the same staged artifact after
+checking the reported error (including whether the AWS login needs refreshing).
+
 Use `--profile canopy` with publishing if needed. The scripts require AWS account `533797168831`, not whichever unrelated account may be configured elsewhere. The API identity stays in the AWS CLI credential provider. No AWS credentials go into the game.
 
 The first release is macOS Apple Silicon (`darwin-aarch64`). The build/publisher also recognize Intel macOS, Windows and Linux; build/test each on its platform before advertising it. Additional platforms for the same version can be published from the exact same frozen log; the feed preserves existing platforms. Before serving more than one platform, extend publishing to stage and promote all platform artifacts together. The current single-platform publisher refuses a new version that would remove existing platforms from the feed.
@@ -82,6 +89,8 @@ Also test an actual older-to-newer update in a disposable copy of the app: check
 Verified on 2026-10-05: macOS Apple Silicon **0.1.0 → 0.2.0**, using an updater-enabled disposable app copy. The native UI found the live CloudFront release, downloaded and verified the package, installed it, restarted into 0.2.0, displayed the bundled 0.2.0 notes, and reported up to date on a second check. The installed Info.plist independently confirmed 0.2.0. Eleven release tests cover signature/version tampering, explicit actions, network/download/install failures, duplicate actions, disposal and restart retry. Windows, Linux and Intel macOS have not been built or tested by this verification.
 
 A failed publisher leaves the stable feed unchanged unless the final commit succeeded. If it crashes and leaves `publishing.lock`, inspect that private object's version/time and confirm the publishing process has stopped before deleting only that lock. Never clear locks or remove release folders as a generic retry tactic. Use S3 object versioning for recovery, but use a new, higher app version to deliver a gameplay rollback.
+
+Verified on 2026-10-13: macOS Apple Silicon **0.2.2 → 0.2.3** in a disposable app copy. The native updater found the published release, displayed its structured notes, and showed download progress. Installation and restart completed; the restarted process used that same app path and its installed Info.plist independently confirmed 0.2.3. The app was then in the multiplayer browser, so a second in-app update check was not performed. Both stored and public package bytes passed the publisher's full SHA-256 verification, and the public stable feed served 0.2.3. Other platforms were not built or tested for this release.
 
 ## Hosting
 

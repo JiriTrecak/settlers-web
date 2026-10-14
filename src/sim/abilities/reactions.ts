@@ -30,7 +30,7 @@ export class SpellReactions {
   // New deaths may append here. Carry the remainder to the next tick rather than recurse.
   const c=this.game.context,queue=c.state.spellLifecycleReactions;
   for(let i=0;i<128&&queue.length;i++){
-   const record=queue.shift()!,a=c.registry.abilityLibrary.abilities.find(a=>a.id===record.ability),trigger=a?.triggers?.find(t=>t.id===record.trigger&&t.event===record.event);
+   const record=queue.shift()!,a=c.registry.findAbility(record.ability),trigger=a?.triggers?.find(t=>t.id===record.trigger&&t.event===record.event);
    if(!a||!trigger)continue;
    if(record.event==='interval'){
     const holder=c.get(record.source);
@@ -106,12 +106,12 @@ export class SpellReactions {
  private entries(holder:Entity):Entry[]{
   const c=this.game.context,entries:Entry[]=[];
   for(const b of c.def(holder).behaviors.abilities?.bindings??[]){
-   const a=c.registry.abilityLibrary.abilities.find(a=>a.id===b.ability),rank=holder.abilities?.ranks[b.id]??0;
+   const a=c.registry.findAbility(b.ability),rank=holder.abilities?.ranks[b.id]??0;
    if(a?.activation==='passive'&&rank){const existing=entries.find(e=>e.ability.id===a.id&&!e.status);if(existing)existing.rank=Math.max(existing.rank,rank);else entries.push({ability:a,rank});}
   }
   for(const s of holder.spellStatuses??[]){
    if(s.expires<=c.state.tick)continue;
-   const a=c.registry.abilityLibrary.abilities.find(a=>a.id===s.ability);
+   const a=c.registry.findAbility(s.ability);
    if(a)entries.push({ability:a,rank:s.rank,status:s.status,started:s.started,grant:s.cast,sourceContext:s.sourceContext});
   }
   return entries.sort((a,b)=>(a.ability.id<b.ability.id?-1:a.ability.id>b.ability.id?1:0)||((a.status??'')<(b.status??'')?-1:(a.status??'')>(b.status??'')?1:0));

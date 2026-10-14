@@ -13,7 +13,1017 @@ A half-second work-assignment search is visible even when the surrounding frames
 are fast. Measure simulation, presentation, and the GPU separately, and keep
 commands and combat authoritative while optimizing them.
 
+## Correlated browser and worker capture
+
+`gamePerformance` captures now include `cpuBudget`: timestamped synchronous
+worker callback roots, browser snapshot receive/send, and match input/HUD work
+before and after the scene draw. Absolute performance timestamps place delayed
+worker telemetry at execution time. Roots are unioned within each thread before
+adding the threads into fixed 25 ms windows. GPU work and message-delivery latency
+are never added to this total. The shared debug window graphs these windows;
+`worst[].contributors` includes the worker tick and actual overlapping roots.
+Contributor rows may nest; use the unioned window totals, not their sum.
+
+Worker telemetry acknowledges only completed callbacks. Partial leading and
+trailing windows are omitted, bounded-buffer drops are reported, and restarting
+worker profiling restricts coverage to the latest uninterrupted epoch.
+Canvas camera/selection/targeting, minimap, settlement HUD, hero bar, tooltip and
+chat input callbacks are also measured between frames. The callback wrapper
+preserves the receiver, result and exceptions, and reads no clock outside a
+capture. Placement-preview replies, their queue continuation, and navigation
+overlay replies have separate roots: Promise continuations execute after the
+worker receive callback returns. Waiting for the reply is not counted as CPU.
+Other async continuations require separate roots. `completeAccounting`
+remains **false**: other UI callbacks, native message dispatch/deserialization
+before callbacks, browser layout/paint and profiler overhead still need separate
+coverage/validation.
+Synchronous elapsed timing also includes OS preemption; it is not OS thread CPU
+time. A 25 ms aggregate percentile is not interchangeable with a per-tick
+percentile or a sum of independent scope percentiles.
+
+Match camera callbacks now update camera state without synchronously rendering
+the scene and minimap. The next normal match frame presents that state. Previously
+keyboard/edge scrolling rendered inside the input scope, followed by another draw
+in the same frame; minimap/focus callbacks could also insert extra draws.
+
+The October 14 browser check (`/tmp/echo-input-browser-ui-proof.json`) records
+canvas, minimap, hero, settlement HUD, tooltip and chat callbacks and exactly
+1,198 presents for 1,198 frames. This is a **post-victory instrumentation check**,
+not acceptance evidence. An active battle with no browser input, restored at tick
+3,900 and viewed at (490,235), still measures **5.90 ms p99** across 398 complete
+25 ms windows (`/tmp/echo-input-browser-battle-idle.json`), with no dropped spans.
+The worst window contains 5.90 ms worker and 0.80 ms browser work. These are partial
+accounting results; the 3 ms goal remains unmet. Two attempted input captures
+missed the input window and must not be used as input-workload evidence.
+
+For manual input checks, start **Quiet capture** in the debug UI and exercise the
+controls immediately. Export the completed capture with `browser-budget.ts
+--map echo-isles --read-capture --interaction "description" --output /tmp/input.json`.
+This does not restart recording. `--interaction` also labels scripted capture
+sessions, but is not proof that controls were exercised: check `sourceCounts`.
+Use `--prepare-only` with `--load` and camera coordinates to restore a battle
+without starting the ten-second capture. Then start Quiet capture and exercise
+input together in one UI action batch; a tool round trip can otherwise consume
+the whole capture window.
+
+The subsequent October 14 checks measured **8.50 ms p99** over 398 windows in
+`/tmp/echo-browser-current-idle.json` (restored battle, ticks 4021–4466), and
+**7.80 ms p99** over 399 windows in `/tmp/echo-browser-active-controls.json`.
+The latter records 21 canvas callbacks, five settlement HUD callbacks, three
+targeting callbacks, and three worker command receipts after selecting a hero,
+issuing movement/stop orders and panning. Its largest window is 10.40 ms,
+including a 9.20 ms simulation pump at tick 5771. It is a later, manually timed
+battle phase with no exact start-state record, not a matched before/after
+comparison or complete-budget acceptance. The end-state query occurred after
+victory and must not be confused with the capture interval. An earlier attempt
+(`/tmp/echo-browser-input-async-roots.json`) missed all input and is explicitly
+labelled invalid for active-input acceptance. No speedup is claimed from these
+measurements. Sixteen focused CPU-accounting/worker tests and root TypeScript
+checking passed for the added asynchronous roots.
+
+Capture a restored browser battle through the existing MCP hub with
+`node --import tsx scripts/bench/browser-budget.ts --map echo-isles --load
+/path/to/verified-browser-save.json --x 100 --z 128 --output /tmp/browser.json`.
+Use `--mode details` for diagnostic simulation subcategories; the default budget
+mode disables detailed simulation instrumentation. Do not run benchmarks or
+interact with the browser during a quiet baseline. Active human input remains a
+separate required workload before acceptance.
+
+The October 14 browser capture `/tmp/echo-correlated-browser-budget.json`
+restored the browser-compatible 24-per-side fixture at tick 3900 and measured
+399 complete windows after warmup. Measured roots had **11.10 ms p99**;
+worker ticks alone had **7.9 ms p99**. The worst window contained 12.40 ms of
+worker work and 1.00 ms of browser work, with no dropped roots. These are live
+browser results, not a direct comparison with the headless 5.53 ms benchmark.
+The companion `/tmp/echo-correlated-browser-details.json` identifies navigation,
+aura application, and intermittent building-site queries as continuing costs.
+A repeat quiet capture (`/tmp/echo-correlated-browser-final.json`) measured
+8.10 ms p99 over 399 windows, with worker tick p99 5.80 ms and no dropped roots.
+Its worst window was 13.00 ms (12.10 worker, 0.90 browser), spanning ticks
+4410–4411. The spread between captures is not an optimization claim: no
+simulation algorithm changed in this instrumentation pass. The UI capture and
+shared chart were also exercised directly. Thirty-five focused tests and
+TypeScript checking passed.
+
+Timing/codec tests include delayed telemetry, nested roots, partial windows,
+profiling restarts, overflow, real worker publication and multiplayer execution.
+
 ## Early-match simulation stalls
+
+AI destination profiling now separates **Destination footprint**, **Origin grid
+join**, **Observed mesh preparation** and **Corridor body validation**, including
+segment counts/distance. These use the existing simulation profiler and therefore
+appear in debug/MCP captures. Diagnostic counters do no distance arithmetic when
+profiling is disabled.
+
+At tick 2610, 24 reachability queries spend 5.92 ms: 3.05 ms preparing locally
+changed meshes for three body sizes, 1.25 ms searching 22 corridors, and 1.38 ms
+validating 217 segments. Only 63 segments reached the previous long-sweep proof;
+short segments still repeated exact footprint rays. The AI now also uses that
+positive clearance proof for short/stationary sweeps of bodies at least 0.5 cells
+in radius. Inconclusive checks retain the exact sweep; observed blocker updates
+continue to invalidate the shared bitplanes. Air and layered navigation are
+unchanged. This makes no tradeoff in destination or route selection.
+
+Diagnostic corridor validation drops **1.38 → 0.63 ms** at tick 2610,
+**1.08 → 0.48 ms** at tick 2890, and **1.03 → 0.47 ms** at tick 2930. Reports:
+`/tmp/echo-ai-tail-phases.json` and `/tmp/echo-ai-short-proof-details.json`.
+Unprofiled ABBA runs confirm lower AI decision costs at tick 2890
+(**4.02–4.06 → 3.28–3.33 ms**) and tick 2930
+(**3.46–3.99 → 2.63–2.67 ms**). Overall headless p99 is **5.54–5.68 ms control**
+versus **5.54 ms candidate**; ranges overlap, so no stable whole-budget gain is
+claimed. Reports: `/tmp/echo-ai-short-proof-control.json`,
+`/tmp/echo-ai-short-proof-after.json`, and their `-2` repeats.
+The next largest identified AI costs remain local mesh preparation and building
+approach validation; this pass does not reduce update frequency or change orders.
+
+Twenty-one focused AI/clearance tests and TypeScript checking pass, including
+proof-enabled/bypassed comparisons for short routes, fractional footprints,
+slopes, boundaries and blocker edits. Projection comparisons, 11 restore
+checkpoints through tick 3900 and two full-state-equal replicas through tick 4500
+with a synthetic stall pass. Full-state audit remains `340583934`. Reports:
+`/tmp/echo-ai-short-proof-verification.json` and
+`/tmp/echo-ai-short-proof-multiplayer.json`. This is headless evidence, not a new
+browser capture or completion of the complete non-render budget.
+
+Cold adjacent mesh edges now reuse the live terrain-clearance bitplanes as a
+conservative positive proof before running their exact directed footprint sweep.
+An inconclusive proof retains the original sweep; the existing radius-aware step
+cache still handles reuse and local invalidation. Tiny-radius and non-adjacent
+checks retain their original behavior. This changes neither routes nor timing of
+gameplay updates.
+
+The diagnostic run `/tmp/echo-adjacent-proof-details.json` certifies **5,049**
+footprints at tick 201 (387 exact fallbacks) and **5,017** at tick 2611 (1,340
+fallbacks). ABBA headless runs reduce those total-tick spikes from **11.06–11.24
+to 8.32–8.63 ms**, and **11.34–11.55 to 8.81–10.58 ms**, respectively. Overall
+p99 ranges overlap; this proves a local work reduction, not a stable whole-match
+percentile gain. Reports: `/tmp/echo-adjacent-proof-control.json`,
+`/tmp/echo-adjacent-proof-after.json`, and their `-2` repeats.
+The final guarded implementation measures **5.59 ms p99**, with ticks 201/2611
+at **8.80/9.78 ms** (`/tmp/echo-adjacent-proof-final.json`). Browser input/HUD
+cost is absent from this baseline, so the complete 3 ms goal remains unmet.
+
+Validation: 43 focused navigation tests and root TypeScript checking pass.
+The integration test compares exact route arrays with proofs enabled/bypassed
+across radii, directed slopes, cold/warm caches and local building edits.
+Projection comparisons and 11 restore checkpoints through tick 3900 pass;
+two replicas remain fully equal through tick 4500 with a synthetic transport
+stall. Final full-state audit is `340583934`. Reports:
+`/tmp/echo-adjacent-proof-verification.json` and
+`/tmp/echo-adjacent-proof-multiplayer.json`.
+
+Route-repair diagnostics now split **Corner candidates**, **Corner connection**,
+**Endpoint connection** and **Corridor connection**, with candidate-ray,
+rejected-ray and emitted-cell counts. At browser-setup tick 201, 887 candidate
+rays (490 rejected) emitted 48,972 cells. Many failures occurred after long clear
+prefixes, so repair now evaluates center-to-center rays from the destination end.
+Each predicate still receives the original **forward-directed edge**; the origin
+stationary check and diagonal side checks are retained. Successful cell arrays
+are restored to their original forward order. Fractional endpoints keep the
+original DDA, and predicates must remain pure.
+
+The same 887 candidates and 490 rejections now emit **20,217 cells** at tick 201;
+diagnostic repair time falls **5.50 → 4.19 ms**. Tick 2611 emits **5,110 → 3,580
+cells**, but its diagnostic timing varied **1.40 → 2.00 ms** (the endpoint phase
+dominated that sample); do not infer a uniform timing improvement from work counts.
+Captures: `/tmp/echo-repair-phases.json`, `/tmp/echo-reverse-repair-details.json`.
+Matched unprofiled headless runs measured **5.78 → 5.56 ms p99**; ticks 201/2611
+fell from **12.17/12.48 to 11.29/11.45 ms**. Reports:
+`/tmp/echo-reverse-repair-control.json`, `/tmp/echo-reverse-repair-after.json`.
+These are sequential, partial-accounting measurements, not proof of the complete
+3 ms goal or a stable percentage gain across machines.
+
+Twenty-eight focused tests and TypeScript pass. Tests compare every directed
+edge and accepted path over all lattice directions, reject each edge separately,
+and cover fractional/boundary cases. Full-state audit remains `340583934`;
+projection comparisons and 11 restore checkpoints through tick 3900 pass, as do
+two lockstep replicas through tick 4500 with a synthetic transport stall.
+Reports: `/tmp/echo-reverse-repair-verification.json`,
+`/tmp/echo-reverse-repair-multiplayer.json`.
+
+Clearance sampling now selects direct reads using estimated footprint work:
+affected samples × maximum footprint-cell count, compared with the local table
+area. A radius-only/quarter-tile cutoff overlooked repeated reads for wider
+units. Prefix queries and direct reads produce the same mask; this changes no
+geometry, routing decisions or cadence. **Direct footprint samples** and
+**Prefix mask samples** counters expose the selected method through the existing
+profiler. Tiny narrow-body edits still use direct reads.
+
+The final diagnostic capture `/tmp/echo-sampling-cost-details.json` reduces mask
+work at tick 3770 from **1.15 to 0.50 ms**, and tick 2610 from **1.74 to 1.39 ms**
+against `/tmp/echo-mask-range-table-details.json`. An experimental forced-prefix
+control also produced **0.52 ms** at tick 3770, corroborating the local bottleneck.
+Paired unprofiled headless runs measured **5.59 ms control / 5.43 ms candidate
+p99** (`/tmp/echo-sampling-cost-control.json`,
+`/tmp/echo-sampling-cost-after.json`). This modest whole-run difference is not a
+stable overall speedup claim; complete browser non-render accounting and the
+3 ms goal remain unmet.
+
+Validation: 46 focused navigation tests, TypeScript checking, every worker
+projection comparison, 11 restore checkpoints through tick 3900, then full-state
+equality across two lockstep replicas through tick 4500. Full audit remains
+`340583934`. Reports: `/tmp/echo-sampling-cost-verification.json` and
+`/tmp/echo-sampling-cost-multiplayer.json`.
+
+Clearance-mask sampling now keeps the known affected rectangle even when an
+obstacle edit covers more than a quarter of a navigation tile. Previously that
+cutoff selected both the sampling algorithm and a full-tile rebuild. The first
+fix separated algorithm selection from invalidation; unaffected samples
+remain intact. A new nested **Local collision tables** scope separates table
+construction from sampling in the existing profiler/debug output.
+
+The October 14 browser-setup spike capture at tick 2610 drops from **18,471 to
+10,143 samples**, with clearance-mask work **2.54 → 1.73 ms**. Tick 2611 drops
+from **5,545 to 3,001 samples**, **0.83 → 0.57 ms**. Reports:
+`/tmp/echo-current-spikes.json` and `/tmp/echo-mask-range-details.json`.
+Unprofiled headless p99 is **5.53 ms before / 5.65 ms after** in sequential runs
+(`/tmp/echo-current-baseline.json`, `/tmp/echo-mask-range-after.json`): no overall
+percentile gain is established, and browser CPU accounting remains incomplete.
+This is a measured local rebuild reduction, not achievement of the 3 ms goal.
+
+Forty-four focused navigation tests and TypeScript checking pass. New tests
+compare local and cold geometry after blocking, unblocking, raising and lowering
+a 12×12 footprint for three body radii. All projection comparisons and 11 restore
+checks through tick 3900 pass; two lockstep replicas preserve full-state equality
+through tick 4500, including the synthetic transport stall. Full-state audit
+remains `340583934`. Reports: `/tmp/echo-mask-range-verification.json` and
+`/tmp/echo-mask-range-multiplayer.json`.
+The additional split (`/tmp/echo-mask-range-table-details.json`) attributes
+**0.52 of 1.74 ms** at tick 2610 to local prefix-table construction. Tick 3770
+still spends **1.15 ms** in direct footprint sampling with no prefix-table work,
+so the remaining mask cost is not solely table allocation or construction.
+
+AI blocker reconciliation now passes known occupancy transitions directly to
+observed navigation. A changed tree/building no longer requires comparing both
+entire blocked-cell sets. Changes accumulate across placement-only frames;
+overlap reference counts prevent false removals. Each delta identifies its
+previous immutable snapshot. Missing/stale baselines and retained old-frame
+queries use full reconciliation, so no changed cells can be silently skipped.
+Equal occupancy retains existing navigation answers instead of invalidating them.
+
+New detail scopes expose **Blocker snapshot copy**, **Known navigation update**,
+and **Blocker cell differences**, with copied/compared/changed cell counts. At
+browser-setup replay tick 4030, 64 changed cells formerly required **55,064 cell
+comparisons** and **1.63 ms** of difference scanning. The delta compares **64 cells**
+in **0.011 ms**; the whole navigation update falls from **1.71 to 0.082 ms**.
+Captures: `/tmp/echo-ai-blocker-details-before.json` and
+`/tmp/echo-ai-deltas-details-after.json`. This does not eliminate the separate
+blocker-record reconciliation or immutable snapshot copy.
+
+Unprofiled headless match p99 remains **5.67 ms** (`/tmp/echo-ai-deltas-after.json`),
+so this is a local spike reduction, not proof of a broad percentile gain or the
+3 ms target. Full-state audit stays `340583934`. Twenty-eight focused tests and
+TypeScript checking passed, including accumulated edits, overlapping blockers,
+stale baselines, old-frame reads and cold navigation equivalence. Projection and
+11 restore checks through tick 3900 passed, then two lockstep replicas retained
+full-state equality through tick 4500 (`/tmp/echo-ai-deltas-verification.json`,
+`/tmp/echo-ai-deltas-multiplayer.json`).
+
+Ground clearance proofs now distinguish occupied cells from directed incoming
+height edges. All footprint rays share the movement direction: DDA can cross
+its two forward cardinal edges and forward diagonal, but cannot cross a cliff
+edge behind or beside that direction. The span proof tests those edges and all
+occupancy; an inconclusive proof still uses the original exact rays. Local
+occupancy edits refresh occupancy bits only; terrain rebuilds refresh height
+edges too. Route selection and collision results are unchanged.
+
+The browser-setup 24-per-side replay measured **5.89 → 5.69 ms p99** and
+**15.56 → 12.57 ms maximum**, with full-state audit `340583934` on both runs.
+Sequential captures are `/tmp/echo-directional-clearance-before.json` and
+`/tmp/echo-directional-clearance-after.json`; these are headless, partial CPU
+accounting, not completion of the 3 ms goal. Detailed tick 201 long exact-sweep
+work fell from **4.50 to 1.42 ms**. Verification: 33 focused tests, TypeScript
+checking, 18,730 positive proofs shadowed by exact rays with no disagreement,
+11 restore checks through tick 3900, then full-state equality across two lockstep
+replicas through tick 4500. Reports: `/tmp/echo-directional-clearance-details.json`,
+`/tmp/echo-directional-clearance-verification.json`, and
+`/tmp/echo-directional-clearance-multiplayer.json`.
+
+For isolated sweep investigations, `bench:match -- --capture-sweep-clearance 201
+--sweep-clearance-output /tmp/sweeps.json` exports uncached multi-cell sweep
+inputs and the corresponding terrain/occupancy revision. The fixture is capped
+at 512 queries and reports omitted queries. `--verify-sweep-clearance` checks
+every successful proof during the run after setup against the original footprint
+rays, including restored-world instances, and fails on disagreement. Both modes
+are diagnostic and deliberately perturb timing; never use them for acceptance.
+
+The October 14 follow-up short-circuits continuous mesh validation once a route
+requires grid repair. The repair still validates the entire returned corridor;
+later continuous checks on the discarded candidate cannot affect that result.
+At tick 201 of the browser-setup replay, this removes **90 sweeps** (114 → 24),
+reducing that nested scope from **0.59 to 0.17 ms**. Tick 2611 removes another
+25 sweeps. Diagnostic captures: `/tmp/echo-mesh-shortcircuit-details-before.json`
+and `/tmp/echo-mesh-shortcircuit-details.json`. The whole replay retains full-state
+audit `340583934`; the unprofiled candidate measures **5.70 ms p99** versus
+**5.82–5.87 ms** in preceding baseline runs. These sequential runs do not establish
+a precise overall speedup and remain headless, partial-accounting measurements.
+Validation passed: 23 focused tests, TypeScript checking, projection verification
+and 11 restore checks through tick 3900, followed by two independent lockstep
+replicas through tick 4500 with full-state equality (including an injected
+transport stall). Reports: `/tmp/echo-mesh-shortcircuit-verification.json` and
+`/tmp/echo-mesh-shortcircuit-multiplayer.json`.
+
+An immutable AI scenery snapshot cache was also tested and **removed**. It cut
+public-observation and blocker-check costs at sampled AI beats, but overall p99
+was **5.85–6.04 ms**, without a clear improvement over **5.82–5.87 ms** baseline.
+The extra freezing, cache metadata and tests were removed together. Reports:
+`/tmp/echo-ai-scenery-before{,2}.json`, `/tmp/echo-ai-scenery-after{,2}.json`.
+The same browser setup, frozen content and 24-per-side battle fixture were used;
+all four full-state audits matched. No AI cadence, privacy or route choice changed.
+
+The next route investigation separates search from conversion overhead. At tick
+201, 17 mesh searches cost about **0.70 ms**, but 24 group routes expand into
+**6,624 raw grid waypoints** and make **1,367 terrain/reservation sweeps** in route
+planning. Compaction, repair, rasterization and smoothing dominate the search.
+Capture: `/tmp/echo-ranking-next-targets.json`. The remaining architectural option
+is a direct, body-validated mesh-to-movement waypoint path with the existing grid
+fallback. This may change exact route selection; user agreement is pending before
+implementation. No production path-selection change was made in this investigation.
+
+Three smaller candidates were investigated rather than retained without evidence:
+- `--probe-sweep-endpoints` executes the original sweep and shadows endpoint-only
+  rejection on uncached long queries. Across 25,556 queries, 1,745 have blocked
+  endpoints, with zero contradictions, but only **1.88 ms** of original work could
+  be avoided versus **32.75 ms** of endpoint checks. The probe remains opt-in;
+  production does not add endpoint checks. `/tmp/echo-sweep-endpoint-probe.json`.
+- A bounded mesh-segment raster cache reused 5,170 cell visits at tick 4011, but
+  produced no meaningful stage improvement and whole-replay p99 was **5.37 ms**
+  versus **4.99 ms** in the preceding baseline. Removed, including its tests/API
+  plumbing; full audit stayed `4250851672`. `/tmp/echo-raster-cache-final.json`.
+- Caching the combined diagonal traversal predicate saved only about **0.23 ms**
+  in tick 4011 compaction, with no clear gain elsewhere and replay p99 **5.19 ms**.
+  Removed rather than doubling cache storage for an unproven aggregate gain.
+  `/tmp/echo-traverse-cache-details.json`, `/tmp/echo-traverse-cache-final.json`.
+These sequential timings include run variance; none proves a precise regression.
+
+
+Large navigation bodies now retain unaffected mask samples on small terrain or
+occupancy edits. They still use prefix tables for the affected rectangle, avoiding
+expensive per-cell body-area scans. Small bodies retain the direct local path;
+broad edits still rebuild the full mask. Cached samples are explicitly cleared
+when they become blocked. Differential fixtures compare exact cold-build geometry
+for radii 2.001, 3, 4.4, 8 and 16, covering tile seams, partial edge tiles, removal,
+addition, raised/lowered heights and broad edits.
+
+At AI tick 2770, sample count drops **26,596 → 2,920** and captured mask cost
+**3.35 → 1.17 ms** (`/tmp/echo-mesh-phase-details.json`,
+`/tmp/echo-wide-mask-details.json`). In sequential unprofiled replays, that tick's
+AI work drops **7.28 → 4.54 ms**. Whole replay remains effectively **5 ms p99**
+(5.014 → 4.990; active-combat 4.987 → 5.009), so this is a local tail improvement,
+not proof that the total budget is met. Full-state audit is unchanged at
+`4250851672`. Results: `/tmp/echo-wide-mask-final.json`.
+Validation: 75 navigation, movement and AI tests across 10 files plus TypeScript
+pass. Projection checks, 11 cold restores and seven two-peer full-state comparisons
+pass, including the injected transport stall (`/tmp/echo-wide-mask-suite.log`,
+`/tmp/echo-wide-mask-verification.json`, `/tmp/echo-wide-mask-multiplayer.json`).
+
+
+Short ground sweeps of at least two cells with bodies at least half a cell wide
+now use the existing conservative clearance envelope before exact footprint rays.
+A failed proof still takes the original exact path. Live reservations remain
+outside this terrain-only proof. At tick 4011 the short-sweep scopes drop from
+**1.14 → 0.36 ms**, including the new envelope checks; 171 exact scans are avoided.
+Tick 201 drops **1.15 → 0.49 ms**, avoiding 213 scans. Diagnostic captures:
+`/tmp/echo-sweep-breakdown.json`, `/tmp/echo-short-proof-details.json`.
+
+The unprofiled replay (`/tmp/echo-short-proof-final.json`) has mean **2.12 ms**,
+p99 **5.01 ms**, active-combat p99 **4.99 ms**, versus 5.17/5.11 ms before.
+Full-state audit remains `4250851672`; browser-wide target is still unmet.
+These sequential runs support the local improvement, not a precise estimate of
+browser frame gains.
+Projection comparison, 11 cold restores and seven two-peer full-state checks
+pass (`/tmp/echo-short-proof-verification.json`,
+`/tmp/echo-short-proof-multiplayer.json`). The broad suite passed 891 tests and
+found three fixtures mutating raw collision arrays without refreshing navigation.
+Those now use actual blocker entities or terrain followed by the rebuild boundary;
+all assertions remain. The five-file rerun passes all 35 tests and TypeScript
+passes (`/tmp/echo-short-proof-repaired-tests.log`, `/tmp/echo-short-proof-tsc.log`).
+
+Navigation diagnostics now separate long/short envelope and exact footprint
+costs and clear/blocked counts. Mesh rebuilds separate clearance masks, boundary
+extraction and triangulation, with sampled-cell and rebuilt/unchanged-tile counts.
+At AI tick 2770, **3.35 of 4.39 ms** in collision-contour rebuilding belongs to
+clearance masks; triangulation is **0.07 ms**. It scans 25,350 full-mask samples
+plus 1,246 local ones across 12 tiles. This points to mask-update locality rather
+than triangulation as the next investigation (`/tmp/echo-mesh-phase-details.json`).
+
+
+Attack-position ranking now partitions exact scores into distance bands and sorts
+only bands consumed by the search. It retains the original floating-point score,
+reservation penalty, tie order and initial eligibility snapshot; it does not
+truncate the search or change its destinations. At tick 1328 it orders **1,668
+of 13,986** eligible candidates. Captured ranking cost (including lazy band sorts)
+is **0.69 ms**, versus **2.79 ms** in the prior diagnostic capture; tick 571 is
+**1.65 ms** versus **6.99 ms**. These diagnostic timings include instrumentation.
+
+Fresh unprofiled runs (`/tmp/echo-ranking-baseline.json`,
+`/tmp/echo-ranking-final.json`) show combat-planning p99 **2.04 → 1.70 ms** but
+whole replay p99 **5.16 → 5.17 ms**: no aggregate improvement is established.
+Both finish with full-state audit `4250851672`. Projection comparison, 11 cold
+restores and seven complete-state two-peer checks pass, including the injected
+transport stall (`/tmp/echo-ranking-verification.json`,
+`/tmp/echo-ranking-multiplayer.json`). Differential tests check complete candidate
+order against the eager implementation, including fractional boundaries,
+reservations, duplicates and lazy eligibility changes. Browser-wide 3 ms p99
+remains unproven and unmet.
+
+
+Mesh-conversion captures are available with `--capture-mesh-conversion TICK`
+and `--mesh-conversion-output /tmp/mesh.json`. They retain the exact fixed-point
+corridor, body radius, reservations, walkability and heights for up to 16 queries
+on that tick. Production routing still supplies all answers; capture timings
+are diagnostic only. The tick-2571 capture (`/tmp/echo-mesh-2571.json`) showed
+that all continuous body sweeps pass, but rounding an intermediate point onto a
+grid centre clips a shoreline cell. Corner-only snapping cannot repair that
+mid-segment failure.
+
+After the existing corner/endpoint repairs fail, conversion now permits nearby
+checked joins at intervals along the original mesh legs. There are at most nine
+choices per join, with failed suffixes memoized; every edge keeps the exact
+footprint predicate. General grid fallback remains available. A three-obstacle
+regression reduced from the live fixture checks continuous clearance, legal
+raster edges, exact destination, bounded detour and rejection of a blocked goal.
+
+In the route trace (`/tmp/echo-short-sweeps-route-trace.json` versus
+`/tmp/echo-mesh-repaired-match.json`), tick 2571's route costs **9.12 → 0.67 ms**;
+its grid expansions fall **3,090 → 0**. All three raster-rejection fallbacks are
+removed, and match-wide grid expansions fall **11,149 → 1,525**. The fixture's
+full-state audit remains `4250851672`, with identical attack counts and survivor
+counts. Unprofiled `/tmp/echo-mesh-final.json` measures mean **2.13 ms**, p99
+**5.18 ms** (also 5.18 ms during active combat): the complete browser/worker
+3 ms target remains unmet. Simulation build **120** prevents mixed clients from
+using potentially different repaired routes on other maps.
+Validation: all 909 tests across 163 game, AI, movement-ability and worker
+transport files pass, as does TypeScript. Per-tick projection comparisons,
+11 cold restores and seven full-state two-peer checkpoints also pass, including
+the injected stall (`/tmp/echo-mesh-suite.log`, `/tmp/echo-mesh-verification.json`,
+`/tmp/echo-mesh-multiplayer.json`). Instance-level benchmark probes now attach
+after local restore/staging, because local restore replaces the World/Spatial.
+
+
+The opt-in `--probe-short-terrain-reuse` extends the terrain shadow probe below
+16-cell spans; it still executes every original query and checks repeated results
+for mismatches. In `/tmp/echo-short-sweep-reuse.json`, 76,022 of 200,445 queries
+repeat within a bounded 1,024-entry shadow cache, with zero mismatches. At tick
+4011, cross-request duplicates cost about 2.05 ms in that diagnostic run.
+
+Ground routing now keeps a separate 1,024-entry short-sweep cache, preserving the
+long-sweep pool against local-query churn. Keys retain direction, exact endpoints
+and body radius; any static geometry revision invalidates both pools. Reservations
+remain live outside the cache, and layered/airborne movement keeps its own path.
+The captured tick 4011 sweep scope falls **4.10 → 2.95 ms**, with the same 1,523
+calls (`/tmp/echo-status-tail-details.json`, `/tmp/echo-short-sweeps-details.json`).
+The whole unprofiled replay remains around **5.3 ms p99** (5.29 before, 5.40 after;
+active-combat p99 5.25 → 5.21), so no whole-budget gain is established. The final
+full-state audit is unchanged at `4250851672`.
+Projection comparison and 11 cold restores pass; two peers match complete state
+at all seven checkpoints through tick 4500, including the injected stall
+(`/tmp/echo-short-sweeps-verification.json`,
+`/tmp/echo-short-sweeps-multiplayer.json`). Focused tests cover profile/direction
+separation, live reservations, nearby additions/removals, eviction and height
+rebuilds. The broader game/AI and movement-ability run passed 890 of 891 tests;
+the remaining fixture directly changed terrain without calling the required
+rebuild boundary. Its terrain-precedence assertion was retained, the fixture was
+corrected, and all seven focused clearance tests then passed. The combat lab's
+terrain-edit scenarios now also rebuild navigation after editing raw cells.
+Logs: `/tmp/echo-short-sweeps-suite.log`,
+`/tmp/echo-short-sweeps-repair-tests.log`, `/tmp/echo-status-final-fixtures.log`.
+
+Remaining measured navigation targets: tick 201 contains 1,367 route sweep calls
+and tick 4011 contains 1,523 in the earlier diagnostic capture. The attack-position
+ranking and rejected mesh-conversion cases are addressed above. These remaining
+bursts need fresh attribution before considering path-quality or cadence changes.
+
+
+Remaining hot ability lookups now use the registry's frozen declaration indexes:
+spell immunity, combat modifiers and marks, concealment/detection, reaction
+bindings and weapon casts. Expiry, strongest-rank aggregation, source ownership,
+stacking and callback order are unchanged; no entity-state results are cached.
+The differential fixture checks indexed lookups against full catalogue/effect
+scans, including both immunity policies, expiry boundaries, duplicates, unknown
+IDs and live replacement. All 841 ability tests across 92 files pass.
+
+`/tmp/echo-status-baseline.json` and `/tmp/echo-status-indexed.json` replay the same
+4,500 ticks: full audit `4250851672`, total mean **2.20 → 2.12 ms**, p99
+**5.46 → 5.29 ms**, ability-lifecycle p99 **0.39 → 0.31 ms**. These sequential
+runs are not proof of a browser-wide budget improvement. Orders/navigation
+remain the largest replay tail contributor. The whole-match tail also identifies
+early combat-planning bursts missed by a late-battle-only fixture; explicit tick
+captures are retained in `/tmp/echo-status-tail-details.json`.
+
+
+Construction updates now distinguish clearance-mask, attack-position, local-sweep,
+ground-mesh and grid-edge invalidation. A batch invalidates each affected sweep
+cache tile only once. Sector portal reconstruction visits perimeter cells in the
+same row-major order instead of scanning interiors; layered topology retains its
+original ordering. Partial edge sectors and repeated/clustered changed cells are
+covered by differential tests.
+
+At browser-fixture tick 4411, diagnostic local-sweep invalidation measured
+**0.42 → 0.29 ms**, and sector boundary links **0.85 → 0.73 ms**
+(`/tmp/echo-construction-split-details.json`,
+`/tmp/echo-construction-optimized-details.json`). The unprofiled 4,500-tick runs
+(`/tmp/echo-construction-baseline.json`, `/tmp/echo-construction-final.json`)
+measured mean **2.15 → 2.18 ms**, p99 **5.51 → 5.28 ms**. This is a modest local
+improvement, not an established overall p99 gain given recent run variance.
+Full audit remains `4250851672`; per-tick projection comparison, 11 cold restores
+and seven two-peer full-state checkpoints pass, including the injected stall
+(`/tmp/echo-construction-verification.json`,
+`/tmp/echo-construction-multiplayer.json`). The 14 focused navigation tests pass.
+The full game/AI suite also passes: 158 files, 854 tests
+(`/tmp/echo-construction-suite.log`); TypeScript checking passes.
+No simulation rules, update cadence or route tie-breaking changed. The worker
+scheduler already subtracts elapsed work; adjacent ticks sharing a measurement
+window alone is not evidence of a scheduling defect. The full 3 ms target remains
+unmet.
+
+
+Construction-site diagnostics now separate visible-unit clearance, resource
+buffers, origin/entrance clearance, sweep-pattern compilation and the bounded
+approach flood. On the browser-compatible fixture at tick 4410, site checks
+cost 5.41 ms, including a 2.59 ms flood and 0.82 ms resource-buffer checks.
+Resource buffers now resolve once per authorized AI observation and compare
+inclusive rectangles instead of expanding every candidate/resource cell pair.
+The flood uses the existing observed-terrain clearance mask for positive proofs
+outside the proposed building's swept footprint. Nearby obstacles, slopes,
+uncertain spans and layered terrain retain the exact sweep. BFS order, goal
+selection and the 4,096-node limit are unchanged.
+
+`/tmp/echo-placement-split-details.json` versus
+`/tmp/echo-placement-proof-details.json` measures that site-check block at
+**5.41 → 3.70 ms**, flood **2.59 → 1.32 ms**, resource checks **0.82 → 0.14 ms**.
+The flood certifies 400 steps and retains 132 exact checks. Compilation was only
+0.13 ms, so geometry sharing was not pursued. The unprofiled 4,500-tick comparison
+(`/tmp/echo-placement-baseline.json`, `/tmp/echo-placement-final.json`) measured
+**5.49 → 4.96 ms p99**; this sequential result is subject to run variance (the
+preceding implementation also measured 4.95 ms on a different run). Full audit
+remains `4250851672`. Projection comparison, 11 restores and seven two-peer
+lockstep checkpoints pass, including the injected stall. Differential placement
+tests preserve decisions and flood expansion counts across rotations, moved or
+depleted resources and removed buildings.
+The game/AI suite passes all 853 tests across 158 files, and TypeScript checking
+passes.
+Validation logs: `/tmp/echo-placement-suite.log`,
+`/tmp/echo-placement-verification.json`, `/tmp/echo-placement-multiplayer.json`.
+
+The actual browser capture `/tmp/echo-placement-browser-budget.json` restores
+the active battle at 3900 and records 399 complete windows after warmup, with
+no dropped roots or desync. Worker tick p99 is **5.4 ms**; measured correlated
+worker/browser roots are **9.0 ms p99**, mean 3.45 ms per 25 ms window. The worst
+11.0 ms window includes pumps 4210 and 4211 plus 0.9 ms browser work. This does
+not establish a browser p99 improvement against earlier captures (8.1–11.1 ms).
+Accounting remains explicitly partial, with no active human-input workload;
+the complete 3 ms goal is unmet. The isolated test tab was closed after capture.
+
+The current whole-computation target is **3 ms p99 on Echo Isles, one human
+and one AI**, including transport and browser input/HUD; it remains unmet.
+For an active workload, use `npm run bench:match -- --map echo-isles --ticks
+4800 --battle-army 24 --budget-tail`. This stages 24 mixed units and one hero
+within that count on each side, then leaves the opponent under normal AI control.
+The older `--human-army 36` remains a one-sided diagnostic. Staged infantry use navigation cell centers
+even when the nearby hall has fractional coordinates. Combat samples have their
+own accounted-CPU percentile so later idle or post-victory ticks cannot dilute
+them. This headless tool still excludes real browser IPC and UI work.
+
+Attack-position geometry now validates footprints and weapon rays on demand in
+the original ranked candidate order. Terrain-only results remain in the bounded,
+locally invalidated cache; moving bodies and reservations are checked live.
+In the frozen Echo Isles battle (`c0e181a2` / `6f668dee`), footprint calls fell
+from 218,203 to 36,498 and weapon rays from 142,544 to 20,656. Unprofiled p99
+remained about 7 ms, so this is a verified reduction in work, not achievement
+of the total budget. A heap-ordering experiment was removed because it did not
+demonstrate a convincing whole-budget gain. Ranking instrumentation now includes
+sorting, which older reports left in the parent scope.
+
+The eager-filter differential test checks identical route choices and unit state,
+including changed reservations, moving targets, nearby/distant buildings and
+terrain rebuilds. Projection comparisons and 11 cold restore checkpoints pass
+through tick 3,900; two production lockstep replicas then agree through 4,500,
+including an injected transport stall. Their full audit is `4250851672`, matching
+the earlier uninterrupted battle. Reports: `/tmp/echo-approach-verification.json`
+and `/tmp/echo-approach-multiplayer.json`. These are correctness proofs, not
+browser timing acceptance. The full game/AI/ability suite passes all 1,677 tests
+across 245 files; TypeScript checking also passes. After those workers stopped,
+`/tmp/echo-approach-final.json` measured 6.85 ms p99 and 2.57 ms mean over 4,300
+post-warmup samples, with the same full audit and routing counts. This excludes
+browser transport/input/HUD and still does not satisfy the 3 ms objective.
+
+The October 14 collision follow-up reuses the same synchronous nearby-body
+snapshot for stationary attack destinations and for builders' work-point searches.
+Cell occupancy and yield reservations remain live. Fallback cell checks reject
+distant units before resolving collision eligibility or movement forms. Snapshot
+data never survives a search or replaces terrain checks.
+
+Diagnostic reports `/tmp/echo-occupancy-before.json` and
+`/tmp/echo-occupancy-workers.json` retain full audit `4250851672`. Candidate
+occupancy time fell from 0.01487 to 0.00210 ms averaged over all ticks; its worst
+block fell from 6.06 to 0.87 ms. The worst worker-assignment block fell from 11.63
+to 2.28 ms, and the construction tick at 2,731 fell from 21.44 to 10.35 ms.
+These instrumented values explain specific spikes; they are not whole-budget
+acceptance. The 46 focused tests pass, including differential construction
+replay, flying/ground separation, bridge decks, dead/contained units, out-of-bounds
+queries and changing yield pockets. TypeScript checking passes.
+Projection comparisons and 11 restore checkpoints pass through tick 3,900;
+the two-peer continuation agrees at seven full-state checkpoints through 4,500,
+with final audit `4250851672`. See `/tmp/echo-body-reuse-verification.json` and
+`/tmp/echo-body-reuse-multiplayer.json`. The final unprofiled run
+(`/tmp/echo-body-reuse-final.json`) measured 6.55 ms p99, versus 6.85 ms before
+this follow-up. Mean remained 2.58 ms. Browser accounting is still excluded and
+the complete 3 ms target remains unmet.
+
+AI observation/frame setup now reports separate public projection, entity-index,
+ownership, hostility and resource-list timings through the existing profiler.
+The privacy whitelist builds public entity records directly rather than spreading
+temporary optional-field objects for every known resource. No entity cache or
+decision-frequency change was introduced. In paired diagnostic runs,
+`/tmp/echo-ai-frame-breakdown.json` and `/tmp/echo-ai-observation-simple.json`,
+public projection fell from 0.579 to 0.232 ms per decision and total frame setup
+from 0.763 to 0.421 ms. Both retain full audit `4250851672`.
+
+Observed AI navigation also uses `TerrainClearance` for long ground segments,
+with its own mask of authorized terrain and observed blockers. Local observation
+changes refresh only the changed occupancy bits. Air, layers and uncertain
+envelopes retain their previous exact sweeps. In
+`/tmp/echo-ai-observed-clearance.json`, operations' retreat reachability averaged
+0.01451 ms over all ticks versus 0.02363 ms before reuse; the worst block did not
+improve. Full audit remains `4250851672`. The 62 AI/session/clearance tests pass,
+including comparison against forced exact rays through blocker additions,
+removals, narrow gates and slopes.
+Type checking, projection comparison and 11 cold-restore checkpoints pass.
+Two production lockstep peers agree through tick 4,500, including the injected
+stall, with final full audit `4250851672`. Reports are
+`/tmp/echo-ai-clearance-verification.json` and
+`/tmp/echo-ai-clearance-multiplayer.json`. The final unprofiled report
+`/tmp/echo-ai-clearance-final.json` measured 6.42 ms p99 (6.44 ms during active
+combat), versus 6.55 ms in the preceding run. Mean did not improve, so the
+subsystem reduction is stronger evidence than this small whole-budget movement.
+Browser transport/input/HUD remain outside this measurement; the goal is unmet.
+
+Long terrain-sweep answers now survive individual route requests in a bounded
+1,024-entry cache. Keys retain exact endpoints, direction and body radius;
+reservations and moving bodies remain live. A geometry revision discards these
+answers without rebuilding terrain. This supersedes the earlier request-local
+memoization described below. The optional `--probe-terrain-reuse` benchmark
+records repeated-query costs and mismatches without suppressing the underlying
+queries; its timings are diagnostic only. Before sharing, it found 35,258
+cross-request repetitions among 61,291 long queries and no mismatches.
+
+All 1,681 game/AI/ability tests across 246 files pass, as does TypeScript checking.
+New cases cover direction, body width, live reservations and bounded eviction;
+existing cases cover blocker placement/removal and height rebuilds. Projection
+and 11 restore checkpoints pass through 3,900; two peers agree at seven full-state
+checkpoints through 4,500, including the injected stall. Reports:
+`/tmp/echo-shared-sweeps-verification.json` and
+`/tmp/echo-shared-sweeps-multiplayer.json`, final audit `4250851672`.
+The unprofiled run `/tmp/echo-shared-sweeps-final.json` measured 6.44 ms p99 and
+2.62 ms mean: essentially unchanged from the preceding 6.42 ms p99. This removes
+repeated work, but does not establish a whole-budget improvement. New mesh
+rasterization, grid-repair and compaction scopes identify group-order spikes;
+attack-position searches remain the largest isolated spikes in this fixture.
+
+The next attack-position change rejects a body-blocked direct approach before
+checking its destination footprint and weapon line once the original eight
+fallback destinations have been collected. It preserves candidate ordering,
+all eight alternatives and retries when traffic clears; no path or search limit
+changes. Differential tests compare route attempts with eagerly validated
+geometry, including traffic reopening previously skipped destinations.
+
+Diagnostic reports `/tmp/echo-shared-sweeps-mesh-details.json` and
+`/tmp/echo-approach-body-rejection-details.json` show footprint calls falling
+36,498 → 17,315 and weapon-line calls 20,656 → 9,147. The worst attack-position
+block falls 15.66 → 6.58 ms, although its overall mean is nearly unchanged.
+The unprofiled `/tmp/echo-approach-body-rejection-final.json` measures
+**6.06 ms p99 overall, 6.19 ms during active combat**, with 2.54 ms overall mean.
+This is one sequential run versus 6.44 ms before; it is not a browser acceptance
+measurement. Routing counters, attacks, survivors and full audit remain identical.
+Focused combat/navigation tests and TypeScript pass. Projection and all 11 cold
+restores pass through 3,900; the two-peer continuation passes seven full-state
+checks through 4,500, audit `4250851672`, including the injected transport stall.
+See `/tmp/echo-approach-rejection-verification.json` and
+`/tmp/echo-approach-rejection-multiplayer.json`. The complete 3 ms goal remains
+unmet; browser transport/input/HUD still need correlated accounting.
+
+Ability area searches now expose target enumeration, actor materialization,
+eligibility and effect-operation scopes through the existing profiler. The
+optional `AbilityHost.targetsInRadius` reads live body membership and precise
+positions before constructing full combat/source records. Auras, chain jumps and
+line projectiles use it; hosts without it retain complete enumeration. Exact
+radius, eligibility and ordering checks remain in the runtime. No ownership,
+visibility or surface restriction is introduced by the broad-phase query.
+
+Effect execution also reuses its initial caster read until the first mutation,
+then reads again at every subsequent operation/declaration boundary. Branch
+conditions keep their operation-start snapshot, while magnitude expressions keep
+their release-start snapshot. Source height queries use the separate point
+argument instead of cloning an entire entity just to replace its coordinates.
+
+In `/tmp/echo-area-baseline-details.json` versus
+`/tmp/echo-area-read-reuse-details.json`, aura CPU averaged over all ticks falls
+0.1173 → 0.0466 ms (~60%); its largest block falls 3.31 → 1.54 ms. The intervening
+`/tmp/echo-area-application-details.json` separates recipient enumeration from
+effect execution. These are instrumented subsystem diagnostics. The final
+unprofiled `/tmp/echo-area-final.json` measures **5.71 ms p99 overall and 5.72 ms
+during active combat**, mean 2.41 ms, versus the preceding 6.06/6.19 ms. Full audit,
+routing, attacks and survivors remain identical; this still excludes browser
+transport/input/HUD and does not satisfy the complete 3 ms objective.
+
+All 839 ability tests are covered by the suite run and the corrected 18-test
+magnitude rerun; the sole initial failure was a new fixture using a forbidden
+empty branch arm. New radius tests cover sub-cell boundary inclusion, buildings,
+death/removal/creation, flying recipients and differential aura/chain/line replay.
+The magnitude regression checks caster mutations between branch operations.
+TypeScript passes. `/tmp/echo-area-verification.json` passes projection checks and
+11 cold restores; `/tmp/echo-area-multiplayer.json` agrees at seven full-state
+checkpoints, including the injected stall, final audit `4250851672`.
+
+Actor-snapshot diagnostics now split damage eligibility, captured source data and
+status application. They exposed repeated whole-library/declaration scans while
+building every damage-type multiplier. Damage eligibility now uses the existing
+immutable registry indexes and resolves each current status once per snapshot.
+No actor state is cached across mutations, and immunity/stacking semantics are
+unchanged. The declaration-scan differential test covers combinations, all ranks,
+duplicates, missing declarations and mutation between reads.
+
+In the targeted 600-tick browser-compatible replay, damage eligibility inside aura
+effects fell **0.259 → 0.015 ms mean per tick**; complete aura execution fell
+0.616 → 0.278 ms. These are diagnostic measurements with identical scope hooks
+(`/tmp/echo-aura-actor-details.json` and `/tmp/echo-aura-indexed-details.json`).
+The unprofiled 4,500-tick comparison (`/tmp/echo-damage-baseline.json` versus
+`/tmp/echo-damage-indexed.json`) measured whole headless p99 **5.25 → 4.95 ms**,
+active-combat p99 **5.28 → 4.87 ms**, and ability-lifecycle p99 0.731 → 0.379 ms.
+The baseline aliases only the previous damage-policy implementation; both use
+the same navigation cache and instrumentation wrappers. This is a sequential
+comparison, not complete browser CPU acceptance. Full audits match `4250851672`.
+Projection comparisons, 11 cold restores and seven two-peer lockstep checks pass,
+including the transport stall. Construction and attack-position navigation
+remain large tail contributors; the 3 ms objective remains unmet.
+All 840 ability tests across 91 files pass, as does TypeScript checking. Reports:
+`/tmp/echo-damage-ability-suite.log`, `/tmp/echo-damage-indexed-verification.json`
+and `/tmp/echo-damage-indexed-multiplayer.json`.
+
+Snapshot encoding now keeps bounded live entity records instead of reconstructing
+a Map, entry tuples and membership Set every publication. Generation marks remove
+departed IDs; order is republished on reordering as well as membership changes.
+Fog encoding patches its owned defensive baseline using the changes it already
+computed. Dense/reset packets retain separate baseline and transferable copies;
+untracked mutable arrays still take the full byte comparison. Simulation fog and
+previous decoded records are never used as the encoder's mutable baseline.
+Player-view assembly also appends remembered/live records directly to its output
+array, retaining live-record precedence and final ID ordering without a redundant
+map of all remembered scenery.
+
+The isolated encoder run (`/tmp/echo-snapshot-baselines-final.json`) reduced encode
+mean/p99 **0.237/0.714 → 0.110/0.168 ms** against `/tmp/echo-area-final.json`.
+The final combined `/tmp/echo-projection-baselines-final.json` measured encode p99
+0.169 ms, projection mean/p99 0.288/0.495 ms, and overall/active-combat p99
+**5.53/5.53 ms**, mean 2.26 ms. The intermediate encoder-only whole p99 was 5.48
+ms; the extra scenery change does not demonstrate another whole-p99 improvement.
+These are sequential headless runs with real codec and transfer-clone work, not
+complete browser accounting. Full audit `4250851672`, routing and battle outcomes
+remain unchanged; the 3 ms goal is still unmet.
+
+Worker codec/client tests and 32 focused observation/codec tests pass, as does
+TypeScript. Added cases cover pure reorders, same-count replacements, mutable
+source arrays, transferred buffers, sparse/dense fog transitions, and live
+building records overriding remembered records without duplicates. Projection
+comparison and 11 restores pass in `/tmp/echo-snapshot-baselines-verification.json`.
+The two-peer continuation (`/tmp/echo-snapshot-baselines-multiplayer.json`) agrees
+at seven full-state checkpoints through 4,500, including the injected stall.
+
+Local steering now caches exact cardinal/diagonal edges at strides of one to
+eight quarter cells, retaining direction and body radius. The previous cache
+accepted only one quarter cell, while larger bodies steer in larger steps.
+The diagnostic `--probe-local-sweeps` found 123,562 of 134,100 calls using these
+larger aligned edges. Arbitrary rays still use the exact sweep; moving bodies and
+reservations remain live. The same 128-tile memory bound covers all strides,
+and local invalidation includes the longest edge's complete footprint.
+
+The browser-compatible 600-tick replay measured movement mean/p99
+**0.764/1.556 → 0.506/1.089 ms** (`/tmp/echo-scaled-local-target-before.json`
+and `after.json`). Its complete headless p99 fell 8.29 → 7.78 ms. The longer
+4,500-tick frozen battle remained essentially flat at **5.55 → 5.57 ms p99**;
+this is a local-work reduction, not a claim of whole-budget success. Both
+variants retain identical full audits and battle outcomes. Projection and 11
+cold restores pass; two lockstep peers agree at seven checkpoints through 4,500,
+including the injected stall (full audit `4250851672`). Randomized differential
+tests cover body sizes, strides, arbitrary endpoints, eviction and obstacle
+changes. The complete 3 ms goal remains unmet.
+The game/AI suite passed all 852 tests across 157 files
+(`/tmp/echo-scaled-local-suite.log`); TypeScript also passed.
+
+Integer ground attack positions now share the existing bounded terrain-step
+cache. A standing footprint result is invalidated around obstacle edits; flying,
+layered and sub-cell checks retain their original sweep. Moving bodies and
+reservations are never cached there. Attack geometry also passes the candidate
+position separately instead of copying the whole actor for each elevation query.
+The 4,500-tick, 24-per-side fixture retained full audit `4250851672` and identical
+combat events. One sequential run measured 7.20 ms overall p99 versus the earlier
+8.18 ms (map `c0e181a2`, content `6f668dee`); this is an initial measurement, not a
+3 ms acceptance result or a statistical guarantee.
+
+Long ground sweeps now first test a conservative swept-square envelope against
+row bitmasks of occupied or steep cells. A clear envelope proves every original
+ray step valid; uncertain envelopes, short segments, flying units and layered
+surfaces retain their exact checks. Building/resource edits update only affected
+bits; explicit terrain rebuilds recompute slope flags. This uses about 450 KiB
+on Echo Isles, independent of the number of body radii. Repeated long segments
+also share results within one synchronous route request (at most 256 entries),
+while live reservations remain outside that reuse.
+
+The October 13 follow-up kept full audit `4250851672`, identical routing counters,
+and all combat counts over 4,500 ticks. Diagnostic route-request sweep time fell
+from 0.02290 to 0.01316 ms averaged across all ticks; its worst block fell from
+13.42 to 8.17 ms. The profiler counted 15,486 positively certified sweeps and 449
+reused request-local results. Unprofiled whole-headless p99 measured 7.05 ms
+versus a fresh 7.42 ms baseline, with maxima 19.50 versus 24.12 ms. Mean/p95 did
+not improve in that pair, and intervening runs ranged around 7–8 ms p99: this is
+evidence of reduced army-order spikes, not a stable whole-budget win. Reports:
+`/tmp/echo-post023-baseline.json`, `/tmp/echo-span-reuse-final.json`, and
+`/tmp/echo-span-reuse-details.json`. The coarse-tile prototype was replaced
+because it rejected too many valid corridors near forest edges.
+
+Differential tests compare 18,000 sweeps with the original ray implementation,
+including sub-cell positions, varied radii, boundaries, slopes and obstacles.
+Integration tests cover placement/removal, reservations, layered/air navigation,
+and cold restore. The game/AI/ability run passed 1,671 tests initially and exposed
+two fixtures bypassing static invalidation; both were repaired without weakening
+their assertions, and the focused 18-test rerun passed. Type checking passed.
+Projection comparison and 11 full-state restore checkpoints passed through tick
+3,900 (`/tmp/echo-span-reuse-verification.json`). The two-peer lockstep replay
+then passed all seven full-state checkpoints through tick 4,500, with identical
+complete final snapshots and audit `4250851672`, matching the uninterrupted run
+(`/tmp/echo-span-reuse-multiplayer.json`). Its timings are not performance
+evidence: a long host suspension contaminated one measured tick.
+
+For actual-browser captures, open an isolated local skirmish and run
+`node_modules/node/bin/node --import tsx scripts/bench/browser-budget.ts --map
+echo-isles --export-setup /tmp/browser-match.json`. Use that setup with
+`npm run bench:match -- --map echo-isles --match /tmp/browser-match.json --ticks
+3900 --battle-army 24 --verify-projection --verify-restore --save
+/tmp/browser-battle.json --output /tmp/browser-fixture.json`.
+Then resume the browser match and run the browser tool with
+`--map echo-isles --load /tmp/browser-battle.json --x 486 --z 230 --output
+/tmp/browser-budget.json`. This restores through the normal game debug bridge
+without adding a saved-game-library record. It preserves the actual match slots
+and production map revision rather than bypassing the restore guard. The camera
+coordinates are navigation units; adjust them to the fixture's battle location.
+Do not interact with the browser or run other benchmarks during the quiet
+10-second capture. Worker-delivery latency is elapsed time, not CPU, and
+inclusive timing scopes must not be summed as independent work.
+
+The October 13 browser capture successfully restored the explicit Ant/Marshal,
+seed-1 fixture and sampled 400 worker ticks around ticks 4,021–4,466. Individual
+p99 scopes were worker tick 8.10 ms, projection 0.70 ms, encode 0.40 ms,
+postMessage CPU 0.20 ms, receive CPU 0.20 ms (including decode), input 0.10 ms,
+and HUD/minimap data 0.80 ms. GPU p99 was 7.08 ms, separately measured.
+These independent percentiles are **not additive**. The capture still lacks a
+synchronized non-render total spanning threads and active input events, so it
+does not establish full-budget acceptance. Two replicas also replayed the original
+seed-731942 fixture from ticks 3,900–4,500 with equal full states at all seven
+checkpoints and final full audit `4250851672`, matching the uninterrupted run.
+
+An October 13 pass found attack-position searches testing about 3,200 candidates.
+Checking moving-body obstruction before a long terrain sweep reduced several
+repeated positioning spikes from 46–57 ms to 23–25 ms. Candidate order and route
+choices are unchanged: the 6,000-tick baseline and optimized run retain full audit
+`2981503894` (map `c0e181a2`, content `6f668dee`). Overall p99 stayed around 7 ms;
+this is a spike reduction, not budget completion. A separate lazy eligibility
+experiment did not improve the whole-run tail and was removed. The unresolved
+first group order cost about 240 ms, including one lazy body-mesh build and
+repeated mesh-to-grid conversion failures followed by grid searches.
+The subsequent 3,600-tick run, stopped before victory, measured 10.8 ms overall
+p99 and 11.4 ms across its 2,690 active-combat ticks. The route diagnostic found
+87 mesh fallbacks in 113 attempts, including 58 grid-rasterization rejections.
+Projection/restore checks and two replicas replaying ticks 3,000–3,600 with a
+synthetic connection stall retained equal full state; these are correctness
+checks, not browser performance acceptance.
+
+The following mesh-conversion fix keeps fractional obstacle corners from rounding
+onto blocked cell-center positions. A bounded search of the adjacent 3×3 centers
+connects corners using the unchanged footprint sweep; it retains the original
+destination, route budget and full-grid fallback. Existing successful conversions
+remain unchanged. Alternate routes affect movement, so simulation build 117
+separates peers using the old and new routing rules.
+
+With the same map/content fingerprints and 3,600-tick army fixture, grid-conversion
+failures fell from 63 to 5 and expanded grid nodes from 185,127 to 57,066. Observed
+overall accounted p99 went from 10.67 to 8.82 ms; active-combat p99 from 10.80 to
+9.89 ms. The first army-order spike fell from 251 to 192 ms and remains a major
+problem, including an approximately 63 ms lazy body-mesh build. These are separate
+match runs with changed routes, not identical-state microbenchmarks or browser
+acceptance. Projection validation and cold restore through tick 3,000 pass; two
+transported replicas through tick 3,600 retain equal full state (audit 1327299382).
+The live performance counters now distinguish missing mesh corridors, footprint
+rejections, repaired/failed cell conversions, and route-budget rejections.
+
+Build 118 also attaches physically legal endpoints excluded only by the mesh's
+0.002-unit safety padding. The ordinary mesh query stays strict; the simulation
+opts into padded endpoint lookup and still validates every returned sweep and
+grid step without relocating either endpoint. In the same 3,600-tick workload,
+missing-corridor fallbacks dropped from 34 to zero, mesh acceptance reached
+98/105, and accounted p99 measured 7.86 ms overall / 8.09 ms in active combat.
+The first order still cost 187 ms. Full-state restore/projection and two delayed
+replicas through tick 3,600 agree with the uninterrupted run (audit 3780416948).
+The new detailed trace identifies attack-position generation and body tests as
+the largest recurring tail cost; first-use mesh compilation remains a separate
+roughly 63 ms event. Browser CPU accounting and the 3 ms goal remain outstanding.
+
+Attack-position terrain geometry now survives planning retries in a bounded
+cache (16 entries / 32,768 positions). Keys cover the target pose, body/flight
+properties and weapon geometry. Blocker changes invalidate only entries whose
+full footprint/ray bounds overlap them; explicit terrain rebuilds clear all.
+Moving-body checks and friendly reservations remain live. Already validated
+candidate terrain is not swept a second time during occupancy checks.
+The serial 3,600-tick run measured 6.71 ms overall p99 and 6.89 ms active-combat
+p99, with exactly the pre-cache audit 3780416948 and attack counts. Projection,
+cold restore and two delayed replicas also retain that full state. Tests cover
+local/distant blocker edits, target movement, attacker changes and live bodies.
+Remaining tails include long grid searches, first-use mesh builds and dynamic
+body tests across large attack-position candidate sets; no update frequency or
+candidate selection rules were changed.
+
+Wide body queries now choose between direct cell lookup and scanning occupied
+buckets, preserving row-major order in either case. Attack-position selection
+also reuses the existing synchronous body snapshot for its candidate rays;
+physical collision data is discarded after that decision. This measured 6.32 ms
+overall p99 / 6.41 ms active-combat p99 in the same workload, again with audit
+3780416948 and identical attacks. Collision/stacked-floor tests, projection,
+restore and two transported replicas pass. The sparse scan alone did not produce
+a material match-level p99 gain. The profile exposes body-snapshot counts and
+their body counts. This fixture remains one-sided (the human army dominates);
+a balanced engagement and real browser transport/input/HUD accounting are still
+required before any budget-completion claim.
+
+The equal-army fixture exposes a more demanding workload: at tick 4,800 it has
+no winner, 4,318 combat ticks, and 836 human / 262 AI attack starts (plus neutral
+combat). Its initial 6,000-tick run measured 11.5 ms active-combat p99; use the
+shorter window to avoid post-victory dilution. Detailed slow-tick captures put
+terrain sweeps, mesh-to-grid validation and fallback searches ahead of the
+previous attack-position bottleneck. AI destination-reachability fallbacks are
+another substantial spike; the profiler now distinguishes accepted mesh routes,
+missing corridors and physical-sweep rejections.
+
+Mesh-to-grid validation now caches exact directed adjacent terrain checks in
+bounded sparse tiles, including stationary footprint checks. Blocker edits
+invalidate only overlapping tiles plus the body's full halo; terrain rebuilds
+discard all entries. Reservations remain live. Empty reservation sets no longer
+cause a redundant center-line sweep before the footprint sweep. No search limit,
+route choice, update cadence or gameplay rule changed.
+
+On the same detailed battle tick 3,171, mesh-validation self time fell from
+6.49 to 1.82 ms across the same 15 calls; total accounted time fell from 47.05 to
+41.35 ms. Both 4,800-tick runs retain audit `1089912279`. Uninstrumented and
+single-tick-instrumented 4,500-tick runs remain roughly 10.5–11.1 ms active p99,
+with audit `3872605398`; this does not establish a reliable whole-budget gain.
+AI endpoint-padding and corner-repair experiments failed to remove the expensive
+fallback at tick 4,490 and were removed. The 3 ms target and real browser
+transport/input/HUD accounting remain outstanding. The new cache has randomized
+directed-clearance, local invalidation and bounded-storage tests; 45 focused
+navigation/collision/AI tests and TypeScript pass.
+Projection decoding matches every original snapshot through tick 3,900; cold
+restore agrees at 11 full-state checkpoints. Two independent transported peers
+then replay ticks 3,900–4,500 with a synthetic upstream stall, agree at all seven
+checkpoints and finish with equal complete state and the uninterrupted-run audit
+`3872605398`. These checks establish correctness, not browser budget acceptance.
+
+Build 119 fixes a concrete endpoint-conversion failure. A unit can legally stand
+at a shoreline cell while a diagonal approach to that cell clips a neighboring
+water cell. Snapping intermediate mesh corners alone cannot fix that final edge.
+After the original bounded repair fails, the shared converter now tries checked
+neighboring start/end joins while retaining the exact requested endpoints. Unit
+routing also attempts that repair after a failed continuous mesh segment; AI
+reachability uses the same helper and validates the same body footprint. A global
+grid fallback remains available when repair cannot prove a route. Existing
+successful conversions remain unchanged, but newly repaired routes differ from
+the former grid fallback, requiring the new simulation compatibility version.
+
+In the 4,500-tick equal-army workload, fallback grid expansions fell from 123,223
+to 11,149, mesh fallbacks from 22 to 5, and active-combat p99 measured 8.23 ms
+(4,030 combat samples). AI attack starts rose from 262 to 355; this is still an
+active fight. Outcomes evolve differently with different routes, so this is a
+matched starting workload, not an identical-state timing comparison. The two
+captured old AI queries at tick 4,490 now use repaired corridors without A* and
+return the same reachability answers. Their isolated replay takes roughly 1–2 ms
+versus 7–27 ms in the original capture, with different cache histories. The
+whole-computation goal remains unmet.
+
+To inspect a slow AI query without rerunning the entire battle repeatedly, add
+`--capture-ai-navigation 4490 --ai-navigation-output /tmp/ai-nav.json` to the match
+benchmark, then run `node --import tsx scripts/bench/replay-ai-navigation.ts
+/tmp/ai-nav.json`. This exports bounded ground-only queries and the AI's observed
+collision geography. Fixture copying perturbs timing; never use capture runs for
+budget acceptance. Debug profiling now reports AI mesh repairs and fallback
+search/node counts through the existing performance report.
+
+Validation for build 119: 937 game/AI/session/network tests pass, including the
+two localhost socket tests rerun outside the sandbox after bind permission was
+denied; TypeScript passes. New regressions exercise both directions around a
+shoreline endpoint, exact destinations, blocked goals, body clearance, and route
+cost limits. Projection decoding and 11 cold-restore checkpoints agree through
+tick 3,900. Two delayed lockstep peers replay through tick 4,500, agree at all
+seven full-state checkpoints and finish equal to the uninterrupted run (audit
+`4250851672`). Release notes record the routing improvement.
 
 Camera movement can remain smooth while units freeze: rendering and camera input
 run independently of the simulation worker. Profile worker and AI timings before
@@ -2366,6 +3376,12 @@ attributed to callers in detailed profiling. `match-budget.ts --cpu-profile
 /tmp/match.cpuprofile` samples only the live workload, excluding map compilation
 and restore. Route traces distinguish grid expansions, mesh expansions and tile
 replacements. Sampling and detailed instrumentation are not acceptance runs.
+Use `node scripts/bench/cpu-report.mjs /tmp/match.cpuprofile --limit 30`
+to aggregate sampled self and inclusive costs by original source location using
+the retained bundle map. Recursive locations count once per inclusive sample;
+parent/child inclusive totals overlap. The report retains engine/inspector and
+benchmark costs explicitly, rather than presenting them as simulation work.
+
 
 Behavior-preserving fixes in this pass:
 - Traffic dependencies inspect only the next non-coincident waypoint; they no

@@ -1,3 +1,4 @@
+import {ownershipTexturePlugin} from '../loading/ownershipTextures';
 /**
  * Offscreen iso snapshot of a glTF. One WebGL context, cached by URL.
  */
@@ -23,7 +24,7 @@ const PAD = 1.16;
 export class PreviewCache {
   private readonly gl: WebGLRenderer;
   private readonly check: CanvasTexture;
-  private readonly loader = new GLTFLoader();
+  private readonly loader = new GLTFLoader().register(ownershipTexturePlugin);
   private readonly shots = new Map<string, Promise<string | null>>();
   private dead = false;
 

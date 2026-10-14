@@ -24,7 +24,7 @@ import type { Camp, Owner } from "../../content/schema";
 import { GameContext } from "./context";
 import { Observation } from "./observation";
 import { distance2 } from "./spatial";
-import { alive, type Entity, type Point } from "./state";
+import { alive, type Entity } from "./state";
 import { Progression } from "./progression";
 
 export type DamageHit={owner?:Owner;source:number;target:number;damage:number;damageType:string;weapon?:boolean;criticalAbility?:string;cleaveAbility?:string;enhancement?:import('./missileState').WeaponEnhancement;weaponOrigin?:{owner:string;x:number;y:number}};
@@ -101,7 +101,6 @@ export class Combat {
   private planUnits(only?:ReadonlySet<number>) {
     const c = this.c;
     this.shells.expire();
-    const approaches=new Map<string, readonly Point[]>();
     c.profile.measure('Target index',()=>this.targets.refresh(c.liveBodies()));
     const targets=this.targets;
     for (const e of c.activeUnits()) {
@@ -123,7 +122,7 @@ export class Combat {
           continue;
         }
       }
-      if(e.abilities?.pending || charging(this.c,e.id) || isStunned(e,this.c.registry))continue;
+      if(e.abilities?.pending || order?.type==='castAbility' || charging(this.c,e.id) || isStunned(e,this.c.registry))continue;
       if(u.taunt){
         if(u.cooldown>0)u.cooldown--;
         const target=c.get(u.taunt.source);
@@ -135,7 +134,7 @@ export class Combat {
           discardNavigation(u);
           if(!u.attack&&!u.cooldown)this.beginAttack(e,target);
         }else if(u.retryAt<=c.state.tick){
-          routeToAttack(c,e,target,approaches);u.retryAt=c.state.tick+6;
+          routeToAttack(c,e,target);u.retryAt=c.state.tick+6;
         }
         continue;
       }
@@ -242,7 +241,7 @@ export class Combat {
             !c.spatial.attackClear({...goal,elevation:c.spatial.elevation({...e,...goal})},target,!!(combat.projectile||combat.shell)));
           if (!u.route.length || staleGoal) {
             c.profile.count(staleGoal?'Attack approach stale goal':'Attack approach no route');
-            routeToAttack(c,e,target,approaches);
+            routeToAttack(c,e,target);
             u.retryAt = c.state.tick + 6;
           }
         }

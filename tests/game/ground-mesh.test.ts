@@ -1,15 +1,44 @@
 import {expect,it} from 'vitest';
-import {buildGroundMesh,GroundMeshBuilder} from '../../src/shared/navigation/groundMesh';
+import {buildGroundMesh,GroundMeshBuilder,GROUND_MESH_CLEARANCE_PADDING} from '../../src/shared/navigation/groundMesh';
 import {createGroundMeshQuery} from '../../src/shared/navigation/groundMeshQuery';
 import {queryProbe,checkProbePath,disposeProbe} from '../../scripts/bench/navigation/recast-probe';
 import {clearSweep,fixed} from '../../src/sim/game/motion';
 import {GroundNavigation} from '../../src/sim/game/groundNavigation';
+import {SimulationProfiler} from '../../src/sim/profiling';
 function scenario(size:number,walk:(x:number,z:number)=>boolean,radius=.34){
  const walkable=Uint8Array.from({length:size*size},(_,i)=>+walk(i%size,Math.floor(i/size))),heights=new Int16Array(size*size);
  const data=buildGroundMesh({size,walkable,heights,radius}),probe=createGroundMeshQuery(data);
  const clear=(a:{x:number;z:number},b:{x:number;z:number})=>clearSweep(fixed({x:a.x,y:a.z}),fixed({x:b.x,y:b.z}),(_a,b)=>!!walkable[b],size,Math.round(radius*1000));
  return {data,probe,clear};
 }
+it('shares sampling lattices across tiles and discards them when body or map dimensions change',()=>{
+ const builder=new GroundMeshBuilder(),profile=new SimulationProfiler();profile.enabled=true;
+ for(const [size,radius] of [[70,.34],[70,2.001],[96,2.001]] as const){
+  const input={size,radius,walkable:new Uint8Array(size*size).fill(1),heights:new Int16Array(size*size)};
+  profile.reset();
+  const first=builder.build(input,undefined,undefined,profile);
+  expect(first.tiles).toEqual(buildGroundMesh(input).tiles);
+  expect(profile.workSnapshot().find(r=>r.path==='Sampling lattices built')?.value).toBe(Math.ceil(size/32));
+  const cell=31*size+31;input.walkable[cell]=0;input.heights[cell+1]=200;
+  profile.reset();
+  const edited=builder.build(input,undefined,undefined,profile);
+  expect(edited.tiles).toEqual(buildGroundMesh(input).tiles);
+  expect(profile.workSnapshot().find(r=>r.path==='Sampling lattices built')?.value??0).toBe(0);
+ }
+});
+it('only bridges the declared endpoint margin when explicitly requested',()=>{
+ const s=scenario(64,(_x,z)=>z>10,1.5),query=s.probe.query;
+ const a={x:5,z:12},b={x:50,z:15},padding=GROUND_MESH_CLEARANCE_PADDING/1000;
+ try{
+  expect(s.clear(a,a)).toBe(true);
+  expect(query.computePath(a,b).success).toBe(false);
+  const result=query.computePathWithEndpointPadding(a,b,padding);
+  expect(result.success).toBe(true);
+  expect(result.path[0]).toEqual({...a,y:0});expect(result.path.at(-1)).toEqual({...b,y:0});
+  expect(checkProbePath(result.path,{...a,y:0},{...b,y:0},s.clear).valid).toBe(true);
+  expect(query.computePathWithEndpointPadding({x:5,z:11.99},b,padding).success).toBe(false);
+ }finally{query.destroy();}
+});
 it('compresses open ground and connects tiles without moving the destination',()=>{
  const s=scenario(64,()=>true);try{
   expect(s.data.triangles).toBeLessThanOrEqual(8);
@@ -146,4 +175,63 @@ it('keeps graph links when a local edit does not change clearance geometry',()=>
  walkable[32*size+32]=0;live.invalidate([32*size+32]);live.prepare();
  expect(live.diagnostics.rebuiltTiles-before).toBe(4);
  const cold=new GroundNavigation(input);expect(live.query.computePath(start,goal)).toEqual(cold.query.computePath(start,goal));
+});
+
+it.each([2.001,3,4.4,8,16])('keeps radius %s local mask edits identical to cold geometry at seams, slopes and partial tiles',radius=>{
+ const size=70,walkable=new Uint8Array(size*size).fill(1),heights=new Int16Array(size*size);
+ const input={size,radius,walkable,heights},builder=new GroundMeshBuilder(),profile=new SimulationProfiler();profile.enabled=true;
+ const ids=Array.from({length:9},(_,i)=>i);
+ builder.build(input);
+ const batches=[[15*size+15],[31*size+31,32*size+32],[65*size+65,69*size+69],
+  Array.from({length:40},(_,i)=>20*size+10+i)];
+ for(const cells of batches)for(const edit of ['block','unblock','raise','lower'] as const){
+  for(const cell of cells){if(edit==='block'||edit==='unblock')walkable[cell]=+(edit==='unblock');else heights[cell]=edit==='raise'?200:0;}
+  profile.reset();
+  const updated=builder.build(input,ids,cells,profile),cold=buildGroundMesh(input);
+  expect(updated.tiles).toEqual(cold.tiles);
+  if(radius===3&&cells.length===1){
+   const samples=profile.workSnapshot().find(row=>row.path.endsWith('Local mask samples'))?.value??0;
+   expect(samples).toBeGreaterThan(0);expect(samples).toBeLessThan(1000);
+   expect(profile.workSnapshot().find(row=>row.path.endsWith('Full mask samples'))?.value??0).toBe(0);
+  }
+ }
+});
+
+it.each([1.5,2.5,3])('retains unaffected mask samples for a large local footprint edit at radius %s',radius=>{
+ const size=64,input={size,radius,walkable:new Uint8Array(size*size).fill(1),heights:new Int16Array(size*size)};
+ const builder=new GroundMeshBuilder(),profile=new SimulationProfiler();profile.enabled=true;
+ builder.build(input);
+ const cells=Array.from({length:144},(_,i)=>(10+Math.floor(i/12))*size+10+i%12);
+ for(const edit of ['block','unblock','raise','lower'] as const){
+  for(const cell of cells){
+   if(edit==='block'||edit==='unblock')input.walkable[cell]=+(edit==='unblock');
+   else input.heights[cell]=edit==='raise'?200:0;
+  }
+  profile.reset();
+  const updated=builder.build(input,[0],cells,profile),cold=buildGroundMesh(input);
+  expect(updated.tiles).toEqual(cold.tiles.filter(t=>t.x===0&&t.z===0));
+  const samples=profile.workSnapshot().find(row=>row.path.endsWith('Local mask samples'))?.value??0;
+  // More than one quarter of this tile changes. Keep the untouched majority
+  // even when prefix sums, rather than direct cell reads, are cheaper.
+  expect(samples).toBeGreaterThan(4225/4);expect(samples).toBeLessThan(2100);
+  expect(profile.workSnapshot().find(row=>row.path.endsWith('Full mask samples'))?.value??0).toBe(0);
+ }
+});
+
+it.each([
+ {radius:.34,cells:[15*64+15],method:'Direct footprint samples'},
+ {radius:1.5,cells:Array.from({length:64},(_,i)=>(10+Math.floor(i/8))*64+10+i%8),method:'Prefix mask samples'},
+])('selects $method for local edits at radius $radius',({radius,cells,method})=>{
+ const size=64,input={size,radius,walkable:new Uint8Array(size*size).fill(1),heights:new Int16Array(size*size)};
+ const builder=new GroundMeshBuilder(),profile=new SimulationProfiler();profile.enabled=true;
+ builder.build(input);
+ for(const blocked of [true,false]){
+  for(const cell of cells)input.walkable[cell]=+!blocked;
+  profile.reset();
+  const updated=builder.build(input,[0],cells,profile),cold=buildGroundMesh(input);
+  expect(updated.tiles).toEqual(cold.tiles.filter(t=>t.x===0&&t.z===0));
+  const counts=Object.fromEntries(profile.workSnapshot().map(r=>[r.path.split(' / ').at(-1),r.value]));
+  expect(counts[method]).toBeGreaterThan(0);
+  expect(counts[method==='Direct footprint samples'?'Prefix mask samples':'Direct footprint samples']??0).toBe(0);
+ }
 });

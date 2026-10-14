@@ -93,6 +93,12 @@ function PerformanceWindow({source:editor}:{source:PerformanceSource}){
       <Button variant="outline" size="sm" disabled={recording} onClick={()=>{perf.capture({quiet:true,trace:false});setReport(editor.performanceReport());}}>Quiet capture · 10 s</Button>
      </div>
      {frames.comparison&&<div className="grid gap-2 sm:grid-cols-3">{['Frame interval','App frame total (CPU)','GPU frame'].map(name=><div key={name} className="rounded-lg bg-muted p-3 text-xs">{name} · {frames.comparison?.[name]?.changePercent?.toFixed(1)??'—'}% vs baseline mean</div>)}</div>}
+     {!!frames.cpuBudget?.stats.samples&&<section className="space-y-3 rounded-lg border border-solid border-border p-4">
+      <h3 className="m-0 text-sm font-semibold">Correlated non-render work · partial coverage</h3>
+      <p className="m-0 text-xs text-muted-foreground">{milliseconds(frames.cpuBudget.stats.p99)} ms p99 per {frames.cpuBudget.windowMs} ms window · {frames.cpuBudget.stats.samples} windows · {frames.cpuBudget.dropped} dropped spans</p>
+      <Graph label="Browser + worker CPU roots" values={frames.cpuBudget.windows.map(w=>w.totalMs)} color="stroke-amber-400"/>
+      <p className="m-0 text-xs text-muted-foreground">{frames.cpuBudget.note}</p>
+     </section>}
      <table className="w-full border-collapse text-left text-xs"><thead className="sticky top-0 bg-background text-muted-foreground"><tr><th className="px-2 py-2 font-medium">Measured work</th>{['Mean','p95','p99','Samples'].map(s=><th key={s} className="px-2 py-2 text-right font-medium">{s}</th>)}</tr></thead><tbody>{stages.map(([name,s])=><tr key={name} className="border-0 border-t border-solid border-border/50"><td className="px-2 py-2">{name}</td>{[milliseconds(s.mean),milliseconds(s.p95),milliseconds(s.p99),s.samples].map((v,i)=><td key={i} className="px-2 py-2 text-right font-mono">{v}</td>)}</tr>)}</tbody></table>
     </div>}
     {tab==='counters'&&<div className="space-y-2">{Object.entries(frames.values).map(([name,value])=><div key={name} className="grid grid-cols-2 gap-4 border-0 border-b border-solid border-border py-2 text-xs"><span>{name}</span><span className="break-words font-mono">{value}</span></div>)}</div>}

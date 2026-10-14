@@ -5,6 +5,8 @@ import {GameMenu} from '../../ui/menu/gameMenu';
 import {getMap} from '../../shared/map/library';
 import type {LocalSave} from '../../shared/save/localSave';
 import {LoadingScreen} from '../../ui/loadingScreen';
+import {matchResult} from '../../presentation/matchResult';
+import {MatchResultDialog} from '../../ui/matchResult/matchResult';
 /**
  * In-match screen: HUD + session. Destroy stops the session.
  */
@@ -23,6 +25,7 @@ export class PlayScreen extends GameScreen {
   private performanceWindow?:PerformanceDebugWindow;
   private readonly menu:GameMenu;
   private readonly initialSave?:LocalSave;
+  private resultDialog?:MatchResultDialog;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -55,7 +58,14 @@ export class PlayScreen extends GameScreen {
       host: this.root,
       channel: hooks.channel,
       match: hooks.match,
-      hooks: { onMissionLeave: hooks.onLeave, onMissionContinue:hooks.onContinue, onHud: (state) => this.hud.update(state) },
+      hooks: {
+        onMissionLeave: hooks.onLeave, onMissionContinue:hooks.onContinue, onHud: (state) => this.hud.update(state),
+        onMatchOutcome:outcome=>{
+          if(this.destroyed||this.resultDialog)return;
+          this.menu.close();
+          this.resultDialog=new MatchResultDialog(matchResult(outcome,hooks.player,hooks.match?.slots??[]),hooks.onLeave);
+        },
+      },
     });
     this.loading = new LoadingScreen(this.root, hooks.onLeave, undefined, entry.overview.mission);
   }
@@ -74,6 +84,7 @@ export class PlayScreen extends GameScreen {
 
   override destroy(): void {
     this.destroyed = true;
+    this.resultDialog?.destroy();
     this.loading.destroy();
     this.menu.destroy();
     this.performanceWindow?.destroy();

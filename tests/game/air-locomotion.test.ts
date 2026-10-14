@@ -22,7 +22,13 @@ describe('air locomotion',()=>{
  });
  it('crosses impassable ground and resource/building occupancy but stays inside the map',()=>{
   const {g,a,b}=setup(),s=g.context.spatial;
-  for(let y=0;y<s.size;y++){s.occupied[y*s.size+103]=999;s.resources[y*s.size+104]=998;s.heights[y*s.size+103]=5000;}
+  const building=g.context.create(placed('wall','building.ants.house',104,100));
+  const tree=g.context.create({...placed('tree','resource.forest.tree',108,100),owner:'none'});
+  for(let y=0;y<s.size;y++){s.terrain[y*s.size+103]=0;s.heights[y*s.size+103]=5000;}
+  // Occupancy derives from entities; a rebuild also publishes raw terrain edits.
+  s.rebuild();
+  expect(s.occupied[s.cell(building)]).toBe(building.id);
+  expect(s.resources[s.cell(tree)]).toBe(tree.id);
   expect(s.clearSegment(fixed({x:100,y:100}),fixed({x:110,y:100}),undefined,b)).toBe(false);
   expect(s.route(a,{x:110,y:100})).toBe(true);expect(a.unit!.route).toEqual([100*s.size+110]);
   expect(s.clearSegment(fixed(a),fixed({x:-1,y:100}),undefined,a)).toBe(false);
@@ -34,6 +40,10 @@ describe('air locomotion',()=>{
   const other=g.context.create(placed('other','unit.ants.archer',a.x,a.y));
   expect(s.free(a,a.id,a)).toBe(false);expect(s.unitSegmentClear(fixed(a),fixed(a),a.id)).toBe(false);
   expect(other.definition).toBe(a.definition);
+  const probes=Array.from({length:25},(_,i)=>({x:98+i%5,y:98+Math.floor(i/5)}));
+  for(const actor of [a,b])s.withLocalUnitClearance(fixed(actor),6000,actor.id,clear=>{
+   for(const p of probes)expect(s.freeOnWalkable(p,actor.id,actor,clear)).toBe(s.freeOnWalkable(p,actor.id,actor));
+  });
  });
  it('moves over grounded units identically after snapshot restore',()=>{
   const {g,a}=setup();a.rotation=heading(a,{x:110,y:100});expect(g.context.spatial.route(a,{x:110,y:100})).toBe(true);

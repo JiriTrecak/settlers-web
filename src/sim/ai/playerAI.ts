@@ -113,7 +113,7 @@ export class PlayerAI {
       rules = this.aiRules;
     if (input.outcome || !this.due(tick)) return [];
     const f = this.profile.measure('Observation and frame',()=>new Frame(
-      playerObservation(input, this.owner),
+      this.profile.measure('Public observation',()=>playerObservation(input, this.owner)),
       this.owner,
       this.registry,
       this.geography,

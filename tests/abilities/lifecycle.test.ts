@@ -56,11 +56,11 @@ describe('Holy Light in real Game simulation',()=>{
   run(game,caster.abilities!.pending!.releaseTick);expect(game.context.get(target.id)).toBeUndefined();
   expect(game.abilities.drainEvents().find(e=>e.event==='damaged')?.amount).toBe(20);
  });
- it('rejects wrong ownership, insufficient mana, out of range and duplicate casts',()=>{
+ it('rejects wrong ownership, insufficient mana and duplicate casts; approaches distant targets',()=>{
   const {game,caster,target,cast}=setup();
   expect(game.command('player.2',{type:'castAbility',actor:caster.id,binding:'holy-light',target:{kind:'unit',entity:target.id}}).accepted).toBe(false);
   caster.abilities!.mana=24;expect(cast().reason).toMatch(/mana/);caster.abilities!.mana=200;
-  target.x=160;expect(cast().accepted).toBe(false);target.x=125;
+  target.x=160;expect(cast().accepted).toBe(true);expect(caster.unit!.order?.type).toBe('castAbility');expect(caster.abilities!.pending).toBeNull();target.x=125;
   expect(cast().accepted).toBe(true);expect(cast().reason).toMatch(/busy/);expect(caster.abilities!.mana).toBe(175);
  });
  it('refunds a stopped preparation but never refunds a released spell',()=>{

@@ -1,3 +1,4 @@
+import {perf} from "../../debug/performance";
 import { playerCss } from '../../shared/player/player';
 import { chatText, type ChatMessage } from '../../shared/chat/chat';
 import './chat.css';
@@ -19,7 +20,7 @@ export class GameChat {
     this.root.append(this.log, this.input); host.append(this.root);
     window.addEventListener('keydown', this.key, true);
   }
-  private key = (event: KeyboardEvent) => {
+  private key = perf.cpuCallback("Chat input", (event: KeyboardEvent) => {
     if (!this.opened && (event.key !== 'Enter' || event.ctrlKey || event.metaKey || event.altKey ||
       (event.target instanceof Element && event.target.closest('input,textarea,select,[contenteditable],dialog')))) return;
     if (this.opened || event.key === 'Enter') {
@@ -33,7 +34,7 @@ export class GameChat {
       if (text) this.send(text);
       this.input.value = ''; this.toggle(false);
     }
-  };
+  });
   private toggle(open: boolean) {
     this.opened = open;
     this.root.classList.toggle('open', open);

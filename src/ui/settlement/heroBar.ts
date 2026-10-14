@@ -1,3 +1,4 @@
+import {perf} from "../../debug/performance";
 import {shortcuts,keyLabel} from '../../shared/input/shortcuts';
 import type { HeroShortcut } from '../../presentation/heroes';
 import { healthColor } from '../../presentation/health';
@@ -24,7 +25,7 @@ export class HeroBar {
         const button = document.createElement('button'), health = document.createElement('span');
         button.type = 'button'; button.className = 'rts-hero-shortcut';
         health.className = 'rts-hero-health'; health.setAttribute('aria-hidden', 'true');
-        button.onclick = () => this.hooks.select(hero.id);
+        button.onclick = perf.cpuCallback("Hero bar input", () => this.hooks.select(hero.id));
         button.ondblclick = () => this.hooks.focus(hero.id);
         entry = {button, health, icon: ''};
         this.buttons.set(hero.id, entry); this.root.append(button);

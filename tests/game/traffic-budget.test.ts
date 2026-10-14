@@ -36,15 +36,16 @@ it('retains exact traffic routes near a dense group and for short destinations',
 it('rejects nearby traffic before scanning a long terrain shortcut, without skipping body clearance',()=>{
  const g=game(),s=g.spatial;
  s.terrain.fill(1);s.heights.fill(0);s.occupied.fill(0);s.resources.fill(0);
+ s.rebuild();
  const from={x:40000,y:100000},to={x:220000,y:100000},body={radius:.75,height:2,formationSpacing:2};
  const check=vi.spyOn(s,'walkable'),blocked=new Set([s.cell({x:41,y:100})]);
  expect(s.clearSegment(from,to,blocked,body)).toBe(false);
  expect(check.mock.calls.length).toBeLessThan(10);
  blocked.clear();expect(s.clearSegment(from,to,blocked,body)).toBe(true);
  // The center is clear, but a wide body's side overlaps a wall.
- s.occupied[s.cell({x:120,y:101})]=999;
+ s.terrain[s.cell({x:120,y:101})]=0;s.rebuild();
  expect(s.clearSegment(from,to,blocked,body)).toBe(false);
- s.occupied.fill(0);s.heights[s.cell({x:120,y:100})]=500;
+ s.terrain[s.cell({x:120,y:101})]=1;s.heights[s.cell({x:120,y:100})]=500;s.rebuild();
  expect(s.clearSegment(from,to,blocked,body)).toBe(false);
 });
 

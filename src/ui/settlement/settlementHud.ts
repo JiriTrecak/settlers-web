@@ -1,3 +1,4 @@
+import {perf} from "../../debug/performance";
 import {formDefinition} from '../../sim/abilities/forms';
 import type {UnitCameraMode} from '../../shared/camera/modes';
 import {HUD_CHANGED,readHudLayout,readHudScale} from '../../shared/settings/hud';
@@ -65,10 +66,10 @@ export class SettlementHud {
   private readonly activeTask = document.createElement("div");
   private readonly workplaceSummary = document.createElement("div");
   private readonly selection = document.createElement("section");
-  private readonly syncLayout=()=>{
+  private readonly syncLayout=perf.cpuCallback("Settlement HUD input", ()=>{
     this.root.dataset.layout=readHudLayout();
     this.root.style.setProperty("--hud-scale",String(readHudScale()/100));
-  };
+  });
   private readonly queues = document.createElement("div");
   private readonly statuses = document.createElement("div");
   private statusSignature = "";
@@ -94,7 +95,7 @@ export class SettlementHud {
   private readonly controlGroups=new ControlGroups();
   private readonly groupBar=document.createElement("nav");
   private groupSignature="";
-  private readonly bindingsChanged=()=>{this.groupSignature="";this.commandSignature="";this.inventorySignature="";if(this.current)this.update(this.current,true);};
+  private readonly bindingsChanged=perf.cpuCallback("Settlement HUD input", ()=>{this.groupSignature="";this.commandSignature="";this.inventorySignature="";if(this.current)this.update(this.current,true);});
   selectedIds: number[] = [];
   targeting: CommandBinding | null = null;
   placementRotation = 0;
@@ -160,7 +161,7 @@ export class SettlementHud {
       const key=document.createElement("kbd");key.textContent=label||"—";
       const count=document.createElement("span");count.textContent=String(ids.length);button.append(key,count);
       Object.assign(button.dataset,{tipName:`Control group ${slot}`,tipDescription:`${ids.length} members. ${keyLabel(shortcuts.key(`group.${slot}.assign`))}: assign. ${keyLabel(shortcuts.key(`group.${slot}.add`))}: add selection. Double press or double click to focus.`,tipKey:label});
-      button.onclick=e=>this.groupInput(slot,e.ctrlKey?"assign":e.shiftKey?"add":"recall");this.groupBar.append(button);
+      button.onclick=perf.cpuCallback("Settlement HUD input", (e: MouseEvent)=>this.groupInput(slot,e.ctrlKey?"assign":e.shiftKey?"add":"recall"));this.groupBar.append(button);
     }
     this.groupBar.hidden=this.readOnly||!this.groupBar.childElementCount;
   }
@@ -186,7 +187,7 @@ export class SettlementHud {
     if(!ids.length)return;const old=this.cycleCursor.get(key),i=old===undefined?-1:ids.indexOf(old),id=ids[(i+1)%ids.length];
     this.cycleCursor.set(key,id);if(select)this.setSelection([id]);this.hooks.focus(id);
   }
-  private readonly onKey = (e: KeyboardEvent) => {
+  private readonly onKey = perf.cpuCallback("Settlement HUD input", (e: KeyboardEvent) => {
     if(inputCaptured(e)||e.repeat)return;
     for(let slot=0;slot<10;slot++)for(const operation of ["assign","add","recall"] as const){
       if(shortcuts.matches(`group.${slot}.${operation}`,e)){e.preventDefault();this.groupInput(slot,operation);return;}
@@ -220,7 +221,7 @@ export class SettlementHud {
     const entries=[...commandPage(this.menuEntries,this.page).map(s=>s.binding),...this.bindings.filter(b=>['move','attack','stop','hold','patrol'].includes(b.type))];
     const binding=commandShortcut(entries,e);
     if(binding){e.preventDefault();this.activate(binding,e.shiftKey);}
-  };
+  });
   constructor(
     host: HTMLElement,
     owner: number | null,
@@ -431,10 +432,10 @@ export class SettlementHud {
           tipCosts: JSON.stringify(b.costs),
           tipKey: keyLabel(shortcuts.key(`command.${b.id}`,authoredKey(b.hotkey))),
         });
-        button.onclick = (event) => {
+        button.onclick = perf.cpuCallback("Settlement HUD input", (event: MouseEvent) => {
           const current = this.menuEntries.find((entry) => entry.id === b.id);
           if (current) this.activate(current,event.shiftKey);
-        };
+        });
         if('alternate' in b&&b.alternate){button.oncontextmenu=event=>{event.preventDefault();const current=this.menuEntries.find(entry=>entry.id===b.id);if(current&&'alternate' in current&&current.alternate)this.hooks.action(current.alternate);};button.dataset.autocast=String(b.autocast);button.style.boxShadow=b.autocast?'inset 0 0 0 2px #ebc764':'';button.dataset.tipDescription+='\nRight-click to toggle autocast.';}
         this.grid.append(button);
       }
@@ -448,10 +449,10 @@ export class SettlementHud {
             "aria-label",
             delta < 0 ? "Previous commands" : "Next commands",
           );
-          button.onclick = () => {
+          button.onclick = perf.cpuCallback("Settlement HUD input", () => {
             this.page = (this.page + delta + pages) % pages;
             this.update(this.current!, true);
-          };
+          });
           this.pages.append(button);
         }
         this.pages.append(
@@ -648,13 +649,13 @@ export class SettlementHud {
           ? `${e.hp}/${e.stats?.maxHp ?? d.body.maxHp}`
           : d.name;
         button.append(text);
-        button.onclick = (event) =>
+        button.onclick = perf.cpuCallback("Settlement HUD input", (event: MouseEvent) =>
           this.setSelection(
             event.shiftKey
               ? this.selectedIds.filter((id) => id !== e.id)
               : [e.id, ...this.selectedIds.filter((id) => id !== e.id)],
             event.shiftKey ? undefined : e.id,
-          );
+          ));
         button.ondblclick = () => this.setSelection([e.id]);
         this.cards.append(button);
       }
@@ -727,9 +728,9 @@ export class SettlementHud {
               : ""),
         });
         button.disabled = !item.definition || !item.drop;
-        button.onclick = () => {
+        button.onclick = perf.cpuCallback("Settlement HUD input", () => {
           if (item.use) this.hooks.action(item.use);
-        };
+        });
         button.oncontextmenu = (event) => {
           event.preventDefault();
           if (item.drop) this.hooks.action(item.drop);
@@ -752,7 +753,7 @@ export class SettlementHud {
         button.innerHTML=iconArt(q.icon);button.disabled=!q.cancel;
         button.setAttribute("aria-label",`${q.cancel?"Cancel ":""}${q.name}`);
         Object.assign(button.dataset,{tipName:q.name,tipDescription:q.cancel?"Click to cancel and refund the reserved resources.":"Queued task.",tipCosts:JSON.stringify(q.costs)});
-        button.onclick=()=>{if(q.cancel)this.hooks.action(q.cancel);};return button;
+        button.onclick=perf.cpuCallback("Settlement HUD input", ()=>{if(q.cancel)this.hooks.action(q.cancel);});return button;
       };
       if(workplace.active){
         const a=workplace.active;

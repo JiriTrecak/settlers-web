@@ -11,16 +11,18 @@ it('matches uncached directed sweeps on quarter steps, arbitrary endpoints and m
   const step=(a:number,b:number)=>!blocked.has(b)&&heights[b]!-heights[a]!<=90;
   const cache=new LocalTerrainSweeps(size,radius,step);
   const queries:{from:FixedPoint;to:FixedPoint}[]=[];
-  for(let i=0;i<250;i++){
+  for(let i=0;i<500;i++){
    const from={x:random(size*4)*250,y:random(size*4)*250};
-   const to={x:from.x+(random(3)-1)*250,y:from.y+(random(3)-1)*250};
+   const stride=1+random(10);
+   const to={x:from.x+(random(3)-1)*250*stride,y:from.y+(random(3)-1)*250*stride};
    if(i%5===0)from.x+=117;
    if(i%7===0)to.y+=1350;
    queries.push({from,to});
   }
   for(let pass=0;pass<3;pass++){
    for(const {from,to} of queries)expect(cache.clear(from,to)).toBe(clearSweep(from,to,step,size,radius));
-   const cell=random(size*size);blocked.add(cell);heights[cell]=450;cache.invalidate([cell]);
+   const cell=random(size*size),cells=[cell,cell,Math.min(size*size-1,cell+1),random(size*size)];
+   for(const changed of cells){blocked.add(changed);heights[changed]=450;}cache.invalidate(cells);
   }
  }
 });
@@ -59,4 +61,21 @@ it('bounds retained work while armies explore many distant regions',()=>{
  step.mockClear();expect(cache.clear(first,first)).toBe(true);
  // An old remote region is recomputed, rather than retaining a growing field.
  expect(step).toHaveBeenCalled();
+});
+
+
+it('caches larger local steps separately and invalidates obstructions anywhere along their footprint',()=>{
+ const size=64,blocked=new Set<number>(),step=vi.fn((_a:number,b:number)=>!blocked.has(b));
+ const cache=new LocalTerrainSweeps(size,1700,step),from={x:15500,y:16000};
+ const targets=[{x:15750,y:16000},{x:16000,y:16000},{x:16250,y:16750},{x:17500,y:18000}];
+ for(const to of targets)expect(cache.clear(from,to)).toBe(clearSweep(from,to,step,size,1700));
+ step.mockClear();for(const to of targets)expect(cache.clear(from,to)).toBe(true);
+ expect(step).not.toHaveBeenCalled();
+ // This cell reaches only the long edge. Invalidating a quarter-step halo
+ // alone would leave a stale clear result in the previous tile.
+ const obstruction=19*size+19;blocked.add(obstruction);cache.invalidate([obstruction]);
+ for(const to of targets)expect(cache.clear(from,to)).toBe(clearSweep(from,to,step,size,1700));
+ expect(cache.clear(from,targets[3]!)).toBe(false);
+ blocked.clear();cache.invalidate([obstruction]);
+ expect(cache.clear(from,targets[3]!)).toBe(true);
 });

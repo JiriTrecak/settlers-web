@@ -68,6 +68,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "eve": "^0.70.0",
+    "fast-png": "8.0.0",
     "fengari": "0.1.5",
     "lucide": "^1.41.0",
     "lucide-react": "^1.49.0",

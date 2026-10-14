@@ -18,7 +18,7 @@ describe('published archer',()=>{
   const count=primitives.reduce((n:number,p:any)=>n+gltf.accessors[p.indices].count/3,0);
   expect(count).toBeGreaterThan(4000);expect(count).toBeLessThanOrEqual(5000);
   const binding=manifest.bindings.render.find((r:any)=>r.id==='asset.ants.archer');
-  expect(binding.projectile).toBe('arrow');expect(binding.projectileSocket).toBe('socket_projectile');
+  expect(binding.projectile).toBe('effect.weapon.arrow');expect(binding.projectileSocket).toBe('socket_projectile');
  });
  it('retains normalized skin weights, the bow socket and a keyed string/arrow release',()=>{
   expect(gltf.skins[0].joints.length).toBeGreaterThanOrEqual(68);

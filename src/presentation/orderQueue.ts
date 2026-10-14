@@ -7,7 +7,9 @@ export function unitOrderCard(focus: EntityView | undefined, view: SettlementVie
     const action = order.type === "construct" ? "build" : order.type === "move" && order.attackMove ? "attack" : order.type;
     const target = "target" in order ? view.entities.find(e => e.id === order.target) : undefined;
     const definition = target ? registry.get(target.definition) : undefined;
-    const meta = action === "gather" || action === "pickup"
+    const binding=order.type==='castAbility'&&focus?registry.get(focus.definition).behaviors.abilities?.bindings.find(b=>b.id===order.binding):undefined;
+    const spell=binding?registry.findAbility(binding.ability):undefined;
+    const meta = action==='castAbility'?{name:spell?.name??'Cast ability',icon:registry.abilityLibrary.presentations.find(p=>p.id===spell?.presentation)?.icon??registry.actions.actions.move.icon}:action === "gather" || action === "pickup"
       ? {name: action === "gather" ? "Gather" : "Pick up", icon: definition?.icon ?? registry.actions.actions.move.icon}
       : registry.actions.actions[action];
     return {

@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=ubuntu
 WorkingDirectory=/home/ubuntu/settlers-match
-Environment=BIND=0.0.0.0
+Environment=BIND=127.0.0.1
 Environment=PORT=8787
 ExecStart=/home/ubuntu/settlers-match/node_modules/.bin/tsx server/index.ts
 Restart=always

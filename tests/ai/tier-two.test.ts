@@ -1,3 +1,4 @@
+import type {AuthoredDefinition} from '../../src/content/schema';
 import {expect,it} from 'vitest';
 import {game,placed} from '../game/helpers';
 import {Frame,Geography} from '../../src/sim/ai/frame';
@@ -5,13 +6,19 @@ import {createMapBriefing} from '../../src/sim/ai/briefing';
 import {newAIState} from '../../src/sim/ai/state';
 import {economy} from '../../src/sim/ai/economy';
 import type {Action} from '../../src/shared/types/types';
-function setup(){
+function setup(singleHeroRoster=false){
  const g=game([
   placed('b','building.ants.barracks',195,190),placed('f','building.ants.ironroot-forge',225,190),placed('w','building.ants.bombardier-workshop',240,210),
   ...Array.from({length:4},(_,i)=>placed(`house${i}`,'building.ants.house',180+i*10,230)),
   ...Array.from({length:4},(_,i)=>placed(`worker${i}`,'unit.ants.settler',208+i,218)),
   ...Array.from({length:3},(_,i)=>placed(`soldier${i}`,'unit.ants.warrior',210+i,220)),
- ]);
+ ],src=>{
+  // Composition tests isolate troop savings from investing in additional heroes.
+  if(singleHeroRoster)for(const d of src.definitions as AuthoredDefinition[]){
+   const production=d.behaviors?.production;
+   if(production?.outputs)production.outputs=production.outputs.filter(id=>id!=='unit.ants.rootbreaker');
+  }
+ });
  const mound=g.context.get(g.state.objectives['player.1'])!;g.state.wallets[mound.owner]={'item.amber':1000,'item.wood':1000,'item.root':100};
  const geo=new Geography(createMapBriefing(g.map,g.registry));
  const frame=()=>new Frame(g.view('player.1'),'player.1',g.registry,geo,g.state.tick);
@@ -76,7 +83,7 @@ it('staffs a new Rootworks by rebalancing empty-handed gatherers, preserving car
  expect(choose().some(a=>a.type==='gather')).toBe(false);
 });
 it('saves for an unlocked underrepresented Hunter instead of endlessly buying cheaper Warriors',()=>{
- const {g,mound,decide}=setup();mound.definition='building.ants.great-mound';
+ const {g,mound,decide}=setup(true);mound.definition='building.ants.great-mound';
  g.state.research['player.1']=Object.keys(g.registry.rules.research);
  for(let i=0;i<8;i++)g.context.create(placed(`mix-worker-${i}`,'unit.ants.settler',210+i,225));
  for(let i=0;i<4;i++)g.context.create(placed(`archer-mix-${i}`,'unit.ants.archer',212+i,219));

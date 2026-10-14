@@ -46,3 +46,16 @@ it('pins one image per effect cue and releases a pending capture when its effect
  const handle=player.play(effect);expect(f.maps).toHaveLength(1);let finished=false;const capture=player.ready().then(()=>finished=true);await Promise.resolve();expect(finished).toBe(false);player.stop(handle);await capture;expect(finished).toBe(true);
  f.failed[0]();await Promise.resolve();await expect(player.ready()).resolves.toBeUndefined();player.play(effect);expect(f.maps).toHaveLength(2);f.completed[1]();await player.ready();player.dispose();expect(f.disposed[1]).toHaveBeenCalled();
 });
+it('prepares and pins every declared image beyond the idle LRU limit, then casts without reloading',async()=>{
+ const f=fixture(),player=new EffectPlayer(undefined,f.cache);
+ const effects=Array.from({length:24},(_,i)=>visualEffectSchema.parse({schemaVersion:1,id:`effect.test.image${i}`,name:'Image',durationTicks:40,layers:[{id:'image',shape:'billboard',durationTicks:40,count:1,size:1,height:1,colour:'#ffffff',accent:'#ffffff',texture:ref(i)}]}));
+ const preparing=player.prepare(effects);
+ for(let i=0;i<effects.length;i++){await vi.waitFor(()=>expect(f.completed).toHaveLength(i+1));f.completed[i]();}
+ await preparing;expect(f.disposed.every(d=>!d.mock.calls.length)).toBe(true);
+ for(const effect of effects){const h=player.play(effect);await player.ready();player.stop(h);}
+ expect(f.maps).toHaveLength(24);player.dispose();expect(f.disposed.every(d=>d.mock.calls.length>0)).toBe(true);
+});
+it('can cancel preparation during a pending image load without reviving disposed resources',async()=>{
+ const f=fixture(),player=new EffectPlayer(undefined,f.cache),effect=visualEffectSchema.parse({schemaVersion:1,id:'effect.test.preload',name:'Image',durationTicks:40,layers:[{id:'image',shape:'billboard',durationTicks:40,count:1,size:1,height:1,colour:'#ffffff',accent:'#ffffff',texture:ref(1)}]});
+ const ready=player.prepare([effect]);await vi.waitFor(()=>expect(f.maps).toHaveLength(1));player.dispose();await ready;f.completed[0]();await Promise.resolve();expect(player.preparedModelsForWarmup()).toHaveLength(0);expect(f.disposed[0]).toHaveBeenCalled();
+});

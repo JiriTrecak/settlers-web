@@ -1,4 +1,5 @@
 import {colonyHome} from '../../sim/game/colony';
+import type {MatchOutcome} from '../../presentation/matchResult';
 import {snapPlacement} from '../../shared/spatial/placement';
 import {SceneryComposition} from '../../presentation/sceneryChanges';
 import {matchContentIdentity} from '../../content/identity';
@@ -48,6 +49,7 @@ import type { HudState } from "../../ui";
 
 export type SessionHooks = {
   onHud: (state: HudState) => void;
+  onMatchOutcome?:(outcome:MatchOutcome)=>void;
   onMissionLeave?:()=>void;
   onMissionContinue?:(mapId:string,company:CampaignCompany)=>void;
 };
@@ -76,6 +78,7 @@ export class Session {
   private fpsFrames = 0;
   private fpsMs = 0;
   private desynced = false;
+  private matchOutcomeReported = false;
   /** Transport mailbox, not authority. An observer borrows an empty local mailbox. */
   private readonly me: number;
   private reveal = false;
@@ -110,7 +113,7 @@ export class Session {
     if(d.pending||now<d.next||!worker||!renderer)return;
     const grid=d.walkability,paths=d.paths,mesh=d.navmesh,epoch=d.epoch;
     d.pending=true;d.next=now+250;
-    void worker.request('navigation',{grid,paths,revision:grid?d.revision:-1,mesh,meshRevision:d.meshRevision}).then(state=>{
+    void worker.request('navigation',{grid,paths,revision:grid?d.revision:-1,mesh,meshRevision:d.meshRevision}).then(perf.cpuCallback('Navigation overlay reply',state=>{
       if(epoch!==d.epoch)return;
       d.pending=false;
       // A stale reply may carry a grid the renderer no longer expects; the next poll corrects it.
@@ -119,12 +122,17 @@ export class Session {
       d.shown=true;
       if(grid)d.revision=state.revision;
       if(state.mesh)d.meshRevision=state.revision;
-    },error=>{if(epoch!==d.epoch)return;d.pending=false;if(worker===this.worker)this.workerError(error);});
+    }),perf.cpuCallback('Navigation overlay error',error=>{if(epoch!==d.epoch)return;d.pending=false;if(worker===this.worker)this.workerError(error);}));
   }
   private configureWorker(){const worker=this.worker;return worker?.request('configure',{speed:this.simulationSpeed,reveal:this.reveal,visionPlayer:this.visionPlayer,profiling:perf.enabled,profilingDetails:perf.detailedSimulation}).catch(error=>{if(worker===this.worker)this.workerError(error);});}
   private workerError(error:unknown){console.error(error);this.economyHud?.showError(`Simulation stopped: ${error instanceof Error?error.message:String(error)}`);}
   private acceptFrame(frame:RuntimeFrame){
     this.desynced=frame.desynced;
+    if(this.config.channel&&!this.matchOutcomeReported&&frame.visual.settlement.outcome){
+      this.matchOutcomeReported=true;
+      this.input?.reset();
+      this.config.hooks.onMatchOutcome?.(frame.visual.settlement.outcome);
+    }
     for(const [name,ms] of frame.profileSamples)perf.sample(name,ms);
     // Tick metrics arrive in profileSamples once per tick, including zero-cost
     // checksum ticks. Sampling them again per published frame biases averages.
@@ -142,6 +150,11 @@ export class Session {
       perf.value('Ground mesh routes accepted (match)',frame.routing.meshAccepted);
       perf.value('Ground mesh polygons expanded (match)',frame.routing.meshExpanded);
       perf.value('Ground mesh fallbacks (match)',frame.routing.meshFallbacks);
+      perf.value('Ground mesh missing corridors (match)',frame.routing.meshNoCorridor);
+      perf.value('Ground mesh sweep rejections (match)',frame.routing.meshSnapRejected);
+      perf.value('Ground mesh grid conversions repaired (match)',frame.routing.meshRasterRepaired);
+      perf.value('Ground mesh grid conversion failures (match)',frame.routing.meshRasterRejected);
+      perf.value('Ground mesh route budget rejections (match)',frame.routing.meshBudgetRejected);
       perf.value('Ground mesh tiles built (match + load)',frame.routing.meshRebuiltTiles);
       perf.value('Worker profiling samples dropped',frame.droppedSamples);
     }
@@ -178,10 +191,10 @@ export class Session {
   private hoverPointer: { clientX: number; clientY: number } | null = null;
   private hoverId: number | null = null;
   private hoverAge = Infinity;
-  private readonly onLeave = () => {
+  private readonly onLeave = perf.cpuCallback("Canvas targeting input", () => {
     this.hoverPointer = null;
     this.hoverId = null;
-  };
+  });
   /** Circle tint as the viewing player sees it; teams come from the match lobby. */
   private relationTo(owner: Owner): "own" | "ally" | "neutral" | "enemy" {
     if (owner === "none") return "neutral";
@@ -203,7 +216,7 @@ export class Session {
         content.get(e.definition).behaviors.production?.outputs.some((id) => content.get(id).kind === "unit"),
     );
   }
-  private readonly onHover = (e: { clientX: number; clientY: number }) => {
+  private readonly onHover = perf.cpuCallback("Canvas targeting input", (e: { clientX: number; clientY: number }) => {
     this.placementPointer = { clientX: e.clientX, clientY: e.clientY };
     this.hoverPointer = this.placementPointer;
     this.hoverAge = Infinity;
@@ -242,7 +255,7 @@ export class Session {
     // asynchronously, with at most one query in flight and stale results ignored.
     this.renderer?.gamePreview(kind,x,z,this.placementResult?.key===key&&!this.placementResult.error,rotation,this.me);
     this.pumpPlacement();
-  };
+  });
   private placementLatest:{key:string;query:{definition:string;position:{x:number;y:number};actor?:number;rotation:number}}|undefined;
   private placementResult:{key:string;error:string|null}|undefined;
   private placementBusy=false;
@@ -250,14 +263,16 @@ export class Session {
     const pending=this.placementLatest,worker=this.worker;
     if(!pending||!worker||this.placementBusy||this.placementResult?.key===pending.key)return;
     this.placementBusy=true;
-    void worker.request('placement',pending.query).then(error=>{
+    // Promise continuations run after the worker receive callback has returned;
+    // measure their CPU separately, without counting the asynchronous wait.
+    void worker.request('placement',pending.query).then(perf.cpuCallback('Placement preview reply',error=>{
       if(worker!==this.worker)return;
       if(this.placementLatest?.key===pending.key&&this.economyHud?.mode===pending.query.definition){
         this.placementResult={key:pending.key,error};
         this.renderer?.gamePreview(pending.query.definition,pending.query.position.x,pending.query.position.y,!error,pending.query.rotation,this.me);
         this.economyHud?.placement(error);
       }
-    }).catch(error=>{if(worker===this.worker)this.workerError(error);}).finally(()=>{this.placementBusy=false;if(worker===this.worker&&this.placementLatest?.key!==pending.key)this.pumpPlacement();});
+    })).catch(perf.cpuCallback('Placement preview error',error=>{if(worker===this.worker)this.workerError(error);})).finally(perf.cpuCallback('Placement preview continuation',()=>{this.placementBusy=false;if(worker===this.worker&&this.placementLatest?.key!==pending.key)this.pumpPlacement();}));
   }
 
   constructor(
@@ -321,6 +336,7 @@ export class Session {
     report({stage:"Preparing simulation and terrain"});
     await loadingPaint(); check();
     const worker=this.worker=new SimulationClient({
+      cpu:{enabled:()=>perf.measuringCpu,span:(source,start,end)=>perf.cpuSpan(source,start,end),worker:batch=>perf.workerCpu(batch)},
       frame:frame=>this.acceptFrame(frame),chat:message=>this.chat?.receive(message),
       learned:()=>this.economyHud?.learnedAbility(),error:error=>{this.desynced=true;this.workerError(error);},sample:(name,ms)=>perf.sample(name,ms),
     },this.config.channel);
@@ -353,7 +369,9 @@ export class Session {
     renderer.camera.lookAt(self.x, self.z);
     renderer.camera.setGame(true, map.size);
     this.input = new MapInput(this.canvas, renderer.camera, {
-      onChanged: () => this.present(),
+      // The match frame owns drawing. Input changes camera state only; drawing
+      // here rendered twice during scrolling and inside the input CPU scope.
+      onChanged: () => {},
       rts: true,
       onClick: (x, y, shift, sameType) => this.click(x, y, shift, false, sameType),
       onRightClick: (x, y, shift) => this.click(x, y, shift, true),
@@ -390,12 +408,11 @@ export class Session {
           renderer.gameAbilityTarget(null);
         }
       },
-      lookAt:(x,y)=>{this.unitCameraMode='rts';renderer.unitCamera(null);renderer.camera.lookAt(x,y);this.present();},
+      lookAt:(x,y)=>{this.unitCameraMode='rts';renderer.unitCamera(null);renderer.camera.lookAt(x,y);},
       focus: (id, group) => {
         const visible=this.selectionView().entities.filter(e=>(group??[id]).includes(e.id)&&!e.unit?.contained&&!e.remembered);
         if(!visible.length)return;
         renderer.camera.lookAt(visible.reduce((n,e)=>n+e.x,0)/visible.length,visible.reduce((n,e)=>n+e.y,0)/visible.length);
-        this.present();
       },
       home: () => {
         const game = this.worker?.latest?.selection.settlement,
@@ -431,7 +448,6 @@ export class Session {
       },
       onLookAt: (x, z) => {
         renderer.camera.lookAt(x, z);
-        this.present();
       },
     });
     this.mini.mountGame(this.economyHud.minimapHost, this.economyHud.clockHost);
@@ -583,7 +599,6 @@ export class Session {
             renderer.camera.lookAt(o.x, o.z);
           if (typeof o.gameZoom === "number")
             renderer.camera.pose({ gameZoom: o.gameZoom });
-          this.present();
           return { x: renderer.camera.targetX, z: renderer.camera.targetZ, cameraMode:this.unitCameraMode };
         }
         if (op === "screenshot") {
@@ -616,15 +631,11 @@ export class Session {
     this.bridge.start();
   }
 
-  private present(): void {
-    this.renderer?.present();
-    this.mini?.paint();
-  }
-
   tick(dtMs: number, _nowMs: number): void {
     const renderer = this.renderer;
     const worker=this.worker;
     if(!this.started||!renderer||!worker?.latest)return;
+    const cpuStart=perf.measuringCpu?performance.now():undefined;
     if(this.workerProfiling!==perf.enabled||this.workerProfilingDetails!==perf.detailedSimulation){this.workerProfiling=perf.enabled;this.workerProfilingDetails=perf.detailedSimulation;this.configureWorker();}
     if(perf.enabled)perf.value('Worker snapshot age (ms)',performance.now()-worker.receivedAt);
     // Keep the authoritative match and network running in a hidden tab, but
@@ -633,6 +644,7 @@ export class Session {
     if (document.hidden) {
       this.fpsFrames = 0;
       this.fpsMs = 0;
+      if(cpuStart!==undefined)perf.cpuSpan('Hidden match maintenance',cpuStart);
       return;
     }
     const input = perf.start();
@@ -686,7 +698,9 @@ export class Session {
       renderer.unitCamera(entity?{...shot,mode:shot.mode,entity:entity.id,lookAt:target?.id}:null);
     }else if(!cinematic&&this.unitCameraMode!=='rts'&&focus){renderer.unitCamera({mode:this.unitCameraMode,entity:focus.id});}
     else {renderer.unitCamera(null);if(cinematic&&scene){const target=shot&&worker.latest.targets.find(e=>e.tag===shot.entity);renderer.camera.lookAt(target?.x??scene.x,target?.y??scene.y);}}
+    if(cpuStart!==undefined)perf.cpuSpan('Input and HUD before draw',cpuStart);
     renderer.draw(view, this.stamps);
+    const afterDraw=perf.measuringCpu?performance.now():undefined;
     this.pollNavigation();
     const minimap = perf.start();
     this.mini?.paint();
@@ -699,6 +713,7 @@ export class Session {
       this.fpsMs = 0;
     }
     this.config.hooks.onHud({ fps: this.fps, zoom: renderer.camera.distance });
+    if(afterDraw!==undefined)perf.cpuSpan('HUD after draw',afterDraw);
   }
 
   async snapshotLocal():Promise<LocalSave>{

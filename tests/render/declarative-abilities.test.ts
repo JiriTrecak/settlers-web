@@ -4,7 +4,8 @@ import {it,expect,vi} from 'vitest';
 import {AbilityEffects} from '../../src/render/abilities/abilityEffects';
 import {castAnimation} from '../../src/render/abilities/castAnimation';
 import {coreAbilities} from '../../src/content/abilities/core';
-import {TextureLoader,Texture,PointLight,Sprite,Vector3,Quaternion} from 'three';
+import {TextureLoader,Texture,PointLight,Sprite,Vector3,Quaternion,Scene} from 'three';
+import {effectLights} from '../../src/render/abilities/effectLights';
 import {presentationSchema} from '../../src/content/abilities/schema';
 import type {AbilityEvent} from '../../src/sim/abilities/runtime';
 const event=(id:number,event:AbilityEvent['event']):AbilityEvent=>({id,cast:id,tick:10,ability:coreAbilities.abilities[0].id,caster:1,target:2,event,origin:{x:1,y:1},point:{x:6,y:1},viewers:['player.1']});
@@ -25,23 +26,24 @@ it('uses declared clip phases and resolves missing clips through the explicit fa
  expect(before.phase).toBeLessThan(at.phase);expect(at.phase).toBeCloseTo(.55);expect(after.phase).toBeGreaterThan(at.phase);
  expect(castAnimation(p,t,12,c=>c==='idle').clip).toBe('idle');
 });
-it('renders the sigil and strips, follows the target, and bounds and disposes real lights',()=>{
+it('renders the sigil and strips, follows the target, and releases pooled scene lights',()=>{
  const loader=vi.spyOn(TextureLoader.prototype,'load').mockReturnValue(new Texture());
  const error=vi.spyOn(console,'error');const effects=new AbilityEffects();
+ const scene=new Scene(),pool=effectLights(scene);scene.add(effects.root);
  try{
   effects.consume(event(1,'released'),coreAbilities.presentations[0]);
   effects.update(16,id=>id===2?{x:20,y:30,height:4}:undefined);
   expect(effects.root.children.every(c=>c.position.x===20&&c.position.z===30&&Math.abs(c.position.y-4.035)<.0001)).toBe(true);
   const sprites:Sprite[]=[],lights:PointLight[]=[];
-  effects.root.traverse(o=>{if(o instanceof Sprite)sprites.push(o);if(o instanceof PointLight)lights.push(o);});
+  scene.traverse(o=>{if(o instanceof Sprite)sprites.push(o);if(o instanceof PointLight)lights.push(o);});
   expect(sprites.length).toBeGreaterThan(20);
   expect(sprites.some(s=>s.scale.y>s.scale.x*10)).toBe(true);
-  expect(lights).toHaveLength(1);expect(lights[0].intensity).toBeGreaterThan(0);expect(lights[0].castShadow).toBe(false);
+  expect(lights).toHaveLength(4);expect(lights.filter(l=>l.intensity>0)).toHaveLength(1);expect(lights[0].castShadow).toBe(false);
   const dispose=vi.spyOn(lights[0],'dispose');
   for(let i=2;i<20;i++)effects.consume(event(i,'released'),coreAbilities.presentations[0]);
-  let count=0;effects.root.traverse(o=>{if(o instanceof PointLight)count++;});expect(count).toBe(4);
-  effects.update(500);expect(effects.liveCues).toBe(0);expect(dispose).toHaveBeenCalledOnce();expect(error).not.toHaveBeenCalled();
- }finally{effects.dispose();loader.mockRestore();error.mockRestore();}
+  effects.update(16);let count=0;scene.traverse(o=>{if(o instanceof PointLight)count++;});expect(count).toBe(4);
+  effects.update(500);expect(effects.liveCues).toBe(0);expect(lights.every(l=>l.intensity===0)).toBe(true);expect(dispose).not.toHaveBeenCalled();expect(error).not.toHaveBeenCalled();
+ }finally{effects.dispose();pool.dispose();loader.mockRestore();error.mockRestore();}
 });
 it('requires published texture references for sigils and strips',()=>{
  for(const shape of ['billboard','streaks']as const){

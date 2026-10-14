@@ -27,6 +27,21 @@ it('distinguishes the primary aim, each queried recipient and the caster snapsho
  for(const source of ['target','recipient','caster']){const f=fixture([{op:'heal',target:'target',query,amount:0,scale:{source,stat:'health',permille:1000}}],{targetCount:2,distance:8});const second=f.game.entities.find(e=>e.id!==f.caster&&e.id!==f.target)!;second.hp=90;
  cast(f);step(f);expect(f.t.hp).toBe(40+(source==='caster'?100:40));expect(second.hp).toBe(90+(source==='target'?40:source==='caster'?100:90));}
 });
+it('refreshes branch source state after effects while retaining cast-start magnitude snapshots',()=>{
+ const condition=(value:number)=>({kind:'resource',of:'caster',resource:'health',measure:'current',comparison:'eq',value});
+ const f=fixture([
+  {op:'heal',target:'caster',amount:50},
+  {op:'branch',condition:condition(150),then:[
+   {op:'damage',target:'caster',amount:20,damageType:'spell'},
+   {op:'heal',target:'target',amount:7},
+  ],else:[{op:'heal',target:'target',amount:0}]},
+  {op:'branch',condition:condition(130),then:[{op:'heal',target:'target',amount:11}],else:[{op:'heal',target:'target',amount:0}]},
+  {op:'heal',target:'target',amount:0,scale:{source:'caster',stat:'health',permille:1000}},
+ ]);
+ f.game.abilities.invoke(f.caster,f.target,f.a,1,f.a.onRelease);
+ expect(f.c.hp).toBe(130);
+ expect(f.t.hp).toBe(158);
+});
 it('records actual post-mitigation damage and caps overkill before a later caster heal',()=>{
  const f=fixture([{op:'damage',target:'target',amount:500,damageType:'spell',record:'offering'},reward('heal','applied')],{relationship:'enemy',targetHealth:40});cast(f);step(f);
  expect(f.game.context.get(f.target)).toBeUndefined();expect(f.c.hp).toBe(120);expect(f.game.abilities.observedEvents().find(e=>e.event==='healed')?.amount).toBe(20);

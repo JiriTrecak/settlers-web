@@ -1,6 +1,6 @@
 import {matchesAbilityCondition,matchesTargetFilter,type TargetTraits} from '../../content/abilities/conditions';
 import type {Definition} from '../../content/schema';
-import {statusDefinition,type AbilityDefinition,type Effect,type ControlKind} from '../../content/abilities/schema';
+import {type AbilityDefinition,type Effect,type ControlKind} from '../../content/abilities/schema';
 import type {ContentRegistry} from '../../content/registry';
 import type {Entity} from '../game/state';
 export type SpellEligibility=TargetTraits&{summonOrigin?:{source:number;ability:string};spellImmunity?:'hostile'|'all';controlImmunity?:ControlKind[];ethereal?:boolean;damageTakenPermille?:Record<string,number>};
@@ -16,6 +16,6 @@ export function operationFilter(effect:Effect){return 'filter' in effect?effect.
 /** Resolved from saved declarations, shared with observed AI actors. */
 export function spellImmunity(e:Pick<Entity,'spellStatuses'>,registry:ContentRegistry,tick?:number):SpellEligibility['spellImmunity']{
  let result:SpellEligibility['spellImmunity'];
- for(const s of e.spellStatuses??[]){if(tick!==undefined&&s.expires<=tick)continue;const a=registry.abilityLibrary.abilities.find(a=>a.id===s.ability),protection=a&&statusDefinition(a,s.status)?.spellImmunity;if(protection==='all')return 'all';if(protection)result=protection;}
+ for(const s of e.spellStatuses??[]){if(tick!==undefined&&s.expires<=tick)continue;const protection=registry.findStatus(s.ability,s.status)?.spellImmunity;if(protection==='all')return 'all';if(protection)result=protection;}
  return result;
 }

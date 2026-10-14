@@ -9,7 +9,7 @@ import {TargetIndex} from '../../src/sim/game/targetIndex';
 import {game,placed,run} from './helpers';
 
 it('declares the agreed C-based unit sizes, speeds, supply and starting company',()=>{
- for(const [role,radius,speed,supply] of [['settler',1.5,12,1],['warrior',1.5,12,1],['archer',1.5,12,1],['marshal',2,13,4],['hunter',2,14,2],['bombardier',2.5,10,3]] as const){
+ for(const [role,radius,speed,supply] of [['settler',1.5,12,1],['warrior',1.5,12,1],['archer',1.5,12,1],['marshal',3,13,4],['hunter',2,14,2],['bombardier',2.5,10,3]] as const){
   const d=content.get('unit.ants.'+role);
   expect(d.dimensions!.radius).toBe(radius);expect(d.dimensions!.formationSpacing).toBeGreaterThanOrEqual(radius*2);
   expect(d.behaviors.movement!.speed).toBe(speed);expect(d.supplyCost).toBe(supply);
@@ -31,9 +31,9 @@ it('declares the agreed C-based unit sizes, speeds, supply and starting company'
 
 it('measures circle/circle and circle/building edge gaps without changing point ranges',()=>{
  const c=new GameContext(emptyState(),content,emptyUtcMap());
- const a=c.create(placed('a','unit.ants.warrior',100,100)),b=c.create(placed('b','unit.ants.marshal',104,100));
- expect(c.spatial.range(a,b)).toBe(16);expect(c.spatial.bodyRange(a,b)).toBe(.25);
- b.unit!.position=fixed({x:104.1,y:100});expect(c.spatial.bodyRange(a,b)).toBeCloseTo(.36);
+ const a=c.create(placed('a','unit.ants.warrior',100,100)),b=c.create(placed('b','unit.ants.marshal',105,100));
+ expect(c.spatial.range(a,b)).toBe(25);expect(c.spatial.bodyRange(a,b)).toBe(.25);
+ b.unit!.position=fixed({x:105.1,y:100});expect(c.spatial.bodyRange(a,b)).toBeCloseTo(.36);
  const house=c.create(placed('house','building.ants.house',135.5,135.5));
  expect(c.spatial.bodyRange(a,house,{x:129.4,y:135.5})).toBeCloseTo(.36);
  const diagonal=2.1/Math.sqrt(2);

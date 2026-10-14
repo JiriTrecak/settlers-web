@@ -1,3 +1,4 @@
+import {ownershipTexturePlugin} from '../../../src/render/loading/ownershipTextures';
 import {AxesHelper,Box3,Box3Helper,Group,Mesh,MeshStandardMaterial,SkeletonHelper,Texture,Vector3,type Object3D} from 'three';
 import {GLTFLoader,type GLTF} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
@@ -50,7 +51,7 @@ export class InspectionSubject {
   }
   this.debug.matrixAutoUpdate=false;this.root.add(this.debug);this.debug.add(this.bounds);this.configure(this.controls);
  }
- static async load(asset:AssetDefinition,url:string,count:number){return new InspectionSubject(await new GLTFLoader().loadAsync(url),asset,count);}
+ static async load(asset:AssetDefinition,url:string,count:number){return new InspectionSubject(await new GLTFLoader().register(ownershipTexturePlugin).loadAsync(url),asset,count);}
  configure(controls:SubjectControls){
   const changedState=controls.state!==this.controls.state;
   this.controls={...controls};

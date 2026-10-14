@@ -1,3 +1,4 @@
+import {perf} from "../../debug/performance";
 import {shortcuts,inputCaptured,SHORTCUTS_CHANGED} from '../../shared/input/shortcuts';
 /**
  * RTS drag selection, arrow-key pan and wheel zoom. Editor also orbits (Alt-LMB, MMB, RMB).
@@ -48,14 +49,14 @@ export class MapInput {
   private startY=0;
   private readonly selectionBox=document.createElement('div');
   private edgePointer: { x: number; y: number } | null = null;
-  private readonly onEdgePointer = (e: PointerEvent) => {
+  private readonly onEdgePointer = perf.cpuCallback("Canvas input", (e: PointerEvent) => {
     this.edgePointer = e.pointerType === "touch" ? null : { x: e.clientX, y: e.clientY };
-  };
-  private readonly onPointerOut = (e: PointerEvent) => {
+  });
+  private readonly onPointerOut = perf.cpuCallback("Canvas input", (e: PointerEvent) => {
     if (!e.relatedTarget) this.edgePointer = null;
-  };
-  private readonly onBlur=()=>{if(this.drag==="grab")this.hooks.grab?.cancel?.();this.zoomMomentum.reset();this.keys.clear();this.panCodes.clear();this.edgePointer=null;this.drag=null;this.selectionBox.hidden=true;};
-  private readonly onContext=(e:Event)=>e.preventDefault();
+  });
+  private readonly onBlur=perf.cpuCallback("Canvas input", ()=>{if(this.drag==="grab")this.hooks.grab?.cancel?.();this.zoomMomentum.reset();this.keys.clear();this.panCodes.clear();this.edgePointer=null;this.drag=null;this.selectionBox.hidden=true;});
+  private readonly onContext=perf.cpuCallback("Canvas input", (e:Event)=>e.preventDefault());
   private readonly panCodes=new Map<string,string>();
   private readonly keys = new Set<string>();
   private drag: Drag | null = null;
@@ -80,7 +81,7 @@ export class MapInput {
     Object.assign(this.selectionBox.style,{position:'fixed',border:'1px solid #d8efb0',background:'#b9df8030',pointerEvents:'none',zIndex:'50'});
     this.selectionBox.className='rts-selection-box';this.selectionBox.hidden=true;
     if(hooks.rts)document.body.append(this.selectionBox);
-    this.onKeyDown = (e) => {
+    this.onKeyDown = perf.cpuCallback("Canvas input", (e: KeyboardEvent) => {
       if (typing(e)||inputCaptured(e)) return;
       if(this.hooks.rts){for(const dir of ["left","right","up","down","zoomIn","zoomOut"]){if(shortcuts.matches(`camera.${dir}`,e)){e.preventDefault();this.keys.add(`arrow${dir}`);this.panCodes.set(e.code,`arrow${dir}`);return;}}return;}
       if (e.code === "Space") {
@@ -99,13 +100,13 @@ export class MapInput {
       }
       if(e.key.startsWith("Arrow"))e.preventDefault();
       this.keys.add(e.key.toLowerCase());
-    };
-    this.onKeyUp = (e) => {
+    });
+    this.onKeyUp = perf.cpuCallback("Canvas input", (e: KeyboardEvent) => {
       const pan=this.panCodes.get(e.code);if(pan){this.keys.delete(pan);this.panCodes.delete(e.code);}
       if (e.code === "Space") this.keys.delete(" ");
       this.keys.delete(e.key.toLowerCase());
-    };
-    this.onPointerDown = (e) => {
+    });
+    this.onPointerDown = perf.cpuCallback("Canvas input", (e: PointerEvent) => {
       if (e.button !== 0 && e.button !== 1 && e.button !== 2) return;
       if (this.hooks.rts && e.button === 2) {
         this.drag = "command";
@@ -152,8 +153,8 @@ export class MapInput {
       this.lastX = e.clientX;
       this.lastY = e.clientY;
       this.canvas.setPointerCapture(e.pointerId);
-    };
-    this.onPointerMove = (e) => {
+    });
+    this.onPointerMove = perf.cpuCallback("Canvas input", (e: PointerEvent) => {
       if (!this.drag) {
         if (this.hooks.paint?.on()) this.hooks.paint.hover(e.clientX, e.clientY);
         return;
@@ -179,8 +180,8 @@ export class MapInput {
       this.lastX = e.clientX;
       this.lastY = e.clientY;
       this.hooks.onChanged();
-    };
-    this.onPointerUp = (e) => {
+    });
+    this.onPointerUp = perf.cpuCallback("Canvas input", (e: PointerEvent) => {
       if (this.drag === "context") {
         if (e.button !== 2) return;
         this.drag = null;
@@ -209,8 +210,8 @@ export class MapInput {
       if (stroking) this.hooks.paint?.endStroke?.();
       if (grabbing) this.hooks.grab?.up();
       if (clicked) this.hooks.onClick?.(e.clientX, e.clientY, e.shiftKey);
-    };
-    this.onPointerCancel = (e) => {
+    });
+    this.onPointerCancel = perf.cpuCallback("Canvas input", (e: PointerEvent) => {
       this.selectionBox.hidden=true;
       const stroking = this.drag === "stroke";
       const grabbing = this.drag === "grab";
@@ -218,8 +219,8 @@ export class MapInput {
       if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
       if (stroking) this.hooks.paint?.endStroke?.();
       if (grabbing) {if(this.hooks.grab?.cancel)this.hooks.grab.cancel();else this.hooks.grab?.up();}
-    };
-    this.onWheel = (e) => {
+    });
+    this.onWheel = perf.cpuCallback("Canvas input", (e: WheelEvent) => {
       e.preventDefault();
       const paint = this.hooks.paint;
       const steps = e.deltaY > 0 ? -1 : 1;
@@ -240,7 +241,7 @@ export class MapInput {
       }
       const pixels = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? this.canvas.clientHeight : 1);
       this.zoomMomentum.push(pixels);
-    };
+    });
     window.addEventListener("blur",this.onBlur);
     window.addEventListener(SHORTCUTS_CHANGED,this.onBlur);
     if (hooks.rts) {

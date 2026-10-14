@@ -4,10 +4,10 @@ import {Box3,Matrix4,Quaternion,Vector3} from 'three';
 
 const game=JSON.parse(readFileSync('content/game.json','utf8'));
 const buildings=[
- ['ants-mound','building.ants.house'],
- ['ants-barracks','building.ants.barracks'],
+ ['ants-silk-brood-house','building.ants.house'],
+ ['ants-leaf-garrison','building.ants.barracks'],
  ['ants-rootworks','building.ants.rootworks'],
- ['ants-chitin-works','building.ants.ironroot-forge'],
+ ['ants-chitin-workshop','building.ants.ironroot-forge'],
  ['ants-bombardier-workshop','building.ants.bombardier-workshop'],
  ['ants-watchtower','building.ants.tower'],
 ] as const;

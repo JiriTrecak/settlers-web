@@ -12108,7 +12108,7 @@
         "hero",
         "tripo"
       ],
-      "revision": 4,
+      "revision": 5,
       "profile": "base",
       "outputs": [
         {
@@ -12120,8 +12120,8 @@
         {
           "role": "model",
           "path": "assets/library/asset.models.units.ants-rootbreaker/geometry.glb",
-          "sha256": "8a82f847d8db4ec85583416c762df7df36ef3ce37f63a51ffc734d5a12a3b97f",
-          "bytes": 4377148
+          "sha256": "ae895825673ac5e7a4d7b00e28f150ea1590da5863a1c33396f8524d8cac733e",
+          "bytes": 4377156
         },
         {
           "role": "image",

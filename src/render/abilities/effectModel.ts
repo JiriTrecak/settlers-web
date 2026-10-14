@@ -1,3 +1,4 @@
+import {ownershipTexturePlugin} from '../loading/ownershipTextures';
 import {AnimationMixer,Color,Group,InstancedMesh,LoopOnce,LoopRepeat,Material,Mesh,Object3D,Texture,type AnimationClip,type AnimationAction,type BufferGeometry} from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
@@ -16,7 +17,7 @@ type Entry={refs:number;ready:Promise<EffectModelSource>;source?:EffectModelSour
 const identity:ModelTransform={scale:1,pivot:[0,0,0],up:'Y',forward:'+Z'};
 export async function loadEffectModel(ref:ModelRef):Promise<EffectModelSource>{
  const resource=effectResource(ref);if(resource.bytes>EFFECT_MODEL_LIMITS.maxBytes)throw Error('Effect model exceeds 16 MB');
- const gltf=await new GLTFLoader().loadAsync(assetUrls[resource.path]??'/'+resource.path);
+ const gltf=await new GLTFLoader().register(ownershipTexturePlugin).loadAsync(assetUrls[resource.path]??'/'+resource.path);
  return {scene:gltf.scene,animations:gltf.animations,transform:geometryModel(resource.path)?.transform??identity};
 }
 function triangles(root:Object3D){let count=0;root.traverse(o=>{if(o instanceof Mesh)count+=(o.geometry.index?.count??o.geometry.attributes.position?.count??0)/3*(o instanceof InstancedMesh?o.count:1);});return count;}
@@ -28,10 +29,14 @@ export function disposeEffectModelSource(source:EffectModelSource){
 
 /** Shared geometry/textures, independently owned materials, skeletons and clocks. Cosmetic only. */
 export class EffectModels {
- private entries=new Map<string,Entry>();private handles=new Set<EffectModel>();private triangleCount=0;private closed=false;
+ private entries=new Map<string,Entry>();private handles=new Set<EffectModel>();private warmHandles=new Set<EffectModel>();private triangleCount=0;private closed=false;
  constructor(private loader:(ref:ModelRef)=>Promise<EffectModelSource>=loadEffectModel){}
- create(ref:ModelRef):EffectModel|undefined{
-  if(this.closed||this.handles.size>=EFFECT_MODEL_LIMITS.instances)return;
+ /** Prepared examples hold sources/material variants, without consuming live instance budgets. */
+ warm(ref:ModelRef){return this.acquire(ref,true);}
+ create(ref:ModelRef){return this.acquire(ref,false);}
+ private acquire(ref:ModelRef,warming:boolean):EffectModel|undefined{
+  const handles=warming?this.warmHandles:this.handles;
+  if(this.closed||handles.size>=EFFECT_MODEL_LIMITS.instances)return;
   const key=`${ref.asset}/${ref.index}`;let entry=this.entries.get(key);
   if(!entry){
    this.trim();if(this.entries.size>=EFFECT_MODEL_LIMITS.instances+EFFECT_MODEL_LIMITS.cachedModels)return;
@@ -46,14 +51,15 @@ export class EffectModels {
   entry.refs++;const owned=entry;
   let charged=0;
   const handle=new EffectModel(ref,owned.ready,()=>{
+   if(warming)return true;
    if(this.triangleCount+owned.triangles>EFFECT_MODEL_LIMITS.triangles)return false;
    this.triangleCount+=owned.triangles;charged=owned.triangles;return true;
-  },()=>{this.triangleCount-=charged;owned.refs--;this.handles.delete(handle);this.trim();});
-  this.handles.add(handle);this.trim();return handle;
+  },()=>{this.triangleCount-=charged;owned.refs--;handles.delete(handle);this.trim();});
+  handles.add(handle);this.trim();return handle;
  }
  private trim(){for(const [key,entry]of this.entries){if(entry.refs||!entry.settled||!entry.failed&&this.entries.size<=EFFECT_MODEL_LIMITS.cachedModels)continue;this.entries.delete(key);if(entry.source)disposeEffectModelSource(entry.source);}}
  async ready(){for(;;){const handles=[...this.handles];await Promise.all(handles.map(h=>h.ready));if([...this.handles].every(h=>handles.includes(h)))break;}for(const h of this.handles)if(h.error)throw h.error;}
- dispose(){if(this.closed)return;this.closed=true;for(const h of [...this.handles])h.dispose();for(const entry of this.entries.values())if(entry.source)disposeEffectModelSource(entry.source);this.entries.clear();}
+ dispose(){if(this.closed)return;this.closed=true;for(const h of [...this.handles,...this.warmHandles])h.dispose();for(const entry of this.entries.values())if(entry.source)disposeEffectModelSource(entry.source);this.entries.clear();}
 }
 export class EffectModel {
  readonly root=new Group();readonly ready:Promise<void>;error?:Error;

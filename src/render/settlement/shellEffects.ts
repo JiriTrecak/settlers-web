@@ -26,11 +26,11 @@ export class ShellEffects {
    this.effects.set(binding.impactEffect,effect);
   }
   this.flights=new ProjectileEffects(this.root,registry,effects,loader,bindings.map(b=>b.projectile!));
-  // Load impact textures before the first shot, through the shared effect player.
-  const warmup=[...this.effects.values()].map(e=>impacts.play(e));impacts.root.visible=false;
-  this.ready=Promise.all([this.flights.ready,impacts.ready()]).then(()=>{for(const handle of warmup)impacts.stop(handle);impacts.root.visible=true;});
+  // Prepare real impact materials and retain their resources for later volleys.
+  this.ready=Promise.all([this.flights.ready,impacts.prepare([...this.effects.values()])]).then(()=>{});
   void this.ready.catch(error=>console.error('Shell effects could not load',error));
  }
+ preparedModels(){return this.impacts.preparedModelsForWarmup();}
  update(shells:readonly Shell[],field:HeightField,tick:number,launchPosition?:(shell:Shell)=>Vector3|undefined){
   if(tick<this.lastTick){this.seen.clear();this.impacts.clear();}this.lastTick=tick;
   const byId=new Map(shells.map(s=>[s.id,s]));

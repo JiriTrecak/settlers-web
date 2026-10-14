@@ -1,3 +1,4 @@
+import {effectLights} from '../abilities/effectLights';
 import {SceneryFilter} from '../../presentation/sceneryChanges';
 import {measureRenderBenchmark,renderBenchmarkOptions,type RenderBenchmarkOptions} from '../display/renderBenchmark';
 import {installEffectAudio,type AudioView} from '../audio/effectSound';
@@ -118,6 +119,7 @@ export class Renderer {
   private readonly display: Display;
   private readonly reflections: WebGLRenderTarget;
   private readonly scene = new Scene();
+  private readonly spellLights = effectLights(this.scene);
   private readonly surroundings = new ForestSurroundingsLayer(this.scene);
   private canopyPreview=true;
   /** Local viewport override only; never changes the biome or saved map. */
@@ -1003,7 +1005,7 @@ export class Renderer {
     this.canopy.dispose();
     this.ceiling.dispose();
     this.cutaway.dispose();
-    this.sceneryLights.dispose();
+    this.sceneryLights.dispose();this.spellLights.dispose();
     this.brush.destroy(this.scene);
     this.terrain?.destroy(this.scene);
     this.importedWater?.dispose();

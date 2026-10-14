@@ -11,7 +11,7 @@ export class GroundNavigation {
  private readonly builder=new GroundMeshBuilder();
  readonly diagnostics={rebuiltTiles:0,builds:1};
  constructor(private readonly input:GroundMeshInput,private readonly profile=new SimulationProfiler()){
-  const data=this.builder.build(input);
+  const data=this.builder.build(input,undefined,undefined,this.profile);
   // The more aggressive prototype bias produced unequal starting routes and
   // camp pulls. Retain a modest bias, with map-level route-quality checks.
   // This weight is not a bound on final funnel-path stretch.
@@ -30,7 +30,7 @@ export class GroundNavigation {
  prepare(){
   if(!this.dirty.size)return;
   const ids=[...this.dirty].sort((a,b)=>a-b);
-  const data=this.profile.measure('Collision contours',()=>this.builder.build(this.input,ids,[...this.dirtyCells]));
+  const data=this.profile.measure('Collision contours',()=>this.builder.build(this.input,ids,[...this.dirtyCells],this.profile));
   // A conservative footprint halo can touch tiles whose usable area did not
   // change. Keep their geometry and graph links, not merely their cell input.
   if(data.rebuiltTiles){

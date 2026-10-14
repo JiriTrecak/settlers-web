@@ -120,11 +120,9 @@ describe("content and presentation contracts", () => {
     ).toBe(true);
     const b = g.entities.find((e) => e.placement === "b")!,
       mill = g.entities.find((e) => e.placement === "mill")!;
-    expect(
-      commandCard(view, [mill.id, b.id], "player.1", g.registry)
-        .filter(c => c.type === "produce")
-        .every(c => c.actors[0] === mill.id && c.targetDefinition === 'unit.ants.marshal'),
-    ).toBe(true);
+    const heroes = commandCard(view, [mill.id, b.id], "player.1", g.registry).filter(c => c.type === "produce");
+    expect(heroes.every(c => c.actors[0] === mill.id)).toBe(true);
+    expect(heroes.map(c => c.targetDefinition).sort()).toEqual(['unit.ants.marshal', 'unit.ants.rootbreaker']);
     expect(
       commandCard(view, [b.id, mill.id], "player.1", g.registry)
         .filter((c) => c.type === "produce")

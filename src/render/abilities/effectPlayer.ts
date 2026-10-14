@@ -1,12 +1,14 @@
+import {ParticleBatch,particleBatches,bindParticleBatches} from './particleBatch';
+import {containingScene,effectLights,type EffectLights} from './effectLights';
 import {EffectTrail} from './effectTrail';
 import {EffectImages,type EffectImage} from './effectImages';
 import type {TrailPoint} from '../../shared/effects/trailHistory';
 import {configureFlipbook,sampleFlipbook} from './flipbook';
 import type {EffectSocket,EffectSocketPose} from './effectSocket';
 import {EffectModels,type EffectModel} from './effectModel';
-import {EffectSound,type AudioView} from '../audio/effectSound';
+import {effectAudio,EffectSound,type AudioView} from '../audio/effectSound';
 import {sampleCueMotion} from './cueMotion';
-import {Euler,Quaternion,AdditiveBlending,NormalBlending,Color,PlaneGeometry,CylinderGeometry,DoubleSide,Group,Mesh,MeshBasicMaterial,PointLight,RingGeometry,SphereGeometry,Sprite,SpriteMaterial,Vector3,type Texture,type BufferGeometry} from 'three';
+import {Euler,Quaternion,AdditiveBlending,NormalBlending,Color,PlaneGeometry,CylinderGeometry,DoubleSide,Group,Mesh,MeshBasicMaterial,PointLight,RingGeometry,SphereGeometry,Sprite,SpriteMaterial,Vector3,type Scene,type Texture,type Object3D,type BufferGeometry} from 'three';
 import {TICK_MS} from '../../shared/match/match';
 import type {EffectRecipe,VisualEffect} from '../../content/effects/schema';
 import {resolveEffectBindings} from '../../content/effects/schema';
@@ -14,7 +16,7 @@ export type EffectContext={id?:number;event:string;ability:string;cast:number;ti
 type Recipe=EffectRecipe;
 type Particle=Mesh<BufferGeometry,MeshBasicMaterial>|Sprite;
 type RainDrop={shard:Particle;landing:Vector3;delay:number;scale:number;fragments:Particle[];flash?:Particle};
-type Cue={image?:EffectImage;trail?:EffectTrail;trailPoints?:TrailPoint[];model?:EffectModel;basePosition:Vector3;attachmentPose?:EffectSocketPose;sound?:EffectSound;handle?:number;finiteEnd?:number;ability:string;flight?:{position:Vector3;previous:Vector3;direction:Vector3;tick:number};origin?:Vector3;destination?:Vector3;status?:boolean;statusId?:string;root:Group;meshes:Particle[];light?:PointLight;rain?:RainDrop[];recipe:Recipe;start:number;cast:number;sourceEntity:number;targetEntity:number;entity:number};
+type Cue={batches?:ParticleBatch[];image?:EffectImage;trail?:EffectTrail;trailPoints?:TrailPoint[];model?:EffectModel;basePosition:Vector3;attachmentPose?:EffectSocketPose;sound?:EffectSound;handle?:number;finiteEnd?:number;ability:string;flight?:{position:Vector3;previous:Vector3;direction:Vector3;tick:number};origin?:Vector3;destination?:Vector3;status?:boolean;statusId?:string;root:Group;meshes:Particle[];light?:PointLight;rain?:RainDrop[];recipe:Recipe;start:number;cast:number;sourceEntity:number;targetEntity:number;entity:number};
 // Visual-only stable randomness: seeking the timeline reconstructs identical drops without RNG state.
 function noise(seed:number){let n=seed|0;n=Math.imul(n^(n>>>16),0x45d9f3b);n=Math.imul(n^(n>>>16),0x45d9f3b);return ((n^(n>>>16))>>>0)/4294967296;}
 export type EffectDeliveryPose=(cast:number)=>{position:Vector3;direction:Vector3}|undefined;
@@ -23,11 +25,68 @@ export type EffectAnchor=(id:number)=>{x:number;y:number;height:number}|undefine
 export class EffectPlayer {
  readonly root=new Group();
  constructor(private models=new EffectModels(),private images=new EffectImages()){}
+ private lights?:EffectLights;
+ private batchScene?:Scene;
+ private syncSceneResources(){
+  const scene=this.closed?undefined:containingScene(this.root),pool=scene?effectLights(scene):undefined;
+  if(pool!==this.lights)this.lights?.sync(this,[]);this.lights=pool;
+  pool?.sync(this,this.cues.filter(c=>c.root.parent&&!!c.light).map(c=>({root:c.root,light:c.light!})));
+  if(this.batchScene&&this.batchScene!==scene)bindParticleBatches(this.batchScene,this,[]);
+  this.batchScene=scene;
+  if(scene)bindParticleBatches(scene,this,[...this.preparedBatches,...this.cues.flatMap(c=>c.root.parent?c.batches??[]:[])]);
+ }
  async ready(){
+  await this.preparing;
   const active=()=>this.cues.flatMap(c=>c.image?[c.image]:[]);
   for(;;){const leases=active();await Promise.all([this.models.ready(),...leases.map(l=>l.ready)]);if(active().every(l=>leases.includes(l)))break;}
   for(const image of active())if(image.error)throw image.error;
  }
+ /** Match loading prepares actual recipes, including custom shaders and animated models.
+  * Leases stay pinned until disposal; idle-cache eviction must not undo the warm-up. */
+ private preparing:Promise<void>=Promise.resolve();
+ private prepared=new Set<VisualEffect>();private preparedRoots:Object3D[]=[];private preparedParticles:Particle[]=[];
+ private preparedImages=new Map<string,EffectImage>();private preparedModels=new Set<string>();
+ private preparedMaterials=new Set<string>();private preparedTrails:EffectTrail[]=[];private preparedBatches:ParticleBatch[]=[];private closed=false;private batching=false;
+ prepare(effects:readonly VisualEffect[]):Promise<void>{
+  return this.preparing=this.preparing.then(async()=>{
+   if(this.closed)return;this.batching=true;this.syncSceneResources();
+   await effectAudio.preload(effects.flatMap(e=>e.layers.filter(l=>l.enabled&&l.sound).map(l=>l.sound!)));
+   for(const effect of effects){
+    if(this.closed)return;if(this.prepared.has(effect))continue;
+    const recipes=resolveEffectBindings([{id:'warm',effect:effect.id,event:'released',anchor:'target',lifetime:'finite'}],[effect]);
+    for(const recipe of recipes){
+     if(this.closed)return;
+     let image:EffectImage|undefined;
+     if(recipe.texture){
+      const key=JSON.stringify(recipe.texture);image=this.preparedImages.get(key);
+      if(!image){image=this.images.acquire(recipe.texture);this.preparedImages.set(key,image);}
+      await image.ready;if(this.closed)return;if(image.error)throw image.error;
+     }
+     if(recipe.model){
+      const key=`${recipe.model.asset}/${recipe.model.index}/${recipe.model.animation?.clip??''}`;
+      if(!this.preparedModels.has(key)){
+       const model=this.models.warm(recipe.model);if(!model)throw Error('Effect model preparation budget reached');
+       await model.ready;if(this.closed)return;if(model.error)throw model.error;
+       model.sample(1,1,'#ffffff');this.preparedRoots.push(model.root);this.preparedModels.add(key);
+      }
+     }else if(!['light','sound','mesh'].includes(recipe.shape)){
+      const examples=[recipe,...(recipe.impact?[{...recipe,...recipe.impact,shape:'burst' as const},{...recipe,...recipe.impact,shape:'glow' as const,texture:undefined,flipbook:undefined}]:[])];
+      for(const example of examples){
+       const key=JSON.stringify([example.shape,example.texture,example.orientation,example.blend,!!example.flipbook]);
+       if(this.preparedMaterials.has(key))continue;this.preparedMaterials.add(key);
+       const particle=this.particle(example,0,1,example.texture?image?.map:undefined);particle.material.opacity=1;
+       this.preparedRoots.push(particle);this.preparedParticles.push(particle);
+       if(!example.flipbook){const batch=new ParticleBatch([particle]);this.preparedBatches.push(batch);this.preparedRoots.push(batch.mesh);}
+      }
+     }
+     if(recipe.trail&&!this.preparedTrails.length){const trail=new EffectTrail(recipe.trail);trail.sample(1,[{x:0,y:0,z:0,tick:0},{x:1,y:1,z:0,tick:1}]);this.preparedTrails.push(trail);this.preparedRoots.push(trail.mesh);}
+    }
+    this.prepared.add(effect);
+   }
+   this.syncSceneResources();
+  });
+ }
+ preparedModelsForWarmup():readonly Object3D[]{return this.preparedRoots;}
  protected cues:Cue[]=[];
  private audioFrame={view:{x:0,z:0,rightX:1,rightZ:0} as AudioView,playing:false,speed:1};
  setAudioFrame(view:AudioView,playing:boolean,speed=1){this.audioFrame={view,playing,speed};if(!playing||speed<=0)for(const cue of this.cues)cue.sound?.stop();}
@@ -105,13 +164,14 @@ export class EffectPlayer {
     return {shard,landing,delay:noise(seed+3)*(recipe.launchDelayMs??0)/TICK_MS,scale:.8+noise(seed+4)*.35,fragments,flash};
    }):undefined;
    for(const drop of rain??[]){meshes.push(...drop.fragments);if(drop.flash)meshes.push(drop.flash);}
-   if(meshes.length)root.add(...meshes);if(trail)root.add(trail.mesh);
+   const batches=this.batching&&meshes.length>=8&&!recipe.flipbook?particleBatches(meshes):undefined;
+   if(batches)root.add(...batches.map(b=>b.mesh));else if(meshes.length)root.add(...meshes);if(trail)root.add(trail.mesh);
    const light=recipe.shape==='light'?new PointLight(recipe.colour,0,recipe.size,2):undefined;
-   if(light){light.castShadow=false;light.position.y=recipe.height;root.add(light);}
-   this.cues.push({image,trail,model,finiteEnd,basePosition:root.position.clone(),sound:recipe.sound?new EffectSound(recipe.sound):undefined,ability:event.ability,origin:new Vector3(event.origin.x,(event.origin.height??height(event.origin.x,event.origin.y))+recipe.height,event.origin.y),destination:new Vector3(event.point.x,(event.point.height??height(event.point.x,event.point.y))+recipe.height,event.point.y),status:event.event==='statusApplied',statusId:event.statusId,root,meshes,light,rain,recipe,start,cast:event.cast,sourceEntity:event.caster,targetEntity:event.target,entity:recipe.anchor==='caster'?event.caster:event.target});
+   if(light){light.castShadow=false;light.position.y=recipe.height;}
+   this.cues.push({batches,image,trail,model,finiteEnd,basePosition:root.position.clone(),sound:recipe.sound?new EffectSound(recipe.sound):undefined,ability:event.ability,origin:new Vector3(event.origin.x,(event.origin.height??height(event.origin.x,event.origin.y))+recipe.height,event.origin.y),destination:new Vector3(event.point.x,(event.point.height??height(event.point.x,event.point.y))+recipe.height,event.point.y),status:event.event==='statusApplied',statusId:event.statusId,root,meshes,light,rain,recipe,start,cast:event.cast,sourceEntity:event.caster,targetEntity:event.target,entity:recipe.anchor==='caster'?event.caster:event.target});
   }
  }
- protected remove(cue:Cue){cue.image?.release();cue.trail?.dispose();cue.model?.dispose();cue.sound?.stop();cue.root.removeFromParent();for(const m of cue.meshes)m.material.dispose();cue.light?.dispose();}
+ protected remove(cue:Cue){for(const batch of cue.batches??[])batch.dispose();cue.image?.release();cue.trail?.dispose();cue.model?.dispose();cue.sound?.stop();cue.root.removeFromParent();for(const m of cue.meshes)m.material.dispose();cue.light?.dispose();this.syncSceneResources();}
  private fallDirection(r:Recipe){const angle=(r.fallAngleDegrees??0)*Math.PI/180,azimuth=(r.fallAzimuthDegrees??0)*Math.PI/180;return new Vector3(Math.cos(azimuth)*Math.tan(angle),1,Math.sin(azimuth)*Math.tan(angle));}
  private updateRain(cue:Cue,tick:number){
   const r=cue.recipe,back=this.fallDirection(r),unit=back.clone().normalize();
@@ -257,7 +317,7 @@ export class EffectPlayer {
     if(r.motion?.rotation){if(mesh instanceof Sprite)mesh.material.rotation=motion.rotation;else mesh.rotation.z=motion.rotation;}
    }
   }
-  this.cues=this.cues.filter(c=>c.root.parent);
+  this.cues=this.cues.filter(c=>c.root.parent);this.syncSceneResources();
  }
  /** Standalone visual playback: positions, clock and seed; no game or spell required. */
  play(effect:VisualEffect,options:{tick?:number;seed?:number;source?:{x:number;y:number;height?:number};target?:{x:number;y:number;height?:number};sustain?:boolean;radius?:number;durationTicks?:number}={},height:(x:number,y:number)=>number=()=>0){
@@ -267,7 +327,7 @@ export class EffectPlayer {
  }
  stop(handle:number){for(const cue of this.cues.filter(c=>c.handle===handle))this.remove(cue);this.cues=this.cues.filter(c=>c.root.parent);}
  clear(){for(const cue of this.cues)this.remove(cue);this.cues=[];}
- dispose(){this.clear();this.models.dispose();this.root.removeFromParent();this.ring.dispose();this.disc.dispose();this.sphere.dispose();this.beam.dispose();this.quad.dispose();this.pillar.dispose();this.images.dispose();}
+ dispose(){this.closed=true;for(const root of this.preparedRoots)root.removeFromParent();for(const p of this.preparedParticles)p.material.dispose();for(const trail of this.preparedTrails)trail.dispose();for(const batch of this.preparedBatches)batch.dispose();for(const image of this.preparedImages.values())image.release();this.preparedRoots=[];this.preparedParticles=[];this.preparedImages.clear();this.clear();this.syncSceneResources();this.models.dispose();this.root.removeFromParent();this.ring.dispose();this.disc.dispose();this.sphere.dispose();this.beam.dispose();this.quad.dispose();this.pillar.dispose();this.images.dispose();}
  get liveCues(){return this.cues.length;}
  /** Focused inspection includes the selected actor's visible attached effects. */
  rootsForEntity(entity:number){return this.cues.filter(c=>c.entity===entity&&c.root.parent).map(c=>c.root);}

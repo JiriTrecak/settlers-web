@@ -35,6 +35,21 @@ export class SectorNavigation {
   if(this.nodesBySector){yield* this.nodesBySector[sector]!;return;}
   const b=this.bounds(sector);for(let y=b.y;y<b.endY;y++)for(let x=b.x;x<b.endX;x++)yield y*this.size+x;
  }
+ private *boundaryNodes(sector:number):Iterable<number>{
+  const b=this.bounds(sector);
+  if(this.nodesBySector){
+   for(const node of this.nodesBySector[sector]!){
+    const cell=this.topology!.cell(node),x=cell%this.size,y=Math.floor(cell/this.size);
+    if(x===b.x||x===b.endX-1||y===b.y||y===b.endY-1)yield node;
+   }
+   return;
+  }
+  // Preserve row-major edge order without visiting every interior cell.
+  for(let y=b.y;y<b.endY;y++){
+   if(y===b.y||y===b.endY-1){for(let x=b.x;x<b.endX;x++)yield y*this.size+x;}
+   else{yield y*this.size+b.x;if(b.endX-b.x>1)yield y*this.size+b.endX-1;}
+  }
+ }
  private bounds(sector:number){const x=(sector%this.width)*SECTOR_SIZE,y=Math.floor(sector/this.width)*SECTOR_SIZE;return {x,y,endX:Math.min(this.size,x+SECTOR_SIZE),endY:Math.min(this.size,y+SECTOR_SIZE)};}
  prepare(){
   this.diagnostics.rebuiltSectors=this.dirty.size;if(!this.dirty.size)return;
@@ -78,10 +93,8 @@ export class SectorNavigation {
   // farther away continue referring to unchanged region IDs.
   for(const sector of boundary)for(const id of this.sectorRegions[sector]!)this.regions.get(id)!.links.clear();
   for(const sector of boundary){
-   const b=this.bounds(sector);
-   for(const from of this.nodesIn(sector)){
+   for(const from of this.boundaryNodes(sector)){
     const cell=this.topology?.cell(from)??from,x=cell%this.size,y=Math.floor(cell/this.size);
-    if(x>b.x&&x<b.endX-1&&y>b.y&&y<b.endY-1)continue;
     const id=this.labels[from]!;if(id<0)continue;
     if(this.topology){
      for(const to of this.topology.neighbors(from))if(this.sector(to)!==sector&&this.labels[to]!>=0)this.regions.get(id)!.links.add(this.labels[to]!);

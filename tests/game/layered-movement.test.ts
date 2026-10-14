@@ -53,6 +53,10 @@ it('keeps local collision snapshots separated by bridge deck height',()=>{
  expect(expected).toEqual([true,false]);
  c.spatial.beginUnitMovement();
  expect(c.spatial.withLocalUnitClearance(fixed(lower),4250,lower.id,clear=>probes.map(([a,b])=>clear(a,b)))).toEqual(expected);
+ const points=[{x:40,y:40},{x:40,y:40,surface:'arch'},{x:44,y:40,surface:'arch'}];
+ c.spatial.withLocalUnitClearance(fixed(lower),4250,lower.id,clear=>{
+  for(const p of points)expect(c.spatial.freeOnWalkable(p,lower.id,lower,clear)).toBe(c.spatial.freeOnWalkable(p,lower.id,lower));
+ });
  c.spatial.endUnitMovement();
 });
 it('walks through an entrance onto the arch, can be interrupted there, and walks down again',()=>{
